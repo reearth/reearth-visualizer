@@ -31,3 +31,17 @@ export const AUTH0_AUDIENCE = process.env.REEARTH_E2E_AUTH0_AUDIENCE ?? "";
 export const AUTH0_CLIENT_ID = process.env.REEARTH_E2E_AUTH0_CLIENT_ID ?? "";
 export const MOCK_USER_ID = process.env.REEARTH_E2E_MOCK_USER_ID ?? "";
 export const SECOND_USER_EMAIL = process.env.REEARTH_E2E_SECOND_USER_EMAIL ?? "";
+
+export const API_BASE_URL =
+  process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "") ??
+  deriveApiBase(BASE_URL);
+
+function deriveApiBase(url: string): string {
+  try {
+    const parsed = new URL(url);
+    parsed.hostname = `api.${parsed.hostname}`;
+    return parsed.origin;
+  } catch {
+    return url;
+  }
+}

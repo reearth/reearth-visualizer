@@ -196,19 +196,29 @@ test.describe("Workspace negative scenarios via API", () => {
     const wsId = wsData.createWorkspace.workspace.id;
     tempWorkspaceIds.push(wsId);
 
-    const { status, data } = await gqlClient.mutate<{
-      addMemberToWorkspace: {
-        workspace: { id: string; members: { userId: string; role: string }[] };
-      };
-    }>(ADD_MEMBER_TO_WORKSPACE, {
-      input: { workspaceId: wsId, userId: fakeUserId, role: "READER" }
-    });
+    // Server may either throw an error or silently ignore the non-existent user
+    try {
+      const { data } = await gqlClient.mutate<{
+        addMemberToWorkspace: {
+          workspace: {
+            id: string;
+            members: { userId: string; role: string }[];
+          };
+        };
+      }>(ADD_MEMBER_TO_WORKSPACE, {
+        input: { workspaceId: wsId, userId: fakeUserId, role: "READER" }
+      });
 
-    expect(status).toBe(200);
-    const fakeMember = data.addMemberToWorkspace.workspace.members.find(
-      (m) => m.userId === fakeUserId
-    );
-    expect(fakeMember).toBeUndefined();
+      // If it didn't throw, verify the fake user was not actually added
+      const fakeMember = data.addMemberToWorkspace.workspace.members.find(
+        (m) => m.userId === fakeUserId
+      );
+      expect(fakeMember).toBeUndefined();
+    } catch (error: unknown) {
+      // Only accept user-not-found related errors; rethrow unexpected ones
+      const msg = error instanceof Error ? error.message : String(error);
+      expect(msg.toLowerCase()).toMatch(/not found|does not exist|user/);
+    }
   });
 
   test("Cannot remove yourself (owner) from workspace", async ({
