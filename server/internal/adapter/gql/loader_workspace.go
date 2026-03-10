@@ -7,15 +7,18 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	"github.com/reearth/reearthx/util"
 )
 
 type WorkspaceLoader struct {
+	client  *gqlclient.Client
 	usecase interfaces.Workspace
 }
 
-func NewWorkspaceLoader(usecase interfaces.Workspace) *WorkspaceLoader {
-	return &WorkspaceLoader{usecase: usecase}
+func NewWorkspaceLoader(client *gqlclient.Client, usecase interfaces.Workspace) *WorkspaceLoader {
+	return &WorkspaceLoader{client: client, usecase: usecase}
 }
 
 func (c *WorkspaceLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Workspace, []error) {
@@ -24,11 +27,22 @@ func (c *WorkspaceLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 		return nil, []error{err}
 	}
 
+	if c.client != nil {
+		workspaces := make([]*gqlmodel.Workspace, 0, len(uids))
+		for _, uid := range uids {
+			w, err := c.client.WorkspaceRepo.FindByID(ctx, uid.String())
+			if err != nil {
+				return nil, []error{err}
+			}
+			workspaces = append(workspaces, gqlmodel.ToWorkspace(w))
+		}
+		return workspaces, nil
+	}
+
 	res, err := c.usecase.Fetch(ctx, uids, getAcOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
 	}
-
 	workspaces := make([]*gqlmodel.Workspace, 0, len(res))
 	for _, t := range res {
 		workspaces = append(workspaces, gqlmodel.ToWorkspace(t))
@@ -40,6 +54,18 @@ func (c *WorkspaceLoader) FindByUser(ctx context.Context, uid gqlmodel.ID) ([]*g
 	userid, err := gqlmodel.ToID[accountsID.User](uid)
 	if err != nil {
 		return nil, err
+	}
+
+	if c.client != nil {
+		res, err := c.client.WorkspaceRepo.FindByUser(ctx, userid.String())
+		if err != nil {
+			return nil, err
+		}
+		workspaces := make([]*gqlmodel.Workspace, 0, len(res))
+		for _, w := range res {
+			workspaces = append(workspaces, gqlmodel.ToWorkspace(w))
+		}
+		return workspaces, nil
 	}
 
 	res, err := c.usecase.FindByUser(ctx, userid, getAcOperator(ctx))
