@@ -143,7 +143,7 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 			ctx := req.Context()
 
 			uc := adapter.Usecases(ctx)
-			ctx = gql.AttachUsecases(ctx, uc, enableDataLoaders)
+			ctx = gql.AttachUsecases(ctx, uc, cfg.AccountsAPIClient, enableDataLoaders)
 
 			c.SetRequest(req.WithContext(ctx))
 

@@ -83,7 +83,7 @@ func initEcho(
 
 		e.Use(echo.WrapMiddleware(wrapHandler))
 
-	} else if cfg.Config.UseReearthAccountAuth() {
+	} else {
 		// Re:Earth Accounts Mode
 		log.Infof("[Auth] Re:Earth Accounts Mode")
 		// The token verification is performed by reearth-accounts.
@@ -151,7 +151,7 @@ func initEcho(
 	apiPrivateRoute := apiRoot.Group("", privateCache)
 	if cfg.Config.UseMockAuth() {
 		apiPrivateRoute.Use(attachOpMiddlewareMockUser(cfg))
-	} else if cfg.Config.UseReearthAccountAuth() {
+	} else {
 		apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
 	}
 
