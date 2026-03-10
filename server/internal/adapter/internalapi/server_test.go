@@ -26,6 +26,7 @@ import (
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	mgo "go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -61,8 +62,10 @@ func (m *mockPolicyChecker) CheckPolicy(_ context.Context, _ gateway.PolicyCheck
 	}, nil
 }
 
-func createGatewayContainer() *gateway.Container {
-	file, _ := gcs.NewFile(true, "test-bucket", "/assets", "public, max-age=3600")
+func createGatewayContainer(t *testing.T) *gateway.Container {
+	t.Helper()
+	file, err := gcs.NewFile(true, "test-bucket", "", "public, max-age=3600")
+	require.NoError(t, err)
 	return &gateway.Container{
 		File:          file,
 		PolicyChecker: &mockPolicyChecker{},
@@ -121,7 +124,7 @@ func TestServer_ValidateProjectAlias(t *testing.T) {
 	db := mongotest.Connect(t)(t)
 
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	ws, op := setupTestData(t, ctx, repos)
@@ -182,7 +185,7 @@ func TestServer_ValidateSceneAlias(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	_, op := setupTestData(t, ctx, repos)
@@ -210,11 +213,11 @@ func TestServer_GetProject(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	us := factory.NewUser()
-	_ = repos.User.Save(ctx, us)
+	require.NoError(t, repos.User.Save(ctx, us))
 
 	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
 		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
@@ -225,31 +228,31 @@ func TestServer_GetProject(t *testing.T) {
 			},
 		})
 	})
-	_ = repos.Workspace.Save(ctx, ws)
+	require.NoError(t, repos.Workspace.Save(ctx, ws))
 
 	pj := factory.NewProject(func(p *project.Builder) {
 		p.Workspace(ws.ID()).
 			Visibility(project.VisibilityPublic)
 	})
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
 		m.Project(pj.ID())
 		m.Workspace(ws.ID())
 	})
-	_ = repos.ProjectMetadata.Save(ctx, meta)
+	require.NoError(t, repos.ProjectMetadata.Save(ctx, meta))
 
 	sc := factory.NewScene(func(sb *scene.Builder) {
 		sb.Project(pj.ID())
 		sb.Workspace(ws.ID())
 	})
-	_ = repos.Scene.Save(ctx, sc)
+	require.NoError(t, repos.Scene.Save(ctx, sc))
 
 	pj.UpdateSceneID(sc.ID())
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	st := storytelling.NewStory().NewID().Scene(sc.ID()).Property(id.NewPropertyID()).MustBuild()
-	_ = repos.Storytelling.Save(ctx, *st)
+	require.NoError(t, repos.Storytelling.Save(ctx, *st))
 
 	op := &usecase.Operator{
 		AcOperator: &accountsWorkspace.Operator{
@@ -303,7 +306,7 @@ func TestServer_CreateProject(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	ws, op := setupTestData(t, ctx, repos)
@@ -352,11 +355,11 @@ func TestServer_UpdateProject(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	us := factory.NewUser()
-	_ = repos.User.Save(ctx, us)
+	require.NoError(t, repos.User.Save(ctx, us))
 
 	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
 		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
@@ -367,32 +370,32 @@ func TestServer_UpdateProject(t *testing.T) {
 			},
 		})
 	})
-	_ = repos.Workspace.Save(ctx, ws)
+	require.NoError(t, repos.Workspace.Save(ctx, ws))
 
 	pj := factory.NewProject(func(p *project.Builder) {
 		p.Workspace(ws.ID()).
 			Name("Original Name").
 			Visibility(project.VisibilityPublic)
 	})
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
 		m.Project(pj.ID())
 		m.Workspace(ws.ID())
 	})
-	_ = repos.ProjectMetadata.Save(ctx, meta)
+	require.NoError(t, repos.ProjectMetadata.Save(ctx, meta))
 
 	sc := factory.NewScene(func(sb *scene.Builder) {
 		sb.Project(pj.ID())
 		sb.Workspace(ws.ID())
 	})
-	_ = repos.Scene.Save(ctx, sc)
+	require.NoError(t, repos.Scene.Save(ctx, sc))
 
 	pj.UpdateSceneID(sc.ID())
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	st := storytelling.NewStory().NewID().Scene(sc.ID()).Property(id.NewPropertyID()).MustBuild()
-	_ = repos.Storytelling.Save(ctx, *st)
+	require.NoError(t, repos.Storytelling.Save(ctx, *st))
 
 	op := &usecase.Operator{
 		AcOperator: &accountsWorkspace.Operator{
@@ -441,11 +444,11 @@ func TestServer_DeleteProject(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	us := factory.NewUser()
-	_ = repos.User.Save(ctx, us)
+	require.NoError(t, repos.User.Save(ctx, us))
 
 	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
 		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
@@ -456,28 +459,28 @@ func TestServer_DeleteProject(t *testing.T) {
 			},
 		})
 	})
-	_ = repos.Workspace.Save(ctx, ws)
+	require.NoError(t, repos.Workspace.Save(ctx, ws))
 
 	pj := factory.NewProject(func(p *project.Builder) {
 		p.Workspace(ws.ID()).
 			Visibility(project.VisibilityPublic)
 	})
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
 		m.Project(pj.ID())
 		m.Workspace(ws.ID())
 	})
-	_ = repos.ProjectMetadata.Save(ctx, meta)
+	require.NoError(t, repos.ProjectMetadata.Save(ctx, meta))
 
 	sc := factory.NewScene(func(sb *scene.Builder) {
 		sb.Project(pj.ID())
 		sb.Workspace(ws.ID())
 	})
-	_ = repos.Scene.Save(ctx, sc)
+	require.NoError(t, repos.Scene.Save(ctx, sc))
 
 	pj.UpdateSceneID(sc.ID())
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	op := &usecase.Operator{
 		AcOperator: &accountsWorkspace.Operator{
@@ -520,11 +523,11 @@ func TestServer_GetAllProjects(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	us := factory.NewUser()
-	_ = repos.User.Save(ctx, us)
+	require.NoError(t, repos.User.Save(ctx, us))
 
 	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
 		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
@@ -535,7 +538,7 @@ func TestServer_GetAllProjects(t *testing.T) {
 			},
 		})
 	})
-	_ = repos.Workspace.Save(ctx, ws)
+	require.NoError(t, repos.Workspace.Save(ctx, ws))
 
 	// Create public projects
 	for i := 0; i < 3; i++ {
@@ -551,8 +554,8 @@ func TestServer_GetAllProjects(t *testing.T) {
 			m.StarCount(&starCount)
 		})
 
-		_ = repos.Project.Save(ctx, pj)
-		_ = repos.ProjectMetadata.Save(ctx, meta)
+		require.NoError(t, repos.Project.Save(ctx, pj))
+		require.NoError(t, repos.ProjectMetadata.Save(ctx, meta))
 	}
 
 	// Create private project
@@ -564,8 +567,8 @@ func TestServer_GetAllProjects(t *testing.T) {
 		m.Project(privatePj.ID())
 		m.Workspace(ws.ID())
 	})
-	_ = repos.Project.Save(ctx, privatePj)
-	_ = repos.ProjectMetadata.Save(ctx, privateMeta)
+	require.NoError(t, repos.Project.Save(ctx, privatePj))
+	require.NoError(t, repos.ProjectMetadata.Save(ctx, privateMeta))
 
 	ctx = adapter.AttachUsecases(ctx, uc)
 	ctx = adapter.AttachCurrentHost(ctx, "https://example.com")
@@ -607,11 +610,11 @@ func TestServer_UpdateProjectMetadata(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	us := factory.NewUser()
-	_ = repos.User.Save(ctx, us)
+	require.NoError(t, repos.User.Save(ctx, us))
 
 	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
 		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
@@ -622,19 +625,19 @@ func TestServer_UpdateProjectMetadata(t *testing.T) {
 			},
 		})
 	})
-	_ = repos.Workspace.Save(ctx, ws)
+	require.NoError(t, repos.Workspace.Save(ctx, ws))
 
 	pj := factory.NewProject(func(p *project.Builder) {
 		p.Workspace(ws.ID()).
 			Visibility(project.VisibilityPublic)
 	})
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
 		m.Project(pj.ID())
 		m.Workspace(ws.ID())
 	})
-	_ = repos.ProjectMetadata.Save(ctx, meta)
+	require.NoError(t, repos.ProjectMetadata.Save(ctx, meta))
 
 	op := &usecase.Operator{
 		AcOperator: &accountsWorkspace.Operator{
@@ -684,11 +687,11 @@ func TestServer_PatchStarCount(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	us := factory.NewUser()
-	_ = repos.User.Save(ctx, us)
+	require.NoError(t, repos.User.Save(ctx, us))
 
 	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
 		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
@@ -699,7 +702,7 @@ func TestServer_PatchStarCount(t *testing.T) {
 			},
 		})
 	})
-	_ = repos.Workspace.Save(ctx, ws)
+	require.NoError(t, repos.Workspace.Save(ctx, ws))
 
 	projectAlias := "star-test-project"
 	pj := factory.NewProject(func(p *project.Builder) {
@@ -707,7 +710,7 @@ func TestServer_PatchStarCount(t *testing.T) {
 			Visibility(project.VisibilityPublic).
 			ProjectAlias(projectAlias)
 	})
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	starCount := int64(0)
 	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
@@ -716,7 +719,7 @@ func TestServer_PatchStarCount(t *testing.T) {
 		m.StarCount(&starCount)
 		m.StarredBy(&[]string{})
 	})
-	_ = repos.ProjectMetadata.Save(ctx, meta)
+	require.NoError(t, repos.ProjectMetadata.Save(ctx, meta))
 
 	op := &usecase.Operator{
 		AcOperator: &accountsWorkspace.Operator{
@@ -791,11 +794,11 @@ func TestServer_GetProjectByWorkspaceAliasAndProjectAlias(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	us := factory.NewUser()
-	_ = repos.User.Save(ctx, us)
+	require.NoError(t, repos.User.Save(ctx, us))
 
 	wsAlias := "test-workspace"
 	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
@@ -808,7 +811,7 @@ func TestServer_GetProjectByWorkspaceAliasAndProjectAlias(t *testing.T) {
 		})
 		w.Alias(wsAlias)
 	})
-	_ = repos.Workspace.Save(ctx, ws)
+	require.NoError(t, repos.Workspace.Save(ctx, ws))
 
 	projectAlias := "test-project"
 	pj := factory.NewProject(func(p *project.Builder) {
@@ -816,25 +819,25 @@ func TestServer_GetProjectByWorkspaceAliasAndProjectAlias(t *testing.T) {
 			Visibility(project.VisibilityPublic).
 			ProjectAlias(projectAlias)
 	})
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
 		m.Project(pj.ID())
 		m.Workspace(ws.ID())
 	})
-	_ = repos.ProjectMetadata.Save(ctx, meta)
+	require.NoError(t, repos.ProjectMetadata.Save(ctx, meta))
 
 	sc := factory.NewScene(func(sb *scene.Builder) {
 		sb.Project(pj.ID())
 		sb.Workspace(ws.ID())
 	})
-	_ = repos.Scene.Save(ctx, sc)
+	require.NoError(t, repos.Scene.Save(ctx, sc))
 
 	pj.UpdateSceneID(sc.ID())
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	st := storytelling.NewStory().NewID().Scene(sc.ID()).Property(id.NewPropertyID()).MustBuild()
-	_ = repos.Storytelling.Save(ctx, *st)
+	require.NoError(t, repos.Storytelling.Save(ctx, *st))
 
 	op := &usecase.Operator{
 		AcOperator: &accountsWorkspace.Operator{
@@ -898,7 +901,7 @@ func TestServer_GetProjectByWorkspaceAliasAndProjectAlias(t *testing.T) {
 			})
 			w.Alias(otherWsAlias)
 		})
-		_ = repos.Workspace.Save(ctx, otherWs)
+		require.NoError(t, repos.Workspace.Save(ctx, otherWs))
 
 		// Try to access the project using the other workspace's alias
 		// but with the original project's alias - should fail
@@ -916,11 +919,11 @@ func TestServer_DeleteProjectByWorkspaceAliasAndProjectAlias(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	us := factory.NewUser()
-	_ = repos.User.Save(ctx, us)
+	require.NoError(t, repos.User.Save(ctx, us))
 
 	wsAlias := "delete-test-workspace"
 	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
@@ -933,7 +936,7 @@ func TestServer_DeleteProjectByWorkspaceAliasAndProjectAlias(t *testing.T) {
 		})
 		w.Alias(wsAlias)
 	})
-	_ = repos.Workspace.Save(ctx, ws)
+	require.NoError(t, repos.Workspace.Save(ctx, ws))
 
 	projectAlias := "delete-test-project"
 	pj := factory.NewProject(func(p *project.Builder) {
@@ -941,22 +944,22 @@ func TestServer_DeleteProjectByWorkspaceAliasAndProjectAlias(t *testing.T) {
 			Visibility(project.VisibilityPublic).
 			ProjectAlias(projectAlias)
 	})
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
 		m.Project(pj.ID())
 		m.Workspace(ws.ID())
 	})
-	_ = repos.ProjectMetadata.Save(ctx, meta)
+	require.NoError(t, repos.ProjectMetadata.Save(ctx, meta))
 
 	sc := factory.NewScene(func(sb *scene.Builder) {
 		sb.Project(pj.ID())
 		sb.Workspace(ws.ID())
 	})
-	_ = repos.Scene.Save(ctx, sc)
+	require.NoError(t, repos.Scene.Save(ctx, sc))
 
 	pj.UpdateSceneID(sc.ID())
-	_ = repos.Project.Save(ctx, pj)
+	require.NoError(t, repos.Project.Save(ctx, pj))
 
 	op := &usecase.Operator{
 		AcOperator: &accountsWorkspace.Operator{
@@ -1001,11 +1004,11 @@ func TestServer_GetProjectList(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	repos := createRepoContainer(db)
-	gateways := createGatewayContainer()
+	gateways := createGatewayContainer(t)
 	uc := createUsecaseContainer(repos, gateways)
 
 	us := factory.NewUser()
-	_ = repos.User.Save(ctx, us)
+	require.NoError(t, repos.User.Save(ctx, us))
 
 	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
 		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
@@ -1016,7 +1019,7 @@ func TestServer_GetProjectList(t *testing.T) {
 			},
 		})
 	})
-	_ = repos.Workspace.Save(ctx, ws)
+	require.NoError(t, repos.Workspace.Save(ctx, ws))
 
 	// Create projects
 	for i := 0; i < 3; i++ {
@@ -1034,11 +1037,11 @@ func TestServer_GetProjectList(t *testing.T) {
 			sb.Project(pj.ID())
 			sb.Workspace(ws.ID())
 		})
-		_ = repos.Scene.Save(ctx, sc)
+		require.NoError(t, repos.Scene.Save(ctx, sc))
 
 		pj.UpdateSceneID(sc.ID())
-		_ = repos.Project.Save(ctx, pj)
-		_ = repos.ProjectMetadata.Save(ctx, meta)
+		require.NoError(t, repos.Project.Save(ctx, pj))
+		require.NoError(t, repos.ProjectMetadata.Save(ctx, meta))
 	}
 
 	op := &usecase.Operator{

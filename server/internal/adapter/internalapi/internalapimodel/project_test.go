@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestToProjectSortType(t *testing.T) {
@@ -132,6 +133,8 @@ func TestToProjectPageInfo(t *testing.T) {
 		assert.Equal(t, int64(100), got.TotalCount)
 		assert.True(t, got.HasNextPage)
 		assert.True(t, got.HasPreviousPage)
+		require.NotNil(t, got.StartCursor)
+		require.NotNil(t, got.EndCursor)
 		assert.Equal(t, "start", *got.StartCursor)
 		assert.Equal(t, "end", *got.EndCursor)
 	})
