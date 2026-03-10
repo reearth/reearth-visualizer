@@ -162,6 +162,12 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 	}
 }
 
+// httpStatusError is an interface for errors that carry an HTTP status code.
+// This matches the NetworkError type from hasura/go-graphql-client.
+type httpStatusError interface {
+	StatusCode() int
+}
+
 func handleAccountsAPIError(ctx context.Context, err error) error {
 	if accountsGqlError.IsUnauthorized(err) {
 		log.Warnfc(ctx, "accounts API: unauthorized: %s", err.Error())
@@ -173,8 +179,29 @@ func handleAccountsAPIError(ctx context.Context, err error) error {
 		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
 
+	// Handle rate limiting from accounts API using typed error detection
+	if isRateLimitError(err) {
+		log.Warnfc(ctx, "accounts API: rate limited: %s", err.Error())
+		return echo.NewHTTPError(http.StatusTooManyRequests, "too many requests")
+	}
+
 	log.Errorfc(ctx, "accounts API: failed to fetch user: %s", err.Error())
 	return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
+}
+
+// isRateLimitError checks if the error indicates a rate limit (HTTP 429) response.
+// It first tries to extract the status code from typed errors (preferred),
+// then falls back to string matching for compatibility.
+func isRateLimitError(err error) bool {
+	// Try to extract status code from typed error (e.g., NetworkError from graphql client)
+	var statusErr httpStatusError
+	if errors.As(err, &statusErr) {
+		return statusErr.StatusCode() == http.StatusTooManyRequests
+	}
+
+	// Fallback: check for the specific error message format from graphql client
+	// The format is "429 Too Many Requests" from NetworkError.Error()
+	return strings.Contains(err.Error(), "429 Too Many Requests")
 }
 
 func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *accountsUser.User) (*accountsUser.User, error) {
