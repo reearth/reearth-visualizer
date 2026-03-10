@@ -21,3 +21,30 @@ export const GET_PROJECT = `
     }
   }
 `;
+
+export const GET_WORKSPACE = `
+  query GetWorkspace($workspaceId: ID!) {
+    node(id: $workspaceId, type: WORKSPACE) {
+      id
+      ... on Workspace { name personal members { userId role } }
+    }
+  }
+`;
+
+export const SEARCH_USER = `
+  query SearchUser($nameOrEmail: String!) {
+    searchUser(nameOrEmail: $nameOrEmail) { id name email }
+  }
+`;
+
+export const WORKSPACE_POLICY_CHECK = `
+  query WorkspacePolicyCheck($input: PolicyCheckInput!) {
+    workspacePolicyCheck(input: $input) {
+      workspaceId
+      enableToCreatePrivateProject
+      enableCustomDomainCreation
+      overCustomDomainCount
+      disableOperationByOverUsedSeat
+    }
+  }
+`;
