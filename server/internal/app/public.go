@@ -43,7 +43,7 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 		}
 
 		// Call reearth-accounts service for signup
-		if cfg.Config.UseReearthAccountAuth() && cfg.AccountsAPIClient != nil {
+		if cfg.AccountsAPIClient != nil {
 			var u *accountsUser.User
 			var err error
 

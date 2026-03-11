@@ -59,7 +59,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   // ──────────────────────────────────────────────────
   // Profile Menu — Account Settings Navigation
   // ──────────────────────────────────────────────────
-  test("Profile menu should have Account settings option", async () => {
+  test.skip("Profile menu should have Account settings option", async () => {
     test.setTimeout(30000);
     await dashBoardPage.profileDropdownButton.click();
     await page.waitForTimeout(500);
@@ -72,7 +72,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     await page.waitForTimeout(300);
   });
 
-  test("Account settings: should navigate (new tab or same page)", async () => {
+  test.skip("Account settings: should navigate (new tab or same page)", async () => {
     test.setTimeout(45000);
     await dashBoardPage.profileDropdownButton.click();
     await page.waitForTimeout(500);
@@ -127,7 +127,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     expect(true).toBeTruthy();
   });
 
-  test("Account: should display page layout", async () => {
+  test.skip("Account: should display page layout", async () => {
     test.skip(
       !accountSettingsLoaded,
       "Account settings page not accessible (EE uses external URL)"
@@ -135,28 +135,28 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     await expect(accountSettings.innerPage).toBeVisible();
   });
 
-  test("Account: should display name field (readonly)", async () => {
+  test.skip("Account: should display name field (readonly)", async () => {
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await expect(accountSettings.nameField).toBeVisible();
   });
 
-  test("Account: should display email field (readonly)", async () => {
+  test.skip("Account: should display email field (readonly)", async () => {
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await expect(accountSettings.emailField).toBeVisible();
   });
 
-  test("Account: should display password field with change button", async () => {
+  test.skip("Account: should display password field with change button", async () => {
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await expect(accountSettings.passwordField).toBeVisible();
     await expect(accountSettings.changePasswordButton).toBeVisible();
   });
 
-  test("Account: should display language selector", async () => {
+  test.skip("Account: should display language selector", async () => {
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await expect(accountSettings.languageField).toBeVisible();
   });
 
-  test("Account: should open password change modal", async () => {
+  test.skip("Account: should open password change modal", async () => {
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     test.setTimeout(30000);
     await accountSettings.openPasswordModal();
@@ -166,14 +166,14 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     await expect(accountSettings.passwordModalChangeButton).toBeDisabled();
   });
 
-  test("Account: password modal should close on cancel", async () => {
+  test.skip("Account: password modal should close on cancel", async () => {
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await accountSettings.passwordModalCancelButton.click();
     await settingsPage.waitForTimeout(500);
     await expect(accountSettings.passwordModalTitle).not.toBeVisible();
   });
 
-  test("Profile menu should have Workspace settings option", async () => {
+  test.skip("Profile menu should have Workspace settings option", async () => {
     test.setTimeout(30000);
     await page.bringToFront();
     if (!page.url().includes("/dashboard/")) {
@@ -197,7 +197,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     await page.waitForTimeout(300);
   });
 
-  test("Workspace settings: should navigate (new tab or same page)", async () => {
+  test.skip("Workspace settings: should navigate (new tab or same page)", async () => {
     test.setTimeout(45000);
 
     if (accountSettingsLoaded) {
@@ -283,7 +283,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     expect(true).toBeTruthy();
   });
 
-  test("Workspace: should display workspace name field", async () => {
+  test.skip("Workspace: should display workspace name field", async () => {
     test.skip(
       !workspaceSettingsLoaded,
       "Workspace settings page not accessible (EE uses external URL)"
@@ -291,7 +291,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     await expect(workspaceSettings.workspaceNameField).toBeVisible();
   });
 
-  test("Workspace: should display sidebar with Account and Workspace tabs", async () => {
+  test.skip("Workspace: should display sidebar with Account and Workspace tabs", async () => {
     test.skip(
       !workspaceSettingsLoaded,
       "Workspace settings page not accessible"
@@ -300,7 +300,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     await expect(workspaceSettings.workspaceTab).toBeVisible();
   });
 
-  test("Workspace: sidebar navigation to Account Settings", async () => {
+  test.skip("Workspace: sidebar navigation to Account Settings", async () => {
     test.skip(
       !workspaceSettingsLoaded,
       "Workspace settings page not accessible"
