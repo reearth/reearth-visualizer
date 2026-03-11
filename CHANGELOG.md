@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.3 - 2026-03-11
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Use onChangeComplete instead of onBlur on number field ([#2099](https://github.com/reearth/reearth-visualizer/pull/2099)) [`4610c5`](https://github.com/reearth/reearth-visualizer/commit/4610c5)
+
+### Server
+
+#### 🚀 Features
+
+- Migrate workspace mutations to reearth-accounts API (Phase 3) ([#2085](https://github.com/reearth/reearth-visualizer/pull/2085)) [`11e047`](https://github.com/reearth/reearth-visualizer/commit/11e047)
+
+#### 🔧 Bug Fixes
+
+- Return 429 instead of 500 for rate limit errors from accounts API ([#2092](https://github.com/reearth/reearth-visualizer/pull/2092)) [`cc489a`](https://github.com/reearth/reearth-visualizer/commit/cc489a)
+- Make plugin export resilient to missing JS files ([#2089](https://github.com/reearth/reearth-visualizer/pull/2089)) [`ef45c6`](https://github.com/reearth/reearth-visualizer/commit/ef45c6)
+
+#### 🧪 Testing
+
+- Add MongoDB-based integration tests for internal API ([#2101](https://github.com/reearth/reearth-visualizer/pull/2101)) [`283dd9`](https://github.com/reearth/reearth-visualizer/commit/283dd9)
+- Add api tests for property operations, published endpoints, and workspace management ([#2097](https://github.com/reearth/reearth-visualizer/pull/2097)) [`5bd08d`](https://github.com/reearth/reearth-visualizer/commit/5bd08d)
+
+#### Miscellaneous Tasks
+
+- Bump version to v1.0.0-beta.15.3 ([#2102](https://github.com/reearth/reearth-visualizer/pull/2102)) [`054708`](https://github.com/reearth/reearth-visualizer/commit/054708)
+- Add e2e test case for pulgin ([#2098](https://github.com/reearth/reearth-visualizer/pull/2098)) [`056476`](https://github.com/reearth/reearth-visualizer/commit/056476)
+
 ## 1.0.0-beta.15.2 - 2026-03-10
 
 ### Web
