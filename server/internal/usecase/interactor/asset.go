@@ -6,11 +6,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"path"
+	"strings"
 
 	"github.com/labstack/gommon/log"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -19,9 +23,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/image"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/i18n"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -43,7 +46,7 @@ func (i *Asset) Fetch(ctx context.Context, assets []id.AssetID, operator *usecas
 	return i.repos.Asset.FindByIDs(ctx, assets)
 }
 
-func (i *Asset) FindByWorkspaceProject(ctx context.Context, tid accountdomain.WorkspaceID, pid *id.ProjectID, keyword *string, sort *asset.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error) {
+func (i *Asset) FindByWorkspaceProject(ctx context.Context, tid accountsID.WorkspaceID, pid *id.ProjectID, keyword *string, sort *asset.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error) {
 	return Run2(
 		ctx, operator, i.repos,
 		Usecase().WithReadableWorkspaces(tid),
@@ -72,6 +75,57 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 	}
 
 	result, _, err := i.uploadAndSave(ctx, inp.File, ws, inp.ProjectID, inp.CoreSupport)
+	return result, err
+}
+
+func (i *Asset) CreateIconAsset(ctx context.Context, inp interfaces.CreateIconAssetParam, operator *usecase.Operator) (*asset.Asset, error) {
+	if inp.File == nil {
+		return nil, interfaces.ErrFileNotIncluded
+	}
+
+	// Ensure the file content is closed after processing
+	defer func() {
+		if inp.File.Content != nil {
+			_ = inp.File.Content.Close()
+		}
+	}()
+
+	ws, err := i.repos.Workspace.FindByID(ctx, inp.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !operator.IsWritableWorkspace(ws.ID()) {
+		return nil, interfaces.ErrOperationDenied
+	}
+
+	// Process the image: resize to 64x64, center-crop, convert to PNG
+	processedData, err := image.ProcessIconImage(inp.File.Content, inp.File.Size)
+	if err != nil {
+		// Map specific errors for better client-side handling
+		switch err {
+		case image.ErrImageTooLarge:
+			return nil, interfaces.ErrIconImageTooLarge
+		case image.ErrImageTooManyPx:
+			return nil, interfaces.ErrIconImageDimTooLarge
+		default:
+			return nil, fmt.Errorf("%w: %v", interfaces.ErrInvalidIconImage, err)
+		}
+	}
+
+	// Create a new file with the processed PNG data
+	baseName := strings.TrimSuffix(path.Base(inp.File.Path), path.Ext(inp.File.Path))
+	pngFileName := baseName + ".png"
+
+	processedFile := &file.File{
+		Content:     io.NopCloser(bytes.NewReader(processedData)),
+		Path:        pngFileName,
+		Size:        int64(len(processedData)),
+		ContentType: "image/png",
+	}
+
+	// Use the existing uploadAndSave method with CoreSupport=true
+	result, _, err := i.uploadAndSave(ctx, processedFile, ws, inp.ProjectID, true)
 	return result, err
 }
 
@@ -207,7 +261,7 @@ var (
 	ErrAssetUploadSizeLimitExceeded error = rerror.NewE(i18n.T("asset upload size limit exceeded"))
 )
 
-func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, coreSupport bool) (*asset.Asset, *url.URL, error) {
+func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *accountsWorkspace.Workspace, pid *id.ProjectID, coreSupport bool) (*asset.Asset, *url.URL, error) {
 
 	// upload
 	u, size, err := i.gateways.File.UploadAsset(ctx, f)
@@ -238,6 +292,7 @@ func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.W
 		Name(path.Base(f.Path)).
 		Size(size).
 		URL(u.String()).
+		ContentType(f.ContentType).
 		CoreSupport(coreSupport).
 		Build()
 	if err != nil {

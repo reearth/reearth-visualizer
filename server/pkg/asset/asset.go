@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 var (
@@ -17,7 +17,7 @@ var (
 type Asset struct {
 	id          id.AssetID
 	createdAt   time.Time
-	workspace   accountdomain.WorkspaceID
+	workspace   accountsID.WorkspaceID
 	project     *id.ProjectID
 	name        string // file name
 	size        int64  // file size
@@ -30,7 +30,7 @@ func (a *Asset) ID() id.AssetID {
 	return a.id
 }
 
-func (a *Asset) Workspace() accountdomain.WorkspaceID {
+func (a *Asset) Workspace() accountsID.WorkspaceID {
 	return a.workspace
 }
 

@@ -7,7 +7,7 @@ import { FC, useEffect, useState } from "react";
 export type NumberFieldProps = {
   onChangeComplete?: (value?: number) => void;
 } & CommonFieldProps &
-  NumberInputProps;
+  Omit<NumberInputProps, "onBlur">;
 const NumberField: FC<NumberFieldProps> = ({
   title,
   description,
@@ -23,8 +23,16 @@ const NumberField: FC<NumberFieldProps> = ({
   }, [value]);
 
   const handleChangeComplete = () => {
-    if (currentValue !== value) {
-      onChangeComplete?.(currentValue as number);
+    // Normalize both to numbers for comparison
+    const normalizedCurrent = typeof currentValue === 'number'
+      ? currentValue
+      : (typeof currentValue === 'string' && currentValue !== '' ? parseFloat(currentValue) : undefined);
+    const normalizedValue = typeof value === 'number'
+      ? value
+      : (typeof value === 'string' && value !== '' ? parseFloat(value) : undefined);
+
+    if (normalizedCurrent !== normalizedValue) {
+      onChangeComplete?.(normalizedCurrent); // Always emits number | undefined
     }
   };
 

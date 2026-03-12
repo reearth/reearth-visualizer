@@ -26,6 +26,12 @@ input CreateAssetInput {
   file: Upload!
 }
 
+input CreateIconAssetInput {
+  workspaceId: ID!
+  projectId: ID
+  file: Upload!
+}
+
 input UpdateAssetInput {
   assetId: ID!
   projectId: ID
@@ -43,6 +49,10 @@ input AssetSort {
 # Payload
 
 type CreateAssetPayload {
+  asset: Asset!
+}
+
+type CreateIconAssetPayload {
   asset: Asset!
 }
 
@@ -81,6 +91,7 @@ extend type Query {
 
 extend type Mutation {
   createAsset(input: CreateAssetInput!): CreateAssetPayload
+  createIconAsset(input: CreateIconAssetInput!): CreateIconAssetPayload
   updateAsset(input: UpdateAssetInput!): UpdateAssetPayload
   removeAsset(input: RemoveAssetInput!): RemoveAssetPayload
 }

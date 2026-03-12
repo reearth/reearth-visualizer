@@ -349,7 +349,7 @@ const StoryPanel: FC<Props> = ({
             handleClassName={PAGE_DRAG_HANDLE_CLASS_NAME}
             onMoveEnd={handleMoveEnd}
             dragDisabled={false}
-            gap={20}
+            gap={panelSettings?.gap?.value ?? 20}
           />
         )}
 

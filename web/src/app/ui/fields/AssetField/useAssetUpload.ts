@@ -22,14 +22,19 @@ export default ({
   assetsTypes?: AcceptedAssetsTypes;
   multiple?: boolean;
 }) => {
-  const { createAssets } = useAssetMutations();
+  const { createAssets, createIconAssets } = useAssetMutations();
+
+  const isIcon = useMemo(
+    () => assetsTypes?.includes("icon") ?? false,
+    [assetsTypes]
+  );
 
   const acceptedExtension = useMemo(() => {
     return assetsTypes && assetsTypes.length > 0
       ? "." +
           assetsTypes
             .map((t) =>
-              t === "image"
+              t === "image" || t === "icon"
                 ? IMAGE_FILE_TYPES
                 : t === "file"
                   ? GIS_FILE_TYPES
@@ -46,20 +51,31 @@ export default ({
     async (files?: FileList) => {
       if (!files) return;
       try {
-        const result = await createAssets({
-          workspaceId: workspaceId ?? "",
-          projectId,
-          file: files,
-          coreSupport: true
-        });
-        const assetUrl = result?.data[0].data?.createAsset?.asset.url;
-        const assetName = result?.data[0].data?.createAsset?.asset.name;
-        onAssetSelect?.(assetUrl, assetName);
+        if (isIcon) {
+          const result = await createIconAssets({
+            workspaceId: workspaceId ?? "",
+            projectId,
+            file: files
+          });
+          const assetUrl = result?.data[0].data?.createIconAsset?.asset.url;
+          const assetName = result?.data[0].data?.createIconAsset?.asset.name;
+          onAssetSelect?.(assetUrl, assetName);
+        } else {
+          const result = await createAssets({
+            workspaceId: workspaceId ?? "",
+            projectId,
+            file: files,
+            coreSupport: true
+          });
+          const assetUrl = result?.data[0].data?.createAsset?.asset.url;
+          const assetName = result?.data[0].data?.createAsset?.asset.name;
+          onAssetSelect?.(assetUrl, assetName);
+        }
       } catch (error) {
         console.error("Error creating assets:", error);
       }
     },
-    [createAssets, workspaceId, projectId, onAssetSelect]
+    [createAssets, createIconAssets, workspaceId, projectId, onAssetSelect, isIcon]
   );
   const handleFileUpload = useFileInput(
     (files) => handleAssetsCreate?.(files),

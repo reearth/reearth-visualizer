@@ -15,6 +15,7 @@ import (
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -27,7 +28,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
@@ -65,7 +66,7 @@ type NLSLayer struct {
 	propertyRepo  repo.Property
 	pluginRepo    repo.Plugin
 	file          gateway.File
-	workspaceRepo accountrepo.Workspace
+	workspaceRepo accountsWorkspace.Repo
 	transaction   usecasex.Transaction
 
 	propertySchemaRepo repo.PropertySchema

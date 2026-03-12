@@ -162,12 +162,16 @@ const headers = `{{if .title}}  <meta name="twitter:title" content="{{.title}}" 
 var (
 	headersTemplate = template.Must(template.New("headers").Parse(headers))
 	titleRegexp     = regexp.MustCompile("<title>.+?</title>")
+	faviconRegexp   = regexp.MustCompile(`<link rel="icon" href=".+?" />`)
 )
 
 // renderIndex returns index HTML with OGP and some meta tags for the project.
 func renderIndex(index, url string, d interfaces.PublishedMetadata) string {
 	if d.Title != "" {
 		index = titleRegexp.ReplaceAllLiteralString(index, "<title>"+html.EscapeString(d.Title)+"</title>")
+	}
+	if d.IconImage != "" {
+		index = faviconRegexp.ReplaceAllLiteralString(index, `<link rel="icon" href="`+html.EscapeString(d.IconImage)+`" />`)
 	}
 	var b bytes.Buffer
 	_ = headersTemplate.Execute(&b,

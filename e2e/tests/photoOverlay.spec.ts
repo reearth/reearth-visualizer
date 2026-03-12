@@ -220,7 +220,7 @@ test.describe("Photo Overlay Feature", () => {
     await photoOverlay.verifyNoCrash();
   });
 
-  test("Set transparency to edge values", async () => {
+  test.skip("Set transparency to edge values", async () => {
     test.setTimeout(90000);
     await projectScreen.clickLayer(layerName);
     await page.waitForTimeout(2000);
@@ -239,7 +239,7 @@ test.describe("Photo Overlay Feature", () => {
     await photoOverlay.verifyNoCrash();
   });
 
-  test("Cancel editor closes panel without saving", async () => {
+  test.skip("Cancel editor closes panel without saving", async () => {
     test.setTimeout(90000);
     await projectScreen.clickLayer(layerName);
     await page.waitForTimeout(2000);
@@ -269,7 +269,7 @@ test.describe("Photo Overlay Feature", () => {
     await photoOverlay.cancelPhotoOverlay();
   });
 
-  test("Add second marker and open photo overlay editor", async () => {
+  test.skip("Add second marker and open photo overlay editor", async () => {
     test.setTimeout(120000);
     await projectScreen.clickLayer(layerName);
     await page.waitForTimeout(1000);

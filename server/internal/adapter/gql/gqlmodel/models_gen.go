@@ -179,6 +179,16 @@ type CreateAssetPayload struct {
 	Asset *Asset `json:"asset"`
 }
 
+type CreateIconAssetInput struct {
+	WorkspaceID ID             `json:"workspaceId"`
+	ProjectID   *ID            `json:"projectId,omitempty"`
+	File        graphql.Upload `json:"file"`
+}
+
+type CreateIconAssetPayload struct {
+	Asset *Asset `json:"asset"`
+}
+
 type CreateNLSInfoboxInput struct {
 	LayerID ID `json:"layerId"`
 }

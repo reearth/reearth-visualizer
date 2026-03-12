@@ -3,6 +3,8 @@ package mongo
 import (
 	"context"
 
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/infrastructure/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -10,9 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/util"
@@ -21,7 +21,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool) (*repo.Container, error) {
+func New(ctx context.Context, db *mongo.Database, account *accountsInfra.Container, useTransaction bool) (*repo.Container, error) {
 	lock, err := NewLock(db.Collection("locks"))
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 	return c, nil
 }
 
-func NewWithExtensions(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool, src []string) (*repo.Container, error) {
+func NewWithExtensions(ctx context.Context, db *mongo.Database, account *accountsInfra.Container, useTransaction bool, src []string) (*repo.Container, error) {
 	c, err := New(ctx, db, account, useTransaction)
 	if err != nil {
 		return nil, err
@@ -113,12 +113,12 @@ func Init(r *repo.Container) error {
 		func() error { return r.Property.(*Property).Init(ctx) },
 		func() error { return r.PropertySchema.(*PropertySchema).Init(ctx) },
 		func() error { return r.Scene.(*Scene).Init(ctx) },
-		func() error { return r.User.(*accountmongo.User).Init() },
-		func() error { return r.Workspace.(*accountmongo.Workspace).Init() },
+		// func() error { return r.User.(*accountsMongo.User).Init() },
+		// func() error { return r.Workspace.(*accountsMongo.Workspace).Init() },
 	)
 }
 
-func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
+func applyWorkspaceFilter(filter interface{}, ids accountsUser.WorkspaceIDList) interface{} {
 	if ids == nil {
 		return filter
 	}
