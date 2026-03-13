@@ -1,5 +1,3 @@
-import { faker } from "@faker-js/faker";
-
 import { test, expect } from "../fixtures/api-test-fixtures";
 import {
   CREATE_PROJECT,
@@ -15,9 +13,7 @@ import {
 } from "../graphql/mutations";
 import { GET_ME, GET_SCENE } from "../graphql/queries";
 
-// Crockford Base32 charset used by oklog/ulid
-const CROCKFORD = "0123456789abcdefghjkmnpqrstvwxyz";
-const generateFakeId = () => faker.string.fromCharacters(CROCKFORD, 26);
+import { generateFakeId } from "./test-helpers";
 
 type PropertyItem = {
   id: string;

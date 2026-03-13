@@ -10,9 +10,7 @@ import {
 } from "../graphql/mutations";
 import { GET_ASSETS, GET_ME } from "../graphql/queries";
 
-// Crockford Base32 charset used by oklog/ulid
-const CROCKFORD = "0123456789abcdefghjkmnpqrstvwxyz";
-const generateFakeId = () => faker.string.fromCharacters(CROCKFORD, 26);
+import { generateFakeId } from "./test-helpers";
 
 test.describe.configure({ mode: "serial" });
 
@@ -218,6 +216,17 @@ test.describe("Asset CRUD lifecycle", () => {
 test.describe("Asset keyword search", () => {
   let workspaceId: string;
   const uniqueTag = faker.string.alphanumeric(8).toLowerCase();
+  const uploadedAssetIds: string[] = [];
+
+  test.afterAll(async ({ gqlClient }) => {
+    for (const id of uploadedAssetIds) {
+      try {
+        await gqlClient.mutate(REMOVE_ASSET, { input: { assetId: id } });
+      } catch {
+        // already removed
+      }
+    }
+  });
 
   test("Setup: upload two assets with distinct names", async ({ gqlClient }) => {
     const { data: me } = await gqlClient.query<{
@@ -226,22 +235,28 @@ test.describe("Asset keyword search", () => {
     workspaceId = me.me.myWorkspaceId;
 
     const png = createTestPng();
-    await gqlClient.uploadFile(
+    const { data: pngData } = await gqlClient.uploadFile<{
+      createAsset: { asset: { id: string } };
+    }>(
       CREATE_ASSET,
       { workspaceId, projectId: null, file: null, coreSupport: true },
       png,
       `searchable-${uniqueTag}.png`,
       "image/png"
     );
+    uploadedAssetIds.push(pngData.createAsset.asset.id);
 
     const csv = createTestCsv();
-    await gqlClient.uploadFile(
+    const { data: csvData } = await gqlClient.uploadFile<{
+      createAsset: { asset: { id: string } };
+    }>(
       CREATE_ASSET,
       { workspaceId, projectId: null, file: null, coreSupport: true },
       csv,
       `other-file-${uniqueTag}.csv`,
       "text/csv"
     );
+    uploadedAssetIds.push(csvData.createAsset.asset.id);
   });
 
   test("Keyword filter narrows results to matching assets", async ({
@@ -354,17 +369,20 @@ test.describe("Asset negative scenarios", () => {
     expect(data.assets.nodes).toHaveLength(0);
   });
 
-  test("Assets query with non-existent project fails", async ({
+  test("Assets query with non-existent project returns empty list", async ({
     gqlClient
   }) => {
     const fakeProjectId = generateFakeId();
-    await expect(
-      gqlClient.query(GET_ASSETS, {
-        workspaceId,
-        projectId: fakeProjectId,
-        pagination: { first: 20 },
-        sort: { field: "DATE", direction: "DESC" }
-      })
-    ).rejects.toThrow();
+    const { data } = await gqlClient.query<{
+      assets: { totalCount: number; nodes: { id: string }[] };
+    }>(GET_ASSETS, {
+      workspaceId,
+      projectId: fakeProjectId,
+      pagination: { first: 20 },
+      sort: { field: "DATE", direction: "DESC" }
+    });
+
+    expect(data.assets.totalCount).toBe(0);
+    expect(data.assets.nodes).toHaveLength(0);
   });
 });

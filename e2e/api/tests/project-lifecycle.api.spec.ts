@@ -4,12 +4,10 @@ import { test, expect } from "../fixtures/api-test-fixtures";
 import { CREATE_PROJECT, CREATE_SCENE, UPDATE_PROJECT, DELETE_PROJECT } from "../graphql/mutations";
 import { GET_ME, GET_PROJECT, GET_PROJECTS } from "../graphql/queries";
 
+import { generateFakeId } from "./test-helpers";
+
 const projectName = faker.lorem.words(2);
 const projectAlias = faker.string.alphanumeric(15);
-
-// Crockford Base32 charset used by oklog/ulid
-const CROCKFORD = "0123456789abcdefghjkmnpqrstvwxyz";
-const generateFakeId = () => faker.string.fromCharacters(CROCKFORD, 26);
 
 test.describe.configure({ mode: "serial" });
 
