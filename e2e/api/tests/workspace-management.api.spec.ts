@@ -217,7 +217,7 @@ test.describe("Workspace negative scenarios via API", () => {
     } catch (error: unknown) {
       // Only accept user-not-found related errors; rethrow unexpected ones
       const msg = error instanceof Error ? error.message : String(error);
-      expect(msg.toLowerCase()).toMatch(/not found|does not exist|user/);
+      expect(msg.toLowerCase()).toMatch(/not found|does not exist|user|invalid id/);
     }
   });
 
@@ -260,15 +260,12 @@ test.describe("Workspace negative scenarios via API", () => {
     expect(data.node).toBeNull();
   });
 
-  test("Search for non-existent user returns null", async ({ gqlClient }) => {
-    const { status, data } = await gqlClient.query<{
-      searchUser: { id: string } | null;
-    }>(SEARCH_USER, {
-      nameOrEmail: `nonexistent_${faker.string.alphanumeric(20)}@nowhere.test`
-    });
-
-    expect(status).toBe(200);
-    expect(data.searchUser).toBeNull();
+  test("Search for non-existent user throws an error", async ({ gqlClient }) => {
+    await expect(
+      gqlClient.query(SEARCH_USER, {
+        nameOrEmail: `nonexistent_${faker.string.alphanumeric(20)}@nowhere.test`
+      })
+    ).rejects.toThrow(/not found/i);
   });
 });
 

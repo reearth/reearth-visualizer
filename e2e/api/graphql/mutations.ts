@@ -239,6 +239,26 @@ export const UPDATE_PROPERTY_ITEMS = `
   }
 `;
 
+export const CREATE_ASSET = `
+  mutation CreateAsset($workspaceId: ID!, $projectId: ID, $file: Upload!, $coreSupport: Boolean!) {
+    createAsset(input: { workspaceId: $workspaceId, projectId: $projectId, file: $file, coreSupport: $coreSupport }) {
+      asset { id workspaceId projectId name size url contentType coreSupport }
+    }
+  }
+`;
+
+export const UPDATE_ASSET = `
+  mutation UpdateAsset($input: UpdateAssetInput!) {
+    updateAsset(input: $input) { assetId projectId }
+  }
+`;
+
+export const REMOVE_ASSET = `
+  mutation RemoveAsset($input: RemoveAssetInput!) {
+    removeAsset(input: $input) { assetId }
+  }
+`;
+
 export const CREATE_STORY = `
   mutation CreateStory($input: CreateStoryInput!) {
     createStory(input: $input) {

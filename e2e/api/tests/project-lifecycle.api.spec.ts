@@ -7,6 +7,10 @@ import { GET_ME, GET_PROJECT, GET_PROJECTS } from "../graphql/queries";
 const projectName = faker.lorem.words(2);
 const projectAlias = faker.string.alphanumeric(15);
 
+// Crockford Base32 charset used by oklog/ulid
+const CROCKFORD = "0123456789abcdefghjkmnpqrstvwxyz";
+const generateFakeId = () => faker.string.fromCharacters(CROCKFORD, 26);
+
 test.describe.configure({ mode: "serial" });
 
 test.describe("Project CRUD lifecycle via API", () => {
@@ -111,5 +115,69 @@ test.describe("Project CRUD lifecycle via API", () => {
 
     expect(status).toBe(200);
     expect(data.node).toBeNull();
+  });
+});
+
+test.describe("Project negative scenarios via API", () => {
+  test("Cannot create project in a non-existent workspace", async ({
+    gqlClient
+  }) => {
+    const fakeWsId = generateFakeId();
+    await expect(
+      gqlClient.mutate(CREATE_PROJECT, {
+        input: {
+          workspaceId: fakeWsId,
+          visualizer: "CESIUM",
+          name: "Ghost Project",
+          coreSupport: true
+        }
+      })
+    ).rejects.toThrow();
+  });
+
+  test("Cannot update a non-existent project", async ({ gqlClient }) => {
+    const fakeProjectId = generateFakeId();
+    await expect(
+      gqlClient.mutate(UPDATE_PROJECT, {
+        input: { projectId: fakeProjectId, name: "No Such Project" }
+      })
+    ).rejects.toThrow();
+  });
+
+  test("Cannot delete a non-existent project", async ({ gqlClient }) => {
+    const fakeProjectId = generateFakeId();
+    await expect(
+      gqlClient.mutate(DELETE_PROJECT, {
+        input: { projectId: fakeProjectId }
+      })
+    ).rejects.toThrow();
+  });
+
+  test("Read non-existent project returns null", async ({ gqlClient }) => {
+    const fakeProjectId = generateFakeId();
+    const { status, data } = await gqlClient.query<{
+      node: { id: string } | null;
+    }>(GET_PROJECT, { projectId: fakeProjectId });
+
+    expect(status).toBe(200);
+    expect(data.node).toBeNull();
+  });
+
+  test("Cannot attach a scene to a non-existent project", async ({
+    gqlClient
+  }) => {
+    const fakeProjectId = generateFakeId();
+    await expect(
+      gqlClient.mutate(CREATE_SCENE, { input: { projectId: fakeProjectId } })
+    ).rejects.toThrow();
+  });
+
+  test("Cannot soft-delete a non-existent project", async ({ gqlClient }) => {
+    const fakeProjectId = generateFakeId();
+    await expect(
+      gqlClient.mutate(UPDATE_PROJECT, {
+        input: { projectId: fakeProjectId, deleted: true }
+      })
+    ).rejects.toThrow();
   });
 });

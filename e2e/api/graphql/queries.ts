@@ -49,6 +49,25 @@ export const WORKSPACE_POLICY_CHECK = `
   }
 `;
 
+export const GET_ASSETS = `
+  query GetAssets($workspaceId: ID!, $projectId: ID, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
+    assets(workspaceId: $workspaceId, projectId: $projectId, pagination: $pagination, keyword: $keyword, sort: $sort) {
+      totalCount
+      nodes {
+        id
+        workspaceId
+        projectId
+        name
+        size
+        url
+        contentType
+        coreSupport
+        createdAt
+      }
+    }
+  }
+`;
+
 export const GET_SCENE = `
   query GetScene($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
