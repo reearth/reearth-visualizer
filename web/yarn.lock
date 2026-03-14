@@ -1658,9 +1658,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cesium/engine@npm:^22.2.0, @cesium/engine@npm:^22.3.0":
-  version: 22.3.0
-  resolution: "@cesium/engine@npm:22.3.0"
+"@cesium/engine@npm:^23.0.1":
+  version: 23.0.1
+  resolution: "@cesium/engine@npm:23.0.1"
   dependencies:
     "@cesium/wasm-splats": "npm:^0.1.0-alpha.2"
     "@spz-loader/core": "npm:0.3.0"
@@ -1683,7 +1683,7 @@ __metadata:
     rbush: "npm:^4.0.1"
     topojson-client: "npm:^3.1.0"
     urijs: "npm:^1.19.7"
-  checksum: 10c0/c97555a6bcb04e81c2fa7a9b862ee6a4f5987890ba3dc46cc8a7242745fbee04ee8bc90736204893a7c29b1d1a57121ffac108c24e7b651cdb25c1ca76e76c83
+  checksum: 10c0/ef4841f11b02b710cb024d05d3f77ba00f83708e9aae85dab6805704f8b846b5b65643f0d2cfefde404d682048a8f3b27759918abf42e9bcd5586894436d71dc
   languageName: node
   linkType: hard
 
@@ -1694,13 +1694,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cesium/widgets@npm:^14.2.0":
-  version: 14.3.0
-  resolution: "@cesium/widgets@npm:14.3.0"
+"@cesium/widgets@npm:^14.4.1":
+  version: 14.4.1
+  resolution: "@cesium/widgets@npm:14.4.1"
   dependencies:
-    "@cesium/engine": "npm:^22.3.0"
+    "@cesium/engine": "npm:^23.0.1"
     nosleep.js: "npm:^0.12.0"
-  checksum: 10c0/6cddcfc8fe88ae4349ec69392a23fb4ff55b859178a8119554f3be86469dce528a3de74382c0c9240f670a143bbf04039f396e7c2f322197bd7dec2389a2ad79
+  checksum: 10c0/096e89e7b65321d48eb905ca23ff4847bbe845bba11fdd86517cb0f7c90c995ed209321c9370085223c3dc6c215aa1d6c93f71c67f3604ec9d3bbb2e315bef8c
   languageName: node
   linkType: hard
 
@@ -5537,7 +5537,7 @@ __metadata:
     aws-amplify: "npm:6.15.8"
     axios: "npm:1.13.2"
     bowser: "npm:2.13.0"
-    cesium: "npm:1.137.0"
+    cesium: "npm:1.139.1"
     class-variance-authority: "npm:0.7.1"
     clsx: "npm:2.1.1"
     core-js: "npm:3.47.0"
@@ -12395,13 +12395,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cesium@npm:1.137.0":
-  version: 1.137.0
-  resolution: "cesium@npm:1.137.0"
+"cesium@npm:1.139.1":
+  version: 1.139.1
+  resolution: "cesium@npm:1.139.1"
   dependencies:
-    "@cesium/engine": "npm:^22.2.0"
-    "@cesium/widgets": "npm:^14.2.0"
-  checksum: 10c0/cb99c508f501789a1ebf474eddb425f0495a3a8785970cc68ad3736919c703825bf026098ea3562a171cb6ddc5514abce45fb44faf8942cb92e853e06ad3df63
+    "@cesium/engine": "npm:^23.0.1"
+    "@cesium/widgets": "npm:^14.4.1"
+  checksum: 10c0/12ec46e98a95f42ca92d0c3eb7601e776634f75686ad107bf4ac3b4fa76f217bba644dd87ebf60122bddf3b416e84fd5143cdb55256ba40e836d1cecfdfd0092
   languageName: node
   linkType: hard
 
