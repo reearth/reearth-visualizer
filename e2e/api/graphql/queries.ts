@@ -68,6 +68,15 @@ export const GET_ASSETS = `
   }
 `;
 
+export const CHECK_STORY_ALIAS = `
+  query CheckStoryAlias($alias: String!, $storyId: ID) {
+    checkStoryAlias(alias: $alias, storyId: $storyId) {
+      alias
+      available
+    }
+  }
+`;
+
 export const GET_SCENE = `
   query GetScene($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {
