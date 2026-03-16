@@ -275,7 +275,7 @@ export const PUBLISH_STORY = `
   }
 `;
 
-// ── Layer mutations ──────────────────────────────────────────────────────────
+// Layer mutations
 
 export const ADD_NLS_LAYER_SIMPLE = `
   mutation AddNLSLayerSimple($input: AddNLSLayerSimpleInput!) {
@@ -320,7 +320,7 @@ export const DUPLICATE_NLS_LAYER = `
   }
 `;
 
-// ── Infobox mutations ────────────────────────────────────────────────────────
+// Infobox mutations
 
 export const CREATE_NLS_INFOBOX = `
   mutation CreateNLSInfobox($input: CreateNLSInfoboxInput!) {
@@ -374,7 +374,7 @@ export const REMOVE_NLS_INFOBOX_BLOCK = `
   }
 `;
 
-// ── Photo overlay mutations ─────────────────────────────────────────────────
+// Photo overlay mutations
 
 export const CREATE_NLS_PHOTO_OVERLAY = `
   mutation CreateNLSPhotoOverlay($input: CreateNLSPhotoOverlayInput!) {
@@ -395,7 +395,7 @@ export const REMOVE_NLS_PHOTO_OVERLAY = `
   }
 `;
 
-// ── Custom property mutations ───────────────────────────────────────────────
+// Custom property mutations
 
 export const UPDATE_CUSTOM_PROPERTIES = `
   mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {
@@ -421,7 +421,7 @@ export const REMOVE_CUSTOM_PROPERTY = `
   }
 `;
 
-// ── Story mutations ─────────────────────────────────────────────────────────
+// Story mutations
 
 export const UPDATE_STORY = `
   mutation UpdateStory($input: UpdateStoryInput!) {
@@ -446,7 +446,7 @@ export const MOVE_STORY = `
   }
 `;
 
-// ── Story page mutations ────────────────────────────────────────────────────
+// Story page mutations
 
 export const CREATE_STORY_PAGE = `
   mutation CreateStoryPage($input: CreateStoryPageInput!) {
@@ -493,7 +493,7 @@ export const REMOVE_STORY_PAGE = `
   }
 `;
 
-// ── Story page layer mutations ──────────────────────────────────────────────
+// Story page layer mutations
 
 export const ADD_PAGE_LAYER = `
   mutation AddPageLayer($input: PageLayerInput!) {
@@ -513,7 +513,7 @@ export const REMOVE_PAGE_LAYER = `
   }
 `;
 
-// ── Story block mutations ───────────────────────────────────────────────────
+// Story block mutations
 
 export const CREATE_STORY_BLOCK = `
   mutation CreateStoryBlock($input: CreateStoryBlockInput!) {
