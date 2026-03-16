@@ -274,3 +274,274 @@ export const PUBLISH_STORY = `
     }
   }
 `;
+
+// Layer mutations
+
+export const ADD_NLS_LAYER_SIMPLE = `
+  mutation AddNLSLayerSimple($input: AddNLSLayerSimpleInput!) {
+    addNLSLayerSimple(input: $input) {
+      layers {
+        id layerType title visible sceneId config
+        infobox { id }
+      }
+    }
+  }
+`;
+
+export const UPDATE_NLS_LAYER = `
+  mutation UpdateNLSLayer($input: UpdateNLSLayerInput!) {
+    updateNLSLayer(input: $input) {
+      layer { id layerType title visible config }
+    }
+  }
+`;
+
+export const UPDATE_NLS_LAYERS = `
+  mutation UpdateNLSLayers($input: UpdateNLSLayersInput!) {
+    updateNLSLayers(input: $input) {
+      layers { id layerType title visible config }
+    }
+  }
+`;
+
+export const REMOVE_NLS_LAYER = `
+  mutation RemoveNLSLayer($input: RemoveNLSLayerInput!) {
+    removeNLSLayer(input: $input) { layerId }
+  }
+`;
+
+export const DUPLICATE_NLS_LAYER = `
+  mutation DuplicateNLSLayer($input: DuplicateNLSLayerInput!) {
+    duplicateNLSLayer(input: $input) {
+      layer {
+        id layerType title visible sceneId
+      }
+    }
+  }
+`;
+
+// Infobox mutations
+
+export const CREATE_NLS_INFOBOX = `
+  mutation CreateNLSInfobox($input: CreateNLSInfoboxInput!) {
+    createNLSInfobox(input: $input) {
+      layer {
+        id
+        infobox { id sceneId layerId propertyId blocks { id pluginId extensionId } }
+      }
+    }
+  }
+`;
+
+export const REMOVE_NLS_INFOBOX = `
+  mutation RemoveNLSInfobox($input: RemoveNLSInfoboxInput!) {
+    removeNLSInfobox(input: $input) {
+      layer { id infobox { id } }
+    }
+  }
+`;
+
+export const ADD_NLS_INFOBOX_BLOCK = `
+  mutation AddNLSInfoboxBlock($input: AddNLSInfoboxBlockInput!) {
+    addNLSInfoboxBlock(input: $input) {
+      infoboxBlock { id pluginId extensionId }
+      layer {
+        id
+        infobox { id blocks { id pluginId extensionId } }
+      }
+    }
+  }
+`;
+
+export const MOVE_NLS_INFOBOX_BLOCK = `
+  mutation MoveNLSInfoboxBlock($input: MoveNLSInfoboxBlockInput!) {
+    moveNLSInfoboxBlock(input: $input) {
+      layer {
+        id
+        infobox { id blocks { id pluginId extensionId } }
+      }
+    }
+  }
+`;
+
+export const REMOVE_NLS_INFOBOX_BLOCK = `
+  mutation RemoveNLSInfoboxBlock($input: RemoveNLSInfoboxBlockInput!) {
+    removeNLSInfoboxBlock(input: $input) {
+      layer {
+        id
+        infobox { id blocks { id pluginId extensionId } }
+      }
+    }
+  }
+`;
+
+// Photo overlay mutations
+
+export const CREATE_NLS_PHOTO_OVERLAY = `
+  mutation CreateNLSPhotoOverlay($input: CreateNLSPhotoOverlayInput!) {
+    createNLSPhotoOverlay(input: $input) {
+      layer {
+        id
+        photoOverlay { id sceneId layerId propertyId }
+      }
+    }
+  }
+`;
+
+export const REMOVE_NLS_PHOTO_OVERLAY = `
+  mutation RemoveNLSPhotoOverlay($input: RemoveNLSPhotoOverlayInput!) {
+    removeNLSPhotoOverlay(input: $input) {
+      layer { id photoOverlay { id } }
+    }
+  }
+`;
+
+// Custom property mutations
+
+export const UPDATE_CUSTOM_PROPERTIES = `
+  mutation UpdateCustomProperties($input: UpdateCustomPropertySchemaInput!) {
+    updateCustomProperties(input: $input) {
+      layer { id }
+    }
+  }
+`;
+
+export const CHANGE_CUSTOM_PROPERTY_TITLE = `
+  mutation ChangeCustomPropertyTitle($input: ChangeCustomPropertyTitleInput!) {
+    changeCustomPropertyTitle(input: $input) {
+      layer { id }
+    }
+  }
+`;
+
+export const REMOVE_CUSTOM_PROPERTY = `
+  mutation RemoveCustomProperty($input: RemoveCustomPropertyInput!) {
+    removeCustomProperty(input: $input) {
+      layer { id }
+    }
+  }
+`;
+
+// Story mutations
+
+export const UPDATE_STORY = `
+  mutation UpdateStory($input: UpdateStoryInput!) {
+    updateStory(input: $input) {
+      story { id title panelPosition bgColor }
+    }
+  }
+`;
+
+export const DELETE_STORY = `
+  mutation DeleteStory($input: DeleteStoryInput!) {
+    deleteStory(input: $input) { storyId }
+  }
+`;
+
+export const MOVE_STORY = `
+  mutation MoveStory($input: MoveStoryInput!) {
+    moveStory(input: $input) {
+      stories { id }
+      storyId
+    }
+  }
+`;
+
+// Story page mutations
+
+export const CREATE_STORY_PAGE = `
+  mutation CreateStoryPage($input: CreateStoryPageInput!) {
+    createStoryPage(input: $input) {
+      story { id pages { id title swipeable } }
+      page { id title swipeable }
+    }
+  }
+`;
+
+export const UPDATE_STORY_PAGE = `
+  mutation UpdateStoryPage($input: UpdateStoryPageInput!) {
+    updateStoryPage(input: $input) {
+      story { id pages { id title swipeable } }
+      page { id title swipeable }
+    }
+  }
+`;
+
+export const MOVE_STORY_PAGE = `
+  mutation MoveStoryPage($input: MoveStoryPageInput!) {
+    moveStoryPage(input: $input) {
+      story { id pages { id title } }
+      page { id title }
+    }
+  }
+`;
+
+export const DUPLICATE_STORY_PAGE = `
+  mutation DuplicateStoryPage($input: DuplicateStoryPageInput!) {
+    duplicateStoryPage(input: $input) {
+      story { id pages { id title } }
+      page { id title }
+    }
+  }
+`;
+
+export const REMOVE_STORY_PAGE = `
+  mutation RemoveStoryPage($input: DeleteStoryPageInput!) {
+    removeStoryPage(input: $input) {
+      story { id pages { id title } }
+      pageId
+    }
+  }
+`;
+
+// Story page layer mutations
+
+export const ADD_PAGE_LAYER = `
+  mutation AddPageLayer($input: PageLayerInput!) {
+    addPageLayer(input: $input) {
+      story { id }
+      page { id layersIds }
+    }
+  }
+`;
+
+export const REMOVE_PAGE_LAYER = `
+  mutation RemovePageLayer($input: PageLayerInput!) {
+    removePageLayer(input: $input) {
+      story { id }
+      page { id layersIds }
+    }
+  }
+`;
+
+// Story block mutations
+
+export const CREATE_STORY_BLOCK = `
+  mutation CreateStoryBlock($input: CreateStoryBlockInput!) {
+    createStoryBlock(input: $input) {
+      story { id }
+      page { id blocks { id pluginId extensionId } }
+      block { id pluginId extensionId }
+    }
+  }
+`;
+
+export const MOVE_STORY_BLOCK = `
+  mutation MoveStoryBlock($input: MoveStoryBlockInput!) {
+    moveStoryBlock(input: $input) {
+      story { id }
+      page { id blocks { id pluginId extensionId } }
+      blockId
+    }
+  }
+`;
+
+export const REMOVE_STORY_BLOCK = `
+  mutation RemoveStoryBlock($input: RemoveStoryBlockInput!) {
+    removeStoryBlock(input: $input) {
+      story { id }
+      page { id blocks { id pluginId extensionId } }
+      blockId
+    }
+  }
+`;
