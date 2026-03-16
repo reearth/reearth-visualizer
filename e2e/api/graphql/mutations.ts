@@ -344,6 +344,7 @@ export const REMOVE_NLS_INFOBOX = `
 export const ADD_NLS_INFOBOX_BLOCK = `
   mutation AddNLSInfoboxBlock($input: AddNLSInfoboxBlockInput!) {
     addNLSInfoboxBlock(input: $input) {
+      infoboxBlock { id pluginId extensionId }
       layer {
         id
         infobox { id blocks { id pluginId extensionId } }

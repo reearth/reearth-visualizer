@@ -169,6 +169,7 @@ test.describe("Layer and infobox operations via API", () => {
   test("Add a text block to the infobox", async ({ gqlClient }) => {
     const { status, data } = await gqlClient.mutate<{
       addNLSInfoboxBlock: {
+        infoboxBlock: InfoboxBlock;
         layer: { id: string; infobox: { blocks: InfoboxBlock[] } };
       };
     }>(ADD_NLS_INFOBOX_BLOCK, {
@@ -180,14 +181,15 @@ test.describe("Layer and infobox operations via API", () => {
     });
 
     expect(status).toBe(200);
-    const blocks = data.addNLSInfoboxBlock.layer.infobox.blocks;
-    expect(blocks.length).toBeGreaterThanOrEqual(1);
-    blockIds.push(blocks[blocks.length - 1].id);
+    const newBlock = data.addNLSInfoboxBlock.infoboxBlock;
+    expect(newBlock.id).toBeTruthy();
+    blockIds.push(newBlock.id);
   });
 
   test("Add a second block for reordering", async ({ gqlClient }) => {
     const { data } = await gqlClient.mutate<{
       addNLSInfoboxBlock: {
+        infoboxBlock: InfoboxBlock;
         layer: { id: string; infobox: { blocks: InfoboxBlock[] } };
       };
     }>(ADD_NLS_INFOBOX_BLOCK, {
@@ -200,7 +202,9 @@ test.describe("Layer and infobox operations via API", () => {
 
     const blocks = data.addNLSInfoboxBlock.layer.infobox.blocks;
     expect(blocks.length).toBeGreaterThanOrEqual(2);
-    blockIds.push(blocks[blocks.length - 1].id);
+    const newBlock = data.addNLSInfoboxBlock.infoboxBlock;
+    expect(newBlock.id).toBeTruthy();
+    blockIds.push(newBlock.id);
   });
 
   test("Move an infobox block to a new position", async ({ gqlClient }) => {
