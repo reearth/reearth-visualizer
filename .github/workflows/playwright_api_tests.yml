@@ -8,6 +8,7 @@ on:
       - "e2e/api/**"
       - "e2e/playwright.config.ts"
       - "e2e/package.json"
+      - "e2e/package-lock.json"
       - ".github/workflows/playwright_api_tests.yml"
 
 concurrency:
@@ -38,17 +39,17 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Cache node modules
-        uses: actions/cache@v5
-        id: cache-node-modules
+      - name: Authenticate to Google Cloud for IAP
+        id: auth
+        uses: google-github-actions/auth@v3
         with:
-          path: e2e/node_modules
-          key: e2e-node-modules-${{ runner.os }}-${{ hashFiles('e2e/package-lock.json') }}
-          restore-keys: |
-            e2e-node-modules-${{ runner.os }}-
+          service_account: ${{ secrets.GC_SA_EMAIL }}
+          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+          token_format: "id_token"
+          id_token_audience: ${{ secrets.IAP_TARGET_AUDIENCE }}
+          id_token_include_email: true
 
       - name: Install dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Run API tests
@@ -59,6 +60,9 @@ jobs:
           REEARTH_E2E_AUTH0_DOMAIN: ${{ secrets.REEARTH_WEB_AUTH0_DOMAIN }}
           REEARTH_E2E_AUTH0_AUDIENCE: ${{ secrets.REEARTH_WEB_AUTH0_AUDIENCE }}
           REEARTH_E2E_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_WEB_AUTH0_CLIENT_ID }}
+          USE_IAP_AUTH: "true"
+          IAP_AUTH_METHOD: id-token
+          IAP_ID_TOKEN: ${{ steps.auth.outputs.id_token }}
           SKIP_STORAGE_STATE: "true"
         run: npm run test:api
 
@@ -197,9 +201,9 @@ jobs:
           now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
           api_run_id = f'{run_id}-api'
-          runs = [r for r in runs if r.get('id') != api_run_id]
 
           if os.path.isdir('./out/allure-report-api'):
+              runs = [r for r in runs if r.get('id') != api_run_id]
               api_entry = {
                   'id': api_run_id,
                   'label': f'{label} (API)',
