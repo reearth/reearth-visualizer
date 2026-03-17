@@ -43,15 +43,5 @@ export async function getAuthToken(request: APIRequestContext): Promise<AuthResu
     return { token: "test", extraHeaders: { "X-Reearth-Debug-User": MOCK_USER_ID } };
   }
 
-  const extraHeaders: Record<string, string> = {};
-
-  if (process.env.USE_IAP_AUTH === "true") {
-    const iapToken = process.env.IAP_ID_TOKEN;
-    if (!iapToken) {
-      throw new Error("IAP_ID_TOKEN is required when USE_IAP_AUTH=true");
-    }
-    extraHeaders["Proxy-Authorization"] = `Bearer ${iapToken}`;
-  }
-
-  return { token: await getAuth0Token(request), extraHeaders };
+  return { token: await getAuth0Token(request), extraHeaders: {} };
 }
