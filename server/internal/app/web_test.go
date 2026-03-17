@@ -24,6 +24,42 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPublishedEmptyNameDoesNotTriggerAuth(t *testing.T) {
+	authCalled := false
+	e := echo.New()
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		if errors.Is(err, rerror.ErrNotFound) || errors.Is(err, echo.ErrNotFound) {
+			_ = c.JSON(http.StatusNotFound, map[string]any{"error": "not found"})
+			return
+		}
+		_ = c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	e.GET("/api/published/", func(c echo.Context) error { return echo.ErrNotFound })
+	e.GET("/api/published/:name", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]string{"name": c.Param("name")})
+	})
+
+	apiRoot := e.Group("/api")
+	apiPrivate := apiRoot.Group("")
+	apiPrivate.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			authCalled = true
+			return next(c)
+		}
+	})
+	apiPrivate.POST("/graphql", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, nil)
+	})
+
+	r := httptest.NewRequest("GET", "/api/published/", nil)
+	w := httptest.NewRecorder()
+	e.ServeHTTP(w, r)
+
+	assert.Equal(t, http.StatusNotFound, w.Result().StatusCode)
+	assert.False(t, authCalled, "auth middleware should not be triggered for /api/published/ (empty name)")
+}
+
 func TestWeb(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.Deactivate()
