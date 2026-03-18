@@ -48,10 +48,12 @@ test.describe("Project alias checks via API", () => {
         workspaceId,
         visualizer: "CESIUM",
         name: `Alias Test ${faker.string.alphanumeric(6)}`,
-        coreSupport: true
+        coreSupport: true,
+        alias: projectAlias
       }
     });
     projectId = proj.createProject.project.id;
+    expect(proj.createProject.project.alias).toBe(projectAlias);
 
     await gqlClient.mutate(CREATE_SCENE, { input: { projectId } });
   });
@@ -84,6 +86,7 @@ test.describe("Project alias checks via API", () => {
     });
 
     expect(status).toBe(200);
+    expect(data.checkProjectAlias.alias).toBe(projectAlias);
     expect(data.checkProjectAlias.available).toBe(true);
   });
 

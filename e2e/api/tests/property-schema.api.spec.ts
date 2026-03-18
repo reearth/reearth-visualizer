@@ -39,9 +39,7 @@ test.describe.configure({ mode: "serial" });
 
 test.describe("Property schema queries via API", () => {
   let projectId: string;
-  let sceneId: string;
   let propertyId: string;
-  let propertySchemaId: string;
 
   test.afterAll(async ({ gqlClient }) => {
     if (!projectId) return;
@@ -72,7 +70,7 @@ test.describe("Property schema queries via API", () => {
     const { data: sc } = await gqlClient.mutate<{
       createScene: { scene: { id: string } };
     }>(CREATE_SCENE, { input: { projectId } });
-    sceneId = sc.createScene.scene.id;
+    const sceneId = sc.createScene.scene.id;
 
     // Get scene property info
     const { data: scene } = await gqlClient.query<SceneNode>(GET_SCENE, {
@@ -80,18 +78,10 @@ test.describe("Property schema queries via API", () => {
     });
     if (!scene.node) throw new Error("scene node is null");
     propertyId = scene.node.property.id;
-
-    // Extract schema ID from the first property item
-    const firstItem = scene.node.property.items[0];
-    if (firstItem && "schemaId" in firstItem) {
-      propertySchemaId = (firstItem as PropertyItem & { schemaId: string })
-        .schemaId;
-    }
   });
 
   test("propertySchema: fetch scene property schema", async ({ gqlClient }) => {
-    // The scene property schema ID follows the pattern: reearth/cesium
-    const schemaId = propertySchemaId || "reearth/cesium";
+    const schemaId = "reearth/cesium";
 
     const { status, data } = await gqlClient.query<{
       propertySchema: {
@@ -106,23 +96,23 @@ test.describe("Property schema queries via API", () => {
     }>(GET_PROPERTY_SCHEMA, { id: schemaId });
 
     expect(status).toBe(200);
-    if (data.propertySchema) {
-      expect(data.propertySchema.id).toBeTruthy();
-      expect(data.propertySchema.groups.length).toBeGreaterThan(0);
+    expect(data.propertySchema).not.toBeNull();
 
-      // Verify the tiles group exists with expected fields
-      const tilesGroup = data.propertySchema.groups.find(
-        (g) => g.schemaGroupId === "tiles"
-      );
-      if (tilesGroup) {
-        expect(tilesGroup.isList).toBe(true);
-        expect(tilesGroup.fields.length).toBeGreaterThan(0);
-      }
-    }
+    const propertySchema = data.propertySchema!;
+    expect(propertySchema.id).toBeTruthy();
+    expect(propertySchema.groups.length).toBeGreaterThan(0);
+
+    // Verify the tiles group exists with expected fields
+    const tilesGroup = propertySchema.groups.find(
+      (g) => g.schemaGroupId === "tiles"
+    );
+    expect(tilesGroup).toBeDefined();
+    expect(tilesGroup!.isList).toBe(true);
+    expect(tilesGroup!.fields.length).toBeGreaterThan(0);
   });
 
   test("propertySchemas: fetch multiple schemas", async ({ gqlClient }) => {
-    const schemaId = propertySchemaId || "reearth/cesium";
+    const schemaId = "reearth/cesium";
 
     const { status, data } = await gqlClient.query<{
       propertySchemas: {
@@ -140,26 +130,32 @@ test.describe("Property schema queries via API", () => {
     expect(data.propertySchemas[0].groups.length).toBeGreaterThan(0);
   });
 
-  test("propertySchema: non-existent schema throws error", async ({
+  test("propertySchema: non-existent schema returns null", async ({
     gqlClient
   }) => {
-    await expect(
-      gqlClient.query(GET_PROPERTY_SCHEMA, { id: "nonexistent/schema" })
-    ).rejects.toThrow();
+    const { status, data } = await gqlClient.query<{
+      propertySchema: { id: string } | null;
+    }>(GET_PROPERTY_SCHEMA, { id: "reearth/notfound" });
+
+    expect(status).toBe(200);
+    expect(data.propertySchema).toBeNull();
   });
 
-  test("propertySchemas: non-existent schemas throws error", async ({
+  test("propertySchemas: non-existent schemas return empty list", async ({
     gqlClient
   }) => {
-    await expect(
-      gqlClient.query(GET_PROPERTY_SCHEMAS, { id: ["nonexistent/schema"] })
-    ).rejects.toThrow();
+    const { status, data } = await gqlClient.query<{
+      propertySchemas: { id: string }[];
+    }>(GET_PROPERTY_SCHEMAS, { id: ["reearth/notfound"] });
+
+    expect(status).toBe(200);
+    expect(Array.isArray(data.propertySchemas)).toBe(true);
+    expect(data.propertySchemas.length).toBe(0);
   });
 });
 
 test.describe("Upload file to property via API", () => {
   let projectId: string;
-  let sceneId: string;
   let propertyId: string;
   let tilesGroupId: string;
 
@@ -194,7 +190,7 @@ test.describe("Upload file to property via API", () => {
     const { data: sc } = await gqlClient.mutate<{
       createScene: { scene: { id: string } };
     }>(CREATE_SCENE, { input: { projectId } });
-    sceneId = sc.createScene.scene.id;
+    const sceneId = sc.createScene.scene.id;
 
     const { data: scene } = await gqlClient.query<SceneNode>(GET_SCENE, {
       sceneId
