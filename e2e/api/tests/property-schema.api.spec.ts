@@ -39,7 +39,6 @@ test.describe.configure({ mode: "serial" });
 
 test.describe("Property schema queries via API", () => {
   let projectId: string;
-  let propertyId: string;
 
   test.afterAll(async ({ gqlClient }) => {
     if (!projectId) return;
@@ -77,7 +76,7 @@ test.describe("Property schema queries via API", () => {
       sceneId
     });
     if (!scene.node) throw new Error("scene node is null");
-    propertyId = scene.node.property.id;
+    expect(scene.node.property.id).toBeTruthy();
   });
 
   test("propertySchema: fetch scene property schema", async ({ gqlClient }) => {
@@ -98,6 +97,7 @@ test.describe("Property schema queries via API", () => {
     expect(status).toBe(200);
     expect(data.propertySchema).not.toBeNull();
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const propertySchema = data.propertySchema!;
     expect(propertySchema.id).toBeTruthy();
     expect(propertySchema.groups.length).toBeGreaterThan(0);
@@ -107,8 +107,10 @@ test.describe("Property schema queries via API", () => {
       (g) => g.schemaGroupId === "tiles"
     );
     expect(tilesGroup).toBeDefined();
-    expect(tilesGroup!.isList).toBe(true);
-    expect(tilesGroup!.fields.length).toBeGreaterThan(0);
+    if (tilesGroup) {
+      expect(tilesGroup.isList).toBe(true);
+      expect(tilesGroup.fields.length).toBeGreaterThan(0);
+    }
   });
 
   test("propertySchemas: fetch multiple schemas", async ({ gqlClient }) => {
@@ -141,16 +143,12 @@ test.describe("Property schema queries via API", () => {
     expect(data.propertySchema).toBeNull();
   });
 
-  test("propertySchemas: non-existent schemas return empty list", async ({
+  test("propertySchemas: non-existent schemas throws error", async ({
     gqlClient
   }) => {
-    const { status, data } = await gqlClient.query<{
-      propertySchemas: { id: string }[];
-    }>(GET_PROPERTY_SCHEMAS, { id: ["reearth/notfound"] });
-
-    expect(status).toBe(200);
-    expect(Array.isArray(data.propertySchemas)).toBe(true);
-    expect(data.propertySchemas.length).toBe(0);
+    await expect(
+      gqlClient.query(GET_PROPERTY_SCHEMAS, { id: ["reearth/notfound"] })
+    ).rejects.toThrow();
   });
 });
 

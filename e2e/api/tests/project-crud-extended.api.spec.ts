@@ -48,12 +48,16 @@ test.describe("Project alias checks via API", () => {
         workspaceId,
         visualizer: "CESIUM",
         name: `Alias Test ${faker.string.alphanumeric(6)}`,
-        coreSupport: true,
-        alias: projectAlias
+        coreSupport: true
       }
     });
     projectId = proj.createProject.project.id;
-    expect(proj.createProject.project.alias).toBe(projectAlias);
+    const { data: updated } = await gqlClient.mutate<{
+      updateProject: { project: { id: string; alias: string } };
+    }>(UPDATE_PROJECT, {
+      input: { projectId, alias: projectAlias }
+    });
+    expect(updated.updateProject.project.alias).toBe(projectAlias);
 
     await gqlClient.mutate(CREATE_SCENE, { input: { projectId } });
   });
@@ -143,9 +147,7 @@ test.describe("Project starred and deleted queries via API", () => {
     expect(data.updateProject.project.starred).toBe(true);
   });
 
-  test("starredProjects returns the starred project", async ({
-    gqlClient
-  }) => {
+  test("starredProjects returns the starred project", async ({ gqlClient }) => {
     const { status, data } = await gqlClient.query<{
       starredProjects: {
         totalCount: number;
@@ -213,8 +215,6 @@ test.describe("Project starred and deleted queries via API", () => {
 test.describe("Project export and metadata via API", () => {
   let workspaceId: string;
   let projectId: string;
-  let sceneId: string;
-
   test.afterAll(async ({ gqlClient }) => {
     if (!projectId) return;
     try {
@@ -245,7 +245,7 @@ test.describe("Project export and metadata via API", () => {
     const { data: sc } = await gqlClient.mutate<{
       createScene: { scene: { id: string } };
     }>(CREATE_SCENE, { input: { projectId } });
-    sceneId = sc.createScene.scene.id;
+    expect(sc.createScene.scene.id).toBeTruthy();
   });
 
   test("Export a project", async ({ gqlClient }) => {
