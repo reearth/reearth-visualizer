@@ -53,11 +53,13 @@ test.describe("Project alias checks via API", () => {
     });
     projectId = proj.createProject.project.id;
     const { data: updated } = await gqlClient.mutate<{
-      updateProject: { project: { id: string; alias: string } };
+      updateProject: {
+        project: { id: string; projectAlias: string };
+      };
     }>(UPDATE_PROJECT, {
-      input: { projectId, alias: projectAlias }
+      input: { projectId, projectAlias }
     });
-    expect(updated.updateProject.project.alias).toBe(projectAlias);
+    expect(updated.updateProject.project.projectAlias).toBe(projectAlias);
 
     await gqlClient.mutate(CREATE_SCENE, { input: { projectId } });
   });

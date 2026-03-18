@@ -17,7 +17,7 @@ export const CREATE_SCENE = `
 export const UPDATE_PROJECT = `
   mutation UpdateProject($input: UpdateProjectInput!) {
     updateProject(input: $input) {
-      project { id name description alias starred isDeleted }
+      project { id name description alias projectAlias starred isDeleted }
     }
   }
 `;
