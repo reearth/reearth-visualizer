@@ -17,7 +17,7 @@ export const CREATE_SCENE = `
 export const UPDATE_PROJECT = `
   mutation UpdateProject($input: UpdateProjectInput!) {
     updateProject(input: $input) {
-      project { id name description starred isDeleted }
+      project { id name description alias projectAlias starred isDeleted }
     }
   }
 `;
@@ -25,6 +25,43 @@ export const UPDATE_PROJECT = `
 export const DELETE_PROJECT = `
   mutation DeleteProject($input: DeleteProjectInput!) {
     deleteProject(input: $input) { projectId }
+  }
+`;
+
+export const EXPORT_PROJECT = `
+  mutation ExportProject($input: ExportProjectInput!) {
+    exportProject(input: $input) { projectDataPath }
+  }
+`;
+
+export const UPDATE_PROJECT_METADATA = `
+  mutation UpdateProjectMetadata($input: UpdateProjectMetadataInput!) {
+    updateProjectMetadata(input: $input) {
+      metadata { id project workspace readme license topics }
+    }
+  }
+`;
+
+export const UPLOAD_FILE_TO_PROPERTY = `
+  mutation UploadFileToProperty(
+    $propertyId: ID!
+    $schemaGroupId: ID
+    $itemId: ID
+    $fieldId: ID!
+    $file: Upload!
+  ) {
+    uploadFileToProperty(
+      input: {
+        propertyId: $propertyId
+        schemaGroupId: $schemaGroupId
+        itemId: $itemId
+        fieldId: $fieldId
+        file: $file
+      }
+    ) {
+      property { id }
+      propertyField { id type value }
+    }
   }
 `;
 
@@ -510,6 +547,75 @@ export const REMOVE_PAGE_LAYER = `
     removePageLayer(input: $input) {
       story { id }
       page { id layersIds }
+    }
+  }
+`;
+
+// Style mutations
+
+export const ADD_STYLE = `
+  mutation AddStyle($input: AddStyleInput!) {
+    addStyle(input: $input) {
+      style { id sceneId name value }
+    }
+  }
+`;
+
+export const UPDATE_STYLE = `
+  mutation UpdateStyle($input: UpdateStyleInput!) {
+    updateStyle(input: $input) {
+      style { id name value }
+    }
+  }
+`;
+
+export const REMOVE_STYLE = `
+  mutation RemoveStyle($input: RemoveStyleInput!) {
+    removeStyle(input: $input) { styleId }
+  }
+`;
+
+export const DUPLICATE_STYLE = `
+  mutation DuplicateStyle($input: DuplicateStyleInput!) {
+    duplicateStyle(input: $input) {
+      style { id sceneId name value }
+    }
+  }
+`;
+
+// Widget mutations
+
+export const ADD_WIDGET = `
+  mutation AddWidget($input: AddWidgetInput!) {
+    addWidget(input: $input) {
+      scene { id widgets { id pluginId extensionId enabled extended } }
+      sceneWidget { id pluginId extensionId enabled extended propertyId }
+    }
+  }
+`;
+
+export const UPDATE_WIDGET = `
+  mutation UpdateWidget($input: UpdateWidgetInput!) {
+    updateWidget(input: $input) {
+      scene { id widgets { id pluginId extensionId enabled extended } }
+      sceneWidget { id pluginId extensionId enabled extended }
+    }
+  }
+`;
+
+export const UPDATE_WIDGET_ALIGN_SYSTEM = `
+  mutation UpdateWidgetAlignSystem($input: UpdateWidgetAlignSystemInput!) {
+    updateWidgetAlignSystem(input: $input) {
+      scene { id }
+    }
+  }
+`;
+
+export const REMOVE_WIDGET = `
+  mutation RemoveWidget($input: RemoveWidgetInput!) {
+    removeWidget(input: $input) {
+      scene { id widgets { id pluginId extensionId } }
+      widgetId
     }
   }
 `;
