@@ -1,0 +1,217 @@
+name: Playwright API Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "server/**"
+      - "e2e/api/**"
+      - "e2e/playwright.config.ts"
+      - "e2e/package.json"
+      - "e2e/package-lock.json"
+      - ".github/workflows/playwright_api_tests.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-api-test:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    environment: dev
+    env:
+      BUCKET: reearth-oss-visualizer-allure-reports
+    defaults:
+      run:
+        working-directory: e2e
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run API tests
+        env:
+          REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
+          REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
+          REEARTH_WEB_E2E_BASEURL: ${{ secrets.REEARTH_WEB_E2E_BASEURL }}
+          REEARTH_E2E_AUTH0_DOMAIN: ${{ secrets.REEARTH_E2E_AUTH0_DOMAIN }}
+          REEARTH_E2E_AUTH0_AUDIENCE: ${{ secrets.REEARTH_E2E_AUTH0_AUDIENCE }}
+          REEARTH_E2E_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_E2E_AUTH0_CLIENT_ID }}
+          USE_IAP_AUTH: "false"
+          SKIP_STORAGE_STATE: "true"
+        run: npm run test:api
+
+      - name: Preserve API Allure results
+        if: always()
+        run: |
+          if [ -d "./out/allure-results" ]; then
+            mv ./out/allure-results ./out/allure-results-api
+          fi
+
+      - name: Authenticate to Google Cloud for GCS
+        if: always()
+        uses: google-github-actions/auth@v3
+        with:
+          service_account: ${{ secrets.GC_SA_EMAIL }}
+          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+
+      - name: Setup Google Cloud SDK
+        if: always()
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Check Allure Results
+        if: always()
+        id: check-results
+        run: |
+          if [ -d "./out/allure-results-api" ] && [ "$(ls -A ./out/allure-results-api)" ]; then
+            echo "has_results=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_results=false" >> "$GITHUB_OUTPUT"
+            echo "No allure results found, skipping report steps."
+          fi
+
+      - name: Load dashboard index and history from GCS
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        run: |
+          if gsutil cp "gs://$BUCKET/index.json" /tmp/index.json 2>/tmp/gsutil_index_err.log; then
+            echo "Downloaded existing index.json from GCS."
+          else
+            if grep -qiE "No URLs matched|Matched no objects|404" /tmp/gsutil_index_err.log; then
+              echo "No existing index.json found in bucket, starting with empty index."
+              echo '[]' > /tmp/index.json
+            else
+              echo "Failed to download index.json from GCS. Error output:"
+              cat /tmp/gsutil_index_err.log
+              rm -f /tmp/gsutil_index_err.log
+              exit 1
+            fi
+          fi
+          rm -f /tmp/gsutil_index_err.log || true
+
+          MOST_RECENT_RUN=$(python3 -c "
+          import json, sys
+          try:
+              with open('/tmp/index.json') as f:
+                  data = json.load(f)
+              api_runs = [r for r in data if r.get('id', '').endswith('-api')]
+              print(api_runs[0]['id'] if api_runs else '')
+          except Exception:
+              print('')
+          ")
+
+          if [ -n "$MOST_RECENT_RUN" ]; then
+            echo "Found previous run: $MOST_RECENT_RUN"
+            mkdir -p ./out/allure-results-api/history
+            if ! gsutil -m rsync -r "gs://$BUCKET/runs/$MOST_RECENT_RUN/history/" ./out/allure-results-api/history/ 2>/tmp/gsutil_history_err.log; then
+              if grep -qE "Matched 0 objects|No URLs matched" /tmp/gsutil_history_err.log; then
+                echo "No history objects found for run $MOST_RECENT_RUN; continuing without history."
+              else
+                echo "Error syncing history from GCS:" >&2
+                cat /tmp/gsutil_history_err.log >&2
+              fi
+            fi
+            rm -f /tmp/gsutil_history_err.log || true
+          else
+            echo "No previous runs, starting fresh"
+          fi
+
+      - name: Generate API Allure Report
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        run: |
+          rm -rf ./out/allure-report-api
+          npx allure generate --output ./out/allure-report-api ./out/allure-results-api
+
+      - name: Determine Run ID
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        id: run-id
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            RUN_ID="pr-${{ github.event.pull_request.number }}"
+            BRANCH="PR #${{ github.event.pull_request.number }}"
+            COMMIT="${{ github.event.pull_request.head.sha }}"
+            LABEL="Pull request #${{ github.event.pull_request.number }}"
+          else
+            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+            RUN_ID="run-${SHORT_SHA}-${{ github.run_number }}"
+            BRANCH="${{ github.ref_name }}"
+            COMMIT="${{ github.sha }}"
+            LABEL="${{ github.ref_name }} #${{ github.run_number }}"
+          fi
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
+          echo "label=$LABEL" >> "$GITHUB_OUTPUT"
+
+      - name: Upload API Allure Report to GCS
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        env:
+          RUN_ID: ${{ steps.run-id.outputs.run_id }}
+        run: |
+          if [ -d "./out/allure-report-api" ]; then
+            gsutil -m rsync -r -d ./out/allure-report-api "gs://$BUCKET/runs/${RUN_ID}-api/"
+            if [ -f "./out/allure-report-api/widgets/summary.json" ]; then
+              gsutil cp ./out/allure-report-api/widgets/summary.json "gs://$BUCKET/runs/${RUN_ID}-api/summary.json"
+            fi
+          fi
+
+      - name: Update dashboard index.json
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        env:
+          RUN_ID: ${{ steps.run-id.outputs.run_id }}
+          BRANCH: ${{ steps.run-id.outputs.branch }}
+          COMMIT: ${{ steps.run-id.outputs.commit }}
+          LABEL: ${{ steps.run-id.outputs.label }}
+        run: |
+          python3 -c "
+          import json, os
+          from datetime import datetime, timezone
+
+          with open('/tmp/index.json') as f:
+              runs = json.load(f)
+
+          run_id = os.environ['RUN_ID']
+          label = os.environ['LABEL']
+          branch = os.environ['BRANCH']
+          commit = os.environ['COMMIT']
+          now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+          api_run_id = f'{run_id}-api'
+
+          if os.path.isdir('./out/allure-report-api'):
+              runs = [r for r in runs if r.get('id') != api_run_id]
+              api_entry = {
+                  'id': api_run_id,
+                  'label': f'{label} (API)',
+                  'branch': branch,
+                  'commit': commit,
+                  'createdAt': now,
+                  'path': f'runs/{api_run_id}/index.html'
+              }
+              runs.insert(0, api_entry)
+
+          runs = runs[:50]
+
+          with open('/tmp/index.json', 'w') as f:
+              json.dump(runs, f, indent=2)
+          "
+
+          OBJECT="gs://$BUCKET/index.json"
+          GEN=$(gsutil stat "$OBJECT" 2>/dev/null | awk '/Generation:/ {print $2}' || true)
+          if [ -z "$GEN" ]; then GEN=0; fi
+
+          gsutil -h "Content-Type:application/json" -h "Cache-Control:no-cache" \
+            -h "x-goog-if-generation-match:${GEN}" \
+            cp /tmp/index.json "$OBJECT"
