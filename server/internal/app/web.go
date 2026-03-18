@@ -29,6 +29,7 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 		publishedHost = w.hostWithSchema()
 	}
 
+	ec.GET("/api/published/", func(c echo.Context) error { return echo.ErrNotFound })
 	ec.GET("/api/published/:name", PublishedMetadata())
 	ec.GET("/api/published_data/:name", PublishedData(w.HostPattern, true)) // for oss / localhost
 
