@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.4 - 2026-03-18
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Fix markdown bg and text color issue in story panel ([#2111](https://github.com/reearth/reearth-visualizer/pull/2111)) [`05555b`](https://github.com/reearth/reearth-visualizer/commit/05555b)
+- Missing props value on color field ([#2112](https://github.com/reearth/reearth-visualizer/pull/2112)) [`46a0b5`](https://github.com/reearth/reearth-visualizer/commit/46a0b5)
+
+#### Miscellaneous Tasks
+
+- Bump version to v1.0.0-beta.15.4 ([#2118](https://github.com/reearth/reearth-visualizer/pull/2118)) [`494405`](https://github.com/reearth/reearth-visualizer/commit/494405)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Return 404 for &#x2F;api&#x2F;published&#x2F; with empty name before auth middleware ([#2114](https://github.com/reearth/reearth-visualizer/pull/2114)) [`d616ba`](https://github.com/reearth/reearth-visualizer/commit/d616ba)
+
+#### 🧪 Testing
+
+- Tests for style, widget, project-crud-extended, property-schema ([#2115](https://github.com/reearth/reearth-visualizer/pull/2115)) [`777b43`](https://github.com/reearth/reearth-visualizer/commit/777b43)
+- Add api tests for layer infobox and storytelling ([#2106](https://github.com/reearth/reearth-visualizer/pull/2106)) [`bf78c5`](https://github.com/reearth/reearth-visualizer/commit/bf78c5)
+- Add API tests for asset management ([#2103](https://github.com/reearth/reearth-visualizer/pull/2103)) [`d7ae14`](https://github.com/reearth/reearth-visualizer/commit/d7ae14)
+
+### Misc
+
+
+###
+
 ## 1.0.0-beta.15.3 - 2026-03-11
 
 ### Web
