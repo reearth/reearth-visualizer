@@ -13,6 +13,8 @@ import {
 } from "../graphql/mutations";
 import { GET_ME, GET_SCENE } from "../graphql/queries";
 
+import { generateFakeId } from "./test-helpers";
+
 type PropertyItem = {
   id: string;
   schemaGroupId: string;
@@ -31,6 +33,30 @@ type SceneNode = {
     stories: { id: string }[];
   } | null;
 };
+
+/** Finds the tiles PropertyGroupList from a scene's property items. */
+function findTilesItem(items: PropertyItem[]): PropertyItem {
+  const item = items.find((i) => i.schemaGroupId === "tiles");
+  if (!item) throw new Error("tiles schema group not found");
+  return item;
+}
+
+/** Returns the groups array from a tiles item, throwing if missing. */
+function getTilesGroups(
+  item: PropertyItem
+): { id: string; schemaGroupId: string }[] {
+  const groups = item.groups;
+  if (!groups || groups.length === 0)
+    throw new Error("tiles item has no groups");
+  return groups;
+}
+
+/** Extracts the scene node, throwing if null. */
+function extractSceneNode(data: SceneNode) {
+  const node = data.node;
+  if (!node) throw new Error("scene node is null");
+  return node;
+}
 
 test.describe.configure({ mode: "serial" });
 
@@ -79,16 +105,11 @@ test.describe("Property operations via API", () => {
     const { data: scene } = await gqlClient.query<SceneNode>(GET_SCENE, {
       sceneId
     });
-    expect(scene.node).not.toBeNull();
-    propertyId = scene.node!.property.id;
+    const sceneNode = extractSceneNode(scene);
+    propertyId = sceneNode.property.id;
 
-    // Find the tiles group list item
-    const tilesItem = scene.node!.property.items.find(
-      (i) => i.schemaGroupId === "tiles"
-    );
-    expect(tilesItem).toBeDefined();
-    // tiles is a PropertyGroupList, get the first group
-    if (tilesItem?.groups && tilesItem.groups.length > 0) {
+    const tilesItem = findTilesItem(sceneNode.property.items);
+    if (tilesItem.groups && tilesItem.groups.length > 0) {
       tilesGroupId = tilesItem.groups[0].id;
     }
   });
@@ -106,11 +127,9 @@ test.describe("Property operations via API", () => {
         propertyId,
         schemaGroupId: "tiles"
       });
-      const tilesItem = data.addPropertyItem.property.items.find(
-        (i) => i.schemaGroupId === "tiles"
-      );
-      expect(tilesItem?.groups?.length).toBeGreaterThan(0);
-      tilesGroupId = tilesItem!.groups![0].id;
+      const tilesItem = findTilesItem(data.addPropertyItem.property.items);
+      const groups = getTilesGroups(tilesItem);
+      tilesGroupId = groups[0].id;
     }
 
     const { status, data } = await gqlClient.mutate<{
@@ -190,25 +209,21 @@ test.describe("Property operations via API", () => {
     expect(status).toBe(200);
     expect(data.addPropertyItem.property.id).toBe(propertyId);
 
-    const tilesItem = data.addPropertyItem.property.items.find(
-      (i) => i.schemaGroupId === "tiles"
-    );
-    expect(tilesItem).toBeDefined();
-    expect(tilesItem!.groups!.length).toBeGreaterThanOrEqual(2);
+    const tilesItem = findTilesItem(data.addPropertyItem.property.items);
+    const groups = getTilesGroups(tilesItem);
+    expect(groups.length).toBeGreaterThanOrEqual(2);
   });
 
   test("MovePropertyItem: reorder tile groups", async ({ gqlClient }) => {
-    // Get current state
     const { data: scene } = await gqlClient.query<SceneNode>(GET_SCENE, {
       sceneId
     });
-    const tilesItem = scene.node!.property.items.find(
-      (i) => i.schemaGroupId === "tiles"
-    );
-    expect(tilesItem?.groups?.length).toBeGreaterThanOrEqual(2);
-    const lastGroup = tilesItem!.groups![tilesItem!.groups!.length - 1];
+    const sceneNode = extractSceneNode(scene);
+    const tilesItem = findTilesItem(sceneNode.property.items);
+    const groups = getTilesGroups(tilesItem);
+    expect(groups.length).toBeGreaterThanOrEqual(2);
+    const lastGroup = groups[groups.length - 1];
 
-    // Move last group to index 0
     const { status, data } = await gqlClient.mutate<{
       movePropertyItem: { property: { id: string } };
     }>(MOVE_PROPERTY_ITEM, {
@@ -223,15 +238,14 @@ test.describe("Property operations via API", () => {
   });
 
   test("RemovePropertyItem: remove a tile group", async ({ gqlClient }) => {
-    // Get current state
     const { data: scene } = await gqlClient.query<SceneNode>(GET_SCENE, {
       sceneId
     });
-    const tilesItem = scene.node!.property.items.find(
-      (i) => i.schemaGroupId === "tiles"
-    );
-    const groupCountBefore = tilesItem!.groups!.length;
-    const lastGroup = tilesItem!.groups![groupCountBefore - 1];
+    const sceneNode = extractSceneNode(scene);
+    const tilesItem = findTilesItem(sceneNode.property.items);
+    const groups = getTilesGroups(tilesItem);
+    const groupCountBefore = groups.length;
+    const lastGroup = groups[groupCountBefore - 1];
 
     const { status, data } = await gqlClient.mutate<{
       removePropertyItem: { property: { id: string } };
@@ -248,10 +262,10 @@ test.describe("Property operations via API", () => {
     const { data: sceneAfter } = await gqlClient.query<SceneNode>(GET_SCENE, {
       sceneId
     });
-    const tilesAfter = sceneAfter.node!.property.items.find(
-      (i) => i.schemaGroupId === "tiles"
-    );
-    expect(tilesAfter!.groups!.length).toBe(groupCountBefore - 1);
+    const afterNode = extractSceneNode(sceneAfter);
+    const tilesAfter = findTilesItem(afterNode.property.items);
+    const afterGroups = getTilesGroups(tilesAfter);
+    expect(afterGroups.length).toBe(groupCountBefore - 1);
   });
 
   test("UpdatePropertyItems: batch add operations", async ({ gqlClient }) => {
@@ -268,5 +282,78 @@ test.describe("Property operations via API", () => {
 
     expect(status).toBe(200);
     expect(data.updatePropertyItems.property.id).toBe(propertyId);
+  });
+});
+
+test.describe("Property negative scenarios via API", () => {
+  test("Cannot update property value on a non-existent property", async ({
+    gqlClient
+  }) => {
+    const fakePropertyId = generateFakeId();
+    const fakeItemId = generateFakeId();
+    await expect(
+      gqlClient.mutate(UPDATE_PROPERTY_VALUE, {
+        propertyId: fakePropertyId,
+        schemaGroupId: "tiles",
+        itemId: fakeItemId,
+        fieldId: "tile_type",
+        value: "default",
+        type: "STRING"
+      })
+    ).rejects.toThrow();
+  });
+
+  test("Cannot remove field from a non-existent property", async ({
+    gqlClient
+  }) => {
+    const fakePropertyId = generateFakeId();
+    const fakeItemId = generateFakeId();
+    await expect(
+      gqlClient.mutate(REMOVE_PROPERTY_FIELD, {
+        propertyId: fakePropertyId,
+        schemaGroupId: "tiles",
+        itemId: fakeItemId,
+        fieldId: "tile_type"
+      })
+    ).rejects.toThrow();
+  });
+
+  test("Cannot add property item to a non-existent property", async ({
+    gqlClient
+  }) => {
+    const fakePropertyId = generateFakeId();
+    await expect(
+      gqlClient.mutate(ADD_PROPERTY_ITEM, {
+        propertyId: fakePropertyId,
+        schemaGroupId: "tiles"
+      })
+    ).rejects.toThrow();
+  });
+
+  test("Cannot remove a non-existent property item", async ({
+    gqlClient
+  }) => {
+    const fakePropertyId = generateFakeId();
+    const fakeItemId = generateFakeId();
+    await expect(
+      gqlClient.mutate(REMOVE_PROPERTY_ITEM, {
+        propertyId: fakePropertyId,
+        schemaGroupId: "tiles",
+        itemId: fakeItemId
+      })
+    ).rejects.toThrow();
+  });
+
+  test("Cannot move a non-existent property item", async ({ gqlClient }) => {
+    const fakePropertyId = generateFakeId();
+    const fakeItemId = generateFakeId();
+    await expect(
+      gqlClient.mutate(MOVE_PROPERTY_ITEM, {
+        propertyId: fakePropertyId,
+        schemaGroupId: "tiles",
+        itemId: fakeItemId,
+        index: 0
+      })
+    ).rejects.toThrow();
   });
 });
