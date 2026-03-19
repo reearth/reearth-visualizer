@@ -34,14 +34,13 @@ const ProjectVisibilityModal: FC<Props> = ({
   const [projectVisibility, setProjectVisibility] = useState(visibility);
 
   const projectVisibilityOptions = useMemo(
-    () => [
-      { value: "public", label: t("Public") },
-      {
-        value: "private",
-        label: t("Private"),
-        disabled: !enableToCreatePrivateProject
-      }
-    ],
+    () =>
+      [
+        { value: "public", label: t("Public") },
+        enableToCreatePrivateProject
+          ? { value: "private", label: t("Private") }
+          : null
+      ].filter((option): option is { value: string; label: string } => !!option),
     [t, enableToCreatePrivateProject]
   );
   return (
@@ -72,10 +71,7 @@ const ProjectVisibilityModal: FC<Props> = ({
             value={projectVisibility}
             onChange={(value) => setProjectVisibility(value as string)}
             data-testid="change-project-visibility-input"
-            options={projectVisibilityOptions.map(({ label, value }) => ({
-              value,
-              label
-            }))}
+            options={projectVisibilityOptions}
           />
           {projectVisibility === "private" && (
             <Typography size="body" color={theme.dangerous.main}>
