@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 import { faker } from "@faker-js/faker";
 
 // Crockford Base32 charset used by oklog/ulid
@@ -15,3 +18,19 @@ const ULID_FIRST_CHAR = CROCKFORD.slice(0, 8);
 export const generateFakeId = (): string =>
   faker.string.fromCharacters(ULID_FIRST_CHAR, 1) +
   faker.string.fromCharacters(CROCKFORD, 25);
+
+const tokenPath = path.join(__dirname, "../../.auth/api-token.json");
+
+/**
+ * Returns auth headers for REST endpoint tests.
+ * Reads from the same token file used by the GraphQL client fixture.
+ */
+export function getAuthHeaders(): Record<string, string> {
+  const { token, extraHeaders } = JSON.parse(
+    fs.readFileSync(tokenPath, "utf-8")
+  );
+  return {
+    Authorization: `Bearer ${token}`,
+    ...extraHeaders
+  };
+}
