@@ -1,6 +1,3 @@
-import fs from "fs";
-import path from "path";
-
 import { faker } from "@faker-js/faker";
 
 import { API_BASE_URL } from "../config/env";
@@ -8,26 +5,18 @@ import { test, expect } from "../fixtures/api-test-fixtures";
 import { DELETE_PROJECT } from "../graphql/mutations";
 import { GET_ME } from "../graphql/queries";
 
-const tokenPath = path.join(__dirname, "../../.auth/api-token.json");
-
-function getAuthHeaders(): Record<string, string> {
-  const { token, extraHeaders } = JSON.parse(
-    fs.readFileSync(tokenPath, "utf-8")
-  );
-  return {
-    Authorization: `Bearer ${token}`,
-    ...extraHeaders
-  };
-}
+import { getAuthHeaders } from "./test-helpers";
 
 /**
- * Build a minimal valid ZIP buffer containing a simple file.
- * This is a tiny ZIP with one empty file entry called "project.json".
+ * Build a minimal valid ZIP buffer containing a valid JSON project.json.
+ * Uses valid JSON content so the server import pipeline can process it
+ * and session cleanup runs properly.
  */
 function createMinimalZip(): Buffer {
-  // Minimal ZIP containing an empty "project.json" entry
-  // Local file header + central directory + end of central directory
   const fileName = Buffer.from("project.json");
+  const fileContent = Buffer.from("{}", "utf-8");
+
+  // Local file header
   const localHeader = Buffer.alloc(30 + fileName.length);
   localHeader.writeUInt32LE(0x04034b50, 0); // Local file header signature
   localHeader.writeUInt16LE(20, 4); // Version needed to extract
@@ -35,13 +24,15 @@ function createMinimalZip(): Buffer {
   localHeader.writeUInt16LE(0, 8); // Compression method (stored)
   localHeader.writeUInt16LE(0, 10); // Last mod file time
   localHeader.writeUInt16LE(0, 12); // Last mod file date
-  localHeader.writeUInt32LE(0, 14); // CRC-32
-  localHeader.writeUInt32LE(0, 18); // Compressed size
-  localHeader.writeUInt32LE(0, 22); // Uncompressed size
+  // CRC-32 for "{}" = 0xFC5C45BE
+  localHeader.writeUInt32LE(0xfc5c45be, 14); // CRC-32
+  localHeader.writeUInt32LE(fileContent.length, 18); // Compressed size
+  localHeader.writeUInt32LE(fileContent.length, 22); // Uncompressed size
   localHeader.writeUInt16LE(fileName.length, 26); // File name length
   localHeader.writeUInt16LE(0, 28); // Extra field length
   fileName.copy(localHeader, 30);
 
+  // Central directory header
   const centralDir = Buffer.alloc(46 + fileName.length);
   centralDir.writeUInt32LE(0x02014b50, 0); // Central directory header signature
   centralDir.writeUInt16LE(20, 4); // Version made by
@@ -50,9 +41,9 @@ function createMinimalZip(): Buffer {
   centralDir.writeUInt16LE(0, 10); // Compression method
   centralDir.writeUInt16LE(0, 12); // Last mod file time
   centralDir.writeUInt16LE(0, 14); // Last mod file date
-  centralDir.writeUInt32LE(0, 16); // CRC-32
-  centralDir.writeUInt32LE(0, 20); // Compressed size
-  centralDir.writeUInt32LE(0, 24); // Uncompressed size
+  centralDir.writeUInt32LE(0xfc5c45be, 16); // CRC-32
+  centralDir.writeUInt32LE(fileContent.length, 20); // Compressed size
+  centralDir.writeUInt32LE(fileContent.length, 24); // Uncompressed size
   centralDir.writeUInt16LE(fileName.length, 28); // File name length
   centralDir.writeUInt16LE(0, 30); // Extra field length
   centralDir.writeUInt16LE(0, 32); // File comment length
@@ -62,6 +53,8 @@ function createMinimalZip(): Buffer {
   centralDir.writeUInt32LE(0, 42); // Relative offset of local header
   fileName.copy(centralDir, 46);
 
+  // End of central directory
+  const localDataSize = localHeader.length + fileContent.length;
   const endOfCentralDir = Buffer.alloc(22);
   endOfCentralDir.writeUInt32LE(0x06054b50, 0); // End of central directory signature
   endOfCentralDir.writeUInt16LE(0, 4); // Number of this disk
@@ -69,10 +62,10 @@ function createMinimalZip(): Buffer {
   endOfCentralDir.writeUInt16LE(1, 8); // Number of central directory records on this disk
   endOfCentralDir.writeUInt16LE(1, 10); // Total number of central directory records
   endOfCentralDir.writeUInt32LE(centralDir.length, 12); // Size of central directory
-  endOfCentralDir.writeUInt32LE(localHeader.length, 16); // Offset of start of central directory
+  endOfCentralDir.writeUInt32LE(localDataSize, 16); // Offset of start of central directory
   endOfCentralDir.writeUInt16LE(0, 20); // Comment length
 
-  return Buffer.concat([localHeader, centralDir, endOfCentralDir]);
+  return Buffer.concat([localHeader, fileContent, centralDir, endOfCentralDir]);
 }
 
 test.describe.configure({ mode: "serial" });
@@ -150,10 +143,8 @@ test.describe("POST /api/split-import — chunked project import", () => {
     expect(json).toHaveProperty("chunk_num", 0);
     expect(json).toHaveProperty("total", 1);
     expect(json).toHaveProperty("completed", true);
-
-    if (json.project_id) {
-      createdProjectId = json.project_id;
-    }
+    expect(json).toHaveProperty("project_id");
+    createdProjectId = json.project_id;
   });
 
   test("Split-import without workspace_id returns 400", async ({

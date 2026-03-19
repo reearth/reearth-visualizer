@@ -1,23 +1,9 @@
-import fs from "fs";
-import path from "path";
-
 import { faker } from "@faker-js/faker";
 
 import { API_BASE_URL } from "../config/env";
 import { test, expect } from "../fixtures/api-test-fixtures";
 
-const tokenPath = path.join(__dirname, "../../.auth/api-token.json");
-
-function getAuthHeaders(): Record<string, string> {
-  const { token, extraHeaders } = JSON.parse(
-    fs.readFileSync(tokenPath, "utf-8")
-  );
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-    ...extraHeaders
-  };
-}
+import { getAuthHeaders } from "./test-helpers";
 
 test.describe("POST /api/signup", () => {
   test("Signup with valid payload returns user info", async ({ request }) => {
@@ -25,7 +11,7 @@ test.describe("POST /api/signup", () => {
     const email = `${name}@e2e-test.example.com`;
 
     const res = await request.post(`${API_BASE_URL}/api/signup`, {
-      headers: getAuthHeaders(),
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       data: {
         name,
         email,
@@ -48,13 +34,14 @@ test.describe("POST /api/signup", () => {
     }
   });
 
-  test("Signup with empty body returns 400", async ({ request }) => {
+  test("Signup with empty body returns client or server error", async ({
+    request
+  }) => {
     const res = await request.post(`${API_BASE_URL}/api/signup`, {
-      headers: getAuthHeaders(),
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       data: {}
     });
 
-    // Empty name/email should fail with a client or server error
     expect(res.status()).toBeGreaterThanOrEqual(400);
   });
 });

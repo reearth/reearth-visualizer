@@ -48,7 +48,7 @@ test.describe("Plugin install/uninstall lifecycle via API", () => {
     sceneId = sc.createScene.scene.id;
   });
 
-  test.skip(
+  test.fixme(
     "Uninstall and re-install the reearth plugin",
     // Server returns "not found" when uninstalling the built-in reearth plugin.
     // The built-in plugin cannot be managed via install/uninstall mutations.
