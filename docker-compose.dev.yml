@@ -52,7 +52,7 @@ services:
     profiles:
       - accounts
     env_file:
-      - ./accounts/.env.docker
+      - ./server/.env.accounts.docker
     ports:
       - 8090:8090
     depends_on:
