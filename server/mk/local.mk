@@ -66,6 +66,10 @@ run-standalone:
 	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
 run-app:
+	@if [ ! -f .env ]; then \
+		echo "Creating .env from .env.example..."; \
+		cp .env.example .env; \
+	fi
 	make d-run-accounts
 	make mockuser
 	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth

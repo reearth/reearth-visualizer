@@ -186,6 +186,10 @@ echo Done!
 goto :eof
 
 :runapp
+if not exist .env (
+  echo Creating .env from .env.example...
+  copy .env.example .env
+)
 call dev.bat d-run-accounts
 call dev.bat mockuser
 go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
