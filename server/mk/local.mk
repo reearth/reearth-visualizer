@@ -72,6 +72,8 @@ run-app:
 	fi
 	make d-run-accounts
 	make mockuser
+	make d-up-gcs
+	make gcs-bucket
 	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
 run-clean-start: clean run-app
