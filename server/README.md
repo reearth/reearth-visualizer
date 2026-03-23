@@ -15,7 +15,7 @@ There are two ways to start the development server depending on your workflow:
 Starts all services including the accounts API from Docker Hub (`reearth/reearth-accounts-api`):
 
 ```bash
-make run
+make d-run
 ```
 
 This starts: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
@@ -24,16 +24,16 @@ This starts: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GC
 
 If you are developing `reearth-accounts` locally and want to run it from source:
 
-**Terminal 1** — Start visualizer (without accounts API):
+**Terminal 1** — Start visualizer with accounts API:
 
 ```bash
 # In ~/reearth-visualizer/server
-make run-local
+make run-app
 ```
 
-This starts: **visualizer** + **MongoDB** + **GCS** (no accounts API)
+This starts accounts API in background, then runs the visualizer locally.
 
-**Terminal 2** — Start accounts API from local repo:
+**Terminal 2** — Or start accounts API from local repo:
 
 ```bash
 # In ~/reearth-accounts/server
@@ -47,7 +47,8 @@ The accounts API will join the `reearth` Docker network automatically.
 After the services are running, initialize GCS and create the demo user:
 
 ```bash
-make init
+make gcs-bucket
+make mockuser-accounts
 ```
 
 ### Database and Environment Reset
@@ -57,7 +58,7 @@ Reset the development environment including database and GCS:
 **Unix/Linux/macOS:**
 
 ```bash
-make reset
+make d-reset-data
 ```
 
 **Windows:**
@@ -81,7 +82,7 @@ Remove all Docker resources and data (use with caution):
 **Unix/Linux/macOS:**
 
 ```bash
-make destroy
+make d-destroy
 ```
 
 **Windows:**
@@ -107,10 +108,10 @@ Run linting and tests inside the Docker container (same environment as CI/CD):
 
 ```bash
 # Run linter with auto-fix
-make lint-docker
+make d-lint
 
 # Run tests
-make test-docker
+make d-test
 ```
 
 **Windows:**
@@ -125,7 +126,7 @@ dev.bat test-docker
 
 > **Note:**
 >
-> - These commands require the development container to be running (`make run` or `dev.bat run`)
+> - These commands require the development container to be running (`make d-run` or `dev.bat run`)
 > - Some e2e tests may fail in Docker due to MongoDB permission constraints
 > - For local e2e testing, use `make test` or `dev.bat test` instead
 
@@ -133,18 +134,19 @@ dev.bat test-docker
 
 | Command                                    | Description                                                    |
 | ------------------------------------------ | -------------------------------------------------------------- |
-| `make run`                                 | Start all services including accounts API from Docker Hub      |
-| `make run-local`                           | Start without accounts API (for local reearth-accounts dev)    |
-| `make init`                                | Initialize GCS bucket and create demo user                     |
-| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data            |
-| `make destroy` / `dev.bat destroy`         | ⚠️ Remove ALL Docker resources and data (destructive)          |
-| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container                          |
-| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                                  |
+| `make d-run`                               | Start all services including accounts API from Docker Hub      |
+| `make run-app`                             | Run visualizer locally with accounts API in Docker             |
+| `make gcs-bucket`                          | Initialize GCS bucket                                          |
+| `make mockuser-accounts`                   | Create demo user via accounts API                              |
+| `make d-reset-data` / `dev.bat reset`      | Reset database and GCS, reinitialize with mock data            |
+| `make d-destroy` / `dev.bat destroy`       | ⚠️ Remove ALL Docker resources and data (destructive)          |
+| `make d-lint` / `dev.bat lint-docker`      | Run golangci-lint in Docker container                          |
+| `make d-test` / `dev.bat test-docker`      | Run tests in Docker container                                  |
 
 ## 🔐 Authentication
 
 Authentication is handled by the shared service [Re:Earth Accounts](https://github.com/reearth/reearth-accounts).
-When using `make run`, a pre-built `reearth/reearth-accounts-api` container from Docker Hub is started automatically.
+When using `make d-run`, a pre-built `reearth/reearth-accounts-api` container from Docker Hub is started automatically.
 
 There are two authentication modes: **Mock User** (default) and **Identity Provider (IdP)**.
 
@@ -193,13 +195,13 @@ EOF
 
 ### Developing reearth-accounts locally
 
-If you need to develop `reearth-accounts` itself, use `make run-local` instead of `make run`:
+If you need to develop `reearth-accounts` itself, use `make run-app` or start services separately:
 
-**Terminal 1** — Start visualizer (without the accounts API container):
+**Terminal 1** — Start visualizer with Docker services:
 
 ```bash
 # In ~/reearth-visualizer/server
-make run-local
+make run-app
 ```
 
 **Terminal 2** — Clone and start accounts API from source:
@@ -233,7 +235,7 @@ Additionally, `REEARTH_ASSETBASEURL` is a required environment variable that is 
 1. Start the fake-gcs-server ([fake-gcs-server](https://github.com/fsouza/fake-gcs-server)):
 
    ```bash
-   make up-gcs
+   make d-up-gcs
    ```
 
 2. Create a bucket:
@@ -242,7 +244,7 @@ Additionally, `REEARTH_ASSETBASEURL` is a required environment variable that is 
 
    ```bash
    # Unix/Linux/macOS
-   make init-gcs
+   make gcs-bucket
 
    # Windows
    dev.bat init-gcs
