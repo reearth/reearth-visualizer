@@ -97,6 +97,10 @@ d-run:
 	${DOCKER_COMPOSE} --profile accounts up reearth-visualizer-dev
 
 d-run-accounts:
+	@if [ ! -f .env.accounts.docker ]; then \
+		echo "Creating .env.accounts.docker from .env.accounts.docker.example..."; \
+		cp .env.accounts.docker.example .env.accounts.docker; \
+	fi
 	${DOCKER_COMPOSE} up -d reearth-accounts-api
 
 d-run-db:

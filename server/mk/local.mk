@@ -64,6 +64,7 @@ migrate-with-key:
 
 run-app:
 	make d-run-accounts
+	make mockuser
 	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
 run-clean-start: clean run
