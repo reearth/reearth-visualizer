@@ -167,7 +167,7 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 			"workspace": bson.M{
 				"$in": targetWsList,
 			},
-			// "deleted":    false,
+			"deleted":    false,
 			"visibility": "public", // public only
 		}
 		if keyword != nil {
@@ -188,6 +188,7 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 			"workspace": bson.M{
 				"$in": matchOwnedWorkspaces,
 			},
+			"deleted": false,
 		})
 	}
 
@@ -197,8 +198,7 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 			"workspace": bson.M{
 				"$in": matchMemberWorkspaces,
 			},
-			// "deleted":    false,
-			// "visibility": "public",
+			"deleted": false,
 		})
 	}
 
@@ -517,11 +517,16 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 	return prj, nil
 }
 
-func (r *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountsID.WorkspaceID, projectAlias string) (*project.Project, error) {
-	prj, err := r.findOne(ctx, bson.M{
+func (r *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountsID.WorkspaceID, projectAlias string, excludeDeleted bool) (*project.Project, error) {
+	filter := bson.M{
 		"projectalias": projectAlias,
 		"workspace":    workspaceID.String(),
-	}, false)
+	}
+	if excludeDeleted {
+		filter["deleted"] = false
+	}
+
+	prj, err := r.findOne(ctx, filter, false)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {

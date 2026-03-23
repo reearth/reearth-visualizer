@@ -1548,34 +1548,34 @@ func TestProject_FindByWorkspaceIDAndProjectAlias(t *testing.T) {
 	r := NewProject(mongox.NewClientWithDatabase(c))
 
 	t.Run("Find project by workspace ID and project alias", func(t *testing.T) {
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "my-project")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "my-project", false)
 		assert.NoError(t, err)
 		assert.NotNil(t, got)
 		assert.Equal(t, prj1.ID(), got.ID())
 	})
 
 	t.Run("Find project with same alias in different workspace", func(t *testing.T) {
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid2, "my-project")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid2, "my-project", false)
 		assert.NoError(t, err)
 		assert.NotNil(t, got)
 		assert.Equal(t, prj3.ID(), got.ID())
 	})
 
 	t.Run("Return error for non-existent project alias", func(t *testing.T) {
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "non-existent")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "non-existent", false)
 		assert.Error(t, err)
 		assert.Nil(t, got)
 	})
 
 	t.Run("Return error for non-existent workspace ID", func(t *testing.T) {
 		nonExistentWid := accountsID.NewWorkspaceID()
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, nonExistentWid, "my-project")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, nonExistentWid, "my-project", false)
 		assert.Error(t, err)
 		assert.Nil(t, got)
 	})
 
 	t.Run("Find another project alias in same workspace", func(t *testing.T) {
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "another-project")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "another-project", false)
 		assert.NoError(t, err)
 		assert.NotNil(t, got)
 		assert.Equal(t, prj2.ID(), got.ID())

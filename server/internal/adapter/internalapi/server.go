@@ -550,7 +550,7 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 func (s server) GetProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, req *pb.GetProjectByWorkspaceAliasAndProjectAliasRequest) (*pb.GetProjectByWorkspaceAliasAndProjectAliasResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, op)
+	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, true, op)
 	if err != nil {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
 	}
@@ -568,7 +568,7 @@ func (s server) GetProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, r
 func (s server) UpdateProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, req *pb.UpdateProjectByWorkspaceAliasAndProjectAliasRequest) (*pb.UpdateProjectByWorkspaceAliasAndProjectAliasResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, op)
+	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, false, op)
 	if err != nil {
 		return nil, err
 	}
@@ -624,7 +624,7 @@ func (s server) UpdateProjectByWorkspaceAliasAndProjectAlias(ctx context.Context
 func (s server) DeleteProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, req *pb.DeleteProjectByWorkspaceAliasAndProjectAliasRequest) (*pb.DeleteProjectByWorkspaceAliasAndProjectAliasResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, op)
+	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, false, op)
 	if err != nil {
 		return nil, err
 	}
@@ -695,7 +695,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 		return nil, err
 	}
 
-	pj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, req.ProjectAlias, op)
+	pj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, req.ProjectAlias, true, op)
 	if err != nil {
 		return nil, err
 	}
