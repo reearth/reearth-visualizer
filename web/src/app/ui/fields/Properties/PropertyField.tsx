@@ -88,6 +88,7 @@ const PropertyField: FC<Props> = ({
             title={schema.title}
             value={(value as string) ?? ""}
             description={schema.description}
+            placeholder={schema.placeholder}
             options={
               schema?.choices?.map(({ key, label }) => ({
                 value: key,
@@ -105,6 +106,7 @@ const PropertyField: FC<Props> = ({
             resizable="height"
             value={(value as string) ?? ""}
             description={schema.description}
+            placeholder={schema.placeholder}
             onChangeComplete={handleChange}
           />
         ) : (
@@ -127,6 +129,7 @@ const PropertyField: FC<Props> = ({
           }
           value={(value as string) ?? ""}
           description={schema.description}
+          placeholder={schema.placeholder}
           onChange={handleChange}
         />
       ) : schema.type === "spacing" ? (
@@ -166,6 +169,7 @@ const PropertyField: FC<Props> = ({
             unit={schema.suffix}
             min={schema.min}
             max={schema.max}
+            placeholder={schema.placeholder}
             description={schema.description}
             onChangeComplete={handleChange}
           />

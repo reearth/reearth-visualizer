@@ -77,9 +77,13 @@ const StyledTextArea = styled("textarea")(() => ({
   outline: "none"
 }));
 
-const MarkdownWrapper = styled("div")(() => ({
+const MarkdownWrapper = styled("div")(({ theme }) => ({
+  backgroundColor: "transparent",
   "@media (prefers-color-scheme: dark)": {
-    all: css.all.unset
+    all: css.all.unset,
+    "& table": {
+      color: theme.content.main
+    }
   },
   "& ul": {
     listStyleType: "initial"
