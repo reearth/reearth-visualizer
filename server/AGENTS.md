@@ -12,6 +12,7 @@
 ## Build, Test, and Development Commands
 - `make build`: Compile server binary from `cmd/reearth`.
 - `make run-app`: Run locally with accounts API and mock user (auto-starts mock environment).
+- `make run-standalone`: Run visualizer standalone (without accounts API).
 - `make dev`: Run with Air hot reload (installs tools if needed).
 - `make lint`: Run `golangci-lint` with auto-fix (local).
 - `make d-lint`: Run `golangci-lint` in Docker container.

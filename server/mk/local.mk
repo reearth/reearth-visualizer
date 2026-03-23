@@ -62,6 +62,9 @@ migrate-with-key:
 	RUN_MIGRATION=true MIGRATION_KEY=$(MIGRATION_KEY) REEARTH_DB=${REEARTH_DB} REEARTH_DB_VIS=${REEARTH_DB_VIS} go run ./cmd/reearth
 	@echo "✓ Migration complete!"
 
+run-standalone:
+	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
+
 run-app:
 	make d-run-accounts
 	make mockuser
@@ -79,4 +82,4 @@ test:
 test-debug:
 	go test -v -timeout 10s ${TEST_DIR} | tee test.log
 
-.PHONY: build clean deep-copy dev dev-install e2e error-msg generate gql lint migrate migrate-with-key run-app run-clean-start schematyper test test-debug
+.PHONY: build clean deep-copy dev dev-install e2e error-msg generate gql lint migrate migrate-with-key run-app run-clean-start run-standalone schematyper test test-debug

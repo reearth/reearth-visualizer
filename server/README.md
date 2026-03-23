@@ -136,6 +136,7 @@ dev.bat test-docker
 | ------------------------------------------ | -------------------------------------------------------------- |
 | `make d-run`                               | Start all services including accounts API from Docker Hub      |
 | `make run-app`                             | Run visualizer locally with accounts API in Docker             |
+| `make run-standalone`                      | Run visualizer standalone (without accounts API)               |
 | `make gcs-bucket`                          | Initialize GCS bucket                                          |
 | `make mockuser-accounts`                   | Create demo user via accounts API                              |
 | `make d-reset-data` / `dev.bat reset`      | Reset database and GCS, reinitialize with mock data            |

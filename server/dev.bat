@@ -35,6 +35,7 @@ if "%1"=="lint" goto lint
 if "%1"=="migrate" goto migrate
 if "%1"=="migrate-with-key" goto migratewithkey
 if "%1"=="run-app" goto runapp
+if "%1"=="run-standalone" goto runstandalone
 if "%1"=="schematyper" goto schematyper
 if "%1"=="test" goto test
 if "%1"=="test-debug" goto testdebug
@@ -80,6 +81,7 @@ echo   lint              Run golangci-lint with auto-fix
 echo   migrate           Run database migration
 echo   migrate-with-key  Run database migration with MIGRATION_KEY
 echo   run-app           Run the application with accounts API
+echo   run-standalone    Run the visualizer standalone
 echo   schematyper       Generate schema using schematyper
 echo   test              Run unit tests
 echo   test-debug        Run unit tests with verbose output
@@ -186,6 +188,10 @@ goto :eof
 :runapp
 call dev.bat d-run-accounts
 call dev.bat mockuser
+go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
+goto :eof
+
+:runstandalone
 go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
 goto :eof
 
