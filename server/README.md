@@ -24,16 +24,7 @@ This starts: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GC
 
 If you are developing `reearth-accounts` locally and want to run it from source:
 
-**Terminal 1** — Start visualizer with accounts API:
-
-```bash
-# In ~/reearth-visualizer/server
-make run-app
-```
-
-This starts accounts API in background, then runs the visualizer locally.
-
-**Terminal 2** — Or start accounts API from local repo:
+**Terminal 1** — Start accounts API from local repo:
 
 ```bash
 # In ~/reearth-accounts/server
@@ -41,6 +32,15 @@ make run
 ```
 
 The accounts API will join the `reearth` Docker network automatically.
+
+**Terminal 2** — Start visualizer standalone:
+
+```bash
+# In ~/reearth-visualizer/server
+make run-standalone
+```
+
+This runs the visualizer without starting the Docker-based accounts API.
 
 #### After startup: Initialize the environment
 
