@@ -103,6 +103,10 @@ d-run-accounts:
 	fi
 	${DOCKER_COMPOSE} up -d reearth-accounts-api
 
+# This is alias for backward compatibility
+run-db:
+	make d-run-db
+
 d-run-db:
 	${DOCKER_COMPOSE} up -d reearth-mongo
 
