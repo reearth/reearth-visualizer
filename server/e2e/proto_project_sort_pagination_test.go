@@ -45,7 +45,7 @@ func TestInternalAPI_GetProjectList_Owner(t *testing.T) {
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*4, // all project
+			testDataCount*2, // active projects only (deleted excluded)
 		)
 
 		// ASC Name
@@ -56,7 +56,7 @@ func TestInternalAPI_GetProjectList_Owner(t *testing.T) {
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*4, // all project
+			testDataCount*2, // active projects only (deleted excluded)
 		)
 
 		// DESC UpdateAt
@@ -67,7 +67,7 @@ func TestInternalAPI_GetProjectList_Owner(t *testing.T) {
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*4, // all project
+			testDataCount*2, // active projects only (deleted excluded)
 		)
 
 		// DESC Name
@@ -78,7 +78,7 @@ func TestInternalAPI_GetProjectList_Owner(t *testing.T) {
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*4, // all project
+			testDataCount*2, // active projects only (deleted excluded)
 		)
 
 		// keyword search
@@ -91,7 +91,7 @@ func TestInternalAPI_GetProjectList_Owner(t *testing.T) {
 			},
 			&keyword,
 			limit,
-			26,
+			22, // active projects matching keyword "2" (deleted excluded)
 		)
 
 	})
@@ -132,7 +132,7 @@ func TestInternalAPI_GetProjectList_Member(t *testing.T) {
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*4, // all project
+			testDataCount*2, // active projects only (deleted excluded)
 		)
 
 		// ASC Name
@@ -143,7 +143,7 @@ func TestInternalAPI_GetProjectList_Member(t *testing.T) {
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*4, // all project
+			testDataCount*2, // active projects only (deleted excluded)
 		)
 
 		// DESC UpdateAt
@@ -154,7 +154,7 @@ func TestInternalAPI_GetProjectList_Member(t *testing.T) {
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*4, // all project
+			testDataCount*2, // active projects only (deleted excluded)
 		)
 
 		// DESC Name
@@ -165,7 +165,7 @@ func TestInternalAPI_GetProjectList_Member(t *testing.T) {
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*4, // all project
+			testDataCount*2, // active projects only (deleted excluded)
 		)
 
 		// keyword search
@@ -178,7 +178,7 @@ func TestInternalAPI_GetProjectList_Member(t *testing.T) {
 			},
 			&keyword,
 			limit,
-			26,
+			22, // active projects matching keyword "2" (deleted excluded)
 		)
 
 	})
@@ -214,7 +214,7 @@ func TestInternalAPI_GetProjectList_Anonymous(t *testing.T) {
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*2, // public project only
+			testDataCount*1, // active public projects only (deleted excluded)
 		)
 
 		// ASC Name
@@ -225,7 +225,7 @@ func TestInternalAPI_GetProjectList_Anonymous(t *testing.T) {
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*2, // public project only
+			testDataCount*1, // active public projects only (deleted excluded)
 		)
 
 		// DESC UpdateAt
@@ -236,7 +236,7 @@ func TestInternalAPI_GetProjectList_Anonymous(t *testing.T) {
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*2, // public project only
+			testDataCount*1, // active public projects only (deleted excluded)
 		)
 
 		// DESC Name
@@ -247,7 +247,7 @@ func TestInternalAPI_GetProjectList_Anonymous(t *testing.T) {
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*2, // public project only
+			testDataCount*1, // active public projects only (deleted excluded)
 		)
 
 		// keyword search
@@ -260,7 +260,7 @@ func TestInternalAPI_GetProjectList_Anonymous(t *testing.T) {
 			},
 			&keyword,
 			limit,
-			22,
+			20, // active public projects matching keyword "2" (deleted excluded)
 		)
 
 	})
