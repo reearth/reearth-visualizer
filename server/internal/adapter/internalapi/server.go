@@ -695,7 +695,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 		return nil, err
 	}
 
-	pj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, req.ProjectAlias, true, op)
+	pj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, req.ProjectAlias, false, op)
 	if err != nil {
 		return nil, err
 	}
