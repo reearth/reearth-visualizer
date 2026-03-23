@@ -74,15 +74,14 @@ d-migrate-with-key:
 	fi
 
 d-reset-data:
-	@echo "==== Stopping database and GCS services ===="
-	${DOCKER_COMPOSE} stop reearth-mongo reearth-gcs
-	${DOCKER_COMPOSE} rm -f reearth-mongo reearth-gcs || true
+	@echo "==== Stopping all services ===="
+	${DOCKER_COMPOSE} --profile accounts down
 	@echo ""
 	@echo "==== Removing data directory (requires sudo password) ===="
 	sudo rm -rf tmp/gcs tmp/mongo
 	@echo ""
-	@echo "==== Starting database and GCS services ===="
-	${DOCKER_COMPOSE} up -d reearth-mongo reearth-gcs
+	@echo "==== Starting all services ===="
+	${DOCKER_COMPOSE} --profile accounts up -d reearth-mongo reearth-gcs reearth-accounts-api
 	@echo ""
 	@echo "==== Waiting for services to be ready (3 seconds) ===="
 	@echo "3..."
@@ -91,16 +90,16 @@ d-reset-data:
 	sleep 1
 	@echo "1..."
 	sleep 1
-	@echo "==== Initializing GCS bucket ===="
-	make gcs-bucket
-	@echo ""
-	@echo "==== Creating mock user ===="
-	make mockuser-accounts
+	@echo "==== Initializing GCS bucket and mock user ===="
+	make init
 	@echo ""
 	@echo "✓ Reset complete!"
 
 d-run:
 	${DOCKER_COMPOSE} --profile accounts up reearth-visualizer-dev
+
+d-logs-accounts:
+	docker logs -f reearth-visualizer-reearth-accounts-api-1
 
 d-run-accounts:
 	@if [ ! -f .env.accounts.docker ]; then \
@@ -138,4 +137,4 @@ d-test:
 d-up-gcs:
 	${DOCKER_COMPOSE} up -d reearth-gcs
 
-.PHONY: d-destroy d-down d-down-internal d-down-gcs d-lint d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-test d-up-gcs
+.PHONY: d-destroy d-down d-down-internal d-down-gcs d-lint d-logs-accounts d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-test d-up-gcs

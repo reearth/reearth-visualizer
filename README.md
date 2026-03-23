@@ -45,16 +45,23 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
 
 ### 🖥️ macOS / Linux
 
-1. Navigate to the `server` directory and start the backend server.  
-   This command will automatically start the database and mock GCS storage:
+1. Navigate to the `server` directory and create the environment files:
 
    ```bash
    cd server
-   make run
+   cp .env.docker.example .env.docker
+   cp .env.accounts.docker.example .env.accounts.docker
    ```
 
-2. Initialize the development environment.  
-   This creates a mock user and sets up the mock GCS bucket.  
+2. Start the backend server.
+   This command will automatically start the database and mock GCS storage:
+
+   ```bash
+   make d-run
+   ```
+
+3. Initialize the development environment.
+   This creates a mock user and sets up the mock GCS bucket.
    This step is only required for the first-time setup:
 
    ```bash
@@ -69,21 +76,28 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    cd server
    ```
 
-2. Set an alias to use `dv` as a shortcut for `make`:
+2. Set an alias to use `dv` as a shortcut for `dev.ps1`:
 
    ```powershell
-   Set-Alias dv .\dev.bat
+   Set-Alias dv .\dev.ps1
    ```
 
-3. Start the backend server.  
+3. Create the environment files:
+
+   ```powershell
+   Copy-Item .env.docker.example .env.docker
+   Copy-Item .env.accounts.docker.example .env.accounts.docker
+   ```
+
+4. Start the backend server.
    This will automatically start the database and mock GCS storage:
 
    ```powershell
-   dv run
+   dv d-run
    ```
 
-4. Initialize the development environment.  
-   This creates a mock user and sets up the mock GCS bucket.  
+5. Initialize the development environment.
+   This creates a mock user and sets up the mock GCS bucket.
    This step is only required for the first-time setup:
 
    ```powershell
