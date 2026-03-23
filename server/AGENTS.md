@@ -11,18 +11,21 @@
 
 ## Build, Test, and Development Commands
 - `make build`: Compile server binary from `cmd/reearth`.
-- `make run-app`: Run locally without hot reload.
+- `make run-app`: Run locally with accounts API and mock user (auto-starts mock environment).
 - `make dev`: Run with Air hot reload (installs tools if needed).
-- `make lint`: Run `golangci-lint` with auto-fix.
+- `make lint`: Run `golangci-lint` with auto-fix (local).
+- `make d-lint`: Run `golangci-lint` in Docker container.
 - `make test`: Run unit tests (`go test ./...`).
+- `make d-test`: Run unit tests in Docker container.
 - `make e2e`: Run end-to-end tests (`go test -v ./e2e/...`).
-- `make run-db`: Start MongoDB via `../docker-compose.yml`.
-- `make run-reset`: Reset local DB and seed mock user (destructive; removes `../mongo` and `data`).
+- `make d-run`: Start all services (visualizer + accounts API + Cerbos + MongoDB + GCS) via Docker.
+- `make d-run-db`: Start MongoDB via `../docker-compose.yml`.
+- `make d-reset-data`: Reset local DB and GCS, seed mock user (destructive).
 - `make gql` / `make generate`: Run GraphQL and general codegen.
 
 Examples:
 - Coverage: `go test ./... -cover -coverprofile=coverage.txt`.
-- Fake GCS: `make up-gcs` (see README for usage).
+- Fake GCS: `make d-up-gcs` (see README for usage).
 
 ## Coding Style & Naming Conventions
 - Language: Go. Format with `gofmt -s -w` (CI enforces via `golangci-lint`).
