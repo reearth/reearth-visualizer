@@ -74,7 +74,7 @@ run-app:
 	make mockuser
 	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
-run-clean-start: clean run
+run-clean-start: clean run-app
 
 schematyper:
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json

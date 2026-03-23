@@ -29,7 +29,8 @@ d-down:
 	${DOCKER_COMPOSE} --profile accounts down
 
 d-down-gcs:
-	${DOCKER_COMPOSE} down gcs
+	${DOCKER_COMPOSE} stop reearth-gcs
+	${DOCKER_COMPOSE} rm -f reearth-gcs || true
 
 d-lint:
 	@echo "Running golangci-lint in Docker container..."
@@ -70,7 +71,8 @@ d-migrate-with-key:
 
 d-reset-data:
 	@echo "==== Stopping database and GCS services ===="
-	${DOCKER_COMPOSE} down reearth-mongo reearth-gcs
+	${DOCKER_COMPOSE} stop reearth-mongo reearth-gcs
+	${DOCKER_COMPOSE} rm -f reearth-mongo reearth-gcs || true
 	@echo ""
 	@echo "==== Removing data directory (requires sudo password) ===="
 	sudo rm -rf tmp/gcs tmp/mongo
@@ -130,6 +132,6 @@ d-test:
 	fi
 
 d-up-gcs:
-	${DOCKER_COMPOSE} up -d gcs
+	${DOCKER_COMPOSE} up -d reearth-gcs
 
-.PHONY: d-destroy d-down d-down-gcs d-lint d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts d-run-db d-run-internal d-run-reset d-test d-up-gcs
+.PHONY: d-destroy d-down d-down-gcs d-lint d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-test d-up-gcs

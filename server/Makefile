@@ -45,6 +45,7 @@ help:
 	@echo "  migrate           Run database migration"
 	@echo "  migrate-with-key  Run database migration with MIGRATION_KEY"
 	@echo "  run-app           Run the application with accounts API"
+	@echo "  run-standalone    Run the application in standalone mode"
 	@echo "  schematyper       Generate schema using schematyper"
 	@echo "  test              Run unit tests"
 	@echo "  test-debug        Run unit tests with verbose output"

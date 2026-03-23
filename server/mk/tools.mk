@@ -5,7 +5,7 @@
 auth0-accounts:
 	curl -s -D - -o /dev/null \
 		-H 'Content-Type: application/json' \
-		-d '{"query":"mutation($$input:SignupOIDCInput!){signupOIDC(input:$$input){user{id name email}}}","variables":{"input":{"email":"y.soneda@eukarya.io","name":"y.soneda","sub":"677b86d8274ea6264bce1c1e", "secret": ""}}}' \
+		-d '{"query":"mutation($$input:SignupOIDCInput!){signupOIDC(input:$$input){user{id name email}}}","variables":{"input":{"email":"user@example.com","name":"Example User","sub":"auth0|example-sub-id", "secret": ""}}}' \
 		http://localhost:8090/api/graphql | head -n 1
 
 gcs-bucket:
@@ -24,4 +24,4 @@ mockuser-accounts:
 		-d '{"query":"mutation($$input:SignupInput!){signup(input:$$input){user{id name email}}}","variables":{"input":{"email":"demo@example.com","name":"Demo User","password":"Passw0rd!"}}}' \
 		http://localhost:8090/api/graphql | head -n 1
 
-.PHONY: auth0-accounts gcs-bucket mockuser-accounts
+.PHONY: auth0-accounts gcs-bucket mockuser mockuser-accounts

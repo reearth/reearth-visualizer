@@ -126,7 +126,7 @@ dev.bat test-docker
 
 > **Note:**
 >
-> - These commands require the development container to be running (`make d-run` or `dev.bat run`)
+> - These commands require the development container to be running (`make d-run` or `dev.bat d-run`)
 > - Some e2e tests may fail in Docker due to MongoDB permission constraints
 > - For local e2e testing, use `make test` or `dev.bat test` instead
 
@@ -141,8 +141,8 @@ dev.bat test-docker
 | `make mockuser-accounts`                   | Create demo user via accounts API                              |
 | `make d-reset-data` / `dev.bat reset`      | Reset database and GCS, reinitialize with mock data            |
 | `make d-destroy` / `dev.bat destroy`       | ⚠️ Remove ALL Docker resources and data (destructive)          |
-| `make d-lint` / `dev.bat lint-docker`      | Run golangci-lint in Docker container                          |
-| `make d-test` / `dev.bat test-docker`      | Run tests in Docker container                                  |
+| `make d-lint` / `dev.bat d-lint`           | Run golangci-lint in Docker container                          |
+| `make d-test` / `dev.bat d-test`           | Run tests in Docker container                                  |
 
 ## 🔐 Authentication
 
@@ -164,7 +164,7 @@ REEARTH_WEB_AUTH_PROVIDER=mock
 
 ### 2. Identity Provider (IdP) Mode
 
-To use an IdP (e.g. Auth0), edit `accounts/.env.docker` with your Auth0 credentials:
+To use an IdP (e.g. Auth0), edit `server/.env.accounts.docker` with your Auth0 credentials:
 
 ```bash
 REEARTH_MOCK_AUTH=false
@@ -248,7 +248,7 @@ Additionally, `REEARTH_ASSETBASEURL` is a required environment variable that is 
    make gcs-bucket
 
    # Windows
-   dev.bat init-gcs
+   dev.bat gcs-bucket
    ```
 
    **Manual Creation (Advanced):**

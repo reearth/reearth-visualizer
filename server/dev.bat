@@ -241,7 +241,8 @@ goto :eof
 goto :eof
 
 :ddowngcs
-%DOCKER_COMPOSE% down gcs
+%DOCKER_COMPOSE% stop reearth-gcs
+%DOCKER_COMPOSE% rm -f reearth-gcs
 goto :eof
 
 :dlint
@@ -348,7 +349,7 @@ if %errorlevel% equ 0 (
 goto :eof
 
 :dupgcs
-%DOCKER_COMPOSE% up -d gcs
+%DOCKER_COMPOSE% up -d reearth-gcs
 goto :eof
 
 REM ==========================
@@ -358,7 +359,7 @@ REM ==========================
 :auth0accounts
 curl -s -D - -o nul ^
   -H "Content-Type: application/json" ^
-  -d "{\"query\":\"mutation($input:SignupOIDCInput!){signupOIDC(input:$input){user{id name email}}}\",\"variables\":{\"input\":{\"email\":\"y.soneda@eukarya.io\",\"name\":\"y.soneda\",\"sub\":\"677b86d8274ea6264bce1c1e\",\"secret\":\"\"}}}" ^
+  -d "{\"query\":\"mutation($input:SignupOIDCInput!){signupOIDC(input:$input){user{id name email}}}\",\"variables\":{\"input\":{\"email\":\"user@example.com\",\"name\":\"Example User\",\"sub\":\"auth0|example-sub-id\",\"secret\":\"\"}}}" ^
   http://localhost:8090/api/graphql
 goto :eof
 
