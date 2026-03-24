@@ -1415,6 +1415,24 @@ extensions:
         fields:
           padding:
             title: 余白
+  linkInfoboxBetaBlock:
+    name: リンク
+    description: インフォボックスリンクブロック
+    propertySchema:
+      default:
+        title: リンクブロック
+        fields:
+          text:
+            title: 表示テキスト
+            placeholder: ${プロパティの値}
+          url:
+            title: URL
+            placeholder: ${プロパティの値}
+      panel:
+        title: パネル設定
+        fields:
+          padding:
+            title: 余白
   linkButtonStoryBlock:
     name: リンクボタン
     description: ストーリーテリングリンクボタン
