@@ -119,6 +119,12 @@ make gcs-bucket
 make mockuser-accounts
 ```
 
+Or simply:
+
+```bash
+make init
+```
+
 ### Database and Environment Reset
 
 Reset the development environment including database and GCS:
@@ -214,6 +220,8 @@ REEARTH_AUTH0_CLIENTID=your-auth0-client-id
 REEARTH_AUTH0_CLIENTSECRET=your-auth0-client-secret
 REEARTH_AUTH0_WEBCLIENTID=your-auth0-web-client-id
 ```
+
+> If you are using the [local accounts development](#local-accounts-development-using-local-reearth-accounts-repo) method, edit `reearth-accounts/server/.env.docker` instead.
 
 Also update **web/.env**:
 
