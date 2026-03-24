@@ -42,39 +42,49 @@ graph TB
 
 ### Starting the Development Server
 
-There are two ways to start the development server depending on your workflow:
-
-#### Default: Using Docker Hub image for accounts API
-
-Starts all services including the accounts API from Docker Hub (`reearth/reearth-accounts-api`):
+Start all backend services with a single command:
 
 ```bash
 make d-run
 ```
 
-This starts: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
+This brings up all required containers with their dependencies: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
+
+To stop all services:
+
+```bash
+make d-down
+```
+
+To check the accounts API logs:
+
+```bash
+make d-logs-accounts
+```
+
+The above method uses the public image `reearth/reearth-accounts-api:v1.0.0` from Docker Hub.
+If you are developing `reearth-accounts` locally, you can also run it from source:
 
 #### Local accounts development: Using local reearth-accounts repo
 
-If you are developing `reearth-accounts` locally and want to run it from source:
-
-**Terminal 1** — Start accounts API from local repo:
+**Terminal 1** — Start visualizer without accounts (visualizer + mongo + gcs only):
 
 ```bash
-# In ~/reearth-accounts/server
+make d-run-standalone
+```
+
+**Terminal 2** — Clone and start accounts API from source:
+
+```bash
+git clone https://github.com/reearth/reearth-accounts.git
+cd reearth-accounts/server
+cp .env.docker.example .env.docker
 make run
 ```
 
-The accounts API will join the `reearth` Docker network automatically.
+This starts `reearth-accounts-dev` and `reearth-cerbos` and attaches them to the `reearth` Docker network.
 
-**Terminal 2** — Start visualizer standalone:
-
-```bash
-# In ~/reearth-visualizer/server
-make run-standalone
-```
-
-This runs the visualizer without starting the Docker-based accounts API.
+The local accounts API will join the `reearth` Docker network automatically and override the Docker Hub image.
 
 #### After startup: Initialize the environment
 

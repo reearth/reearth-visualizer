@@ -98,6 +98,9 @@ d-reset-data:
 d-run:
 	${DOCKER_COMPOSE} --profile accounts up reearth-visualizer-dev
 
+d-run-standalone:
+	${DOCKER_COMPOSE} up reearth-visualizer-dev
+
 d-logs-accounts:
 	docker logs -f reearth-visualizer-reearth-accounts-api-1
 
@@ -137,4 +140,4 @@ d-test:
 d-up-gcs:
 	${DOCKER_COMPOSE} up -d reearth-gcs
 
-.PHONY: d-destroy d-down d-down-internal d-down-gcs d-lint d-logs-accounts d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-test d-up-gcs
+.PHONY: d-destroy d-down d-down-internal d-down-gcs d-lint d-logs-accounts d-migrate d-migrate-with-key d-reset-data d-run d-run-standalone d-run-accounts run-db d-run-db d-run-internal d-run-reset d-test d-up-gcs
