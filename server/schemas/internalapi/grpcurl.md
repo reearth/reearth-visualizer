@@ -3,10 +3,7 @@
 ## Setup
 
 ```bash
-# 1. Set token in .env.docker
-REEARTH_VISUALIZER_INTERNALAPI_TOKEN=test-abc-123
-
-# 2. Start internal API server
+# 1. Start internal API server
 make d-run-internal
 
 # 3. Stop

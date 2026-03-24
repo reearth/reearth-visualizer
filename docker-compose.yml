@@ -32,7 +32,6 @@ services:
     environment:
       - SKIP_DOTENV=true
       - REEARTH_VISUALIZER_INTERNALAPI_ACTIVE=true
-      - REEARTH_VISUALIZER_INTERNALAPI_TOKEN=test-abc-123
     env_file:
       - path: ./server/.env.docker
         required: false
