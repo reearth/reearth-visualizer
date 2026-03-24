@@ -252,25 +252,6 @@ curl -H 'Content-Type: application/json' http://localhost:8080/api/signup -d @- 
 EOF
 ```
 
-## Storage
-
-Visualizer is compatible with the following storage interfaces:
-
-- [Google Cloud Storage](https://cloud.google.com/storage)
-- [Amazon S3](https://aws.amazon.com/s3/)
-- Local File System
-
-### Storage Configuration
-
-To use these storage interfaces, you need to set the following environment variables in order of priority:
-
-1. `REEARTH_GCS_BUCKETNAME`: Set this to use Google Cloud Storage.
-2. `REEARTH_S3_BUCKET_NAME`: Set this to use Amazon S3.
-
-If neither `REEARTH_GCS_BUCKETNAME` nor `REEARTH_S3_BUCKET_NAME` is configured, the local file system will be used as the default storage interface.
-
-Additionally, `REEARTH_ASSETBASEURL` is a required environment variable that is used across all storage types. This should be set to the base URL for accessing your stored assets.
-
 ## Project Export and Import
 
 Re:Earth provides functionality to export and import complete projects including all associated data.
@@ -298,12 +279,14 @@ Projects can be exported via the GraphQL API using the `ExportProject` mutation.
 
 ```
 project.zip
-├── project.json       # Complete project data with metadata
-├── assets/           # Project assets
-│   ├── image1.png
-│   └── model.gltf
-└── plugins/          # Plugin files
-    └── plugin1/
+├── project.json                        # Complete project data with metadata
+├── assets/                             # Project assets
+│   ├── {asset-filename-1}
+│   └── {asset-filename-2}
+└── plugins/                            # Plugin files
+    └── {plugin-id}/
+        ├── {extension-id-1}.js
+        └── {extension-id-2}.js
 ```
 
 #### Export Data Version
@@ -314,7 +297,7 @@ The `exportDataVersion` field enables compatibility management for future format
 - Version is embedded in `exportedInfo` section of `project.json`
 - Future versions can support schema migrations and new features
 
-**File**: `internal/adapter/gql/resolver_mutation_project.go:149`
+**File**: `internal/adapter/gql/resolver_mutation_project.go:219`
 
 ### Import
 
@@ -400,7 +383,7 @@ if version != nil && *version == "2" {
 return importV1(...)
 ```
 
-**File**: `internal/app/file_import_common.go:193`
+**File**: `internal/app/file_import_common.go:250`
 
 ### Error Handling
 
@@ -414,6 +397,7 @@ All import steps update project status on failure:
 
 - `ProjectImportStatusNone` - Not imported
 - `ProjectImportStatusUploading` - Upload in progress
+- `ProjectImportStatusProcessing` - Import processing
 - `ProjectImportStatusSuccess` - Import completed successfully
 - `ProjectImportStatusFailed` - Import failed (check `importResultLog`)
 
