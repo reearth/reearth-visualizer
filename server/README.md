@@ -200,13 +200,21 @@ There are two authentication modes: **Mock User** (default) and **Identity Provi
 ### 1. Mock User Mode (Default)
 
 Uses a demo user for local development without requiring an external IdP.
-No additional configuration is needed — this is the default.
+No additional configuration is needed — these are the defaults.
 
 **web/.env**
 
 ```bash
 REEARTH_WEB_AUTH_PROVIDER=mock
 ```
+
+**server/.env.accounts.docker**
+
+```bash
+REEARTH_MOCK_AUTH=true
+```
+
+> If you are using the [local accounts development](#local-accounts-development-using-local-reearth-accounts-repo) method, edit `reearth-accounts/server/.env.docker` instead.
 
 ### 2. Identity Provider (IdP) Mode
 
