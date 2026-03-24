@@ -2,6 +2,7 @@ import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/Blo
 import type { CommonBlockProps as BlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import type { ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo } from "react";
 
 import { InfoboxBlock } from "../../../types";
@@ -79,14 +80,14 @@ const Link = styled("span")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   minWidth: 0,
-  wordWrap: "break-word",
-  color: "#0066cc",
-  textDecoration: "underline",
-  cursor: "pointer",
-  position: "relative",
+  wordWrap: css.wordBreak.breakWord,
+  color: theme.primary.main,
+  textDecoration: css.textDecoration.underline,
+  cursor: css.cursor.pointer,
+  position: css.position.relative,
   zIndex: 1,
   "&:hover": {
-    color: "#004499"
+    color: theme.primary.strong
   }
 }));
 
@@ -94,7 +95,7 @@ const PlainText = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   minWidth: 0,
-  wordWrap: "break-word",
-  color: "#0066cc",
-  textDecoration: "underline"
+  wordWrap: css.wordBreak.breakWord,
+  color: theme.primary.main,
+  textDecoration: css.textDecoration.underline
 }));
