@@ -69,6 +69,8 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    make init
    ```
 
+> For more details on backend development commands, see [server/README.md](server/README.md).
+
 ---
 
 ## Start Frontend Service

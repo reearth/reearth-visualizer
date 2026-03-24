@@ -4,6 +4,40 @@
 
 A back-end API server application for Re:Earth
 
+## Architecture
+
+The development environment runs the following containers via Docker Compose:
+
+```mermaid
+graph TB
+    subgraph host["Host Machine"]
+        Web["Web (Frontend)<br/>:3000"]
+    end
+
+    subgraph docker["Docker Network: reearth"]
+        Visualizer["reearth-visualizer-dev<br/>(Go + Air hot reload)<br/>:8080"]
+        Accounts["reearth-accounts-api<br/>(reearth/reearth-accounts-api:v1.0.0)<br/>:8090"]
+        Cerbos["reearth-cerbos<br/>(cerbos/cerbos:0.40.0)<br/>:3593"]
+        Mongo["reearth-mongo<br/>(mongo:7)<br/>:27017"]
+        GCS["reearth-gcs<br/>(fake-gcs-server:1.52.1)<br/>:4443"]
+    end
+
+    Web -- "API requests" --> Visualizer
+    Visualizer --> Mongo
+    Visualizer --> GCS
+    Visualizer --> Accounts
+    Accounts --> Mongo
+    Accounts --> Cerbos
+```
+
+| Container | Image | Port | Description |
+| --- | --- | --- | --- |
+| reearth-visualizer-dev | (local build) | 8080 | Visualizer API server with hot reload |
+| reearth-accounts-api | reearth/reearth-accounts-api:v1.0.0 | 8090 | User/workspace management API |
+| reearth-cerbos | cerbos/cerbos:0.40.0 | 3593 | Authorization policy engine |
+| reearth-mongo | mongo:7 | 27017 | MongoDB (shared by visualizer and accounts) |
+| reearth-gcs | fsouza/fake-gcs-server:1.52.1 | 4443 | Fake GCS for local asset storage |
+
 ## 🛠️ Useful Development Commands
 
 ### Starting the Development Server
