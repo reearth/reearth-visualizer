@@ -88,4 +88,4 @@ test:
 test-debug:
 	go test -v -timeout 10s ${TEST_DIR} | tee test.log
 
-.PHONY: build clean deep-copy dev dev-install e2e error-msg generate grpc grpc-doc gql lint migrate migrate-with-key run-app run-clean-start run-standalone schematyper test test-debug
+.PHONY: build clean deep-copy dev dev-install e2e error-msg generate gql lint migrate migrate-with-key run-app run-clean-start run-standalone schematyper test test-debug

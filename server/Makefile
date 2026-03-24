@@ -40,8 +40,6 @@ help:
 	@echo "  e2e               Run end-to-end tests"
 	@echo "  error-msg         Generate error messages"
 	@echo "  generate          Run go generate"
-	@echo "  grpc              Generate gRPC Go code from proto"
-	@echo "  grpc-doc          Generate internal API docs from proto"
 	@echo "  gql               Generate GraphQL code"
 	@echo "  lint              Run golangci-lint with auto-fix"
 	@echo "  migrate           Run database migration"
