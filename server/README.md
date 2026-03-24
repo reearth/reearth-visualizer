@@ -124,7 +124,7 @@ make mockuser-accounts
 Or simply:
 
 ```bash
-make init
+make setup-dev
 ```
 
 ### Database and Environment Reset
@@ -186,7 +186,7 @@ make d-test
 | `make d-run-standalone` | Start visualizer without accounts API (mongo + gcs only) |
 | `make d-down` | Stop all services |
 | `make d-logs-accounts` | Follow accounts API logs |
-| `make init` | Initialize GCS bucket and create mock user |
+| `make setup-dev` | Initialize GCS bucket and create mock user |
 | `make d-reset-data` | Reset database and GCS, reinitialize with mock data |
 | `make d-destroy` | Remove ALL Docker resources and data (destructive) |
 | `make d-lint` | Run golangci-lint in Docker container |

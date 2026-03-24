@@ -69,7 +69,7 @@ help:
 	@echo "  d-up-gcs          Start fake GCS server"
 	@echo ""
 	@echo "Setup:"
-	@echo "  init              Initialize GCS bucket and create mock user"
+	@echo "  setup-dev         Initialize GCS bucket and create mock user"
 	@echo "  auth0-accounts    Create a user via Auth0 OIDC"
 	@echo "  gcs-bucket        Initialize GCS bucket"
 	@echo "  mockuser-accounts Create a mock user via accounts API"

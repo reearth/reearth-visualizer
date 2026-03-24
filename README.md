@@ -45,17 +45,15 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
 
 > **Windows users**: Please use [WSL (Windows Subsystem for Linux)](https://learn.microsoft.com/en-us/windows/wsl/install) for development. All commands below work within WSL.
 
-1. Clone the repository and create the environment files:
+1. Clone the repository:
 
    ```bash
    git clone https://github.com/reearth/reearth-visualizer.git
    cd reearth-visualizer/server
-   cp .env.docker.example .env.docker
-   cp .env.accounts.docker.example .env.accounts.docker
    ```
 
 2. Start the backend server.
-   This command will automatically start the database and mock GCS storage:
+   This command will automatically start the database, mock GCS storage, and create `.env` files if they don't exist:
 
    ```bash
    make d-run
@@ -66,7 +64,7 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    This step is only required for the first-time setup:
 
    ```bash
-   make init
+   make setup-dev
    ```
 
 > For more details on backend development commands, see [server/README.md](server/README.md).
