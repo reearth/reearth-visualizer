@@ -651,3 +651,82 @@ export const REMOVE_STORY_BLOCK = `
     }
   }
 `;
+
+// Icon asset mutations
+
+export const CREATE_ICON_ASSET = `
+  mutation CreateIconAsset($input: CreateIconAssetInput!) {
+    createIconAsset(input: $input) {
+      asset { id workspaceId projectId name size url contentType }
+    }
+  }
+`;
+
+// GeoJSON feature mutations
+
+export const ADD_GEOJSON_FEATURE = `
+  mutation AddGeoJSONFeature($input: AddGeoJSONFeatureInput!) {
+    addGeoJSONFeature(input: $input) {
+      type
+      id
+      geometry { ... on Point { type pointCoordinates } }
+      properties
+    }
+  }
+`;
+
+export const UPDATE_GEOJSON_FEATURE = `
+  mutation UpdateGeoJSONFeature($input: UpdateGeoJSONFeatureInput!) {
+    updateGeoJSONFeature(input: $input) {
+      type
+      id
+      geometry { ... on Point { type pointCoordinates } }
+      properties
+    }
+  }
+`;
+
+export const DELETE_GEOJSON_FEATURE = `
+  mutation DeleteGeoJSONFeature($input: DeleteGeoJSONFeatureInput!) {
+    deleteGeoJSONFeature(input: $input) { deletedFeatureId }
+  }
+`;
+
+// Plugin mutations
+
+export const INSTALL_PLUGIN = `
+  mutation InstallPlugin($input: InstallPluginInput!) {
+    installPlugin(input: $input) {
+      scene { id }
+      scenePlugin { pluginId }
+    }
+  }
+`;
+
+export const UNINSTALL_PLUGIN = `
+  mutation UninstallPlugin($input: UninstallPluginInput!) {
+    uninstallPlugin(input: $input) {
+      pluginId
+      scene { id }
+    }
+  }
+`;
+
+export const UPLOAD_PLUGIN = `
+  mutation UploadPlugin($sceneId: ID!, $file: Upload, $url: URL) {
+    uploadPlugin(input: { sceneId: $sceneId, file: $file, url: $url }) {
+      plugin { id name }
+      scene { id }
+      scenePlugin { pluginId }
+    }
+  }
+`;
+
+export const UPGRADE_PLUGIN = `
+  mutation UpgradePlugin($input: UpgradePluginInput!) {
+    upgradePlugin(input: $input) {
+      scene { id }
+      scenePlugin { pluginId }
+    }
+  }
+`;

@@ -54,13 +54,14 @@ export class GraphQLClient {
     variables: Record<string, unknown>,
     fileBuffer: Buffer,
     fileName: string,
-    mimeType: string
+    mimeType: string,
+    fileVariablePath = "variables.file"
   ): Promise<GQLResult<T>> {
     const boundary = `----FormBoundary${Date.now()}`;
     const crlf = "\r\n";
 
     const operations = JSON.stringify({ query: mutation, variables });
-    const map = JSON.stringify({ "0": ["variables.file"] });
+    const map = JSON.stringify({ "0": [fileVariablePath] });
 
     const parts: Buffer[] = [];
     const addField = (name: string, value: string) => {
