@@ -38,9 +38,11 @@ graph TB
 | reearth-mongo | mongo:7 | 27017 | MongoDB (shared by visualizer and accounts) |
 | reearth-gcs | fsouza/fake-gcs-server:1.52.1 | 4443 | Fake GCS for local asset storage |
 
-## 🛠️ Useful Development Commands
+## Development
 
-### Starting the Development Server
+### Starting Services
+
+#### Method 1: Using Docker Hub image (default)
 
 Start all backend services with a single command:
 
@@ -49,6 +51,8 @@ make d-run
 ```
 
 This brings up all required containers with their dependencies: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
+
+This method uses the public image `reearth/reearth-accounts-api:v1.0.0` from Docker Hub.
 
 To stop all services:
 
@@ -62,11 +66,9 @@ To check the accounts API logs:
 make d-logs-accounts
 ```
 
-The above method uses the public image `reearth/reearth-accounts-api:v1.0.0` from Docker Hub.
-
 ---
 
-#### Local accounts development: Using local reearth-accounts repo
+#### Method 2: Local accounts development
 
 If you are developing `reearth-accounts` locally, you can run it from source instead of the Docker Hub image.
 
@@ -110,7 +112,7 @@ graph TB
     style accounts fill:#fef7e0,stroke:#f9ab00
 ```
 
-#### After startup: Initialize the environment
+### Initializing the Environment
 
 After the services are running, initialize GCS and create the demo user:
 
@@ -154,7 +156,7 @@ This command will:
 - Stop all Docker containers
 - Remove all Docker images, volumes, and networks
 - Delete all data directories
-- **⚠️ WARNING:** This is a destructive operation and cannot be undone
+- **WARNING:** This is a destructive operation and cannot be undone
 
 > **Note:** This command will prompt for confirmation before proceeding.
 
@@ -178,19 +180,19 @@ make d-test
 
 ### Quick Reference
 
-| Command                                    | Description                                                    |
-| ------------------------------------------ | -------------------------------------------------------------- |
-| `make d-run`                               | Start all services including accounts API from Docker Hub      |
-| `make run-app`                             | Run visualizer locally with accounts API in Docker             |
-| `make run-standalone`                      | Run visualizer standalone (without accounts API)               |
-| `make gcs-bucket`                          | Initialize GCS bucket                                          |
-| `make mockuser-accounts`                   | Create demo user via accounts API                              |
-| `make d-reset-data`                        | Reset database and GCS, reinitialize with mock data            |
-| `make d-destroy`                           | ⚠️ Remove ALL Docker resources and data (destructive)          |
-| `make d-lint`                              | Run golangci-lint in Docker container                          |
-| `make d-test`                              | Run tests in Docker container                                  |
+| Command | Description |
+| --- | --- |
+| `make d-run` | Start all services including accounts API from Docker Hub |
+| `make d-run-standalone` | Start visualizer without accounts API (mongo + gcs only) |
+| `make d-down` | Stop all services |
+| `make d-logs-accounts` | Follow accounts API logs |
+| `make init` | Initialize GCS bucket and create mock user |
+| `make d-reset-data` | Reset database and GCS, reinitialize with mock data |
+| `make d-destroy` | Remove ALL Docker resources and data (destructive) |
+| `make d-lint` | Run golangci-lint in Docker container |
+| `make d-test` | Run tests in Docker container |
 
-## 🔐 Authentication
+## Authentication
 
 Authentication is handled by the shared service [Re:Earth Accounts](https://github.com/reearth/reearth-accounts).
 When using `make d-run`, a pre-built `reearth/reearth-accounts-api` container from Docker Hub is started automatically.
@@ -214,7 +216,7 @@ REEARTH_WEB_AUTH_PROVIDER=mock
 REEARTH_MOCK_AUTH=true
 ```
 
-> If you are using the [local accounts development](#local-accounts-development-using-local-reearth-accounts-repo) method, edit `reearth-accounts/server/.env.docker` instead.
+> If you are using [Method 2](#method-2-local-accounts-development), edit `reearth-accounts/server/.env.docker` instead.
 
 ### 2. Identity Provider (IdP) Mode
 
@@ -229,7 +231,7 @@ REEARTH_AUTH0_CLIENTSECRET=your-auth0-client-secret
 REEARTH_AUTH0_WEBCLIENTID=your-auth0-web-client-id
 ```
 
-> If you are using the [local accounts development](#local-accounts-development-using-local-reearth-accounts-repo) method, edit `reearth-accounts/server/.env.docker` instead.
+> If you are using [Method 2](#method-2-local-accounts-development), edit `reearth-accounts/server/.env.docker` instead.
 
 Also update **web/.env**:
 
@@ -260,7 +262,10 @@ Visualizer is compatible with the following storage interfaces:
 
 ### Storage Configuration
 
-To use these storage interfaces, you need to set the following environment variables in order of priority: 1. `REEARTH_GCS_BUCKETNAME`: Set this to use Google Cloud Storage. 2. `REEARTH_S3_BUCKET_NAME`: Set this to use Amazon S3.
+To use these storage interfaces, you need to set the following environment variables in order of priority:
+
+1. `REEARTH_GCS_BUCKETNAME`: Set this to use Google Cloud Storage.
+2. `REEARTH_S3_BUCKET_NAME`: Set this to use Amazon S3.
 
 If neither `REEARTH_GCS_BUCKETNAME` nor `REEARTH_S3_BUCKET_NAME` is configured, the local file system will be used as the default storage interface.
 
