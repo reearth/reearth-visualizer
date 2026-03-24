@@ -1,225 +1,77 @@
-# ReEarth Visualizer gRPC Commands Example
+# ReEarth Visualizer Internal API - grpcurl Test Script
 
-## Setup gRPC server
+## Setup
 
 ```bash
-# 1. Add the following to .env
-REEARTH_VISUALIZER_INTERNALAPI_ACTIVE=true
-REEARTH_VISUALIZER_INTERNALAPI_PORT=50051
+# 1. Set token in .env.docker
 REEARTH_VISUALIZER_INTERNALAPI_TOKEN=test-abc-123
 
-# 2. start gRPC
-make run-app
+# 2. Start internal API server
+make d-run-internal
+
+# 3. Stop
+make d-down-internal
 ```
 
-## Basic Configuration
+## Usage
+
+Run from the `server/` directory:
 
 ```bash
-# Server address and proto file settings
-SERVER_ADDRESS="localhost:50051" # Change to your actual server address
-PROTO_FILE="schemas/internalapi/v1/schema.proto"  # Specify the path to your proto file
-USER_ID="???User-ID???" # Change to your actual user ID
+USER_ID=<user-id> WORKSPACE_ID=<workspace-id> ./schemas/internalapi/grpcurl.sh <command> [args]
 ```
 
-## 1. GetProjectList - Retrieve Project List
+### Environment Variables
+
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `USER_ID` | Yes | - | User ID |
+| `WORKSPACE_ID` | Yes | - | Workspace ID |
+| `TOKEN` | No | `test-abc-123` | API token (must match `INTERNALAPI_TOKEN`) |
+| `SERVER_ADDRESS` | No | `localhost:50051` | gRPC server address |
+| `PROTO_FILE` | No | `schemas/internalapi/v1/schema.proto` | Proto file path |
+
+### Commands
 
 ```bash
-# Basic list retrieval
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -d '{
-    "workspace_id": "???Workspace-ID???",
-    "authenticated": true
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/GetProjectList
+# Run all API lifecycle test (create -> update -> ... -> delete)
+./schemas/internalapi/grpcurl.sh all
 
-# With keyword search and sorting
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -d '{
-    "workspace_id": "???Workspace-ID???",
-    "authenticated": true,
-    "keyword": "test",
-    "sort": {
-      "field": "UPDATEDAT",
-      "direction": "DESC"
-    },
-    "pagination": {
-      "limit": 10,
-      "offset": 0
-    }
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/GetProjectList
+# Read operations (no token required)
+./schemas/internalapi/grpcurl.sh list                              # GetProjectList
+./schemas/internalapi/grpcurl.sh all-projects                      # GetAllProjects
+./schemas/internalapi/grpcurl.sh get <project_id>                  # GetProject
+./schemas/internalapi/grpcurl.sh export <project_id>               # ExportProject
+./schemas/internalapi/grpcurl.sh get-by-alias <ws_alias> <pj_alias>  # GetProjectByWorkspaceAliasAndProjectAlias
+
+# Write operations (token required)
+./schemas/internalapi/grpcurl.sh create [name] [alias]             # CreateProject
+./schemas/internalapi/grpcurl.sh update <project_id>               # UpdateProject
+./schemas/internalapi/grpcurl.sh publish <project_id> [status]     # PublishProject
+./schemas/internalapi/grpcurl.sh metadata <project_id>             # UpdateProjectMetadata
+./schemas/internalapi/grpcurl.sh star <project_alias>              # PatchStarCount
+./schemas/internalapi/grpcurl.sh delete <project_id>               # DeleteProject
+./schemas/internalapi/grpcurl.sh validate-alias [alias]            # ValidateProjectAlias
+./schemas/internalapi/grpcurl.sh validate-scene [alias]            # ValidateSceneAlias
+./schemas/internalapi/grpcurl.sh update-by-alias <ws_alias> <pj_alias>   # UpdateProjectByWorkspaceAliasAndProjectAlias
+./schemas/internalapi/grpcurl.sh delete-by-alias <ws_alias> <pj_alias>   # DeleteProjectByWorkspaceAliasAndProjectAlias
+
+# Help
+./schemas/internalapi/grpcurl.sh help
 ```
 
-## 2. GetProject - Retrieve Specific Project
+### Example
 
 ```bash
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -d '{
-    "project_id": "???project-ID???"
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/GetProject
-```
+export USER_ID=01kjvjwb2zqxzgvz5g2236k9g3
+export WORKSPACE_ID=01kjvjwb32sex1zrng12bj8bts
 
-## 3. GetProjectByAlias - Retrieve Project by Alias
+# Full lifecycle test
+./schemas/internalapi/grpcurl.sh all
 
-```bash
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -d '{
-    "alias": "my-project-alias"
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/GetProjectByAlias
-```
-
-## 4. ValidateProjectAlias - Validate Project Alias
-
-```bash
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -d '{
-    "project_id": "???project-ID???",
-    "alias": "new-project-alias"
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/ValidateProjectAlias
-```
-
-## 5. CreateProject - Create Project
-
-```bash
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -H "authorization: Bearer test-abc-123" \
-  -d '{
-    "workspace_id": "???Workspace-ID???",
-    "visualizer": "VISUALIZER_CESIUM",
-    "name": "New Project",
-    "description": "Project description",
-    "core_support": true,
-    "visibility": "private",
-    "project_alias": "new-project",
-    "readme": "# About This Project\n\nThis project is...",
-    "license": "MIT",
-    "topics": "visualization, 3D, mapping"
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/CreateProject
-```
-
-## 6. UpdateProject - Update Project
-
-```bash
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -H "authorization: Bearer test-abc-123" \
-  -d '{
-    "project_id": "???project-ID???",
-    "name": "Updated Project Name",
-    "description": "Updated description",
-    "starred": true,
-    "visibility": "public",
-    "project_alias": "updated-alias"
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/UpdateProject
-```
-
-## 7. PublishProject - Publish Project
-
-```bash
-# Publish project
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -H "authorization: Bearer test-abc-123" \
-  -d '{
-    "project_id": "???project-ID???",
-    "alias": "published-project",
-    "publishment_status": "PUBLISHMENT_STATUS_PUBLIC"
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/PublishProject
-
-# Unpublish project
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -H "authorization: Bearer test-abc-123" \
-  -d '{
-    "project_id": "???project-ID???",
-    "publishment_status": "PUBLISHMENT_STATUS_PRIVATE"
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/PublishProject
-```
-
-## 8. UpdateProjectMetadata - Update Project Metadata
-
-```bash
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -H "authorization: Bearer test-abc-123" \
-  -d '{
-    "project_id": "???project-ID???",
-    "readme": "# Updated README\n\nThis is new content.",
-    "license": "Apache-2.0",
-    "topics": {"values": ["3D", "visualization", "GIS", "mapping"]}
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/UpdateProjectMetadata
-```
-
-## 9. DeleteProject - Delete Project
-
-```bash
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -H "authorization: Bearer test-abc-123" \
-  -d '{
-    "project_id": "???project-ID???"
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/DeleteProject
-```
-
-## 10. ExportProject - Export Project
-
-```bash
-grpcurl -plaintext \
-  -H "user-id: ${USER_ID}" \
-  -H "authorization: Bearer test-abc-123" \
-  -d '{
-    "project_id": "???project-ID???"
-  }' \
-  -import-path . \
-  -proto ${PROTO_FILE} \
-  ${SERVER_ADDRESS} \
-  reearth.visualizer.v1.ReEarthVisualizer/ExportProject
+# Individual commands
+./schemas/internalapi/grpcurl.sh list
+./schemas/internalapi/grpcurl.sh create "My Project" "my-project"
+./schemas/internalapi/grpcurl.sh get 01kmf5cj3qsvggrr6mfjrwkzy5
+./schemas/internalapi/grpcurl.sh delete 01kmf5cj3qsvggrr6mfjrwkzy5
 ```

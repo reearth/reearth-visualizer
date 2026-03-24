@@ -28,6 +28,10 @@ d-destroy:
 d-down:
 	${DOCKER_COMPOSE} --profile accounts down
 
+d-down-internal:
+	${DOCKER_COMPOSE} stop reearth-visualizer-internal-api
+	${DOCKER_COMPOSE} rm -f reearth-visualizer-internal-api || true
+
 d-down-gcs:
 	${DOCKER_COMPOSE} stop reearth-gcs
 	${DOCKER_COMPOSE} rm -f reearth-gcs || true
@@ -134,4 +138,4 @@ d-test:
 d-up-gcs:
 	${DOCKER_COMPOSE} up -d reearth-gcs
 
-.PHONY: d-destroy d-down d-down-gcs d-lint d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-test d-up-gcs
+.PHONY: d-destroy d-down d-down-internal d-down-gcs d-lint d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-test d-up-gcs

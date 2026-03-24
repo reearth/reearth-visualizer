@@ -55,6 +55,7 @@ help:
 	@echo "Docker:"
 	@echo "  d-destroy         Remove ALL Docker resources and data (destructive)"
 	@echo "  d-down            Stop Docker Compose services"
+	@echo "  d-down-internal   Stop internal gRPC API container"
 	@echo "  d-down-gcs        Stop fake GCS server"
 	@echo "  d-lint            Run golangci-lint in Docker container"
 	@echo "  d-migrate         Run database migration in Docker container"
