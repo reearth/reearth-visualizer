@@ -6,7 +6,7 @@
 # 1. Start internal API server
 make d-run-internal
 
-# 3. Stop
+# 2. Stop
 make d-down-internal
 ```
 
