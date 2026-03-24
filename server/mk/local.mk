@@ -40,20 +40,6 @@ error-msg:
 generate: dev-install
 	go generate ./...
 
-grpc:
-	protoc \
-		--go_out=paths=source_relative:internal/adapter/internalapi/schemas/internalapi \
-		--go-grpc_out=paths=source_relative:internal/adapter/internalapi/schemas/internalapi \
-		-I schemas/internalapi \
-		schemas/internalapi/v1/schema.proto
-
-grpc-doc:
-	protoc \
-		--doc_out=schemas/internalapi/docs \
-		--doc_opt=markdown,schema.md \
-		-I schemas/internalapi \
-		schemas/internalapi/v1/schema.proto
-
 gql:
 	go generate ./internal/adapter/gql/gqldataloader
 	go generate ./internal/adapter/gql
