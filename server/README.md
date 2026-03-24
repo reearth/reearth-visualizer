@@ -266,38 +266,6 @@ If neither `REEARTH_GCS_BUCKETNAME` nor `REEARTH_S3_BUCKET_NAME` is configured, 
 
 Additionally, `REEARTH_ASSETBASEURL` is a required environment variable that is used across all storage types. This should be set to the base URL for accessing your stored assets.
 
-### Testing GCS Locally
-
-1. Start the fake-gcs-server ([fake-gcs-server](https://github.com/fsouza/fake-gcs-server)):
-
-   ```bash
-   make d-up-gcs
-   ```
-
-2. Create a bucket:
-
-   **Using Make (Recommended):**
-
-   ```bash
-   make gcs-bucket
-   ```
-
-   **Manual Creation (Advanced):**
-
-   If you need to create a bucket with a custom name or project ID:
-
-   ```bash
-   curl -X POST http://localhost:4443/storage/v1/b\?project\=your-project-id \
-       -H "Content-Type: application/json" \
-       -d '{
-             "name": "test-bucket"
-           }'
-   ```
-
-3. Set `REEARTH_GCS_BUCKETNAME` to `test-bucket`
-
-> **Note:** The default bucket name is `test-bucket`. You can use a different name if needed.
-
 ## Project Export and Import
 
 Re:Earth provides functionality to export and import complete projects including all associated data.
