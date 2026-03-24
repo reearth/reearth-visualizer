@@ -222,20 +222,16 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *accountsUser.Us
 
 	var workspaces accountsWorkspace.List
 	var err error
-	if cfg.AccountsAPIClient != nil {
+	// TODO: Internal API behavior has not been fully considered yet.
+	if cfg.AccountsAPIClient != nil && !cfg.Config.Visualizer.InternalApi.Active {
 		workspaces, err = cfg.AccountsAPIClient.WorkspaceRepo.FindByUser(ctx, uid.String())
-		if err != nil {
-			log.Warnfc(ctx, "auth: accounts API FindByUser failed, falling back to local repo: %v", err)
-			workspaces, err = cfg.Repos.Workspace.FindByUser(ctx, uid)
-			if err != nil {
-				return nil, err
-			}
-		}
 	} else {
 		workspaces, err = cfg.Repos.Workspace.FindByUser(ctx, uid)
-		if err != nil {
-			return nil, err
-		}
+	}
+
+	if err != nil {
+		log.Errorfc(ctx, "auth: failed to fetch workspaces: %v", err)
+		return nil, err
 	}
 
 	wsList := accountsWorkspace.List(workspaces)
