@@ -40,6 +40,20 @@ error-msg:
 generate: dev-install
 	go generate ./...
 
+grpc:
+	protoc \
+		--go_out=paths=source_relative:internal/adapter/internalapi/schemas/internalapi \
+		--go-grpc_out=paths=source_relative:internal/adapter/internalapi/schemas/internalapi \
+		-I schemas/internalapi \
+		schemas/internalapi/v1/schema.proto
+
+grpc-doc:
+	protoc \
+		--doc_out=schemas/internalapi/docs \
+		--doc_opt=markdown,schema.md \
+		-I schemas/internalapi \
+		schemas/internalapi/v1/schema.proto
+
 gql:
 	go generate ./internal/adapter/gql/gqldataloader
 	go generate ./internal/adapter/gql
@@ -88,4 +102,4 @@ test:
 test-debug:
 	go test -v -timeout 10s ${TEST_DIR} | tee test.log
 
-.PHONY: build clean deep-copy dev dev-install e2e error-msg generate gql lint migrate migrate-with-key run-app run-clean-start run-standalone schematyper test test-debug
+.PHONY: build clean deep-copy dev dev-install e2e error-msg generate grpc grpc-doc gql lint migrate migrate-with-key run-app run-clean-start run-standalone schematyper test test-debug
