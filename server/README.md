@@ -250,27 +250,6 @@ curl -H 'Content-Type: application/json' http://localhost:8080/api/signup -d @- 
 EOF
 ```
 
-### Developing reearth-accounts locally
-
-If you need to develop `reearth-accounts` itself, use `make run-app` or start services separately:
-
-**Terminal 1** — Start visualizer with Docker services:
-
-```bash
-# In ~/reearth-visualizer/server
-make run-app
-```
-
-**Terminal 2** — Clone and start accounts API from source:
-
-```bash
-git clone https://github.com/reearth/reearth-accounts.git ~/reearth-accounts
-cd ~/reearth-accounts/server
-make run
-```
-
-The local accounts API will join the `reearth` Docker network automatically.
-
 ## Storage
 
 Visualizer is compatible with the following storage interfaces:
