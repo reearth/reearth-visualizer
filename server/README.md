@@ -55,16 +55,8 @@ make mockuser-accounts
 
 Reset the development environment including database and GCS:
 
-**Unix/Linux/macOS:**
-
 ```bash
 make d-reset-data
-```
-
-**Windows:**
-
-```cmd
-dev.bat reset
 ```
 
 This command will:
@@ -79,16 +71,8 @@ This command will:
 
 Remove all Docker resources and data (use with caution):
 
-**Unix/Linux/macOS:**
-
 ```bash
 make d-destroy
-```
-
-**Windows:**
-
-```cmd
-dev.bat destroy
 ```
 
 This command will:
@@ -104,8 +88,6 @@ This command will:
 
 Run linting and tests inside the Docker container (same environment as CI/CD):
 
-**Unix/Linux/macOS:**
-
 ```bash
 # Run linter with auto-fix
 make d-lint
@@ -114,21 +96,11 @@ make d-lint
 make d-test
 ```
 
-**Windows:**
-
-```cmd
-# Run linter with auto-fix
-dev.bat lint-docker
-
-# Run tests
-dev.bat test-docker
-```
-
 > **Note:**
 >
-> - These commands require the development container to be running (`make d-run` or `dev.bat d-run`)
+> - These commands require the development container to be running (`make d-run`)
 > - Some e2e tests may fail in Docker due to MongoDB permission constraints
-> - For local e2e testing, use `make test` or `dev.bat test` instead
+> - For local e2e testing, use `make test` instead
 
 ### Quick Reference
 
@@ -139,10 +111,10 @@ dev.bat test-docker
 | `make run-standalone`                      | Run visualizer standalone (without accounts API)               |
 | `make gcs-bucket`                          | Initialize GCS bucket                                          |
 | `make mockuser-accounts`                   | Create demo user via accounts API                              |
-| `make d-reset-data` / `dev.bat reset`      | Reset database and GCS, reinitialize with mock data            |
-| `make d-destroy` / `dev.bat destroy`       | ⚠️ Remove ALL Docker resources and data (destructive)          |
-| `make d-lint` / `dev.bat d-lint`           | Run golangci-lint in Docker container                          |
-| `make d-test` / `dev.bat d-test`           | Run tests in Docker container                                  |
+| `make d-reset-data`                        | Reset database and GCS, reinitialize with mock data            |
+| `make d-destroy`                           | ⚠️ Remove ALL Docker resources and data (destructive)          |
+| `make d-lint`                              | Run golangci-lint in Docker container                          |
+| `make d-test`                              | Run tests in Docker container                                  |
 
 ## 🔐 Authentication
 
@@ -241,54 +213,23 @@ Additionally, `REEARTH_ASSETBASEURL` is a required environment variable that is 
 
 2. Create a bucket:
 
-   **Using Make/dev.bat (Recommended):**
+   **Using Make (Recommended):**
 
    ```bash
-   # Unix/Linux/macOS
    make gcs-bucket
-
-   # Windows
-   dev.bat gcs-bucket
    ```
 
    **Manual Creation (Advanced):**
 
    If you need to create a bucket with a custom name or project ID:
 
-   <details>
-   <summary>Unix/Linux/macOS</summary>
-
-   ```shell
+   ```bash
    curl -X POST http://localhost:4443/storage/v1/b\?project\=your-project-id \
        -H "Content-Type: application/json" \
        -d '{
              "name": "test-bucket"
            }'
    ```
-
-   </details>
-
-   <details>
-   <summary>Windows (Command Prompt)</summary>
-
-   ```cmd
-   curl -X POST "http://localhost:4443/storage/v1/b?project=your-project-id" ^
-       -H "Content-Type: application/json" ^
-       -d "{\"name\": \"test-bucket\"}"
-   ```
-
-   </details>
-
-   <details>
-   <summary>Windows (PowerShell)</summary>
-
-   ```powershell
-   curl.exe -X POST "http://localhost:4443/storage/v1/b?project=your-project-id" `
-       -H "Content-Type: application/json" `
-       -d '{"name": "test-bucket"}'
-   ```
-
-   </details>
 
 3. Set `REEARTH_GCS_BUCKETNAME` to `test-bucket`
 
