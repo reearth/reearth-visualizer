@@ -63,9 +63,12 @@ make d-logs-accounts
 ```
 
 The above method uses the public image `reearth/reearth-accounts-api:v1.0.0` from Docker Hub.
-If you are developing `reearth-accounts` locally, you can also run it from source:
+
+---
 
 #### Local accounts development: Using local reearth-accounts repo
+
+If you are developing `reearth-accounts` locally, you can run it from source instead of the Docker Hub image.
 
 **Terminal 1** — Start visualizer without accounts (visualizer + mongo + gcs only):
 
@@ -84,7 +87,28 @@ make run
 
 This starts `reearth-accounts-dev` and `reearth-cerbos` and attaches them to the `reearth` Docker network.
 
-The local accounts API will join the `reearth` Docker network automatically and override the Docker Hub image.
+```mermaid
+graph TB
+    subgraph visualizer["reearth-visualizer (Terminal 1: make d-run-standalone)"]
+        V["reearth-visualizer-dev<br/>:8080"]
+        Mongo["reearth-mongo<br/>:27017"]
+        GCS["reearth-gcs<br/>:4443"]
+    end
+
+    subgraph accounts["reearth-accounts (Terminal 2: make run)"]
+        A["reearth-accounts-dev<br/>:8090"]
+        Cerbos["reearth-cerbos<br/>:3593"]
+    end
+
+    V --> Mongo
+    V --> GCS
+    V --> A
+    A --> Mongo
+    A --> Cerbos
+
+    style visualizer fill:#e8f4fd,stroke:#1a73e8
+    style accounts fill:#fef7e0,stroke:#f9ab00
+```
 
 #### After startup: Initialize the environment
 
