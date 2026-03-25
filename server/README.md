@@ -7,95 +7,135 @@ A back-end API server application for Re:Earth
 ## Data Structure
 
 ```mermaid
-block-beta
-  columns 1
+erDiagram
+    Workspace ||--o{ Project : contains
 
-  block:ws["Workspace (Team)"]
-    columns 2
+    Project ||--|| Scene : "1:1"
+    Project ||--o| ProjectMetadata : has
 
-    block:pj1["Project"]
-      columns 3
-      pm1["ProjectMetadata"]:3
+    Scene ||--o| Story : "1:1 (in practice)"
+    Scene ||--o{ NLSLayer : contains
+    Scene ||--o{ LayerStyle : contains
+    Scene ||--o{ Widget : contains
+    Scene ||--o{ Plugin : installed
+    Scene ||--|| Property : "scene property"
 
-      block:sc1["Scene"]
-        columns 3
+    Story ||--o{ StoryPage : contains
+    StoryPage ||--o{ StoryBlock : contains
 
-        block:st1["Storytelling (Story)"]
-          columns 3
-          block:sp1["StoryPage"]
-            sb1a["StoryBlock"]
-            sb1b["StoryBlock"]
-          end
-          block:sp2["StoryPage"]
-            sb2a["StoryBlock"]
-            sb2b["StoryBlock"]
-          end
-          block:sp3["StoryPage"]
-            sb3a["StoryBlock"]
-            sb3b["StoryBlock"]
-          end
-        end
+    NLSLayer ||--o| SketchInfo : "optional"
+    NLSLayer ||--o| Infobox : "optional"
+    NLSLayerGroup ||--o{ NLSLayer : children
 
-        block:widgets["Widgets"]
-          columns 1
-          w1["Widget"]
-          w2["Widget"]
-        end
+    SketchInfo ||--|| FeatureCollection : has
+    FeatureCollection ||--o{ Feature : contains
+    Feature ||--|| Geometry : has
 
-        block:plugins["Plugins"]
-          columns 1
-          pl1["Plugin"]
-          pl2["Plugin"]
-        end
+    Infobox ||--o{ InfoboxBlock : contains
 
-        block:properties["Properties"]
-          columns 1
-          pr1["Property"]
-          pr2["Property"]
-        end
+    Widget }o--|| Plugin : references
+    StoryBlock }o--|| Plugin : references
 
-        block:nl1["NLSLayer"]
-          columns 2
-          block:sk1["SketchInfo"]
-            columns 1
-            fc1["FeatureCollection"]
-            f1a["Feature"]
-            f1b["Feature"]
-          end
-          ib1["Infobox\n(InfoboxBlock)"]
-        end
-
-        block:nl2["NLSLayer"]
-          columns 1
-          space
-        end
-
-        block:nl3["NLSLayerGroup"]
-          columns 1
-          nl3c["NLSLayer (children)"]
-        end
-
-        ls1["LayerStyle"]:1
-        ls2["LayerStyle"]:1
-        ls3["LayerStyle"]:1
-
-      end
-    end
-
-    block:pj2["Project"]
-      columns 1
-      pm2["ProjectMetadata"]
-      sc2["Scene\n(same structure as left)"]
-    end
-
-  end
+    Workspace {
+        WorkspaceID id
+    }
+    Project {
+        ProjectID id
+        WorkspaceID workspace
+        SceneID scene
+        string name
+        string description
+        string visibility
+    }
+    ProjectMetadata {
+        ProjectID project
+        string license
+        string readme
+        string[] topics
+    }
+    Scene {
+        SceneID id
+        ProjectID project
+        WorkspaceID workspace
+        PropertyID property
+    }
+    Story {
+        StoryID id
+        SceneID scene
+        ProjectID project
+    }
+    StoryPage {
+        PageID id
+        PropertyID property
+        NLSLayerID[] layers
+    }
+    StoryBlock {
+        BlockID id
+        PluginID plugin
+        ExtensionID extension
+        PropertyID property
+    }
+    NLSLayer {
+        NLSLayerID id
+        SceneID scene
+        bool isSketch
+    }
+    NLSLayerGroup {
+        NLSLayerID id
+        NLSLayerID[] children
+    }
+    SketchInfo {
+        map customPropertySchema
+    }
+    FeatureCollection {
+        Feature[] features
+    }
+    Feature {
+        FeatureID id
+        string type
+        map properties
+    }
+    Geometry {
+        string type
+        coordinates coordinates
+    }
+    LayerStyle {
+        StyleID id
+        SceneID scene
+        string name
+        map value
+    }
+    Widget {
+        WidgetID id
+        PluginID plugin
+        ExtensionID extension
+        PropertyID property
+    }
+    Plugin {
+        PluginID id
+        string name
+        Extension[] extensions
+    }
+    Infobox {
+        PropertyID property
+    }
+    InfoboxBlock {
+        BlockID id
+        PluginID plugin
+        ExtensionID extension
+        PropertyID property
+    }
+    Property {
+        PropertyID id
+        PropertySchemaID schema
+    }
 ```
 
 > **Note:**
-> - **Project : Scene : Storytelling = 1 : 1 : 1** (code allows 1:Many for Story, but in practice it is 1:1)
+> - **Project : Scene : Story = 1 : 1 : 1** in practice (code allows 1:Many for Story, but only one is used)
 > - **SketchInfo** is optional per NLSLayer — not all layers have sketch/features
-> - **NLSLayerGroup** can contain child NLSLayers (hierarchical structure)
-> - **Property** is referenced by Scene, Widget, Plugin, StoryBlock, Infobox, etc. as the shared dynamic configuration system
+> - **NLSLayerGroup** is a subtype of NLSLayer that can contain child NLSLayers (hierarchical)
+> - **Property** is the shared dynamic configuration system — referenced by Scene, Widget, Plugin, StoryBlock, StoryPage, Infobox, InfoboxBlock
 
 ## Architecture
 
