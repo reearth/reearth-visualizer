@@ -496,6 +496,57 @@ return importV1(...)
 
 **File**: `internal/app/file_import_common.go:250`
 
+### Plugin Export and Import
+
+Plugins have a unique data model — JS files are stored in object storage, while parameter schemas (defined in YAML) are stored only in the database. Both must be handled during export/import.
+
+#### Export
+
+`ExportPlugins()` collects the following for each non-system plugin attached to the scene:
+
+1. **JS files** — Read from storage and written to `plugins/{plugin-id}/{extension-id}.js` in the zip
+2. **Plugin definitions** — Serialized to `project.json` under `plugins`
+3. **Property schemas** — Read from DB and serialized to `project.json` under `schemas`
+
+```
+project.zip
+└── plugins/
+    └── {plugin-id}/
+        ├── {extension-id-1}.js   ← from storage
+        └── {extension-id-2}.js   ← from storage
+
+project.json
+├── plugins: [ ... ]              ← plugin metadata (from DB)
+└── schemas: [ ... ]              ← property schemas (from DB)
+```
+
+**File**: `internal/usecase/interactor/plugin.go:65`
+
+#### Import
+
+`ImportPlugins()` restores plugins in two steps:
+
+```mermaid
+flowchart TD
+    Start([ImportPlugins]) --> Upload[1. uploadPluginFile<br/>Upload JS files to storage]
+    Upload -->|fail| Fail([Error])
+    Upload --> Parse[2. Parse plugins and schemas<br/>from project.json]
+    Parse --> Loop[For each plugin]
+    Loop --> Schema[Save PropertySchema to DB]
+    Schema --> Extension[Build Extension with schema reference]
+    Extension --> Plugin[Save Plugin to DB]
+    Plugin --> Next{More plugins?}
+    Next -->|yes| Loop
+    Next -->|no| Done([Done])
+```
+
+1. **Upload JS files** — Each `plugins/{plugin-id}/{extension-id}.js` from the zip is uploaded to storage. The old scene ID in the plugin ID is replaced with the new scene ID.
+2. **Restore schemas and plugins** — For each plugin in `project.json`:
+   - Parse and save each `PropertySchema` directly to the database
+   - Build and save the `Plugin` entity with extensions referencing the saved schemas
+
+**File**: `internal/usecase/interactor/plugin.go:117`
+
 ### Error Handling
 
 All import steps update project status on failure:
