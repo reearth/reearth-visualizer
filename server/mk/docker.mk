@@ -28,13 +28,13 @@ d-destroy:
 d-down:
 	${DOCKER_COMPOSE} --profile accounts down
 
-d-down-internal:
-	${DOCKER_COMPOSE} stop reearth-visualizer-internal-api
-	${DOCKER_COMPOSE} rm -f reearth-visualizer-internal-api || true
-
 d-down-gcs:
 	${DOCKER_COMPOSE} stop reearth-gcs
 	${DOCKER_COMPOSE} rm -f reearth-gcs || true
+
+d-down-internal:
+	${DOCKER_COMPOSE} stop reearth-visualizer-internal-api
+	${DOCKER_COMPOSE} rm -f reearth-visualizer-internal-api || true
 
 d-lint:
 	@echo "Running golangci-lint in Docker container..."
@@ -45,6 +45,9 @@ d-lint:
 		echo "Please start the container with 'make d-run' first."; \
 		exit 1; \
 	fi
+
+d-logs-accounts:
+	docker logs -f reearth-visualizer-reearth-accounts-api-1
 
 d-migrate:
 	@echo "==== Running database migration in Docker container ===="
@@ -74,15 +77,14 @@ d-migrate-with-key:
 	fi
 
 d-reset-data:
-	@echo "==== Stopping database and GCS services ===="
-	${DOCKER_COMPOSE} stop reearth-mongo reearth-gcs
-	${DOCKER_COMPOSE} rm -f reearth-mongo reearth-gcs || true
+	@echo "==== Stopping all services ===="
+	${DOCKER_COMPOSE} --profile accounts down
 	@echo ""
 	@echo "==== Removing data directory (requires sudo password) ===="
 	sudo rm -rf tmp/gcs tmp/mongo
 	@echo ""
-	@echo "==== Starting database and GCS services ===="
-	${DOCKER_COMPOSE} up -d reearth-mongo reearth-gcs
+	@echo "==== Starting all services ===="
+	${DOCKER_COMPOSE} --profile accounts up -d reearth-mongo reearth-gcs reearth-accounts-api
 	@echo ""
 	@echo "==== Waiting for services to be ready (3 seconds) ===="
 	@echo "3..."
@@ -91,15 +93,20 @@ d-reset-data:
 	sleep 1
 	@echo "1..."
 	sleep 1
-	@echo "==== Initializing GCS bucket ===="
-	make gcs-bucket
-	@echo ""
-	@echo "==== Creating mock user ===="
-	make mockuser-accounts
+	@echo "==== Initializing GCS bucket and mock user ===="
+	make setup-dev
 	@echo ""
 	@echo "✓ Reset complete!"
 
 d-run:
+	@if [ ! -f .env.docker ]; then \
+		echo "Creating .env.docker from .env.docker.example..."; \
+		cp .env.docker.example .env.docker; \
+	fi
+	@if [ ! -f .env.accounts.docker ]; then \
+		echo "Creating .env.accounts.docker from .env.accounts.docker.example..."; \
+		cp .env.accounts.docker.example .env.accounts.docker; \
+	fi
 	${DOCKER_COMPOSE} --profile accounts up reearth-visualizer-dev
 
 d-run-accounts:
@@ -125,6 +132,13 @@ d-run-reset:
 	make d-run-db
 	make mockuser-accounts
 
+d-run-standalone:
+	@if [ ! -f .env.docker ]; then \
+		echo "Creating .env.docker from .env.docker.example..."; \
+		cp .env.docker.example .env.docker; \
+	fi
+	${DOCKER_COMPOSE} up reearth-visualizer-dev
+
 d-test:
 	@echo "Running tests in Docker container..."
 	@if docker ps --format '{{.Names}}' | grep -q '^reearth-visualizer-reearth-visualizer-dev-1$$'; then \
@@ -138,4 +152,4 @@ d-test:
 d-up-gcs:
 	${DOCKER_COMPOSE} up -d reearth-gcs
 
-.PHONY: d-destroy d-down d-down-internal d-down-gcs d-lint d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-test d-up-gcs
+.PHONY: d-destroy d-down d-down-gcs d-down-internal d-lint d-logs-accounts d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-run-standalone d-test d-up-gcs
