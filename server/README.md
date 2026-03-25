@@ -4,6 +4,99 @@
 
 A back-end API server application for Re:Earth
 
+## Data Structure
+
+```mermaid
+block-beta
+  columns 1
+
+  block:ws["Workspace (Team)"]
+    columns 2
+
+    block:pj1["Project"]
+      columns 3
+      pm1["ProjectMetadata"]:3
+
+      block:sc1["Scene"]
+        columns 3
+
+        block:st1["Storytelling (Story)"]
+          columns 3
+          block:sp1["StoryPage"]
+            sb1a["StoryBlock"]
+            sb1b["StoryBlock"]
+          end
+          block:sp2["StoryPage"]
+            sb2a["StoryBlock"]
+            sb2b["StoryBlock"]
+          end
+          block:sp3["StoryPage"]
+            sb3a["StoryBlock"]
+            sb3b["StoryBlock"]
+          end
+        end
+
+        block:widgets["Widgets"]
+          columns 1
+          w1["Widget"]
+          w2["Widget"]
+        end
+
+        block:plugins["Plugins"]
+          columns 1
+          pl1["Plugin"]
+          pl2["Plugin"]
+        end
+
+        block:properties["Properties"]
+          columns 1
+          pr1["Property"]
+          pr2["Property"]
+        end
+
+        block:nl1["NLSLayer"]
+          columns 2
+          block:sk1["SketchInfo"]
+            columns 1
+            fc1["FeatureCollection"]
+            f1a["Feature"]
+            f1b["Feature"]
+          end
+          ib1["Infobox\n(InfoboxBlock)"]
+        end
+
+        block:nl2["NLSLayer"]
+          columns 1
+          space
+        end
+
+        block:nl3["NLSLayerGroup"]
+          columns 1
+          nl3c["NLSLayer (children)"]
+        end
+
+        ls1["LayerStyle"]:1
+        ls2["LayerStyle"]:1
+        ls3["LayerStyle"]:1
+
+      end
+    end
+
+    block:pj2["Project"]
+      columns 1
+      pm2["ProjectMetadata"]
+      sc2["Scene\n(same structure as left)"]
+    end
+
+  end
+```
+
+> **Note:**
+> - **Project : Scene : Storytelling = 1 : 1 : 1** (code allows 1:Many for Story, but in practice it is 1:1)
+> - **SketchInfo** is optional per NLSLayer — not all layers have sketch/features
+> - **NLSLayerGroup** can contain child NLSLayers (hierarchical structure)
+> - **Property** is referenced by Scene, Widget, Plugin, StoryBlock, Infobox, etc. as the shared dynamic configuration system
+
 ## Architecture
 
 The development environment runs the following containers via Docker Compose:
