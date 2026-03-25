@@ -8,11 +8,14 @@ auth0-accounts:
 		-d '{"query":"mutation($$input:SignupOIDCInput!){signupOIDC(input:$$input){user{id name email}}}","variables":{"input":{"email":"user@example.com","name":"Example User","sub":"auth0|example-sub-id", "secret": ""}}}' \
 		http://localhost:8090/api/graphql | head -n 1
 
+setup-dev: gcs-bucket mockuser-accounts
+
 gcs-bucket:
-	curl -s -D - -o /dev/null \
+	curl -s -o /dev/null -w "%{http_code}" \
 		-H 'Content-Type: application/json' \
 		-d '{"name": "test-bucket"}' \
-		http://localhost:4443/storage/v1/b | head -n 1
+		http://localhost:4443/storage/v1/b | grep -qE "200|409" || exit 1
+	@echo "GCS bucket ready."
 
 # this is alias for backward compatibility
 mockuser:
@@ -24,4 +27,4 @@ mockuser-accounts:
 		-d '{"query":"mutation($$input:SignupInput!){signup(input:$$input){user{id name email}}}","variables":{"input":{"email":"demo@example.com","name":"Demo User","password":"Passw0rd!"}}}' \
 		http://localhost:8090/api/graphql | head -n 1
 
-.PHONY: auth0-accounts gcs-bucket mockuser mockuser-accounts
+.PHONY: setup-dev auth0-accounts gcs-bucket mockuser mockuser-accounts
