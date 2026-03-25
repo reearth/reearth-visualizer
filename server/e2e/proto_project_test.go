@@ -95,7 +95,7 @@ func TestInternalAPI_Basic(t *testing.T) {
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 4, len(res3.Projects))
+		assert.Equal(t, 2, len(res3.Projects)) // 4 created, 2 deleted => 2 active
 
 	})
 
@@ -106,14 +106,14 @@ func TestInternalAPI_Basic(t *testing.T) {
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(res3.Projects))
+		assert.Equal(t, 1, len(res3.Projects)) // 1 active public
 
 		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			Authenticated: true,
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(res4.Projects))
+		assert.Equal(t, 1, len(res4.Projects)) // 1 active public (non-member sees public only)
 
 	})
 
@@ -125,7 +125,7 @@ func TestInternalAPI_Basic(t *testing.T) {
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 4, len(res3.Projects))
+		assert.Equal(t, 2, len(res3.Projects)) // 4 created, 2 deleted => 2 active
 	})
 
 }
