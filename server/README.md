@@ -289,6 +289,46 @@ project.zip
         └── {extension-id-2}.js
 ```
 
+#### project.json Top-Level Structure
+
+```jsonc
+{
+  "scene": {                          // Scene data (built by scene/builder)
+    "schemaVersion": 1,
+    "id": "...",
+    "publishedAt": "...",
+    "property": { ... },              // Scene property
+    "plugins": { ... },               // Plugin properties (keyed by plugin ID)
+    "widgets": [ ... ],               // Widget configurations
+    "widgetAlignSystems": { ... },    // Widget layout alignment
+    "story": { ... },                 // Storytelling data (optional)
+    "nlsLayers": [ ... ],             // NLS layer data
+    "layerStyles": [ ... ],           // Layer style data
+    "coreSupport": true,
+    "enableGa": false,
+    "trackingId": ""
+  },
+  "project": {                        // Project metadata
+    "visualizer": "cesium",
+    "name": "...",
+    "description": "...",
+    "imageUrl": "...",                 // optional
+    "visibility": "public",           // optional
+    "license": "...",                  // optional
+    "readme": "...",                   // optional
+    "topics": [ ... ]                  // optional
+  },
+  "plugins": [ ... ],                 // Plugin definitions
+  "schemas": [ ... ],                 // Property schema definitions
+  "exportedInfo": {                   // Export metadata
+    "host": "https://...",
+    "project": "{projectId}",
+    "timestamp": "2025-01-01T00:00:00Z",
+    "exportDataVersion": "1"
+  }
+}
+```
+
 #### Export Data Version
 
 The `exportDataVersion` field enables compatibility management for future format changes:
@@ -303,11 +343,25 @@ The `exportDataVersion` field enables compatibility management for future format
 
 Projects can be imported via two methods:
 
-#### 1. Split Upload API (`POST /api/split-import`)
+#### Method 1: Direct Upload (`POST /api/split-import`)
 
-Handles chunked file uploads for large project files.
+Client uploads the project zip file directly to the server in chunks. Requires authentication.
 
 **Process Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server as Visualizer API
+    Client->>Server: POST /api/split-import (chunk 0)
+    Server->>Server: Save chunk, create temporary project (status: UPLOADING)
+    Server-->>Client: { project_id, completed: false }
+    Client->>Server: POST /api/split-import (chunk 1..N)
+    Server-->>Client: { project_id, completed: false }
+    Client->>Server: POST /api/split-import (final chunk)
+    Server-->>Client: { project_id, completed: true }
+    Server->>Server: (async) Assemble chunks → ImportProject()
+```
 
 1. **Chunk Upload** - Client uploads file in chunks (16MB each)
 2. **Session Management** - Server tracks upload progress per file ID
@@ -316,23 +370,80 @@ Handles chunked file uploads for large project files.
 5. **Async Processing** - Spawns goroutine to process import
 6. **Import Execution** - Calls `ImportProject()` with assembled data
 
-**File**: `internal/app/file_split_uploader.go:69`
+**File**: `internal/app/file_split_uploader.go`
 
-#### 2. Storage Trigger API (`POST /api/import-project`)
+#### Method 2: Signed URL Upload (via GCS)
 
-Triggered automatically when a project zip file is uploaded directly to storage (e.g., GCS/S3 bucket notification).
+Client uploads the project zip file to GCS using a signed URL, then a GCS event triggers the server to process the import. This method is suitable for large files and production environments using GCP.
+
+**Endpoints**:
+
+| Endpoint | Auth | Description |
+| --- | --- | --- |
+| `POST /api/signature-url` | Required | Generates a signed upload URL for GCS |
+| `POST /api/import-project` | Not required | Triggered by GCS Cloud Function event |
+| `POST /api/storage-event` | Not required | Triggered by GCS Pub/Sub push subscription |
+
+**Process Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server as Visualizer API
+    participant GCS
+    participant Trigger as Cloud Function / Pub/Sub
+
+    Client->>Server: POST /api/signature-url (workspace_id)
+    Server->>Server: Create temporary project (status: UPLOADING)
+    Server->>GCS: Generate signed upload URL
+    Server-->>Client: { upload_url, temporary_project, expires_at }
+    Client->>GCS: PUT upload_url (project zip)
+    GCS->>Trigger: Storage event (object created)
+    Trigger->>Server: POST /api/import-project or /api/storage-event
+    Server->>GCS: Download zip file
+    Server->>Server: ImportProject()
+    Server->>GCS: Remove zip file
+```
+
+1. **Request Signed URL** - Client calls `POST /api/signature-url` with `workspace_id`. Server creates a temporary project and returns a GCS signed upload URL.
+2. **Upload to GCS** - Client uploads the zip file directly to GCS using the signed URL.
+3. **GCS Event** - GCS triggers a notification (via Cloud Function or Pub/Sub) to the server.
+4. **Import Processing** - Server downloads the zip from GCS, runs `ImportProject()`, then removes the zip from GCS.
 
 **Authentication**:
 
-- No auth token required (triggered by storage service)
-- User context extracted from filename: `{workspaceId}-{projectId}-{userId}.zip`
-- Operator context automatically generated from user ID
+- `POST /api/signature-url` requires a valid auth token (authenticated route).
+- `POST /api/import-project` and `POST /api/storage-event` do not require an auth token — they are triggered by GCS events. User context is extracted from the filename: `{workspaceId}-{projectId}-{userId}.zip`, and an operator is generated from the user ID.
 
-**File**: `internal/app/file_import_common.go:95`
+**File**: `internal/app/file_signature_uploader.go`
 
 ### ImportProject() Implementation
 
 Core import logic that processes the extracted project data.
+
+```mermaid
+flowchart TD
+    Start([ImportProject called]) --> ProjectData[1. ImportProjectData<br/>Project metadata and configuration]
+    ProjectData -->|fail| Fail
+    ProjectData --> Assets[2. ImportAssetFiles<br/>Upload and register asset files]
+    Assets -->|fail| Fail
+    Assets --> Scene[3. Create Scene<br/>Create new scene for imported project]
+    Scene -->|fail| Fail
+    Scene --> ReplaceID[4. Replace Scene ID<br/>Replace old scene ID with new ID throughout data]
+    ReplaceID -->|fail| Fail
+    ReplaceID --> Plugins[5. ImportPlugins<br/>Install required plugins and schemas]
+    Plugins -->|fail| Fail
+    Plugins --> SceneData[6. ImportSceneData<br/>Scene configuration and layers]
+    SceneData -->|fail| Fail
+    SceneData --> Styles[7. ImportStyles<br/>Layer styling information]
+    Styles -->|fail| Fail
+    Styles --> NLSLayers[8. ImportNLSLayers<br/>New layer system data]
+    NLSLayers -->|fail| Fail
+    NLSLayers --> Story[9. ImportStory<br/>Storytelling configuration]
+    Story -->|fail| Fail
+    Story --> Success([Status: SUCCESS])
+    Fail([Status: FAILED<br/>Stops at first error])
+```
 
 **Processing Order**:
 
