@@ -10,8 +10,6 @@ REEARTH_DB_DOCKER := mongodb://reearth-mongo:27017/?directConnection=true
 MIGRATION_KEY ?=
 SCHEMATYPER := github.com/idubinskiy/schematyper
 MANIFEST_DIR := pkg/plugin/manifest
-DOCKER_COMPOSE := docker compose -f ../docker-compose.yml
-DOCKER_EXEC := docker exec reearth-visualizer-reearth-visualizer-dev-1
 
 # =======================
 # Include Fragments
