@@ -85,7 +85,6 @@ const Link = styled("span")(({ theme }) => ({
   textDecoration: css.textDecoration.underline,
   cursor: css.cursor.pointer,
   position: css.position.relative,
-  zIndex: 1,
   "&:hover": {
     color: theme.primary.strong
   }
