@@ -2948,6 +2948,34 @@ extensions:
               title: Content
               placeholder: ${your property key}
               ui: property_selector
+  - id: linkInfoboxBetaBlock
+    name: Link
+    type: infoboxBlock
+    description: Infobox Link Block
+    schema:
+      groups:
+        - id: panel
+          title: Panel Setting
+          fields:
+            - id: padding
+              type: spacing
+              title: Padding
+              ui: padding
+              min: 0
+              max: 100
+        - id: default
+          title: Link Block
+          fields:
+            - id: text
+              type: string
+              title: Display Text
+              placeholder: ${your property key}
+              ui: property_selector
+            - id: url
+              type: string
+              title: URL
+              placeholder: ${your property key}
+              ui: property_selector
 
   - id: photo-overlay
     name: Photo overlay
