@@ -33,10 +33,33 @@ export default () => {
   const [updatePropertyValue] = useUpdatePropertyValueMutation();
   const client = useApolloClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false);
-  const [autoRefreshInterval, setAutoRefreshInterval] = useState<"15min" | "30min" | "1hour" | "2hour" | "4hour">("1hour");
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(() => {
+    try {
+      const saved = localStorage.getItem("autoRefreshEnabled");
+      return saved ? JSON.parse(saved) : false;
+    } catch {
+      return false;
+    }
+  });
+  const [autoRefreshInterval, setAutoRefreshInterval] = useState<"15min" | "30min" | "1hour" | "2hour" | "4hour">(() => {
+    try {
+      const saved = localStorage.getItem("autoRefreshInterval");
+      return (saved as "15min" | "30min" | "1hour" | "2hour" | "4hour") || "1hour";
+    } catch {
+      return "1hour";
+    }
+  });
   const autoRefreshTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isAuthenticated = useAuth();
+
+  // Persist auto refresh settings to localStorage
+  useEffect(() => {
+    localStorage.setItem("autoRefreshEnabled", JSON.stringify(autoRefreshEnabled));
+  }, [autoRefreshEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem("autoRefreshInterval", autoRefreshInterval);
+  }, [autoRefreshInterval]);
 
   const { data: rawDatasets, loading: datasetsLoading, refetch } = useGetDatasetsForDatasetInfoPaneQuery({
     variables: {
