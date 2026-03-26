@@ -77,7 +77,7 @@ services:
       - reearth
 
   reearth-mongo:
-    image: mongo:7
+    image: mongo:8.0
     hostname: reearth-mongo
     ports:
       - 27017:27017
