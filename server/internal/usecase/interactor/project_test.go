@@ -470,7 +470,7 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 	})
 
 	t.Run("unauthenticated access to public project should succeed", func(t *testing.T) {
-		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), publicProject.ProjectAlias(), nil)
+		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), publicProject.ProjectAlias(), false, nil)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
@@ -479,7 +479,7 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 	})
 
 	t.Run("unauthenticated access to private project should fail", func(t *testing.T) {
-		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), nil)
+		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), false, nil)
 
 		assert.Error(t, err)
 		assert.Equal(t, "project is private", err.Error())
@@ -493,7 +493,7 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 			},
 		}
 
-		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), operator)
+		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), false, operator)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, result)

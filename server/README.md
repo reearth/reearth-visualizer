@@ -4,66 +4,268 @@
 
 A back-end API server application for Re:Earth
 
-## 🛠️ Useful Development Commands
+## Data Structure
 
-### Starting the Development Server
+```mermaid
+erDiagram
+    Workspace ||--o{ Project : contains
 
-There are two ways to start the development server depending on your workflow:
+    Project ||--|| Scene : "1:1"
+    Project ||--o| ProjectMetadata : has
 
-#### Default: Using Docker Hub image for accounts API
+    Scene ||--o| Story : "1:1 (in practice)"
+    Scene ||--o{ NLSLayer : contains
+    Scene ||--o{ LayerStyle : contains
+    Scene ||--o{ Widget : contains
+    Scene ||--o{ Plugin : installed
+    Scene ||--|| Property : "scene property"
 
-Starts all services including the accounts API from Docker Hub (`reearth/reearth-accounts-api`):
+    Story ||--o{ StoryPage : contains
+    StoryPage ||--o{ StoryBlock : contains
+
+    NLSLayer ||--o| SketchInfo : "optional"
+    NLSLayer ||--o| Infobox : "optional"
+    NLSLayerGroup ||--o{ NLSLayer : children
+
+    SketchInfo ||--|| FeatureCollection : has
+    FeatureCollection ||--o{ Feature : contains
+    Feature ||--|| Geometry : has
+
+    Infobox ||--o{ InfoboxBlock : contains
+
+    Widget }o--|| Plugin : references
+    StoryBlock }o--|| Plugin : references
+
+    Workspace {
+        WorkspaceID id
+    }
+    Project {
+        ProjectID id
+        WorkspaceID workspace
+        SceneID scene
+        string name
+        string description
+        string visibility
+    }
+    ProjectMetadata {
+        ProjectID project
+        string license
+        string readme
+        string[] topics
+    }
+    Scene {
+        SceneID id
+        ProjectID project
+        WorkspaceID workspace
+        PropertyID property
+    }
+    Story {
+        StoryID id
+        SceneID scene
+        ProjectID project
+    }
+    StoryPage {
+        PageID id
+        PropertyID property
+        NLSLayerID[] layers
+    }
+    StoryBlock {
+        BlockID id
+        PluginID plugin
+        ExtensionID extension
+        PropertyID property
+    }
+    NLSLayer {
+        NLSLayerID id
+        SceneID scene
+        bool isSketch
+    }
+    NLSLayerGroup {
+        NLSLayerID id
+        NLSLayerID[] children
+    }
+    SketchInfo {
+        map customPropertySchema
+    }
+    FeatureCollection {
+        Feature[] features
+    }
+    Feature {
+        FeatureID id
+        string type
+        map properties
+    }
+    Geometry {
+        string type
+        coordinates coordinates
+    }
+    LayerStyle {
+        StyleID id
+        SceneID scene
+        string name
+        map value
+    }
+    Widget {
+        WidgetID id
+        PluginID plugin
+        ExtensionID extension
+        PropertyID property
+    }
+    Plugin {
+        PluginID id
+        string name
+        Extension[] extensions
+    }
+    Infobox {
+        PropertyID property
+    }
+    InfoboxBlock {
+        BlockID id
+        PluginID plugin
+        ExtensionID extension
+        PropertyID property
+    }
+    Property {
+        PropertyID id
+        PropertySchemaID schema
+    }
+```
+
+> **Note:**
+> - **Project : Scene : Story = 1 : 1 : 1** in practice (code allows 1:Many for Story, but only one is used)
+> - **SketchInfo** is optional per NLSLayer — not all layers have sketch/features
+> - **NLSLayerGroup** is a subtype of NLSLayer that can contain child NLSLayers (hierarchical)
+> - **Property** is the shared dynamic configuration system — referenced by Scene, Widget, Plugin, StoryBlock, StoryPage, Infobox, InfoboxBlock
+
+## Architecture
+
+The development environment runs the following containers via Docker Compose:
+
+```mermaid
+graph TB
+    subgraph host["Host Machine"]
+        Web["Web (Frontend)<br/>:3000"]
+    end
+
+    subgraph docker["Docker Network: reearth"]
+        Visualizer["reearth-visualizer-dev<br/>(Go + Air hot reload)<br/>:8080"]
+        Accounts["reearth-accounts-api<br/>(reearth/reearth-accounts-api:v1.0.0)<br/>:8090"]
+        Cerbos["reearth-cerbos<br/>(cerbos/cerbos:0.40.0)<br/>:3593"]
+        Mongo["reearth-mongo<br/>(mongo:7)<br/>:27017"]
+        GCS["reearth-gcs<br/>(fake-gcs-server:1.52.1)<br/>:4443"]
+    end
+
+    Web -- "API requests" --> Visualizer
+    Visualizer --> Mongo
+    Visualizer --> GCS
+    Visualizer --> Accounts
+    Accounts --> Mongo
+    Accounts --> Cerbos
+```
+
+| Container | Image | Port | Description |
+| --- | --- | --- | --- |
+| reearth-visualizer-dev | (local build) | 8080 | Visualizer API server with hot reload |
+| reearth-accounts-api | reearth/reearth-accounts-api:v1.0.0 | 8090 | User/workspace management API |
+| reearth-cerbos | cerbos/cerbos:0.40.0 | 3593 | Authorization policy engine |
+| reearth-mongo | mongo:7 | 27017 | MongoDB (shared by visualizer and accounts) |
+| reearth-gcs | fsouza/fake-gcs-server:1.52.1 | 4443 | Fake GCS for local asset storage |
+
+## Development
+
+### Starting Services
+
+#### Method 1: Using Docker Hub image (default)
+
+Start all backend services with a single command:
 
 ```bash
+make d-run
+```
+
+This brings up all required containers with their dependencies: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
+
+This method uses the public image `reearth/reearth-accounts-api:v1.0.0` from Docker Hub.
+
+To stop all services:
+
+```bash
+make d-down
+```
+
+To check the accounts API logs:
+
+```bash
+make d-logs-accounts
+```
+
+---
+
+#### Method 2: Local accounts development
+
+If you are developing `reearth-accounts` locally, you can run it from source instead of the Docker Hub image.
+
+**Terminal 1** — Start visualizer without accounts (visualizer + mongo + gcs only):
+
+```bash
+make d-run-standalone
+```
+
+**Terminal 2** — Clone and start accounts API from source:
+
+```bash
+git clone https://github.com/reearth/reearth-accounts.git
+cd reearth-accounts/server
+cp .env.docker.example .env.docker
 make run
 ```
 
-This starts: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
+This starts `reearth-accounts-dev` and `reearth-cerbos` and attaches them to the `reearth` Docker network.
 
-#### Local accounts development: Using local reearth-accounts repo
+```mermaid
+graph TB
+    subgraph visualizer["reearth-visualizer (Terminal 1: make d-run-standalone)"]
+        V["reearth-visualizer-dev<br/>:8080"]
+        Mongo["reearth-mongo<br/>:27017"]
+        GCS["reearth-gcs<br/>:4443"]
+    end
 
-If you are developing `reearth-accounts` locally and want to run it from source:
+    subgraph accounts["reearth-accounts (Terminal 2: make run)"]
+        A["reearth-accounts-dev<br/>:8090"]
+        Cerbos["reearth-cerbos<br/>:3593"]
+    end
 
-**Terminal 1** — Start visualizer (without accounts API):
+    V --> Mongo
+    V --> GCS
+    V --> A
+    A --> Mongo
+    A --> Cerbos
 
-```bash
-# In ~/reearth-visualizer/server
-make run-local
+    style visualizer fill:#e8f4fd,stroke:#1a73e8
+    style accounts fill:#fef7e0,stroke:#f9ab00
 ```
 
-This starts: **visualizer** + **MongoDB** + **GCS** (no accounts API)
-
-**Terminal 2** — Start accounts API from local repo:
-
-```bash
-# In ~/reearth-accounts/server
-make run
-```
-
-The accounts API will join the `reearth` Docker network automatically.
-
-#### After startup: Initialize the environment
+### Initializing the Environment
 
 After the services are running, initialize GCS and create the demo user:
 
 ```bash
-make init
+make gcs-bucket
+make mockuser-accounts
+```
+
+Or simply:
+
+```bash
+make setup-dev
 ```
 
 ### Database and Environment Reset
 
 Reset the development environment including database and GCS:
 
-**Unix/Linux/macOS:**
-
 ```bash
-make reset
-```
-
-**Windows:**
-
-```cmd
-dev.bat reset
+make d-reset-data
 ```
 
 This command will:
@@ -78,16 +280,8 @@ This command will:
 
 Remove all Docker resources and data (use with caution):
 
-**Unix/Linux/macOS:**
-
 ```bash
-make destroy
-```
-
-**Windows:**
-
-```cmd
-dev.bat destroy
+make d-destroy
 ```
 
 This command will:
@@ -95,7 +289,7 @@ This command will:
 - Stop all Docker containers
 - Remove all Docker images, volumes, and networks
 - Delete all data directories
-- **⚠️ WARNING:** This is a destructive operation and cannot be undone
+- **WARNING:** This is a destructive operation and cannot be undone
 
 > **Note:** This command will prompt for confirmation before proceeding.
 
@@ -103,55 +297,45 @@ This command will:
 
 Run linting and tests inside the Docker container (same environment as CI/CD):
 
-**Unix/Linux/macOS:**
-
 ```bash
 # Run linter with auto-fix
-make lint-docker
+make d-lint
 
 # Run tests
-make test-docker
-```
-
-**Windows:**
-
-```cmd
-# Run linter with auto-fix
-dev.bat lint-docker
-
-# Run tests
-dev.bat test-docker
+make d-test
 ```
 
 > **Note:**
 >
-> - These commands require the development container to be running (`make run` or `dev.bat run`)
+> - These commands require the development container to be running (`make d-run`)
 > - Some e2e tests may fail in Docker due to MongoDB permission constraints
-> - For local e2e testing, use `make test` or `dev.bat test` instead
+> - For local e2e testing, use `make test` instead
 
 ### Quick Reference
 
-| Command                                    | Description                                                    |
-| ------------------------------------------ | -------------------------------------------------------------- |
-| `make run`                                 | Start all services including accounts API from Docker Hub      |
-| `make run-local`                           | Start without accounts API (for local reearth-accounts dev)    |
-| `make init`                                | Initialize GCS bucket and create demo user                     |
-| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data            |
-| `make destroy` / `dev.bat destroy`         | ⚠️ Remove ALL Docker resources and data (destructive)          |
-| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container                          |
-| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                                  |
+| Command | Description |
+| --- | --- |
+| `make d-run` | Start all services including accounts API from Docker Hub |
+| `make d-run-standalone` | Start visualizer without accounts API (mongo + gcs only) |
+| `make d-down` | Stop all services |
+| `make d-logs-accounts` | Follow accounts API logs |
+| `make setup-dev` | Initialize GCS bucket and create mock user |
+| `make d-reset-data` | Reset database and GCS, reinitialize with mock data |
+| `make d-destroy` | Remove ALL Docker resources and data (destructive) |
+| `make d-lint` | Run golangci-lint in Docker container |
+| `make d-test` | Run tests in Docker container |
 
-## 🔐 Authentication
+## Authentication
 
 Authentication is handled by the shared service [Re:Earth Accounts](https://github.com/reearth/reearth-accounts).
-When using `make run`, a pre-built `reearth/reearth-accounts-api` container from Docker Hub is started automatically.
+When using `make d-run`, a pre-built `reearth/reearth-accounts-api` container from Docker Hub is started automatically.
 
 There are two authentication modes: **Mock User** (default) and **Identity Provider (IdP)**.
 
 ### 1. Mock User Mode (Default)
 
 Uses a demo user for local development without requiring an external IdP.
-No additional configuration is needed — this is the default.
+No additional configuration is needed — these are the defaults.
 
 **web/.env**
 
@@ -159,9 +343,17 @@ No additional configuration is needed — this is the default.
 REEARTH_WEB_AUTH_PROVIDER=mock
 ```
 
+**server/.env.accounts.docker**
+
+```bash
+REEARTH_MOCK_AUTH=true
+```
+
+> If you are using [Method 2](#method-2-local-accounts-development), edit `reearth-accounts/server/.env.docker` instead.
+
 ### 2. Identity Provider (IdP) Mode
 
-To use an IdP (e.g. Auth0), edit `accounts/.env.docker` with your Auth0 credentials:
+To use an IdP (e.g. Auth0), edit `server/.env.accounts.docker` with your Auth0 credentials:
 
 ```bash
 REEARTH_MOCK_AUTH=false
@@ -171,6 +363,8 @@ REEARTH_AUTH0_CLIENTID=your-auth0-client-id
 REEARTH_AUTH0_CLIENTSECRET=your-auth0-client-secret
 REEARTH_AUTH0_WEBCLIENTID=your-auth0-web-client-id
 ```
+
+> If you are using [Method 2](#method-2-local-accounts-development), edit `reearth-accounts/server/.env.docker` instead.
 
 Also update **web/.env**:
 
@@ -190,106 +384,6 @@ curl -H 'Content-Type: application/json' http://localhost:8080/api/signup -d @- 
 }
 EOF
 ```
-
-### Developing reearth-accounts locally
-
-If you need to develop `reearth-accounts` itself, use `make run-local` instead of `make run`:
-
-**Terminal 1** — Start visualizer (without the accounts API container):
-
-```bash
-# In ~/reearth-visualizer/server
-make run-local
-```
-
-**Terminal 2** — Clone and start accounts API from source:
-
-```bash
-git clone https://github.com/reearth/reearth-accounts.git ~/reearth-accounts
-cd ~/reearth-accounts/server
-make run
-```
-
-The local accounts API will join the `reearth` Docker network automatically.
-
-## Storage
-
-Visualizer is compatible with the following storage interfaces:
-
-- [Google Cloud Storage](https://cloud.google.com/storage)
-- [Amazon S3](https://aws.amazon.com/s3/)
-- Local File System
-
-### Storage Configuration
-
-To use these storage interfaces, you need to set the following environment variables in order of priority: 1. `REEARTH_GCS_BUCKETNAME`: Set this to use Google Cloud Storage. 2. `REEARTH_S3_BUCKET_NAME`: Set this to use Amazon S3.
-
-If neither `REEARTH_GCS_BUCKETNAME` nor `REEARTH_S3_BUCKET_NAME` is configured, the local file system will be used as the default storage interface.
-
-Additionally, `REEARTH_ASSETBASEURL` is a required environment variable that is used across all storage types. This should be set to the base URL for accessing your stored assets.
-
-### Testing GCS Locally
-
-1. Start the fake-gcs-server ([fake-gcs-server](https://github.com/fsouza/fake-gcs-server)):
-
-   ```bash
-   make up-gcs
-   ```
-
-2. Create a bucket:
-
-   **Using Make/dev.bat (Recommended):**
-
-   ```bash
-   # Unix/Linux/macOS
-   make init-gcs
-
-   # Windows
-   dev.bat init-gcs
-   ```
-
-   **Manual Creation (Advanced):**
-
-   If you need to create a bucket with a custom name or project ID:
-
-   <details>
-   <summary>Unix/Linux/macOS</summary>
-
-   ```shell
-   curl -X POST http://localhost:4443/storage/v1/b\?project\=your-project-id \
-       -H "Content-Type: application/json" \
-       -d '{
-             "name": "test-bucket"
-           }'
-   ```
-
-   </details>
-
-   <details>
-   <summary>Windows (Command Prompt)</summary>
-
-   ```cmd
-   curl -X POST "http://localhost:4443/storage/v1/b?project=your-project-id" ^
-       -H "Content-Type: application/json" ^
-       -d "{\"name\": \"test-bucket\"}"
-   ```
-
-   </details>
-
-   <details>
-   <summary>Windows (PowerShell)</summary>
-
-   ```powershell
-   curl.exe -X POST "http://localhost:4443/storage/v1/b?project=your-project-id" `
-       -H "Content-Type: application/json" `
-       -d '{"name": "test-bucket"}'
-   ```
-
-   </details>
-
-3. Set `REEARTH_GCS_BUCKETNAME` to `test-bucket`
-
-> **Note:** The default bucket name is `test-bucket`. You can use a different name if needed.
 
 ## Project Export and Import
 
@@ -318,12 +412,54 @@ Projects can be exported via the GraphQL API using the `ExportProject` mutation.
 
 ```
 project.zip
-├── project.json       # Complete project data with metadata
-├── assets/           # Project assets
-│   ├── image1.png
-│   └── model.gltf
-└── plugins/          # Plugin files
-    └── plugin1/
+├── project.json                        # Complete project data with metadata
+├── assets/                             # Project assets
+│   ├── {asset-filename-1}
+│   └── {asset-filename-2}
+└── plugins/                            # Plugin files
+    └── {plugin-id}/
+        ├── {extension-id-1}.js
+        └── {extension-id-2}.js
+```
+
+#### project.json Top-Level Structure
+
+```jsonc
+{
+  "scene": {                          // Scene data (built by scene/builder)
+    "schemaVersion": 1,
+    "id": "...",
+    "publishedAt": "...",
+    "property": { ... },              // Scene property
+    "plugins": { ... },               // Plugin properties (keyed by plugin ID)
+    "widgets": [ ... ],               // Widget configurations
+    "widgetAlignSystems": { ... },    // Widget layout alignment
+    "story": { ... },                 // Storytelling data (optional)
+    "nlsLayers": [ ... ],             // NLS layer data
+    "layerStyles": [ ... ],           // Layer style data
+    "coreSupport": true,
+    "enableGa": false,
+    "trackingId": ""
+  },
+  "project": {                        // Project metadata
+    "visualizer": "cesium",
+    "name": "...",
+    "description": "...",
+    "imageUrl": "...",                 // optional
+    "visibility": "public",           // optional
+    "license": "...",                  // optional
+    "readme": "...",                   // optional
+    "topics": [ ... ]                  // optional
+  },
+  "plugins": [ ... ],                 // Plugin definitions
+  "schemas": [ ... ],                 // Property schema definitions
+  "exportedInfo": {                   // Export metadata
+    "host": "https://...",
+    "project": "{projectId}",
+    "timestamp": "2025-01-01T00:00:00Z",
+    "exportDataVersion": "1"
+  }
+}
 ```
 
 #### Export Data Version
@@ -334,17 +470,31 @@ The `exportDataVersion` field enables compatibility management for future format
 - Version is embedded in `exportedInfo` section of `project.json`
 - Future versions can support schema migrations and new features
 
-**File**: `internal/adapter/gql/resolver_mutation_project.go:149`
+**File**: `internal/adapter/gql/resolver_mutation_project.go:219`
 
 ### Import
 
 Projects can be imported via two methods:
 
-#### 1. Split Upload API (`POST /api/split-import`)
+#### Method 1: Direct Upload (`POST /api/split-import`)
 
-Handles chunked file uploads for large project files.
+Client uploads the project zip file directly to the server in chunks. Requires authentication.
 
 **Process Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server as Visualizer API
+    Client->>Server: POST /api/split-import (chunk 0)
+    Server->>Server: Save chunk, create temporary project (status: UPLOADING)
+    Server-->>Client: { project_id, completed: false }
+    Client->>Server: POST /api/split-import (chunk 1..N)
+    Server-->>Client: { project_id, completed: false }
+    Client->>Server: POST /api/split-import (final chunk)
+    Server-->>Client: { project_id, completed: true }
+    Server->>Server: (async) Assemble chunks → ImportProject()
+```
 
 1. **Chunk Upload** - Client uploads file in chunks (16MB each)
 2. **Session Management** - Server tracks upload progress per file ID
@@ -353,23 +503,80 @@ Handles chunked file uploads for large project files.
 5. **Async Processing** - Spawns goroutine to process import
 6. **Import Execution** - Calls `ImportProject()` with assembled data
 
-**File**: `internal/app/file_split_uploader.go:69`
+**File**: `internal/app/file_split_uploader.go`
 
-#### 2. Storage Trigger API (`POST /api/import-project`)
+#### Method 2: Signed URL Upload (via GCS)
 
-Triggered automatically when a project zip file is uploaded directly to storage (e.g., GCS/S3 bucket notification).
+Client uploads the project zip file to GCS using a signed URL, then a GCS event triggers the server to process the import. This method is suitable for large files and production environments using GCP.
+
+**Endpoints**:
+
+| Endpoint | Auth | Description |
+| --- | --- | --- |
+| `POST /api/signature-url` | Required | Generates a signed upload URL for GCS |
+| `POST /api/import-project` | Not required | Triggered by GCS Cloud Function event |
+| `POST /api/storage-event` | Not required | Triggered by GCS Pub/Sub push subscription |
+
+**Process Flow**:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server as Visualizer API
+    participant GCS
+    participant Trigger as Cloud Function / Pub/Sub
+
+    Client->>Server: POST /api/signature-url (workspace_id)
+    Server->>Server: Create temporary project (status: UPLOADING)
+    Server->>GCS: Generate signed upload URL
+    Server-->>Client: { upload_url, temporary_project, expires_at }
+    Client->>GCS: PUT upload_url (project zip)
+    GCS->>Trigger: Storage event (object created)
+    Trigger->>Server: POST /api/import-project or /api/storage-event
+    Server->>GCS: Download zip file
+    Server->>Server: ImportProject()
+    Server->>GCS: Remove zip file
+```
+
+1. **Request Signed URL** - Client calls `POST /api/signature-url` with `workspace_id`. Server creates a temporary project and returns a GCS signed upload URL.
+2. **Upload to GCS** - Client uploads the zip file directly to GCS using the signed URL.
+3. **GCS Event** - GCS triggers a notification (via Cloud Function or Pub/Sub) to the server.
+4. **Import Processing** - Server downloads the zip from GCS, runs `ImportProject()`, then removes the zip from GCS.
 
 **Authentication**:
 
-- No auth token required (triggered by storage service)
-- User context extracted from filename: `{workspaceId}-{projectId}-{userId}.zip`
-- Operator context automatically generated from user ID
+- `POST /api/signature-url` requires a valid auth token (authenticated route).
+- `POST /api/import-project` and `POST /api/storage-event` do not require an auth token — they are triggered by GCS events. User context is extracted from the filename: `{workspaceId}-{projectId}-{userId}.zip`, and an operator is generated from the user ID.
 
-**File**: `internal/app/file_import_common.go:95`
+**File**: `internal/app/file_signature_uploader.go`
 
 ### ImportProject() Implementation
 
 Core import logic that processes the extracted project data.
+
+```mermaid
+flowchart TD
+    Start([ImportProject called]) --> ProjectData[1. ImportProjectData<br/>Project metadata and configuration]
+    ProjectData -->|fail| Fail
+    ProjectData --> Assets[2. ImportAssetFiles<br/>Upload and register asset files]
+    Assets -->|fail| Fail
+    Assets --> Scene[3. Create Scene<br/>Create new scene for imported project]
+    Scene -->|fail| Fail
+    Scene --> ReplaceID[4. Replace Scene ID<br/>Replace old scene ID with new ID throughout data]
+    ReplaceID -->|fail| Fail
+    ReplaceID --> Plugins[5. ImportPlugins<br/>Install required plugins and schemas]
+    Plugins -->|fail| Fail
+    Plugins --> SceneData[6. ImportSceneData<br/>Scene configuration and layers]
+    SceneData -->|fail| Fail
+    SceneData --> Styles[7. ImportStyles<br/>Layer styling information]
+    Styles -->|fail| Fail
+    Styles --> NLSLayers[8. ImportNLSLayers<br/>New layer system data]
+    NLSLayers -->|fail| Fail
+    NLSLayers --> Story[9. ImportStory<br/>Storytelling configuration]
+    Story -->|fail| Fail
+    Story --> Success([Status: SUCCESS])
+    Fail([Status: FAILED<br/>Stops at first error])
+```
 
 **Processing Order**:
 
@@ -420,7 +627,58 @@ if version != nil && *version == "2" {
 return importV1(...)
 ```
 
-**File**: `internal/app/file_import_common.go:193`
+**File**: `internal/app/file_import_common.go:250`
+
+### Plugin Export and Import
+
+Plugins have a unique data model — JS files are stored in object storage, while parameter schemas (defined in YAML) are stored only in the database. Both must be handled during export/import.
+
+#### Export
+
+`ExportPlugins()` collects the following for each non-system plugin attached to the scene:
+
+1. **JS files** — Read from storage and written to `plugins/{plugin-id}/{extension-id}.js` in the zip
+2. **Plugin definitions** — Serialized to `project.json` under `plugins`
+3. **Property schemas** — Read from DB and serialized to `project.json` under `schemas`
+
+```
+project.zip
+└── plugins/
+    └── {plugin-id}/
+        ├── {extension-id-1}.js   ← from storage
+        └── {extension-id-2}.js   ← from storage
+
+project.json
+├── plugins: [ ... ]              ← plugin metadata (from DB)
+└── schemas: [ ... ]              ← property schemas (from DB)
+```
+
+**File**: `internal/usecase/interactor/plugin.go:65`
+
+#### Import
+
+`ImportPlugins()` restores plugins in two steps:
+
+```mermaid
+flowchart TD
+    Start([ImportPlugins]) --> Upload[1. uploadPluginFile<br/>Upload JS files to storage]
+    Upload -->|fail| Fail([Error])
+    Upload --> Parse[2. Parse plugins and schemas<br/>from project.json]
+    Parse --> Loop[For each plugin]
+    Loop --> Schema[Save PropertySchema to DB]
+    Schema --> Extension[Build Extension with schema reference]
+    Extension --> Plugin[Save Plugin to DB]
+    Plugin --> Next{More plugins?}
+    Next -->|yes| Loop
+    Next -->|no| Done([Done])
+```
+
+1. **Upload JS files** — Each `plugins/{plugin-id}/{extension-id}.js` from the zip is uploaded to storage. The old scene ID in the plugin ID is replaced with the new scene ID.
+2. **Restore schemas and plugins** — For each plugin in `project.json`:
+   - Parse and save each `PropertySchema` directly to the database
+   - Build and save the `Plugin` entity with extensions referencing the saved schemas
+
+**File**: `internal/usecase/interactor/plugin.go:117`
 
 ### Error Handling
 
@@ -434,6 +692,7 @@ All import steps update project status on failure:
 
 - `ProjectImportStatusNone` - Not imported
 - `ProjectImportStatusUploading` - Upload in progress
+- `ProjectImportStatusProcessing` - Import processing
 - `ProjectImportStatusSuccess` - Import completed successfully
 - `ProjectImportStatusFailed` - Import failed (check `importResultLog`)
 

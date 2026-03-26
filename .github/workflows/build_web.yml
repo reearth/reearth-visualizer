@@ -69,7 +69,7 @@ jobs:
           echo "::set-output name=version::$VERSION"
           echo "::set-output name=tags::$TAGS"
       - name: Build and push docker image
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
         with:
           context: web
           platforms: ${{ steps.options.outputs.platforms }}
@@ -124,7 +124,7 @@ jobs:
     env:
       ARTIFACT: reearth-web_${{ inputs.name }}.tar.gz
     steps:
-      - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+      - uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
         id: app-token
         with:
           app-id: ${{ vars.GH_APP_ID }}

@@ -210,17 +210,17 @@ func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator 
 	return pj, nil
 }
 
-func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, excludeDeleted bool, operator *usecase.Operator) (*project.Project, error) {
 	ws, err := i.workspaceRepo.FindByAlias(ctx, workspaceAlias)
 	if err != nil {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
 	}
 
-	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)
+	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, excludeDeleted, operator)
 }
 
-func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountsID.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
-	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias)
+func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountsID.WorkspaceID, projectAlias string, excludeDeleted bool, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias, excludeDeleted)
 	if err != nil {
 		return nil, err
 	}

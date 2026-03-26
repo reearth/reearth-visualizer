@@ -378,4 +378,94 @@ describe("PropertyItem", () => {
     render(<PropertyItem propertyId="testId" item={mockItem} />);
     expect(screen.getByText("Range Field")).toBeInTheDocument();
   });
+
+  test("renders selection field with placeholder", () => {
+    const mockItem = {
+      id: "1",
+      schemaGroup: "group1",
+      schemaFields: [
+        {
+          id: "selectField",
+          type: "string",
+          title: "Select Field",
+          placeholder: "Choose an option",
+          choices: [
+            { key: "option1", label: "Option 1" },
+            { key: "option2", label: "Option 2" }
+          ]
+        }
+      ],
+      fields: [],
+      representativeField: "selectField"
+    } as unknown as Item;
+
+    render(<PropertyItem propertyId="testId" item={mockItem} />);
+    expect(screen.getByText("Select Field")).toBeInTheDocument();
+    expect(screen.getByText("Choose an option")).toBeInTheDocument();
+  });
+
+  test("renders multiline field with placeholder", () => {
+    const mockItem = {
+      id: "1",
+      schemaGroup: "group1",
+      schemaFields: [
+        {
+          id: "textareaField",
+          type: "string",
+          title: "Textarea Field",
+          ui: "multiline",
+          placeholder: "Enter your text here"
+        }
+      ],
+      fields: [],
+      representativeField: "textareaField"
+    } as unknown as Item;
+
+    render(<PropertyItem propertyId="testId" item={mockItem} />);
+    expect(screen.getByText("Textarea Field")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Enter your text here")).toBeInTheDocument();
+  });
+
+  test("renders number field with placeholder", () => {
+    const mockItem = {
+      id: "1",
+      schemaGroup: "group1",
+      schemaFields: [
+        {
+          id: "numberField",
+          type: "number",
+          title: "Number Field",
+          placeholder: "Enter a number",
+          suffix: "px"
+        }
+      ],
+      fields: [],
+      representativeField: "numberField"
+    } as unknown as Item;
+
+    render(<PropertyItem propertyId="testId" item={mockItem} />);
+    expect(screen.getByText("Number Field")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Enter a number")).toBeInTheDocument();
+  });
+
+  test("renders url field with placeholder", () => {
+    const mockItem = {
+      id: "1",
+      schemaGroup: "group1",
+      schemaFields: [
+        {
+          id: "urlField",
+          type: "url",
+          title: "URL Field",
+          placeholder: "https://example.com"
+        }
+      ],
+      fields: [],
+      representativeField: "urlField"
+    } as unknown as Item;
+
+    render(<PropertyItem propertyId="testId" item={mockItem} />);
+    expect(screen.getByText("URL Field")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("https://example.com")).toBeInTheDocument();
+  });
 });

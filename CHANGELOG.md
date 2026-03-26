@@ -2,6 +2,79 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.5 - 2026-03-25
+
+### Web
+
+#### ✨ Refactor
+
+- Support placeholder on more property fields ([#2119](https://github.com/reearth/reearth-visualizer/pull/2119)) [`5d441b`](https://github.com/reearth/reearth-visualizer/commit/5d441b)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Exclude deleted projects from read-only internal API responses ([#2123](https://github.com/reearth/reearth-visualizer/pull/2123)) [`4119bc`](https://github.com/reearth/reearth-visualizer/commit/4119bc)
+- Skip Accounts API for Internal API requests ([#2110](https://github.com/reearth/reearth-visualizer/pull/2110)) [`99f896`](https://github.com/reearth/reearth-visualizer/commit/99f896)
+
+#### ✨ Refactor
+
+- Split Makefile into modular fragments ([#2122](https://github.com/reearth/reearth-visualizer/pull/2122)) [`237ea8`](https://github.com/reearth/reearth-visualizer/commit/237ea8)
+
+#### 🧪 Testing
+
+- Completed api tests ([#2121](https://github.com/reearth/reearth-visualizer/pull/2121)) [`d45ac5`](https://github.com/reearth/reearth-visualizer/commit/d45ac5)
+
+#### Miscellaneous Tasks
+
+- Improve dev setup scripts and remove dev.bat ([#2124](https://github.com/reearth/reearth-visualizer/pull/2124)) [`652bd8`](https://github.com/reearth/reearth-visualizer/commit/652bd8)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.15.5 ([#2128](https://github.com/reearth/reearth-visualizer/pull/2128)) [`7d9e07`](https://github.com/reearth/reearth-visualizer/commit/7d9e07)
+- Update docker&#x2F;build-push-action action to v7 ([#2108](https://github.com/reearth/reearth-visualizer/pull/2108)) [`79dc55`](https://github.com/reearth/reearth-visualizer/commit/79dc55)
+- Update actions&#x2F;create-github-app-token action to v3 ([#2113](https://github.com/reearth/reearth-visualizer/pull/2113)) [`9739fb`](https://github.com/reearth/reearth-visualizer/commit/9739fb)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.15.5 ([#2128](https://github.com/reearth/reearth-visualizer/pull/2128)) [`7d9e07`](https://github.com/reearth/reearth-visualizer/commit/7d9e07)
+- Update docker&#x2F;build-push-action action to v7 ([#2108](https://github.com/reearth/reearth-visualizer/pull/2108)) [`79dc55`](https://github.com/reearth/reearth-visualizer/commit/79dc55)
+- Update actions&#x2F;create-github-app-token action to v3 ([#2113](https://github.com/reearth/reearth-visualizer/pull/2113)) [`9739fb`](https://github.com/reearth/reearth-visualizer/commit/9739fb)
+
+## 1.0.0-beta.15.4 - 2026-03-18
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Fix markdown bg and text color issue in story panel ([#2111](https://github.com/reearth/reearth-visualizer/pull/2111)) [`05555b`](https://github.com/reearth/reearth-visualizer/commit/05555b)
+- Missing props value on color field ([#2112](https://github.com/reearth/reearth-visualizer/pull/2112)) [`46a0b5`](https://github.com/reearth/reearth-visualizer/commit/46a0b5)
+
+#### Miscellaneous Tasks
+
+- Bump version to v1.0.0-beta.15.4 ([#2118](https://github.com/reearth/reearth-visualizer/pull/2118)) [`494405`](https://github.com/reearth/reearth-visualizer/commit/494405)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Return 404 for &#x2F;api&#x2F;published&#x2F; with empty name before auth middleware ([#2114](https://github.com/reearth/reearth-visualizer/pull/2114)) [`d616ba`](https://github.com/reearth/reearth-visualizer/commit/d616ba)
+
+#### 🧪 Testing
+
+- Tests for style, widget, project-crud-extended, property-schema ([#2115](https://github.com/reearth/reearth-visualizer/pull/2115)) [`777b43`](https://github.com/reearth/reearth-visualizer/commit/777b43)
+- Add api tests for layer infobox and storytelling ([#2106](https://github.com/reearth/reearth-visualizer/pull/2106)) [`bf78c5`](https://github.com/reearth/reearth-visualizer/commit/bf78c5)
+- Add API tests for asset management ([#2103](https://github.com/reearth/reearth-visualizer/pull/2103)) [`d7ae14`](https://github.com/reearth/reearth-visualizer/commit/d7ae14)
+
+### Misc
+
+
+###
+
 ## 1.0.0-beta.15.3 - 2026-03-11
 
 ### Web

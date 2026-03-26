@@ -49,6 +49,110 @@ export const WORKSPACE_POLICY_CHECK = `
   }
 `;
 
+export const GET_ASSETS = `
+  query GetAssets($workspaceId: ID!, $projectId: ID, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
+    assets(workspaceId: $workspaceId, projectId: $projectId, pagination: $pagination, keyword: $keyword, sort: $sort) {
+      totalCount
+      nodes {
+        id
+        workspaceId
+        projectId
+        name
+        size
+        url
+        contentType
+        coreSupport
+        createdAt
+      }
+    }
+  }
+`;
+
+export const CHECK_STORY_ALIAS = `
+  query CheckStoryAlias($alias: String!, $storyId: ID) {
+    checkStoryAlias(alias: $alias, storyId: $storyId) {
+      alias
+      available
+    }
+  }
+`;
+
+export const CHECK_PROJECT_ALIAS = `
+  query CheckProjectAlias($alias: String!, $workspaceId: ID!, $projectId: ID) {
+    checkProjectAlias(alias: $alias, workspaceId: $workspaceId, projectId: $projectId) {
+      alias
+      available
+    }
+  }
+`;
+
+export const CHECK_SCENE_ALIAS = `
+  query CheckSceneAlias($alias: String!, $projectId: ID) {
+    checkSceneAlias(alias: $alias, projectId: $projectId) {
+      alias
+      available
+    }
+  }
+`;
+
+export const GET_STARRED_PROJECTS = `
+  query GetStarredProjects($workspaceId: ID!) {
+    starredProjects(workspaceId: $workspaceId) {
+      totalCount
+      nodes { id name starred }
+    }
+  }
+`;
+
+export const GET_DELETED_PROJECTS = `
+  query GetDeletedProjects($workspaceId: ID!) {
+    deletedProjects(workspaceId: $workspaceId) {
+      totalCount
+      nodes { id name isDeleted }
+    }
+  }
+`;
+
+export const GET_PROPERTY_SCHEMA = `
+  query GetPropertySchema($id: ID!) {
+    propertySchema(id: $id) {
+      id
+      groups {
+        schemaGroupId
+        schemaId
+        isList
+        title
+        fields { fieldId type title description }
+      }
+    }
+  }
+`;
+
+export const GET_PROPERTY_SCHEMAS = `
+  query GetPropertySchemas($id: [ID!]!) {
+    propertySchemas(id: $id) {
+      id
+      groups {
+        schemaGroupId
+        schemaId
+        isList
+        fields { fieldId type title }
+      }
+    }
+  }
+`;
+
+export const GET_SCENE_WIDGETS = `
+  query GetSceneWidgets($sceneId: ID!) {
+    node(id: $sceneId, type: SCENE) {
+      id
+      ... on Scene {
+        widgets { id pluginId extensionId enabled extended propertyId }
+      }
+    }
+  }
+`;
+
 export const GET_SCENE = `
   query GetScene($sceneId: ID!) {
     node(id: $sceneId, type: SCENE) {

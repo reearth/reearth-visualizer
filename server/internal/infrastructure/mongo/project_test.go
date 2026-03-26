@@ -1548,37 +1548,83 @@ func TestProject_FindByWorkspaceIDAndProjectAlias(t *testing.T) {
 	r := NewProject(mongox.NewClientWithDatabase(c))
 
 	t.Run("Find project by workspace ID and project alias", func(t *testing.T) {
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "my-project")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "my-project", false)
 		assert.NoError(t, err)
 		assert.NotNil(t, got)
 		assert.Equal(t, prj1.ID(), got.ID())
 	})
 
 	t.Run("Find project with same alias in different workspace", func(t *testing.T) {
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid2, "my-project")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid2, "my-project", false)
 		assert.NoError(t, err)
 		assert.NotNil(t, got)
 		assert.Equal(t, prj3.ID(), got.ID())
 	})
 
 	t.Run("Return error for non-existent project alias", func(t *testing.T) {
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "non-existent")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "non-existent", false)
 		assert.Error(t, err)
 		assert.Nil(t, got)
 	})
 
 	t.Run("Return error for non-existent workspace ID", func(t *testing.T) {
 		nonExistentWid := accountsID.NewWorkspaceID()
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, nonExistentWid, "my-project")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, nonExistentWid, "my-project", false)
 		assert.Error(t, err)
 		assert.Nil(t, got)
 	})
 
 	t.Run("Find another project alias in same workspace", func(t *testing.T) {
-		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "another-project")
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "another-project", false)
 		assert.NoError(t, err)
 		assert.NotNil(t, got)
 		assert.Equal(t, prj2.ID(), got.ID())
+	})
+}
+
+func TestProject_FindByWorkspaceIDAndProjectAlias_ExcludeDeleted(t *testing.T) {
+	now := time.Now().UTC().Truncate(time.Second)
+	defer util.MockNow(now)()
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountsID.NewWorkspaceID()
+
+	activeProject := project.New().NewID().Workspace(wid).UpdatedAt(now).ProjectAlias("active-project").MustBuild()
+	deletedProject := project.New().NewID().Workspace(wid).UpdatedAt(now).ProjectAlias("deleted-project").Deleted(true).MustBuild()
+
+	_, _ = c.Collection("project").InsertMany(ctx, []any{
+		util.DR(mongodoc.NewProject(activeProject)),
+		util.DR(mongodoc.NewProject(deletedProject)),
+	})
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("excludeDeleted=false returns deleted project", func(t *testing.T) {
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid, "deleted-project", false)
+		assert.NoError(t, err)
+		assert.NotNil(t, got)
+		assert.Equal(t, deletedProject.ID(), got.ID())
+	})
+
+	t.Run("excludeDeleted=true does not return deleted project", func(t *testing.T) {
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid, "deleted-project", true)
+		assert.Error(t, err)
+		assert.Nil(t, got)
+	})
+
+	t.Run("excludeDeleted=true returns active project", func(t *testing.T) {
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid, "active-project", true)
+		assert.NoError(t, err)
+		assert.NotNil(t, got)
+		assert.Equal(t, activeProject.ID(), got.ID())
+	})
+
+	t.Run("excludeDeleted=false returns active project", func(t *testing.T) {
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid, "active-project", false)
+		assert.NoError(t, err)
+		assert.NotNil(t, got)
+		assert.Equal(t, activeProject.ID(), got.ID())
 	})
 }
 

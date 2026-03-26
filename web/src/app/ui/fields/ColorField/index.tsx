@@ -27,6 +27,7 @@ const ColorInputField: FC<ColorInputFieldProps> = ({
     >
       <ColorInput
         {...props}
+        value={value}
         onChange={handleChange}
         data-testid="colorfield-input"
       />
