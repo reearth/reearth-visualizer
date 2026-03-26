@@ -33,7 +33,9 @@ const DatasetPropertyItem: React.FC<Props> = ({ primitiveItems, onCreateLayerGro
   const convertPrimitiveItemToDatasetPropertyItem = (
     items?: PrimitiveItem[],
   ): { key: string; label: string; icon: string }[] => {
-    return items?.map(i => ({ key: i.extensionId, label: i.name, icon: i.icon })) || [];
+    return items
+      ?.filter(i => i.extensionId !== "photooverlay")
+      .map(i => ({ key: i.extensionId, label: i.name, icon: i.icon })) || [];
   };
   return (
     <Flex direction="column">

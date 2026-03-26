@@ -223,7 +223,7 @@ const Marker: React.FC<PrimitiveProps<Property>> = ({ layer }) => {
             image={icon}
             color={imageColorCesium}
             horizontalOrigin={ho(horizontalOrigin)}
-            verticalOrigin={vo(verticalOrigin)}
+            verticalOrigin={vo(verticalOrigin ?? "bottom")}
             heightReference={heightReference(hr)}
             sizeInMeters={imageSizeInMeters}
             distanceDisplayCondition={distanceDisplayCondition}

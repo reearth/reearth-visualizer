@@ -210,9 +210,11 @@ const Tileset: FC<PrimitiveProps<Property, any, SceneProperty>> = memo(function 
     if (sourceType !== "google-photorealistic" || !isVisible) return;
     // Ref: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Scene/createGooglePhotorealistic3DTileset.js#L30
     const googleMaps = CesiumGoogleMaps as GoogleMaps;
-    // Default key: https://github.com/CesiumGS/cesium/blob/b208135a095073386e5f04a59956ee11a03aa847/packages/engine/Source/Core/GoogleMaps.js#L6C36-L6C36
-    googleMaps.defaultApiKey = 'AIzaSyCBt4diigz9Zo1Yd_CCw6J6AXeqH2UqH5c';
-    const key = defaultValue(apiKey, 'AIzaSyCBt4diigz9Zo1Yd_CCw6J6AXeqH2UqH5c');
+    // Use environment variable only (no fallback to avoid exposing API keys)
+    const envApiKey = import.meta.env.VITE_GOOGLE_TILES_API_KEY;
+    googleMaps.defaultApiKey = envApiKey || '';
+    const key = defaultValue(apiKey, envApiKey);
+    // Fallback commented out: 'AIzaSyDKjfZny2TPc_sIeEOQpo7C9dGb771Jmb4'
     const credit = googleMaps.getDefaultApiKeyCredit(key);
     return new Resource({
       url: `${googleMaps.mapTilesApiEndpoint}3dtiles/root.json`,

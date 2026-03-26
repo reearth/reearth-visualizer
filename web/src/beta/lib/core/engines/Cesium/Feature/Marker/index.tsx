@@ -182,7 +182,7 @@ export default function Marker({ property, id, isVisible, geometry, layer, featu
             image={icon}
             color={imageColorCesium}
             horizontalOrigin={ho(horizontalOrigin)}
-            verticalOrigin={vo(verticalOrigin)}
+            verticalOrigin={vo(verticalOrigin ?? "bottom")}
             heightReference={heightReference(hr)}
             distanceDisplayCondition={distanceDisplayCondition}
             sizeInMeters={imageSizeInMeters}

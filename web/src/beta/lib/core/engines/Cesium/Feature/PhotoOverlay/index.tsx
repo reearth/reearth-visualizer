@@ -105,7 +105,7 @@ export default function PhotoOverlay({
         <BillboardGraphics
           image={canvas}
           horizontalOrigin={ho(imageHorizontalOrigin)}
-          verticalOrigin={vo(imageVerticalOrigin)}
+          verticalOrigin={vo(imageVerticalOrigin ?? "bottom")}
           heightReference={heightReference(hr)}
           distanceDisplayCondition={distanceDisplayCondition}
         />

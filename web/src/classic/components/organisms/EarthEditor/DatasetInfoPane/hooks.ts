@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, useEffect, useRef } from "react";
 
 import {
   useAddLayerGroupFromDatasetSchemaMutation,
@@ -33,6 +33,9 @@ export default () => {
   const [updatePropertyValue] = useUpdatePropertyValueMutation();
   const client = useApolloClient();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false);
+  const [autoRefreshInterval, setAutoRefreshInterval] = useState<"15min" | "30min" | "1hour" | "2hour" | "4hour">("1hour");
+  const autoRefreshTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isAuthenticated = useAuth();
 
   const { data: rawDatasets, loading: datasetsLoading, refetch } = useGetDatasetsForDatasetInfoPaneQuery({
@@ -156,7 +159,48 @@ export default () => {
     } finally {
       setIsRefreshing(false);
     }
-  }, [selectedDatasetSchemaId, refreshHostedCsvMutation, client, refetch, setNotification, t]);
+  }, [selectedDatasetSchemaId, refreshHostedCsvMutation, client, refetch, refetchScene, setNotification, t]);
+
+  // Get interval in milliseconds
+  const getIntervalMs = useCallback((interval: string): number => {
+    const intervals: Record<string, number> = {
+      "15min": 15 * 60 * 1000,
+      "30min": 30 * 60 * 1000,
+      "1hour": 60 * 60 * 1000,
+      "2hour": 2 * 60 * 60 * 1000,
+      "4hour": 4 * 60 * 60 * 1000,
+    };
+    return intervals[interval] || 60 * 60 * 1000;
+  }, []);
+
+  // Set up auto-refresh interval
+  useEffect(() => {
+    if (autoRefreshEnabled && isHosted && selectedDatasetSchemaId) {
+      // Clear existing timer
+      if (autoRefreshTimerRef.current) {
+        clearInterval(autoRefreshTimerRef.current);
+      }
+
+      // Set new timer
+      const intervalMs = getIntervalMs(autoRefreshInterval);
+      autoRefreshTimerRef.current = setInterval(() => {
+        handleRefresh();
+      }, intervalMs);
+    } else {
+      // Clear timer if auto-refresh is disabled
+      if (autoRefreshTimerRef.current) {
+        clearInterval(autoRefreshTimerRef.current);
+        autoRefreshTimerRef.current = null;
+      }
+    }
+
+    return () => {
+      if (autoRefreshTimerRef.current) {
+        clearInterval(autoRefreshTimerRef.current);
+        autoRefreshTimerRef.current = null;
+      }
+    };
+  }, [autoRefreshEnabled, autoRefreshInterval, isHosted, selectedDatasetSchemaId, handleRefresh, getIntervalMs]);
 
   return {
     datasets: datasets?.length > 0 ? datasets.slice(0, 10) : [],
@@ -168,5 +212,9 @@ export default () => {
     isHosted,
     handleRefresh,
     isRefreshing,
+    autoRefreshEnabled,
+    setAutoRefreshEnabled,
+    autoRefreshInterval,
+    setAutoRefreshInterval,
   };
 };

@@ -104,7 +104,7 @@ const PhotoOverlay: React.FC<PrimitiveProps<Property>> = ({ layer, isSelected })
         <BillboardGraphics
           image={canvas}
           horizontalOrigin={ho(imageHorizontalOrigin)}
-          verticalOrigin={vo(imageVerticalOrigin)}
+          verticalOrigin={vo(imageVerticalOrigin ?? "bottom")}
           heightReference={heightReference(hr)}
           distanceDisplayCondition={distanceDisplayCondition}
         />
