@@ -2,6 +2,8 @@
 # Docker
 # =======================
 DOCKER_COMPOSE := docker compose -f ../docker-compose.yml
+DOCKER_VIS_EXEC := ${DOCKER_COMPOSE} exec -T reearth-visualizer-dev
+DOCKER_MONGO_EXEC := ${DOCKER_COMPOSE} exec -T reearth-mongo
 
 d-destroy:
 	@echo "⚠️  WARNING: This will remove ALL Docker resources!"
@@ -40,7 +42,7 @@ d-down-internal:
 d-lint:
 	@echo "Running golangci-lint in Docker container..."
 	@if ${DOCKER_COMPOSE} ps --format '{{.Names}}' | grep -q 'reearth-visualizer-dev'; then \
-		${DOCKER_COMPOSE} exec -T reearth-visualizer-dev golangci-lint run --fix --timeout=10m; \
+		${DOCKER_VIS_EXEC} golangci-lint run --fix --timeout=10m; \
 	else \
 		echo "Error: reearth-visualizer-dev container is not running."; \
 		echo "Please start the container with 'make d-run' first."; \
@@ -53,7 +55,7 @@ d-logs-accounts:
 d-migrate:
 	@echo "==== Running database migration in Docker container ===="
 	@if ${DOCKER_COMPOSE} ps --format '{{.Names}}' | grep -q 'reearth-visualizer-dev'; then \
-		${DOCKER_COMPOSE} exec -T reearth-visualizer-dev sh -c "RUN_MIGRATION=true REEARTH_DB='${REEARTH_DB_DOCKER}' REEARTH_DB_VIS='${REEARTH_DB_VIS}' go run ./cmd/reearth"; \
+		${DOCKER_VIS_EXEC} sh -c "RUN_MIGRATION=true REEARTH_DB='${REEARTH_DB_DOCKER}' REEARTH_DB_VIS='${REEARTH_DB_VIS}' go run ./cmd/reearth"; \
 		echo "✓ Migration complete!"; \
 	else \
 		echo "Error: reearth-visualizer-dev container is not running."; \
@@ -69,7 +71,7 @@ d-migrate-with-key:
 	fi
 	@echo "==== Running database migration with MIGRATION_KEY=$(MIGRATION_KEY) in Docker container ===="
 	@if ${DOCKER_COMPOSE} ps --format '{{.Names}}' | grep -q 'reearth-visualizer-dev'; then \
-		${DOCKER_COMPOSE} exec -T reearth-visualizer-dev sh -c "RUN_MIGRATION=true MIGRATION_KEY='$(MIGRATION_KEY)' REEARTH_DB='${REEARTH_DB_DOCKER}' REEARTH_DB_VIS='${REEARTH_DB_VIS}' go run ./cmd/reearth"; \
+		${DOCKER_VIS_EXEC} sh -c "RUN_MIGRATION=true MIGRATION_KEY='$(MIGRATION_KEY)' REEARTH_DB='${REEARTH_DB_DOCKER}' REEARTH_DB_VIS='${REEARTH_DB_VIS}' go run ./cmd/reearth"; \
 		echo "✓ Migration complete!"; \
 	else \
 		echo "Error: reearth-visualizer-dev container is not running."; \
@@ -125,7 +127,7 @@ d-run-db:
 	${DOCKER_COMPOSE} up -d reearth-mongo
 	@echo "==== Waiting for MongoDB primary to be ready ===="
 	@MAX_WAIT=60; WAITED=0; \
-	until ${DOCKER_COMPOSE} exec -T reearth-mongo mongosh --quiet --eval "db.adminCommand({ ping: 1 }).ok" >/dev/null 2>&1; do \
+	until ${DOCKER_MONGO_EXEC} mongosh --quiet --eval "db.adminCommand({ ping: 1 }).ok" >/dev/null 2>&1; do \
 		if [ $$WAITED -ge $$MAX_WAIT ]; then \
 			echo "MongoDB did not become ready within $$MAX_WAIT seconds"; \
 			exit 1; \
@@ -135,7 +137,7 @@ d-run-db:
 		WAITED=$$((WAITED + 1)); \
 	done
 	@echo "==== Initializing replica set if needed ===="
-	@${DOCKER_COMPOSE} exec -T reearth-mongo mongosh --quiet --eval '\
+	@${DOCKER_MONGO_EXEC} mongosh --quiet --eval '\
 	try { \
 		rs.status(); \
 		print("Replica set already initialized"); \
@@ -145,7 +147,7 @@ d-run-db:
 	}'
 	@echo "==== Waiting for MongoDB primary election ===="
 	@MAX_WAIT=30; WAITED=0; \
-	until ${DOCKER_COMPOSE} exec -T reearth-mongo mongosh --quiet --eval 'if (!db.hello().isWritablePrimary) { quit(1); }' >/dev/null 2>&1; do \
+	until ${DOCKER_MONGO_EXEC} mongosh --quiet --eval 'if (!db.hello().isWritablePrimary) { quit(1); }' >/dev/null 2>&1; do \
 		if [ $$WAITED -ge $$MAX_WAIT ]; then \
 			echo "MongoDB did not become writable primary within $$MAX_WAIT seconds"; \
 			exit 1; \
@@ -175,17 +177,17 @@ d-run-standalone:
 
 d-set-mongo-fcv-8:
 	@echo "==== Setting featureCompatibilityVersion to 8.0 ===="
-	@${DOCKER_COMPOSE} exec -T reearth-mongo mongosh --quiet --eval '\
+	@${DOCKER_MONGO_EXEC} mongosh --quiet --eval '\
 db.adminCommand({ setFeatureCompatibilityVersion: "8.0", confirm: true })'
 	@echo "==== Verifying featureCompatibilityVersion ===="
-	@${DOCKER_COMPOSE} exec -T reearth-mongo mongosh --quiet --eval '\
+	@${DOCKER_MONGO_EXEC} mongosh --quiet --eval '\
 printjson(db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 }))'
 	@echo "FCV set to 8.0"
 
 d-test:
 	@echo "Running tests in Docker container..."
 	@if ${DOCKER_COMPOSE} ps --format '{{.Names}}' | grep -q 'reearth-visualizer-dev'; then \
-		${DOCKER_COMPOSE} exec -T reearth-visualizer-dev go test ${TEST_DIR} -run ${TARGET_TEST}; \
+		${DOCKER_VIS_EXEC} go test ${TEST_DIR} -run ${TARGET_TEST}; \
 	else \
 		echo "Error: reearth-visualizer-dev container is not running."; \
 		echo "Please start the container with 'make d-run' first."; \
