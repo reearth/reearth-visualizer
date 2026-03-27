@@ -5557,7 +5557,7 @@ __metadata:
     aws-amplify: "npm:6.15.8"
     axios: "npm:1.13.2"
     bowser: "npm:2.13.0"
-    cesium: "npm:^1.137.0"
+    cesium: "npm:1.139.1"
     class-variance-authority: "npm:0.7.1"
     clsx: "npm:2.1.1"
     core-js: "npm:3.47.0"
@@ -12400,7 +12400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cesium@npm:^1.137.0":
+"cesium@npm:1.139.1":
   version: 1.139.1
   resolution: "cesium@npm:1.139.1"
   dependencies:
