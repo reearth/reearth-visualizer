@@ -5,15 +5,30 @@ import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo } from "react";
 
+import { openUrlInNewTab } from "../../../../Plugins/pluginAPI/utils";
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
 
 const normalizeUrl = (url: string | undefined): string | undefined => {
-  if (!url) return undefined;
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    return url;
+  if (!url || typeof url !== "string") return undefined;
+
+  const trimmed = url.trim();
+  if (!trimmed) return undefined;
+
+  const urlWithProtocol =
+    trimmed.startsWith("http://") || trimmed.startsWith("https://")
+      ? trimmed
+      : `https://${trimmed}`;
+
+  try {
+    const parsed = new URL(urlWithProtocol);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return undefined;
+    }
+    return parsed.href;
+  } catch {
+    return undefined;
   }
-  return `https://${url}`;
 };
 
 const LinkBlock: FC<BlockProps<InfoboxBlock>> = ({
@@ -47,7 +62,7 @@ const LinkBlock: FC<BlockProps<InfoboxBlock>> = ({
     (e: React.MouseEvent) => {
       e.stopPropagation();
       if (normalizedUrl) {
-        window.open(normalizedUrl, "_blank", "noopener,noreferrer");
+        openUrlInNewTab(normalizedUrl);
       }
     },
     [normalizedUrl]
