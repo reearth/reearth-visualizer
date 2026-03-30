@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/gavv/httpexpect/v2"
-	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	gqlclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
@@ -197,5 +197,5 @@ func TestStorageEventImportFlow(t *testing.T) {
 		"storage-event returned 401 — generateOperator called accounts API without a JWT")
 
 	// 5. storage-event is synchronous — assert the import completed successfully.
-	resp.Status(http.StatusOK).JSON().Object().ValueEqual("status", "success")
+	resp.Status(http.StatusOK).JSON().Object().HasValue("status", "success")
 }
