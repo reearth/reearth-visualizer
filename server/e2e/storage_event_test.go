@@ -48,7 +48,7 @@ func (g *importCapableGateway) UploadImportProjectZip(_ context.Context, name st
 	if err := g.memFs.MkdirAll("import", 0755); err != nil {
 		return err
 	}
-	f, err := g.memFs.Create(name)
+	f, err := g.memFs.Create("import/" + name)
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,10 @@ func (g *importCapableGateway) ReadImportProjectZip(_ context.Context, name stri
 }
 
 func (g *importCapableGateway) RemoveImportProjectZip(_ context.Context, name string) error {
-	_ = g.memFs.Remove("import/" + name)
+	err := g.memFs.Remove("import/" + name)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
 	return nil
 }
 
