@@ -223,7 +223,9 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *accountsUser.Us
 	var workspaces accountsWorkspace.List
 	var err error
 	// TODO: Internal API behavior has not been fully considered yet.
-	if cfg.AccountsAPIClient != nil && !cfg.Config.Visualizer.InternalApi.Active {
+	// Skip the accounts API when there is no JWT in context (e.g. Pub/Sub-triggered
+	// endpoints like /api/storage-event) and fall back to the local repo directly.
+	if cfg.AccountsAPIClient != nil && !cfg.Config.Visualizer.InternalApi.Active && adapter.JwtToken(ctx) != "" {
 		workspaces, err = cfg.AccountsAPIClient.WorkspaceRepo.FindByUser(ctx, uid.String())
 	} else {
 		workspaces, err = cfg.Repos.Workspace.FindByUser(ctx, uid)
