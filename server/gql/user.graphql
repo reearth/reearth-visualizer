@@ -16,6 +16,7 @@ type Me {
   lang: Lang!
   theme: Theme!
   metadata: UserMetadata
+  latestLogoutAt: DateTime
   myWorkspaceId: ID!
   auths: [String!]!
   workspaces: [Workspace!]!
@@ -52,4 +53,5 @@ extend type Query {
 
 extend type Mutation {
   updateMe(input: UpdateMeInput!): UpdateMePayload
+  logout: Me
 }

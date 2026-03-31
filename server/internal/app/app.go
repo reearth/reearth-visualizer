@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"net/http"
 	"net/http/pprof"
@@ -61,7 +62,8 @@ func initEcho(
 	if len(origins) > 0 {
 		e.Use(
 			middleware.CORSWithConfig(middleware.CORSConfig{
-				AllowOrigins: origins,
+				AllowOrigins:  origins,
+				ExposeHeaders: []string{"X-Latest-Logout-At"},
 			}),
 		)
 	}
@@ -154,6 +156,7 @@ func initEcho(
 	} else {
 		apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
 	}
+	apiPrivateRoute.Use(latestLogoutAtHeader)
 
 	// Main backend API
 	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, cfg.AccountsAPIClient, gqldev))
@@ -246,6 +249,17 @@ func errorMessage(err error, log func(string, ...interface{})) (int, string) {
 	}
 
 	return code, msg
+}
+
+func latestLogoutAtHeader(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if u := adapter.User(c.Request().Context()); u != nil {
+			if t := u.LatestLogoutAt(); !t.IsZero() {
+				c.Response().Header().Set("X-Latest-Logout-At", fmt.Sprintf("%d", t.Unix()))
+			}
+		}
+		return next(c)
+	}
 }
 
 func privateCache(next echo.HandlerFunc) echo.HandlerFunc {
