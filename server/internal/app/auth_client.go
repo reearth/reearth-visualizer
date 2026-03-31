@@ -195,15 +195,20 @@ func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *account
 		auths = append(auths, accountsUser.AuthFrom(authStr.String()))
 	}
 
-	u, err := accountsUser.New().
+	b := accountsUser.New().
 		ID(uId).
 		Name(userModel.Name()).
 		Alias(userModel.Alias()).
 		Email(userModel.Email()).
 		Metadata(usermetadata).
 		Workspace(wid).
-		Auths(auths).
-		Build()
+		Auths(auths)
+
+	if !userModel.LatestLogoutAt().IsZero() {
+		b = b.LatestLogoutAt(userModel.LatestLogoutAt())
+	}
+
+	u, err := b.Build()
 
 	if err != nil {
 		log.Errorfc(ctx, "accounts API: failed to build user: %v", err)
