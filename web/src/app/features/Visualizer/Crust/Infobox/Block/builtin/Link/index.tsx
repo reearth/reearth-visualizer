@@ -5,7 +5,6 @@ import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo } from "react";
 
-import { openUrlInNewTab } from "../../../../Plugins/pluginAPI/utils";
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
 
@@ -58,15 +57,9 @@ const LinkBlock: FC<BlockProps<InfoboxBlock>> = ({
 
   const displayText = evaluatedText || evaluatedUrl;
 
-  const handleClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      if (normalizedUrl) {
-        openUrlInNewTab(normalizedUrl);
-      }
-    },
-    [normalizedUrl]
-  );
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+  }, []);
 
   return (
     <BlockWrapper
@@ -80,7 +73,14 @@ const LinkBlock: FC<BlockProps<InfoboxBlock>> = ({
     >
       {displayText !== undefined ? (
         normalizedUrl ? (
-          <Link onClick={handleClick}>{displayText}</Link>
+          <Link
+            href={normalizedUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleClick}
+          >
+            {displayText}
+          </Link>
         ) : (
           <PlainText>{displayText}</PlainText>
         )
@@ -91,7 +91,7 @@ const LinkBlock: FC<BlockProps<InfoboxBlock>> = ({
 
 export default LinkBlock;
 
-const Link = styled("span")(({ theme }) => ({
+const Link = styled("a")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   minWidth: 0,
