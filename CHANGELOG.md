@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.6 - 2026-03-31
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.15.6 ([#2139](https://github.com/reearth/reearth-visualizer/pull/2139)) [`8f788a`](https://github.com/reearth/reearth-visualizer/commit/8f788a)
+- Update core version ([#2135](https://github.com/reearth/reearth-visualizer/pull/2135)) [`c7aca3`](https://github.com/reearth/reearth-visualizer/commit/c7aca3)
+
+### Server
+
+#### 🚀 Features
+
+- Add linkInfoboxBetaBlock server[VIZ-2417] ([#2133](https://github.com/reearth/reearth-visualizer/pull/2133)) [`7f4aa0`](https://github.com/reearth/reearth-visualizer/commit/7f4aa0)
+
+#### 🔧 Bug Fixes
+
+- Skip accounts API in generateOperator when no JWT present ([#2138](https://github.com/reearth/reearth-visualizer/pull/2138)) [`a7b152`](https://github.com/reearth/reearth-visualizer/commit/a7b152)
+
+#### Miscellaneous Tasks
+
+- Update Go version from 1.26.0 to 1.26.1 ([#2134](https://github.com/reearth/reearth-visualizer/pull/2134)) [`f7d7a4`](https://github.com/reearth/reearth-visualizer/commit/f7d7a4)
+- Update MongoDB to version 8.0 ([#2129](https://github.com/reearth/reearth-visualizer/pull/2129)) [`cc1ede`](https://github.com/reearth/reearth-visualizer/commit/cc1ede)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update mongo docker tag to v8 ([#2027](https://github.com/reearth/reearth-visualizer/pull/2027)) [`9a46d9`](https://github.com/reearth/reearth-visualizer/commit/9a46d9)
+- Update docker&#x2F;setup-qemu-action action to v4 ([#2131](https://github.com/reearth/reearth-visualizer/pull/2131)) [`2aa715`](https://github.com/reearth/reearth-visualizer/commit/2aa715)
+- Update docker&#x2F;setup-buildx-action action to v4 ([#2130](https://github.com/reearth/reearth-visualizer/pull/2130)) [`6dc0b5`](https://github.com/reearth/reearth-visualizer/commit/6dc0b5)
+- Update dawidd6&#x2F;action-download-artifact action to v19 ([#2125](https://github.com/reearth/reearth-visualizer/pull/2125)) [`b348da`](https://github.com/reearth/reearth-visualizer/commit/b348da)
+- Update docker&#x2F;login-action action to v4 ([#2126](https://github.com/reearth/reearth-visualizer/pull/2126)) [`804717`](https://github.com/reearth/reearth-visualizer/commit/804717)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update mongo docker tag to v8 ([#2027](https://github.com/reearth/reearth-visualizer/pull/2027)) [`9a46d9`](https://github.com/reearth/reearth-visualizer/commit/9a46d9)
+- Update docker&#x2F;setup-qemu-action action to v4 ([#2131](https://github.com/reearth/reearth-visualizer/pull/2131)) [`2aa715`](https://github.com/reearth/reearth-visualizer/commit/2aa715)
+- Update docker&#x2F;setup-buildx-action action to v4 ([#2130](https://github.com/reearth/reearth-visualizer/pull/2130)) [`6dc0b5`](https://github.com/reearth/reearth-visualizer/commit/6dc0b5)
+- Update dawidd6&#x2F;action-download-artifact action to v19 ([#2125](https://github.com/reearth/reearth-visualizer/pull/2125)) [`b348da`](https://github.com/reearth/reearth-visualizer/commit/b348da)
+- Update docker&#x2F;login-action action to v4 ([#2126](https://github.com/reearth/reearth-visualizer/pull/2126)) [`804717`](https://github.com/reearth/reearth-visualizer/commit/804717)
+
 ## 1.0.0-beta.15.5 - 2026-03-25
 
 ### Web
