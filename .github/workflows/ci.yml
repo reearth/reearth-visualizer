@@ -45,6 +45,13 @@ jobs:
             e2e/
             .github/workflows/playwright_ui_tests.yml
 
+  check-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Check for unpinned dependencies
+        run: bash script/check-unpinned-deps.sh
+
   ci-web:
     needs: prepare
     if: needs.prepare.outputs.web == 'true'
@@ -60,6 +67,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     needs:
+      - check-deps
       - ci-web
       - ci-server
     if: ${{ !failure() }}
