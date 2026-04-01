@@ -1,3 +1,4 @@
+import { updateLatestLogoutAt } from "@reearth/services/auth/logoutTimestamp";
 import UploadHttpLink from "apollo-upload-client/UploadHttpLink.mjs";
 
 type RequestInitWithTimeout = RequestInit & { __timeout?: number };
@@ -23,5 +24,16 @@ const fetchWithTimeout = (
   return fetch(input, {
     ...init,
     signal: controller.signal
-  }).finally(() => clearTimeout(timer));
+  })
+    .then((response) => {
+      const logoutAt = response.headers.get("X-Latest-Logout-At");
+      if (logoutAt) {
+        const timestamp = parseInt(logoutAt, 10);
+        if (!isNaN(timestamp)) {
+          updateLatestLogoutAt(timestamp);
+        }
+      }
+      return response;
+    })
+    .finally(() => clearTimeout(timer));
 };
