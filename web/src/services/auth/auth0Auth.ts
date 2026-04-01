@@ -16,6 +16,27 @@ const getJwtIat = (token: string): number | null => {
   }
 };
 
+const sendLogoutMutation = async (accessToken: string): Promise<void> => {
+  const endpoint = window.REEARTH_CONFIG?.api
+    ? `${window.REEARTH_CONFIG.api}/graphql`
+    : "/api/graphql";
+
+  try {
+    await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        query: `mutation { logout { id } }`
+      })
+    });
+  } catch {
+    // Best-effort: don't block logout if mutation fails
+  }
+};
+
 export const useAuth0Auth = (): AuthHook => {
   const {
     isAuthenticated,
@@ -66,7 +87,14 @@ export const useAuth0Auth = (): AuthHook => {
       logOutFromTenant();
       return loginWithRedirect();
     },
-    logout: () => {
+    logout: async () => {
+      try {
+        const token = await getAccessTokenSilently();
+        await sendLogoutMutation(token);
+      } catch {
+        // Best-effort: proceed with logout even if mutation fails
+      }
+
       logOutFromTenant();
 
       return logout({
