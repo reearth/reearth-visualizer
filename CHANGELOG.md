@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.7 - 2026-04-01
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.15.7 ([#2144](https://github.com/reearth/reearth-visualizer/pull/2144)) [`de6ab0`](https://github.com/reearth/reearth-visualizer/commit/de6ab0)
+- Pin and update dependency versions ([#2140](https://github.com/reearth/reearth-visualizer/pull/2140)) [`eefb4b`](https://github.com/reearth/reearth-visualizer/commit/eefb4b)
+
+### Misc
+
+#### 📖 Documentation
+
+- Add SSO logout design doc and design doc template ([#2141](https://github.com/reearth/reearth-visualizer/pull/2141)) [`4fd09d`](https://github.com/reearth/reearth-visualizer/commit/4fd09d)
+
+### 
+
+#### 📖 Documentation
+
+- Add SSO logout design doc and design doc template ([#2141](https://github.com/reearth/reearth-visualizer/pull/2141)) [`4fd09d`](https://github.com/reearth/reearth-visualizer/commit/4fd09d)
+
 ## 1.0.0-beta.15.6 - 2026-03-31
 
 ### Web
