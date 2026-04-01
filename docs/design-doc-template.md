@@ -59,12 +59,12 @@ Good solution explanation:
 
 Example:
 **Option 1**
-1. Create http handler **mountian_scoring.go** that will accept 1 parameter; mountain_id, token
+1. Create http handler **mountain_scoring.go** that will accept 1 parameter; mountain_id, token
     - Authenticate request
     - Validate input
     - Call service
     - Render response
-2. Crete service **mountain_scoring.go**
+2. Create service **mountain_scoring.go**
     - Check if mountain_id already exists in database
         - No: throw error
         - Yes: continue to step b
@@ -91,7 +91,7 @@ Example:
 
 ## Deployment Plan
 [ Explain how we plan deployment ]
-1. Does this feature has backward compatibility? Yes/No
+1. Does this feature have backward compatibility? Yes/No
 2. Can we make partial deployment? Yes/No
 3. Who needs to be notified about this deployment?
 4. What configuration changes that need to be prepared?
