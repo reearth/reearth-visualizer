@@ -91,3 +91,18 @@ const hasActiveGQLTasksAtom = atom((get) => get(activeApiTasksAtom).length > 0);
 export const useAddApiTask = () => useSetAtom(addApiTaskAtom);
 export const useRemoveApiTask = () => useSetAtom(removeApiTaskAtom);
 export const useHasActiveApiTasks = () => useAtom(hasActiveGQLTasksAtom);
+
+// SSO logout tracking
+const latestLogoutAtAtom = atom<number | null>(null);
+
+const updateLatestLogoutAtAtom = atom(
+  null,
+  (_get, set, timestamp: number) => {
+    set(latestLogoutAtAtom, (prev) =>
+      prev === null || timestamp > prev ? timestamp : prev
+    );
+  }
+);
+
+export const useLatestLogoutAt = () => useAtom(latestLogoutAtAtom);
+export const useUpdateLatestLogoutAt = () => useSetAtom(updateLatestLogoutAtAtom);
