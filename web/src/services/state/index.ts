@@ -93,6 +93,7 @@ export const useRemoveApiTask = () => useSetAtom(removeApiTaskAtom);
 export const useHasActiveApiTasks = () => useAtom(hasActiveGQLTasksAtom);
 
 // SSO logout tracking
+// Timestamps are Unix timestamps in seconds (to match JWT "iat").
 const latestLogoutAtAtom = atom<number | null>(null);
 
 const updateLatestLogoutAtAtom = atom(
