@@ -4,17 +4,9 @@ import { useLatestLogoutAt } from "@reearth/services/state";
 import { useCallback, useEffect } from "react";
 
 import type { AuthHook } from "./authHook";
+import { getJwtIat } from "./jwtUtils";
 
 export const errorKey = "reeartherror";
-
-const getJwtIat = (token: string): number | null => {
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return typeof payload.iat === "number" ? payload.iat : null;
-  } catch {
-    return null;
-  }
-};
 
 export const useAuth0Auth = (): AuthHook => {
   const {
