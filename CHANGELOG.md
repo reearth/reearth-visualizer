@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.8 - 2026-04-03
+
+### Web
+
+#### 🚀 Features
+
+- Add linkInfoboxBetaBlock[VIZ-2417] ([#2127](https://github.com/reearth/reearth-visualizer/pull/2127)) [`0c1cbb`](https://github.com/reearth/reearth-visualizer/commit/0c1cbb)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.15.8 ([#2147](https://github.com/reearth/reearth-visualizer/pull/2147)) [`30bd0b`](https://github.com/reearth/reearth-visualizer/commit/30bd0b)
+- Update core version to 0.0.7-alpha.62 ([#2146](https://github.com/reearth/reearth-visualizer/pull/2146)) [`55b94b`](https://github.com/reearth/reearth-visualizer/commit/55b94b)
+
+### Misc
+
+#### 
+
+- Vv1.0.0 [`dc18c6`](https://github.com/reearth/reearth-visualizer/commit/dc18c6)
+
+### 
+
+#### 
+
+- Vv1.0.0 [`dc18c6`](https://github.com/reearth/reearth-visualizer/commit/dc18c6)
+
 ## 1.0.0-beta.15.7 - 2026-04-01
 
 ### Web
