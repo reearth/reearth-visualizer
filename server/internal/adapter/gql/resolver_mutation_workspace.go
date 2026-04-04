@@ -62,7 +62,7 @@ func (r *mutationResolver) UpdateWorkspace(ctx context.Context, input gqlmodel.U
 	if r.AccountsAPIClient != nil {
 		res, err := r.AccountsAPIClient.WorkspaceRepo.UpdateWorkspace(ctx, gqlclientWorkspace.UpdateWorkspaceInput{
 			WorkspaceID: tid.String(),
-			Name:        input.Name,
+			Name:        &input.Name,
 		})
 		if err != nil {
 			return nil, err
@@ -88,7 +88,7 @@ func (r *mutationResolver) AddMemberToWorkspace(ctx context.Context, input gqlmo
 		role := gqlmodel.FromRole(input.Role)
 		res, err := r.AccountsAPIClient.WorkspaceRepo.AddUsersToWorkspace(ctx, gqlclientWorkspace.AddUsersToWorkspaceInput{
 			WorkspaceID: tid.String(),
-			Users: []gqlclientWorkspace.MemberInput{
+			Users: []gqlclientWorkspace.WorkspaceMemberInput{
 				{UserID: uid.String(), Role: string(role)},
 			},
 		})

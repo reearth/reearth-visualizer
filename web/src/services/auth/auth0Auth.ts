@@ -1,8 +1,10 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { logOutFromTenant } from "@reearth/services/config";
-import { useEffect } from "react";
+import { useLatestLogoutAt } from "@reearth/services/state";
+import { useCallback, useEffect } from "react";
 
 import type { AuthHook } from "./authHook";
+import { getJwtIat } from "./jwtUtils";
 
 export const errorKey = "reeartherror";
 
@@ -33,11 +35,26 @@ export const useAuth0Auth = (): AuthHook => {
     };
   }, []);
 
+  const [latestLogoutAt] = useLatestLogoutAt();
+
+  const getAccessToken = useCallback(async () => {
+    const token = await getAccessTokenSilently();
+
+    if (latestLogoutAt !== null) {
+      const iat = getJwtIat(token);
+      if (iat !== null && latestLogoutAt > iat) {
+        return getAccessTokenSilently({ cacheMode: "off" });
+      }
+    }
+
+    return token;
+  }, [getAccessTokenSilently, latestLogoutAt]);
+
   return {
     isAuthenticated: isAuthenticated && !error,
     isLoading,
     error: error?.message ?? null,
-    getAccessToken: () => getAccessTokenSilently(),
+    getAccessToken,
     login: () => {
       logOutFromTenant();
       return loginWithRedirect();
