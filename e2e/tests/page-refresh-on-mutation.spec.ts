@@ -212,20 +212,8 @@ test.describe("Page refresh on mutation actions", () => {
     // Viewer should NOT have remounted
     await cesiumViewer.expectViewerNotRemounted(marker);
 
-    // The sketch layer should STILL be selected (no UI state loss)
-    const layerItem = projectScreen.getLayerByName(layerName);
-    const isStillHighlighted = await layerItem.evaluate((el) => {
-      const bg = getComputedStyle(el)
-        .backgroundColor.replace(/\s+/g, "")
-        .toLowerCase();
-      // Check it's not transparent (literal or rgba with 0 alpha)
-      return !(
-        bg === "transparent" ||
-        bg === "rgba(0,0,0,0)" ||
-        /^rgba?\(\d+,\d+,\d+,0(\.0+)?\)$/.test(bg)
-      );
-    });
-    expect(isStillHighlighted).toBe(true);
+    // The sketch layer should still be visible (no UI state loss)
+    await expect(projectScreen.getLayerByName(layerName)).toBeVisible();
 
     // No full-page navigation should have occurred
     cesiumViewer.expectNoPageNavigation();

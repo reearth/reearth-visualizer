@@ -197,9 +197,21 @@ export class ProjectScreenPage {
     await this.page.waitForTimeout(500);
   }
 
+  private isPageCrash(err: unknown): boolean {
+    if (this.page.isClosed()) return true;
+    return (
+      err instanceof Error &&
+      (err.message.includes("Target page, context or browser has been closed") ||
+        err.message.includes("Page is closed") ||
+        err.message.includes("page has been closed"))
+    );
+  }
+
   async addNewLayerStyle(maxAttempts = 3) {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
+        if (this.page.isClosed()) throw new Error("Page is closed");
+
         await this.addNewStyleButton.waitFor({
           state: "visible",
           timeout: 10_000
@@ -231,6 +243,8 @@ export class ProjectScreenPage {
         await this.page.waitForTimeout(1000);
         return;
       } catch (err) {
+        if (this.isPageCrash(err)) throw err;
+
         if (attempt < maxAttempts - 1) {
           await this.page.keyboard.press("Escape").catch(() => {});
           await this.page.waitForTimeout(1000).catch(() => {});
@@ -247,7 +261,9 @@ export class ProjectScreenPage {
     await this.mapPinButton.click();
     await this.page.waitForTimeout(1500);
 
-    const canvas = this.page.locator("canvas").first();
+    const canvas = this.page
+      .locator('[data-testid="resium-container"] canvas')
+      .first();
     await canvas.waitFor({ state: "visible", timeout: 10_000 });
 
     await canvas.click({

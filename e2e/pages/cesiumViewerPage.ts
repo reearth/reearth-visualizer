@@ -6,6 +6,7 @@ export class CesiumViewerPage {
   readonly cesiumViewer: Locator;
   private navigationCount = 0;
   private navigationTracking = false;
+  private navigationHandler: ((frame: unknown) => void) | null = null;
 
   constructor(private page: Page) {
     this.resiumContainer = this.page.locator(
@@ -16,13 +17,18 @@ export class CesiumViewerPage {
   }
 
   startNavigationTracking() {
+    // Remove previous listener to avoid duplicates
+    if (this.navigationHandler) {
+      this.page.removeListener("framenavigated", this.navigationHandler);
+    }
     this.navigationCount = 0;
     this.navigationTracking = true;
-    this.page.on("framenavigated", (frame) => {
+    this.navigationHandler = (frame: unknown) => {
       if (this.navigationTracking && frame === this.page.mainFrame()) {
         this.navigationCount++;
       }
-    });
+    };
+    this.page.on("framenavigated", this.navigationHandler);
   }
 
   resetNavigationCount() {
@@ -89,7 +95,9 @@ export class CesiumViewerPage {
   async waitForLoaderToDisappear(timeout = 30_000) {
     const loader = this.page.getByTestId("loader");
     await this.page.waitForTimeout(300);
-    await loader.waitFor({ state: "hidden", timeout }).catch(() => {});
+    await loader.waitFor({ state: "hidden", timeout }).catch(() => {
+      // Loader may never appear if the mutation is very fast
+    });
   }
 
   getSwitch(index: number): Locator {

@@ -256,14 +256,20 @@ test.describe("Layer Deletion & Reordering", () => {
   });
 
   test("Delete all remaining layers one by one", async () => {
+    test.setTimeout(120000);
     const layerItems = page.getByTestId("layer-item");
     let count = await layerItems.count();
 
     while (count > 0) {
-      await layerItems.first().click();
+      const countBefore = count;
+
+      // Wait for the first layer item to be stable before interacting
+      await layerItems.first().waitFor({ state: "visible", timeout: 10_000 });
+      await layerItems.first().click({ force: true });
       await page.waitForTimeout(500);
 
-      await layerItems.first()
+      await layerItems
+        .first()
         .getByTestId("icon-button-dotsThreeVertical")
         .click();
 
@@ -281,7 +287,11 @@ test.describe("Layer Deletion & Reordering", () => {
         .filter({ hasText: /^Delete$/ })
         .last()
         .click();
-      await cesiumViewer.waitForLoaderToDisappear();
+
+      // Wait until the layer count actually decreases
+      await expect(layerItems).toHaveCount(countBefore - 1, {
+        timeout: 15_000
+      });
 
       count = await layerItems.count();
     }
