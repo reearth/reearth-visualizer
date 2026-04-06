@@ -200,6 +200,9 @@ export class ProjectScreenPage {
   async addNewLayerStyle(maxAttempts = 3) {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
+        // Check page is alive before attempting
+        if (this.page.isClosed()) throw new Error("Page is closed");
+
         await this.addNewStyleButton.waitFor({
           state: "visible",
           timeout: 10_000

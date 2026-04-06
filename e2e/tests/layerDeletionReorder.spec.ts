@@ -120,16 +120,15 @@ test.describe("Layer Deletion & Reordering", () => {
     const initialCount = await layerItems.count();
 
     await projectScreen.clickLayer(layerNames[0]);
+    await page.waitForTimeout(500);
 
     const targetLayer = layerItems.filter({ hasText: layerNames[0] });
-    const dotsBtn = targetLayer.getByTestId("icon-button-dotsThreeVertical");
-    await dotsBtn.waitFor({ state: "visible", timeout: 5_000 });
-    await dotsBtn.click();
+    await targetLayer.getByTestId("icon-button-dotsThreeVertical").click();
 
-    const deleteMenuItem = page
-      .getByRole("menuitem")
-      .filter({ hasText: "Delete" });
-    await deleteMenuItem.waitFor({ state: "visible", timeout: 5_000 });
+    const deleteMenuItem = page.locator('[role="menuitem"]', {
+      hasText: "Delete"
+    });
+    await expect(deleteMenuItem).toBeVisible({ timeout: 10_000 });
     await deleteMenuItem.click();
 
     await expect(
@@ -205,16 +204,14 @@ test.describe("Layer Deletion & Reordering", () => {
     const targetLayer = layerItems.filter({ hasText: layerNames[1] });
 
     await targetLayer.click();
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
 
-    const dotsBtn = targetLayer.getByTestId("icon-button-dotsThreeVertical");
-    await dotsBtn.waitFor({ state: "visible", timeout: 5_000 });
-    await dotsBtn.click();
+    await targetLayer.getByTestId("icon-button-dotsThreeVertical").click();
 
-    const renameMenuItem = page
-      .getByRole("menuitem")
-      .filter({ hasText: "Rename" });
-    await renameMenuItem.waitFor({ state: "visible", timeout: 5_000 });
+    const renameMenuItem = page.locator('[role="menuitem"]', {
+      hasText: "Rename"
+    });
+    await expect(renameMenuItem).toBeVisible({ timeout: 10_000 });
     await renameMenuItem.click();
     await page.waitForTimeout(1000);
 
@@ -256,17 +253,16 @@ test.describe("Layer Deletion & Reordering", () => {
 
     while (count > 0) {
       await layerItems.first().click();
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(500);
 
-      const dotsBtn = layerItems.first()
-        .getByTestId("icon-button-dotsThreeVertical");
-      await dotsBtn.waitFor({ state: "visible", timeout: 5_000 });
-      await dotsBtn.click();
+      await layerItems.first()
+        .getByTestId("icon-button-dotsThreeVertical")
+        .click();
 
-      const deleteMenuItem = page
-        .getByRole("menuitem")
-        .filter({ hasText: "Delete" });
-      await deleteMenuItem.waitFor({ state: "visible", timeout: 5_000 });
+      const deleteMenuItem = page.locator('[role="menuitem"]', {
+        hasText: "Delete"
+      });
+      await expect(deleteMenuItem).toBeVisible({ timeout: 10_000 });
       await deleteMenuItem.click();
 
       await expect(
