@@ -197,62 +197,23 @@ export class ProjectScreenPage {
     await this.page.waitForTimeout(500);
   }
 
-  private isPageCrash(err: unknown): boolean {
-    if (this.page.isClosed()) return true;
-    return (
-      err instanceof Error &&
-      (err.message.includes("Target page, context or browser has been closed") ||
-        err.message.includes("Page is closed") ||
-        err.message.includes("page has been closed"))
-    );
-  }
+  async addNewLayerStyle() {
+    await this.addNewStyleButton.waitFor({
+      state: "visible",
+      timeout: 10_000
+    });
+    await this.page.waitForTimeout(500);
+    await this.addNewStyleButton.click();
 
-  async addNewLayerStyle(maxAttempts = 3) {
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      try {
-        if (this.page.isClosed()) throw new Error("Page is closed");
+    // Use "Default" preset — single click, no cascading submenu.
+    // The "Basic Geometry > Points" hover submenu crashes WebKit
+    // due to FloatingPortal overlaying the Cesium WebGL canvas.
+    await expect(this.defaultState).toBeVisible({ timeout: 10_000 });
+    await this.defaultState.click();
 
-        await this.addNewStyleButton.waitFor({
-          state: "visible",
-          timeout: 10_000
-        });
-        await this.page.waitForTimeout(500);
-        await this.addNewStyleButton.click();
-        await expect(this.basicGeometryState).toBeVisible({ timeout: 10_000 });
-        await this.page.waitForTimeout(500);
-
-        await this.basicGeometryState.hover();
-        await this.page.waitForTimeout(500);
-
-        const pointsVisible = await this.pointsState
-          .first()
-          .isVisible({ timeout: 3_000 })
-          .catch(() => false);
-
-        if (!pointsVisible) {
-          await this.page.keyboard.press("Escape");
-          await this.page.waitForTimeout(500);
-          continue;
-        }
-
-        await this.pointsState.first().click();
-        await this.page.waitForTimeout(500);
-
-        await expect(this.assignNewStyleButton).toBeEnabled({ timeout: 5_000 });
-        await this.assignNewStyleButton.click();
-        await this.page.waitForTimeout(1000);
-        return;
-      } catch (err) {
-        if (this.isPageCrash(err)) throw err;
-
-        if (attempt < maxAttempts - 1) {
-          await this.page.keyboard.press("Escape").catch(() => {});
-          await this.page.waitForTimeout(1000).catch(() => {});
-        } else {
-          throw err;
-        }
-      }
-    }
+    await expect(this.assignNewStyleButton).toBeEnabled({ timeout: 10_000 });
+    await this.assignNewStyleButton.click();
+    await this.page.waitForTimeout(1000);
   }
 
   async addPointsOnMap(x: number, y: number) {

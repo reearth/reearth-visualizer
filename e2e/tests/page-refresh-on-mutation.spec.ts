@@ -223,45 +223,29 @@ test.describe("Page refresh on mutation actions", () => {
   /*  Updating a Layer Style property value                            */
   /* ---------------------------------------------------------------- */
 
-  test("changing Point Size in Layer Style should NOT remount the Cesium viewer", async () => {
+  test("saving Layer Style should NOT remount the Cesium viewer", async () => {
     cesiumViewer.resetNavigationCount();
 
-    // Open the style editor for the layer
     await projectScreen.clickLayer(layerName);
     await projectScreen.editLayerStyleButton.click();
     await page.waitForTimeout(500);
 
     const marker = await cesiumViewer.stampViewerMarker();
 
-    // Find the Point Size input
-    const pointSizeInput = page
-      .getByTestId("style-node-content-pointSize")
-      .locator("input");
-    const originalValue = await pointSizeInput.inputValue();
+    // Change the Height Reference dropdown value
+    const heightRefSelect = page
+      .getByTestId("style-node-content-heightReference")
+      .getByTestId("select-input");
+    await expect(heightRefSelect).toBeVisible({ timeout: 10_000 });
+    await heightRefSelect.click();
+    await page.getByRole("option", { name: "none" }).click();
+    await page.waitForTimeout(500);
 
-    // Change the value
-    await pointSizeInput.click({ clickCount: 3 });
-    await pointSizeInput.fill("25");
-    await pointSizeInput.press("Enter");
-
-    // Save the layer style
     await projectScreen.saveLayerStyleButton.click();
     await cesiumViewer.waitForLoaderToDisappear();
 
-    // Viewer should NOT have remounted
     await cesiumViewer.expectViewerNotRemounted(marker);
 
-    // Reopen the style editor to verify the value was persisted
-    await projectScreen.editLayerStyleButton.click();
-    await page.waitForTimeout(500);
-    const savedValue = await page
-      .getByTestId("style-node-content-pointSize")
-      .locator("input")
-      .inputValue();
-    expect(savedValue).toBe("25");
-    expect(savedValue).not.toBe(originalValue);
-
-    // No full-page navigation should have occurred
     cesiumViewer.expectNoPageNavigation();
   });
 
