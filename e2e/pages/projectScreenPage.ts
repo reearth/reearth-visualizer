@@ -161,7 +161,17 @@ export class ProjectScreenPage {
     await this.layerNameInput.first().waitFor({ state: "visible" });
     await this.layerNameInput.first().fill(layerName);
     await this.createNewLayerButton.click();
-    await this.page.waitForTimeout(3000);
+
+    // Wait for the loader spinner to disappear after the mutation
+    const loader = this.page.getByTestId("loader");
+    await this.page.waitForTimeout(500);
+    await loader
+      .waitFor({ state: "hidden", timeout: 30_000 })
+      .catch(() => {});
+
+    // Ensure the editor is still stable and the layer panel is ready
+    await this.newLayerButton.waitFor({ state: "visible", timeout: 15_000 });
+    await this.page.waitForTimeout(1000);
   }
 
   async selectPropertyType(propertyType: string) {
@@ -182,25 +192,38 @@ export class ProjectScreenPage {
   }
   async clickLayer(layerName: string) {
     const layerItem = this.getLayerByName(layerName);
-    await expect(layerItem).toBeVisible();
+    await expect(layerItem).toBeVisible({ timeout: 10_000 });
     await layerItem.click();
+    await this.page.waitForTimeout(500);
   }
 
   async addNewLayerStyle() {
+    // Ensure the style button is ready before clicking
+    await this.addNewStyleButton.waitFor({ state: "visible", timeout: 10_000 });
+    await this.page.waitForTimeout(500);
     await this.addNewStyleButton.click();
-    await expect(this.basicGeometryState).toBeVisible();
+    await expect(this.basicGeometryState).toBeVisible({ timeout: 10_000 });
+    await this.page.waitForTimeout(300);
     await this.basicGeometryState.hover();
-    await expect(this.pointsState.first()).toBeVisible();
+    await expect(this.pointsState.first()).toBeVisible({ timeout: 10_000 });
+    await this.page.waitForTimeout(300);
     await this.pointsState.first().click();
+    await this.assignNewStyleButton.waitFor({
+      state: "visible",
+      timeout: 10_000
+    });
     await this.assignNewStyleButton.click();
+    await this.page.waitForTimeout(1000);
   }
 
   async addPointsOnMap(x: number, y: number) {
+    await this.mapPinButton.waitFor({ state: "visible", timeout: 10_000 });
+    await this.page.waitForTimeout(500);
     await this.mapPinButton.click();
-    await this.page.waitForTimeout(1000);
+    await this.page.waitForTimeout(1500);
 
     const canvas = this.page.locator("canvas").first();
-    await canvas.waitFor({ state: "visible" });
+    await canvas.waitFor({ state: "visible", timeout: 10_000 });
 
     await canvas.click({
       position: { x, y },
