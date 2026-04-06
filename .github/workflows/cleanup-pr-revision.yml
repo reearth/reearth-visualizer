@@ -10,6 +10,10 @@ jobs:
   show-github-event-info:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - name: Print event information
         run: |
           echo "Event name: ${{ github.event_name }}"
@@ -22,6 +26,10 @@ jobs:
     needs: [show-github-event-info]
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - name: Remove Cloud Run Tag
         uses: reearth/actions/remove-cloud-run-tag@4a7719ea2bfbcf3841b58eaedb01e91d3520227a # main
         with:
@@ -35,6 +43,10 @@ jobs:
     needs: [show-github-event-info]
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - name: Remove Cloud Run Tag
         uses: reearth/actions/remove-cloud-run-tag@4a7719ea2bfbcf3841b58eaedb01e91d3520227a # main
         with:
