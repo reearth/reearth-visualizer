@@ -33,6 +33,10 @@ jobs:
       run:
         working-directory: web
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Set up QEMU
@@ -88,6 +92,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
@@ -124,6 +132,10 @@ jobs:
     env:
       ARTIFACT: reearth-web_${{ inputs.name }}.tar.gz
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
         id: app-token
         with:
@@ -152,6 +164,10 @@ jobs:
     env:
       ARTIFACT: reearth-web_${{ inputs.new_tag }}.tar.gz
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - name: Fetch reearth-web release
         uses: dsaltares/fetch-gh-release-asset@master
         with:

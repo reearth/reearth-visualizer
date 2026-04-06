@@ -17,6 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !startsWith(github.head_ref, 'renovate/') }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -36,4 +40,8 @@ jobs:
   assign-author:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - uses: toshimaru/auto-author-assign@4d585cc37690897bd9015942ed6e766aa7cdb97f # v3.0.1
