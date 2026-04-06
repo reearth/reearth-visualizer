@@ -113,7 +113,9 @@ test.describe("Page refresh on mutation actions", () => {
 
     await projectScreen.createNewLayer(layerName);
 
-    // The new layer should appear
+    // Wait for the layer to appear in the list
+    await projectScreen.verifyLayerAdded(layerName);
+
     const layersAfter = await cesiumViewer.getLayerCount();
     expect(layersAfter).toBe(layersBefore + 1);
 

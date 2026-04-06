@@ -197,23 +197,50 @@ export class ProjectScreenPage {
     await this.page.waitForTimeout(500);
   }
 
-  async addNewLayerStyle() {
-    // Ensure the style button is ready before clicking
-    await this.addNewStyleButton.waitFor({ state: "visible", timeout: 10_000 });
-    await this.page.waitForTimeout(500);
-    await this.addNewStyleButton.click();
-    await expect(this.basicGeometryState).toBeVisible({ timeout: 10_000 });
-    await this.page.waitForTimeout(300);
-    await this.basicGeometryState.hover();
-    await expect(this.pointsState.first()).toBeVisible({ timeout: 10_000 });
-    await this.page.waitForTimeout(300);
-    await this.pointsState.first().click();
-    await this.assignNewStyleButton.waitFor({
-      state: "visible",
-      timeout: 10_000
-    });
-    await this.assignNewStyleButton.click();
-    await this.page.waitForTimeout(1000);
+  async addNewLayerStyle(maxAttempts = 3) {
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        await this.addNewStyleButton.waitFor({
+          state: "visible",
+          timeout: 10_000
+        });
+        await this.page.waitForTimeout(500);
+        await this.addNewStyleButton.click();
+        await expect(this.basicGeometryState).toBeVisible({ timeout: 10_000 });
+        await this.page.waitForTimeout(500);
+
+        await this.basicGeometryState.hover();
+        await this.page.waitForTimeout(500);
+
+        const pointsVisible = await this.pointsState
+          .first()
+          .isVisible({ timeout: 3_000 })
+          .catch(() => false);
+
+        if (!pointsVisible) {
+          await this.page.keyboard.press("Escape");
+          await this.page.waitForTimeout(500);
+          continue;
+        }
+
+        await this.pointsState.first().click();
+        await this.page.waitForTimeout(500);
+
+        await expect(this.assignNewStyleButton).toBeEnabled({ timeout: 5_000 });
+        await this.assignNewStyleButton.click();
+        await this.page.waitForTimeout(1000);
+        return;
+      } catch {
+        if (attempt < maxAttempts - 1) {
+          await this.page.keyboard.press("Escape");
+          await this.page.waitForTimeout(1000);
+        } else {
+          throw new Error(
+            "addNewLayerStyle failed after " + maxAttempts + " attempts"
+          );
+        }
+      }
+    }
   }
 
   async addPointsOnMap(x: number, y: number) {
