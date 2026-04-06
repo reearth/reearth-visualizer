@@ -7,26 +7,59 @@ import { GraphQLClient } from "../api/graphql/client";
 import { DELETE_PROJECT, UPDATE_PROJECT } from "../api/graphql/mutations";
 import { GET_ME, GET_PROJECTS } from "../api/graphql/queries";
 
-const tokenPath = path.join(__dirname, "../.auth/api-token.json");
+const apiTokenPath = path.join(__dirname, "../.auth/api-token.json");
+const storagePath = path.join(__dirname, "../.auth/user.json");
 
-function getGqlClient(request: APIRequestContext): GraphQLClient {
-  const { token, extraHeaders } = JSON.parse(
-    fs.readFileSync(tokenPath, "utf-8")
+/**
+ * Try to obtain an auth token from either the API token file or the
+ * browser storage state (Auth0 access_token). This ensures cleanup works
+ * regardless of which Playwright project (webkit / api-tests) ran first.
+ */
+function getAuthToken(): { token: string; extraHeaders: Record<string, string> } {
+  // 1. Try api-token.json (written by api global setup)
+  if (fs.existsSync(apiTokenPath)) {
+    try {
+      return JSON.parse(fs.readFileSync(apiTokenPath, "utf-8"));
+    } catch {
+      // malformed, fall through
+    }
+  }
+
+  // 2. Try extracting from browser storage state (written by web global setup)
+  if (fs.existsSync(storagePath)) {
+    try {
+      const state = JSON.parse(fs.readFileSync(storagePath, "utf-8"));
+      for (const origin of state.origins ?? []) {
+        for (const item of origin.localStorage ?? []) {
+          if (!item.name.startsWith("@@auth0spajs@@") || !item.value) continue;
+          const parsed = JSON.parse(item.value);
+          if (parsed?.body?.access_token) {
+            return { token: parsed.body.access_token, extraHeaders: {} };
+          }
+        }
+      }
+    } catch {
+      // malformed, fall through
+    }
+  }
+
+  throw new Error(
+    "Project cleanup: no auth token found. Neither .auth/api-token.json nor .auth/user.json contain a valid token."
   );
-  return new GraphQLClient(request, token, extraHeaders);
 }
 
 /**
  * Delete a project by name via the GraphQL API.
  * Performs soft-delete (move to recycle bin) then permanent delete.
- * Silently ignores errors if the project doesn't exist or was already deleted.
+ * Logs warnings on failure instead of silently swallowing errors.
  */
 export async function deleteProjectByName(
   request: APIRequestContext,
   projectName: string
 ): Promise<void> {
   try {
-    const client = getGqlClient(request);
+    const { token, extraHeaders } = getAuthToken();
+    const client = new GraphQLClient(request, token, extraHeaders);
 
     // Get workspace ID
     const { data: meData } = await client.query<{
@@ -47,23 +80,44 @@ export async function deleteProjectByName(
       (p) => p.name === projectName
     );
 
+    if (projects.length === 0) {
+      console.log(
+        `[cleanup] Project "${projectName}" not found — may have been deleted already.`
+      );
+      return;
+    }
+
     for (const project of projects) {
       // Soft delete (move to recycle bin)
       await client
         .mutate(UPDATE_PROJECT, {
           input: { projectId: project.id, deleted: true }
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.warn(
+            `[cleanup] Failed to soft-delete project "${projectName}" (${project.id}):`,
+            err
+          );
+        });
 
       // Permanent delete
       await client
         .mutate(DELETE_PROJECT, {
           input: { projectId: project.id }
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.warn(
+            `[cleanup] Failed to permanently delete project "${projectName}" (${project.id}):`,
+            err
+          );
+        });
     }
-  } catch {
-    // Silently ignore cleanup errors — don't fail the test suite
+
+    console.log(
+      `[cleanup] Deleted ${projects.length} project(s) named "${projectName}".`
+    );
+  } catch (err) {
+    console.warn(`[cleanup] Could not clean up project "${projectName}":`, err);
   }
 }
 

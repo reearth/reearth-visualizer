@@ -212,9 +212,17 @@ test.describe("Page refresh on mutation actions", () => {
 
     // The sketch layer should STILL be selected (no UI state loss)
     const layerItem = projectScreen.getLayerByName(layerName);
-    const isStillHighlighted = await layerItem.evaluate(
-      (el) => getComputedStyle(el).backgroundColor !== "transparent"
-    );
+    const isStillHighlighted = await layerItem.evaluate((el) => {
+      const bg = getComputedStyle(el)
+        .backgroundColor.replace(/\s+/g, "")
+        .toLowerCase();
+      // Check it's not transparent (literal or rgba with 0 alpha)
+      return !(
+        bg === "transparent" ||
+        bg === "rgba(0,0,0,0)" ||
+        /^rgba?\(\d+,\d+,\d+,0(\.0+)?\)$/.test(bg)
+      );
+    });
     expect(isStillHighlighted).toBe(true);
 
     // No full-page navigation should have occurred
