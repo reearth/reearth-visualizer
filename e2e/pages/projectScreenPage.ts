@@ -230,14 +230,12 @@ export class ProjectScreenPage {
         await this.assignNewStyleButton.click();
         await this.page.waitForTimeout(1000);
         return;
-      } catch {
+      } catch (err) {
         if (attempt < maxAttempts - 1) {
-          await this.page.keyboard.press("Escape");
-          await this.page.waitForTimeout(1000);
+          await this.page.keyboard.press("Escape").catch(() => {});
+          await this.page.waitForTimeout(1000).catch(() => {});
         } else {
-          throw new Error(
-            "addNewLayerStyle failed after " + maxAttempts + " attempts"
-          );
+          throw err;
         }
       }
     }

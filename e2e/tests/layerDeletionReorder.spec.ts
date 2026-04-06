@@ -119,15 +119,18 @@ test.describe("Layer Deletion & Reordering", () => {
     const layerItems = page.getByTestId("layer-item");
     const initialCount = await layerItems.count();
 
-    const targetLayer = layerItems.filter({ hasText: layerNames[0] });
-    await targetLayer.hover();
-    await page.waitForTimeout(300);
-    await targetLayer
-      .getByTestId("icon-button-dotsThreeVertical")
-      .click();
-    await page.waitForTimeout(300);
+    await projectScreen.clickLayer(layerNames[0]);
 
-    await page.getByRole("menuitem").filter({ hasText: "Delete" }).click();
+    const targetLayer = layerItems.filter({ hasText: layerNames[0] });
+    const dotsBtn = targetLayer.getByTestId("icon-button-dotsThreeVertical");
+    await dotsBtn.waitFor({ state: "visible", timeout: 5_000 });
+    await dotsBtn.click();
+
+    const deleteMenuItem = page
+      .getByRole("menuitem")
+      .filter({ hasText: "Delete" });
+    await deleteMenuItem.waitFor({ state: "visible", timeout: 5_000 });
+    await deleteMenuItem.click();
 
     await expect(
       page.getByText("Delete this Layer?")
@@ -201,13 +204,18 @@ test.describe("Layer Deletion & Reordering", () => {
     const layerItems = page.getByTestId("layer-item");
     const targetLayer = layerItems.filter({ hasText: layerNames[1] });
 
-    await targetLayer.hover();
+    await targetLayer.click();
     await page.waitForTimeout(300);
-    await targetLayer
-      .getByTestId("icon-button-dotsThreeVertical")
-      .click();
-    await page.waitForTimeout(300);
-    await page.getByRole("menuitem").filter({ hasText: "Rename" }).click();
+
+    const dotsBtn = targetLayer.getByTestId("icon-button-dotsThreeVertical");
+    await dotsBtn.waitFor({ state: "visible", timeout: 5_000 });
+    await dotsBtn.click();
+
+    const renameMenuItem = page
+      .getByRole("menuitem")
+      .filter({ hasText: "Rename" });
+    await renameMenuItem.waitFor({ state: "visible", timeout: 5_000 });
+    await renameMenuItem.click();
     await page.waitForTimeout(1000);
 
     const renameInput = layerItems.locator("input").first();
@@ -247,14 +255,19 @@ test.describe("Layer Deletion & Reordering", () => {
     let count = await layerItems.count();
 
     while (count > 0) {
-      await layerItems.first().hover();
-      await page.waitForTimeout(300);
-      await layerItems.first()
-        .getByTestId("icon-button-dotsThreeVertical")
-        .click();
+      await layerItems.first().click();
       await page.waitForTimeout(300);
 
-      await page.getByRole("menuitem").filter({ hasText: "Delete" }).click();
+      const dotsBtn = layerItems.first()
+        .getByTestId("icon-button-dotsThreeVertical");
+      await dotsBtn.waitFor({ state: "visible", timeout: 5_000 });
+      await dotsBtn.click();
+
+      const deleteMenuItem = page
+        .getByRole("menuitem")
+        .filter({ hasText: "Delete" });
+      await deleteMenuItem.waitFor({ state: "visible", timeout: 5_000 });
+      await deleteMenuItem.click();
 
       await expect(
         page.getByText("Delete this Layer?")
