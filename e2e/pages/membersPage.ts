@@ -1,45 +1,67 @@
 import { Locator, Page, expect } from "@playwright/test";
 
 export class MembersPage {
-  constructor(private page: Page) {}
-  searchInput: Locator = this.page.getByPlaceholder(
-    "Search member by name or email"
-  );
-  inviteButton: Locator = this.page.getByRole("button", {
-    name: "invite user"
-  });
-  userNameHeader: Locator = this.page.getByText("User Name");
-  emailHeader: Locator = this.page.getByText("Email");
-  roleHeader: Locator = this.page.getByText("Role");
-  noMemberMessage: Locator = this.page.getByText(
-    "No Member match your search."
-  );
-  addMemberModalTitle: Locator = this.page.getByText("Add a team member");
-  addMemberSearchInput: Locator = this.page.getByPlaceholder("name@reearth.io");
-  addMemberAddButton: Locator = this.page
-    .getByRole("button", { name: "Add" })
-    .last();
-  addMemberCancelButton: Locator = this.page
-    .getByRole("button", { name: "Cancel" })
-    .last();
-  userNotFoundWarning: Locator = this.page.getByText("Can't find the user");
-  userExistsWarning: Locator = this.page.getByText(
-    "User already joined this workspace."
-  );
+  searchInput: Locator;
+  inviteButton: Locator;
+  userNameHeader: Locator;
+  emailHeader: Locator;
+  roleHeader: Locator;
+  noMemberMessage: Locator;
+  addMemberModalTitle: Locator;
+  addMemberSearchInput: Locator;
+  addMemberAddButton: Locator;
+  addMemberCancelButton: Locator;
+  userNotFoundWarning: Locator;
+  userExistsWarning: Locator;
+  updateRoleModalTitle: Locator;
+  updateRoleUpdateButton: Locator;
+  updateRoleCancelButton: Locator;
+  deleteMemberRemoveButton: Locator;
+  deleteMemberCancelButton: Locator;
+  changeRoleMenuItem: Locator;
+  removeMenuItem: Locator;
 
-  updateRoleModalTitle: Locator = this.page.getByText("Update Member Role");
-  updateRoleUpdateButton: Locator = this.page.getByRole("button", {
-    name: "Update"
-  });
-  updateRoleCancelButton: Locator = this.page
-    .getByRole("button", { name: "Cancel" })
-    .last();
-  deleteMemberRemoveButton: Locator = this.page.getByRole("button", {
-    name: "Remove"
-  });
-  deleteMemberCancelButton: Locator = this.page
-    .getByRole("button", { name: "Cancel" })
-    .last();
+  constructor(private page: Page) {
+    this.searchInput = this.page.getByPlaceholder(
+      "Search member by name or email"
+    );
+    this.inviteButton = this.page.getByRole("button", {
+      name: "invite user"
+    });
+    this.userNameHeader = this.page.getByText("User Name");
+    this.emailHeader = this.page.getByText("Email");
+    this.roleHeader = this.page.getByText("Role");
+    this.noMemberMessage = this.page.getByText(
+      "No Member match your search."
+    );
+    this.addMemberModalTitle = this.page.getByText("Add a team member");
+    this.addMemberSearchInput = this.page.getByPlaceholder("name@reearth.io");
+    this.addMemberAddButton = this.page
+      .getByRole("button", { name: "Add" })
+      .last();
+    this.addMemberCancelButton = this.page
+      .getByRole("button", { name: "Cancel" })
+      .last();
+    this.userNotFoundWarning = this.page.getByText("Can't find the user");
+    this.userExistsWarning = this.page.getByText(
+      "User already joined this workspace."
+    );
+    this.updateRoleModalTitle = this.page.getByText("Update Member Role");
+    this.updateRoleUpdateButton = this.page.getByRole("button", {
+      name: "Update"
+    });
+    this.updateRoleCancelButton = this.page
+      .getByRole("button", { name: "Cancel" })
+      .last();
+    this.deleteMemberRemoveButton = this.page.getByRole("button", {
+      name: "Remove"
+    });
+    this.deleteMemberCancelButton = this.page
+      .getByRole("button", { name: "Cancel" })
+      .last();
+    this.changeRoleMenuItem = this.page.getByText("Change Role");
+    this.removeMenuItem = this.page.getByText("Remove").last();
+  }
 
   getMemberRows(): Locator {
     return this.page.locator(
@@ -52,10 +74,6 @@ export class MembersPage {
       has: this.page.locator('button[icon="dotsThreeVertical"]')
     });
   }
-
-  // Context menu items
-  changeRoleMenuItem: Locator = this.page.getByText("Change Role");
-  removeMenuItem: Locator = this.page.getByText("Remove").last();
 
   // Actions
   async openInviteModal() {
