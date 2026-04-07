@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearthx/log"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 type dynamicAuthTransport struct {
@@ -13,9 +14,10 @@ type dynamicAuthTransport struct {
 }
 
 func NewDynamicAuthTransport() *dynamicAuthTransport {
+	base := otelhttp.NewTransport(http.DefaultTransport)
 	return &dynamicAuthTransport{
 		transport: gqlclient.NewAccountsTransport(
-			http.DefaultTransport,
+			base,
 			gqlclient.InternalServiceVisualizerAPI,
 		),
 	}
