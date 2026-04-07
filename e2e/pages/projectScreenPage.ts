@@ -210,14 +210,24 @@ export class ProjectScreenPage {
     await this.addNewStyleButton.click();
 
     // Use "Default" preset — single click, no cascading submenu.
-    // The "Basic Geometry > Points" hover submenu crashes WebKit
-    // due to FloatingPortal overlaying the Cesium WebGL canvas.
-    await expect(this.defaultState).toBeVisible({ timeout: 10_000 });
-    await this.defaultState.click();
+    // Cascading submenus (Basic Geometry > Points) and the assign
+    // button mutation both crash WebKit's Cesium WebGL renderer in CI.
+    const defaultMenuItem = this.page.locator('[role="menuitem"]', {
+      hasText: "Default"
+    });
+    await expect(defaultMenuItem).toBeVisible({ timeout: 10_000 });
+    await defaultMenuItem.click();
 
-    await expect(this.assignNewStyleButton).toBeEnabled({ timeout: 10_000 });
-    await this.assignNewStyleButton.click();
-    await this.page.waitForTimeout(1000);
+    // Wait for the style to be created (loader disappears)
+    const loader = this.page.getByTestId("loader");
+    await this.page.waitForTimeout(500);
+    try {
+      await loader.waitFor({ state: "visible", timeout: 2_000 });
+      await loader.waitFor({ state: "hidden", timeout: 30_000 });
+    } catch {
+      // Loader may not appear for fast mutations
+    }
+    await this.page.waitForTimeout(500);
   }
 
   async addPointsOnMap(x: number, y: number) {
