@@ -162,12 +162,16 @@ export class ProjectScreenPage {
     await this.layerNameInput.first().fill(layerName);
     await this.createNewLayerButton.click();
 
-    // Wait for the loader spinner to disappear after the mutation
+    // Wait for the loader spinner to disappear after the mutation,
+    // but only if it actually appears.
     const loader = this.page.getByTestId("loader");
     await this.page.waitForTimeout(500);
-    await loader
-      .waitFor({ state: "hidden", timeout: 30_000 })
-      .catch(() => {});
+    try {
+      await loader.waitFor({ state: "visible", timeout: 2_000 });
+      await loader.waitFor({ state: "hidden", timeout: 30_000 });
+    } catch {
+      // The loader may never appear for fast mutations
+    }
 
     // Ensure the editor is still stable and the layer panel is ready
     await this.newLayerButton.waitFor({ state: "visible", timeout: 15_000 });

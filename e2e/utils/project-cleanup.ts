@@ -5,7 +5,7 @@ import { APIRequestContext } from "@playwright/test";
 
 import { GraphQLClient } from "../api/graphql/client";
 import { DELETE_PROJECT, UPDATE_PROJECT } from "../api/graphql/mutations";
-import { GET_ME, GET_PROJECTS } from "../api/graphql/queries";
+import { GET_ME, GET_DELETED_PROJECTS, GET_PROJECTS } from "../api/graphql/queries";
 
 const apiTokenPath = path.join(__dirname, "../.auth/api-token.json");
 const storagePath = path.join(__dirname, "../.auth/user.json");
@@ -67,7 +67,7 @@ export async function deleteProjectByName(
     }>(GET_ME);
     const workspaceId = meData.me.myWorkspaceId;
 
-    // Find the project by name
+    // Find active projects by name
     const { data: projectsData } = await client.query<{
       projects: { nodes: { id: string; name: string }[] };
     }>(GET_PROJECTS, {
@@ -76,29 +76,39 @@ export async function deleteProjectByName(
       keyword: projectName
     });
 
-    const projects = projectsData.projects.nodes.filter(
+    const activeProjects = projectsData.projects.nodes.filter(
       (p) => p.name === projectName
     );
 
-    if (projects.length === 0) {
+    // Also find soft-deleted projects (in recycle bin)
+    const { data: deletedData } = await client
+      .query<{
+        deletedProjects: { nodes: { id: string; name: string }[] };
+      }>(GET_DELETED_PROJECTS, { workspaceId })
+      .catch(() => ({
+        data: { deletedProjects: { nodes: [] } }
+      }));
+
+    const deletedProjects = deletedData.deletedProjects.nodes.filter(
+      (p) => p.name === projectName
+    );
+
+    const allProjects = [...activeProjects, ...deletedProjects];
+
+    if (allProjects.length === 0) {
       console.log(
         `[cleanup] Project "${projectName}" not found — may have been deleted already.`
       );
       return;
     }
 
-    for (const project of projects) {
-      // Soft delete (move to recycle bin)
+    for (const project of allProjects) {
+      // Soft delete first (no-op if already in recycle bin)
       await client
         .mutate(UPDATE_PROJECT, {
           input: { projectId: project.id, deleted: true }
         })
-        .catch((err) => {
-          console.warn(
-            `[cleanup] Failed to soft-delete project "${projectName}" (${project.id}):`,
-            err
-          );
-        });
+        .catch(() => {});
 
       // Permanent delete
       await client
@@ -114,7 +124,7 @@ export async function deleteProjectByName(
     }
 
     console.log(
-      `[cleanup] Deleted ${projects.length} project(s) named "${projectName}".`
+      `[cleanup] Deleted ${allProjects.length} project(s) named "${projectName}".`
     );
   } catch (err) {
     console.warn(`[cleanup] Could not clean up project "${projectName}":`, err);
