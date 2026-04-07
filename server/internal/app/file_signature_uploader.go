@@ -18,6 +18,7 @@ import (
 	file_ "github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 )
 
 type SignedUploadURLResponse struct {
@@ -179,6 +180,10 @@ func servSignatureUploadFiles(
 				errMsg := fmt.Sprintf("fail ReadImportProjectZip: %v", err)
 				log.Errorf("[Import] %s", errMsg)
 				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				if errors.Is(err, rerror.ErrNotFound) {
+					// File is gone — retrying will never recover it, acknowledge to stop Pub/Sub retries
+					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
+				}
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 			}
 			defer f.Close()
@@ -210,7 +215,8 @@ func servSignatureUploadFiles(
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
 				log.Errorf("[Import] %s", errMsg)
 				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
-				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
+				// Invalid/corrupt zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
+				return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
 			}
 
 			ok := ImportProject(
@@ -232,7 +238,8 @@ func servSignatureUploadFiles(
 			}
 
 			log.Errorf("[Import] Failed to import project: %s", pid.String())
-			return nil, echo.NewHTTPError(http.StatusInternalServerError, "import failed")
+			// Import already marked as failed in DB — retrying won't change the outcome, acknowledge to stop Pub/Sub retries
+			return map[string]string{"status": "unrecoverable", "reason": "import failed"}, nil
 		}),
 	)
 
