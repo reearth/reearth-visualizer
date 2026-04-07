@@ -9,6 +9,7 @@ import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { RecycleBinPage } from "../pages/recycleBinPage";
 import { createIAPContext } from "../utils/iap-auth";
+import { deleteProjectsByName } from "../utils/project-cleanup";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -63,6 +64,10 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test.afterAll(async () => {
+    await deleteProjectsByName(page.request, [
+      projectName,
+      specialProjectName
+    ]);
     await context.close();
   });
 

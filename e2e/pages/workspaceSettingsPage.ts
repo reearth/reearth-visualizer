@@ -1,31 +1,44 @@
 import { Locator, Page, expect } from "@playwright/test";
 
 export class WorkspaceSettingsPage {
-  constructor(private page: Page) {}
-  workspaceTitle: Locator = this.page.getByText("Workspace", { exact: true });
-  workspaceNameField: Locator = this.page.getByText("Workspace Name");
-  dangerZoneTitle: Locator = this.page.getByText("Danger Zone");
-  deleteWorkspaceButton: Locator = this.page.getByRole("button", {
-    name: "Delete workspace"
-  });
+  workspaceTitle: Locator;
+  workspaceNameField: Locator;
+  dangerZoneTitle: Locator;
+  deleteWorkspaceButton: Locator;
+  deleteModalTitle: Locator;
+  deleteModalInput: Locator;
+  deleteModalConfirmButton: Locator;
+  deleteModalCancelButton: Locator;
+  warningModalTitle: Locator;
+  warningModalOkButton: Locator;
+  accountTab: Locator;
+  workspaceTab: Locator;
 
-  deleteModalTitle: Locator = this.page.getByText("Delete workspace");
-  deleteModalInput: Locator = this.page
-    .getByRole("dialog")
-    .locator("input")
-    .last();
-  deleteModalConfirmButton: Locator = this.page.getByRole("button", {
-    name: "I am sure I want to delete this workspace"
-  });
-  deleteModalCancelButton: Locator = this.page
-    .getByRole("button", { name: "Cancel" })
-    .last();
-  warningModalTitle: Locator = this.page.getByText("Delete workspace");
-  warningModalOkButton: Locator = this.page.getByRole("button", {
-    name: "Ok"
-  });
-  accountTab: Locator = this.page.getByRole("link", { name: "Account" });
-  workspaceTab: Locator = this.page.getByRole("link", { name: "Workspace" });
+  constructor(private page: Page) {
+    this.workspaceTitle = this.page.getByText("Workspace", { exact: true });
+    this.workspaceNameField = this.page.getByText("Workspace Name");
+    this.dangerZoneTitle = this.page.getByText("Danger Zone");
+    this.deleteWorkspaceButton = this.page.getByRole("button", {
+      name: "Delete workspace"
+    });
+    this.deleteModalTitle = this.page.getByText("Delete workspace");
+    this.deleteModalInput = this.page
+      .getByRole("dialog")
+      .locator("input")
+      .last();
+    this.deleteModalConfirmButton = this.page.getByRole("button", {
+      name: "I am sure I want to delete this workspace"
+    });
+    this.deleteModalCancelButton = this.page
+      .getByRole("button", { name: "Cancel" })
+      .last();
+    this.warningModalTitle = this.page.getByText("Delete workspace");
+    this.warningModalOkButton = this.page.getByRole("button", {
+      name: "Ok"
+    });
+    this.accountTab = this.page.getByRole("link", { name: "Account" });
+    this.workspaceTab = this.page.getByRole("link", { name: "Workspace" });
+  }
 
   async verifyPageLoaded() {
     await expect(this.workspaceNameField).toBeVisible();
