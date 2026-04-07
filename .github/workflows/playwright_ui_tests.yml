@@ -13,11 +13,6 @@ on:
         description: "URL to run tests against"
         type: string
         required: false
-  pull_request:
-    paths:
-      - "e2e/**"
-      - "web/**"
-      - ".github/workflows/playwright_ui_tests.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
