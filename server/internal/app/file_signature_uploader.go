@@ -1,6 +1,7 @@
 package app
 
 import (
+	"archive/zip"
 	"context"
 	"errors"
 	"fmt"
@@ -122,7 +123,12 @@ func servSignatureUploadFiles(
 			importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(currentHost, tmpfile)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
-				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				if errors.Is(err, zip.ErrFormat) || errors.Is(err, zip.ErrAlgorithm) || errors.Is(err, zip.ErrChecksum) {
+					// Corrupt or invalid zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
+					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
+				}
+				// I/O or other transient error — return 500 to allow Pub/Sub to retry
 				return nil, errors.New(errMsg)
 			}
 			// EXPORT_DATA_VERSION
@@ -214,9 +220,13 @@ func servSignatureUploadFiles(
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
 				log.Errorf("[Import] %s", errMsg)
-				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
-				// Invalid/corrupt zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
-				return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
+				if errors.Is(err, zip.ErrFormat) || errors.Is(err, zip.ErrAlgorithm) || errors.Is(err, zip.ErrChecksum) {
+					// Corrupt or invalid zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
+					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
+				}
+				// I/O or other transient error — return 500 to allow Pub/Sub to retry
+				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 			}
 
 			ok := ImportProject(
