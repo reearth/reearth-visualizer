@@ -62,8 +62,7 @@ export class LayerStylePanelPage {
     ).toBeVisible({ timeout: 10_000 });
 
     await this.page.locator(`input[value='${currentName}']`).click();
-    await this.page.keyboard.press("Meta+a");
-    await this.page.keyboard.type(newName);
+    await this.page.locator(`input[value='${currentName}']`).fill(newName);
     await this.page.keyboard.press("Enter");
 
     const loader = this.page.getByTestId("loader");
