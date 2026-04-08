@@ -1,28 +1,38 @@
 import { Locator, Page } from "@playwright/test";
 
 export class RecycleBinPage {
-  projectTitles: Locator = this.page.locator(
-    '[data-testid^="recycle-bin-item-title-"]'
-  );
-  recoverButton: Locator = this.page.getByText("Recover");
-  deleteButton: Locator = this.page.getByText("Delete");
-  deletePoptitle: Locator = this.page.getByText("Delete project");
-  projectNameDisplay: Locator = this.page.locator(
-    '[data-testid^="recycle-bin-item-title-"]'
-  );
-  warningMessages: Locator = this.page.getByText(
-    "This action cannot be undone"
-  );
-  projectNameInput: Locator = this.page
-    .getByRole("dialog")
-    .locator("input")
-    .last();
-  cancelButton: Locator = this.page.getByRole("button", { name: "Cancel" });
-  confirmDeleteButton: Locator = this.page.getByRole("button", {
-    name: "I am sure I want to delete this project"
-  });
+  projectTitles: Locator;
+  recoverButton: Locator;
+  deleteButton: Locator;
+  deletePoptitle: Locator;
+  projectNameDisplay: Locator;
+  warningMessages: Locator;
+  projectNameInput: Locator;
+  cancelButton: Locator;
+  confirmDeleteButton: Locator;
 
-  constructor(private page: Page) {}
+  constructor(private page: Page) {
+    this.projectTitles = this.page.locator(
+      '[data-testid^="recycle-bin-item-title-"]'
+    );
+    this.recoverButton = this.page.getByText("Recover");
+    this.deleteButton = this.page.getByText("Delete");
+    this.deletePoptitle = this.page.getByText("Delete project");
+    this.projectNameDisplay = this.page.locator(
+      '[data-testid^="recycle-bin-item-title-"]'
+    );
+    this.warningMessages = this.page.getByText(
+      "This action cannot be undone"
+    );
+    this.projectNameInput = this.page
+      .getByRole("dialog")
+      .locator("input")
+      .last();
+    this.cancelButton = this.page.getByRole("button", { name: "Cancel" });
+    this.confirmDeleteButton = this.page.getByRole("button", {
+      name: "I am sure I want to delete this project"
+    });
+  }
 
   recycleBinItem(projectName: string): Locator {
     return this.page.getByTestId(`recycle-bin-item-${projectName}`);
