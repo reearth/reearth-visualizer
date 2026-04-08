@@ -20,7 +20,7 @@ export class DataSourceManagerPage {
   googlePhotorealisticRadio: Locator;
 
   constructor(private page: Page) {
-    this.modalTitle = this.page.getByTestId("datasource-modal");
+    this.modalTitle = this.page.getByText("Data Source Manager");
     this.geojsonTab = this.page.getByRole("tab", { name: "GeoJSON" });
     this.csvTab = this.page.getByRole("tab", { name: "CSV" });
     this.wmsTab = this.page.getByRole("tab", { name: "WMS" });
