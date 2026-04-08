@@ -1,42 +1,57 @@
 import { Locator, Page } from "@playwright/test";
 
 export class LoginPage {
-  appTitle: Locator = this.page.locator(
-    'div#custom-prompt-logo[title="reearth-dev"]'
-  );
-  emailInput: Locator = this.page.locator(`input[name="username"]`);
-  continueButton: Locator = this.page.getByRole("button", { name: "Continue" });
-  passwordInput: Locator = this.page.locator(`input[name="password"]`);
-  loginButton: Locator = this.page.getByRole("button", { name: "Continue" });
+  appTitle: Locator;
+  emailInput: Locator;
+  continueButton: Locator;
+  passwordInput: Locator;
+  loginButton: Locator;
+  lockWidgetContainer: Locator;
+  lockUsernameInput: Locator;
+  lockPasswordInput: Locator;
+  lockSubmitButton: Locator;
+  errorMessageUsername: Locator;
+  errorMessagePassword: Locator;
+  forgotPasswordLink: Locator;
+  forgotPasswordError: Locator;
+  loginErrorMessage: Locator;
+  editEmailLink: Locator;
+  logoutCTA: Locator;
 
-  lockWidgetContainer: Locator = this.page.locator(
-    ".auth0-lock-widget-container"
-  );
-  lockUsernameInput: Locator = this.page.locator(
-    '.auth0-lock-input-username input[name="username"]'
-  );
-  lockPasswordInput: Locator = this.page.locator(
-    '.auth0-lock-input-password input[name="password"]'
-  );
-  lockSubmitButton: Locator = this.page.locator("button.auth0-lock-submit");
-
-  errorMessageUsername: Locator = this.page.getByRole("alert", {
-    name: /Username can't be blank/i
-  });
-  errorMessagePassword: Locator = this.page.locator(
-    "#auth0-lock-error-msg-username .auth0-lock-error-invalid-hint"
-  );
-  forgotPasswordLink: Locator = this.page.getByRole("link", {
-    name: /Don't remember your password/i
-  });
-  forgotPasswordError: Locator = this.page.locator(
-    "#auth0-lock-error-msg-password .auth0-lock-error-invalid-hint"
-  );
-  loginErrorMessage: Locator = this.page.locator("#error-element-password");
-  editEmailLink: Locator = this.page.getByRole("link", { name: "Edit" });
-  logoutCTA: Locator = this.page.getByTestId("header-user-menu-logout");
-
-  constructor(private page: Page) {}
+  constructor(private page: Page) {
+    this.appTitle = this.page.locator(
+      'div#custom-prompt-logo[title="reearth-dev"]'
+    );
+    this.emailInput = this.page.locator(`input[name="username"]`);
+    this.continueButton = this.page.getByRole("button", { name: "Continue" });
+    this.passwordInput = this.page.locator(`input[name="password"]`);
+    this.loginButton = this.page.getByRole("button", { name: "Continue" });
+    this.lockWidgetContainer = this.page.locator(
+      ".auth0-lock-widget-container"
+    );
+    this.lockUsernameInput = this.page.locator(
+      '.auth0-lock-input-username input[name="username"]'
+    );
+    this.lockPasswordInput = this.page.locator(
+      '.auth0-lock-input-password input[name="password"]'
+    );
+    this.lockSubmitButton = this.page.locator("button.auth0-lock-submit");
+    this.errorMessageUsername = this.page.getByRole("alert", {
+      name: /Username can't be blank/i
+    });
+    this.errorMessagePassword = this.page.locator(
+      "#auth0-lock-error-msg-username .auth0-lock-error-invalid-hint"
+    );
+    this.forgotPasswordLink = this.page.getByRole("link", {
+      name: /Don't remember your password/i
+    });
+    this.forgotPasswordError = this.page.locator(
+      "#auth0-lock-error-msg-password .auth0-lock-error-invalid-hint"
+    );
+    this.loginErrorMessage = this.page.locator("#error-element-password");
+    this.editEmailLink = this.page.getByRole("link", { name: "Edit" });
+    this.logoutCTA = this.page.getByTestId("header-user-menu-logout");
+  }
 
   async detectFormType() {
     await this.page.waitForTimeout(1000);
