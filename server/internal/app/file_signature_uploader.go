@@ -238,7 +238,9 @@ func servSignatureUploadFiles(
 			}
 
 			log.Errorf("[Import] Failed to import project: %s", pid.String())
-			// Import already marked as failed in DB — retrying won't change the outcome, acknowledge to stop Pub/Sub retries
+			// ImportProject marks the import as Failed in the DB before returning false, so the failure is already
+			// recorded regardless of cause. Replaying the message risks creating duplicate projects/scenes/assets
+			// from partial state, so acknowledge to stop Pub/Sub retries.
 			return map[string]string{"status": "unrecoverable", "reason": "import failed"}, nil
 		}),
 	)
