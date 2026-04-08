@@ -60,7 +60,7 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			if u != nil {
 				ctx = adapter.AttachUser(ctx, u)
-				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+				log.Debugfc(ctx, "auth: user: id=%s", u.ID())
 
 				op, err := generateOperator(ctx, cfg, u)
 				if err != nil {
@@ -142,7 +142,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			if u != nil {
 				ctx = adapter.AttachUser(ctx, u)
-				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+				log.Debugfc(ctx, "auth: user: id=%s", u.ID())
 
 				op, err := generateOperator(ctx, cfg, u)
 				if err != nil {
