@@ -20,7 +20,7 @@ export class DataSourceManagerPage {
   googlePhotorealisticRadio: Locator;
 
   constructor(private page: Page) {
-    this.modalTitle = this.page.getByText("Data Source Manager");
+    this.modalTitle = this.page.getByTestId("datasource-modal");
     this.geojsonTab = this.page.getByRole("tab", { name: "GeoJSON" });
     this.csvTab = this.page.getByRole("tab", { name: "CSV" });
     this.wmsTab = this.page.getByRole("tab", { name: "WMS" });
@@ -33,10 +33,10 @@ export class DataSourceManagerPage {
     });
     this.fromWebRadio = this.page.getByText("From Web", { exact: true });
     this.fromValueRadio = this.page.getByText("From Value", { exact: true });
-    this.geojsonUrlInput = this.page.getByPlaceholder("Input Text");
-    this.geojsonValueInput = this.page.getByPlaceholder("Input data here");
+    this.geojsonUrlInput = this.page.getByTestId("geojson-url-input");
+    this.geojsonValueInput = this.page.getByTestId("geojson-value-input");
     this.threeDTilesUrlRadio = this.page.getByText("URL", { exact: true });
-    this.threeDTilesUrlInput = this.page.getByPlaceholder("https://");
+    this.threeDTilesUrlInput = this.page.getByTestId("threedtiles-url-textinput");
     this.cesiumOsmRadio = this.page.getByText("Cesium OSM 3D Tiles");
     this.googlePhotorealisticRadio = this.page.getByText(
       "Google Photorealistic 3D Tiles"

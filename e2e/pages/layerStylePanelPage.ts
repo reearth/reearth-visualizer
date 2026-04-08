@@ -57,12 +57,10 @@ export class LayerStylePanelPage {
     await renameMenuItem.click();
     await this.page.waitForTimeout(1000);
 
-    await expect(
-      this.page.locator(`input[value='${currentName}']`)
-    ).toBeVisible({ timeout: 10_000 });
-
-    await this.page.locator(`input[value='${currentName}']`).click();
-    await this.page.locator(`input[value='${currentName}']`).fill(newName);
+    const renameInput = this.page.locator(`input[value='${currentName}']`);
+    await expect(renameInput).toBeVisible({ timeout: 10_000 });
+    await renameInput.click();
+    await renameInput.fill(newName);
     await this.page.keyboard.press("Enter");
 
     const loader = this.page.getByTestId("loader");

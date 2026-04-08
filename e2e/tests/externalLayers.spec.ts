@@ -109,14 +109,16 @@ test.describe("Adding Layers from External Resources", () => {
   test("Open Data Source Manager and verify all tabs", async () => {
     await openDataSourceManager();
     await dataSourceManager.verifyAllTabs();
+    await dataSourceManager.close();
   });
 
   test("Add a GeoJSON layer from web URL", async () => {
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
+    await openDataSourceManager();
     await dataSourceManager.addGeoJsonFromUrl(
-      "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
+      "https://raw.githubusercontent.com/johan/world.geo.json/master/countries/JPN.geo.json"
     );
     await cesiumViewer.waitForLoaderToDisappear();
     await dataSourceManager.waitForClosed();
