@@ -1,42 +1,143 @@
 import { Locator, Page, expect } from "@playwright/test";
 
 export class ProjectsPage {
-  newProjectButton: Locator = this.page.getByTestId("create-project-btn");
-  importButton: Locator = this.page.getByTestId("import-project-btn");
-  importFileInput: Locator = this.page.getByTestId("import-project-file-input");
+  newProjectButton: Locator;
+  importButton: Locator;
+  importFileInput: Locator;
+  searchProjectInput: Locator;
+  searchButton: Locator;
+  sortLabel: Locator;
+  sortDropdown: Locator;
+  searchResultBreadcrumb: Locator;
+  allProjectsBreadcrumb: Locator;
+  emptyContent: Locator;
+  gridViewToggle: Locator;
+  listViewToggle: Locator;
+  gridLayoutButton: Locator;
+  listLayoutButton: Locator;
+  columnHeaderProjectName: Locator;
+  columnHeaderUpdatedAt: Locator;
+  columnHeaderCreatedAt: Locator;
+  allProjectsHeader: Locator;
+  assetMigrationTitle: Locator;
+  projectDates: Locator;
+  firstProjectOptions: Locator;
+  favoriteButton: Locator;
+  modalTitle: Locator;
+  projectNameLabel: Locator;
+  projectNameInput: Locator;
+  projectAliasLabel: Locator;
+  projectAliasInput: Locator;
+  descriptionLabel: Locator;
+  descriptionTextarea: Locator;
+  cancelButton: Locator;
+  applyButton: Locator;
+  noticeBanner: Locator;
+  projectFavrtButton: Locator;
+  starIcon: Locator;
+  starredSection: Locator;
+  renameButton: Locator;
+  projectSettingLink: Locator;
+  projectAssetsLink: Locator;
+  exportButton: Locator;
+  moveToRecycleBinButton: Locator;
+  popUpCancelButton: Locator;
+  popUpRemoveButton: Locator;
+  renameMenuItem: Locator;
+  exportMenuItem: Locator;
+  projectSettingMenuItem: Locator;
+  projectAssetsMenuItem: Locator;
 
-  // Search & Sort
-  searchProjectInput: Locator = this.page.getByPlaceholder("Search project");
-  searchButton: Locator = this.page.getByTestId("projects-manager-header")
-    .locator('button:has(svg)').last();
-  sortLabel: Locator = this.page.locator("p", { hasText: "Sort:" });
-  sortDropdown: Locator = this.page.getByTestId("select-input");
-
-  // Search Results
-  searchResultBreadcrumb: Locator = this.page.getByTestId(
-    "breadcrumb-search-result"
-  );
-  allProjectsBreadcrumb: Locator = this.page.getByTestId(
-    "breadcrumb-all-projects"
-  );
-  emptyContent: Locator = this.page.getByTestId("projects-empty-content");
-
-  // View Toggles — IconButton generates data-testid="icon-button-{icon}"
-  gridViewToggle: Locator = this.page.getByTestId("icon-button-grid");
-  listViewToggle: Locator = this.page.getByTestId("icon-button-list");
-  gridLayoutButton: Locator = this.page.getByTestId("icon-button-grid");
-  listLayoutButton: Locator = this.page.getByTestId("icon-button-list");
-
-  // Table View Headers
-  columnHeaderProjectName: Locator = this.page.getByTestId(
-    "projects-list-name-col"
-  );
-  columnHeaderUpdatedAt: Locator = this.page.getByTestId(
-    "projects-list-updated-col"
-  );
-  columnHeaderCreatedAt: Locator = this.page.getByTestId(
-    "projects-list-created-col"
-  );
+  constructor(private page: Page) {
+    this.newProjectButton = this.page.getByTestId("create-project-btn");
+    this.importButton = this.page.getByTestId("import-project-btn");
+    this.importFileInput = this.page.getByTestId("import-project-file-input");
+    this.searchProjectInput = this.page.getByPlaceholder("Search project");
+    this.searchButton = this.page.getByTestId("projects-manager-header")
+      .locator('button:has(svg)').last();
+    this.sortLabel = this.page.locator("p", { hasText: "Sort:" });
+    this.sortDropdown = this.page.getByTestId("select-input");
+    this.searchResultBreadcrumb = this.page.getByTestId(
+      "breadcrumb-search-result"
+    );
+    this.allProjectsBreadcrumb = this.page.getByTestId(
+      "breadcrumb-all-projects"
+    );
+    this.emptyContent = this.page.getByTestId("projects-empty-content");
+    this.gridViewToggle = this.page.getByTestId("icon-button-grid");
+    this.listViewToggle = this.page.getByTestId("icon-button-list");
+    this.gridLayoutButton = this.page.getByTestId("icon-button-grid");
+    this.listLayoutButton = this.page.getByTestId("icon-button-list");
+    this.columnHeaderProjectName = this.page.getByTestId(
+      "projects-list-name-col"
+    );
+    this.columnHeaderUpdatedAt = this.page.getByTestId(
+      "projects-list-updated-col"
+    );
+    this.columnHeaderCreatedAt = this.page.getByTestId(
+      "projects-list-created-col"
+    );
+    this.allProjectsHeader = this.page.locator(
+      '[data-testid="projects-breadcrumb-container"] p',
+      { hasText: "All projects" }
+    );
+    this.assetMigrationTitle = this.page.locator(
+      '[data-testid^="project-list-item-title-"]',
+      { hasText: "Test_Asset_migration" }
+    );
+    this.projectDates = this.page.locator("div.css-9u2lx8 p");
+    this.firstProjectOptions = this.page
+      .locator('[data-testid^="project-list-item-menu-btn-"]')
+      .first();
+    this.favoriteButton = this.page.locator(
+      'button.css-19yctgj svg path[d*="M14.9479 6.0882"]'
+    );
+    this.modalTitle = this.page.getByText("Create new project");
+    this.projectNameLabel = this.page.getByText("Project Name *");
+    this.projectNameInput = this.page.getByTestId("project-name-input");
+    this.projectAliasLabel = this.page.getByText("Project Alias *");
+    this.projectAliasInput = this.page.getByTestId("project-alias-input");
+    this.descriptionLabel = this.page.getByText("Description");
+    this.descriptionTextarea = this.page.getByTestId(
+      "project-description-input"
+    );
+    this.cancelButton = this.page.getByTestId(
+      "project-creator-cancel-btn"
+    );
+    this.applyButton = this.page.getByTestId("project-creator-apply-btn");
+    this.noticeBanner = this.page.getByText("Notice");
+    this.projectFavrtButton = this.page
+      .locator('[data-testid^="project-list-item-star-btn-"]')
+      .first();
+    this.starIcon = this.page.locator('svg[color="#f1c21b"]');
+    this.starredSection = this.page.locator(
+      '[data-testid="starred-projects-wrapper"] p',
+      { hasText: "Starred" }
+    );
+    this.renameButton = this.page.getByText("Rename");
+    this.projectSettingLink = this.page.getByRole("link", {
+      name: "Project Setting"
+    });
+    this.projectAssetsLink = this.page.getByRole("link", {
+      name: "Project Assets"
+    });
+    this.exportButton = this.page.getByText("Export");
+    this.moveToRecycleBinButton = this.page.getByText("Move to Recycle Bin");
+    this.popUpCancelButton = this.page.getByRole("button", {
+      name: "Cancel"
+    });
+    this.popUpRemoveButton = this.page.getByRole("button", {
+      name: "Remove"
+    });
+    this.renameMenuItem = this.page.getByText("Rename");
+    this.exportMenuItem = this.page.getByText("Export");
+    this.projectSettingMenuItem = this.page.getByRole("link", {
+      name: "Project Setting"
+    });
+    this.projectAssetsMenuItem = this.page.getByRole("link", {
+      name: "Project Assets"
+    });
+  }
 
   // Grid View - Project Card
   gridProjectItem(projectName: string): Locator {
@@ -56,74 +157,6 @@ export class ProjectsPage {
   gridProjectImage(projectName: string): Locator {
     return this.page.getByTestId(`project-grid-item-image-${projectName}`);
   }
-
-  // All Projects Header (breadcrumb)
-  allProjectsHeader: Locator = this.page.locator(
-    '[data-testid="projects-breadcrumb-container"] p',
-    { hasText: "All projects" }
-  );
-
-  // List View (fallback)
-  assetMigrationTitle: Locator = this.page.locator(
-    '[data-testid^="project-list-item-title-"]',
-    { hasText: "Test_Asset_migration" }
-  );
-  projectDates: Locator = this.page.locator("div.css-9u2lx8 p");
-  firstProjectOptions: Locator = this.page
-    .locator('[data-testid^="project-list-item-menu-btn-"]')
-    .first();
-  favoriteButton: Locator = this.page.locator(
-    'button.css-19yctgj svg path[d*="M14.9479 6.0882"]'
-  );
-
-  // Modal - Create New Project
-  modalTitle: Locator = this.page.getByText("Create new project");
-  projectNameLabel: Locator = this.page.getByText("Project Name *");
-  projectNameInput: Locator = this.page.getByTestId("project-name-input");
-  projectAliasLabel: Locator = this.page.getByText("Project Alias *");
-  projectAliasInput: Locator = this.page.getByTestId("project-alias-input");
-  descriptionLabel: Locator = this.page.getByText("Description");
-  descriptionTextarea: Locator = this.page.getByTestId(
-    "project-description-input"
-  );
-  cancelButton: Locator = this.page.getByTestId(
-    "project-creator-cancel-btn"
-  );
-  applyButton: Locator = this.page.getByTestId("project-creator-apply-btn");
-
-  // Notifications
-  noticeBanner: Locator = this.page.getByText("Notice");
-
-  // Starred Section
-  projectFavrtButton: Locator = this.page
-    .locator('[data-testid^="project-list-item-star-btn-"]')
-    .first();
-  starIcon: Locator = this.page.locator('svg[color="#f1c21b"]');
-  starredSection: Locator = this.page.locator(
-    '[data-testid="starred-projects-wrapper"] p',
-    { hasText: "Starred" }
-  );
-
-  // Sidebar and Project Actions
-  renameButton: Locator = this.page.getByText("Rename");
-  projectSettingLink: Locator = this.page.getByRole("link", {
-    name: "Project Setting"
-  });
-  projectAssetsLink: Locator = this.page.getByRole("link", {
-    name: "Project Assets"
-  });
-  exportButton: Locator = this.page.getByText("Export");
-  moveToRecycleBinButton: Locator = this.page.getByText("Move to Recycle Bin");
-
-  // Pop-up confirmations
-  popUpCancelButton: Locator = this.page.getByRole("button", {
-    name: "Cancel"
-  });
-  popUpRemoveButton: Locator = this.page.getByRole("button", {
-    name: "Remove"
-  });
-
-  constructor(private page: Page) {}
 
   async createNewProject(
     projectName: string,
@@ -193,14 +226,6 @@ export class ProjectsPage {
       `xpath=//div[contains(@class, 'css-1ez7fby')]//div[contains(@title, "${projectName}")]`
     );
   }
-  // async goToProjectPage(projectName: string) {
-  //   const projectRow = this.page.getByTestId(
-  //     `project-grid-item-${projectName}`
-  //   );
-  //   await projectRow.first().dblclick();
-  // }
-
-  // ...existing code...
 
   async goToProjectPage(projectName: string) {
     const projectRow = this.page.getByTestId(
@@ -270,16 +295,6 @@ export class ProjectsPage {
       .getByTestId(`project-list-item-${projectName}`)
       .getByRole("textbox");
   }
-
-  // Project context menu items
-  renameMenuItem: Locator = this.page.getByText("Rename");
-  exportMenuItem: Locator = this.page.getByText("Export");
-  projectSettingMenuItem: Locator = this.page.getByRole("link", {
-    name: "Project Setting"
-  });
-  projectAssetsMenuItem: Locator = this.page.getByRole("link", {
-    name: "Project Assets"
-  });
 
   // Search actions
   async searchProject(searchTerm: string) {

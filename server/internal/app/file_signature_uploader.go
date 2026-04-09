@@ -1,6 +1,7 @@
 package app
 
 import (
+	"archive/zip"
 	"context"
 	"errors"
 	"fmt"
@@ -18,6 +19,7 @@ import (
 	file_ "github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 )
 
 type SignedUploadURLResponse struct {
@@ -121,7 +123,12 @@ func servSignatureUploadFiles(
 			importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(currentHost, tmpfile)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
-				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				if errors.Is(err, zip.ErrFormat) || errors.Is(err, zip.ErrAlgorithm) || errors.Is(err, zip.ErrChecksum) {
+					// Corrupt or invalid zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
+					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
+				}
+				// I/O or other transient error — return 500 to allow Pub/Sub to retry
 				return nil, errors.New(errMsg)
 			}
 			// EXPORT_DATA_VERSION
@@ -179,6 +186,10 @@ func servSignatureUploadFiles(
 				errMsg := fmt.Sprintf("fail ReadImportProjectZip: %v", err)
 				log.Errorf("[Import] %s", errMsg)
 				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				if errors.Is(err, rerror.ErrNotFound) {
+					// File is gone — retrying will never recover it, acknowledge to stop Pub/Sub retries
+					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
+				}
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 			}
 			defer f.Close()
@@ -209,7 +220,12 @@ func servSignatureUploadFiles(
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
 				log.Errorf("[Import] %s", errMsg)
-				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				if errors.Is(err, zip.ErrFormat) || errors.Is(err, zip.ErrAlgorithm) || errors.Is(err, zip.ErrChecksum) {
+					// Corrupt or invalid zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
+					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
+				}
+				// I/O or other transient error — return 500 to allow Pub/Sub to retry
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 			}
 
@@ -232,7 +248,10 @@ func servSignatureUploadFiles(
 			}
 
 			log.Errorf("[Import] Failed to import project: %s", pid.String())
-			return nil, echo.NewHTTPError(http.StatusInternalServerError, "import failed")
+			// ImportProject marks the import as Failed in the DB before returning false, so the failure is already
+			// recorded regardless of cause. Replaying the message risks creating duplicate projects/scenes/assets
+			// from partial state, so acknowledge to stop Pub/Sub retries.
+			return map[string]string{"status": "unrecoverable", "reason": "import failed"}, nil
 		}),
 	)
 

@@ -12,6 +12,10 @@ jobs:
       server: ${{ steps.server.outputs.any_modified }}
       e2e: ${{ steps.e2e.outputs.any_modified }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
@@ -64,6 +68,10 @@ jobs:
       - ci-server
     if: ${{ !failure() }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - run: echo OK
 
   build-prepare:
@@ -136,6 +144,10 @@ jobs:
       issues: write
       pull-requests: write
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - uses: reearth/actions/deploy-cloud-run-with-tag@4a7719ea2bfbcf3841b58eaedb01e91d3520227a # main
         id: deploy
         with:
