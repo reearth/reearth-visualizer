@@ -69,9 +69,10 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				ctx = adapter.AttachOperator(ctx, op)
 				log.Debugfc(ctx, "auth: op: %#v", op)
+				log.Infofc(ctx, "auth: request context (user_id=%s, path=%s)", u.ID(), c.Path())
 
 			} else {
-				log.Errorfc(ctx, "Demo User information not found: %s", req.URL.Path)
+				log.Errorfc(ctx, "Demo User information not found: %s", c.Path())
 			}
 
 			c.SetRequest(req.WithContext(ctx))
@@ -151,9 +152,10 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				ctx = adapter.AttachOperator(ctx, op)
 				log.Debugfc(ctx, "auth: op: %#v", op)
+				log.Infofc(ctx, "auth: request context (user_id=%s, path=%s)", u.ID(), c.Path())
 
 			} else {
-				log.Errorfc(ctx, "User information not found: %s", req.URL.Path)
+				log.Errorfc(ctx, "User information not found: %s", c.Path())
 			}
 
 			c.SetRequest(req.WithContext(ctx))
