@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.9 - 2026-04-09
+
+### Web
+
+#### 🧪 Testing
+
+- Test for browser refresh issue ([#2150](https://github.com/reearth/reearth-visualizer/pull/2150)) [`64c3ad`](https://github.com/reearth/reearth-visualizer/commit/64c3ad)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.15.9 ([#2158](https://github.com/reearth/reearth-visualizer/pull/2158)) [`a7650d`](https://github.com/reearth/reearth-visualizer/commit/a7650d)
+
+### Server
+
+#### 🚀 Features
+
+- Add GraphQL operation timing and request context logs [VIZ-2421] ([#2153](https://github.com/reearth/reearth-visualizer/pull/2153)) [`ab74f3`](https://github.com/reearth/reearth-visualizer/commit/ab74f3)
+
+#### 🔧 Bug Fixes
+
+- Stop import retry storms by returning 200 for unrecoverable errors [VIZ-2421] ([#2154](https://github.com/reearth/reearth-visualizer/pull/2154)) [`da8f36`](https://github.com/reearth/reearth-visualizer/commit/da8f36)
+- Remove PII from auth debug logs [VIZ-2421] ([#2152](https://github.com/reearth/reearth-visualizer/pull/2152)) [`35691b`](https://github.com/reearth/reearth-visualizer/commit/35691b)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update codecov&#x2F;codecov-action action to v6 ([#2145](https://github.com/reearth/reearth-visualizer/pull/2145)) [`1c3483`](https://github.com/reearth/reearth-visualizer/commit/1c3483)
+
+### server&#x2F;web
+
+#### 🔧 Bug Fixes
+
+- Use native ARM runners instead of QEMU for build_server ([#2155](https://github.com/reearth/reearth-visualizer/pull/2155)) [`58a6df`](https://github.com/reearth/reearth-visualizer/commit/58a6df)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update codecov&#x2F;codecov-action action to v6 ([#2145](https://github.com/reearth/reearth-visualizer/pull/2145)) [`1c3483`](https://github.com/reearth/reearth-visualizer/commit/1c3483)
+
 ## 1.0.0-beta.15.8 - 2026-04-03
 
 ### Web
