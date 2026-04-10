@@ -1,3 +1,4 @@
+import { useMeMutations } from "@reearth/services/api/user";
 import { useAuth } from "@reearth/services/auth/useAuth";
 import { config } from "@reearth/services/config";
 import { useLang as useCurrentLang } from "@reearth/services/i18n/hooks";
@@ -12,6 +13,7 @@ const GlobalModal: React.FC = () => {
   const extensions = config()?.extensions?.globalModal;
 
   const { getAccessToken, logout } = useAuth();
+  const { logoutFromAccount } = useMeMutations();
   const currentLang = useCurrentLang();
   const [currentTheme] = useCurrentTheme();
   const [, setNotification] = useNotification();
@@ -39,7 +41,10 @@ const GlobalModal: React.FC = () => {
           lang={currentLang}
           theme={currentTheme}
           accessToken={accessToken}
-          onLogOut={logout}
+          onLogOut={async () => {
+            await logoutFromAccount();
+            logout();
+          }}
           onNotificationChange={handleNotificationChange}
         />
       ))}
