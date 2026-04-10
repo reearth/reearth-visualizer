@@ -6,6 +6,7 @@ import { DashBoardPage } from "../pages/dashBoardPage";
 import { ProjectSettingsPage } from "../pages/projectSettingsPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { createIAPContext } from "../utils/iap-auth";
+import { deleteProjectByName } from "../utils/project-cleanup";
 
 const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 if (!REEARTH_WEB_E2E_BASEURL) {
@@ -54,6 +55,7 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test.afterAll(async () => {
+    await deleteProjectByName(page.request, projectName);
     await context.close();
   });
 

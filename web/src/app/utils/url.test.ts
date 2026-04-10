@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-import { isValidUrl } from "./url";
+import { isValidUrl, isSafeHttpUrl, openUrlInNewTab } from "./url";
 
 describe("isValidUrl", () => {
   it("should return true for valid HTTP URLs", () => {
@@ -134,5 +134,139 @@ describe("isValidUrl", () => {
   it("should handle URLs with unicode domain names", () => {
     expect(isValidUrl("https://xn--e1afmkfd.xn--p1ai")).toBe(true); // пример.рф
     expect(isValidUrl("https://例え.テスト")).toBe(true);
+  });
+});
+
+describe("isSafeHttpUrl", () => {
+  it("should return true for HTTP URLs", () => {
+    expect(isSafeHttpUrl("http://example.com")).toBe(true);
+    expect(isSafeHttpUrl("http://localhost:3000")).toBe(true);
+  });
+
+  it("should return true for HTTPS URLs", () => {
+    expect(isSafeHttpUrl("https://example.com")).toBe(true);
+    expect(isSafeHttpUrl("https://example.com/path?query=value")).toBe(true);
+  });
+
+  it("should return false for non-HTTP protocols", () => {
+    expect(isSafeHttpUrl("ftp://example.com")).toBe(false);
+    expect(isSafeHttpUrl("file:///etc/passwd")).toBe(false);
+    expect(isSafeHttpUrl("javascript:alert('xss')")).toBe(false);
+    expect(isSafeHttpUrl("data:text/html,<script>alert('xss')</script>")).toBe(
+      false
+    );
+  });
+
+  it("should return false for invalid URLs", () => {
+    expect(isSafeHttpUrl("not-a-url")).toBe(false);
+    expect(isSafeHttpUrl("")).toBe(false);
+    expect(isSafeHttpUrl("://invalid")).toBe(false);
+  });
+});
+
+describe("openUrlInNewTab", () => {
+  const originalConsoleError = console.error;
+  const originalWindowOpen = window.open;
+
+  beforeEach(() => {
+    console.error = vi.fn();
+    window.open = vi.fn();
+  });
+
+  afterEach(() => {
+    console.error = originalConsoleError;
+    window.open = originalWindowOpen;
+    vi.clearAllMocks();
+  });
+
+  describe("when called with valid HTTP URLs", () => {
+    it("should open HTTP URLs in new tab with noopener", () => {
+      const url = "http://example.com";
+      openUrlInNewTab(url);
+      expect(window.open).toHaveBeenCalledWith(url, "_blank", "noopener");
+      expect(console.error).not.toHaveBeenCalled();
+    });
+
+    it("should open HTTPS URLs in new tab with noopener", () => {
+      const url = "https://example.com";
+      openUrlInNewTab(url);
+      expect(window.open).toHaveBeenCalledWith(url, "_blank", "noopener");
+      expect(console.error).not.toHaveBeenCalled();
+    });
+
+    it("should handle URLs with paths and query parameters", () => {
+      const url = "https://example.com/path?param=value&foo=bar";
+      openUrlInNewTab(url);
+      expect(window.open).toHaveBeenCalledWith(url, "_blank", "noopener");
+      expect(console.error).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("when called with invalid URLs", () => {
+    it("should not open invalid URLs and log error", () => {
+      const invalidUrl = "not-a-url";
+      openUrlInNewTab(invalidUrl);
+      expect(window.open).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledWith("Invalid URL", invalidUrl);
+    });
+
+    it("should not open empty string and log error", () => {
+      const emptyUrl = "";
+      openUrlInNewTab(emptyUrl);
+      expect(window.open).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledWith("Invalid URL", emptyUrl);
+    });
+
+    it("should handle non-string input gracefully", () => {
+      const nonStringUrl = 123 as unknown as string;
+      openUrlInNewTab(nonStringUrl);
+      expect(window.open).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledWith("Invalid URL", nonStringUrl);
+    });
+  });
+
+  describe("when called with potentially unsafe protocols", () => {
+    it("should not open javascript: URLs and log error", () => {
+      const jsUrl = "javascript:alert('xss')";
+      openUrlInNewTab(jsUrl);
+      expect(window.open).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledWith("Invalid URL", jsUrl);
+    });
+
+    it("should not open data: URLs and log error", () => {
+      const dataUrl = "data:text/html,<script>alert('xss')</script>";
+      openUrlInNewTab(dataUrl);
+      expect(window.open).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledWith("Invalid URL", dataUrl);
+    });
+
+    it("should not open file: URLs and log error", () => {
+      const fileUrl = "file:///etc/passwd";
+      openUrlInNewTab(fileUrl);
+      expect(window.open).not.toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledWith("Invalid URL", fileUrl);
+    });
+  });
+
+  describe("security considerations", () => {
+    it("should always use 'noopener' attribute for security", () => {
+      const url = "https://example.com";
+      openUrlInNewTab(url);
+      expect(window.open).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(String),
+        "noopener"
+      );
+    });
+
+    it("should always use '_blank' target for new tab", () => {
+      const url = "https://example.com";
+      openUrlInNewTab(url);
+      expect(window.open).toHaveBeenCalledWith(
+        expect.any(String),
+        "_blank",
+        expect.any(String)
+      );
+    });
   });
 });

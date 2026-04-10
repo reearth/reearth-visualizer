@@ -60,7 +60,7 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			if u != nil {
 				ctx = adapter.AttachUser(ctx, u)
-				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+				log.Debugfc(ctx, "auth: user: id=%s", u.ID())
 
 				op, err := generateOperator(ctx, cfg, u)
 				if err != nil {
@@ -69,9 +69,10 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				ctx = adapter.AttachOperator(ctx, op)
 				log.Debugfc(ctx, "auth: op: %#v", op)
+				log.Infofc(ctx, "auth: request context (user_id=%s, path=%s)", u.ID(), c.Path())
 
 			} else {
-				log.Errorfc(ctx, "Demo User information not found: %s", req.URL.Path)
+				log.Errorfc(ctx, "Demo User information not found: %s", c.Path())
 			}
 
 			c.SetRequest(req.WithContext(ctx))
@@ -142,7 +143,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			if u != nil {
 				ctx = adapter.AttachUser(ctx, u)
-				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+				log.Debugfc(ctx, "auth: user: id=%s", u.ID())
 
 				op, err := generateOperator(ctx, cfg, u)
 				if err != nil {
@@ -151,9 +152,10 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				ctx = adapter.AttachOperator(ctx, op)
 				log.Debugfc(ctx, "auth: op: %#v", op)
+				log.Infofc(ctx, "auth: request context (user_id=%s, path=%s)", u.ID(), c.Path())
 
 			} else {
-				log.Errorfc(ctx, "User information not found: %s", req.URL.Path)
+				log.Errorfc(ctx, "User information not found: %s", c.Path())
 			}
 
 			c.SetRequest(req.WithContext(ctx))

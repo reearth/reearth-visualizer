@@ -13,11 +13,6 @@ on:
         description: "URL to run tests against"
         type: string
         required: false
-  pull_request:
-    paths:
-      - "e2e/**"
-      - "web/**"
-      - ".github/workflows/playwright_ui_tests.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -40,6 +35,10 @@ jobs:
         working-directory: e2e
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - name: Checkout code
         uses: actions/checkout@v6
 
