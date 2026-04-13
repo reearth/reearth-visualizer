@@ -272,7 +272,7 @@ func (i *Plugin) uploadPluginFile(ctx context.Context, plugins map[string]*zip.F
 	return nil
 }
 
-func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaField {
+func parsePropertySchemaField(fieldMap map[string]interface{}) (*property.SchemaField, error) {
 
 	// SchemaFieldChoice -------------
 	chs := make([]property.SchemaFieldChoice, 0)
@@ -305,7 +305,7 @@ func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaF
 	if v, ok := fieldMap["type"].(string); ok {
 		t := gqlmodel.ToPropertyValueType(v)
 		fiBuilder = fiBuilder.Type(t)
-		if dv, ok := fieldMap["defaultValue"]; ok {
+		if dv, ok := fieldMap["defaultValue"]; ok && dv != nil {
 			fiBuilder = fiBuilder.DefaultValue(property.ValueType(t).ValueFrom(dv))
 		}
 	}
@@ -334,7 +334,7 @@ func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaF
 	if v, ok := fieldMap["isAvailableIf"].(map[string]interface{}); ok {
 		fiBuilder = fiBuilder.IsAvailableIf(parseIsAvailableIf(v))
 	}
-	return fiBuilder.MustBuild()
+	return fiBuilder.Build()
 }
 
 func parseIsAvailableIf(conditionMap map[string]any) *property.Condition {
@@ -371,7 +371,10 @@ func parsePropertySchema(psid id.PropertySchemaID, schemaMap map[string]any) (*p
 		if fields, ok := groupMap["fields"].([]any); ok {
 			for _, field := range fields {
 				fieldMap := field.(map[string]any)
-				fi := parsePropertySchemaField(fieldMap)
+				fi, err := parsePropertySchemaField(fieldMap)
+				if err != nil {
+					return nil, fmt.Errorf("failed to parse schema field: %w", err)
+				}
 				fil = append(fil, fi)
 			}
 		}
