@@ -211,6 +211,7 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
             <PublicSettings
               data-testid="project-settings-public"
               project={project}
+              workspaceId={workspaceId || ""}
               sceneId={sceneId}
               isStory={!!subId}
               currentStory={currentStory}

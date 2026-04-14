@@ -17,8 +17,7 @@ import { useLang, useT } from "@reearth/services/i18n/hooks";
 import {
   NotificationType,
   useCurrentTheme,
-  useNotification,
-  useWorkspace
+  useNotification
 } from "@reearth/services/state";
 import { useTheme } from "@reearth/services/styled";
 import { styled } from "@reearth/services/theme";
@@ -46,6 +45,7 @@ export type StoryWithTypename = Story & WithTypename;
 
 type Props = {
   settingsItem: (SettingsProject | Story) & WithTypename;
+  workspaceId: string;
   sceneId?: string;
   isStory?: boolean;
   onUpdate: (settings: PublicSettingsType) => void;
@@ -63,6 +63,7 @@ type ExtensionComponentProps = (
 
 const PublicSettingsDetail: FC<Props> = ({
   settingsItem,
+  workspaceId,
   sceneId,
   isStory,
   onUpdate,
@@ -186,10 +187,7 @@ const PublicSettingsDetail: FC<Props> = ({
     [settingsItem.publishmentStatus]
   );
 
-  const [workspace] = useWorkspace();
-  const workspacePolicyCheckResultData = useWorkspacePolicyCheck(
-    workspace?.id ?? ""
-  );
+  const workspacePolicyCheckResultData = useWorkspacePolicyCheck(workspaceId);
   const enableCustomDomainExtension =
     !!workspacePolicyCheckResultData?.workspacePolicyCheck
       ?.enableCustomDomainCreation;

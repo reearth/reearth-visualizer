@@ -55,6 +55,7 @@ export type SettingsProject = {
 
 type Props = {
   project: SettingsProject;
+  workspaceId: string;
   sceneId?: string;
   isStory: boolean;
   currentStory?: Story;
@@ -68,6 +69,7 @@ type Props = {
 
 const PublicSettings: FC<Props> = ({
   project,
+  workspaceId,
   sceneId,
   isStory,
   currentStory,
@@ -98,6 +100,7 @@ const PublicSettings: FC<Props> = ({
             key={currentStory?.id}
             isStory
             settingsItem={storySettingsItem}
+            workspaceId={workspaceId}
             onUpdate={onUpdateStory}
             onUpdateBasicAuth={onUpdateStory}
             onUpdateAlias={onUpdateStoryAlias}
@@ -107,6 +110,7 @@ const PublicSettings: FC<Props> = ({
           <PublicSettingsDetail
             key="map"
             settingsItem={projectSettingsItem}
+            workspaceId={workspaceId}
             sceneId={sceneId}
             onUpdate={onUpdateProject}
             onUpdateBasicAuth={onUpdateProjectBasicAuth}
