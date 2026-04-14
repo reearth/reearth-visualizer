@@ -13,46 +13,46 @@ extensions:
     description: Extension Property Widget
     schema:
       groups:
-      - id: default
-        title: Default
-        fields:
-          - id: text
-            type: string
-            title: Text
-          - id: color
-            type: string
-            title: Color
-            ui: color
+        - id: default
+          title: Default
+          fields:
+            - id: text
+              type: string
+              title: Text
+            - id: color
+              type: string
+              title: Color
+              ui: color
   - id: infobox-block
     type: infoboxBlock
     name: Infobox Block
     schema:
       groups:
-      - id: default
-        title: Default
-        fields:
-          - id: text
-            type: string
-            title: Text
-          - id: color
-            type: string
-            title: Color
-            ui: color
+        - id: default
+          title: Default
+          fields:
+            - id: text
+              type: string
+              title: Text
+            - id: color
+              type: string
+              title: Color
+              ui: color
   - id: story-block
     type: storyBlock
     name: Story Block
     schema:
       groups:
-      - id: default
-        title: Default
-        fields:
-          - id: text
-            type: string
-            title: Text
-          - id: color
-            type: string
-            title: Color
-            ui: color
+        - id: default
+          title: Default
+          fields:
+            - id: text
+              type: string
+              title: Text
+            - id: color
+              type: string
+              title: Color
+              ui: color
   `,
   disableEdit: true,
   disableDelete: true
