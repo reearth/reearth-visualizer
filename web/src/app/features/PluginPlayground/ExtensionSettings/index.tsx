@@ -98,12 +98,14 @@ const ExtensionSettings: FC<ExtensionSettingsProps> = ({
           const repField = repFieldId
             ? item.fields.find((f) => f.id === repFieldId)
             : undefined;
+          const repValue = repField?.value ?? repSchemaField?.defaultValue;
+          const repTitle =
+            typeof repValue === "string" || typeof repValue === "number"
+              ? String(repValue)
+              : undefined;
           return {
             id: item.id,
-            title:
-              (repField?.value as string) ??
-              (repSchemaField?.defaultValue as string) ??
-              t("New Item")
+            title: repTitle ?? t("New Item")
           };
         });
 
@@ -114,6 +116,7 @@ const ExtensionSettings: FC<ExtensionSettingsProps> = ({
                 <ListField
                   items={listFieldItems}
                   selected={selectedItemId}
+                  atLeastOneItem
                   onItemSelect={(id) =>
                     setSelectedItemIds((prev) => ({
                       ...prev,

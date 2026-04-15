@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { FieldValue } from "../types";
 import { getYmlJson } from "../utils";
 
-import { ExtensionSettingsProps } from ".";
+import type { ExtensionSettingsProps } from ".";
 
 type ListFieldItem = {
   id: string;
@@ -48,33 +49,32 @@ export default ({
   }, [ymlResult, selectedFile.title]);
 
   useEffect(() => {
-    if (!extension?.schema?.groups) return;
     const initialItems: Record<string, ListFieldItem[]> = {};
-    for (const group of extension.schema.groups) {
-      if ("list" in group && group.list === true && group.fields?.length) {
-        const defaultItem: ListFieldItem = {
-          id: crypto.randomUUID(),
-          fields: group.fields.map((f) => ({
-            id: f.id,
-            type: f.type,
-            value: f.defaultValue as FieldValue | undefined,
-            overridden: false
-          }))
-        };
-        initialItems[group.id] = [defaultItem];
+    if (extension?.schema?.groups) {
+      for (const group of extension.schema.groups) {
+        if ("list" in group && group.list === true && group.fields?.length) {
+          const defaultItem: ListFieldItem = {
+            id: uuidv4(),
+            fields: group.fields.map((f) => ({
+              id: f.id,
+              type: f.type,
+              value: f.defaultValue as FieldValue | undefined,
+              overridden: false
+            }))
+          };
+          initialItems[group.id] = [defaultItem];
+        }
       }
     }
-    if (Object.keys(initialItems).length > 0) {
-      setListFieldItem(initialItems);
-      setSelectedItemIds(
-        Object.fromEntries(
-          Object.entries(initialItems).map(([groupId, items]) => [
-            groupId,
-            items[0]?.id
-          ])
-        )
-      );
-    }
+    setListFieldItem(initialItems);
+    setSelectedItemIds(
+      Object.fromEntries(
+        Object.entries(initialItems).map(([groupId, items]) => [
+          groupId,
+          items[0]?.id
+        ])
+      )
+    );
   }, [extension]);
 
   const handleListFieldValueChange = useCallback(
@@ -119,10 +119,21 @@ export default ({
   );
 
   const handleItemDelete = useCallback((groupId: string, itemId: string) => {
-    setListFieldItem((prev) => ({
-      ...prev,
-      [groupId]: (prev[groupId] ?? []).filter((item) => item.id !== itemId)
-    }));
+    setListFieldItem((prev) => {
+      const remaining = (prev[groupId] ?? []).filter(
+        (item) => item.id !== itemId
+      );
+      setSelectedItemIds((prevIds) => {
+        if (prevIds[groupId] !== itemId) return prevIds;
+        const deletedIndex = (prev[groupId] ?? []).findIndex(
+          (item) => item.id === itemId
+        );
+        const nextSelected =
+          remaining[deletedIndex]?.id ?? remaining[deletedIndex - 1]?.id;
+        return { ...prevIds, [groupId]: nextSelected };
+      });
+      return { ...prev, [groupId]: remaining };
+    });
   }, []);
 
   const handleItemMove = useCallback(
@@ -141,7 +152,7 @@ export default ({
 
   const handleFieldValueChange = useCallback(
     (fieldId: string, value: FieldValue) => {
-      setFieldValues({ ...fieldValues, [fieldId]: value });
+      setFieldValues({ ...(fieldValues ?? {}), [fieldId]: value });
     },
     [fieldValues, setFieldValues]
   );
