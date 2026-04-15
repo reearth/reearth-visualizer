@@ -1594,18 +1594,25 @@ All notable changes to this project will be documented in this file.
 
 - Vv1.0.0 [`d34bca`](https://github.com/reearth/reearth-visualizer/commit/d34bca)
 
-## 1.0.0 - 2026-04-03
+## 1.0.0 - 2026-04-15
 
 ### Web
 
-#### 🚀 Features
-
-- Add linkInfoboxBetaBlock[VIZ-2417] ([#2127](https://github.com/reearth/reearth-visualizer/pull/2127)) [`0c1cbb`](https://github.com/reearth/reearth-visualizer/commit/0c1cbb)
-
 #### Miscellaneous Tasks
 
-- Bump version to 1.0.0-beta.15.8 ([#2147](https://github.com/reearth/reearth-visualizer/pull/2147)) [`30bd0b`](https://github.com/reearth/reearth-visualizer/commit/30bd0b)
-- Update core version to 0.0.7-alpha.62 ([#2146](https://github.com/reearth/reearth-visualizer/pull/2146)) [`55b94b`](https://github.com/reearth/reearth-visualizer/commit/55b94b)
+- Update package version to 1.0.0-beta.16.0 ([#2165](https://github.com/reearth/reearth-visualizer/pull/2165)) [`b548f2`](https://github.com/reearth/reearth-visualizer/commit/b548f2)
+
+### Server
+
+#### 🧪 Testing
+
+- Add e2e tests for plugin GraphQL API  ([#2159](https://github.com/reearth/reearth-visualizer/pull/2159)) [`80ebab`](https://github.com/reearth/reearth-visualizer/commit/80ebab)
+
+### server,web
+
+#### 🚀 Features
+
+- Add SSO logout tracking with response header ([#2142](https://github.com/reearth/reearth-visualizer/pull/2142)) [`8352bf`](https://github.com/reearth/reearth-visualizer/commit/8352bf)
 
 ## 1.0.0-beta.4.1 - 2025-03-18
 
