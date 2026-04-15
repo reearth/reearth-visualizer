@@ -151,7 +151,7 @@ export default function MenuButton({
 
   return (
     <div
-      className="flex items-center gap-0.5 rounded-sm px-2"
+      className="flex items-center gap-0.5 rounded-sm"
       style={
         customStyles
           ? {
@@ -165,11 +165,11 @@ export default function MenuButton({
       <Button
         variant="ghost"
         customTheme={!!customStyles}
-        className={cn(
-          "h-9 min-w-9 rounded-sm select-none leading-[35px]",
-          b?.buttonStyle === "icon" ? "p-0" : "px-2.5 py-0"
-        )}
-        style={customStyles}
+        className={cn("min-w-9 rounded-sm select-none leading-[35px]")}
+        style={{
+          padding: b?.buttonStyle === "icon" ? "0px" : "0px 8px",
+          ...customStyles
+        }}
         onClick={b && handleClick(b)}
         ref={referenceElement}
       >
