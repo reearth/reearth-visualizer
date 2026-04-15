@@ -5,7 +5,8 @@ import {
   GQLTask,
   useAddApiTask,
   useRemoveApiTask,
-  useSetError
+  useSetError,
+  useUpdateLatestLogoutAt
 } from "@reearth/services/state";
 import { useCallback, type ReactNode } from "react";
 
@@ -86,6 +87,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   // Call hooks at component level, then pass to link factories
   const { getAccessToken } = useAuth();
   const { setErrors } = useSetError();
+  const updateLatestLogoutAt = useUpdateLatestLogoutAt();
 
   const client = new ApolloClient({
     link: ApolloLink.from([
@@ -95,7 +97,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       authLink(getAccessToken),
       langLink(),
       // https://github.com/apollographql/apollo-client/issues/6011#issuecomment-619468320
-      uploadLink(endpoint) as unknown as ApolloLink
+      uploadLink(endpoint, updateLatestLogoutAt) as unknown as ApolloLink
     ]),
     cache,
     defaultOptions: {

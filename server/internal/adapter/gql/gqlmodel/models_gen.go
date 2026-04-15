@@ -402,16 +402,17 @@ type LineString struct {
 func (LineString) IsGeometry() {}
 
 type Me struct {
-	ID            ID            `json:"id"`
-	Name          string        `json:"name"`
-	Email         string        `json:"email"`
-	Lang          language.Tag  `json:"lang"`
-	Theme         Theme         `json:"theme"`
-	Metadata      *UserMetadata `json:"metadata,omitempty"`
-	MyWorkspaceID ID            `json:"myWorkspaceId"`
-	Auths         []string      `json:"auths"`
-	Workspaces    []*Workspace  `json:"workspaces"`
-	MyWorkspace   *Workspace    `json:"myWorkspace,omitempty"`
+	ID             ID            `json:"id"`
+	Name           string        `json:"name"`
+	Email          string        `json:"email"`
+	Lang           language.Tag  `json:"lang"`
+	Theme          Theme         `json:"theme"`
+	Metadata       *UserMetadata `json:"metadata,omitempty"`
+	LatestLogoutAt *time.Time    `json:"latestLogoutAt,omitempty"`
+	MyWorkspaceID  ID            `json:"myWorkspaceId"`
+	Auths          []string      `json:"auths"`
+	Workspaces     []*Workspace  `json:"workspaces"`
+	MyWorkspace    *Workspace    `json:"myWorkspace,omitempty"`
 }
 
 type MergedProperty struct {

@@ -1,6 +1,8 @@
 package gqlmodel
 
 import (
+	"time"
+
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
@@ -58,14 +60,21 @@ func ToMe(u *accountsUser.User) *Me {
 		theme = accountsUser.ThemeDefault
 	}
 
+	var latestLogoutAt *time.Time
+	if !u.LatestLogoutAt().IsZero() {
+		t := u.LatestLogoutAt()
+		latestLogoutAt = &t
+	}
+
 	return &Me{
-		ID:            IDFrom(u.ID()),
-		Name:          u.Name(),
-		Email:         u.Email(),
-		Lang:          lang,
-		Theme:         Theme(theme),
-		Metadata:      userMetadata,
-		MyWorkspaceID: IDFrom(u.Workspace()),
+		ID:             IDFrom(u.ID()),
+		Name:           u.Name(),
+		Email:          u.Email(),
+		Lang:           lang,
+		Theme:          Theme(theme),
+		Metadata:       userMetadata,
+		LatestLogoutAt: latestLogoutAt,
+		MyWorkspaceID:  IDFrom(u.Workspace()),
 		Auths: util.Map(u.Auths(), func(a accountsUser.Auth) string {
 			return a.Provider
 		}),

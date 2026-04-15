@@ -1,4 +1,5 @@
 import { useProject } from "@reearth/services/api/project";
+import { useMeMutations } from "@reearth/services/api/user";
 import { useWorkspaces, useWorkspace } from "@reearth/services/api/workspace";
 import { useAuth } from "@reearth/services/auth/useAuth";
 import {
@@ -17,7 +18,12 @@ export default ({
   workspaceId?: string;
 }) => {
   const navigate = useNavigate();
-  const { logout: handleLogout } = useAuth();
+  const { logout } = useAuth();
+  const { logoutFromAccount } = useMeMutations();
+  const handleLogout = useCallback(async () => {
+    await logoutFromAccount();
+    logout();
+  }, [logoutFromAccount, logout]);
 
   const [currentWorkspace, setCurrentWorkspace] = useWorkspaceState();
 

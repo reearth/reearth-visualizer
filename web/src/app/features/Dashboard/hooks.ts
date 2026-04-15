@@ -1,4 +1,4 @@
-import { useMe } from "@reearth/services/api/user";
+import { useMe, useMeMutations } from "@reearth/services/api/user";
 import { useAuth } from "@reearth/services/auth/useAuth";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useWorkspace } from "@reearth/services/state";
@@ -17,6 +17,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const navigate = useNavigate();
   const { me: data } = useMe();
   const { logout } = useAuth();
+  const { logoutFromAccount } = useMeMutations();
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
 
   const workspaces = (data?.workspaces as Workspace[]) ?? [];
@@ -82,7 +83,10 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
     topTabs,
     bottomTabs,
     currentTab,
-    onSignOut: logout,
+    onSignOut: async () => {
+      await logoutFromAccount();
+      logout();
+    },
     handleWorkspaceChange
   };
 };
