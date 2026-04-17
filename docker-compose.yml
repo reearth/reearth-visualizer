@@ -49,7 +49,7 @@ services:
       - reearth
 
   reearth-accounts-api:
-    image: reearth/reearth-accounts-api:v1.0.0
+    image: reearth/reearth-accounts-api:latest
     hostname: reearth-accounts-dev
     profiles:
       - accounts
