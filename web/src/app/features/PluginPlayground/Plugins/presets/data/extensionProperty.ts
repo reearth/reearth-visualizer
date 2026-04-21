@@ -23,6 +23,19 @@ extensions:
               type: string
               title: Color
               ui: color
+        - id: listItem
+          title: Dynamic List Item
+          list: true
+          representativeField: itemName
+          fields:
+            - id: itemName
+              type: string
+              title: Item Name
+              defaultValue:  Item Name
+            - id: color
+              type: string
+              title: Color
+              ui: color
   - id: infobox-block
     type: infoboxBlock
     name: Infobox Block
@@ -66,6 +79,7 @@ const widgetFile: FileType = {
   /* Generic styling system that provides consistent UI components and styling across all plugins */
 
   @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  
   </style>
   <div class="primary-background p-16 rounded-sm flex-column gap-8">
     <p class="text-3xl font-bold text-center">Extension Property</p>
@@ -76,6 +90,8 @@ const widgetFile: FileType = {
   <script>
     window.addEventListener("message", e => {
       const msg = e.data;
+          console.log(msg);
+
       if (msg.type === "getWidgetProperty") {
         document.getElementById("text").textContent = msg.property?.default?.text ?? "";
         document.getElementById("text").style.color = msg.property?.default?.color ?? "";
