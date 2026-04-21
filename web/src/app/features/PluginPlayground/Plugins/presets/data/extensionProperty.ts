@@ -90,6 +90,17 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   <style>
     @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+    #list {
+      list-style-type: disc;  
+      padding-left: 20px;  
+      margin: 0; 
+     }
+
+    #list li {
+       margin: 0; 
+       padding: 0;  
+    }
+
   </style>
 
   <div class="primary-background p-16 rounded-sm flex-column gap-8">
@@ -108,7 +119,6 @@ const widgetFile: FileType = {
   <script>
     window.addEventListener("message", e => {
       const msg = e.data;
-      console.log(msg);
 
       if (msg.type === "getWidgetProperty") {
         const textEl = document.getElementById("text");
