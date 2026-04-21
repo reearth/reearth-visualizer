@@ -67,6 +67,9 @@ function generateProperty(
     const base = `${pluginId}-${extensionId}-${group.id}`;
 
     if (isList) {
+      // List groups store items as flat keys keyed by itemId. Read the stored
+      // order and build an array so the plugin receives property[groupId] as
+      // an array rather than a plain object.
       const orderKey = `${base}-__order`;
       const raw = fieldValues[orderKey];
       const itemIds: string[] = Array.isArray(raw) ? (raw as string[]) : [];
