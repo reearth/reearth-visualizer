@@ -63,12 +63,30 @@ function generateProperty(
   if (!schema || !schema.groups) return property;
 
   schema.groups.forEach((group) => {
-    const groupProperty: Record<string, FieldValue> = {};
-    group.fields.forEach((field) => {
-      const id = `${pluginId}-${extensionId}-${group.id}-${field.id}`;
-      groupProperty[field.id] = fieldValues[id] ?? field.defaultValue;
-    });
-    property[group.id] = groupProperty;
+    const isList = "list" in group && !!group.list;
+    const base = `${pluginId}-${extensionId}-${group.id}`;
+
+    if (isList) {
+      const orderKey = `${base}-__order`;
+      const raw = fieldValues[orderKey];
+      const itemIds: string[] = Array.isArray(raw) ? (raw as string[]) : [];
+
+      property[group.id] = itemIds.map((itemId) => {
+        const itemProperty: Record<string, FieldValue> = {};
+        group.fields.forEach((field) => {
+          const key = `${base}-${itemId}-${field.id}`;
+          itemProperty[field.id] = fieldValues[key] ?? field.defaultValue;
+        });
+        return itemProperty;
+      });
+    } else {
+      const groupProperty: Record<string, FieldValue> = {};
+      group.fields.forEach((field) => {
+        const id = `${base}-${field.id}`;
+        groupProperty[field.id] = fieldValues[id] ?? field.defaultValue;
+      });
+      property[group.id] = groupProperty;
+    }
   });
 
   return property;

@@ -51,6 +51,19 @@ extensions:
               type: string
               title: Color
               ui: color
+        - id: listItem
+          title: Dynamic List Item
+          list: true
+          representativeField: itemName
+          fields:
+            - id: itemName
+              type: string
+              title: Item Name
+              defaultValue: Item Name
+            - id: color
+              type: string
+              title: Color
+              ui: color
   - id: story-block
     type: storyBlock
     name: Story Block
@@ -139,20 +152,38 @@ const infoboxBlockFile: FileType = {
   title: "infobox-block.js",
   sourceCode: `reearth.ui.show(\`
   <style>
-  /* Generic styling system that provides consistent UI components and styling across all plugins */
-
   @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-  <div id="wrapper">
+  <div class="primary-background p-16 rounded-sm flex-column gap-8">
     <h2 id="text" style="text-align: center;"></h2>
+
+    <!-- List -->
+    <ul id="list" class="text-md flex-column gap-4"></ul>
   </div>
 
   <script>
     window.addEventListener("message", e => {
       const msg = e.data;
       if (msg.type === "getBlockProperty") {
-        document.getElementById("text").textContent = msg.property?.default?.text ?? "";
-        document.getElementById("text").style.color = msg.property?.default?.color ?? "";
+        const property = msg.property;
+
+        const textEl = document.getElementById("text");
+        textEl.textContent = property?.default?.text ?? "";
+        textEl.style.color = property?.default?.color ?? "";
+
+        const listEl = document.getElementById("list");
+        const items = property?.listItem;
+        listEl.innerHTML = "";
+
+        if (Array.isArray(items)) {
+          items.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item?.itemName ?? "";
+            li.style.color = item?.color ?? "";
+            li.className = "p-4 border rounded-xs";
+            listEl.appendChild(li);
+          });
+        }
       }
     });
   </script>
