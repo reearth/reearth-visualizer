@@ -232,6 +232,14 @@ func ToPropertyValueType(t string) property.ValueType {
 		return property.ValueTypeRect
 	case ValueTypeArray.String():
 		return property.ValueTypeArray
+	case ValueTypeCamera.String():
+		return property.ValueTypeCamera
+	case ValueTypeTypography.String():
+		return property.ValueTypeTypography
+	case ValueTypeSpacing.String():
+		return property.ValueTypeSpacing
+	case ValueTypeTimeline.String():
+		return property.ValueTypeTimeline
 	default:
 		return property.ValueTypeUnknown
 	}
