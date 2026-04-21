@@ -76,29 +76,55 @@ const widgetFile: FileType = {
   title: "extension-property-widget.js",
   sourceCode: `reearth.ui.show(\`
   <style>
-  /* Generic styling system that provides consistent UI components and styling across all plugins */
-
-  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
-  
+    @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
+
   <div class="primary-background p-16 rounded-sm flex-column gap-8">
     <p class="text-3xl font-bold text-center">Extension Property</p>
-    <p class="text-md text-secondary text-center">Input on Extension Settings and execute code again.</p>
+    <p class="text-md text-secondary text-center">
+      Input on Extension Settings and execute code again.
+    </p>
+
+    <!-- Text -->
     <p class="text-md text-center" id="text"></p>
+
+    <!-- List -->
+    <ul id="list" class="text-md flex-column gap-4"></ul>
   </div>
 
   <script>
     window.addEventListener("message", e => {
       const msg = e.data;
-          console.log(msg);
+      console.log(msg);
 
       if (msg.type === "getWidgetProperty") {
-        document.getElementById("text").textContent = msg.property?.default?.text ?? "";
-        document.getElementById("text").style.color = msg.property?.default?.color ?? "";
+        const textEl = document.getElementById("text");
+        const listEl = document.getElementById("list");
+
+        const property = msg.property;
+
+        textEl.textContent = property?.default?.text ?? "";
+        textEl.style.color = property?.default?.color ?? "";
+
+        // Handle items array
+        const items = property?.listItem;
+
+        // Clear previous list
+        listEl.innerHTML = "";
+
+        if (Array.isArray(items)) {
+          items.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item?.itemName ?? "";
+            li.style.color = item?.color ?? "";
+            li.className = "p-4 border rounded-xs";
+            listEl.appendChild(li);
+          });
+        }
       }
     });
   </script>
-\`);
+  \`);
 
 // Get widget property values and send to UI.
 // Property schema is defined in reearth.yml.
