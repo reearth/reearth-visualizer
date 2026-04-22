@@ -1,4 +1,5 @@
 import { Collapse } from "@reearth/app/lib/reearth-ui";
+import ListField from "@reearth/app/ui/fields/ListField";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
@@ -6,11 +7,11 @@ import { FC, ReactNode } from "react";
 
 import { FileType } from "../Plugins/constants";
 import { FieldValue } from "../types";
-import { getYmlJson } from "../utils";
 
+import useHooks from "./hooks";
 import PropertyItem from "./PropertyItem";
 
-type Props = {
+export type ExtensionSettingsProps = {
   selectedPlugin: {
     id: string;
     files: {
@@ -23,89 +24,91 @@ type Props = {
   fieldValues: Record<string, FieldValue>;
   setFieldValues: (fieldValues: Record<string, FieldValue>) => void;
 };
-const ExtensionSettings: FC<Props> = ({
+
+const ExtensionSettings: FC<ExtensionSettingsProps> = ({
   selectedPlugin,
   selectedFile,
   fieldValues,
   setFieldValues
 }): ReactNode => {
   const t = useT();
+  const {
+    extension,
+    ymlJSON,
+    handleItemSelect,
+    getGroupListItems,
+    getSelectedItemId,
+    handleItemAdd,
+    handleItemDelete,
+    handleItemMove,
+    handleFieldValueChange
+  } = useHooks({ selectedPlugin, selectedFile, fieldValues, setFieldValues });
 
-  const ymlFile =
-    selectedPlugin.files &&
-    selectedPlugin.files.find((f) => f.title.endsWith("reearth.yml"));
-
-  if (!ymlFile) {
+  if (!extension?.schema?.groups) {
     return (
       <Wrapper>
-        <ErrorMessage>
-          This plugin does not have a reearth.yml file.
-        </ErrorMessage>
+        <ErrorMessage>{t("No valid schema defined.")}</ErrorMessage>
       </Wrapper>
     );
   }
 
-  const getYmlResult = getYmlJson(ymlFile);
-
-  if (!getYmlResult.success) {
-    return (
-      <Wrapper>
-        <ErrorMessage>{getYmlResult.message}</ErrorMessage>
-      </Wrapper>
-    );
-  }
-
-  const ymlJSON = getYmlResult.data;
-
-  if (!ymlJSON || !ymlJSON.extensions) {
-    return (
-      <Wrapper>
-        <ErrorMessage>
-          {t("This plugin does not have a valid reearth.yml file.")}
-        </ErrorMessage>
-      </Wrapper>
-    );
-  }
-
-  const extension = ymlJSON.extensions.find(
-    (e) => e.id === selectedFile.title.split(".")[0]
-  );
-
-  const handleFieldValueChange = (fieldId: string, value: FieldValue) => {
-    setFieldValues({ ...fieldValues, [fieldId]: value });
-  };
-
-  return extension?.schema?.groups && extension.schema.groups.length > 0 ? (
+  return (
     <Wrapper>
-      {extension.schema.groups.map((group) => (
-        <Collapse title={group.title} key={group.id}>
-          <FieldsWrapper>
-            {group.fields.map((field) => {
-              const id = `${ymlJSON.id}-${extension.id}-${group.id}-${field.id}`;
-              const value = fieldValues[id];
-              return (
-                <PropertyItem
-                  id={id}
-                  field={field}
-                  value={value}
-                  key={field.id}
-                  onUpdate={handleFieldValueChange}
+      {extension.schema.groups.map((group) => {
+        const isList = "list" in group && !!group.list;
+        const selectedItemId = isList
+          ? getSelectedItemId(group.id, fieldValues)
+          : "";
+        const listItems = isList ? getGroupListItems(group.id) : [];
+
+        return (
+          <Collapse key={group.id} title={group.title}>
+            <FieldsWrapper>
+              {isList && (
+                <ListField
+                  items={listItems}
+                  selected={selectedItemId}
+                  onItemSelect={(itemId) => handleItemSelect(group.id, itemId)}
+                  onItemAdd={() => handleItemAdd(group.id)}
+                  onItemDelete={(itemId) => handleItemDelete(group.id, itemId)}
+                  onItemMove={(itemId, targetIndex) =>
+                    handleItemMove(group.id, itemId, targetIndex)
+                  }
+                  atLeastOneItem
+                  isEditable={false}
                 />
-              );
-            })}
-          </FieldsWrapper>
-        </Collapse>
-      ))}
-    </Wrapper>
-  ) : (
-    <Wrapper>
-      <ErrorMessage>{t("No valid schema defined.")}</ErrorMessage>
+              )}
+
+              {group.fields.map((field) => {
+                if (isList && !selectedItemId) return null;
+
+                const id = isList
+                  ? `${ymlJSON?.id}-${extension.id}-${group.id}-${selectedItemId}-${field.id}`
+                  : `${ymlJSON?.id}-${extension.id}-${group.id}-${field.id}`;
+
+                return (
+                  <PropertyItem
+                    key={id}
+                    id={id}
+                    field={field}
+                    value={fieldValues[id]}
+                    onUpdate={handleFieldValueChange}
+                  />
+                );
+              })}
+            </FieldsWrapper>
+          </Collapse>
+        );
+      })}
     </Wrapper>
   );
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing.small
+  display: "flex",
+  padding: theme.spacing.small,
+  flexDirection: "column",
+  gap: theme.spacing.small
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
@@ -115,8 +118,7 @@ const FieldsWrapper = styled("div")(({ theme }) => ({
 }));
 
 const ErrorMessage = styled("p")(({ theme }) => ({
-  color: theme.content.weak,
-  fontSize: theme.fonts.sizes.body
+  color: theme.content.weak
 }));
 
 export default ExtensionSettings;
