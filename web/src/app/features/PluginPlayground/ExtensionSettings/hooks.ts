@@ -141,20 +141,20 @@ export default ({
     [getGroupItemIdsFromValues, getStoredOrder]
   );
 
-  const getSelectedItemId = (
-    groupId: string,
-    values: Record<string, FieldValue>
-  ): string => {
-    const selectedKey = getSelectedKey(groupId);
-    const orderedIds = getOrderedGroupItemIds(groupId, values);
+  const getSelectedItemId = useCallback(
+    (groupId: string, values: Record<string, FieldValue>): string => {
+      const selectedKey = getSelectedKey(groupId);
+      const orderedIds = getOrderedGroupItemIds(groupId, values);
     const stored = selectedKey ? values[selectedKey] : undefined;
 
     if (typeof stored === "string" && orderedIds.includes(stored)) {
       return stored;
     }
 
-    return orderedIds[0] ?? "";
-  };
+      return orderedIds[0] ?? "";
+    },
+    [getSelectedKey, getOrderedGroupItemIds]
+  );
 
   const updateGroupMeta = useCallback(
     (
