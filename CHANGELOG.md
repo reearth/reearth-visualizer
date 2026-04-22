@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.1 - 2026-04-22
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.1 ([#2173](https://github.com/reearth/reearth-visualizer/pull/2173)) [`adf1fe`](https://github.com/reearth/reearth-visualizer/commit/adf1fe)
+- Add readme for services and app lib ([#2170](https://github.com/reearth/reearth-visualizer/pull/2170)) [`515882`](https://github.com/reearth/reearth-visualizer/commit/515882)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Update reearth-accounts-api image to latest ([#2168](https://github.com/reearth/reearth-visualizer/pull/2168)) [`777fcf`](https://github.com/reearth/reearth-visualizer/commit/777fcf)
+- Prevent panic during project import with plugin schema field types ([#2162](https://github.com/reearth/reearth-visualizer/pull/2162)) [`157ec3`](https://github.com/reearth/reearth-visualizer/commit/157ec3)
+
 ## 1.0.0-beta.16.0 - 2026-04-15
 
 ### Web
