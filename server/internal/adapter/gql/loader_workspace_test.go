@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	workspaceMock "github.com/reearth/reearth-accounts/server/pkg/gqlclient/workspace/mockrepo"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"go.uber.org/mock/gomock"
