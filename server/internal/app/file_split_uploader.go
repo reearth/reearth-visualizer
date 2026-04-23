@@ -112,8 +112,11 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 	var pid *id.ProjectID
 	result := map[string]any{}
 
-	if session := m.activeUploads[fileID]; session != nil {
-		pid = m.activeUploads[fileID].Project.ID().Ref()
+	m.mu.RLock()
+	session := m.activeUploads[fileID]
+	m.mu.RUnlock()
+	if session != nil {
+		pid = session.Project.ID().Ref()
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d Project: %s", fileID, chunkNum+1, totalChunks, pid.String())
 	} else {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d ", fileID, chunkNum+1, totalChunks)
