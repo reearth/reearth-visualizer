@@ -28,12 +28,13 @@ func (c *WorkspaceLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 	}
 
 	if c.client != nil {
-		workspaces := make([]*gqlmodel.Workspace, 0, len(uids))
-		for _, uid := range uids {
-			w, err := c.client.WorkspaceRepo.FindByID(ctx, uid.String())
-			if err != nil {
-				return nil, []error{err}
-			}
+		stringIDs := util.Map(uids, func(u accountsID.WorkspaceID) string { return u.String() })
+		res, err := c.client.WorkspaceRepo.FindByIDs(ctx, stringIDs)
+		if err != nil {
+			return nil, []error{err}
+		}
+		workspaces := make([]*gqlmodel.Workspace, 0, len(res))
+		for _, w := range res {
 			workspaces = append(workspaces, gqlmodel.ToWorkspace(w))
 		}
 		return workspaces, nil
