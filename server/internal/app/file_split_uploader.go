@@ -107,16 +107,23 @@ func servSplitUploadFiles(
 
 }
 
+func (m *SplitUploadManager) readSessionProjectID(fileID string) *id.ProjectID {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	session := m.activeUploads[fileID]
+	if session != nil && session.Project != nil {
+		return session.Project.ID().Ref()
+	}
+	return nil
+}
+
 func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId accountsID.WorkspaceID, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
 
 	var pid *id.ProjectID
 	result := map[string]any{}
 
-	m.mu.RLock()
-	session := m.activeUploads[fileID]
-	m.mu.RUnlock()
-	if session != nil {
-		pid = session.Project.ID().Ref()
+	pid = m.readSessionProjectID(fileID)
+	if pid != nil {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d Project: %s", fileID, chunkNum+1, totalChunks, pid.String())
 	} else {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d ", fileID, chunkNum+1, totalChunks)

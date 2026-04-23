@@ -7,8 +7,9 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 )
 
-// TestSplitUploadManager_ConcurrentMapAccess verifies that concurrent chunk
-// uploads do not cause a fatal map race. Run with -race to catch any regression.
+// TestSplitUploadManager_ConcurrentMapAccess verifies that concurrent calls to
+// readSession and UpdateSession do not cause a fatal map race.
+// Run with -race to catch any regression: go test -race -run TestSplitUploadManager
 //
 // Before the fix, handleChunkedUpload read activeUploads without holding the
 // mutex while UpdateSession wrote under it — triggering a Go runtime fatal crash.
@@ -24,22 +25,16 @@ func TestSplitUploadManager_ConcurrentMapAccess(t *testing.T) {
 	wg.Add(goroutines)
 
 	for i := 0; i < goroutines; i++ {
-		go func(chunkNum int) {
+		go func() {
 			defer wg.Done()
 
-			// Mirrors the fixed read in handleChunkedUpload: RLock before map access.
-			m.mu.RLock()
-			session := m.activeUploads[fileID]
-			m.mu.RUnlock()
-			_ = session
+			// Exercise the same read path used by handleChunkedUpload.
+			pid := m.readSessionProjectID(fileID)
+			_ = pid
 
 			// Concurrently write a session (as UpdateSession does).
-			m.mu.Lock()
-			if _, exists := m.activeUploads[fileID]; !exists {
-				m.activeUploads[fileID] = &SplitUploadSession{FileID: fileID}
-			}
-			m.mu.Unlock()
-		}(i)
+			_, _, _ = m.UpdateSession(fileID, 0, goroutines, nil)
+		}()
 	}
 
 	wg.Wait()
