@@ -149,7 +149,7 @@ graph TB
 
     subgraph docker["Docker Network: reearth"]
         Visualizer["reearth-visualizer-dev<br/>(Go + Air hot reload)<br/>:8080"]
-        Accounts["reearth-accounts-api<br/>(reearth/reearth-accounts-api:v1.0.0)<br/>:8090"]
+        Accounts["reearth-accounts-api<br/>(reearth/reearth-accounts-api:latest)<br/>:8090"]
         Cerbos["reearth-cerbos<br/>(cerbos/cerbos:0.40.0)<br/>:3593"]
         Mongo["reearth-mongo<br/>(mongo:7)<br/>:27017"]
         GCS["reearth-gcs<br/>(fake-gcs-server:1.52.1)<br/>:4443"]
@@ -166,7 +166,7 @@ graph TB
 | Container | Image | Port | Description |
 | --- | --- | --- | --- |
 | reearth-visualizer-dev | (local build) | 8080 | Visualizer API server with hot reload |
-| reearth-accounts-api | reearth/reearth-accounts-api:v1.0.0 | 8090 | User/workspace management API |
+| reearth-accounts-api | reearth/reearth-accounts-api:latest | 8090 | User/workspace management API |
 | reearth-cerbos | cerbos/cerbos:0.40.0 | 3593 | Authorization policy engine |
 | reearth-mongo | mongo:7 | 27017 | MongoDB (shared by visualizer and accounts) |
 | reearth-gcs | fsouza/fake-gcs-server:1.52.1 | 4443 | Fake GCS for local asset storage |
@@ -185,7 +185,7 @@ make d-run
 
 This brings up all required containers with their dependencies: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
 
-This method uses the public image `reearth/reearth-accounts-api:v1.0.0` from Docker Hub.
+This method uses the public image `reearth/reearth-accounts-api:latest` from Docker Hub.
 
 To stop all services:
 
