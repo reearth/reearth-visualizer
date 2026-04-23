@@ -34,9 +34,15 @@ func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.
 		if err != nil {
 			return nil, []error{err}
 		}
-		users := make([]*gqlmodel.User, 0, len(res))
+		byID := make(map[string]*gqlmodel.User, len(res))
 		for _, u := range res {
-			users = append(users, gqlmodel.ToUser(u))
+			if u != nil {
+				byID[u.ID().String()] = gqlmodel.ToUser(u)
+			}
+		}
+		users := make([]*gqlmodel.User, len(uids))
+		for i, uid := range uids {
+			users[i] = byID[uid.String()]
 		}
 		return users, nil
 	}

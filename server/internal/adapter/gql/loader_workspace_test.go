@@ -13,7 +13,7 @@ import (
 )
 
 // TestWorkspaceLoader_Fetch_BatchesWithClient verifies that Fetch makes a single
-// FindByIDs call rather than one FindByID call per workspace when the gqlclient is set.
+// FindByIDs call and returns results aligned to the input ID order.
 func TestWorkspaceLoader_Fetch_BatchesWithClient(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -21,17 +21,22 @@ func TestWorkspaceLoader_Fetch_BatchesWithClient(t *testing.T) {
 	wid1 := accountsID.NewWorkspaceID()
 	wid2 := accountsID.NewWorkspaceID()
 
-	uid := accountsID.NewUserID()
-	w1, _ := accountsWorkspace.New().ID(wid1).Name("WS1").Build()
-	w2, _ := accountsWorkspace.New().ID(wid2).Name("WS2").Build()
-	_ = uid
+	w1, err := accountsWorkspace.New().ID(wid1).Name("WS1").Build()
+	if err != nil {
+		t.Fatalf("failed to build workspace fixture w1: %v", err)
+	}
+	w2, err := accountsWorkspace.New().ID(wid2).Name("WS2").Build()
+	if err != nil {
+		t.Fatalf("failed to build workspace fixture w2: %v", err)
+	}
 
 	mockWorkspaceRepo := workspaceMock.NewMockWorkspaceRepo(ctrl)
 
-	// FindByIDs must be called exactly once with all IDs — never FindByID.
+	// FindByIDs must be called exactly once — never FindByID.
+	// Repo returns workspaces in reverse order to verify the caller reorders correctly.
 	mockWorkspaceRepo.EXPECT().
 		FindByIDs(gomock.Any(), gomock.InAnyOrder([]string{wid1.String(), wid2.String()})).
-		Return(accountsWorkspace.List{w1, w2}, nil).
+		Return(accountsWorkspace.List{w2, w1}, nil).
 		Times(1)
 
 	client := &gqlclient.Client{WorkspaceRepo: mockWorkspaceRepo}
@@ -46,7 +51,16 @@ func TestWorkspaceLoader_Fetch_BatchesWithClient(t *testing.T) {
 	if len(errs) > 0 {
 		t.Fatalf("unexpected errors: %v", errs)
 	}
-	if len(workspaces) != 2 {
-		t.Errorf("expected 2 workspaces, got %d", len(workspaces))
+	if len(workspaces) != len(ids) {
+		t.Fatalf("expected %d workspaces, got %d", len(ids), len(workspaces))
+	}
+	// Results must be aligned to input ID order regardless of repo return order.
+	for i, id := range ids {
+		if workspaces[i] == nil {
+			t.Fatalf("expected workspace at index %d for id %s, got nil", i, id)
+		}
+		if workspaces[i].ID != id {
+			t.Errorf("expected workspace at index %d to have ID %s, got %s", i, id, workspaces[i].ID)
+		}
 	}
 }
