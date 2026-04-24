@@ -174,7 +174,23 @@ export default () => {
         )
       }
     ],
-    [t, encodeAndSharePlugin, showShareLimitModal, closeShareLimitModal, sharedPlugin, presetPlugins, selectedPlugin, selectPlugin, selectedFile, selectFile, addFile, updateFileTitle, deleteFile, handlePluginImport, handlePluginDownload]
+    [
+      t,
+      encodeAndSharePlugin,
+      showShareLimitModal,
+      closeShareLimitModal,
+      sharedPlugin,
+      presetPlugins,
+      selectedPlugin,
+      selectPlugin,
+      selectedFile,
+      selectFile,
+      addFile,
+      updateFileTitle,
+      deleteFile,
+      handlePluginImport,
+      handlePluginDownload
+    ]
   );
 
   const RightAreaTabs: TabItem[] = useMemo(

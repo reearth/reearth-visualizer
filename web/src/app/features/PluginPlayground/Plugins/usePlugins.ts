@@ -7,7 +7,11 @@ import { useSearchParams } from "react-router";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
 
-import { PluginType, SHARED_PLUGIN_ID } from "./constants";
+import {
+  MAX_SHARE_URL_LENGTH,
+  PluginType,
+  SHARED_PLUGIN_ID
+} from "./constants";
 import { presetPlugins } from "./presets";
 import { validateFileTitle } from "./utils";
 
@@ -287,7 +291,7 @@ export default () => {
 
         const shareUrl = `${window.location.origin}${window.location.pathname}?shared-plugin=${compressed}`;
 
-        if (shareUrl.length > 5000) {
+        if (shareUrl.length > MAX_SHARE_URL_LENGTH) {
           setShowShareLimitModal(true);
           return;
         }
