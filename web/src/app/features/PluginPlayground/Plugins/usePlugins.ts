@@ -266,6 +266,12 @@ export default () => {
     }
   }, [selectedPlugin, setNotification]);
 
+  const [showShareLimitModal, setShowShareLimitModal] = useState(false);
+
+  const closeShareLimitModal = useCallback(() => {
+    setShowShareLimitModal(false);
+  }, []);
+
   const encodeAndSharePlugin = useCallback(
     (pluginId: string) => {
       try {
@@ -280,6 +286,12 @@ export default () => {
           .replace(/=/g, "");
 
         const shareUrl = `${window.location.origin}${window.location.pathname}?shared-plugin=${compressed}`;
+
+        if (shareUrl.length > 5000) {
+          setShowShareLimitModal(true);
+          return;
+        }
+
         navigator.clipboard.writeText(shareUrl);
 
         setNotification({
@@ -298,6 +310,8 @@ export default () => {
 
   return {
     encodeAndSharePlugin,
+    showShareLimitModal,
+    closeShareLimitModal,
     presetPlugins,
     selectPlugin,
     selectedPlugin,

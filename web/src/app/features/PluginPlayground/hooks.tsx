@@ -60,7 +60,9 @@ export default () => {
     deleteFile,
     handlePluginImport,
     handlePluginDownload,
-    encodeAndSharePlugin
+    encodeAndSharePlugin,
+    showShareLimitModal,
+    closeShareLimitModal
   } = usePlugins();
 
   const { executeCode, infoboxBlocks, story, widgets } = useCode({
@@ -155,6 +157,8 @@ export default () => {
         children: (
           <Plugins
             encodeAndSharePlugin={encodeAndSharePlugin}
+            showShareLimitModal={showShareLimitModal}
+            closeShareLimitModal={closeShareLimitModal}
             sharedPlugin={sharedPlugin}
             presetPlugins={presetPlugins}
             selectedPlugin={selectedPlugin}
@@ -170,21 +174,7 @@ export default () => {
         )
       }
     ],
-    [
-      addFile,
-      deleteFile,
-      encodeAndSharePlugin,
-      handlePluginDownload,
-      presetPlugins,
-      selectedFile,
-      selectedPlugin,
-      selectFile,
-      selectPlugin,
-      sharedPlugin,
-      t,
-      handlePluginImport,
-      updateFileTitle
-    ]
+    [t, encodeAndSharePlugin, showShareLimitModal, closeShareLimitModal, sharedPlugin, presetPlugins, selectedPlugin, selectPlugin, selectedFile, selectFile, addFile, updateFileTitle, deleteFile, handlePluginImport, handlePluginDownload]
   );
 
   const RightAreaTabs: TabItem[] = useMemo(
