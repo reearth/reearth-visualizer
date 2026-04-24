@@ -37,7 +37,19 @@ func NewProperty(r *repo.Container, gr *gateway.Container) interfaces.Property {
 }
 
 func (i *Property) Fetch(ctx context.Context, ids []id.PropertyID, operator *usecase.Operator) ([]*property.Property, error) {
-	return i.propertyRepo.FindByIDs(ctx, ids)
+	if operator == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+	res, err := i.propertyRepo.FindByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for idx, p := range res {
+		if p != nil && !operator.IsReadableScene(p.Scene()) {
+			res[idx] = nil
+		}
+	}
+	return res, nil
 }
 
 func (i *Property) FetchSchema(ctx context.Context, ids []id.PropertySchemaID, operator *usecase.Operator) ([]*property.Schema, error) {

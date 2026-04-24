@@ -85,13 +85,23 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 
 // GetProject invoked by loader
 func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Operator) ([]*project.Project, error) {
+	if op == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
 
 	projects, err := i.projectRepo.FindByIDs(ctx, ids)
 	if err != nil {
 		return []*project.Project{}, err
 	}
 
-	projects, err = i.addMetadatas(ctx, projects, false, op)
+	authorized := make([]*project.Project, 0, len(projects))
+	for _, p := range projects {
+		if p != nil && op.IsReadableWorkspace(p.Workspace()) {
+			authorized = append(authorized, p)
+		}
+	}
+
+	projects, err = i.addMetadatas(ctx, authorized, false, op)
 	if err != nil {
 		return nil, err
 	}
