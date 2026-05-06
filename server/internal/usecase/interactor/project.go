@@ -94,14 +94,13 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Ope
 		return []*project.Project{}, err
 	}
 
-	authorized := make([]*project.Project, 0, len(projects))
-	for _, p := range projects {
-		if p != nil && op.IsReadableWorkspace(p.Workspace()) {
-			authorized = append(authorized, p)
+	for idx, p := range projects {
+		if p != nil && !op.IsReadableWorkspace(p.Workspace()) {
+			projects[idx] = nil
 		}
 	}
 
-	projects, err = i.addMetadatas(ctx, authorized, false, op)
+	projects, err = i.addMetadatas(ctx, projects, false, op)
 	if err != nil {
 		return nil, err
 	}
@@ -148,10 +147,15 @@ func (i *Project) addMetadatas(ctx context.Context, projects []*project.Project,
 	}
 
 	// projects with a FAILED status will be deleted and excluded.
-	excludedProjects := make([]*project.Project, 0)
+	excludedProjects := make([]*project.Project, 0, len(projects))
 	for _, p := range projects {
+		if p == nil {
+			excludedProjects = append(excludedProjects, nil)
+			continue
+		}
 		metadata := matchMetadata(p.ID(), metadatas)
 		if metadata == nil {
+			excludedProjects = append(excludedProjects, nil)
 			continue
 		}
 		if *metadata.ImportStatus() == project.ProjectImportStatusFailed {
