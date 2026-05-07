@@ -38,6 +38,12 @@ Re:Earth Visualizer is a web-based GIS (Geographic Information System) applicati
 - `yarn i18n` - Extract i18n strings for translation
 - `yarn coverage` - Run tests with coverage report
 
+### 1Password Integration (Optional)
+
+- `yarn start:op` - Start dev server with 1Password secrets (replaces `yarn start`)
+
+See [docs/1password-setup.md](docs/1password-setup.md) for setup guide.
+
 ## Project Structure
 
 ### Key Directories
