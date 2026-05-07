@@ -453,9 +453,9 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountsID.WorkspaceID
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
-func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.WorkspaceID) ([]*project.Project, error) {
+func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.WorkspaceID, p *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
-		return nil, repo.ErrOperationDenied
+		return nil, nil, repo.ErrOperationDenied
 	}
 
 	filter := bson.M{
@@ -468,12 +468,12 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.Work
 		"coresupport": true,
 	}
 
-	return r.find(ctx, filter)
+	return r.paginate(ctx, filter, nil, p)
 }
 
-func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID) ([]*project.Project, error) {
+func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, p *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
-		return nil, repo.ErrOperationDenied
+		return nil, nil, repo.ErrOperationDenied
 	}
 
 	filter := bson.M{
@@ -482,7 +482,7 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.Work
 		"coresupport": true,
 	}
 
-	return r.find(ctx, filter)
+	return r.paginate(ctx, filter, nil, p)
 }
 
 func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
