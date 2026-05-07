@@ -20,8 +20,8 @@ Web interface for Re:Earth GIS software built with React 18 and Vite.
 Securely manage secrets without storing them on disk.
 
 1. Install 1Password CLI: <https://developer.1password.com/docs/cli/get-started/>
-2. Set up 1Password item with environment variables
-3. Update `.env.op` with your vault/item names
+2. Create 1Password item with environment variables from `.env.example`
+3. Create `.env.op` with 1Password secret references
 4. Run: `yarn start:op`
 
 See [docs/1password-setup.md](docs/1password-setup.md) for detailed setup instructions.

@@ -4,6 +4,8 @@
 
 This project supports using 1Password CLI to manage environment variables securely, eliminating the need to store secrets in `.env` files on disk.
 
+**Important:** Only `.env.example` is tracked in git. You will create `.env.op` locally based on `.env.example` - it will not be committed.
+
 ## Prerequisites
 
 1. **1Password Account**: Team or personal account with appropriate vault access
@@ -55,6 +57,8 @@ This allows `op run` to access secrets without password prompts during developme
 
 ### 3. Create 1Password Item with Environment Variables
 
+Reference `.env.example` for all required fields.
+
 **Manual Setup Steps:**
 
 1. Open 1Password Desktop App
@@ -64,31 +68,17 @@ This allows `op run` to access secrets without password prompts during developme
    - **Type**: Password or Secure Note
    - **Vault**: Use your team's designated vault
 
-4. Add the following fields to the item:
-
-   **Required Fields:**
-   - `auth0_domain` → Your Auth0 domain
-   - `auth0_audience` → Your Auth0 API audience
-   - `auth0_client_id` → Your Auth0 client ID (set as password type)
-   - `api` → API endpoint (e.g., `http://localhost:8080/api`)
-   - `plugins` → Plugins endpoint (e.g., `http://localhost:8080/plugins`)
-
-   **Optional Fields:**
-   - `auth_provider` → "auth0", "mock", or leave empty
-   - `config_url` → Remote config URL
-   - `cesium_ion_token` → Cesium Ion access token (set as password type)
-   - `feature_collection` → "ee" or leave empty
-   - `enable_gql_playground` → "true" or leave empty
-   - `unsafe_plugin_urls` → JSON array string (e.g., `["http://example.com"]`)
-   - `extension_urls` → JSON array string
-   - `dev_plugin_urls` → JSON array string
-   - `platform_url` → Platform URL
+4. Add fields for each variable in `.env.example`:
+   - Use the field names from `.env.example` (without the `REEARTH_WEB_` prefix)
+   - Example: `REEARTH_WEB_AUTH0_DOMAIN` → field name `auth0_domain`
+   - Set sensitive fields like `auth0_client_id` and `cesium_ion_token` as password type
+   - See `.env.example` for complete list and descriptions
 
 5. Save the item
 
-### 4. Update .env.op Template
+### 4. Create .env.op File
 
-Edit `.env.op` file to match your 1Password structure:
+Create a new `.env.op` file (not tracked in git) with 1Password secret references:
 
 ```bash
 # Example: If your vault is "Engineering" and item is "Re:Earth Visualizer Dev"

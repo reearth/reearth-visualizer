@@ -200,7 +200,8 @@ The `appFeature()` function provides access to runtime feature configuration. **
 
 ### Environment Setup
 
-1. Copy `env.example` to `.env` and configure environment variables
+1. Copy `.env.example` to `.env` and configure environment variables
+   - Or use 1Password CLI: create `.env.op` based on `.env.example` (see docs/1password-setup.md)
 2. Ensure Node.js >= 20.11.0 is installed
 3. Use Yarn 4.6.0 as the package manager
 
