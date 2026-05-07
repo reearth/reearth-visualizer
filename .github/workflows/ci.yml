@@ -4,6 +4,9 @@ on:
     branches: [main, release/*, release]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -130,6 +133,9 @@ jobs:
 
   deploy-web:
     needs: build-web
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/deploy_web_nightly.yml
     secrets: inherit
 
@@ -161,15 +167,24 @@ jobs:
 
   deploy-server:
     needs: build-server
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/deploy_server_nightly.yml
     secrets: inherit
   playwright-tests:
     needs: deploy-web
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/playwright_ui_tests.yml
     secrets: inherit
 
   playwright-tests-pr:
     needs: deploy-web-pr
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/playwright_ui_tests.yml
     with:
       url: ${{ needs.deploy-web-pr.outputs.preview_url }}
@@ -178,5 +193,8 @@ jobs:
   playwright-tests-e2e-only:
     needs: prepare
     if: needs.prepare.outputs.e2e == 'true' && github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      id-token: write
     uses: ./.github/workflows/playwright_ui_tests.yml
     secrets: inherit
