@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "start": "yarn && vite",
-    "start:op": "op run --env-file=.env.op -- yarn start",
+    "start:op": "op run --env-file=.env.op -- vite",
     "test": "vitest",
     "coverage": "vitest --coverage",
     "prepare": "cd .. && husky install web/.husky",
