@@ -358,6 +358,8 @@ Export Plugin: プラグインをエクスポート
 Share Plugin: プラグインを共有
 Shared: 共有
 No plugins: プラグインがありません
+Close: 閉じる
+This plugin is too large to share via URL. Please use the Export function to download the plugin and share the file directly.: このプラグインはURLで共有するには大きすぎます。エクスポート機能を使用してプラグインをダウンロードし、ファイルを直接共有してください。
 Custom: カスタム
 User Interface: ユーザーインターフェース
 Data: データ
