@@ -2,6 +2,95 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.1 - 2026-04-22
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.1 ([#2173](https://github.com/reearth/reearth-visualizer/pull/2173)) [`adf1fe`](https://github.com/reearth/reearth-visualizer/commit/adf1fe)
+- Add readme for services and app lib ([#2170](https://github.com/reearth/reearth-visualizer/pull/2170)) [`515882`](https://github.com/reearth/reearth-visualizer/commit/515882)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Update reearth-accounts-api image to latest ([#2168](https://github.com/reearth/reearth-visualizer/pull/2168)) [`777fcf`](https://github.com/reearth/reearth-visualizer/commit/777fcf)
+- Prevent panic during project import with plugin schema field types ([#2162](https://github.com/reearth/reearth-visualizer/pull/2162)) [`157ec3`](https://github.com/reearth/reearth-visualizer/commit/157ec3)
+
+## 1.0.0-beta.16.0 - 2026-04-15
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.16.0 ([#2165](https://github.com/reearth/reearth-visualizer/pull/2165)) [`b548f2`](https://github.com/reearth/reearth-visualizer/commit/b548f2)
+
+### Server
+
+#### 🧪 Testing
+
+- Add e2e tests for plugin GraphQL API  ([#2159](https://github.com/reearth/reearth-visualizer/pull/2159)) [`80ebab`](https://github.com/reearth/reearth-visualizer/commit/80ebab)
+
+### Misc
+
+#### 
+
+- Vv1.0.0 [`c6b4d4`](https://github.com/reearth/reearth-visualizer/commit/c6b4d4)
+
+### server,web
+
+#### 🚀 Features
+
+- Add SSO logout tracking with response header ([#2142](https://github.com/reearth/reearth-visualizer/pull/2142)) [`8352bf`](https://github.com/reearth/reearth-visualizer/commit/8352bf)
+
+### 
+
+#### 
+
+- Vv1.0.0 [`c6b4d4`](https://github.com/reearth/reearth-visualizer/commit/c6b4d4)
+
+## 1.0.0-beta.15.9 - 2026-04-09
+
+### Web
+
+#### 🧪 Testing
+
+- Test for browser refresh issue ([#2150](https://github.com/reearth/reearth-visualizer/pull/2150)) [`64c3ad`](https://github.com/reearth/reearth-visualizer/commit/64c3ad)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.15.9 ([#2158](https://github.com/reearth/reearth-visualizer/pull/2158)) [`a7650d`](https://github.com/reearth/reearth-visualizer/commit/a7650d)
+
+### Server
+
+#### 🚀 Features
+
+- Add GraphQL operation timing and request context logs [VIZ-2421] ([#2153](https://github.com/reearth/reearth-visualizer/pull/2153)) [`ab74f3`](https://github.com/reearth/reearth-visualizer/commit/ab74f3)
+
+#### 🔧 Bug Fixes
+
+- Stop import retry storms by returning 200 for unrecoverable errors [VIZ-2421] ([#2154](https://github.com/reearth/reearth-visualizer/pull/2154)) [`da8f36`](https://github.com/reearth/reearth-visualizer/commit/da8f36)
+- Remove PII from auth debug logs [VIZ-2421] ([#2152](https://github.com/reearth/reearth-visualizer/pull/2152)) [`35691b`](https://github.com/reearth/reearth-visualizer/commit/35691b)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update codecov&#x2F;codecov-action action to v6 ([#2145](https://github.com/reearth/reearth-visualizer/pull/2145)) [`1c3483`](https://github.com/reearth/reearth-visualizer/commit/1c3483)
+
+### server&#x2F;web
+
+#### 🔧 Bug Fixes
+
+- Use native ARM runners instead of QEMU for build_server ([#2155](https://github.com/reearth/reearth-visualizer/pull/2155)) [`58a6df`](https://github.com/reearth/reearth-visualizer/commit/58a6df)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update codecov&#x2F;codecov-action action to v6 ([#2145](https://github.com/reearth/reearth-visualizer/pull/2145)) [`1c3483`](https://github.com/reearth/reearth-visualizer/commit/1c3483)
+
 ## 1.0.0-beta.15.8 - 2026-04-03
 
 ### Web
@@ -1553,18 +1642,25 @@ All notable changes to this project will be documented in this file.
 
 - Vv1.0.0 [`d34bca`](https://github.com/reearth/reearth-visualizer/commit/d34bca)
 
-## 1.0.0 - 2026-04-03
+## 1.0.0 - 2026-04-15
 
 ### Web
 
-#### 🚀 Features
-
-- Add linkInfoboxBetaBlock[VIZ-2417] ([#2127](https://github.com/reearth/reearth-visualizer/pull/2127)) [`0c1cbb`](https://github.com/reearth/reearth-visualizer/commit/0c1cbb)
-
 #### Miscellaneous Tasks
 
-- Bump version to 1.0.0-beta.15.8 ([#2147](https://github.com/reearth/reearth-visualizer/pull/2147)) [`30bd0b`](https://github.com/reearth/reearth-visualizer/commit/30bd0b)
-- Update core version to 0.0.7-alpha.62 ([#2146](https://github.com/reearth/reearth-visualizer/pull/2146)) [`55b94b`](https://github.com/reearth/reearth-visualizer/commit/55b94b)
+- Update package version to 1.0.0-beta.16.0 ([#2165](https://github.com/reearth/reearth-visualizer/pull/2165)) [`b548f2`](https://github.com/reearth/reearth-visualizer/commit/b548f2)
+
+### Server
+
+#### 🧪 Testing
+
+- Add e2e tests for plugin GraphQL API  ([#2159](https://github.com/reearth/reearth-visualizer/pull/2159)) [`80ebab`](https://github.com/reearth/reearth-visualizer/commit/80ebab)
+
+### server,web
+
+#### 🚀 Features
+
+- Add SSO logout tracking with response header ([#2142](https://github.com/reearth/reearth-visualizer/pull/2142)) [`8352bf`](https://github.com/reearth/reearth-visualizer/commit/8352bf)
 
 ## 1.0.0-beta.4.1 - 2025-03-18
 

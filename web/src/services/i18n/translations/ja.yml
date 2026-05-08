@@ -346,7 +346,6 @@ Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 HTML Editor: HTML エディター
 Run Code: コードを実行
-This plugin does not have a valid reearth.yml file.: このプラグインには有効な reearth.yml ファイルがありません。
 No valid schema defined.: 有効なスキーマが定義されていません。
 Chiyoda 3D Tiles: 千代田区 3D Tiles
 Japanese Heritage Sites: 日本の遺産
@@ -359,6 +358,8 @@ Export Plugin: プラグインをエクスポート
 Share Plugin: プラグインを共有
 Shared: 共有
 No plugins: プラグインがありません
+Close: 閉じる
+This plugin is too large to share via URL. Please use the Export function to download the plugin and share the file directly.: このプラグインはURLで共有するには大きすぎます。エクスポート機能を使用してプラグインをダウンロードし、ファイルを直接共有してください。
 Custom: カスタム
 User Interface: ユーザーインターフェース
 Data: データ
