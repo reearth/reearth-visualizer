@@ -132,6 +132,34 @@ The first time you run `yarn start:op`, you may be prompted to authenticate via:
 
 **Note:** Environment variables are only used during development server startup. Build and test processes don't require them.
 
+### Local Overrides with .env.local (Optional)
+
+Vite automatically loads `.env.local` (if it exists) to override any variables for your local environment. This works with both `.env` and `.env.op` approaches.
+
+**Common use cases:**
+
+```bash
+# .env.local - Personal overrides (create this file if needed)
+REEARTH_WEB_API=http://localhost:9000/api  # Different port
+REEARTH_WEB_AUTH_PROVIDER=mock             # Use mock auth
+REEARTH_WEB_ENABLE_GQL_PLAYGROUND=true     # Enable playground
+```
+
+**How it works:**
+
+- **With `yarn start`**: Vite loads `.env` then `.env.local`
+- **With `yarn start:op`**: 1Password injects secrets from `.env.op` into process.env, then Vite loads `.env.local` and merges them
+
+**Priority order:**
+
+1. `.env.local` (highest - always wins)
+2. `.env.op` or `.env` (base configuration)
+3. Default values (lowest)
+
+**Important:** After changing `.env.local`, restart the dev server (`Ctrl+C` then `yarn start:op` again) for changes to take effect.
+
+**Note:** `.env.local` is optional - only create it if you need local overrides.
+
 ## Migration from .env
 
 ### Step 1: Backup Current .env

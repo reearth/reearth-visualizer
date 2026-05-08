@@ -26,6 +26,8 @@ Securely manage secrets without storing them on disk.
 
 See [docs/1password-setup.md](docs/1password-setup.md) for detailed setup instructions.
 
+**Tip:** Create `.env.local` to override any variables locally (works with both options above).
+
 `yarn start` to start the local server. The interface will open on [http://localhost:3000](http://localhost:3000)
 
 `yarn build` TBC
