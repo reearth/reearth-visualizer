@@ -31,6 +31,19 @@ var (
 	projectUniqueIndexes = []string{"id"}
 )
 
+const defaultPageLimit int64 = 100
+
+// defaultPagination returns p unchanged when non-nil, or a default offset
+// pagination of 100 when nil. PaginateProject short-circuits on nil
+// pagination and returns no results, so callers that pass no pagination
+// would otherwise get an empty response.
+func defaultPagination(p *usecasex.Pagination) *usecasex.Pagination {
+	if p != nil {
+		return p
+	}
+	return usecasex.OffsetPagination{Offset: 0, Limit: defaultPageLimit}.Wrap()
+}
+
 type Project struct {
 	client *mongox.ClientCollection
 	f      repo.WorkspaceFilter
@@ -468,7 +481,7 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.Work
 		"coresupport": true,
 	}
 
-	return r.paginate(ctx, filter, nil, p)
+	return r.paginate(ctx, filter, nil, defaultPagination(p))
 }
 
 func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, p *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
@@ -482,7 +495,7 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.Work
 		"coresupport": true,
 	}
 
-	return r.paginate(ctx, filter, nil, p)
+	return r.paginate(ctx, filter, nil, defaultPagination(p))
 }
 
 func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {

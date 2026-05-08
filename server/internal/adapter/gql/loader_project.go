@@ -117,11 +117,15 @@ func (c *ProjectLoader) FindStarredByWorkspace(ctx context.Context, wsID gqlmode
 		nodes = append(nodes, prj)
 	}
 
+	totalCount := int64(len(nodes))
+	if pi != nil {
+		totalCount = pi.TotalCount
+	}
 	return &gqlmodel.ProjectConnection{
 		Edges:      edges,
 		Nodes:      nodes,
 		PageInfo:   gqlmodel.ToPageInfo(pi),
-		TotalCount: int(pi.TotalCount),
+		TotalCount: int(totalCount),
 	}, nil
 }
 
@@ -147,11 +151,15 @@ func (c *ProjectLoader) FindDeletedByWorkspace(ctx context.Context, wsID gqlmode
 		nodes = append(nodes, prj)
 	}
 
+	totalCount := int64(len(nodes))
+	if pi != nil {
+		totalCount = pi.TotalCount
+	}
 	return &gqlmodel.ProjectConnection{
 		Edges:      edges,
 		Nodes:      nodes,
 		PageInfo:   gqlmodel.ToPageInfo(pi),
-		TotalCount: int(pi.TotalCount),
+		TotalCount: int(totalCount),
 	}, nil
 }
 
