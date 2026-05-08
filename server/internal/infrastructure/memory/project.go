@@ -94,7 +94,7 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.Work
 	defer r.lock.Unlock()
 
 	if !r.f.CanRead(id) {
-		return nil, nil, nil
+		return nil, usecasex.EmptyPageInfo(), nil
 	}
 
 	var result []*project.Project
@@ -108,7 +108,7 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.Work
 		return result[i].UpdatedAt().After(result[j].UpdatedAt())
 	})
 
-	return result, nil, nil
+	return result, usecasex.NewPageInfo(int64(len(result)), nil, nil, false, false), nil
 }
 
 func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, _ *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
@@ -116,7 +116,7 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.Work
 	defer r.lock.Unlock()
 
 	if !r.f.CanRead(id) {
-		return nil, nil, nil
+		return nil, usecasex.EmptyPageInfo(), nil
 	}
 
 	var result []*project.Project
@@ -130,7 +130,7 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.Work
 		return result[i].UpdatedAt().After(result[j].UpdatedAt())
 	})
 
-	return result, nil, nil
+	return result, usecasex.NewPageInfo(int64(len(result)), nil, nil, false, false), nil
 }
 
 func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {

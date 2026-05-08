@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/reearth/reearthx/util"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
@@ -165,10 +166,22 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 	r := NewProject(mongox.NewClientWithDatabase(c))
 
 	t.Run("FindStarredByWorkspace", func(t *testing.T) {
-		got, _, err := r.FindStarredByWorkspace(ctx, wid, nil)
+		got, pi, err := r.FindStarredByWorkspace(ctx, wid, nil)
 		assert.NoError(t, err)
+		assert.NotNil(t, pi)
+		assert.Equal(t, int64(2), pi.TotalCount)
 		assert.Equal(t, 2, len(got))
 		assert.ElementsMatch(t, []id.ProjectID{pid1, pid2}, []id.ProjectID{got[0].ID(), got[1].ID()})
+	})
+
+	t.Run("FindStarredByWorkspace with pagination limits results", func(t *testing.T) {
+		first := int64(1)
+		got, pi, err := r.FindStarredByWorkspace(ctx, wid, usecasex.CursorPagination{First: &first}.Wrap())
+		assert.NoError(t, err)
+		assert.NotNil(t, pi)
+		assert.Equal(t, int64(2), pi.TotalCount)
+		assert.Equal(t, 1, len(got))
+		assert.True(t, pi.HasNextPage)
 	})
 
 	t.Run("FindStarredByWorkspace with workspace filter", func(t *testing.T) {
