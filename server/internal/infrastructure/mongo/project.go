@@ -31,6 +31,32 @@ var (
 	projectUniqueIndexes = []string{"id"}
 )
 
+// Pagination bounds for FindAll aggregation pipelines that join projectmetadata.
+// Aggregation pipelines without a $limit force MongoDB to materialize and sort
+// the full joined result set; these constants ensure the pipeline always
+// terminates with a bounded page even when callers pass nil pagination.
+const (
+	findAllDefaultLimit int64 = 100
+	findAllMaxLimit     int64 = 200
+)
+
+// resolveFindAllPagination returns concrete offset/limit values, applying the
+// default when nil and capping at findAllMaxLimit.
+func resolveFindAllPagination(pFilter repo.ProjectFilter) (offset, limit int64) {
+	if pFilter.Offset != nil {
+		offset = *pFilter.Offset
+	}
+	if pFilter.Limit != nil {
+		limit = *pFilter.Limit
+	} else {
+		limit = findAllDefaultLimit
+	}
+	if limit > findAllMaxLimit {
+		limit = findAllMaxLimit
+	}
+	return offset, limit
+}
+
 type Project struct {
 	client *mongox.ClientCollection
 	f      repo.WorkspaceFilter
@@ -945,23 +971,29 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 		}
 	}
 
+	// Pipeline-style lookup that applies the topics filter inside the join,
+	// so non-matching metadata docs are excluded before the join result is
+	// materialized.
 	lookupStage := bson.M{
 		"$lookup": bson.M{
-			"from":         "projectmetadata",
-			"localField":   "id",
-			"foreignField": "project",
-			"as":           "metadata",
+			"from": "projectmetadata",
+			"let":  bson.M{"pid": "$id"},
+			"pipeline": bson.A{
+				bson.M{"$match": bson.M{
+					"$expr":  bson.M{"$eq": bson.A{"$project", "$$pid"}},
+					"topics": bson.M{"$all": pFilter.Topics},
+				}},
+			},
+			"as": "metadata",
 		},
 	}
 
-	// Build topics match condition
-	topicsMatchStage := bson.M{
-		"$match": bson.M{
-			"metadata.topics": bson.M{"$all": pFilter.Topics},
-		},
+	// Drop projects where the join produced no matching metadata.
+	hasMetadataStage := bson.M{
+		"$match": bson.M{"metadata.0": bson.M{"$exists": true}},
 	}
 
-	pipeline := []bson.M{matchStage, lookupStage, topicsMatchStage}
+	pipeline := []bson.M{matchStage, lookupStage, hasMetadataStage}
 
 	// Handle sorting
 	sortOrder := 1
@@ -1006,11 +1038,10 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 		}
 	}
 
-	// Handle pagination
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		pipeline = append(pipeline, bson.M{"$skip": *pFilter.Offset})
-		pipeline = append(pipeline, bson.M{"$limit": *pFilter.Limit})
-	}
+	// Always paginate to keep the joined result set bounded.
+	offset, limit := resolveFindAllPagination(pFilter)
+	pipeline = append(pipeline, bson.M{"$skip": offset})
+	pipeline = append(pipeline, bson.M{"$limit": limit})
 
 	// Execute aggregation
 	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
@@ -1030,16 +1061,10 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 		return nil, nil, err
 	}
 
-	var hasNextPage, hasPreviousPage bool
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
-		hasPreviousPage = *pFilter.Offset > 0
-	}
-
 	pageInfo := &usecasex.PageInfo{
 		TotalCount:      totalCount,
-		HasNextPage:     hasNextPage,
-		HasPreviousPage: hasPreviousPage,
+		HasNextPage:     offset+limit < totalCount,
+		HasPreviousPage: offset > 0,
 	}
 
 	return consumer.Result, pageInfo, nil
@@ -1129,11 +1154,10 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		}
 	}
 
-	// Handle pagination
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		pipeline = append(pipeline, bson.M{"$skip": *pFilter.Offset})
-		pipeline = append(pipeline, bson.M{"$limit": *pFilter.Limit})
-	}
+	// Always paginate to keep the joined result set bounded.
+	offset, limit := resolveFindAllPagination(pFilter)
+	pipeline = append(pipeline, bson.M{"$skip": offset})
+	pipeline = append(pipeline, bson.M{"$limit": limit})
 
 	// Execute aggregation
 	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
@@ -1153,16 +1177,10 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		return nil, nil, err
 	}
 
-	var hasNextPage, hasPreviousPage bool
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
-		hasPreviousPage = *pFilter.Offset > 0
-	}
-
 	pageInfo := &usecasex.PageInfo{
 		TotalCount:      totalCount,
-		HasNextPage:     hasNextPage,
-		HasPreviousPage: hasPreviousPage,
+		HasNextPage:     offset+limit < totalCount,
+		HasPreviousPage: offset > 0,
 	}
 
 	return consumer.Result, pageInfo, nil
