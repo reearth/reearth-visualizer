@@ -155,7 +155,7 @@ func (i *Project) addMetadatas(ctx context.Context, projects []*project.Project,
 		}
 		metadata := matchMetadata(p.ID(), metadatas)
 		if metadata == nil {
-			excludedProjects = append(excludedProjects, nil)
+			excludedProjects = append(excludedProjects, p)
 			continue
 		}
 		if *metadata.ImportStatus() == project.ProjectImportStatusFailed {

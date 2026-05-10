@@ -24,55 +24,8 @@ import (
 // SEC-01 regression tests: Fetch methods on the GraphQL node/nodes path must
 // not return entities from workspaces/scenes the caller cannot read.
 //
-// The mongo repo positionally aligns results with input IDs (filling misses
-// with nil); the memory repo used here does not, so the invariant checked is
-// "unauthorized entities are excluded from the result set" regardless of
-// ordering.
-
-func hasAssetID(list []*asset.Asset, want id.AssetID) bool {
-	for _, a := range list {
-		if a != nil && a.ID() == want {
-			return true
-		}
-	}
-	return false
-}
-
-func hasProjectID(list []*project.Project, want id.ProjectID) bool {
-	for _, p := range list {
-		if p != nil && p.ID() == want {
-			return true
-		}
-	}
-	return false
-}
-
-func hasSceneID(list []*scene.Scene, want id.SceneID) bool {
-	for _, s := range list {
-		if s != nil && s.ID() == want {
-			return true
-		}
-	}
-	return false
-}
-
-func hasPropertyID(list []*property.Property, want id.PropertyID) bool {
-	for _, p := range list {
-		if p != nil && p.ID() == want {
-			return true
-		}
-	}
-	return false
-}
-
-func hasPluginID(list []*plugin.Plugin, want id.PluginID) bool {
-	for _, p := range list {
-		if p != nil && p.ID().Equal(want) {
-			return true
-		}
-	}
-	return false
-}
+// Results must be positionally aligned with input IDs (DataLoader contract):
+// result[i] corresponds to input[i], with nil for unauthorized or missing entries.
 
 func TestAsset_Fetch_IDOR(t *testing.T) {
 	ctx := context.Background()
@@ -91,8 +44,10 @@ func TestAsset_Fetch_IDOR(t *testing.T) {
 
 	res, err := i.Fetch(ctx, []id.AssetID{own.ID(), other.ID()}, op)
 	assert.NoError(t, err)
-	assert.True(t, hasAssetID(res, own.ID()), "own asset must be returned")
-	assert.False(t, hasAssetID(res, other.ID()), "cross-tenant asset must not be returned")
+	assert.Len(t, res, 2, "result length must match input length")
+	assert.NotNil(t, res[0], "own asset must be at position 0")
+	assert.Equal(t, own.ID(), res[0].ID(), "own asset must be at position 0")
+	assert.Nil(t, res[1], "cross-tenant asset must be nil at position 1")
 
 	_, err = i.Fetch(ctx, []id.AssetID{own.ID()}, nil)
 	assert.ErrorIs(t, err, interfaces.ErrOperationDenied)
@@ -125,8 +80,10 @@ func TestProject_Fetch_IDOR(t *testing.T) {
 
 	res, err := i.Fetch(ctx, []id.ProjectID{own.ID(), other.ID()}, op)
 	assert.NoError(t, err)
-	assert.True(t, hasProjectID(res, own.ID()), "own project must be returned")
-	assert.False(t, hasProjectID(res, other.ID()), "cross-tenant project must not be returned")
+	assert.Len(t, res, 2, "result length must match input length")
+	assert.NotNil(t, res[0], "own project must be at position 0")
+	assert.Equal(t, own.ID(), res[0].ID(), "own project must be at position 0")
+	assert.Nil(t, res[1], "cross-tenant project must be nil at position 1")
 
 	_, err = i.Fetch(ctx, []id.ProjectID{own.ID()}, nil)
 	assert.ErrorIs(t, err, interfaces.ErrOperationDenied)
@@ -152,8 +109,10 @@ func TestScene_Fetch_IDOR(t *testing.T) {
 
 	res, err := i.Fetch(ctx, []id.SceneID{own.ID(), other.ID()}, op)
 	assert.NoError(t, err)
-	assert.True(t, hasSceneID(res, own.ID()), "own scene must be returned")
-	assert.False(t, hasSceneID(res, other.ID()), "cross-tenant scene must not be returned")
+	assert.Len(t, res, 2, "result length must match input length")
+	assert.NotNil(t, res[0], "own scene must be at position 0")
+	assert.Equal(t, own.ID(), res[0].ID(), "own scene must be at position 0")
+	assert.Nil(t, res[1], "cross-tenant scene must be nil at position 1")
 
 	_, err = i.Fetch(ctx, []id.SceneID{own.ID()}, nil)
 	assert.ErrorIs(t, err, interfaces.ErrOperationDenied)
@@ -179,8 +138,10 @@ func TestProperty_Fetch_IDOR(t *testing.T) {
 
 	res, err := i.Fetch(ctx, []id.PropertyID{own.ID(), other.ID()}, op)
 	assert.NoError(t, err)
-	assert.True(t, hasPropertyID(res, own.ID()), "own property must be returned")
-	assert.False(t, hasPropertyID(res, other.ID()), "cross-scene property must not be returned")
+	assert.Len(t, res, 2, "result length must match input length")
+	assert.NotNil(t, res[0], "own property must be at position 0")
+	assert.Equal(t, own.ID(), res[0].ID(), "own property must be at position 0")
+	assert.Nil(t, res[1], "cross-scene property must be nil at position 1")
 
 	_, err = i.Fetch(ctx, []id.PropertyID{own.ID()}, nil)
 	assert.ErrorIs(t, err, interfaces.ErrOperationDenied)
@@ -209,9 +170,12 @@ func TestPlugin_Fetch_IDOR(t *testing.T) {
 
 	res, err := i.Fetch(ctx, []id.PluginID{ownPluginID, otherPluginID, globalPluginID}, op)
 	assert.NoError(t, err)
-	assert.True(t, hasPluginID(res, ownPluginID), "own scene-scoped plugin must be returned")
-	assert.False(t, hasPluginID(res, otherPluginID), "cross-scene plugin must not be returned")
-	assert.True(t, hasPluginID(res, globalPluginID), "global plugin (no scene) must always be returned")
+	assert.Len(t, res, 3, "result length must match input length")
+	assert.NotNil(t, res[0], "own scene-scoped plugin must be at position 0")
+	assert.Equal(t, ownPluginID, res[0].ID(), "own plugin must be at position 0")
+	assert.Nil(t, res[1], "cross-scene plugin must be nil at position 1")
+	assert.NotNil(t, res[2], "global plugin must be at position 2")
+	assert.Equal(t, globalPluginID, res[2].ID(), "global plugin must be at position 2")
 
 	_, err = i.Fetch(ctx, []id.PluginID{globalPluginID}, nil)
 	assert.ErrorIs(t, err, interfaces.ErrOperationDenied)
