@@ -54,9 +54,17 @@ func usecases(ctx context.Context) *interfaces.Container {
 }
 
 func loaders(ctx context.Context) *Loaders {
-	return ctx.Value(contextLoaders).(*Loaders)
+	l, ok := ctx.Value(contextLoaders).(*Loaders)
+	if !ok || l == nil {
+		panic("gql: loaders not attached to context — AttachUsecases middleware may be misconfigured")
+	}
+	return l
 }
 
 func dataloaders(ctx context.Context) *DataLoaders {
-	return ctx.Value(contextDataloaders).(*DataLoaders)
+	dl, ok := ctx.Value(contextDataloaders).(*DataLoaders)
+	if !ok || dl == nil {
+		panic("gql: dataloaders not attached to context — AttachUsecases middleware may be misconfigured")
+	}
+	return dl
 }
