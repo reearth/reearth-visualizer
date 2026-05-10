@@ -78,26 +78,11 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 		return nil, nil, err
 	}
 
-	// Collect all schema IDs up front for a single batch fetch instead of
-	// one FindByID per extension (SCA-05).
-	var schemaIDs []id.PropertySchemaID
-	for _, p := range plugins {
-		for _, extension := range p.Extensions() {
-			schemaIDs = append(schemaIDs, extension.Schema())
-		}
-	}
-	fetchedSchemas, err := i.propertySchemaRepo.FindByIDs(ctx, schemaIDs)
-	if err != nil {
-		return nil, nil, err
-	}
-	schemaByID := make(map[id.PropertySchemaID]*property.Schema, len(fetchedSchemas))
-	for _, s := range fetchedSchemas {
-		if s != nil {
-			schemaByID[s.ID()] = s
-		}
-	}
+	// Cache schema lookups by ID to avoid redundant FindByID calls when
+	// multiple extensions share the same schema (SCA-05).
+	schemaByID := make(map[id.PropertySchemaID]*property.Schema)
 
-	schemas := make([]*property.Schema, 0, len(schemaIDs))
+	schemas := make([]*property.Schema, 0)
 	for _, p := range plugins {
 		for _, extension := range p.Extensions() {
 			extensionFileName := fmt.Sprintf("%s.js", extension.ID().String())
@@ -121,7 +106,15 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 				_ = stream.Close()
 			}
 
-			schemas = append(schemas, schemaByID[extension.Schema()])
+			sid := extension.Schema()
+			if _, seen := schemaByID[sid]; !seen {
+				s, err := i.propertySchemaRepo.FindByID(ctx, sid)
+				if err != nil {
+					return nil, nil, err
+				}
+				schemaByID[sid] = s
+			}
+			schemas = append(schemas, schemaByID[sid])
 		}
 	}
 
