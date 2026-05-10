@@ -2,9 +2,12 @@ package interactor
 
 import (
 	"context"
+	"errors"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -19,6 +22,28 @@ import (
 )
 
 var pluginPackageSizeLimit int64 = 10 * 1024 * 1024 // 10MB
+
+// remotePluginClient is hardened for fetching user-supplied URLs (REL-03).
+// ResponseHeaderTimeout kills slow-drip connections that bypass the overall Timeout.
+// See: https://github.com/eukarya-inc/compliance/issues/7
+var remotePluginClient = &http.Client{
+	Timeout: 60 * time.Second,
+	Transport: &http.Transport{
+		DialContext:           (&net.Dialer{Timeout: 5 * time.Second, KeepAlive: 30 * time.Second}).DialContext,
+		TLSHandshakeTimeout:   5 * time.Second,
+		ResponseHeaderTimeout: 10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+		IdleConnTimeout:       90 * time.Second,
+		MaxIdleConnsPerHost:   10,
+		DisableCompression:    true,
+	},
+	CheckRedirect: func(_ *http.Request, via []*http.Request) error {
+		if len(via) >= 5 {
+			return errors.New("too many redirects")
+		}
+		return nil
+	},
+}
 
 func (i *Plugin) Upload(ctx context.Context, r io.Reader, sid id.SceneID, operator *usecase.Operator) (_ *plugin.Plugin, _ *scene.Scene, err error) {
 	if err := i.CanWriteScene(sid, operator); err != nil {
@@ -52,7 +77,7 @@ func (i *Plugin) UploadFromRemote(ctx context.Context, u *url.URL, sid id.SceneI
 		return nil, nil, interfaces.ErrInvalidPluginPackage
 	}
 
-	res, err := http.DefaultClient.Do(req)
+	res, err := remotePluginClient.Do(req)
 	if err != nil {
 		return nil, nil, interfaces.ErrInvalidPluginPackage
 	}
@@ -63,7 +88,7 @@ func (i *Plugin) UploadFromRemote(ctx context.Context, u *url.URL, sid id.SceneI
 		return nil, nil, interfaces.ErrInvalidPluginPackage
 	}
 
-	p, err := pluginpack.PackageFromZip(res.Body, &sid, pluginPackageSizeLimit)
+	p, err := pluginpack.PackageFromZip(io.LimitReader(res.Body, pluginPackageSizeLimit), &sid, pluginPackageSizeLimit)
 	if err != nil {
 		_ = res.Body.Close()
 		return nil, nil, &rerror.Error{
