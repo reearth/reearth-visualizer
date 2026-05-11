@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
+	pb "github.com/reearth/reearth-proto/gen/go/visualizer/v1"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
