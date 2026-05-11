@@ -6,25 +6,30 @@ set -euo pipefail
 # =========================================================
 #
 # Usage:
-#   ./schemas/internalapi/grpcurl.sh [command] [options]
+#   ./tools/internalapi/grpcurl.sh [command] [options]
 #
 # Setup:
 #   1. Set INTERNALAPI_TOKEN in .env.docker
 #   2. make d-run-internal
-#   3. Run this script from the server/ directory
+#   3. Run this script from anywhere; the proto schema is resolved
+#      from the github.com/reearth/reearth-proto Go module cache.
 #
 # Examples:
-#   ./schemas/internalapi/grpcurl.sh list                    # GetProjectList
-#   ./schemas/internalapi/grpcurl.sh all                     # Run all tests (create -> ... -> delete)
-#   ./schemas/internalapi/grpcurl.sh create                  # CreateProject
-#   ./schemas/internalapi/grpcurl.sh get -p <project_id>     # GetProject
-#   ./schemas/internalapi/grpcurl.sh help                    # Show this help
+#   ./tools/internalapi/grpcurl.sh list                    # GetProjectList
+#   ./tools/internalapi/grpcurl.sh all                     # Run all tests (create -> ... -> delete)
+#   ./tools/internalapi/grpcurl.sh create                  # CreateProject
+#   ./tools/internalapi/grpcurl.sh get -p <project_id>     # GetProject
+#   ./tools/internalapi/grpcurl.sh help                    # Show this help
 
 # ---------------------------------------------------------
 # Configuration (override with environment variables)
 # ---------------------------------------------------------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SERVER_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+
 SERVER_ADDRESS="${SERVER_ADDRESS:-localhost:50051}"
-PROTO_FILE="${PROTO_FILE:-schemas/internalapi/v1/schema.proto}"
+PROTO_DIR="${PROTO_DIR:-$(cd "${SERVER_DIR}" && go list -m -f '{{.Dir}}' github.com/reearth/reearth-proto)}"
+PROTO_FILE="${PROTO_FILE:-visualizer/v1/visualizer.proto}"
 USER_ID="${USER_ID:?USER_ID is required}"
 WORKSPACE_ID="${WORKSPACE_ID:?WORKSPACE_ID is required}"
 TOKEN="${TOKEN:-test-abc-123}"
@@ -38,7 +43,7 @@ rpc_read() {
   local method="$1"; shift
   grpcurl -plaintext \
     -H "user-id: ${USER_ID}" \
-    -import-path . -proto "${PROTO_FILE}" \
+    -import-path "${PROTO_DIR}" -proto "${PROTO_FILE}" \
     "$@" \
     "${SERVER_ADDRESS}" "${SERVICE}/${method}"
 }
@@ -48,7 +53,7 @@ rpc_write() {
   grpcurl -plaintext \
     -H "user-id: ${USER_ID}" \
     -H "authorization: Bearer ${TOKEN}" \
-    -import-path . -proto "${PROTO_FILE}" \
+    -import-path "${PROTO_DIR}" -proto "${PROTO_FILE}" \
     "$@" \
     "${SERVER_ADDRESS}" "${SERVICE}/${method}"
 }
@@ -245,7 +250,7 @@ cmd_all() {
 # ---------------------------------------------------------
 usage() {
   cat <<'EOF'
-Usage: ./schemas/internalapi/grpcurl.sh <command> [args]
+Usage: ./tools/internalapi/grpcurl.sh <command> [args]
 
 Required environment variables:
   USER_ID        User ID
