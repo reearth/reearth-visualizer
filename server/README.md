@@ -391,7 +391,7 @@ The Internal API gRPC schema is defined in
 [`github.com/reearth/reearth-proto`](https://github.com/reearth/reearth-proto)
 (`visualizer/v1/visualizer.proto`) and consumed via the Go bindings under
 `github.com/reearth/reearth-proto/gen/go/visualizer/v1`. To test the server
-locally with `grpcurl`, see [`tools/grpcurl.md`](tools/grpcurl.md).
+locally with `grpcurl`, see [`tools/internalapi/grpcurl.md`](tools/internalapi/grpcurl.md).
 
 ## Project Export and Import
 

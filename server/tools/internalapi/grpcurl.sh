@@ -6,7 +6,7 @@ set -euo pipefail
 # =========================================================
 #
 # Usage:
-#   ./tools/grpcurl.sh [command] [options]
+#   ./tools/internalapi/grpcurl.sh [command] [options]
 #
 # Setup:
 #   1. Set INTERNALAPI_TOKEN in .env.docker
@@ -15,17 +15,17 @@ set -euo pipefail
 #      from the github.com/reearth/reearth-proto Go module cache.
 #
 # Examples:
-#   ./tools/grpcurl.sh list                    # GetProjectList
-#   ./tools/grpcurl.sh all                     # Run all tests (create -> ... -> delete)
-#   ./tools/grpcurl.sh create                  # CreateProject
-#   ./tools/grpcurl.sh get -p <project_id>     # GetProject
-#   ./tools/grpcurl.sh help                    # Show this help
+#   ./tools/internalapi/grpcurl.sh list                    # GetProjectList
+#   ./tools/internalapi/grpcurl.sh all                     # Run all tests (create -> ... -> delete)
+#   ./tools/internalapi/grpcurl.sh create                  # CreateProject
+#   ./tools/internalapi/grpcurl.sh get -p <project_id>     # GetProject
+#   ./tools/internalapi/grpcurl.sh help                    # Show this help
 
 # ---------------------------------------------------------
 # Configuration (override with environment variables)
 # ---------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SERVER_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+SERVER_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 SERVER_ADDRESS="${SERVER_ADDRESS:-localhost:50051}"
 PROTO_DIR="${PROTO_DIR:-$(cd "${SERVER_DIR}" && go list -m -f '{{.Dir}}' github.com/reearth/reearth-proto)}"
@@ -250,7 +250,7 @@ cmd_all() {
 # ---------------------------------------------------------
 usage() {
   cat <<'EOF'
-Usage: ./tools/grpcurl.sh <command> [args]
+Usage: ./tools/internalapi/grpcurl.sh <command> [args]
 
 Required environment variables:
   USER_ID        User ID
