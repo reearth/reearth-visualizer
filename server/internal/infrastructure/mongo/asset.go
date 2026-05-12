@@ -201,7 +201,6 @@ func (r *Asset) RemoveByProjectWithFile(ctx context.Context, pid id.ProjectID, f
 		g, gctx := errgroup.WithContext(ctx)
 		g.SetLimit(removeByProjectMaxConcurrent)
 		for _, a := range batch {
-			a := a
 			g.Go(func() error {
 				u, perr := url.Parse(a.URL())
 				if perr != nil || u == nil {
