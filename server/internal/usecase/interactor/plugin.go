@@ -59,7 +59,26 @@ func (i *Plugin) pluginCommon() *pluginCommon {
 }
 
 func (i *Plugin) Fetch(ctx context.Context, ids []id.PluginID, operator *usecase.Operator) ([]*plugin.Plugin, error) {
-	return i.pluginRepo.FindByIDs(ctx, ids)
+	if operator == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+	res, err := i.pluginRepo.FindByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for idx, p := range res {
+		if p == nil {
+			continue
+		}
+		// Global/marketplace plugins (no scene) are public.
+		if p.Scene() == nil {
+			continue
+		}
+		if !operator.IsReadableScene(*p.Scene()) {
+			res[idx] = nil
+		}
+	}
+	return res, nil
 }
 
 func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter *zip.Writer) ([]*plugin.Plugin, []*property.Schema, error) {

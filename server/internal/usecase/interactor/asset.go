@@ -43,7 +43,19 @@ func NewAsset(r *repo.Container, g *gateway.Container) interfaces.Asset {
 }
 
 func (i *Asset) Fetch(ctx context.Context, assets []id.AssetID, operator *usecase.Operator) ([]*asset.Asset, error) {
-	return i.repos.Asset.FindByIDs(ctx, assets)
+	if operator == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+	res, err := i.repos.Asset.FindByIDs(ctx, assets)
+	if err != nil {
+		return nil, err
+	}
+	for idx, a := range res {
+		if a != nil && !operator.IsReadableWorkspace(a.Workspace()) {
+			res[idx] = nil
+		}
+	}
+	return res, nil
 }
 
 func (i *Asset) FindByWorkspaceProject(ctx context.Context, tid accountsID.WorkspaceID, pid *id.ProjectID, keyword *string, sort *asset.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error) {
