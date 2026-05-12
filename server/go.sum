@@ -413,8 +413,10 @@ github.com/ravilushqa/otelgqlgen v0.19.0 h1:LbgdvOeZLW3y6qJoZHu2qd1srsB2aYRDiY8m
 github.com/ravilushqa/otelgqlgen v0.19.0/go.mod h1:89WViMNkh5tnf6PYQGDFQDyLdhpQSlDdQ2/lYkdnlHg=
 github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355 h1:hmQfd74d4+CdE7vz72n8OPAFocOwVo6yoczZ8eLYKi4=
 github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355/go.mod h1:YWoaA2PfCxtfLyH9+pz5tZh9kwKbPEbRoaIA/DSCt10=
-github.com/reearth/reearth-accounts/server v0.0.0-20260402041151-4a1cfa464d74 h1:dXpFg7ES9WpDnirRRPGRzIhgPEW2C3WfCM5eceGTnow=
-github.com/reearth/reearth-accounts/server v0.0.0-20260402041151-4a1cfa464d74/go.mod h1:SQX77AQKJWrQENu2DEnN1cKlqb+9ZLeqV1eJ2FDDYEQ=
+github.com/reearth/reearth-accounts/server v0.0.0-20260408081344-4583813bc504 h1:v3hWJdVHPlNxaT5lQsDc0p1pBWAnbD1oOAxrbawRMAM=
+github.com/reearth/reearth-accounts/server v0.0.0-20260408081344-4583813bc504/go.mod h1:SQX77AQKJWrQENu2DEnN1cKlqb+9ZLeqV1eJ2FDDYEQ=
+github.com/reearth/reearth-proto v1.1.0 h1:X+sMDSUSNrCqo/pyhWIo5DP9Y5gDKHHmgbb40UVpdS0=
+github.com/reearth/reearth-proto v1.1.0/go.mod h1:FKi8cux5rfTA4fgkAl/OA/v0bxArXSQAlZY6mDAZ+7o=
 github.com/reearth/reearthx v0.0.0-20260303053047-71650b1e0cb5 h1:5ARG8AaKVtHZ2QmWzwLIoqdX/5IZ94GFtF/hDv/WuG4=
 github.com/reearth/reearthx v0.0.0-20260303053047-71650b1e0cb5/go.mod h1:z4JjOCy4MZZglLSrJx+btJ1ZLltESDZfSWJCnONwRS4=
 github.com/rodaine/protogofakeit v0.1.1 h1:ZKouljuRM3A+TArppfBqnH8tGZHOwM/pjvtXe9DaXH8=
