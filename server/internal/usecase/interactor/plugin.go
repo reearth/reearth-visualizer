@@ -97,6 +97,10 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 		return nil, nil, err
 	}
 
+	// Cache schema lookups by ID to avoid redundant FindByID calls when
+	// multiple extensions share the same schema (SCA-05).
+	schemaByID := make(map[id.PropertySchemaID]*property.Schema)
+
 	schemas := make([]*property.Schema, 0)
 	for _, p := range plugins {
 		for _, extension := range p.Extensions() {
@@ -121,12 +125,15 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 				_ = stream.Close()
 			}
 
-			schema, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
-			if err != nil {
-				return nil, nil, err
+			sid := extension.Schema()
+			if _, seen := schemaByID[sid]; !seen {
+				s, err := i.propertySchemaRepo.FindByID(ctx, sid)
+				if err != nil {
+					return nil, nil, err
+				}
+				schemaByID[sid] = s
 			}
-
-			schemas = append(schemas, schema)
+			schemas = append(schemas, schemaByID[sid])
 		}
 	}
 
