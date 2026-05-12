@@ -85,10 +85,19 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 
 // GetProject invoked by loader
 func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Operator) ([]*project.Project, error) {
+	if op == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
 
 	projects, err := i.projectRepo.FindByIDs(ctx, ids)
 	if err != nil {
 		return []*project.Project{}, err
+	}
+
+	for idx, p := range projects {
+		if p != nil && !op.IsReadableWorkspace(p.Workspace()) {
+			projects[idx] = nil
+		}
 	}
 
 	projects, err = i.addMetadatas(ctx, projects, false, op)
@@ -138,10 +147,15 @@ func (i *Project) addMetadatas(ctx context.Context, projects []*project.Project,
 	}
 
 	// projects with a FAILED status will be deleted and excluded.
-	excludedProjects := make([]*project.Project, 0)
+	excludedProjects := make([]*project.Project, 0, len(projects))
 	for _, p := range projects {
+		if p == nil {
+			excludedProjects = append(excludedProjects, nil)
+			continue
+		}
 		metadata := matchMetadata(p.ID(), metadatas)
 		if metadata == nil {
+			excludedProjects = append(excludedProjects, p)
 			continue
 		}
 		if *metadata.ImportStatus() == project.ProjectImportStatusFailed {
