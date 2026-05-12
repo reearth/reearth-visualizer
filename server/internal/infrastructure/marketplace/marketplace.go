@@ -5,13 +5,17 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
+	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )
+
+var marketplaceClient = &http.Client{Timeout: 30 * time.Second}
 
 const (
 	secretHeader           string = "X-Reearth-Secret"
@@ -40,7 +44,7 @@ func (m *Marketplace) FetchPluginPackage(ctx context.Context, pid id.PluginID) (
 
 	log.Infofc(ctx, "marketplace: downloading plugin package from \"%s\"", url)
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
@@ -82,7 +86,7 @@ func (m *Marketplace) NotifyDownload(ctx context.Context, pid id.PluginID) error
 
 	log.Infofc(ctx, "marketplace: notify donwload to \"%s\"", url)
 
-	req, err := http.NewRequest("POST", url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, nil)
 	if err != nil {
 		return rerror.ErrInternalByWithContext(ctx, err)
 	}
@@ -112,13 +116,13 @@ func (m *Marketplace) getPluginURL(pid id.PluginID) (string, error) {
 	return strings.TrimSpace(fmt.Sprintf("%s/api/plugins/%s/%s", m.endpoint, pid.Name(), pid.Version().String())), nil
 }
 
-func (m *Marketplace) client(ctx context.Context) (client *http.Client) {
+func (m *Marketplace) client(ctx context.Context) *http.Client {
 	if m.conf != nil && m.conf.ClientID != "" && m.conf.ClientSecret != "" && m.conf.TokenURL != "" {
-		client = m.conf.Client(ctx)
+		// Pass a timeout base client so the oauth2 token fetch also has a deadline.
+		ctx = context.WithValue(ctx, oauth2.HTTPClient, marketplaceClient)
+		c := m.conf.Client(ctx)
+		c.Timeout = 30 * time.Second
+		return c
 	}
-	if client == nil {
-		client = http.DefaultClient
-	}
-
-	return
+	return marketplaceClient
 }
