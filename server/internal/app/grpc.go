@@ -8,9 +8,9 @@ import (
 	"time"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	pb "github.com/reearth/reearth-proto/gen/go/visualizer/v1"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/internalapi"
-	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
