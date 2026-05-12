@@ -184,12 +184,12 @@ func (r *queryResolver) CheckStoryAlias(ctx context.Context, alias string, story
 	return loaders(ctx).Story.CheckStorytellingAlias(ctx, alias, storyId)
 }
 
-func (r *queryResolver) StarredProjects(ctx context.Context, workspaceId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindStarredByWorkspace(ctx, workspaceId)
+func (r *queryResolver) StarredProjects(ctx context.Context, workspaceId gqlmodel.ID, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindStarredByWorkspace(ctx, workspaceId, pagination)
 }
 
-func (r *queryResolver) DeletedProjects(ctx context.Context, workspaceId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindDeletedByWorkspace(ctx, workspaceId)
+func (r *queryResolver) DeletedProjects(ctx context.Context, workspaceId gqlmodel.ID, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindDeletedByWorkspace(ctx, workspaceId, pagination)
 }
 
 func (r *queryResolver) VisibilityProjects(ctx context.Context, authenticated bool, workspaceId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {

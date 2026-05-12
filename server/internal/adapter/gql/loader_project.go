@@ -95,47 +95,71 @@ func (c *ProjectLoader) CheckSceneAlias(ctx context.Context, alias string, proje
 	return &gqlmodel.SceneAliasAvailability{Alias: alias, Available: ok}, nil
 }
 
-func (c *ProjectLoader) FindStarredByWorkspace(ctx context.Context, wsID gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+func (c *ProjectLoader) FindStarredByWorkspace(ctx context.Context, wsID gqlmodel.ID, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error) {
 	tid, err := gqlmodel.ToID[accountsID.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := c.usecase.FindStarredByWorkspace(ctx, tid, getOperator(ctx))
+	res, pi, err := c.usecase.FindStarredByWorkspace(ctx, tid, gqlmodel.ToPagination(pagination), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
+	edges := make([]*gqlmodel.ProjectEdge, 0, len(res))
 	nodes := make([]*gqlmodel.Project, 0, len(res))
 	for _, p := range res {
-		nodes = append(nodes, gqlmodel.ToProject(p))
+		prj := gqlmodel.ToProject(p)
+		edges = append(edges, &gqlmodel.ProjectEdge{
+			Node:   prj,
+			Cursor: usecasex.Cursor(prj.ID),
+		})
+		nodes = append(nodes, prj)
 	}
 
+	totalCount := int64(len(nodes))
+	if pi != nil {
+		totalCount = pi.TotalCount
+	}
 	return &gqlmodel.ProjectConnection{
+		Edges:      edges,
 		Nodes:      nodes,
-		TotalCount: len(nodes),
+		PageInfo:   gqlmodel.ToPageInfo(pi),
+		TotalCount: int(totalCount),
 	}, nil
 }
 
-func (c *ProjectLoader) FindDeletedByWorkspace(ctx context.Context, wsID gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+func (c *ProjectLoader) FindDeletedByWorkspace(ctx context.Context, wsID gqlmodel.ID, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error) {
 	tid, err := gqlmodel.ToID[accountsID.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := c.usecase.FindDeletedByWorkspace(ctx, tid, getOperator(ctx))
+	res, pi, err := c.usecase.FindDeletedByWorkspace(ctx, tid, gqlmodel.ToPagination(pagination), getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
+	edges := make([]*gqlmodel.ProjectEdge, 0, len(res))
 	nodes := make([]*gqlmodel.Project, 0, len(res))
 	for _, p := range res {
-		nodes = append(nodes, gqlmodel.ToProject(p))
+		prj := gqlmodel.ToProject(p)
+		edges = append(edges, &gqlmodel.ProjectEdge{
+			Node:   prj,
+			Cursor: usecasex.Cursor(prj.ID),
+		})
+		nodes = append(nodes, prj)
 	}
 
+	totalCount := int64(len(nodes))
+	if pi != nil {
+		totalCount = pi.TotalCount
+	}
 	return &gqlmodel.ProjectConnection{
+		Edges:      edges,
 		Nodes:      nodes,
-		TotalCount: len(nodes),
+		PageInfo:   gqlmodel.ToPageInfo(pi),
+		TotalCount: int(totalCount),
 	}, nil
 }
 

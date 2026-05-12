@@ -714,7 +714,7 @@ type ComplexityRoot struct {
 		CheckProjectAlias    func(childComplexity int, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) int
 		CheckSceneAlias      func(childComplexity int, alias string, projectID *gqlmodel.ID) int
 		CheckStoryAlias      func(childComplexity int, alias string, storyID *gqlmodel.ID) int
-		DeletedProjects      func(childComplexity int, workspaceID gqlmodel.ID) int
+		DeletedProjects      func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination) int
 		Me                   func(childComplexity int) int
 		Node                 func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Nodes                func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
@@ -725,7 +725,7 @@ type ComplexityRoot struct {
 		PropertySchemas      func(childComplexity int, id []gqlmodel.ID) int
 		Scene                func(childComplexity int, projectID gqlmodel.ID) int
 		SearchUser           func(childComplexity int, nameOrEmail string) int
-		StarredProjects      func(childComplexity int, workspaceID gqlmodel.ID) int
+		StarredProjects      func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination) int
 		WorkspacePolicyCheck func(childComplexity int, input gqlmodel.PolicyCheckInput) int
 	}
 
@@ -1241,8 +1241,8 @@ type QueryResolver interface {
 	Projects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
 	CheckProjectAlias(ctx context.Context, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error)
 	CheckSceneAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.SceneAliasAvailability, error)
-	StarredProjects(ctx context.Context, workspaceID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
-	DeletedProjects(ctx context.Context, workspaceID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
+	StarredProjects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error)
+	DeletedProjects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
@@ -4344,7 +4344,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.DeletedProjects(childComplexity, args["workspaceId"].(gqlmodel.ID)), true
+		return e.complexity.Query.DeletedProjects(childComplexity, args["workspaceId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination)), true
 	case "Query.me":
 		if e.complexity.Query.Me == nil {
 			break
@@ -4460,7 +4460,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.StarredProjects(childComplexity, args["workspaceId"].(gqlmodel.ID)), true
+		return e.complexity.Query.StarredProjects(childComplexity, args["workspaceId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination)), true
 	case "Query.workspacePolicyCheck":
 		if e.complexity.Query.WorkspacePolicyCheck == nil {
 			break
@@ -6668,8 +6668,8 @@ extend type Query {
     projectId: ID
   ): ProjectAliasAvailability!
   checkSceneAlias(alias: String!, projectId: ID): SceneAliasAvailability!
-  starredProjects(workspaceId: ID!): ProjectConnection!
-  deletedProjects(workspaceId: ID!): ProjectConnection!
+  starredProjects(workspaceId: ID!, pagination: Pagination): ProjectConnection!
+  deletedProjects(workspaceId: ID!, pagination: Pagination): ProjectConnection!
 }
 
 extend type Mutation {
@@ -8706,6 +8706,11 @@ func (ec *executionContext) field_Query_deletedProjects_args(ctx context.Context
 		return nil, err
 	}
 	args["workspaceId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "pagination", ec.unmarshalOPagination2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPagination)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg1
 	return args, nil
 }
 
@@ -8841,6 +8846,11 @@ func (ec *executionContext) field_Query_starredProjects_args(ctx context.Context
 		return nil, err
 	}
 	args["workspaceId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "pagination", ec.unmarshalOPagination2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPagination)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg1
 	return args, nil
 }
 
@@ -25138,7 +25148,7 @@ func (ec *executionContext) _Query_starredProjects(ctx context.Context, field gr
 		ec.fieldContext_Query_starredProjects,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().StarredProjects(ctx, fc.Args["workspaceId"].(gqlmodel.ID))
+			return ec.resolvers.Query().StarredProjects(ctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination))
 		},
 		nil,
 		ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection,
@@ -25189,7 +25199,7 @@ func (ec *executionContext) _Query_deletedProjects(ctx context.Context, field gr
 		ec.fieldContext_Query_deletedProjects,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().DeletedProjects(ctx, fc.Args["workspaceId"].(gqlmodel.ID))
+			return ec.resolvers.Query().DeletedProjects(ctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination))
 		},
 		nil,
 		ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection,

@@ -168,12 +168,12 @@ func matchMetadata(pid id.ProjectID, metadatas []*project.ProjectMetadata) *proj
 	return nil
 }
 
-func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
-	return i.projectRepo.FindStarredByWorkspace(ctx, id)
+func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.WorkspaceID, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+	return i.projectRepo.FindStarredByWorkspace(ctx, id, p)
 }
 
-func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
-	return i.projectRepo.FindDeletedByWorkspace(ctx, id)
+func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+	return i.projectRepo.FindDeletedByWorkspace(ctx, id, p)
 }
 
 func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
