@@ -9,3 +9,7 @@ server/.env.docker
 mongo/
 tmp/
 
+# AIDLC workflow files
+.aidlc-rule-details/
+aidlc-docs/
+
