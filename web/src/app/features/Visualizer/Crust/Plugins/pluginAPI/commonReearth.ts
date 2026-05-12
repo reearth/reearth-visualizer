@@ -2,7 +2,7 @@ import { LazyLayer, MapRef } from "@reearth/core";
 
 import { REEATH_PLUGIN_API_VERSION } from "./constaint";
 import { GlobalThis, Reearth } from "./types";
-import { openUrlInNewTab } from "./utils";
+import { openUrlInNewTab, reloadCurrentWebPage } from "./utils";
 
 export type CommonReearth = Omit<
   Reearth,
@@ -215,6 +215,7 @@ export function commonReearth({
       },
       capture: captureScreen,
       open: openUrlInNewTab,
+      reload: reloadCurrentWebPage,
       tools: {
         getLocationFromScreenCoordinate,
         getScreenCoordinateFromPosition,

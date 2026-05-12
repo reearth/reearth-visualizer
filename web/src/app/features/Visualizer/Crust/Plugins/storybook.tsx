@@ -5,7 +5,7 @@ import { PluginProvider } from "./context";
 import type { Context } from "./types";
 
 // Mock function for actions
- 
+
 const fn =
   () =>
   (..._args: any[]) => {};
@@ -119,6 +119,7 @@ export const context: Context = {
       },
       capture: act("captureScreen"),
       open: act("open"),
+      reload: act("reload"),
       tools: {
         getLocationFromScreenCoordinate: act("getLocationFromScreenCoordinate"),
         getScreenCoordinateFromPosition: act("getScreenCoordinateFromPosition"),

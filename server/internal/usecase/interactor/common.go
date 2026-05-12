@@ -19,7 +19,39 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 
 	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/usecasex"
 )
+
+// runWithTxRetry runs fn in a fresh MongoDB transaction for each attempt,
+// retrying up to maxRetries additional times on TransientTransactionError.
+// Each retry starts a new session so the driver can safely renegotiate locks.
+func runWithTxRetry(ctx context.Context, t usecasex.Transaction, maxRetries int, fn func(context.Context) error) error {
+	if t == nil {
+		return fn(ctx)
+	}
+	var lastErr error
+	for attempt := 0; attempt <= maxRetries; attempt++ {
+		tx, err := t.Begin(ctx)
+		if err != nil {
+			return err
+		}
+		txCtx := tx.Context()
+		lastErr = fn(txCtx)
+		if lastErr == nil {
+			tx.Commit()
+		}
+		if endErr := tx.End(txCtx); endErr != nil && lastErr == nil {
+			lastErr = endErr
+		}
+		if lastErr == nil {
+			return nil
+		}
+		if !errors.Is(lastErr, usecasex.ErrTransaction) {
+			return lastErr
+		}
+	}
+	return lastErr
+}
 
 type ContainerConfig struct {
 	SignupSecret       string

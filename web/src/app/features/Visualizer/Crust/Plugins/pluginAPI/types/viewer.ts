@@ -54,6 +54,7 @@ export declare type Viewer = {
     encoderOptions?: number
   ) => string | undefined;
   readonly open: (url: string) => void;
+  readonly reload: () => void;
   readonly on: ViewerEvents["on"];
   readonly off: ViewerEvents["off"];
 };

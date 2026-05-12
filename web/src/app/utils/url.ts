@@ -24,3 +24,7 @@ export const openUrlInNewTab = (url: string): void => {
   }
   window.open(url, "_blank", "noopener");
 };
+
+export const reloadCurrentWebPage = (): void => {
+  window.location.reload();
+};
