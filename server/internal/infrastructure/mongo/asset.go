@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
 	"net/url"
 	"regexp"
 	"strings"
+	"sync"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -22,6 +22,17 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/sync/errgroup"
+)
+
+// Batching parameters for RemoveByProjectWithFile. Chosen so a single batch
+// lives comfortably in memory and one DeleteMany covers a full batch. The GCS
+// concurrency limit keeps cleanup from saturating the storage client pool when
+// multiple project deletions overlap.
+const (
+	removeByProjectBatchSize     = 100
+	removeByProjectMaxConcurrent = 10
 )
 
 var (
@@ -160,39 +171,68 @@ func (r *Asset) Remove(ctx context.Context, id id.AssetID) error {
 }
 
 func (r *Asset) RemoveByProjectWithFile(ctx context.Context, pid id.ProjectID, f gateway.File) error {
-
-	projectAssets, err := r.find(ctx, bson.M{
+	baseFilter := bson.M{
 		"coresupport": true,
 		"project":     pid.String(),
-	})
-	if err != nil {
-		return err
 	}
 
-	for _, a := range projectAssets {
-
-		if !r.f.CanWrite(a.Workspace()) {
-			return repo.ErrOperationDenied
-		}
-
-		aPath, err := url.Parse(a.URL())
+	for {
+		// Find is bounded by removeByProjectBatchSize. After each batch is
+		// deleted, the next call naturally returns the following page because
+		// the previous rows no longer match.
+		batch, err := r.find(ctx, baseFilter, options.Find().SetLimit(removeByProjectBatchSize))
 		if err != nil {
-			continue
+			return err
+		}
+		if len(batch) == 0 {
+			return nil
 		}
 
-		err = f.RemoveAsset(ctx, aPath)
-		if err != nil {
-			log.Print(err.Error())
+		for _, a := range batch {
+			if !r.f.CanWrite(a.Workspace()) {
+				return repo.ErrOperationDenied
+			}
 		}
 
-		err = r.Remove(ctx, a.ID())
-		if err != nil {
-			log.Print(err.Error())
+		var (
+			mu      sync.Mutex
+			failIDs = map[string]struct{}{}
+		)
+		g, gctx := errgroup.WithContext(ctx)
+		g.SetLimit(removeByProjectMaxConcurrent)
+		for _, a := range batch {
+			g.Go(func() error {
+				u, perr := url.Parse(a.URL())
+				if perr != nil || u == nil {
+					return nil
+				}
+				if err := f.RemoveAsset(gctx, u); err != nil {
+					// Log and skip DB deletion so the row survives for retry.
+					log.Errorfc(gctx, "asset: gcs delete failed for %s: %v", a.ID(), err)
+					mu.Lock()
+					failIDs[a.ID().String()] = struct{}{}
+					mu.Unlock()
+				}
+				return nil
+			})
+		}
+		_ = g.Wait()
+
+		ids := make([]string, 0, len(batch))
+		for _, a := range batch {
+			if _, failed := failIDs[a.ID().String()]; !failed {
+				ids = append(ids, a.ID().String())
+			}
+		}
+		writeFilter := applyWorkspaceFilter(bson.M{"id": bson.M{"$in": ids}}, r.f.Writable)
+		if err := r.client.RemoveAll(ctx, writeFilter); err != nil {
+			return err
 		}
 
+		if len(batch) < removeByProjectBatchSize {
+			return nil
+		}
 	}
-
-	return nil
 }
 
 func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, pagination *usecasex.Pagination) ([]*asset.Asset, *usecasex.PageInfo, error) {
@@ -212,9 +252,9 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 	return c.Result, pageInfo, nil
 }
 
-func (r *Asset) find(ctx context.Context, filter any) ([]*asset.Asset, error) {
+func (r *Asset) find(ctx context.Context, filter any, opts ...*options.FindOptions) ([]*asset.Asset, error) {
 	c := mongodoc.NewAssetConsumer(r.f.Readable)
-	if err2 := r.client.Find(ctx, filter, c); err2 != nil {
+	if err2 := r.client.Find(ctx, filter, c, opts...); err2 != nil {
 		return nil, rerror.ErrInternalByWithContext(ctx, err2)
 	}
 	return c.Result, nil
