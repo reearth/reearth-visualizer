@@ -116,22 +116,53 @@ function config(): Plugin {
   return {
     name: "reearth-config",
     async configureServer(server) {
+      const envDir = server.config.envDir || process.cwd();
+
+      // Clear REEARTH_WEB_* from process.env temporarily so loadEnv reads files fresh
+      // This prevents values from op run from interfering with loadEnv's file reading
+      const savedEnvs: Record<string, string | undefined> = {};
+      const prefix = Array.isArray(server.config.envPrefix)
+        ? server.config.envPrefix[0]
+        : server.config.envPrefix || "";
+      for (const key in process.env) {
+        if (prefix && key.startsWith(prefix)) {
+          savedEnvs[key] = process.env[key];
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+          delete process.env[key];
+        }
+      }
+
       const envs = loadEnv(
         server.config.mode,
-        server.config.envDir ?? process.cwd(),
+        envDir,
         server.config.envPrefix
       );
-      const remoteReearthConfig = envs.REEARTH_WEB_CONFIG_URL
-        ? await (await fetch(envs.REEARTH_WEB_CONFIG_URL)).json()
+
+      // Restore process.env
+      Object.assign(process.env, savedEnvs);
+
+      // Merge process.env (from op run) with envs from loadEnv (.env.local overrides)
+      // Priority: .env.local > .env.op (via process.env) > .env
+      // This ensures .env.local overrides work with both yarn start and yarn start:op
+      const mergedEnvs = {
+        ...process.env,
+        ...envs
+      };
+
+      const remoteReearthConfig = mergedEnvs.REEARTH_WEB_CONFIG_URL
+        ? await (await fetch(mergedEnvs.REEARTH_WEB_CONFIG_URL)).json()
         : {};
+
+      const envConfig = readEnv("REEARTH_WEB", {
+        source: mergedEnvs
+      });
+
       const configRes = JSON.stringify(
         {
           ...remoteReearthConfig,
           api: "http://localhost:8080/api",
           published: "/published.html?alias={}",
-          ...readEnv("REEARTH_WEB", {
-            source: envs
-          }),
+          ...envConfig,
           // Override config with local reearth-config.json if it exists
           ...loadJSON("./reearth-config.json")
         },
