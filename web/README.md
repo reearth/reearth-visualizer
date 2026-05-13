@@ -39,3 +39,8 @@ See [docs/1password-setup.md](docs/1password-setup.md) for detailed setup instru
 `yarn gql` automatically generates typing of GraphQL operations.
 
 `yarn i18n` parses components to provide internationalisation for texts in supported languages.
+
+## Documentation
+
+- [1Password CLI Setup](docs/1password-setup.md) - Secure environment variable management
+- [Custom Providers Configuration](docs/custom-providers.md) - Configure custom imagery, terrain, and layer providers
