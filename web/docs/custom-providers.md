@@ -66,16 +66,12 @@ REEARTH_WEB_CUSTOM_DATA_SOURCES='{ ... }'
 
 The configuration uses a JSON structure with three main categories: `imagery`, `terrain`, and `layers`.
 
-**For `imagery` and `terrain` categories:**
+**For all categories:**
 
 - **`providers`** array: Override specific preset providers by matching their `id`. Any provider ID not in this array remains unchanged.
 - **`remove`** array: Remove specific preset providers by listing their `id`. These providers will not be available to users.
 
 **Important**: You can only override or remove **preset** providers. Adding entirely new provider types is not supported. All provider IDs must match those defined in `server/pkg/builtin/manifest.yml`.
-
-**For `layers` category:**
-
-- Simple array of layer configurations (no override/remove logic).
 
 #### Structure
 
@@ -109,13 +105,16 @@ The configuration uses a JSON structure with three main categories: `imagery`, `
     ],
     "remove": ["string (optional)"]
   },
-  "layers": [
-    {
-      "type": "google-photorealistic-3d-tiles",
-      "url": "string",
-      "options": {}
-    }
-  ]
+  "layers": {
+    "providers": [
+      {
+        "id": "string",
+        "url": "string",
+        "options": {}
+      }
+    ],
+    "remove": ["string (optional)"]
+  }
 }
 ```
 
@@ -140,6 +139,12 @@ The configuration uses a JSON structure with three main categories: `imagery`, `
 - **`requestVertexNormals`** (optional): Enable vertex normals for better lighting (default: false)
 - **`requestWaterMask`** (optional): Enable water mask for water rendering (default: false)
 - **`credit`** (optional): Attribution text
+
+**Layer Providers**:
+
+- **`id`** (required): Unique identifier for this layer provider
+- **`url`** (required): URL to the layer data source
+- **`options`** (optional): Layer-specific configuration options (e.g., API keys)
 
 #### URL Template Placeholders
 
@@ -177,7 +182,7 @@ The configuration uses a JSON structure with three main categories: `imagery`, `
 
 **Important Limitation**: You cannot add entirely new provider types. All provider IDs in the `providers` array must match preset IDs defined in the manifest. To use custom tile URLs, override an existing provider (like "default") or use the preset "url" provider type.
 
-**Note**: The `layers` category currently only supports one layer type: `google-photorealistic-3d-tiles`.
+**Note**: The same override and remove logic applies to the `layers` category. Currently only one layer ID is supported: `google-photorealistic-3d-tiles`.
 
 #### Example: Override Specific Provider
 
@@ -259,19 +264,21 @@ Configure custom Google Photorealistic 3D Tiles:
 
 ```json
 {
-  "layers": [
-    {
-      "type": "google-photorealistic-3d-tiles",
-      "url": "https://tile.googleapis.com/v1/3dtiles/root.json",
-      "options": {
-        "apiKey": "your-google-api-key"
+  "layers": {
+    "providers": [
+      {
+        "id": "google-photorealistic-3d-tiles",
+        "url": "https://tile.googleapis.com/v1/3dtiles/root.json",
+        "options": {
+          "apiKey": "your-google-api-key"
+        }
       }
-    }
-  ]
+    ]
+  }
 }
 ```
 
-**Note**: Currently only `google-photorealistic-3d-tiles` is supported. More layer types will be added in future releases.
+**Note**: Currently only `google-photorealistic-3d-tiles` is supported. More layer IDs will be added in future releases.
 
 #### Example: Complete Configuration
 
@@ -311,15 +318,17 @@ Configure all three categories:
       }
     ]
   },
-  "layers": [
-    {
-      "type": "google-photorealistic-3d-tiles",
-      "url": "https://tile.googleapis.com/v1/3dtiles/root.json",
-      "options": {
-        "apiKey": "your-google-api-key"
+  "layers": {
+    "providers": [
+      {
+        "id": "google-photorealistic-3d-tiles",
+        "url": "https://tile.googleapis.com/v1/3dtiles/root.json",
+        "options": {
+          "apiKey": "your-google-api-key"
+        }
       }
-    }
-  ]
+    ]
+  }
 }
 ```
 
@@ -352,7 +361,8 @@ Environment Variable (REEARTH_WEB_CUSTOM_DATA_SOURCES)
 Custom providers are passed through Editor options to the `@reearth/core` library, which handles:
 
 - **Provider Initialization**: Creating imagery and terrain providers from the configuration
-- **Layer Resolution**: Resolving layer data sources based on type
+- **Layer Resolution**: Resolving layer data sources based on ID
+- **Override and Remove Logic**: Applying provider overrides and removing specified providers across all categories
 - **Error Handling**: Fallback to defaults if custom sources fail
 - **Caching**: Caching tile and terrain data according to provider settings
 
@@ -372,12 +382,13 @@ This feature is currently under development.
 
 - [x] Configuration format and structure (JSON with three categories)
 - [x] Override by ID logic: match provider ID and replace
-- [x] Remove array: hide specific default providers
+- [x] Remove array: hide specific preset providers (applies to all categories)
 - [x] Imagery provider options (id, name, nameJa, url, credit, maximumLevel, minimumLevel)
 - [x] Terrain provider options (id, name, nameJa, url, requestVertexNormals, requestWaterMask, credit)
-- [x] Layer support (google-photorealistic-3d-tiles)
+- [x] Layer provider options (id, url, options)
+- [x] Layer support with override and remove (google-photorealistic-3d-tiles)
 - [x] Multiple providers per category
-- [x] Internationalization support (Japanese names)
+- [x] Internationalization support (Japanese names for imagery and terrain)
 - [x] Environment variable configuration (REEARTH_WEB_CUSTOM_DATA_SOURCES)
 
 ### To Be Implemented
@@ -388,7 +399,8 @@ This feature is currently under development.
 - [ ] Pass configuration to @reearth/core library
 - [ ] URL template processing for imagery
 - [ ] Terrain provider initialization
-- [ ] Override by ID matching logic
-- [ ] Remove provider filtering logic
+- [ ] Layer provider initialization
+- [ ] Override by ID matching logic (imagery, terrain, layers)
+- [ ] Remove provider filtering logic (imagery, terrain, layers)
 - [ ] Fallback behavior when custom sources fail
 - [ ] Unit tests and integration tests
