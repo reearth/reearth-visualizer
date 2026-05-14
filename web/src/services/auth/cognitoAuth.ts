@@ -6,6 +6,7 @@ import {
   AuthUser
 } from "@aws-amplify/auth";
 import { logOutFromTenant } from "@reearth/services/config";
+import { clearSentinelToken } from "@reearth/services/sentinel";
 import { useState, useEffect } from "react";
 
 import type { AuthHook } from "./authHook";
@@ -45,6 +46,7 @@ export const useCognitoAuth = (): AuthHook => {
 
   const logout = async () => {
     logOutFromTenant();
+    await clearSentinelToken();
     try {
       await signOut();
       setUser(null);

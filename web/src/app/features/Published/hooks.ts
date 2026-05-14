@@ -15,7 +15,7 @@ import { DeviceType } from "@reearth/app/utils/device";
 import type { Camera } from "@reearth/app/utils/value";
 import { MapRef } from "@reearth/core";
 import type { NLSInfobox } from "@reearth/services/api/layer/types";
-import { config } from "@reearth/services/config";
+import { getTileProviderConfig } from "@reearth/services/tileProvider";
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
@@ -316,7 +316,8 @@ export default (alias?: string) => {
       cesiumIonAccessToken:
         typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
           ? cesiumIonAccessToken
-          : config()?.cesiumIonAccessToken
+          : undefined,
+      tileProvider: getTileProviderConfig()
     }),
     [cesiumIonAccessToken]
   );

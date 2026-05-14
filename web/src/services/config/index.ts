@@ -25,7 +25,25 @@ export type Config = {
   googleClientId?: string;
   sentryDsn?: string;
   sentryEnv?: string;
-  cesiumIonAccessToken?: string;
+  // Terravista configuration
+  terravistaAccessToken?: string;
+  // Base URL, defaults to https://tiles.eukarya.io — all endpoint fields below are derived from it if not set
+  terravistaBaseUrl?: string;
+  // Individual endpoint overrides (each defaults to {terravistaBaseUrl}/<path> if not set)
+  terravistaTerrainUrl?: string;
+  terravistaTerrainCredit?: string;
+  terravistaImageryDefaultUrl?: string;
+  terravistaImageryDefaultCredit?: string;
+  terravistaImageryRoadUrl?: string;
+  terravistaImageryRoadCredit?: string;
+  terravistaImageryBlackMarbleUrl?: string;
+  terravistaImageryBlackMarbleCredit?: string;
+  terravistaImageryOsmUrl?: string;
+  terravistaImageryOsmCredit?: string;
+  terravistaGoogle3dUrl?: string;
+  terravistaGoogle3dCredit?: string;
+  // Tile provider type: 'terravista' | 'custom' (unset = no system provider)
+  tileProviderType?: "terravista" | "custom";
   earlyAccessAdmins?: string[];
   brand?: {
     logoUrl?: string;

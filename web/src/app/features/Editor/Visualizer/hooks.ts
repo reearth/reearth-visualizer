@@ -18,7 +18,7 @@ import { useLayerStyles } from "@reearth/services/api/layerStyle";
 import { usePropertyMutations } from "@reearth/services/api/property";
 import { useStoryBlockMutations } from "@reearth/services/api/storytelling";
 import { useWidgetMutations } from "@reearth/services/api/widget";
-import { config } from "@reearth/services/config";
+import { getTileProviderConfig } from "@reearth/services/tileProvider";
 import { useAtomValue } from "jotai";
 import {
   useMemo,
@@ -421,7 +421,8 @@ export default ({
       cesiumIonAccessToken:
         typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
           ? cesiumIonAccessToken
-          : config()?.cesiumIonAccessToken
+          : undefined,
+      tileProvider: getTileProviderConfig()
     }),
     [cesiumIonAccessToken]
   );
