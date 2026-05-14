@@ -5472,6 +5472,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reearth/sentinel@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@reearth/sentinel@npm:0.1.0"
+  dependencies:
+    idb: "npm:^8.0.0"
+    jose: "npm:^5.0.0"
+  checksum: 10c0/bd4e2ee1bd3e076bd8c96cd4094591eb5d2e5c87702eba0d490012557d8305e0584b010c8c0b96b4648031ebde8ad1bf6ea4ad925d14ed6906453ccaefdc73e2
+  languageName: node
+  linkType: hard
+
 "@reearth/spatial-id-sdk@npm:0.0.0":
   version: 0.0.0
   resolution: "@reearth/spatial-id-sdk@npm:0.0.0"
@@ -5521,6 +5531,7 @@ __metadata:
     "@radix-ui/react-select": "npm:2.2.6"
     "@radix-ui/react-slot": "npm:1.2.4"
     "@reearth/core": "npm:0.0.7-alpha.62"
+    "@reearth/sentinel": "npm:^0.1.0"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
@@ -16087,6 +16098,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"idb@npm:^8.0.0":
+  version: 8.0.3
+  resolution: "idb@npm:8.0.3"
+  checksum: 10c0/421cd9a3281b7564528857031cc33fd9e95753f8191e483054cb25d1ceea7303a0d1462f4f69f5b41606f0f066156999e067478abf2460dfcf9cab80dae2a2b2
+  languageName: node
+  linkType: hard
+
 "ieee754@npm:^1.1.12, ieee754@npm:^1.1.4, ieee754@npm:^1.2.1":
   version: 1.2.1
   resolution: "ieee754@npm:1.2.1"
@@ -16823,6 +16841,13 @@ __metadata:
   bin:
     jiti: lib/jiti-cli.mjs
   checksum: 10c0/79b2e96a8e623f66c1b703b98ec1b8be4500e1d217e09b09e343471bbb9c105381b83edbb979d01cef18318cc45ce6e153571b6c83122170eefa531c64b6789b
+  languageName: node
+  linkType: hard
+
+"jose@npm:^5.0.0":
+  version: 5.10.0
+  resolution: "jose@npm:5.10.0"
+  checksum: 10c0/e20d9fc58d7e402f2e5f04e824b8897d5579aae60e64cb88ebdea1395311c24537bf4892f7de413fab1acf11e922797fb1b42269bc8fc65089a3749265ccb7b0
   languageName: node
   linkType: hard
 
