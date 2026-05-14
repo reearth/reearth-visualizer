@@ -355,12 +355,8 @@ export default ({
 
   useEffect(() => {
     if (
-      (range &&
-        isPlaying &&
-        JSON.stringify(currentTime) >= JSON.stringify(range?.end)) ||
-      (range &&
-        isPlayingReversed &&
-        JSON.stringify(currentTime) <= JSON.stringify(range.start))
+      (range && isPlaying && currentTime >= range.end) ||
+      (range && isPlayingReversed && currentTime <= range.start)
     ) {
       if (playMode === "loop") {
         return handleOnResetAndPlay();
