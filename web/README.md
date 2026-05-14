@@ -6,8 +6,27 @@ Web interface for Re:Earth GIS software built with React 18 and Vite.
 
 ### Development
 
-Add environment variables to .env. A template of the required variables are in `env.local`.
-Consult the development team for the correct environment variables.
+#### Environment Configuration
+
+**Option 1: Traditional .env File (Default)**
+
+1. Copy `.env.example` to `.env`
+2. Fill in your environment variables
+3. Consult the development team for the correct environment variables
+4. Run `yarn start`
+
+**Option 2: 1Password CLI (Recommended)**
+
+Securely manage secrets without storing them on disk.
+
+1. Install 1Password CLI: <https://developer.1password.com/docs/cli/get-started/>
+2. Create 1Password item with environment variables from `.env.example`
+3. Create `.env.op` with 1Password secret references
+4. Run: `yarn start:op`
+
+See [docs/1password-setup.md](docs/1password-setup.md) for detailed setup instructions.
+
+**Tip:** Create `.env.local` to override any variables locally (works with both options above).
 
 `yarn start` to start the local server. The interface will open on [http://localhost:3000](http://localhost:3000)
 
@@ -20,3 +39,8 @@ Consult the development team for the correct environment variables.
 `yarn gql` automatically generates typing of GraphQL operations.
 
 `yarn i18n` parses components to provide internationalisation for texts in supported languages.
+
+## Documentation
+
+- [1Password CLI Setup](docs/1password-setup.md) - Secure environment variable management
+- [Custom Providers Configuration](docs/custom-providers.md) - Configure custom imagery, terrain, and layer providers
