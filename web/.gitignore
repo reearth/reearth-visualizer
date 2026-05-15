@@ -10,6 +10,8 @@ __screenshots__
 /playwright-report
 /test-results
 /.env
+/.env.local
+/.env.op
 /reearth-config.json
 /cesium_ion_token.txt
 .idea/*
