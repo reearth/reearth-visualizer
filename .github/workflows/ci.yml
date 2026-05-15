@@ -89,6 +89,8 @@ jobs:
 
   build-web:
     needs: [ci-web, build-prepare]
+    permissions:
+      contents: write
     uses: ./.github/workflows/build_web.yml
     with:
       sha_short: ${{ needs.build-prepare.outputs.sha_short }}
