@@ -154,7 +154,7 @@ jobs:
         uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
         with:
           egress-policy: audit
-      - uses: reearth/actions/deploy-cloud-run-with-tag@4a7719ea2bfbcf3841b58eaedb01e91d3520227a # main
+      - uses: reearth/actions/deploy-cloud-run-with-tag@ee8a23fc9256524828d4074e0e607904cfd8dffc # main
         id: deploy
         with:
           image: '${{ secrets.WEB_IMAGE_BASE }}:${{ needs.build-prepare-pr.outputs.sha_short }}'
