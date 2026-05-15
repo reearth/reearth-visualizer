@@ -162,6 +162,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     if: ${{ inputs.new_tag != '' }}
+    permissions:
+      contents: write
     env:
       ARTIFACT: reearth-web_${{ inputs.new_tag }}.tar.gz
     steps:

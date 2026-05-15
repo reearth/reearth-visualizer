@@ -23,6 +23,8 @@ jobs:
     name: Build and release server
     runs-on: ubuntu-latest
     if: inputs.name || inputs.new_tag
+    permissions:
+      contents: write
     env:
       ARTIFACTS: server/dist/reearth_*.*
     steps:
