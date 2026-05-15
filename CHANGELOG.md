@@ -2,6 +2,58 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.3 - 2026-05-15
+
+### Web
+
+#### 🚀 Features
+
+- Support reload page on plugin API [VIZ-DEV-24] ([#2190](https://github.com/reearth/reearth-visualizer/pull/2190)) [`dae310`](https://github.com/reearth/reearth-visualizer/commit/dae310)
+- Support list field in plugin-playground ([#2164](https://github.com/reearth/reearth-visualizer/pull/2164)) [`03161f`](https://github.com/reearth/reearth-visualizer/commit/03161f)
+
+#### 🔧 Bug Fixes
+
+- Incorrect time limit check on story timeline block ([#2195](https://github.com/reearth/reearth-visualizer/pull/2195)) [`bcb940`](https://github.com/reearth/reearth-visualizer/commit/bcb940)
+- Fixed button&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s widget padding ([#2161](https://github.com/reearth/reearth-visualizer/pull/2161)) [`da62d6`](https://github.com/reearth/reearth-visualizer/commit/da62d6)
+
+#### ✨ Refactor
+
+- Improve plugin playground content sharing ([#2178](https://github.com/reearth/reearth-visualizer/pull/2178)) [`a76a2d`](https://github.com/reearth/reearth-visualizer/commit/a76a2d)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.3 ([#2197](https://github.com/reearth/reearth-visualizer/pull/2197)) [`181828`](https://github.com/reearth/reearth-visualizer/commit/181828)
+- Missing write permission on release-nightly-rc ([#2196](https://github.com/reearth/reearth-visualizer/pull/2196)) [`4faecf`](https://github.com/reearth/reearth-visualizer/commit/4faecf)
+- Support load env from 1password ([#2184](https://github.com/reearth/reearth-visualizer/pull/2184)) [`17bc2a`](https://github.com/reearth/reearth-visualizer/commit/17bc2a)
+- Bump version to 1.0.0-beta.16.2 ([#2191](https://github.com/reearth/reearth-visualizer/pull/2191)) [`e5dfbc`](https://github.com/reearth/reearth-visualizer/commit/e5dfbc)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Safe type assertion for GraphQL context loaders (REL-05) ([#2187](https://github.com/reearth/reearth-visualizer/pull/2187)) [`6d73e8`](https://github.com/reearth/reearth-visualizer/commit/6d73e8)
+- Deduplicate property schema lookups in plugin export (SCA-05) ([#2188](https://github.com/reearth/reearth-visualizer/pull/2188)) [`8bac75`](https://github.com/reearth/reearth-visualizer/commit/8bac75)
+- Enforce workspace&#x2F;scene ownership in GraphQL node&#x2F;nodes Fetch ([#2179](https://github.com/reearth/reearth-visualizer/pull/2179)) [`82a609`](https://github.com/reearth/reearth-visualizer/commit/82a609)
+- Batch User and Workspace DataLoader fetches via FindByIDs ([#2176](https://github.com/reearth/reearth-visualizer/pull/2176)) [`402052`](https://github.com/reearth/reearth-visualizer/commit/402052)
+- Hold RLock when reading activeUploads in handleChunkedUpload ([#2175](https://github.com/reearth/reearth-visualizer/pull/2175)) [`1f9d91`](https://github.com/reearth/reearth-visualizer/commit/1f9d91)
+- Fix publishProject&#x2F;Story WriteConflict by moving GCS upload outside transaction ([#2177](https://github.com/reearth/reearth-visualizer/pull/2177)) [`945827`](https://github.com/reearth/reearth-visualizer/commit/945827)
+
+#### Miscellaneous Tasks
+
+- Import reearth-proto instead of internal definition ([#2189](https://github.com/reearth/reearth-visualizer/pull/2189)) [`33d118`](https://github.com/reearth/reearth-visualizer/commit/33d118)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Ignore aidlc workflow files ([#2174](https://github.com/reearth/reearth-visualizer/pull/2174)) [`7732a4`](https://github.com/reearth/reearth-visualizer/commit/7732a4)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Ignore aidlc workflow files ([#2174](https://github.com/reearth/reearth-visualizer/pull/2174)) [`7732a4`](https://github.com/reearth/reearth-visualizer/commit/7732a4)
+
 ## 1.0.0-beta.16.1 - 2026-04-22
 
 ### Web
