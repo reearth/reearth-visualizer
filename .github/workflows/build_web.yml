@@ -157,6 +157,7 @@ jobs:
           tag: ${{ inputs.name }}
           body: ${{ inputs.sha }}
           prerelease: true
+          token: ${{ steps.app-token.outputs.token }}
 
   release:
     runs-on: ubuntu-latest
