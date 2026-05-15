@@ -3,5 +3,5 @@
   "extends": [
     "github>reearth/renovate-config"
   ],
-  "rebaseWhen": "never"
+  "rebaseWhen": "conflicted"
 }
