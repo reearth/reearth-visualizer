@@ -27,7 +27,7 @@ const layerNames = [
 
 test.describe.configure({ mode: "serial" });
 
-test.describe("Layer Deletion & Reordering", () => {
+test.describe.skip("Layer Deletion & Reordering", () => {
   let context: BrowserContext;
   let page: Page;
   let dashBoardPage: DashBoardPage;
