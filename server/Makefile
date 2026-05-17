@@ -59,6 +59,7 @@ help:
 	@echo "  d-migrate-with-key Run database migration with MIGRATION_KEY in Docker"
 	@echo "  d-reset-data      Reset database and GCS, reinitialize with mock data"
 	@echo "  d-run             Start all services including accounts API"
+	@echo "  inject-env-op     Inject secrets from 1Password into .env.docker and .env.accounts.docker"
 	@echo "  d-run-standalone  Start visualizer without accounts API (mongo + gcs only)"
 	@echo "  d-run-accounts    Start accounts API with Docker Compose"
 	@echo "  d-run-db          Start MongoDB with Docker Compose"

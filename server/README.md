@@ -173,6 +173,24 @@ graph TB
 
 ## Development
 
+### Environment Setup
+
+There are two ways to configure environment variables depending on your access level:
+
+**OSS contributors** — copy the example files and fill in your own values:
+
+```bash
+cp .env.docker.example .env.docker
+cp .env.accounts.docker.example .env.accounts.docker
+```
+
+**Eukarya employees** — run `inject-env-op` once (requires [1Password CLI](https://developer.1password.com/docs/cli/get-started/) with access to the **Visualizer** vault) to resolve secrets into the `.env` files, then use any existing make target as normal:
+
+```bash
+make inject-env-op
+make d-run
+```
+
 ### Starting Services
 
 #### Method 1: Using Docker Hub image (default)
@@ -343,7 +361,7 @@ No additional configuration is needed — these are the defaults.
 REEARTH_WEB_AUTH_PROVIDER=mock
 ```
 
-**server/.env.accounts.docker**
+**server/.env.accounts.docker** — set by default. OSS contributors edit this file directly; Eukarya employees update the value in 1Password (**Backend ENV OSS**) and re-run `make inject-env-op`.
 
 ```bash
 REEARTH_MOCK_AUTH=true
@@ -353,7 +371,7 @@ REEARTH_MOCK_AUTH=true
 
 ### 2. Identity Provider (IdP) Mode
 
-To use an IdP (e.g. Auth0), edit `server/.env.accounts.docker` with your Auth0 credentials:
+To use an IdP (e.g. Auth0), update `server/.env.accounts.docker` with your Auth0 credentials. OSS contributors edit the file directly; Eukarya employees update the values in 1Password (**Backend ENV OSS**) and re-run `make inject-env-op`.
 
 ```bash
 REEARTH_MOCK_AUTH=false

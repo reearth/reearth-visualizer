@@ -112,6 +112,10 @@ d-run:
 	fi
 	${DOCKER_COMPOSE} --profile accounts up reearth-visualizer-dev
 
+inject-env-op:
+	op inject -f -i app.env -o .env.docker
+	op inject -f -i app.accounts.env -o .env.accounts.docker
+
 d-run-accounts:
 	@if [ ! -f .env.accounts.docker ]; then \
 		echo "Creating .env.accounts.docker from .env.accounts.docker.example..."; \
@@ -197,4 +201,4 @@ d-test:
 d-up-gcs:
 	${DOCKER_COMPOSE} up -d reearth-gcs
 
-.PHONY: d-destroy d-down d-down-gcs d-down-internal d-lint d-logs-accounts d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-run-standalone d-set-mongo-fcv-8 d-test d-up-gcs
+.PHONY: d-destroy d-down d-down-gcs d-down-internal d-lint d-logs-accounts d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts inject-env-op run-db d-run-db d-run-internal d-run-reset d-run-standalone d-set-mongo-fcv-8 d-test d-up-gcs
