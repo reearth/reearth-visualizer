@@ -191,6 +191,20 @@ make inject-env-op
 make d-run
 ```
 
+To start with Auth0 authentication instead of the mock user (e.g. for testing login flows), use `d-run-auth0`. This injects secrets from 1Password and disables mock auth automatically:
+
+```bash
+make d-run-auth0
+```
+
+After starting with Auth0, register your Auth0 user on first run:
+
+```bash
+curl -X POST http://localhost:8080/api/signup \
+  -H "Content-Type: application/json" \
+  -d '{"sub": "<your-auth0-sub>", "email": "<your-email>", "name": "<your-name>"}'
+```
+
 ### Starting Services
 
 #### Method 1: Using Docker Hub image (default)
