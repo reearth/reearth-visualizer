@@ -27,7 +27,7 @@ import (
 )
 
 var (
-	projectIndexes       = []string{"alias", "alias,publishmentstatus", "workspace"}
+	projectIndexes       = []string{"alias", "alias,publishmentstatus", "workspace", "visibility,deleted"}
 	projectUniqueIndexes = []string{"id"}
 )
 
@@ -563,24 +563,12 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		visibility = *pFilter.Visibility
 	}
 
-	// Check if we need to filter by topics (which requires joining with projectmetadata)
-	if len(pFilter.Topics) > 0 {
-		return r.findAllWithTopicsFilter(ctx, pFilter, visibility)
-	}
-
-	// Check if we need to sort by starcount (which requires joining with projectmetadata)
-	if pFilter.Sort != nil && pFilter.Sort.Key == "starcount" {
-		return r.findAllWithStarcountSort(ctx, pFilter, visibility)
-	}
-
-	// Original implementation for non-topics search
 	filter := bson.M{
 		"visibility": visibility,
 		"deleted":    false,
 	}
 
 	if pFilter.Keyword != nil {
-		// Add name regex search directly to the filter
 		filter["name"] = bson.M{
 			"$regex": primitive.Regex{
 				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
@@ -589,30 +577,35 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		}
 	}
 
-	count, err := r.client.Count(ctx, filter)
-	if err != nil {
-		log.Errorf("FindAll: Error counting public projects: %v", err)
-	} else {
-		// If count is 0, do a broader search just to verify projects exist
-		if count == 0 {
-			// Check if there are any projects at all
-			totalCount, err := r.client.Count(ctx, bson.M{})
-			if err != nil {
-				log.Errorf("FindAll: Error counting all projects: %v", err)
-			} else {
-				log.Infof("FindAll: Total projects in MongoDB: %d", totalCount)
-			}
-
-			log.Warnf("FindAll: No public projects found, returning empty list")
+	// Topics filter requires joining with projectmetadata. Pre-fetch matching
+	// project IDs to avoid a per-document $lookup over all public projects.
+	if len(pFilter.Topics) > 0 {
+		ids, err := r.findProjectIDsByTopics(ctx, pFilter.Topics)
+		if err != nil {
+			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: topics pre-query error", err)
+		}
+		if len(ids) == 0 {
 			return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 		}
+		filter["id"] = bson.M{"$in": ids}
 	}
 
+	// Sort by starcount needs metadata join via aggregation
+	if pFilter.Sort != nil && pFilter.Sort.Key == "starcount" {
+		return r.findAllWithStarcountSort(ctx, pFilter, filter)
+	}
+
+	return r.findAllWithFilter(ctx, pFilter, filter)
+}
+
+func (r *Project) findAllWithFilter(ctx context.Context, pFilter repo.ProjectFilter, filter bson.M) ([]*project.Project, *usecasex.PageInfo, error) {
 	if pFilter.Limit != nil && pFilter.Offset != nil {
 		totalCount, err := r.client.Count(ctx, filter)
 		if err != nil {
-			log.Errorf("FindAll: Count error: %v", err)
 			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
+		}
+		if totalCount == 0 {
+			return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 		}
 
 		var sortDoc bson.D
@@ -645,8 +638,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 
 		c := mongodoc.NewProjectConsumer(nil)
 		if err := r.client.Find(ctx, filter, c, findOptions); err != nil {
-			log.Errorf("FindAll: Find error: %v", err)
-			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
+			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Find error:", err)
 		}
 
 		pageInfo := &usecasex.PageInfo{
@@ -663,13 +655,42 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	}
 
 	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
-	if err == nil {
-		log.Infof("FindAll: Filter succeeded, found %d projects", len(projects))
-		return projects, pageInfo, nil
-	} else {
-		log.Warnf("FindAll: Error in pagination: %v, trying simplified query", err)
+	if err != nil {
+		log.Warnf("FindAll: Error in pagination: %v", err)
 		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
+	return projects, pageInfo, nil
+}
+
+// findProjectIDsByTopics returns the list of project IDs whose metadata
+// matches all provided topics. Pre-fetching IDs is much faster than a
+// $lookup-then-$match aggregation across the project collection.
+func (r *Project) findProjectIDsByTopics(ctx context.Context, topics []string) ([]string, error) {
+	metadataColl := r.client.Client().Database().Collection("projectmetadata")
+	cursor, err := metadataColl.Find(ctx, bson.M{
+		"topics": bson.M{"$all": topics},
+	}, options.Find().SetProjection(bson.M{"project": 1, "_id": 0}))
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var ids []string
+	for cursor.Next(ctx) {
+		var doc struct {
+			Project string `bson:"project"`
+		}
+		if err := cursor.Decode(&doc); err != nil {
+			return nil, err
+		}
+		if doc.Project != "" {
+			ids = append(ids, doc.Project)
+		}
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	return ids, nil
 }
 
 func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountsID.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
@@ -926,24 +947,8 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 	return res
 }
 
-func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.ProjectFilter, visibility string) ([]*project.Project, *usecasex.PageInfo, error) {
-	// Build aggregation pipeline
-	matchStage := bson.M{
-		"$match": bson.M{
-			"visibility": visibility,
-			"deleted":    false,
-		},
-	}
-
-	// Add keyword search for name if provided
-	if pFilter.Keyword != nil {
-		matchStage["$match"].(bson.M)["name"] = bson.M{
-			"$regex": primitive.Regex{
-				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
-				Options: "i",
-			},
-		}
-	}
+func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.ProjectFilter, filter bson.M) ([]*project.Project, *usecasex.PageInfo, error) {
+	matchStage := bson.M{"$match": filter}
 
 	lookupStage := bson.M{
 		"$lookup": bson.M{
@@ -954,128 +959,8 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 		},
 	}
 
-	// Build topics match condition
-	topicsMatchStage := bson.M{
-		"$match": bson.M{
-			"metadata.topics": bson.M{"$all": pFilter.Topics},
-		},
-	}
-
-	pipeline := []bson.M{matchStage, lookupStage, topicsMatchStage}
-
-	// Handle sorting
-	sortOrder := 1
-	if pFilter.Sort != nil {
-		sortKey := pFilter.Sort.Key
-		if sortKey == "starcount" {
-			sortKey = "metadata.starcount"
-		}
-		if pFilter.Sort.Desc {
-			sortOrder = -1
-		}
-		sortStage := bson.M{
-			"$sort": bson.D{{Key: sortKey, Value: sortOrder}, {Key: "_id", Value: sortOrder}},
-		}
-		pipeline = append(pipeline, sortStage)
-	} else {
-		// Default sort by starcount descending
-		sortStage := bson.M{
-			"$sort": bson.D{{Key: "metadata.starcount", Value: -1}, {Key: "_id", Value: -1}},
-		}
-		pipeline = append(pipeline, sortStage)
-	}
-
-	// Count total documents with aggregation
-	countPipeline := make([]bson.M, len(pipeline))
-	copy(countPipeline, pipeline)
-	countPipeline = append(countPipeline, bson.M{"$count": "total"})
-
-	countCursor, err := r.client.Client().Aggregate(ctx, countPipeline)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer countCursor.Close(ctx)
-
-	var totalCount int64 = 0
-	if countCursor.Next(ctx) {
-		var result struct {
-			Total int64 `bson:"total"`
-		}
-		if err := countCursor.Decode(&result); err == nil {
-			totalCount = result.Total
-		}
-	}
-
-	// Handle pagination
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		pipeline = append(pipeline, bson.M{"$skip": *pFilter.Offset})
-		pipeline = append(pipeline, bson.M{"$limit": *pFilter.Limit})
-	}
-
-	// Execute aggregation
-	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer cursor.Close(ctx)
-
-	consumer := mongodoc.NewProjectConsumer(nil)
-	for cursor.Next(ctx) {
-		raw := cursor.Current
-		if err := consumer.Consume(raw); err != nil {
-			return nil, nil, err
-		}
-	}
-	if err := cursor.Err(); err != nil {
-		return nil, nil, err
-	}
-
-	var hasNextPage, hasPreviousPage bool
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
-		hasPreviousPage = *pFilter.Offset > 0
-	}
-
-	pageInfo := &usecasex.PageInfo{
-		TotalCount:      totalCount,
-		HasNextPage:     hasNextPage,
-		HasPreviousPage: hasPreviousPage,
-	}
-
-	return consumer.Result, pageInfo, nil
-}
-
-func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.ProjectFilter, visibility string) ([]*project.Project, *usecasex.PageInfo, error) {
-	// Build aggregation pipeline
-	matchStage := bson.M{
-		"$match": bson.M{
-			"visibility": visibility,
-			"deleted":    false,
-		},
-	}
-
-	// Add keyword search for name if provided
-	if pFilter.Keyword != nil {
-		matchStage["$match"].(bson.M)["name"] = bson.M{
-			"$regex": primitive.Regex{
-				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
-				Options: "i",
-			},
-		}
-	}
-
-	lookupStage := bson.M{
-		"$lookup": bson.M{
-			"from":         "projectmetadata",
-			"localField":   "id",
-			"foreignField": "project",
-			"as":           "metadata",
-		},
-	}
-
-	// Handle sorting by starcount
-	// For projects without metadata, we need to handle them specially
-	// Add a field for sorting that handles missing metadata
+	// Project-side sort key derived from metadata.starcount, defaulting to 0
+	// when no metadata exists, so projects without metadata sort to the end.
 	addFieldsStage := bson.M{
 		"$addFields": bson.M{
 			"sort_star_count": bson.M{
@@ -1089,7 +974,7 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 							},
 						},
 					},
-					"else": 0, // Projects without metadata get 0 for sorting
+					"else": 0,
 				},
 			},
 		},
@@ -1106,47 +991,48 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		},
 	}
 
-	pipeline := []bson.M{matchStage, lookupStage, addFieldsStage, sortStage}
-
-	// Count total documents with aggregation
-	countPipeline := make([]bson.M, len(pipeline))
-	copy(countPipeline, pipeline)
-	countPipeline = append(countPipeline, bson.M{"$count": "total"})
-
-	countCursor, err := r.client.Client().Aggregate(ctx, countPipeline)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer countCursor.Close(ctx)
-
-	var totalCount int64 = 0
-	if countCursor.Next(ctx) {
-		var result struct {
-			Total int64 `bson:"total"`
-		}
-		if err := countCursor.Decode(&result); err == nil {
-			totalCount = result.Total
-		}
-	}
-
-	// Handle pagination
+	dataPipeline := []bson.M{sortStage}
 	if pFilter.Limit != nil && pFilter.Offset != nil {
-		pipeline = append(pipeline, bson.M{"$skip": *pFilter.Offset})
-		pipeline = append(pipeline, bson.M{"$limit": *pFilter.Limit})
+		dataPipeline = append(dataPipeline, bson.M{"$skip": *pFilter.Offset})
+		dataPipeline = append(dataPipeline, bson.M{"$limit": *pFilter.Limit})
 	}
 
-	// Execute aggregation
+	// $facet runs count and paginated data in a single pipeline pass,
+	// avoiding the duplicate $lookup/$addFields the previous code required.
+	facetStage := bson.M{
+		"$facet": bson.M{
+			"data":  dataPipeline,
+			"count": []bson.M{{"$count": "total"}},
+		},
+	}
+
+	pipeline := []bson.M{matchStage, lookupStage, addFieldsStage, facetStage}
+
 	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, nil, err
 	}
 	defer cursor.Close(ctx)
 
+	var totalCount int64 = 0
 	consumer := mongodoc.NewProjectConsumer(nil)
-	for cursor.Next(ctx) {
-		raw := cursor.Current
-		if err := consumer.Consume(raw); err != nil {
+	if cursor.Next(ctx) {
+		var result struct {
+			Data  []bson.Raw `bson:"data"`
+			Count []struct {
+				Total int64 `bson:"total"`
+			} `bson:"count"`
+		}
+		if err := cursor.Decode(&result); err != nil {
 			return nil, nil, err
+		}
+		if len(result.Count) > 0 {
+			totalCount = result.Count[0].Total
+		}
+		for _, raw := range result.Data {
+			if err := consumer.Consume(raw); err != nil {
+				return nil, nil, err
+			}
 		}
 	}
 	if err := cursor.Err(); err != nil {
