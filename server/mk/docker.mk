@@ -113,14 +113,13 @@ d-run:
 	${DOCKER_COMPOSE} --profile accounts up reearth-visualizer-dev
 
 inject-env-op:
+	@command -v op >/dev/null 2>&1 || { echo "Error: 1Password CLI not installed. See https://developer.1password.com/docs/cli/get-started/"; exit 1; }
 	op inject -f -i app.env -o .env.docker
 	op inject -f -i app.accounts.env -o .env.accounts.docker
 
-d-run-auth0:
-	op inject -f -i app.env -o .env.docker
-	op inject -f -i app.accounts.env -o .env.accounts.docker
-	sed -i '' 's/REEARTH_MOCKAUTH=.*/REEARTH_MOCKAUTH=false/' .env.docker
-	sed -i '' 's/REEARTH_MOCK_AUTH=.*/REEARTH_MOCK_AUTH=false/' .env.accounts.docker
+d-run-auth0: inject-env-op
+	sed -i.bak 's/REEARTH_MOCKAUTH=.*/REEARTH_MOCKAUTH=false/' .env.docker && rm -f .env.docker.bak
+	sed -i.bak 's/REEARTH_MOCK_AUTH=.*/REEARTH_MOCK_AUTH=false/' .env.accounts.docker && rm -f .env.accounts.docker.bak
 	${DOCKER_COMPOSE} --profile accounts up reearth-visualizer-dev
 
 d-run-accounts:
