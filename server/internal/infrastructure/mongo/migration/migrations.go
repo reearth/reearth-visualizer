@@ -42,4 +42,5 @@ var migrations = migration.Migrations[DBClient]{
 	251113173239: GcschangeEsriToDefault,
 	251216142332: RemoveTimeline,
 	251222111114: AddUnifiedCaseInsensitiveAliasIndex,
+	260518143901: AddProjectVisibilityAndTopicsIndexes,
 }

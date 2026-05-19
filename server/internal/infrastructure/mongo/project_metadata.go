@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	projectmetadataIndexes       = []string{"project", "topics"}
+	projectmetadataIndexes       = []string{"project"}
 	projectmetadataUniqueIndexes = []string{"id"}
 )
 
