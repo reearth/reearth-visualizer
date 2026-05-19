@@ -349,7 +349,9 @@ make d-test
 | Command | Description |
 | --- | --- |
 | `make d-run` | Start all services including accounts API from Docker Hub |
+| `make d-run-auth0` | Start all services with Auth0 authentication (requires 1Password) |
 | `make d-run-standalone` | Start visualizer without accounts API (mongo + gcs only) |
+| `make run-app` | Run the Go server directly (accounts API + infra in Docker) |
 | `make d-down` | Stop all services |
 | `make d-logs-accounts` | Follow accounts API logs |
 | `make setup-dev` | Initialize GCS bucket and create mock user |
@@ -357,6 +359,7 @@ make d-test
 | `make d-destroy` | Remove ALL Docker resources and data (destructive) |
 | `make d-lint` | Run golangci-lint in Docker container |
 | `make d-test` | Run tests in Docker container |
+| `make inject-env-op` | Inject secrets from 1Password into `.env.docker` and `.env.accounts.docker` |
 
 ## Authentication
 
@@ -376,7 +379,7 @@ No additional configuration is needed — these are the defaults.
 REEARTH_WEB_AUTH_PROVIDER=mock
 ```
 
-**server/.env.accounts.docker** — set by default. OSS contributors edit this file directly; Eukarya employees update the value in 1Password (**Backend ENV OSS**) and re-run `make inject-env-op`.
+**server/.env.accounts.docker** — set by default. OSS contributors edit this file directly; Eukarya employees re-run `make inject-env-op`.
 
 ```bash
 REEARTH_MOCK_AUTH=true
@@ -386,7 +389,7 @@ REEARTH_MOCK_AUTH=true
 
 ### 2. Identity Provider (IdP) Mode
 
-To use an IdP (e.g. Auth0), update `server/.env.accounts.docker` with your Auth0 credentials. OSS contributors edit the file directly; Eukarya employees update the values in 1Password (**Backend ENV OSS**) and re-run `make inject-env-op`.
+To use an IdP (e.g. Auth0), update `server/.env.accounts.docker` with your Auth0 credentials. OSS contributors edit the file directly; Eukarya employees re-run `make inject-env-op`.
 
 ```bash
 REEARTH_MOCK_AUTH=false
@@ -398,6 +401,8 @@ REEARTH_AUTH0_WEBCLIENTID=your-auth0-web-client-id
 ```
 
 > If you are using [Method 2](#method-2-local-accounts-development), edit `reearth-accounts/server/.env.docker` instead.
+
+> **Note for `make run-app` users:** The visualizer Go server reads `server/.env` for its Auth0 config. The `REEARTH_AUTH0_DOMAIN`, `REEARTH_AUTH0_AUDIENCE`, and `REEARTH_AUTH0_WEBCLIENTID` values in `server/.env` must match those in `server/.env.accounts.docker` — both services validate JWTs against the same Auth0 tenant. Copy these values manually after updating `server/.env.accounts.docker`.
 
 Also update **web/.env**:
 
