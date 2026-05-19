@@ -577,20 +577,13 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		}
 	}
 
-	// Topics filter requires joining with projectmetadata. Pre-fetch matching
-	// project IDs to avoid a per-document $lookup over all public projects.
+	// Topics filter or starcount sort needs to join projectmetadata. The
+	// topics path keeps the join entirely server-side via a pipeline-form
+	// $lookup that filters on the projectmetadata.topics index, which avoids
+	// transferring potentially large ID sets through the client.
 	if len(pFilter.Topics) > 0 {
-		ids, err := r.findProjectIDsByTopics(ctx, pFilter.Topics)
-		if err != nil {
-			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: topics pre-query error", err)
-		}
-		if len(ids) == 0 {
-			return []*project.Project{}, usecasex.EmptyPageInfo(), nil
-		}
-		filter["id"] = bson.M{"$in": ids}
+		return r.findAllWithTopicsFilter(ctx, pFilter, filter)
 	}
-
-	// Sort by starcount needs metadata join via aggregation
 	if pFilter.Sort != nil && pFilter.Sort.Key == "starcount" {
 		return r.findAllWithStarcountSort(ctx, pFilter, filter)
 	}
@@ -662,35 +655,115 @@ func (r *Project) findAllWithFilter(ctx context.Context, pFilter repo.ProjectFil
 	return projects, pageInfo, nil
 }
 
-// findProjectIDsByTopics returns the list of project IDs whose metadata
-// matches all provided topics. Pre-fetching IDs is much faster than a
-// $lookup-then-$match aggregation across the project collection.
-func (r *Project) findProjectIDsByTopics(ctx context.Context, topics []string) ([]string, error) {
-	metadataColl := r.client.Client().Database().Collection("projectmetadata")
-	cursor, err := metadataColl.Find(ctx, bson.M{
-		"topics": bson.M{"$all": topics},
-	}, options.Find().SetProjection(bson.M{"project": 1, "_id": 0}))
+// findAllWithTopicsFilter runs the FindAll aggregation when a topics filter is
+// active. It uses a pipeline-form $lookup so the topics match runs inside the
+// projectmetadata sub-pipeline (using both the project and topics indexes),
+// avoiding the per-document $lookup-then-$match the previous implementation
+// did and without transferring matching IDs through the client.
+//
+// When no explicit sort is given, ordering defaults to metadata.starcount
+// descending, matching the previous topics path's behavior.
+func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.ProjectFilter, filter bson.M) ([]*project.Project, *usecasex.PageInfo, error) {
+	matchStage := bson.M{"$match": filter}
+
+	lookupStage := bson.M{
+		"$lookup": bson.M{
+			"from": "projectmetadata",
+			"let":  bson.M{"pid": "$id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr":  bson.M{"$eq": bson.A{"$project", "$$pid"}},
+					"topics": bson.M{"$all": pFilter.Topics},
+				}},
+			},
+			"as": "metadata",
+		},
+	}
+
+	matchHasMetadata := bson.M{
+		"$match": bson.M{"metadata.0": bson.M{"$exists": true}},
+	}
+
+	sortKey := "metadata.starcount"
+	sortOrder := -1
+	if pFilter.Sort != nil {
+		if pFilter.Sort.Key == "starcount" {
+			sortKey = "metadata.starcount"
+		} else {
+			sortKey = pFilter.Sort.Key
+		}
+		if pFilter.Sort.Desc {
+			sortOrder = -1
+		} else {
+			sortOrder = 1
+		}
+	}
+	sortStage := bson.M{
+		"$sort": bson.D{
+			{Key: sortKey, Value: sortOrder},
+			{Key: "_id", Value: sortOrder},
+		},
+	}
+
+	dataPipeline := []bson.M{sortStage}
+	if pFilter.Limit != nil && pFilter.Offset != nil {
+		dataPipeline = append(dataPipeline, bson.M{"$skip": *pFilter.Offset})
+		dataPipeline = append(dataPipeline, bson.M{"$limit": *pFilter.Limit})
+	}
+
+	facetStage := bson.M{
+		"$facet": bson.M{
+			"data":  dataPipeline,
+			"count": []bson.M{{"$count": "total"}},
+		},
+	}
+
+	pipeline := []bson.M{matchStage, lookupStage, matchHasMetadata, facetStage}
+
+	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer cursor.Close(ctx)
 
-	var ids []string
-	for cursor.Next(ctx) {
-		var doc struct {
-			Project string `bson:"project"`
+	var totalCount int64 = 0
+	consumer := mongodoc.NewProjectConsumer(nil)
+	if cursor.Next(ctx) {
+		var result struct {
+			Data  []bson.Raw `bson:"data"`
+			Count []struct {
+				Total int64 `bson:"total"`
+			} `bson:"count"`
 		}
-		if err := cursor.Decode(&doc); err != nil {
-			return nil, err
+		if err := cursor.Decode(&result); err != nil {
+			return nil, nil, err
 		}
-		if doc.Project != "" {
-			ids = append(ids, doc.Project)
+		if len(result.Count) > 0 {
+			totalCount = result.Count[0].Total
+		}
+		for _, raw := range result.Data {
+			if err := consumer.Consume(raw); err != nil {
+				return nil, nil, err
+			}
 		}
 	}
 	if err := cursor.Err(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return ids, nil
+
+	var hasNextPage, hasPreviousPage bool
+	if pFilter.Limit != nil && pFilter.Offset != nil {
+		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
+		hasPreviousPage = *pFilter.Offset > 0
+	}
+
+	pageInfo := &usecasex.PageInfo{
+		TotalCount:      totalCount,
+		HasNextPage:     hasNextPage,
+		HasPreviousPage: hasPreviousPage,
+	}
+
+	return consumer.Result, pageInfo, nil
 }
 
 func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountsID.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
