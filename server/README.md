@@ -177,12 +177,7 @@ graph TB
 
 There are two ways to configure environment variables depending on your access level:
 
-**OSS contributors** — `make d-run` auto-creates `.env.docker` and `.env.accounts.docker` from the example files on first run. If you need to customise values before starting, copy them manually first:
-
-```bash
-cp .env.docker.example .env.docker
-cp .env.accounts.docker.example .env.accounts.docker
-```
+**OSS contributors** — `make d-run` auto-creates `.env.docker` and `.env.accounts.docker` from the example files on first run. Edit those files directly if you need to customise any values.
 
 **Eukarya employees** — requires [1Password CLI](https://developer.1password.com/docs/cli/get-started/) with access to the **Visualizer** vault. Sign in first, then run `inject-env-op` to resolve secrets into the `.env` files:
 
