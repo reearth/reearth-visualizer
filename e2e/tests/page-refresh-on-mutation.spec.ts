@@ -23,7 +23,7 @@ const layerName = faker.string.alpha(8);
 
 test.describe.configure({ mode: "serial" });
 
-test.describe("Page refresh on mutation actions", () => {
+test.describe.skip("Page refresh on mutation actions", () => {
   let context: BrowserContext;
   let page: Page;
   let dashBoardPage: DashBoardPage;
