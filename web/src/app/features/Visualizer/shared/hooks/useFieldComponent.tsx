@@ -226,9 +226,17 @@ export const FieldComponent = ({
         description={field.description}
         options={
           field?.choices?.map(
-            ({ key, label }: { key: string; label: string }) => ({
+            ({
+              key,
+              label,
+              title
+            }: {
+              key: string;
+              label: string;
+              title?: string;
+            }) => ({
               value: key,
-              label: label
+              label: label ?? title ?? key
             })
           ) || []
         }
