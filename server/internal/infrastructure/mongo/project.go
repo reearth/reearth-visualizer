@@ -1090,111 +1090,90 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 	return res
 }
 
+// findAllWithStarcountSort runs the FindAll path that orders by starcount.
+// The previous implementation matched projects first, $lookup'd every
+// metadata, computed sort_star_count, and sorted in memory — so the work
+// scaled with the size of the public project set even when only the top N
+// projects were needed.
+//
+// This implementation starts from projectmetadata and uses its
+// (starcount, _id) index for an index-backed $sort. A pipeline-form
+// $lookup brings in the matching project with the visibility/deleted/
+// keyword filter applied inline; non-matching metadata (private/deleted
+// projects, projects filtered out by keyword) is dropped via the
+// post-lookup $match. MongoDB can stream the index-ordered scan and stop
+// once $limit is satisfied, so realistic top-N queries only touch the
+// metadata entries near the top of the ordering.
+//
+// The total count for the response is independent of metadata and is
+// computed by a direct Count on the project collection using the same
+// project filter.
+//
+// Cursor.After/Before are still ignored on this path; First/Last/Limit
+// are clamped via effectiveSkipLimit.
 func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.ProjectFilter, filter bson.M) ([]*project.Project, *usecasex.PageInfo, error) {
 	warnIfUnsupportedCursor(ctx, "starcount", pFilter.Pagination)
-	matchStage := bson.M{"$match": filter}
 
-	lookupStage := bson.M{
-		"$lookup": bson.M{
-			"from":         "projectmetadata",
-			"localField":   "id",
-			"foreignField": "project",
-			"as":           "metadata",
-		},
+	totalCount, err := r.client.Count(ctx, filter)
+	if err != nil {
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: starcount count error", err)
 	}
-
-	// Project-side sort key derived from metadata.starcount, defaulting to 0
-	// when no metadata exists. Missing-metadata projects therefore sort to
-	// the bottom for DESC and to the top for ASC, matching the semantics of
-	// treating an absent star count as zero.
-	addFieldsStage := bson.M{
-		"$addFields": bson.M{
-			"sort_star_count": bson.M{
-				"$cond": bson.M{
-					"if": bson.M{"$gt": bson.A{bson.M{"$size": "$metadata"}, 0}},
-					"then": bson.M{
-						"$toInt": bson.M{
-							"$ifNull": bson.A{
-								bson.M{"$arrayElemAt": bson.A{"$metadata.starcount", 0}},
-								0,
-							},
-						},
-					},
-					"else": 0,
-				},
-			},
-		},
+	if totalCount == 0 {
+		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
 
 	sortOrder := 1
-	if pFilter.Sort.Desc {
+	if pFilter.Sort != nil && pFilter.Sort.Desc {
 		sortOrder = -1
 	}
-	sortStage := bson.M{
-		"$sort": bson.D{
-			{Key: "sort_star_count", Value: sortOrder},
-			{Key: "_id", Value: sortOrder},
-		},
+
+	// Build the $lookup sub-pipeline: correlate metadata.project with
+	// project.id and apply the same project filter (visibility, deleted,
+	// optional keyword) inline so private/deleted/non-matching projects
+	// are dropped before they reach the post-lookup $match.
+	lookupMatch := bson.M{"$expr": bson.M{"$eq": bson.A{"$id", "$$pid"}}}
+	for k, v := range filter {
+		lookupMatch[k] = v
 	}
 
-	// metadata is only needed to compute sort_star_count, so drop it
-	// immediately after $addFields. The smaller documents reduce sort
-	// buffer/spill cost. sort_star_count is dropped after sorting since
-	// neither field is consumed downstream.
 	skip, lim := effectiveSkipLimit(pFilter)
-	dataPipeline := []bson.M{lookupStage, addFieldsStage, {"$unset": "metadata"}, sortStage}
+
+	pipeline := []bson.M{
+		{"$sort": bson.D{
+			{Key: "starcount", Value: sortOrder},
+			{Key: "_id", Value: sortOrder},
+		}},
+		{"$lookup": bson.M{
+			"from":     "project",
+			"let":      bson.M{"pid": "$project"},
+			"pipeline": []bson.M{{"$match": lookupMatch}},
+			"as":       "project",
+		}},
+		{"$match": bson.M{"project.0": bson.M{"$exists": true}}},
+	}
 	if skip > 0 {
-		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
+		pipeline = append(pipeline, bson.M{"$skip": skip})
 	}
-	dataPipeline = append(dataPipeline, bson.M{"$limit": lim}, bson.M{"$unset": "sort_star_count"})
+	pipeline = append(pipeline,
+		bson.M{"$limit": lim},
+		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$arrayElemAt": bson.A{"$project", 0}}}},
+	)
 
-	// $facet runs count and paginated data in a single pipeline pass. The
-	// total count for this path is determined solely by the project filter,
-	// so $lookup/$addFields/$sort/$skip/$limit live only in the `data`
-	// sub-pipeline; the `count` sub-pipeline reads the post-$match stream
-	// directly to avoid materializing metadata it does not need.
-	facetStage := bson.M{
-		"$facet": bson.M{
-			"data":  dataPipeline,
-			"count": []bson.M{{"$count": "total"}},
-		},
-	}
-
-	pipeline := []bson.M{matchStage, facetStage}
-
-	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
+	metadataColl := r.client.Client().Database().Collection("projectmetadata")
+	cursor, err := metadataColl.Aggregate(ctx, pipeline)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: starcount aggregate error", err)
 	}
 	defer cursor.Close(ctx)
 
-	var totalCount int64 = 0
 	consumer := mongodoc.NewProjectConsumer(nil)
-	if cursor.Next(ctx) {
-		var result struct {
-			Data  []bson.Raw `bson:"data"`
-			Count []struct {
-				Total int64 `bson:"total"`
-			} `bson:"count"`
-		}
-		if err := cursor.Decode(&result); err != nil {
+	for cursor.Next(ctx) {
+		if err := consumer.Consume(cursor.Current); err != nil {
 			return nil, nil, err
-		}
-		if len(result.Count) > 0 {
-			totalCount = result.Count[0].Total
-		}
-		for _, raw := range result.Data {
-			if err := consumer.Consume(raw); err != nil {
-				return nil, nil, err
-			}
 		}
 	}
 	if err := cursor.Err(); err != nil {
 		return nil, nil, err
-	}
-
-	if totalCount == 0 {
-		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
 
 	pageInfo := &usecasex.PageInfo{
