@@ -742,15 +742,25 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 		},
 	}
 
+	// When ordering does not depend on the joined metadata (e.g. by
+	// updatedat on the project itself), drop the metadata array before
+	// $sort to reduce sort buffer/spill cost. When sorting by
+	// metadata.starcount the array must survive until after $sort and is
+	// dropped once $limit has reduced the row count.
 	skip, lim := effectiveSkipLimit(pFilter)
-	dataPipeline := []bson.M{sortStage}
+	sortNeedsMetadata := strings.HasPrefix(sortKey, "metadata.")
+	dataPipeline := make([]bson.M, 0, 6)
+	if !sortNeedsMetadata {
+		dataPipeline = append(dataPipeline, bson.M{"$unset": "metadata"})
+	}
+	dataPipeline = append(dataPipeline, sortStage)
 	if skip > 0 {
 		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
 	}
-	// Drop the joined metadata array before materializing into the facet.
-	// The project consumer ignores it, and keeping it would bloat the single
-	// facet result document toward MongoDB's 16MB limit.
-	dataPipeline = append(dataPipeline, bson.M{"$limit": lim}, bson.M{"$unset": "metadata"})
+	dataPipeline = append(dataPipeline, bson.M{"$limit": lim})
+	if sortNeedsMetadata {
+		dataPipeline = append(dataPipeline, bson.M{"$unset": "metadata"})
+	}
 
 	facetStage := bson.M{
 		"$facet": bson.M{
@@ -1105,16 +1115,16 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		},
 	}
 
+	// metadata is only needed to compute sort_star_count, so drop it
+	// immediately after $addFields. The smaller documents reduce sort
+	// buffer/spill cost. sort_star_count is dropped after sorting since
+	// neither field is consumed downstream.
 	skip, lim := effectiveSkipLimit(pFilter)
-	dataPipeline := []bson.M{lookupStage, addFieldsStage, sortStage}
+	dataPipeline := []bson.M{lookupStage, addFieldsStage, bson.M{"$unset": "metadata"}, sortStage}
 	if skip > 0 {
 		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
 	}
-	// Drop the joined metadata array and the temporary sort key before
-	// materializing into the facet. Neither field is consumed downstream and
-	// keeping them would bloat the single facet result document toward
-	// MongoDB's 16MB limit.
-	dataPipeline = append(dataPipeline, bson.M{"$limit": lim}, bson.M{"$unset": []string{"metadata", "sort_star_count"}})
+	dataPipeline = append(dataPipeline, bson.M{"$limit": lim}, bson.M{"$unset": "sort_star_count"})
 
 	// $facet runs count and paginated data in a single pipeline pass. The
 	// total count for this path is determined solely by the project filter,

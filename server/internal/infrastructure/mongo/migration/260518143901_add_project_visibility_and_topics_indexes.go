@@ -68,6 +68,16 @@ func createNonUniqueIndex(ctx context.Context, c DBClient, collectionName, index
 // same direction values). MongoDB enforces that only one index can exist per
 // key spec, so a positive match here means CreateOne would either succeed as
 // a no-op or fail with a conflict; we skip in either case.
+//
+// Note: the match is strict on field order. A pre-existing index that
+// reverses the order — for example {deleted: 1, visibility: 1} when this
+// migration wants {visibility: 1, deleted: 1} — is treated as a different
+// index and the migration will still create its declared index. This is
+// intentional: MongoDB compound indexes are order-sensitive (prefix-match
+// rules differ), so silently treating reversed orders as equivalent could
+// leave the workload on a less-effective index. Operators pre-building
+// these indexes manually must use the field order declared in
+// AddProjectVisibilityAndTopicsIndexes.
 func indexWithKeysExists(ctx context.Context, col *mongo.Collection, keys bson.D) (bool, string, error) {
 	cursor, err := col.Indexes().List(ctx)
 	if err != nil {
