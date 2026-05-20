@@ -783,6 +783,10 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 		return nil, nil, err
 	}
 
+	if totalCount == 0 {
+		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
+	}
+
 	pageInfo := &usecasex.PageInfo{
 		TotalCount:      totalCount,
 		HasNextPage:     skip+lim < totalCount,
@@ -1091,14 +1095,17 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	}
 
 	skip, lim := effectiveSkipLimit(pFilter)
-	dataPipeline := []bson.M{sortStage}
+	dataPipeline := []bson.M{lookupStage, addFieldsStage, sortStage}
 	if skip > 0 {
 		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
 	}
 	dataPipeline = append(dataPipeline, bson.M{"$limit": lim})
 
-	// $facet runs count and paginated data in a single pipeline pass,
-	// avoiding the duplicate $lookup/$addFields the previous code required.
+	// $facet runs count and paginated data in a single pipeline pass. The
+	// total count for this path is determined solely by the project filter,
+	// so $lookup/$addFields/$sort/$skip/$limit live only in the `data`
+	// sub-pipeline; the `count` sub-pipeline reads the post-$match stream
+	// directly to avoid materializing metadata it does not need.
 	facetStage := bson.M{
 		"$facet": bson.M{
 			"data":  dataPipeline,
@@ -1106,7 +1113,7 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		},
 	}
 
-	pipeline := []bson.M{matchStage, lookupStage, addFieldsStage, facetStage}
+	pipeline := []bson.M{matchStage, facetStage}
 
 	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
 	if err != nil {
@@ -1137,6 +1144,10 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	}
 	if err := cursor.Err(); err != nil {
 		return nil, nil, err
+	}
+
+	if totalCount == 0 {
+		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
 
 	pageInfo := &usecasex.PageInfo{
