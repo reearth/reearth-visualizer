@@ -1120,7 +1120,7 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	// buffer/spill cost. sort_star_count is dropped after sorting since
 	// neither field is consumed downstream.
 	skip, lim := effectiveSkipLimit(pFilter)
-	dataPipeline := []bson.M{lookupStage, addFieldsStage, bson.M{"$unset": "metadata"}, sortStage}
+	dataPipeline := []bson.M{lookupStage, addFieldsStage, {"$unset": "metadata"}, sortStage}
 	if skip > 0 {
 		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
 	}
