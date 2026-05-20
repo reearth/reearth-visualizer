@@ -663,25 +663,30 @@ const aggregationFacetCap int64 = 1000
 
 // effectiveSkipLimit derives an effective ($skip, $limit) pair for the
 // aggregation paths. Precedence: explicit pFilter.Limit/Offset → Pagination
-// Offset → Pagination Cursor First/Last → the hard cap.
+// Offset → Pagination Cursor First/Last → the hard cap. The returned limit
+// is always clamped to (0, aggregationFacetCap] regardless of caller input,
+// since unauthenticated GetAllProjects reaches these paths and the $facet
+// "data" array must stay well below MongoDB's 16MB document limit.
 func effectiveSkipLimit(pFilter repo.ProjectFilter) (skip, lim int64) {
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		return *pFilter.Offset, *pFilter.Limit
+	switch {
+	case pFilter.Limit != nil && pFilter.Offset != nil:
+		skip, lim = *pFilter.Offset, *pFilter.Limit
+	case pFilter.Pagination != nil && pFilter.Pagination.Offset != nil:
+		skip, lim = pFilter.Pagination.Offset.Offset, pFilter.Pagination.Offset.Limit
+	case pFilter.Pagination != nil && pFilter.Pagination.Cursor != nil && pFilter.Pagination.Cursor.First != nil:
+		lim = *pFilter.Pagination.Cursor.First
+	case pFilter.Pagination != nil && pFilter.Pagination.Cursor != nil && pFilter.Pagination.Cursor.Last != nil:
+		lim = *pFilter.Pagination.Cursor.Last
+	default:
+		lim = aggregationFacetCap
 	}
-	if pFilter.Pagination != nil {
-		if pFilter.Pagination.Offset != nil {
-			return pFilter.Pagination.Offset.Offset, pFilter.Pagination.Offset.Limit
-		}
-		if pFilter.Pagination.Cursor != nil {
-			if pFilter.Pagination.Cursor.First != nil && *pFilter.Pagination.Cursor.First > 0 {
-				return 0, *pFilter.Pagination.Cursor.First
-			}
-			if pFilter.Pagination.Cursor.Last != nil && *pFilter.Pagination.Cursor.Last > 0 {
-				return 0, *pFilter.Pagination.Cursor.Last
-			}
-		}
+	if skip < 0 {
+		skip = 0
 	}
-	return 0, aggregationFacetCap
+	if lim <= 0 || lim > aggregationFacetCap {
+		lim = aggregationFacetCap
+	}
+	return skip, lim
 }
 
 // findAllWithTopicsFilter runs the FindAll aggregation when a topics filter is
@@ -741,7 +746,10 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 	if skip > 0 {
 		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
 	}
-	dataPipeline = append(dataPipeline, bson.M{"$limit": lim})
+	// Drop the joined metadata array before materializing into the facet.
+	// The project consumer ignores it, and keeping it would bloat the single
+	// facet result document toward MongoDB's 16MB limit.
+	dataPipeline = append(dataPipeline, bson.M{"$limit": lim}, bson.M{"$unset": "metadata"})
 
 	facetStage := bson.M{
 		"$facet": bson.M{
@@ -1063,7 +1071,9 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	}
 
 	// Project-side sort key derived from metadata.starcount, defaulting to 0
-	// when no metadata exists, so projects without metadata sort to the end.
+	// when no metadata exists. Missing-metadata projects therefore sort to
+	// the bottom for DESC and to the top for ASC, matching the semantics of
+	// treating an absent star count as zero.
 	addFieldsStage := bson.M{
 		"$addFields": bson.M{
 			"sort_star_count": bson.M{
@@ -1099,7 +1109,11 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	if skip > 0 {
 		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
 	}
-	dataPipeline = append(dataPipeline, bson.M{"$limit": lim})
+	// Drop the joined metadata array and the temporary sort key before
+	// materializing into the facet. Neither field is consumed downstream and
+	// keeping them would bloat the single facet result document toward
+	// MongoDB's 16MB limit.
+	dataPipeline = append(dataPipeline, bson.M{"$limit": lim}, bson.M{"$unset": []string{"metadata", "sort_star_count"}})
 
 	// $facet runs count and paginated data in a single pipeline pass. The
 	// total count for this path is determined solely by the project filter,
