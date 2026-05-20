@@ -515,6 +515,12 @@ aria-label-zoom-out: ズームアウト
 Street View: ストリートビュー
 Select a location on the map to view Street View: 地図上の場所を選択してストリートビューを表示
 Please provide the API key: APIキーを入力してください
+1sec/sec: 1秒/秒
+0.5min/sec: 0.5分/秒
+1min/sec: 1分/秒
+0.1hr/sec: 0.1時間/秒
+0.5hr/sec: 0.5時間/秒
+1hr/sec: 1時間/秒
 New Channel: 新しいチャンネル
 Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定

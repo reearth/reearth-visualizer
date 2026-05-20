@@ -4,6 +4,7 @@ import {
   TickEventCallback,
   TimelineCommitter
 } from "@reearth/core";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { TimelineValues } from "../../Crust/StoryPanel/Block/builtin/Timeline";
@@ -24,15 +25,6 @@ const calculateMidTime = (startTime: number, stopTime: number) => {
   return (startTime + stopTime) / 2;
 };
 
-const playSpeedOptions = [
-  { timeString: "1sec/sec", seconds: 1 },
-  { timeString: "0.5min/sec", seconds: 30 },
-  { timeString: "1min/sec", seconds: 60 },
-  { timeString: "0.1hr/sec", seconds: 360 },
-  { timeString: "0.5hr/sec", seconds: 1800 },
-  { timeString: "1hr/sec", seconds: 3600 }
-];
-
 const TRANSITION_SPEED = 0;
 
 const timeRange = (startTime?: number, stopTime?: number) => {
@@ -49,6 +41,20 @@ const timeRange = (startTime?: number, stopTime?: number) => {
 };
 
 export default (timelineValues?: TimelineValues) => {
+  const t = useT();
+
+  const playSpeedOptions = useMemo(
+    () => [
+      { timeString: t("1sec/sec"), seconds: 1 },
+      { timeString: t("0.5min/sec"), seconds: 30 },
+      { timeString: t("1min/sec"), seconds: 60 },
+      { timeString: t("0.1hr/sec"), seconds: 360 },
+      { timeString: t("0.5hr/sec"), seconds: 1800 },
+      { timeString: t("1hr/sec"), seconds: 3600 }
+    ],
+    [t]
+  );
+
   const visualizerContext = useVisualizer();
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
@@ -118,10 +124,7 @@ export default (timelineValues?: TimelineValues) => {
     (speed: number, committerId?: string) => {
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "SET_OPTIONS",
-        payload: {
-          multiplier: speed,
-          stepType: "rate"
-        },
+        payload: { multiplier: speed, stepType: "rate" },
         committer: { source: "storyTimelineBlock", id: committerId }
       });
     },
@@ -164,7 +167,7 @@ export default (timelineValues?: TimelineValues) => {
         throw error;
       }
     },
-    [onSpeedChange]
+    [onSpeedChange, playSpeedOptions]
   );
 
   useEffect(() => {
