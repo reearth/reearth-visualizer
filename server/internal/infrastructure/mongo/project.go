@@ -662,12 +662,32 @@ func (r *Project) findAllWithFilter(ctx context.Context, pFilter repo.ProjectFil
 // project count against PageInfo.TotalCount.
 const aggregationFacetCap int64 = 1000
 
+// warnIfUnsupportedCursor surfaces a warning when callers request Relay-style
+// cursor positioning (After/Before) on the aggregation paths. These paths do
+// not implement cursor-position $match — they only honor First/Last as a
+// bounded $limit — so After/Before are silently ignored, which matches the
+// pre-existing behavior of the topics aggregation prior to this PR. The
+// warning lets operators spot mis-paginated calls.
+func warnIfUnsupportedCursor(ctx context.Context, path string, pagination *usecasex.Pagination) {
+	if pagination == nil || pagination.Cursor == nil {
+		return
+	}
+	if pagination.Cursor.After == nil && pagination.Cursor.Before == nil {
+		return
+	}
+	log.Warnfc(ctx, "FindAll: %s ignored cursor positioning (After/Before); aggregation paths only honor First/Last as $limit", path)
+}
+
 // effectiveSkipLimit derives an effective ($skip, $limit) pair for the
 // aggregation paths. Precedence: explicit pFilter.Limit/Offset → Pagination
 // Offset → Pagination Cursor First/Last → the hard cap. The returned limit
 // is always clamped to (0, aggregationFacetCap] regardless of caller input,
 // since unauthenticated GetAllProjects reaches these paths and the $facet
 // "data" array must stay well below MongoDB's 16MB document limit.
+//
+// Relay-style cursor positioning (Cursor.After / Cursor.Before) is not
+// implemented on the aggregation paths and is therefore ignored here; see
+// warnIfUnsupportedCursor.
 func effectiveSkipLimit(pFilter repo.ProjectFilter) (skip, lim int64) {
 	switch {
 	case pFilter.Limit != nil && pFilter.Offset != nil:
@@ -701,6 +721,7 @@ func effectiveSkipLimit(pFilter repo.ProjectFilter) (skip, lim int64) {
 // When no explicit sort is given, ordering defaults to metadata.starcount
 // descending, matching the previous topics path's behavior.
 func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.ProjectFilter, filter bson.M) ([]*project.Project, *usecasex.PageInfo, error) {
+	warnIfUnsupportedCursor(ctx, "topics", pFilter.Pagination)
 	matchStage := bson.M{"$match": filter}
 
 	lookupStage := bson.M{
@@ -1070,6 +1091,7 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 }
 
 func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.ProjectFilter, filter bson.M) ([]*project.Project, *usecasex.PageInfo, error) {
+	warnIfUnsupportedCursor(ctx, "starcount", pFilter.Pagination)
 	matchStage := bson.M{"$match": filter}
 
 	lookupStage := bson.M{
