@@ -655,27 +655,12 @@ func (r *Project) findAllWithFilter(ctx context.Context, pFilter repo.ProjectFil
 }
 
 // aggregationFacetCap is the hard upper bound on documents materialized into
-// the $facet "data" sub-pipeline. The cap prevents a single facet result from
-// approaching MongoDB's 16MB document limit when callers provide no
+// the $facet "data" sub-pipeline. The cap keeps the single facet result
+// document well below MongoDB's 16MB limit when callers provide no
 // pagination (or request more than the cap). When the cap actually
-// truncates results, warnFacetTruncation surfaces the event in logs so
-// operators can spot the case and ask the caller to paginate explicitly.
+// truncates a result set, callers can detect it by comparing the returned
+// project count against PageInfo.TotalCount.
 const aggregationFacetCap int64 = 1000
-
-// warnFacetTruncation emits a warning when the aggregation $facet path
-// returned fewer documents than the total match count strictly because the
-// hard cap kicked in. The caller-provided skip/lim are reported so it is
-// clear whether the truncation came from an explicit large limit or from
-// the fallback default.
-func warnFacetTruncation(ctx context.Context, path string, skip, lim, totalCount int64) {
-	if lim != aggregationFacetCap {
-		return
-	}
-	if skip+lim >= totalCount {
-		return
-	}
-	log.Warnfc(ctx, "FindAll: %s truncated to aggregationFacetCap=%d (skip=%d, totalCount=%d); caller should paginate", path, aggregationFacetCap, skip, totalCount)
-}
 
 // effectiveSkipLimit derives an effective ($skip, $limit) pair for the
 // aggregation paths. Precedence: explicit pFilter.Limit/Offset → Pagination
@@ -810,8 +795,6 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 	if totalCount == 0 {
 		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
-
-	warnFacetTruncation(ctx, "topics", skip, lim, totalCount)
 
 	pageInfo := &usecasex.PageInfo{
 		TotalCount:      totalCount,
@@ -1181,8 +1164,6 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	if totalCount == 0 {
 		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
-
-	warnFacetTruncation(ctx, "starcount", skip, lim, totalCount)
 
 	pageInfo := &usecasex.PageInfo{
 		TotalCount:      totalCount,
