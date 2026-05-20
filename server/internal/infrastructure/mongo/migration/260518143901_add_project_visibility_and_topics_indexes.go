@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearthx/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // AddProjectVisibilityAndTopicsIndexes creates indexes that back the public
@@ -24,13 +25,13 @@ import (
 // can mark this migration as unapplied and retry on a future run instead of
 // silently leaving the database without the intended indexes.
 func AddProjectVisibilityAndTopicsIndexes(ctx context.Context, c DBClient) error {
-	if err := createNonUniqueIndex(ctx, c, "project", bson.D{
+	if err := createNonUniqueIndex(ctx, c, "project", "project_visibility_deleted", bson.D{
 		{Key: "visibility", Value: 1},
 		{Key: "deleted", Value: 1},
 	}); err != nil {
 		return err
 	}
-	if err := createNonUniqueIndex(ctx, c, "projectmetadata", bson.D{
+	if err := createNonUniqueIndex(ctx, c, "projectmetadata", "projectmetadata_topics", bson.D{
 		{Key: "topics", Value: 1},
 	}); err != nil {
 		return err
@@ -38,10 +39,11 @@ func AddProjectVisibilityAndTopicsIndexes(ctx context.Context, c DBClient) error
 	return nil
 }
 
-func createNonUniqueIndex(ctx context.Context, c DBClient, collectionName string, keys bson.D) error {
+func createNonUniqueIndex(ctx context.Context, c DBClient, collectionName, indexName string, keys bson.D) error {
 	collection := c.Database().Collection(collectionName)
 	name, err := collection.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys: keys,
+		Keys:    keys,
+		Options: options.Index().SetName(indexName),
 	})
 	if err != nil {
 		return fmt.Errorf("migration: AddProjectVisibilityAndTopicsIndexes: failed to create index on %s: %w", collectionName, err)

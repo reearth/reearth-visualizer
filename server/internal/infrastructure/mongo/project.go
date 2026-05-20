@@ -655,11 +655,42 @@ func (r *Project) findAllWithFilter(ctx context.Context, pFilter repo.ProjectFil
 	return projects, pageInfo, nil
 }
 
+// aggregationFacetCap is the hard upper bound on documents materialized into
+// the $facet "data" sub-pipeline. The cap prevents a single facet result from
+// approaching MongoDB's 16MB document limit when no explicit pagination is
+// supplied.
+const aggregationFacetCap int64 = 1000
+
+// effectiveSkipLimit derives an effective ($skip, $limit) pair for the
+// aggregation paths. Precedence: explicit pFilter.Limit/Offset → Pagination
+// Offset → Pagination Cursor First/Last → the hard cap.
+func effectiveSkipLimit(pFilter repo.ProjectFilter) (skip, lim int64) {
+	if pFilter.Limit != nil && pFilter.Offset != nil {
+		return *pFilter.Offset, *pFilter.Limit
+	}
+	if pFilter.Pagination != nil {
+		if pFilter.Pagination.Offset != nil {
+			return pFilter.Pagination.Offset.Offset, pFilter.Pagination.Offset.Limit
+		}
+		if pFilter.Pagination.Cursor != nil {
+			if pFilter.Pagination.Cursor.First != nil && *pFilter.Pagination.Cursor.First > 0 {
+				return 0, *pFilter.Pagination.Cursor.First
+			}
+			if pFilter.Pagination.Cursor.Last != nil && *pFilter.Pagination.Cursor.Last > 0 {
+				return 0, *pFilter.Pagination.Cursor.Last
+			}
+		}
+	}
+	return 0, aggregationFacetCap
+}
+
 // findAllWithTopicsFilter runs the FindAll aggregation when a topics filter is
-// active. It uses a pipeline-form $lookup so the topics match runs inside the
-// projectmetadata sub-pipeline (using both the project and topics indexes),
-// avoiding the per-document $lookup-then-$match the previous implementation
-// did and without transferring matching IDs through the client.
+// active. The topics match is pushed into the $lookup sub-pipeline so only
+// metadata matching the requested topics is joined (predicate pushdown,
+// exercising both the projectmetadata.project and projectmetadata.topics
+// indexes). The lookup itself still runs per input project document — the
+// improvement is reduced joined payload and an early non-empty-array check
+// in place of the previous post-lookup `metadata.topics: $all` scan.
 //
 // When no explicit sort is given, ordering defaults to metadata.starcount
 // descending, matching the previous topics path's behavior.
@@ -705,11 +736,12 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 		},
 	}
 
+	skip, lim := effectiveSkipLimit(pFilter)
 	dataPipeline := []bson.M{sortStage}
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		dataPipeline = append(dataPipeline, bson.M{"$skip": *pFilter.Offset})
-		dataPipeline = append(dataPipeline, bson.M{"$limit": *pFilter.Limit})
+	if skip > 0 {
+		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
 	}
+	dataPipeline = append(dataPipeline, bson.M{"$limit": lim})
 
 	facetStage := bson.M{
 		"$facet": bson.M{
@@ -751,16 +783,10 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 		return nil, nil, err
 	}
 
-	var hasNextPage, hasPreviousPage bool
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
-		hasPreviousPage = *pFilter.Offset > 0
-	}
-
 	pageInfo := &usecasex.PageInfo{
 		TotalCount:      totalCount,
-		HasNextPage:     hasNextPage,
-		HasPreviousPage: hasPreviousPage,
+		HasNextPage:     skip+lim < totalCount,
+		HasPreviousPage: skip > 0,
 	}
 
 	return consumer.Result, pageInfo, nil
@@ -1064,11 +1090,12 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		},
 	}
 
+	skip, lim := effectiveSkipLimit(pFilter)
 	dataPipeline := []bson.M{sortStage}
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		dataPipeline = append(dataPipeline, bson.M{"$skip": *pFilter.Offset})
-		dataPipeline = append(dataPipeline, bson.M{"$limit": *pFilter.Limit})
+	if skip > 0 {
+		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
 	}
+	dataPipeline = append(dataPipeline, bson.M{"$limit": lim})
 
 	// $facet runs count and paginated data in a single pipeline pass,
 	// avoiding the duplicate $lookup/$addFields the previous code required.
@@ -1112,16 +1139,10 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		return nil, nil, err
 	}
 
-	var hasNextPage, hasPreviousPage bool
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
-		hasPreviousPage = *pFilter.Offset > 0
-	}
-
 	pageInfo := &usecasex.PageInfo{
 		TotalCount:      totalCount,
-		HasNextPage:     hasNextPage,
-		HasPreviousPage: hasPreviousPage,
+		HasNextPage:     skip+lim < totalCount,
+		HasPreviousPage: skip > 0,
 	}
 
 	return consumer.Result, pageInfo, nil
