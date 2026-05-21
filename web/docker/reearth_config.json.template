@@ -7,6 +7,7 @@
     "cesiumIonAccessToken": ${REEARTH_CESIUM_ION_ACCESS_TOKEN},
     "cloudApi": ${REEARTH_CLOUD_API},
     "currentTos": ${REEARTH_CURRENT_TOS},
+    "customProviders": ${REEARTH_CUSTOM_PROVIDERS},
     "documentationUrl": ${REEARTH_DOCUMENTATION_URL},
     "earlyAccessAdmins": ${REEARTH_EARLY_ACCESS_ADMINS},
     "enableGqlPlayground": ${REEARTH_ENABLE_GQL_PLAYGROUND},

@@ -22,16 +22,23 @@ extensions:
             title: 種類
             placeholder: タイルのタイプを選択
             choices:
+              google_satellite: Google Satellite
+              google_roadmap: Google Road Map
+              nasa_black_marble: NASA Black Marble
               default: デフォルト
               default_label: ラベル付き地図
               default_road: 道路地図
               open_street_map: OpenStreetMap
               black_marble: Black Marble
               japan_gsi_standard: 地理院地図 標準地図
+              cesium_ion: Cesium Ion
               url: URL
           tile_url:
             title: URL
             placeholder: タイルのURLを入力
+          cesium_ion_asset_id:
+            title: Cesium Ion アセットID
+            description: Cesium Ion に登録されたタイルアセットの ID を指定して、タイルレイヤーとして使用します。この機能を有効にするには、「メイン設定」に Cesium Ion の API アクセストークンを入力してください。
           tile_zoomLevel:
             title: ズームレベル
             placeholder: ズームレベルを入力
@@ -50,6 +57,7 @@ extensions:
             title: 種類
             description: 地形の種類を指定します。
             choices:
+              reearth_terrain: Re:Earth Terrain
               cesium: Cesium World Terrain
               cesiumion: Cesium Ion
           terrainCesiumIonAsset:

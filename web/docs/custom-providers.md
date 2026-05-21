@@ -2,59 +2,94 @@
 
 ## Overview
 
-Re:Earth Visualizer supports custom providers that allow you to override default imagery, terrain, and layer providers. This feature enables integration with private tile servers, custom terrain data, or specialized geospatial services.
+Re:Earth Visualizer supports custom providers that allow you to override imagery, terrain, and layer provider data per deployment environment. This feature enables integration with private tile servers, custom terrain data, or specialized geospatial services.
 
-## Features
+**Important**: Custom providers configuration is **only for provider data** (URLs, credentials, settings). It does not control which provider options appear in the UI. UI option visibility is controlled by the backend `manifest.yml`.
 
-Custom providers can override the following:
+### Architecture
 
-- **Imagery Tile Providers**: Override preset tile providers with custom URLs (supports multiple overrides)
-- **Terrain Providers**: Override preset terrain providers with custom data sources (supports multiple overrides)
-- **Layer Sources**: Configure custom layer sources (currently supports: `google-photorealistic-3d-tiles`)
+**Backend (Server):**
+- Defines the **complete list** of all available provider types in `server/pkg/builtin/manifest.yml`
+- Controls which provider types are visible in the UI via manifest choices
+- Validates that saved provider selections match defined types
+- Ensures data integrity across all environments
 
-**Important**: This configuration allows you to **override** or **remove** preset providers only. You cannot add entirely new provider types. The available provider IDs are defined in `server/pkg/builtin/manifest.yml`.
+**Frontend (Per Environment):**
+- **Overrides** specific provider data (URLs, credentials, settings)
+- Does **not** control which providers are visible in the UI
+- Allows different deployments to use different data sources without backend changes
+
+### Key Benefits
+
+✅ **Environment Flexibility**: Different environments can use different data sources (URLs, credentials)
+✅ **Configuration-Only Changes**: URL changes don't require code modifications or redeployment
+✅ **Centralized Control**: Provider types and UI visibility managed in backend manifest
+✅ **Secure Configuration**: Can use 1Password or environment variables for sensitive data
+
+## How It Works
+
+**Backend Controls UI Options:**
+- The backend `manifest.yml` defines which provider types exist and which are visible in the UI
+- To show/hide provider options, modify the `choices` in `manifest.yml` or use `appFeature().disabledTileTypes`
+- This ensures consistent UI across all environments
+
+**Frontend Provides Data:**
+- Custom providers configuration only overrides the data for existing provider types
+- You can change URLs, credentials, and settings per environment
+- You cannot add new provider types or hide providers via configuration
+- Providers not mentioned in the configuration use default values from the backend
+
+**Example Flow:**
+1. Backend defines visible providers: `google_satellite`, `open_street_map`, `cesium_ion`, `url`
+2. Production config overrides: `open_street_map` URL to point to production tile server
+3. Staging config overrides: `open_street_map` URL to point to staging tile server
+4. Users in both environments see the same 4 options, but they fetch from different URLs
 
 ## Use Cases
 
 ### Private Tile Servers
 
-Organizations with private map tile infrastructure can configure Re:Earth to use their internal tile servers instead of public providers.
+Organizations with private map tile infrastructure can configure Re:Earth to use their internal tile servers instead of default public URLs.
 
 ### Custom Terrain Data
 
-Projects requiring specialized terrain data (high-resolution DEMs, bathymetry, etc.) can configure custom terrain providers.
+Projects requiring specialized terrain data can configure custom terrain providers with environment-specific URLs.
 
 ### Air-Gapped Deployments
 
-Environments without internet access can configure Re:Earth to use locally hosted tile and terrain services.
+Environments without internet access can configure Re:Earth to use locally hosted tile and terrain services by overriding provider URLs.
 
 ### Regional Data Compliance
 
-Organizations with data sovereignty requirements can ensure all geospatial data comes from approved, region-specific sources.
+Organizations with data sovereignty requirements can ensure all geospatial data comes from approved, region-specific sources by overriding provider URLs.
+
+### Multi-Tenant Deployments
+
+Different customers or tenants can use different data sources without maintaining separate codebases by configuring tenant-specific provider URLs.
 
 ## Configuration
 
-Custom providers are configured using the `REEARTH_WEB_CUSTOM_DATA_SOURCES` environment variable.
+Custom providers are configured using the `REEARTH_WEB_CUSTOM_PROVIDERS` environment variable.
 
 ### Environment Variable
 
-**Variable Name**: `REEARTH_WEB_CUSTOM_DATA_SOURCES`
+**Variable Name**: `REEARTH_WEB_CUSTOM_PROVIDERS`
 
 **Format**: JSON string
 
 **Example**:
 
 ```bash
-REEARTH_WEB_CUSTOM_DATA_SOURCES='{ ... }'
+REEARTH_WEB_CUSTOM_PROVIDERS='{"imagery":{"providers":[{"id":"open_street_map","url":"https://tiles.example.com/{z}/{x}/{y}.png"}]}}'
 ```
 
 ### How It Works
 
-1. **Define the Configuration**: Set `REEARTH_WEB_CUSTOM_DATA_SOURCES` in your `.env`, `.env.local`, or `.env.op` file
+1. **Define the Configuration**: Set `REEARTH_WEB_CUSTOM_PROVIDERS` in your `.env`, `.env.local`, or `.env.op` file
 2. **Development Loading**: Configuration is loaded via vite.config.ts when starting the dev server
 3. **Runtime Injection**: The configuration is injected into `/reearth_config.json`
 4. **Editor Integration**: Custom providers are passed to Editor options
-5. **Core Library**: @reearth/core receives the configuration and applies the overrides
+5. **Core Library**: @reearth/core receives the configuration and applies the data overrides
 
 ### Key Features
 
@@ -68,52 +103,81 @@ The configuration uses a JSON structure with three main categories: `imagery`, `
 
 **For all categories:**
 
-- **`providers`** array: Override specific preset providers by matching their `id`. Any provider ID not in this array remains unchanged.
-- **`remove`** array: Remove specific preset providers by listing their `id`. These providers will not be available to users.
+- **`providers`** array: Override specific preset providers by matching their `id`. Any provider ID not in this array uses default backend values.
 
-**Important**: You can only override or remove **preset** providers. Adding entirely new provider types is not supported. All provider IDs must match those defined in `server/pkg/builtin/manifest.yml`.
+**Important**:
+- You can only override **existing** providers defined in `server/pkg/builtin/manifest.yml`
+- You cannot hide providers via this configuration (use backend manifest or `appFeature().disabledTileTypes` instead)
+- You cannot add entirely new provider types (must be defined in backend manifest first)
 
 #### Structure
+
+**Minimal Configuration** (most common use case):
 
 ```json
 {
   "imagery": {
     "providers": [
       {
-        "id": "string",
-        "name": "string (optional)",
-        "nameJa": "string (optional)",
-        "url": "string",
-        "credit": "string (optional)",
-        "maximumLevel": "number (optional, default: 18)",
-        "minimumLevel": "number (optional, default: 0)"
+        "id": "string (required)",
+        "url": "string (required)"
       }
-    ],
-    "remove": ["string (optional)"]
+    ]
   },
   "terrain": {
     "providers": [
       {
-        "id": "string",
-        "name": "string (optional)",
-        "nameJa": "string (optional)",
-        "url": "string",
-        "requestVertexNormals": "boolean (optional, default: false)",
-        "requestWaterMask": "boolean (optional, default: false)",
-        "credit": "string (optional)"
+        "id": "string (required)",
+        "url": "string (required)"
       }
-    ],
-    "remove": ["string (optional)"]
+    ]
   },
   "layers": {
     "providers": [
       {
-        "id": "string",
-        "url": "string",
-        "options": {}
+        "id": "string (required)",
+        "url": "string (required)",
+        "options": {} // optional
       }
-    ],
-    "remove": ["string (optional)"]
+    ]
+  }
+}
+```
+
+**Full Configuration** (with optional fields):
+
+```json
+{
+  "imagery": {
+    "providers": [
+      {
+        "id": "string (required)",
+        "url": "string (required)",
+        "credit": "string (optional)",
+        "maximumLevel": "number (optional, default: 18)",
+        "minimumLevel": "number (optional, default: 0)"
+      }
+    ]
+  },
+  "terrain": {
+    "providers": [
+      {
+        "id": "string (required)",
+        "url": "string (required)",
+        "requestVertexNormals": "boolean (optional, default: false)",
+        "requestWaterMask": "boolean (optional, default: false)",
+        "credit": "string (optional)"
+      }
+    ]
+  },
+  "layers": {
+    "providers": [
+      {
+        "id": "string (required)",
+        "url": "string (required)",
+        "options": {} // optional
+      }
+    ]
   }
 }
 ```
@@ -122,28 +186,26 @@ The configuration uses a JSON structure with three main categories: `imagery`, `
 
 **Imagery Providers**:
 
-- **`id`** (required): Unique identifier for this provider
-- **`name`** (optional): Display name for this provider
-- **`nameJa`** (optional): Japanese display name for this provider
-- **`url`** (required): URL template with placeholders like `{z}/{x}/{y}` for XYZ tiles or `{z}/{x}/{reverseY}` for TMS
+- **`id`** (required): Provider ID matching the backend definition in manifest.yml
+- **`url`** (required): Environment-specific URL template with placeholders like `{z}/{x}/{y}` for XYZ tiles or `{z}/{x}/{reverseY}` for TMS
 - **`credit`** (optional): Attribution text (e.g., "© OpenStreetMap")
 - **`maximumLevel`** (optional): Maximum zoom level (default: 18)
 - **`minimumLevel`** (optional): Minimum zoom level (default: 0)
 
+**Note**: Provider names and labels are defined in the backend manifest (`server/pkg/builtin/manifest.yml`) and cannot be overridden per environment.
+
 **Terrain Providers**:
 
-- **`id`** (required): Unique identifier for this provider
-- **`name`** (optional): Display name for this provider
-- **`nameJa`** (optional): Japanese display name for this provider
-- **`url`** (required): Base URL to terrain tile service
+- **`id`** (required): Provider ID matching the backend definition in manifest.yml
+- **`url`** (required): Environment-specific base URL to terrain tile service
 - **`requestVertexNormals`** (optional): Enable vertex normals for better lighting (default: false)
 - **`requestWaterMask`** (optional): Enable water mask for water rendering (default: false)
 - **`credit`** (optional): Attribution text
 
 **Layer Providers**:
 
-- **`id`** (required): Unique identifier for this layer provider
-- **`url`** (required): URL to the layer data source
+- **`id`** (required): Layer provider ID matching the backend definition
+- **`url`** (required): Environment-specific URL to the layer data source
 - **`options`** (optional): Layer-specific configuration options (e.g., API keys)
 
 #### URL Template Placeholders
@@ -164,75 +226,91 @@ The configuration uses a JSON structure with three main categories: `imagery`, `
 
 - Example: `https://terrain.example.com/`
 
-#### Provider Override and Remove
+#### Provider Override
 
 **How it works:**
 
 - **`providers` array**: Override specific preset providers by matching their `id`
-  - Any provider with an `id` matching a preset will replace that preset
-  - Preset providers not listed here remain unchanged
-  - Example: Override "default" to point to your custom tile server
-  - **Note**: You can only override existing preset provider IDs, not create new ones
+  - Any provider with an `id` matching a preset will replace that preset's data configuration
+  - You can override: URL, zoom levels, credits, and other settings
+  - Preset providers not listed here use their default backend configuration
+  - Example: Override "open_street_map" to point to your environment-specific tile server
 
-- **`remove` array**: Remove preset providers by listing their `id`
-  - These providers will be hidden from users
-  - Example: Remove "black_marble" and "japan_gsi_standard" from available options
+**Available Provider IDs:**
 
-**Preset Provider IDs** can be found in `server/pkg/builtin/manifest.yml`.
+All available provider IDs are defined in `server/pkg/builtin/manifest.yml`. Current provider IDs include:
+- `google_satellite`, `google_roadmap` - Google Maps tiles (EE only)
+- `nasa_black_marble` - NASA Black Marble
+- `open_street_map` - OpenStreetMap
+- `japan_gsi_standard` - Japan GSI Standard Map
+- `cesium_ion` - Cesium Ion tiles (requires access token)
+- `url` - Custom URL input
+- `default`, `default_label`, `default_road`, `black_marble` - **Deprecated** (legacy tile types)
 
-**Important Limitation**: You cannot add entirely new provider types. All provider IDs in the `providers` array must match preset IDs defined in the manifest. To use custom tile URLs, override an existing provider (like "default") or use the preset "url" provider type.
-
-**Note**: The same override and remove logic applies to the `layers` category. Currently only one layer ID is supported: `google-photorealistic-3d-tiles`.
+**Notes**:
+- To control which providers are visible in the UI, modify the backend `manifest.yml` or use `appFeature().disabledTileTypes` configuration. Custom providers configuration only overrides data, not visibility.
+- Default values for new tiles are controlled by `appFeature().defaultTileType` (separate from custom providers)
 
 #### Example: Override Specific Provider
 
-Override the default provider to use custom tiles:
+Override the OpenStreetMap provider to use custom tiles:
 
 ```json
 {
   "imagery": {
     "providers": [
       {
-        "id": "default",
-        "name": "Custom Default Tiles",
-        "nameJa": "カスタムデフォルトタイル",
-        "url": "https://custom-tiles.example.com/{z}/{x}/{y}.png",
-        "credit": "© Custom Tiles",
-        "maximumLevel": 18
+        "id": "open_street_map",
+        "url": "https://custom-tiles.example.com/{z}/{x}/{y}.png"
       }
     ]
   }
 }
 ```
 
-**Result**: The "default" provider now points to custom tiles. Other defaults (open_street_map, black_marble, url, etc.) remain available.
+**Result**: The "open_street_map" provider uses the custom URL. Display name "OpenStreetMap" comes from backend manifest. Zoom levels and other settings use backend defaults.
 
-#### Example: Override and Remove
-
-Override one provider and remove unwanted ones:
+**With optional settings:**
 
 ```json
 {
   "imagery": {
     "providers": [
       {
-        "id": "default",
-        "name": "Internal Tiles",
-        "nameJa": "内部タイル",
-        "url": "https://tiles.internal.com/{z}/{x}/{y}.png",
-        "credit": "© Internal Tiles"
+        "id": "open_street_map",
+        "url": "https://tiles.production.com/{z}/{x}/{y}.png",
+        "credit": "© Production Tiles 2024",
+        "maximumLevel": 20
       }
-    ],
-    "remove": ["black_marble", "japan_gsi_standard"]
+    ]
   }
 }
 ```
 
-**Result**:
+**Result**: Same as above, but with custom attribution and higher max zoom level.
 
-- "default" provider uses custom tiles
-- "black_marble" and "japan_gsi_standard" are hidden
-- Other defaults (open_street_map, url, etc.) remain available
+#### Example: Multiple Overrides
+
+Override multiple providers:
+
+```json
+{
+  "imagery": {
+    "providers": [
+      {
+        "id": "google_satellite",
+        "url": "https://tiles.internal.com/{z}/{x}/{y}.png"
+      },
+      {
+        "id": "open_street_map",
+        "url": "https://osm.internal.com/{z}/{x}/{y}.png"
+      }
+    ]
+  }
+}
+```
+
+**Result**: Both providers use custom URLs. Other providers use backend defaults.
 
 #### Example: Terrain Configuration
 
@@ -244,8 +322,23 @@ Configure custom terrain provider:
     "providers": [
       {
         "id": "cesium",
-        "name": "Custom Cesium Terrain",
-        "nameJa": "カスタムCesium地形",
+        "url": "https://custom-terrain.example.com/"
+      }
+    ]
+  }
+}
+```
+
+**Result**: The "cesium" terrain provider uses the custom URL.
+
+**With additional settings:**
+
+```json
+{
+  "terrain": {
+    "providers": [
+      {
+        "id": "cesium",
         "url": "https://custom-terrain.example.com/",
         "requestVertexNormals": true,
         "requestWaterMask": false,
@@ -255,8 +348,6 @@ Configure custom terrain provider:
   }
 }
 ```
-
-**Result**: The "cesium" terrain provider now points to custom terrain data.
 
 #### Example: Layer Override
 
@@ -278,7 +369,62 @@ Configure custom Google Photorealistic 3D Tiles:
 }
 ```
 
-**Note**: Currently only `google-photorealistic-3d-tiles` is supported. More layer IDs will be added in future releases.
+**Note**: Currently only `google-photorealistic-3d-tiles` is supported.
+
+#### Example: Multi-Environment Setup
+
+Configure different data sources for different environments:
+
+**Production Environment:**
+
+```json
+{
+  "imagery": {
+    "providers": [
+      {
+        "id": "open_street_map",
+        "url": "https://tiles.production.com/{z}/{x}/{y}.png"
+      }
+    ]
+  }
+}
+```
+
+**Staging Environment:**
+
+```json
+{
+  "imagery": {
+    "providers": [
+      {
+        "id": "open_street_map",
+        "url": "https://tiles.staging.com/{z}/{x}/{y}.png"
+      }
+    ]
+  }
+}
+```
+
+**Internal Deployment:**
+
+```json
+{
+  "imagery": {
+    "providers": [
+      {
+        "id": "open_street_map",
+        "url": "https://tiles.internal.company.com/{z}/{x}/{y}.png"
+      },
+      {
+        "id": "google_satellite",
+        "url": "https://satellite.internal.company.com/{z}/{x}/{y}.png"
+      }
+    ]
+  }
+}
+```
+
+**Result**: All environments see the same provider options (controlled by backend), but fetch from different URLs.
 
 #### Example: Complete Configuration
 
@@ -289,32 +435,23 @@ Configure all three categories:
   "imagery": {
     "providers": [
       {
-        "id": "default",
-        "name": "Internal Basemap",
-        "nameJa": "内部ベースマップ",
+        "id": "google_satellite",
         "url": "https://basemap.internal.com/{z}/{x}/{y}.png",
-        "credit": "© Internal Tiles",
-        "maximumLevel": 18
+        "credit": "© Internal Tiles 2024",
+        "maximumLevel": 20
       },
       {
         "id": "open_street_map",
-        "name": "Custom OSM",
-        "nameJa": "カスタムOSM",
-        "url": "https://osm.internal.com/{z}/{x}/{y}.png",
-        "credit": "© OpenStreetMap Contributors"
+        "url": "https://osm.internal.com/{z}/{x}/{y}.png"
       }
-    ],
-    "remove": ["black_marble", "japan_gsi_standard"]
+    ]
   },
   "terrain": {
     "providers": [
       {
         "id": "cesium",
-        "name": "High Resolution Terrain",
-        "nameJa": "高解像度地形",
         "url": "https://terrain.internal.com/",
-        "requestVertexNormals": true,
-        "credit": "© Internal Terrain Data"
+        "requestVertexNormals": true
       }
     ]
   },
@@ -332,18 +469,88 @@ Configure all three categories:
 }
 ```
 
-**Result**:
+## Controlling UI Option Visibility
 
-- **Imagery**: "default" and "open_street_map" use custom URLs; "black_marble" and "japan_gsi_standard" removed; "url" and other defaults remain available
-- **Terrain**: "cesium" uses custom terrain data; other terrain providers remain available
-- **Layers**: Custom Google 3D Tiles configuration
+Custom providers configuration does **not** control which options appear in the UI. To control visibility:
+
+### Option 1: Backend Manifest (Recommended)
+
+Edit `server/pkg/builtin/manifest.yml` to add or remove provider choices:
+
+```yaml
+- id: tile_type
+  type: string
+  title: Tile type
+  defaultValue: google_satellite
+  choices:
+    - key: google_satellite
+      label: Google Satellite
+    - key: open_street_map
+      label: OpenStreetMap
+    - key: cesium_ion
+      label: Cesium Ion
+    - key: url
+      label: URL
+    # Remove unwanted options by not including them in choices
+```
+
+**Note**: The `defaultValue` shown in manifest.yml is overridden by `appFeature().defaultTileType` on the frontend. See "Default Tile Type" section below.
+
+### Option 2: Frontend Feature Flag
+
+Use `appFeature().disabledTileTypes` to filter options dynamically:
+
+```typescript
+// In src/services/config/appFeatureConfig.ts
+export type AppFeatureConfig = {
+  disabledTileTypes?: string[];
+  // ... other features
+};
+
+// Example configuration
+{
+  "disabledTileTypes": ["black_marble", "japan_gsi_standard"]
+}
+```
+
+This filters options in the UI without modifying the backend manifest.
+
+### Option 3: Default Tile Type
+
+Control what tile type is selected by default when creating new tiles using `appFeature().defaultTileType`:
+
+**Open Source Version** (`src/services/config/appFeatureConfig.ts`):
+```typescript
+const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
+  // ... other config
+  defaultTileType: "open_street_map"
+};
+```
+
+**Enterprise Edition** (`src/ee/featureConfig.ts`):
+```typescript
+export const getFeatureConfig = (): AppFeatureConfig => {
+  return {
+    // ... other config
+    defaultTileType: "google_satellite"
+  };
+};
+```
+
+**How it works:**
+- When users create a new tile without explicitly setting tile_type, the frontend displays the `defaultTileType` value
+- Database stores empty fields array (`fields: []`)
+- Only stores actual values when user explicitly changes them
+- Different deployments (OSS vs EE) can have different defaults
+
+**Note**: This is separate from custom providers - it controls the default value shown in the UI, not data source URLs.
 
 ## Technical Architecture
 
 ### Configuration Flow
 
 ```text
-Environment Variable (REEARTH_WEB_CUSTOM_DATA_SOURCES)
+Environment Variable (REEARTH_WEB_CUSTOM_PROVIDERS)
          ↓
    vite.config.ts (dev server)
          ↓
@@ -353,18 +560,79 @@ Environment Variable (REEARTH_WEB_CUSTOM_DATA_SOURCES)
          ↓
    Editor Options
          ↓
-   @reearth/core (3D engine)
+   @reearth/core (3D engine applies data overrides)
 ```
 
 ### Integration with Core Library
+
+**Backend to Frontend Flow:**
+
+1. **Backend**: All provider types defined in `server/pkg/builtin/manifest.yml`
+2. **Database**: Users save provider selections (validated against backend types)
+3. **Frontend Config**: Environment-specific `customProviders` loaded from `reearth_config.json`
+4. **Runtime Override**: Frontend applies data overrides before passing to core library
+5. **Core Library**: `@reearth/core` receives final provider configuration with custom URLs
+
+**Core Library Integration:**
 
 Custom providers are passed through Editor options to the `@reearth/core` library, which handles:
 
 - **Provider Initialization**: Creating imagery and terrain providers from the configuration
 - **Layer Resolution**: Resolving layer data sources based on ID
-- **Override and Remove Logic**: Applying provider overrides and removing specified providers across all categories
+- **Data Override Application**: Replacing preset provider URLs and settings with custom values
+- **URL Resolution**: Resolving tile URLs with custom templates ({z}/{x}/{y}, {reverseY})
 - **Error Handling**: Fallback to defaults if custom sources fail
 - **Caching**: Caching tile and terrain data according to provider settings
+
+**Example Override Process:**
+
+1. Backend defines provider ID: `open_street_map` with default URL
+2. User selects: `tile_type: "open_street_map"` (passes validation ✓)
+3. Frontend loads config: `{"imagery": {"providers": [{"id": "open_street_map", "url": "https://custom.com/{z}/{x}/{y}.png"}]}}`
+4. Core library creates tile provider with custom URL
+5. Map displays tiles from custom server
+
+## Related Features
+
+Custom providers works alongside other configuration features:
+
+### Feature Comparison
+
+| Feature | Purpose | Scope | Configuration Location |
+|---------|---------|-------|----------------------|
+| **Custom Providers** | Override data source URLs | Per environment | `REEARTH_WEB_CUSTOM_PROVIDERS` env var |
+| **Default Tile Type** | Set default tile for new tiles | OSS vs EE | `appFeatureConfig.ts` / `ee/featureConfig.ts` |
+| **Disabled Tile Types** | Hide tile options from UI | OSS vs EE | `appFeatureConfig.ts` / `ee/featureConfig.ts` |
+| **Manifest Choices** | Define all available tile types | Global (all deployments) | `server/pkg/builtin/manifest.yml` |
+
+### Example: Complete Configuration
+
+**Scenario**: Internal deployment wanting to use private tile servers
+
+1. **Backend Manifest** (defines all options):
+   ```yaml
+   choices:
+     - key: google_satellite
+     - key: open_street_map
+     - key: cesium_ion
+   ```
+
+2. **Frontend Config** (OSS sets default):
+   ```typescript
+   defaultTileType: "open_street_map"
+   disabledTileTypes: ["cesium_ion"]  // Hide Cesium Ion option
+   ```
+
+3. **Environment Config** (override data URLs):
+   ```bash
+   REEARTH_WEB_CUSTOM_PROVIDERS='{"imagery":{"providers":[{"id":"open_street_map","url":"https://internal-tiles.company.com/{z}/{x}/{y}.png"}]}}'
+   ```
+
+**Result**:
+- Users see: "Google Satellite", "OpenStreetMap" (Cesium Ion hidden)
+- New tiles default to: "OpenStreetMap"
+- OpenStreetMap fetches from: Internal tile server
+- Google Satellite fetches from: Default URL
 
 ## Support and Resources
 
@@ -376,31 +644,42 @@ Custom providers are passed through Editor options to the `@reearth/core` librar
 
 ## Implementation Status
 
-This feature is currently under development.
+### Completed ✅
 
-### Designed ✓
+**Configuration Architecture:**
+- [x] Backend-defined provider types in manifest.yml (complete list of all available IDs and display names)
+- [x] Frontend data override design by ID: match provider ID and replace URL/settings
+- [x] Configuration format and structure (JSON with three categories: imagery, terrain, layers)
+- [x] TypeScript type definitions (`CustomProviders` in `services/config/index.ts`)
 
-- [x] Configuration format and structure (JSON with three categories)
-- [x] Override by ID logic: match provider ID and replace
-- [x] Remove array: hide specific preset providers (applies to all categories)
-- [x] Imagery provider options (id, name, nameJa, url, credit, maximumLevel, minimumLevel)
-- [x] Terrain provider options (id, name, nameJa, url, requestVertexNormals, requestWaterMask, credit)
+**Provider Options:**
+- [x] Imagery provider options (id, url, credit, maximumLevel, minimumLevel)
+- [x] Terrain provider options (id, url, requestVertexNormals, requestWaterMask, credit)
 - [x] Layer provider options (id, url, options)
-- [x] Layer support with override and remove (google-photorealistic-3d-tiles)
-- [x] Multiple providers per category
-- [x] Internationalization support (Japanese names for imagery and terrain)
-- [x] Environment variable configuration (REEARTH_WEB_CUSTOM_DATA_SOURCES)
+- [x] Layer support design (google-photorealistic-3d-tiles)
 
-### To Be Implemented
+**UI and Configuration:**
+- [x] Display names and internationalization defined in backend manifest (label field)
+- [x] Environment variable configuration (REEARTH_WEB_CUSTOM_PROVIDERS)
+- [x] UI option visibility controlled by backend manifest and appFeature().disabledTileTypes
+- [x] Default tile type feature (`appFeature().defaultTileType`)
+- [x] Configuration loading infrastructure in services/config
 
-- [ ] Configuration loading in services/config
+### To Be Implemented 🚧
+
+**Core Integration:**
+- [ ] Pass configuration to @reearth/core library (currently commented out in Visualizer/index.tsx)
+- [ ] Core library data override implementation
+- [ ] URL template processing for imagery ({z}/{x}/{y}, {reverseY})
+- [ ] Terrain provider initialization in core
+- [ ] Layer provider initialization in core
+- [ ] Data override by ID matching logic (imagery, terrain, layers)
+
+**Production Readiness:**
 - [ ] Validation and error handling
-- [ ] Integration with Editor options
-- [ ] Pass configuration to @reearth/core library
-- [ ] URL template processing for imagery
-- [ ] Terrain provider initialization
-- [ ] Layer provider initialization
-- [ ] Override by ID matching logic (imagery, terrain, layers)
-- [ ] Remove provider filtering logic (imagery, terrain, layers)
 - [ ] Fallback behavior when custom sources fail
 - [ ] Unit tests and integration tests
+- [ ] Performance testing with custom providers
+- [ ] Documentation for core library integration
+
+**Current Status**: Custom providers configuration can be loaded but is not yet passed to the core library (temporarily disabled due to Cesium error). The infrastructure is ready, pending core library integration.
