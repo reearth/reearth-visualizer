@@ -86,6 +86,8 @@ export type Config = {
   featureCollection?: string;
   enableGqlPlayground?: boolean;
   platformUrl?: string;
+  tileServerBaseUrl?: string;
+  tileServerToken?: string;
 } & AuthInfo;
 
 declare global {
