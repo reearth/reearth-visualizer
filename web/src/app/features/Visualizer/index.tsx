@@ -23,7 +23,7 @@ import type { NLSLayer } from "@reearth/services/api/layer";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, MutableRefObject, SetStateAction, useRef } from "react";
+import { FC, MutableRefObject, SetStateAction, useMemo, useRef } from "react";
 
 import { VISUALIZER_CORE_DOM_ID } from "./constaints";
 import Crust from "./Crust";
@@ -238,7 +238,8 @@ const Visualizer: FC<VisualizerProps> = ({
     viewerProperty,
     onCoreLayerSelect,
     currentCamera,
-    handleCoreAPIReady
+    handleCoreAPIReady,
+    engineMeta
   });
 
   const coreWrapperRef = useRef<HTMLDivElement>(null);
@@ -247,6 +248,8 @@ const Visualizer: FC<VisualizerProps> = ({
     forceDevice,
     onDeviceChange
   });
+
+  const customProviders = useMemo(() => config()?.customProviders, []);
 
   return (
     <Wrapper
@@ -265,6 +268,7 @@ const Visualizer: FC<VisualizerProps> = ({
           viewerProperty={overriddenViewerProperty}
           ready={ready}
           meta={engineMeta}
+          customProvider={customProviders}
           camera={visualizerCamera}
           interactionMode={interactionMode}
           shouldRender={shouldRender}
