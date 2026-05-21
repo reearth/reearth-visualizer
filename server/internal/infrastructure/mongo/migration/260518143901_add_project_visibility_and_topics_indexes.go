@@ -39,14 +39,16 @@ var projectQueryCollation = &options.Collation{
 	Alternate: "shifted",
 }
 
+const addProjectVisibilityAndTopicsIndexesName = "AddProjectVisibilityAndTopicsIndexes"
+
 func AddProjectVisibilityAndTopicsIndexes(ctx context.Context, c DBClient) error {
-	if err := createNonUniqueIndex(ctx, c, "project", "project_visibility_deleted", bson.D{
+	if err := createNonUniqueIndex(ctx, c, addProjectVisibilityAndTopicsIndexesName, "project", "project_visibility_deleted", bson.D{
 		{Key: "visibility", Value: 1},
 		{Key: "deleted", Value: 1},
 	}, projectQueryCollation); err != nil {
 		return err
 	}
-	if err := createNonUniqueIndex(ctx, c, "projectmetadata", "projectmetadata_topics", bson.D{
+	if err := createNonUniqueIndex(ctx, c, addProjectVisibilityAndTopicsIndexesName, "projectmetadata", "projectmetadata_topics", bson.D{
 		{Key: "topics", Value: 1},
 	}, nil); err != nil {
 		return err
@@ -54,15 +56,19 @@ func AddProjectVisibilityAndTopicsIndexes(ctx context.Context, c DBClient) error
 	return nil
 }
 
-func createNonUniqueIndex(ctx context.Context, c DBClient, collectionName, indexName string, keys bson.D, collation *options.Collation) error {
+// createNonUniqueIndex is shared between index-adding migrations. The
+// migrationName parameter is used as a prefix in log lines and wrapped
+// errors so that deploy-time failures clearly identify which migration
+// they originated from.
+func createNonUniqueIndex(ctx context.Context, c DBClient, migrationName, collectionName, indexName string, keys bson.D, collation *options.Collation) error {
 	collection := c.Database().Collection(collectionName)
 
 	exists, existingName, err := indexWithKeysExists(ctx, collection, keys, collation)
 	if err != nil {
-		return fmt.Errorf("migration: AddProjectVisibilityAndTopicsIndexes: failed to list indexes on %s: %w", collectionName, err)
+		return fmt.Errorf("migration: %s: failed to list indexes on %s: %w", migrationName, collectionName, err)
 	}
 	if exists {
-		log.Infofc(ctx, "migration: AddProjectVisibilityAndTopicsIndexes: index already exists on %s as %q, skipping", collectionName, existingName)
+		log.Infofc(ctx, "migration: %s: index already exists on %s as %q, skipping", migrationName, collectionName, existingName)
 		return nil
 	}
 
@@ -75,9 +81,9 @@ func createNonUniqueIndex(ctx context.Context, c DBClient, collectionName, index
 		Options: idxOpts,
 	})
 	if err != nil {
-		return fmt.Errorf("migration: AddProjectVisibilityAndTopicsIndexes: failed to create index on %s: %w", collectionName, err)
+		return fmt.Errorf("migration: %s: failed to create index on %s: %w", migrationName, collectionName, err)
 	}
-	log.Infofc(ctx, "migration: AddProjectVisibilityAndTopicsIndexes: created index on %s: %s", collectionName, name)
+	log.Infofc(ctx, "migration: %s: created index on %s: %s", migrationName, collectionName, name)
 	return nil
 }
 
