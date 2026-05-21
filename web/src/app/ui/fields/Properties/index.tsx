@@ -63,7 +63,10 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
           // Apply default tile type override for tile_type field in tiles group
           let value = representativeField?.value;
           if (!value) {
-            if (item.representativeField === "tile_type" && item.schemaGroup === "tiles") {
+            if (
+              item?.representativeField === "tile_type" &&
+              item?.schemaGroup === "tiles"
+            ) {
               const overriddenDefault = appFeature()?.defaultTileType;
               value = overriddenDefault ?? nameSchemaField?.defaultValue;
             } else {
