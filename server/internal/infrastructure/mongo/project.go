@@ -1097,7 +1097,7 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 // projects were needed.
 //
 // This implementation starts from projectmetadata and uses its
-// (starcount, _id) index for an index-backed $sort. A pipeline-form
+// (starcount, project) index for an index-backed $sort. A pipeline-form
 // $lookup brings in the matching project with the visibility/deleted/
 // keyword filter applied inline; non-matching metadata (private/deleted
 // projects, projects filtered out by keyword) is dropped via the
@@ -1107,7 +1107,11 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 //
 // The total count for the response is independent of metadata and is
 // computed by a direct Count on the project collection using the same
-// project filter.
+// project filter. This relies on the 1:1 invariant between project and
+// projectmetadata established by the AddProjectMetadata backfill and
+// createProject; when len(consumer.Result) falls short of the expected
+// page size, we log a warning so that a regression in that invariant is
+// observable in production.
 //
 // Cursor.After/Before are still ignored on this path; First/Last/Limit
 // are clamped via effectiveSkipLimit.
@@ -1139,9 +1143,14 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	skip, lim := effectiveSkipLimit(pFilter)
 
 	pipeline := []bson.M{
+		// Tie-break by projectmetadata.project (= project.id) for stable
+		// ordering across deployments. The metadata document's _id is
+		// unstable because the legacy AddProjectMetadata backfill
+		// generated _ids in one pass at backfill time rather than at
+		// project creation time.
 		{"$sort": bson.D{
 			{Key: "starcount", Value: sortOrder},
-			{Key: "_id", Value: sortOrder},
+			{Key: "project", Value: sortOrder},
 		}},
 		{"$lookup": bson.M{
 			"from":     "project",
@@ -1174,6 +1183,21 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	}
 	if err := cursor.Err(); err != nil {
 		return nil, nil, err
+	}
+
+	// Defensive check for the 1:1 project↔projectmetadata invariant.
+	// totalCount comes from the project collection while the result rows
+	// come from the metadata-first aggregation, so a project without a
+	// metadata document would silently disappear here. Surface the gap.
+	expected := lim
+	if remaining := totalCount - skip; remaining < expected {
+		expected = remaining
+	}
+	if expected < 0 {
+		expected = 0
+	}
+	if int64(len(consumer.Result)) < expected {
+		log.Warnfc(ctx, "FindAll: starcount returned %d projects, expected %d (skip=%d, lim=%d, totalCount=%d); some projects may be missing projectmetadata documents", len(consumer.Result), expected, skip, lim, totalCount)
 	}
 
 	pageInfo := &usecasex.PageInfo{

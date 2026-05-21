@@ -8,8 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// AddProjectmetadataStarcountIndex backfills projectmetadata.starcount and
-// creates a compound (starcount, _id) index that backs the most_starred
+// AddProjectMetadataStarcountIndex backfills projectmetadata.starcount and
+// creates a compound (starcount, project) index that backs the most_starred
 // sort path used by InternalAPI GetAllProjects.
 //
 // Backfill: the original AddProjectMetadata migration did not set
@@ -22,7 +22,7 @@ import (
 // star_count field when it carries a usable number.
 //
 // Index: the aggregation reads metadata in starcount order and joins to
-// project, so an index-backed sort on (starcount, _id) replaces the
+// project, so an index-backed sort on (starcount, project) replaces the
 // previous in-memory sort over every public project. The plan is not
 // index-only (project still has to be read for the $lookup), but the
 // sort no longer needs to buffer the full result set. The same
@@ -30,15 +30,23 @@ import (
 // MongoDB scans the index in the reverse direction when the sort
 // inverts every key uniformly.
 //
+// Tie-break: projectmetadata.project (the project ID) is used instead of
+// the metadata document's _id because metadata _id values are not
+// stable across the legacy backfill path. AddProjectMetadata generated
+// fresh metadata _ids for all pre-existing projects in one pass, so
+// their _id ordering reflects backfill order rather than project
+// creation order. The project ID is a stable per-project identifier
+// that gives deterministic pagination across deployments.
+//
 // Idempotent: the backfill targets only documents without a numeric
 // starcount, and createNonUniqueIndex is itself idempotent.
-func AddProjectmetadataStarcountIndex(ctx context.Context, c DBClient) error {
+func AddProjectMetadataStarcountIndex(ctx context.Context, c DBClient) error {
 	if err := backfillStarcount(ctx, c); err != nil {
 		return err
 	}
-	return createNonUniqueIndex(ctx, c, "projectmetadata", "projectmetadata_starcount_id", bson.D{
+	return createNonUniqueIndex(ctx, c, "projectmetadata", "projectmetadata_starcount_project", bson.D{
 		{Key: "starcount", Value: 1},
-		{Key: "_id", Value: 1},
+		{Key: "project", Value: 1},
 	}, nil)
 }
 
@@ -60,10 +68,10 @@ func backfillStarcount(ctx context.Context, c DBClient) error {
 	}
 	res, err := col.UpdateMany(ctx, filter, update)
 	if err != nil {
-		return fmt.Errorf("migration: AddProjectmetadataStarcountIndex: failed to backfill starcount: %w", err)
+		return fmt.Errorf("migration: AddProjectMetadataStarcountIndex: failed to backfill starcount: %w", err)
 	}
 	if res.ModifiedCount > 0 {
-		log.Infofc(ctx, "migration: AddProjectmetadataStarcountIndex: backfilled starcount on %d projectmetadata documents", res.ModifiedCount)
+		log.Infofc(ctx, "migration: AddProjectMetadataStarcountIndex: backfilled starcount on %d projectmetadata documents", res.ModifiedCount)
 	}
 	return nil
 }
