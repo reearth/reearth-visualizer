@@ -1126,6 +1126,20 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
 
+	skip, lim := effectiveSkipLimit(pFilter)
+
+	// Skip is already beyond the matched set, so the page is empty by
+	// construction. Return a fully-populated PageInfo without running the
+	// metadata-first aggregation; this saves a sort/lookup over the whole
+	// collection for out-of-range pagination requests.
+	if skip >= totalCount {
+		return []*project.Project{}, &usecasex.PageInfo{
+			TotalCount:      totalCount,
+			HasNextPage:     false,
+			HasPreviousPage: skip > 0,
+		}, nil
+	}
+
 	sortOrder := 1
 	if pFilter.Sort != nil && pFilter.Sort.Desc {
 		sortOrder = -1
@@ -1139,8 +1153,6 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	for k, v := range filter {
 		lookupMatch[k] = v
 	}
-
-	skip, lim := effectiveSkipLimit(pFilter)
 
 	pipeline := []bson.M{
 		// Tie-break by projectmetadata.project (= project.id) for stable
