@@ -21,15 +21,31 @@ func MigrateTilesToCesiumIon(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("property")
 
 	// Find all properties with tiles that need migration
+	// This includes:
+	// 1. Tiles with explicit tile_type in [default, default_label, default_road, black_marble]
+	// 2. Tiles with empty fields array (were using old default "default")
 	filter := bson.M{
 		"items": bson.M{
 			"$elemMatch": bson.M{
 				"schemagroup": "tiles",
-				"groups.fields": bson.M{
-					"$elemMatch": bson.M{
-						"field": "tile_type",
-						"value": bson.M{
-							"$in": []string{"default", "default_label", "default_road", "black_marble"},
+				"$or": []bson.M{
+					// Case 1: Explicit old tile types
+					{
+						"groups.fields": bson.M{
+							"$elemMatch": bson.M{
+								"field": "tile_type",
+								"value": bson.M{
+									"$in": []string{"default", "default_label", "default_road", "black_marble"},
+								},
+							},
+						},
+					},
+					// Case 2: Empty fields array (using old default)
+					{
+						"groups": bson.M{
+							"$elemMatch": bson.M{
+								"fields": bson.M{"$size": 0},
+							},
 						},
 					},
 				},
@@ -84,6 +100,8 @@ func MigrateTilesToCesiumIon(ctx context.Context, c DBClient) error {
 						// Find tile_type field
 						var tileTypeIndex = -1
 						var oldTileType string
+						var isEmptyFields = len(group.Fields) == 0
+
 						for k, field := range group.Fields {
 							if field.Field == "tile_type" {
 								if val, ok := field.Value.(string); ok {
@@ -96,12 +114,30 @@ func MigrateTilesToCesiumIon(ctx context.Context, c DBClient) error {
 							}
 						}
 
-						if tileTypeIndex == -1 {
+						// Skip if not a migration target
+						// (has tile_type but it's not in our migration list, and fields is not empty)
+						if tileTypeIndex == -1 && !isEmptyFields {
 							continue
 						}
 
-						// Update tile_type to cesium_ion
-						group.Fields[tileTypeIndex].Value = "cesium_ion"
+						// Determine the old tile type
+						if isEmptyFields {
+							// Empty fields means it was using the old default "default"
+							oldTileType = "default"
+						}
+
+						// Update or add tile_type field
+						if tileTypeIndex != -1 {
+							// Update existing tile_type field
+							group.Fields[tileTypeIndex].Value = "cesium_ion"
+						} else {
+							// Add new tile_type field (for empty fields case)
+							group.Fields = append(group.Fields, &mongodoc.PropertyFieldDocument{
+								Field: "tile_type",
+								Type:  "string",
+								Value: "cesium_ion",
+							})
+						}
 						modified = true
 
 						// Check if cesium_ion_asset_id already exists
