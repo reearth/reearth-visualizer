@@ -5,6 +5,7 @@ import type {
   GroupListItem,
   Item
 } from "@reearth/services/api/property";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
@@ -59,8 +60,16 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
             (sf) => sf.id === item.representativeField
           );
 
-          const value =
-            representativeField?.value || nameSchemaField?.defaultValue;
+          // Apply default tile type override for tile_type field in tiles group
+          let value = representativeField?.value;
+          if (!value) {
+            if (item.representativeField === "tile_type" && item.schemaGroup === "tiles") {
+              const overriddenDefault = appFeature()?.defaultTileType;
+              value = overriddenDefault ?? nameSchemaField?.defaultValue;
+            } else {
+              value = nameSchemaField?.defaultValue;
+            }
+          }
 
           const choice = nameSchemaField?.choices
             ? nameSchemaField?.choices?.find((c) => c.key === value)?.label
