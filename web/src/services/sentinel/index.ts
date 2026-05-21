@@ -23,7 +23,7 @@ let isInitialized = false;
 export async function initializeSentinel(): Promise<void> {
   const appConfig = config();
 
-  if (!appConfig?.tileServerToken) {
+  if (!appConfig?.tileServerToken || !appConfig?.tileServerBaseUrl) {
     return;
   }
 
