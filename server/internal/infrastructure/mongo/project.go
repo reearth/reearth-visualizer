@@ -1156,16 +1156,19 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 			"from":     "project",
 			"let":      bson.M{"pid": "$project"},
 			"pipeline": []bson.M{{"$match": lookupMatch}},
-			"as":       "project",
+			// "joinedProject" rather than "project" so we don't clobber the
+			// existing projectmetadata.project scalar that the lookup
+			// correlates against — keeps the pipeline easier to extend.
+			"as": "joinedProject",
 		}},
-		{"$match": bson.M{"project.0": bson.M{"$exists": true}}},
+		{"$match": bson.M{"joinedProject.0": bson.M{"$exists": true}}},
 	}
 	if skip > 0 {
 		pipeline = append(pipeline, bson.M{"$skip": skip})
 	}
 	pipeline = append(pipeline,
 		bson.M{"$limit": lim},
-		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$arrayElemAt": bson.A{"$project", 0}}}},
+		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$arrayElemAt": bson.A{"$joinedProject", 0}}}},
 	)
 
 	metadataColl := r.client.Client().Database().Collection("projectmetadata")

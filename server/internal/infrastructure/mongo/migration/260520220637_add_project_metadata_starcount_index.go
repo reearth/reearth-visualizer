@@ -40,11 +40,13 @@ import (
 //
 // Idempotent: the backfill targets only documents without a numeric
 // starcount, and createNonUniqueIndex is itself idempotent.
+const addProjectMetadataStarcountIndexName = "AddProjectMetadataStarcountIndex"
+
 func AddProjectMetadataStarcountIndex(ctx context.Context, c DBClient) error {
 	if err := backfillStarcount(ctx, c); err != nil {
 		return err
 	}
-	return createNonUniqueIndex(ctx, c, "projectmetadata", "projectmetadata_starcount_project", bson.D{
+	return createNonUniqueIndex(ctx, c, addProjectMetadataStarcountIndexName, "projectmetadata", "projectmetadata_starcount_project", bson.D{
 		{Key: "starcount", Value: 1},
 		{Key: "project", Value: 1},
 	}, nil)
@@ -68,10 +70,10 @@ func backfillStarcount(ctx context.Context, c DBClient) error {
 	}
 	res, err := col.UpdateMany(ctx, filter, update)
 	if err != nil {
-		return fmt.Errorf("migration: AddProjectMetadataStarcountIndex: failed to backfill starcount: %w", err)
+		return fmt.Errorf("migration: %s: failed to backfill starcount: %w", addProjectMetadataStarcountIndexName, err)
 	}
 	if res.ModifiedCount > 0 {
-		log.Infofc(ctx, "migration: AddProjectMetadataStarcountIndex: backfilled starcount on %d projectmetadata documents", res.ModifiedCount)
+		log.Infofc(ctx, "migration: %s: backfilled starcount on %d projectmetadata documents", addProjectMetadataStarcountIndexName, res.ModifiedCount)
 	}
 	return nil
 }
