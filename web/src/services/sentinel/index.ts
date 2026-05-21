@@ -3,9 +3,12 @@ import {
   updateToken,
   clearToken,
   getSecurityStatus,
-  unregisterAssetSecurity,
+  unregisterAssetSecurity
 } from "@reearth/sentinel";
-import type { AssetSecurityStatus, TokenUpdateOptions } from "@reearth/sentinel";
+import type {
+  AssetSecurityStatus,
+  TokenUpdateOptions
+} from "@reearth/sentinel";
 
 import { config } from "../config";
 
@@ -14,7 +17,7 @@ export type { AssetSecurityStatus, TokenUpdateOptions };
 let isInitialized = false;
 
 /**
- * Initialize Sentinel Service Worker for Terravista Bearer-token injection.
+ * Initialize Sentinel Service Worker
  * Must be called after loadConfig() resolves, before the viewer mounts.
  */
 export async function initializeSentinel(): Promise<void> {
@@ -27,50 +30,48 @@ export async function initializeSentinel(): Promise<void> {
   if (isInitialized) return;
 
   try {
-    const baseUrl = appConfig.tileServerBaseUrl ?? "https://tiles.eukarya.io";
+    const baseUrl = appConfig.tileServerBaseUrl;
     const protectedDomain = new URL(baseUrl).host;
 
     await registerAssetSecurity({
-      // proxyUrl is required by Sentinel's API validation; Terravista validates
-      // Bearer tokens directly so no separate proxy is needed — point at origin.
       proxyUrl: baseUrl,
       protectedDomains: [protectedDomain],
       namespace: "reearth-visualizer",
-      // Override default rasterTiles pattern to match all Terravista paths.
-      // Default pattern (/tiles/{name}/{z}/{x}/{y}) does NOT match Terravista URLs,
-      // so terrain/imagery/3D-tiles requests would not be intercepted without this.
       assetPatterns: {
-        rasterTiles: /\/(?:cesium-mesh|imagery|google3d|v1\/3dtiles)\//,
+        rasterTiles: /\/(?:cesium-mesh|imagery|google3d|v1\/3dtiles)\//
       },
       tokenConfig: {
-        memoryCacheTTL: 300_000,  // 5 min
-        refreshThreshold: 60_000, // refresh 1 min before expiry
+        memoryCacheTTL: 300_000, // 5 min
+        refreshThreshold: 60_000 // refresh 1 min before expiry
       },
       debug: import.meta.env.DEV,
       onTokenExpired: async () => {
-        // Terravista token is a server-side secret in GCP Secret Manager.
         // Re-fetch reearth_config.json (no-store) to pick up a rotated token.
         try {
-          const res = await fetch("/reearth_config.json", { cache: "no-store" });
+          const res = await fetch("/reearth_config.json", {
+            cache: "no-store"
+          });
           const freshConfig = await res.json();
           const newToken: string | undefined = freshConfig?.tileServerToken;
           if (newToken) {
             await updateToken({
               accessToken: newToken,
-              expiresAt: Date.now() + 24 * 60 * 60 * 1000, // re-check in 24h
+              expiresAt: Date.now() + 24 * 60 * 60 * 1000 // re-check in 24h
             });
           } else {
-            console.warn("[Sentinel] Token expired and no new token found in config");
+            console.warn(
+              "[Sentinel] Token expired and no new token found in config"
+            );
           }
         } catch (err) {
           console.error("[Sentinel] Token refresh failed:", err);
         }
-      },
+      }
     });
 
     await updateToken({
       accessToken: appConfig.tileServerToken,
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000, // re-check in 24h via onTokenExpired
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000 // re-check in 24h via onTokenExpired
     });
 
     isInitialized = true;
@@ -86,7 +87,9 @@ export async function clearSentinelToken(): Promise<void> {
   await clearToken();
 }
 
-export async function updateSentinelToken(options: TokenUpdateOptions): Promise<void> {
+export async function updateSentinelToken(
+  options: TokenUpdateOptions
+): Promise<void> {
   if (!isInitialized) return;
   await updateToken(options);
 }
