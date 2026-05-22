@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.4 - 2026-05-21
+
+### Web
+
+#### 🧪 Testing
+
+- Skip flaky e2e test suites temporarily ([#2199](https://github.com/reearth/reearth-visualizer/pull/2199)) [`db0311`](https://github.com/reearth/reearth-visualizer/commit/db0311)
+
+### Server
+
+#### ⚡️ Performance
+
+- Metadata-first aggregation for most_starred sort ([#2206](https://github.com/reearth/reearth-visualizer/pull/2206)) [`6b394d`](https://github.com/reearth/reearth-visualizer/commit/6b394d)
+- Optimize InternalAPI GetAllProjects query path ([#2202](https://github.com/reearth/reearth-visualizer/pull/2202)) [`ad3714`](https://github.com/reearth/reearth-visualizer/commit/ad3714)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.4 ([#2207](https://github.com/reearth/reearth-visualizer/pull/2207)) [`d3706a`](https://github.com/reearth/reearth-visualizer/commit/d3706a)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update dawidd6&#x2F;action-download-artifact action to v21 ([#2181](https://github.com/reearth/reearth-visualizer/pull/2181)) [`c0732f`](https://github.com/reearth/reearth-visualizer/commit/c0732f)
+- Update code owners ([#2204](https://github.com/reearth/reearth-visualizer/pull/2204)) [`00b4e2`](https://github.com/reearth/reearth-visualizer/commit/00b4e2)
+- Limit renovate auto-rebase to conflicted branches only ([#2200](https://github.com/reearth/reearth-visualizer/pull/2200)) [`01b8b1`](https://github.com/reearth/reearth-visualizer/commit/01b8b1)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Add contents: write permission to release jobs ([#2198](https://github.com/reearth/reearth-visualizer/pull/2198)) [`e9b543`](https://github.com/reearth/reearth-visualizer/commit/e9b543)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update dawidd6&#x2F;action-download-artifact action to v21 ([#2181](https://github.com/reearth/reearth-visualizer/pull/2181)) [`c0732f`](https://github.com/reearth/reearth-visualizer/commit/c0732f)
+- Update code owners ([#2204](https://github.com/reearth/reearth-visualizer/pull/2204)) [`00b4e2`](https://github.com/reearth/reearth-visualizer/commit/00b4e2)
+- Limit renovate auto-rebase to conflicted branches only ([#2200](https://github.com/reearth/reearth-visualizer/pull/2200)) [`01b8b1`](https://github.com/reearth/reearth-visualizer/commit/01b8b1)
+
 ## 1.0.0-beta.16.3 - 2026-05-15
 
 ### Web
