@@ -50,6 +50,23 @@ export default function useHooks({
     const configData = config();
     const isEE = configData?.featureCollection === "ee";
     const defaultTileType = appFeature()?.defaultTileType;
+
+    // Mapping of deprecated tile types to EE tile types
+    const tileTypeMigrationMap: Record<string, string> = {
+      default: "google_satellite",
+      default_label: "google_satellite",
+      default_road: "google_roadmap",
+      black_marble: "nasa_black_marble"
+    };
+
+    // Mapping of Cesium Ion asset IDs to EE tile types (fallback when no token provided)
+    const cesiumIonAssetIdFallbackMap: Record<string, string> = {
+      "2": "google_satellite",
+      "3": "google_satellite",
+      "4": "google_roadmap",
+      "3812": "nasa_black_marble"
+    };
+
     const hasAccessToken = !!engineMeta?.cesiumIonAccessToken;
 
     return migrateViewerPropertyTiles(overriddenViewerProperty, {
