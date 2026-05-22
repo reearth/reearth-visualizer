@@ -50,10 +50,21 @@ const PropertyField: FC<Props> = ({
     // Apply default tile type override for tile_type field in tiles group
     if (schema.id === "tile_type" && schemaGroup === "tiles") {
       const overriddenDefault = appFeature()?.defaultTileType;
-      return field?.mergedValue ?? field?.value ?? overriddenDefault ?? schema.defaultValue;
+      return (
+        field?.mergedValue ??
+        field?.value ??
+        overriddenDefault ??
+        schema.defaultValue
+      );
     }
     return field?.mergedValue ?? field?.value ?? schema.defaultValue;
-  }, [field?.mergedValue, field?.value, schema.defaultValue, schema.id, schemaGroup]);
+  }, [
+    field?.mergedValue,
+    field?.value,
+    schema.defaultValue,
+    schema.id,
+    schemaGroup
+  ]);
 
   const assetTypes = useMemo(
     () =>
