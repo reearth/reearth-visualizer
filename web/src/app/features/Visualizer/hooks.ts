@@ -59,7 +59,7 @@ export default function useHooks({
     const cesiumIonAssetIdFallbackMap: Record<string, string> = {
       "2": "google_satellite",
       "3": "google_satellite",
-      "4": "google_road",
+      "4": "google_roadmap",
       "3812": "nasa_black_marble"
     };
 
