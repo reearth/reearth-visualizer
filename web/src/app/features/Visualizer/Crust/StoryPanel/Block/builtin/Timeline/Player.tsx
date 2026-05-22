@@ -128,7 +128,7 @@ const TimelineEditor = ({
             </PlayButton>
           </PlayControl>
           <PopoverWrapper isMinimized={isMinimized}>
-            {playSpeed === "control_by_user" ? (
+            {!playSpeed || playSpeed === "control_by_user" ? (
               <Popup
                 offset={4}
                 open={isOpen}

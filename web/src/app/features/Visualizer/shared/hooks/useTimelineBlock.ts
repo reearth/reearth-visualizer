@@ -173,15 +173,23 @@ export default (timelineValues?: TimelineValues, playSpeed?: string) => {
     if (!playSpeed || playSpeed === "control_by_user") return;
     const mappedSpeed = PLAY_SPEED_MAP[playSpeed];
     if (mappedSpeed === undefined) return;
+    let timerId: ReturnType<typeof setTimeout> | undefined;
     try {
       onSpeedChange(TRANSITION_SPEED);
-      setTimeout(() => {
-        onSpeedChange(mappedSpeed);
-        setSpeed(mappedSpeed);
+      timerId = setTimeout(() => {
+        try {
+          onSpeedChange(mappedSpeed);
+          setSpeed(mappedSpeed);
+        } catch {
+          setSpeed(playSpeedOptions[0].seconds);
+        }
       }, 0);
     } catch {
       setSpeed(playSpeedOptions[0].seconds);
     }
+    return () => {
+      clearTimeout(timerId);
+    };
   }, [playSpeed, onSpeedChange, playSpeedOptions]);
 
   useEffect(() => {
