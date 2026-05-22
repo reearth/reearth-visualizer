@@ -247,6 +247,60 @@ func UpdateImportStatus(
 	}
 }
 
+var legacyTileTypeMap = map[string]string{
+	"default":       "google_satellite",
+	"default_label": "google_satellite",
+	"default_road":  "google_roadmap",
+	"black_marble":  "nasa_black_marble",
+}
+
+func migrateLegacyTileTypes(data *[]byte) error {
+	var d map[string]any
+	if err := json.Unmarshal(*data, &d); err != nil {
+		return err
+	}
+
+	scene, ok := d["scene"].(map[string]any)
+	if !ok {
+		return nil
+	}
+	property, ok := scene["property"].(map[string]any)
+	if !ok {
+		return nil
+	}
+	tiles, ok := property["tiles"].([]any)
+	if !ok {
+		return nil
+	}
+
+	for _, t := range tiles {
+		tile, ok := t.(map[string]any)
+		if !ok {
+			continue
+		}
+		// tile_type is stored as {"type": "string", "value": "<tile_type>"}
+		tileTypeObj, ok := tile["tile_type"].(map[string]any)
+		if !ok {
+			continue
+		}
+		tileType, ok := tileTypeObj["value"].(string)
+		if !ok {
+			continue
+		}
+		if mapped, exists := legacyTileTypeMap[tileType]; exists {
+			log.Infof("[Import] migrating legacy tile_type %q -> %q", tileType, mapped)
+			tileTypeObj["value"] = mapped
+		}
+	}
+
+	b, err := json.Marshal(d)
+	if err != nil {
+		return err
+	}
+	*data = b
+	return nil
+}
+
 func ImportProject(
 	ctx context.Context,
 	usecases *interfaces.Container,
@@ -259,6 +313,10 @@ func ImportProject(
 	result map[string]any,
 	version *string,
 ) bool {
+
+	if err := migrateLegacyTileTypes(importData); err != nil {
+		log.Warnf("[Import] failed to migrate legacy tile types: %v", err)
+	}
 
 	// project ----------
 	newProject, err := usecases.Project.ImportProjectData(ctx, wsId.String(), pid.Ref().StringRef(), importData, op)
