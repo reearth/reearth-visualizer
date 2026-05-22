@@ -9,6 +9,7 @@ import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 import { useOverriddenProperty } from "./utils";
+import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
 
 export default function useHooks({
   ownBuiltinWidgets,
@@ -38,101 +39,25 @@ export default function useHooks({
     return shouldWidgetAnimate;
   }, [ownBuiltinWidgets]);
 
-  // Apply backward compatibility for tiles when featureCollection is 'ee'
-  // Also apply default tile type for tiles without explicit type
-  const migratedViewerProperty = useMemo(() => {
-    if (!viewerProperty?.tiles) return viewerProperty;
+  // Apply overrides first
+  const [overriddenViewerProperty, overrideViewerProperty] =
+    useOverriddenProperty(viewerProperty);
 
+  // Apply migration (backward compatibility) and fallback:
+  // Migration: Deprecated tile types → new types (EE), default tile/terrain types
+  // Fallback: Cesium Ion assets → alternatives when token missing
+  const migratedViewerProperty = useMemo(() => {
     const configData = config();
     const isEE = configData?.featureCollection === "ee";
     const defaultTileType = appFeature()?.defaultTileType;
-
-    // Mapping of deprecated tile types to EE tile types
-    const tileTypeMigrationMap: Record<string, string> = {
-      default: "google_satellite",
-      default_label: "google_satellite",
-      default_road: "google_roadmap",
-      black_marble: "nasa_black_marble"
-    };
-
-    // Mapping of Cesium Ion asset IDs to EE tile types (fallback when no token provided)
-    const cesiumIonAssetIdFallbackMap: Record<string, string> = {
-      "2": "google_satellite",
-      "3": "google_satellite",
-      "4": "google_road",
-      "3812": "nasa_black_marble"
-    };
-
     const hasAccessToken = !!engineMeta?.cesiumIonAccessToken;
 
-    const needsProcessing = viewerProperty.tiles.some((tile) => {
-      // Check for tiles without type (need default)
-      if (!tile.type) return true;
-
-      // Check for deprecated tile types (EE only)
-      if (isEE && tile.type in tileTypeMigrationMap) return true;
-
-      // Check for cesium_ion tiles without token that need fallback (EE only)
-      if (
-        isEE &&
-        tile.type === "cesium_ion" &&
-        !hasAccessToken &&
-        // @ts-expect-error - cesiumIonAssetId will be added to core type later
-        tile.cesiumIonAssetId &&
-        // @ts-expect-error - cesiumIonAssetId will be added to core type later
-        tile.cesiumIonAssetId in cesiumIonAssetIdFallbackMap
-      ) {
-        return true;
-      }
-
-      return false;
+    return migrateViewerPropertyTiles(overriddenViewerProperty, {
+      isEE,
+      defaultTileType,
+      hasAccessToken
     });
-
-    if (!needsProcessing) return viewerProperty;
-
-    const migratedTiles = viewerProperty.tiles.map((tile) => {
-      // Apply default tile type for tiles without explicit type
-      if (!tile.type && defaultTileType) {
-        return {
-          ...tile,
-          type: defaultTileType
-        };
-      }
-
-      // EE-specific migrations only apply when featureCollection is 'ee'
-      if (!isEE) return tile;
-
-      // Migrate deprecated tile types
-      if (tile.type && tile.type in tileTypeMigrationMap) {
-        return {
-          ...tile,
-          type: tileTypeMigrationMap[tile.type]
-        };
-      }
-
-      // Fallback cesium_ion tiles to EE types when no access token provided
-      if (tile.type === "cesium_ion" && !hasAccessToken) {
-        // @ts-expect-error - cesiumIonAssetId will be added to core type later
-        const assetId = tile.cesiumIonAssetId;
-        if (assetId && assetId in cesiumIonAssetIdFallbackMap) {
-          return {
-            ...tile,
-            type: cesiumIonAssetIdFallbackMap[assetId]
-          };
-        }
-      }
-
-      return tile;
-    });
-
-    return {
-      ...viewerProperty,
-      tiles: migratedTiles
-    };
-  }, [viewerProperty, engineMeta]);
-
-  const [overriddenViewerProperty, overrideViewerProperty] =
-    useOverriddenProperty(migratedViewerProperty);
+  }, [overriddenViewerProperty, engineMeta]);
 
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -165,7 +90,7 @@ export default function useHooks({
 
   return {
     shouldRender,
-    overriddenViewerProperty,
+    overriddenViewerProperty: migratedViewerProperty,
     overrideViewerProperty,
     storyWrapperRef,
     visualizerCamera,
