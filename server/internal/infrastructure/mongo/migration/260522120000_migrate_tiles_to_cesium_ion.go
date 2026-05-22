@@ -168,8 +168,7 @@ func MigrateTilesToCesiumIon(ctx context.Context, c DBClient) error {
 							})
 						}
 
-						fmt.Printf("[migration]   - migrated tile: %s -> cesium_ion (asset_id=%s)\n",
-							oldTileType, tileTypeToCesiumIonAsset[oldTileType])
+
 					}
 				}
 
