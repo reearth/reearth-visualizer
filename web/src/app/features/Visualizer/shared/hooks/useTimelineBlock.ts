@@ -13,6 +13,7 @@ import {
   formatISO8601,
   formatTimezone
 } from "../../Crust/StoryPanel/utils";
+import { PLAY_SPEED_MAP, TRANSITION_SPEED } from "../constants";
 
 export const getNewDate = (d?: Date) => d ?? new Date();
 
@@ -24,8 +25,6 @@ const calculateEndTime = (date: Date) => {
 const calculateMidTime = (startTime: number, stopTime: number) => {
   return (startTime + stopTime) / 2;
 };
-
-const TRANSITION_SPEED = 0;
 
 const timeRange = (startTime?: number, stopTime?: number) => {
   // To avoid out of range error in Cesium, we need to turn back a hour.
@@ -40,7 +39,7 @@ const timeRange = (startTime?: number, stopTime?: number) => {
   };
 };
 
-export default (timelineValues?: TimelineValues) => {
+export default (timelineValues?: TimelineValues, playSpeed?: string) => {
   const t = useT();
 
   const playSpeedOptions = useMemo(
@@ -169,6 +168,21 @@ export default (timelineValues?: TimelineValues) => {
     },
     [onSpeedChange, playSpeedOptions]
   );
+
+  useEffect(() => {
+    if (!playSpeed || playSpeed === "control_by_user") return;
+    const mappedSpeed = PLAY_SPEED_MAP[playSpeed];
+    if (mappedSpeed === undefined) return;
+    try {
+      onSpeedChange(TRANSITION_SPEED);
+      setTimeout(() => {
+        onSpeedChange(mappedSpeed);
+        setSpeed(mappedSpeed);
+      }, 0);
+    } catch {
+      setSpeed(playSpeedOptions[0].seconds);
+    }
+  }, [playSpeed, onSpeedChange, playSpeedOptions]);
 
   useEffect(() => {
     if (timelineValues) {

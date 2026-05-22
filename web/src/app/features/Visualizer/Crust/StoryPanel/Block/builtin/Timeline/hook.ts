@@ -12,6 +12,7 @@ import type {
   PanelProperty
 } from "@reearth/app/features/Visualizer/shared/types";
 import { TickEventCallback, TimelineCommitter } from "@reearth/core";
+import { useT } from "@reearth/services/i18n/hooks";
 import {
   ChangeEventHandler,
   MouseEventHandler,
@@ -24,11 +25,7 @@ import {
 
 import { TimelineValues } from ".";
 
-export type Range = {
-  start: number;
-  mid: number;
-  end: number;
-};
+export type Range = { start: number; mid: number; end: number };
 
 export type TimelineBlockProperty = {
   panel?: PanelProperty;
@@ -84,6 +81,7 @@ export default ({
   removeTickEventListener,
   setCurrentTime
 }: TimelineProps) => {
+  const t = useT();
   const [isPause, setIsPause] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [activeBlock, setActiveBlock] = useState("");
@@ -98,7 +96,7 @@ export default ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selected, setSelected] = useState("1sec/sec");
+  const [selected, setSelected] = useState(t("1sec/sec"));
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(
       currentTime,

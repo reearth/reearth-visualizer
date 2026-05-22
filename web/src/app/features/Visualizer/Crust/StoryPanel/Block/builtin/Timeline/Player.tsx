@@ -3,7 +3,7 @@ import useHooks, {
 } from "@reearth/app/features/Visualizer/Crust/StoryPanel/Block/builtin/Timeline/hook";
 import useTimelineBlock from "@reearth/app/features/Visualizer/shared/hooks/useTimelineBlock";
 import { PaddingProp } from "@reearth/app/features/Visualizer/shared/types";
-import { Icon, Popup } from "@reearth/app/lib/reearth-ui";
+import { Icon, Popup, Typography } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
@@ -16,6 +16,7 @@ type TimelineProps = {
   timelineValues?: TimelineValues;
   inEditor?: boolean;
   playMode?: string;
+  playSpeed?: string;
   padding?: PaddingProp;
   property?: TimelineBlockProperty;
 };
@@ -26,6 +27,7 @@ const TimelineEditor = ({
   timelineValues,
   inEditor,
   playMode,
+  playSpeed,
   padding,
   property
 }: TimelineProps) => {
@@ -45,7 +47,7 @@ const TimelineEditor = ({
     removeTickEventListener,
     setCurrentTime,
     onTimeChange
-  } = useTimelineBlock(timelineValues);
+  } = useTimelineBlock(timelineValues, playSpeed);
 
   const {
     formattedCurrentTime,
@@ -126,32 +128,41 @@ const TimelineEditor = ({
             </PlayButton>
           </PlayControl>
           <PopoverWrapper isMinimized={isMinimized}>
-            <Popup
-              offset={4}
-              open={isOpen}
-              placement="bottom-start"
-              onOpenChange={handlePopOver}
-              trigger={
-                <InputWrapper onClick={handlePopOver}>
-                  <Select>{selected && t(`${selected}`)}</Select>
-                  <ArrowIcon icon="caretDown" open={isOpen} />
-                </InputWrapper>
-              }
-            >
-              <SelectorWrapper>
-                {playSpeedOptions?.map((playSpeed, key) => (
-                  <InputOptions
-                    key={key}
-                    value={playSpeed.seconds}
-                    onClick={() => {
-                      handleOnSelect(playSpeed.timeString, playSpeed.seconds);
-                    }}
-                  >
-                    {playSpeed.timeString}
-                  </InputOptions>
-                ))}
-              </SelectorWrapper>
-            </Popup>
+            {playSpeed === "control_by_user" ? (
+              <Popup
+                offset={4}
+                open={isOpen}
+                placement="bottom-start"
+                onOpenChange={handlePopOver}
+                trigger={
+                  <InputWrapper onClick={handlePopOver}>
+                    <Select>{selected && t(`${selected}`)}</Select>
+                    <ArrowIcon icon="caretDown" open={isOpen} />
+                  </InputWrapper>
+                }
+              >
+                <SelectorWrapper>
+                  {playSpeedOptions?.map((playSpeed, key) => (
+                    <InputOptions
+                      key={key}
+                      value={playSpeed.seconds}
+                      onClick={() => {
+                        handleOnSelect(playSpeed.timeString, playSpeed.seconds);
+                      }}
+                    >
+                      {playSpeed.timeString}
+                    </InputOptions>
+                  ))}
+                </SelectorWrapper>
+              </Popup>
+            ) : (
+              <Typography size="body" color="#525252">
+                {t(
+                  playSpeedOptions.find((o) => o.seconds === Math.abs(speed))
+                    ?.timeString ?? ""
+                )}
+              </Typography>
+            )}
           </PopoverWrapper>
         </TimelineControl>
         <CurrentTime isMinimized={isMinimized}>
