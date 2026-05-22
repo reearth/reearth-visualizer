@@ -66,7 +66,9 @@ func MigrateTilesToCesiumIon(ctx context.Context, c DBClient) error {
 		return nil
 	}
 
-	return col.Find(ctx, filter, &mongox.BatchConsumer{
+	var totalProcessed, totalMigrated, totalSkipped, totalFailed int
+
+	err = col.Find(ctx, filter, &mongox.BatchConsumer{
 		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 			ids := make([]string, 0, len(rows))
@@ -77,6 +79,12 @@ func MigrateTilesToCesiumIon(ctx context.Context, c DBClient) error {
 			for _, row := range rows {
 				var doc mongodoc.PropertyDocument
 				if err := bson.Unmarshal(row, &doc); err != nil {
+					var raw struct {
+						ID string `bson:"id"`
+					}
+					_ = bson.Unmarshal(row, &raw)
+					fmt.Printf("[migration] MigrateTilesToCesiumIon: failed to unmarshal document id=%q: %v\n", raw.ID, err)
+					totalFailed++
 					return err
 				}
 
@@ -165,18 +173,26 @@ func MigrateTilesToCesiumIon(ctx context.Context, c DBClient) error {
 					}
 				}
 
+				totalProcessed++
 				if modified {
 					ids = append(ids, doc.ID)
 					newRows = append(newRows, doc)
+					totalMigrated++
+				} else {
+					totalSkipped++
 				}
 			}
 
 			if len(ids) > 0 {
-				fmt.Printf("[migration] MigrateTilesToCesiumIon: saving %d modified properties\n", len(ids))
+				fmt.Printf("[migration] MigrateTilesToCesiumIon: saving properties: %v\n", ids)
 				return col.SaveAll(ctx, ids, newRows)
 			}
 
 			return nil
 		},
 	})
+
+	fmt.Printf("[migration] MigrateTilesToCesiumIon: total=%d migrated=%d skipped=%d failed=%d\n",
+		totalProcessed, totalMigrated, totalSkipped, totalFailed)
+	return err
 }

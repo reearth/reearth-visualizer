@@ -43,6 +43,6 @@ var migrations = migration.Migrations[DBClient]{
 	251216142332: RemoveTimeline,
 	251222111114: AddUnifiedCaseInsensitiveAliasIndex,
 	260518143901: AddProjectVisibilityAndTopicsIndexes,
-  260519180130: MigrateTilesToCesiumIon,
 	260520220637: AddProjectMetadataStarcountIndex,
+	260522120000: MigrateTilesToCesiumIon,
 }
