@@ -41,6 +41,7 @@ import {
 import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
 import useViewport from "./hooks/useViewport";
+import { migrateLayers } from "./utils";
 
 type VisualizerProps = {
   engine?: EngineType;
@@ -242,6 +243,16 @@ const Visualizer: FC<VisualizerProps> = ({
     engineMeta
   });
 
+  // Apply layers fallback when requirements not met:
+  // 1. OSM Buildings: fallback to reearth-buildings when Cesium Ion token missing
+  // 2. Google Photorealistic (EE): fallback provider to reearth when token missing or no provider
+  const migratedLayers = useMemo(() => {
+    const configData = config();
+    const isEE = configData?.featureCollection === "ee";
+    const hasAccessToken = !!engineMeta?.cesiumIonAccessToken;
+    return migrateLayers(layers, { isEE, hasAccessToken });
+  }, [layers, engineMeta]);
+
   const coreWrapperRef = useRef<HTMLDivElement>(null);
   const { viewport } = useViewport({
     wrapperRef: coreWrapperRef,
@@ -263,7 +274,7 @@ const Visualizer: FC<VisualizerProps> = ({
           engine={engine}
           isBuilt={!!isBuilt}
           isEditable={!isBuilt}
-          layers={layers}
+          layers={migratedLayers}
           zoomedLayerId={zoomedLayerId}
           viewerProperty={overriddenViewerProperty}
           ready={ready}
@@ -290,7 +301,7 @@ const Visualizer: FC<VisualizerProps> = ({
             inEditor={inEditor}
             mapRef={visualizerRef}
             mapAPIReady={mapAPIReady}
-            layers={layers}
+            layers={migratedLayers}
             // Viewer
             viewport={viewport}
             viewerProperty={overriddenViewerProperty}
