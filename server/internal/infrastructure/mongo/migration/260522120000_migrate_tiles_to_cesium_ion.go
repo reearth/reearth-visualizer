@@ -168,7 +168,6 @@ func MigrateTilesToCesiumIon(ctx context.Context, c DBClient) error {
 							})
 						}
 
-
 					}
 				}
 
