@@ -42,7 +42,7 @@ extensions:
                 - key: google_roadmap
                   label: Google Road Map
                 - key: nasa_black_marble
-                  label: Black Marble
+                  label: NASA Black Marble
                 - key: open_street_map
                   label: OpenStreetMap
                 - key: japan_gsi_standard
