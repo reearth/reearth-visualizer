@@ -253,7 +253,8 @@ describe("tilesMigration", () => {
     it("should return original viewerProperty when neither tiles nor terrain need migration", () => {
       const viewerProperty = {
         tiles: [{ id: "1", type: "open_street_map" as const }],
-        terrain: { type: "reearth_terrain" as const, enabled: true }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        terrain: { type: "reearth_terrain" as any, enabled: true }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
