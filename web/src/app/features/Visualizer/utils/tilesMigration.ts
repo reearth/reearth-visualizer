@@ -129,13 +129,12 @@ function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
 ): T | undefined {
   if (!terrain) return terrain;
 
-  // Fallback Ion-backed terrain types to reearth_terrain when token is missing (FALLBACK)
-  if (
-    (terrain.type === "cesiumion" || terrain.type === "cesium") &&
-    !config.hasAccessToken
-  ) {
+  // Fallback cesium (Cesium World Terrain) to reearth_terrain when token is missing (FALLBACK)
+  // Note: cesiumion is intentionally excluded — if the user chose a custom Ion asset
+  // and provides no token, terrain simply won't load (expected behaviour).
+  if (terrain.type === "cesium" && !config.hasAccessToken) {
     console.warn(
-      `[Terrain Fallback] Terrain type "${terrain.type}" → "reearth_terrain" (Cesium Ion access token required but missing)`
+      `[Terrain Fallback] Terrain type "cesium" → "reearth_terrain" (Cesium Ion access token required but missing)`
     );
     return {
       ...terrain,
@@ -185,14 +184,12 @@ export function migrateViewerPropertyTiles(
 
   // Check if tiles need migration
   const tilesNeedProcessing =
-    hasTiles &&
-    tiles.some((tile) => needsTileMigration(tile, config));
+    hasTiles && tiles.some((tile) => needsTileMigration(tile, config));
 
   // Check if terrain needs migration
   const terrainNeedsMigration =
     hasTerrain &&
-    (((terrain.type === "cesiumion" || terrain.type === "cesium") &&
-      !config.hasAccessToken) ||
+    ((terrain.type === "cesium" && !config.hasAccessToken) ||
       (terrain.enabled && !terrain.type));
 
   // Return original if nothing needs migration

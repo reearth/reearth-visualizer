@@ -174,7 +174,7 @@ describe("tilesMigration", () => {
       });
     });
 
-    it("should migrate terrain when type is cesiumion and no token provided", () => {
+    it("should NOT migrate cesiumion terrain when no token (user's explicit choice)", () => {
       const viewerProperty = {
         terrain: { type: "cesiumion" as const, enabled: true }
       };
@@ -182,10 +182,7 @@ describe("tilesMigration", () => {
         isEE: false,
         hasAccessToken: false
       });
-      expect(result?.terrain).toEqual({
-        type: "reearth_terrain",
-        enabled: true
-      });
+      expect(result).toBe(viewerProperty); // No migration — cesiumion without token is expected to fail
     });
 
     it("should NOT migrate terrain when token is available", () => {
@@ -205,7 +202,7 @@ describe("tilesMigration", () => {
           { id: "1", type: "default" as const },
           { id: "2", type: "cesium_ion" as const, cesiumIonAssetId: 2 }
         ],
-        terrain: { type: "cesiumion" as const, enabled: true }
+        terrain: { type: "cesium" as const, enabled: true }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: true,
@@ -237,7 +234,7 @@ describe("tilesMigration", () => {
     it("should only migrate terrain when tiles don't need migration", () => {
       const viewerProperty = {
         tiles: [{ id: "1", type: "open_street_map" as const }],
-        terrain: { type: "cesiumion" as const, enabled: true }
+        terrain: { type: "cesium" as const, enabled: true }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -492,26 +489,21 @@ describe("tilesMigration", () => {
       expect(result).toBeUndefined();
     });
 
-    it("should fallback cesiumion terrain to reearth_terrain when no token", () => {
+    it("should NOT fallback cesiumion terrain when no token (user's explicit choice)", () => {
       const terrain = { type: "cesiumion", enabled: true, normal: true };
       const result = migrateTerrain(terrain, {
         isEE: false,
         hasAccessToken: false
       });
-      expect(result).toEqual({
-        type: "reearth_terrain",
-        enabled: true,
-        normal: true
-      });
+      expect(result).toBe(terrain); // No migration
     });
 
-    it("should NOT fallback cesiumion terrain when token is available", () => {
-      const terrain = { type: "cesiumion", enabled: true };
-      const result = migrateTerrain(terrain, {
-        isEE: false,
-        hasAccessToken: true
-      });
-      expect(result).toBe(terrain); // Returns original unchanged
+    it("should NOT fallback cesiumion terrain regardless of token (user's explicit choice)", () => {
+      const terrainNoToken = { type: "cesiumion", enabled: true };
+      expect(migrateTerrain(terrainNoToken, { isEE: false, hasAccessToken: false })).toBe(terrainNoToken);
+
+      const terrainWithToken = { type: "cesiumion", enabled: true };
+      expect(migrateTerrain(terrainWithToken, { isEE: false, hasAccessToken: true })).toBe(terrainWithToken);
     });
 
     it("should NOT modify terrain with other types", () => {
@@ -542,9 +534,9 @@ describe("tilesMigration", () => {
       expect(result).toBe(terrain);
     });
 
-    it("should preserve all terrain properties during migration", () => {
+    it("should preserve all terrain properties during cesium migration", () => {
       const terrain = {
-        type: "cesiumion" as const,
+        type: "cesium" as const,
         enabled: true,
         url: "https://example.com/terrain",
         normal: true,
