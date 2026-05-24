@@ -35,7 +35,7 @@ const TILE_TYPE_MIGRATION_MAP: Record<string, string> = {
 const CESIUM_ION_ASSET_ID_FALLBACK_MAP: Record<string, string> = {
   "2": "google_satellite",
   "3": "google_satellite",
-  "4": "google_road",
+  "4": "google_roadmap",
   "3812": "nasa_black_marble"
 };
 
