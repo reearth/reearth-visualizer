@@ -91,7 +91,7 @@ describe("tilesMigration", () => {
       expect(result?.tiles).toEqual([
         { id: "1", type: "google_satellite", cesiumIonAssetId: 2 },
         { id: "2", type: "google_satellite", cesiumIonAssetId: 3 },
-        { id: "3", type: "google_road", cesiumIonAssetId: 4 },
+        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4 },
         { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812 }
       ]);
     });
@@ -601,7 +601,7 @@ describe("tilesMigration", () => {
       expect(CESIUM_ION_ASSET_ID_FALLBACK_MAP).toEqual({
         "2": "google_satellite",
         "3": "google_satellite",
-        "4": "google_road",
+        "4": "google_roadmap",
         "3812": "nasa_black_marble"
       });
     });
