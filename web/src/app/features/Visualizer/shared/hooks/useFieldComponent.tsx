@@ -229,14 +229,16 @@ export const FieldComponent = ({
             ({
               key,
               label,
-              title
+              title,
+              translatedTitle
             }: {
               key: string;
               label: string;
               title?: string;
+              translatedTitle?: string;
             }) => ({
               value: key,
-              label: label ?? title ?? key
+              label: label ?? translatedTitle ?? title ?? key
             })
           ) || []
         }
