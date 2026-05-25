@@ -46,6 +46,9 @@ function needsTileMigration(
   tile: { type?: string; cesiumIonAssetId?: number | string },
   config: TilesMigrationConfig
 ): boolean {
+  // Check if tile needs default type application
+  if (!tile.type && config.defaultTileType) return true;
+
   // Skip tiles without type - they will use schema defaults
   if (!tile.type) return false;
 
@@ -68,12 +71,21 @@ function needsTileMigration(
 
 /**
  * Applies migration and fallback to a single tile
+ * - Default Application: Apply defaultTileType when no type is set
  * - Migration: Migrate deprecated types (backward compatibility, EE only)
  * - Fallback: Use alternatives when Cesium Ion requires token but it's missing (EE only)
  */
 function migrateTile<
   T extends { type?: string; cesiumIonAssetId?: number | string }
 >(tile: T, config: TilesMigrationConfig): T {
+  // Apply default tile type when no type is set
+  if (!tile.type && config.defaultTileType) {
+    return {
+      ...tile,
+      type: config.defaultTileType
+    };
+  }
+
   // Skip tiles without type - they will use schema defaults
   if (!tile.type) return tile;
 
@@ -139,17 +151,20 @@ function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
 /**
  * Applies migration (backward compatibility) and fallback logic to viewer property
  *
+ * Default Application:
+ * 1. Apply defaultTileType to tiles without explicit type
+ *
  * Migration (backward compatibility):
- * 1. Migrate deprecated tile types to new types (EE only)
+ * 2. Migrate deprecated tile types to new types (EE only)
  *
  * Fallback (when requirements not met):
- * 2. Fallback Cesium Ion tiles to alternatives when token missing (EE only)
- * 3. Fallback Cesium terrain to reearth_terrain when token missing
+ * 3. Fallback Cesium Ion tiles to alternatives when token missing (EE only)
+ * 4. Fallback Cesium terrain to reearth_terrain when token missing
  *
- * Note: Tiles/terrain without explicit type will use schema defaults (no migration needed)
+ * Note: Tiles without type and without defaultTileType config will use schema defaults
  *
  * @param viewerProperty - The viewer property containing tiles and terrain
- * @param config - Migration and fallback configuration
+ * @param config - Migration and fallback configuration (includes defaultTileType)
  * @returns Processed viewer property or original if no processing needed
  */
 export function migrateViewerPropertyTiles(
