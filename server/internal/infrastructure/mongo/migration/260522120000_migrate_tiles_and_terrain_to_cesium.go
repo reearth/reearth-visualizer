@@ -10,64 +10,35 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var tileTypeToCesiumIonAsset = map[string]string{
-	"default":       "2",
-	"default_label": "3",
-	"default_road":  "4",
-	"black_marble":  "3812",
+// legacyTileTypeToTerravista maps explicit legacy tile types to their Terravista equivalents.
+var legacyTileTypeToTerravista = map[string]string{
+	"default":       "google_satellite",
+	"default_label": "google_satellite",
+	"default_road":  "google_roadmap",
+	"black_marble":  "nasa_black_marble",
 }
 
-// MigrateTilesAndTerrainToCesium migrates legacy tile configurations to Cesium Ion
-// and adds default terrain type for enabled terrain without explicit type.
+// MigrateTilesAndTerrainToCesium migrates legacy tile types to Terravista equivalents.
 //
-// This migration performs two operations:
-//  1. Tiles: Converts legacy tile types (default, default_label, default_road, black_marble)
-//     to cesium_ion with appropriate asset IDs
-//  2. Terrain: Adds terrainType="cesium" when terrain is enabled but no type is specified
+// Only tiles with an explicit legacy tile_type are migrated:
+//   - default, default_label -> google_satellite
+//   - default_road           -> google_roadmap
+//   - black_marble           -> nasa_black_marble
+//
+// Tiles with no tile_type (empty fields) and terrain items are intentionally left unchanged.
 func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("property")
 
-	// Find all properties with tiles or terrain that need migration
-	// This includes:
-	// 1. Tiles with explicit tile_type in [default, default_label, default_road, black_marble]
-	// 2. Tiles with empty fields array (were using old default "default")
-	// 3. Terrain enabled (terrain=true) but missing terrainType field
 	filter := bson.M{
 		"items": bson.M{
 			"$elemMatch": bson.M{
-				"$or": []bson.M{
-					// Case 1: Tiles with old tile types
-					{
-						"schemagroup": "tiles",
-						"groups.fields": bson.M{
-							"$elemMatch": bson.M{
-								"field": "tile_type",
-								"value": bson.M{
-									"$in": []string{"default", "default_label", "default_road", "black_marble"},
-								},
-							},
+				"schemagroup": "tiles",
+				"groups.fields": bson.M{
+					"$elemMatch": bson.M{
+						"field": "tile_type",
+						"value": bson.M{
+							"$in": []string{"default", "default_label", "default_road", "black_marble"},
 						},
-					},
-					// Case 2: Tiles with empty fields array (using old default)
-					{
-						"schemagroup": "tiles",
-						"groups": bson.M{
-							"$elemMatch": bson.M{
-								"fields": bson.M{"$size": 0},
-							},
-						},
-					},
-					// Case 3: Terrain enabled but no terrainType field
-					{
-						"schemagroup": "terrain",
-						"type":        "group",
-						"fields": bson.M{
-							"$elemMatch": bson.M{
-								"field": "terrain",
-								"value": true,
-							},
-						},
-						"fields.field": bson.M{"$ne": "terrainType"},
 					},
 				},
 			},
@@ -95,8 +66,6 @@ func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 			ids := make([]string, 0, len(rows))
 			newRows := make([]interface{}, 0, len(rows))
 
-			fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: processing batch of %d properties\n", len(rows))
-
 			for _, row := range rows {
 				var doc mongodoc.PropertyDocument
 				if err := bson.Unmarshal(row, &doc); err != nil {
@@ -111,106 +80,37 @@ func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 
 				modified := false
 
-				// Iterate through items
 				for i := range doc.Items {
-					// Handle tiles migration
-					if doc.Items[i].SchemaGroup == "tiles" && doc.Items[i].Type == "grouplist" {
-						// Iterate through groups (tile instances)
-						for j := range doc.Items[i].Groups {
-							group := doc.Items[i].Groups[j]
-
-							// Find tile_type field
-							var tileTypeIndex = -1
-							var oldTileType string
-							var isEmptyFields = len(group.Fields) == 0
-
-							for k, field := range group.Fields {
-								if field.Field == "tile_type" {
-									if val, ok := field.Value.(string); ok {
-										if _, exists := tileTypeToCesiumIonAsset[val]; exists {
-											tileTypeIndex = k
-											oldTileType = val
-											break
-										}
-									}
-								}
-							}
-
-							// Skip if not a migration target
-							// (has tile_type but it's not in our migration list, and fields is not empty)
-							if tileTypeIndex == -1 && !isEmptyFields {
-								continue
-							}
-
-							// Determine the old tile type
-							if isEmptyFields {
-								// Empty fields means it was using the old default "default"
-								oldTileType = "default"
-							}
-
-							// Update or add tile_type field
-							if tileTypeIndex != -1 {
-								// Update existing tile_type field
-								group.Fields[tileTypeIndex].Value = "cesium_ion"
-							} else {
-								// Add new tile_type field (for empty fields case)
-								group.Fields = append(group.Fields, &mongodoc.PropertyFieldDocument{
-									Field: "tile_type",
-									Type:  "string",
-									Value: "cesium_ion",
-								})
-							}
-							modified = true
-
-							// Check if cesium_ion_asset_id already exists
-							assetIDExists := false
-							for k := range group.Fields {
-								if group.Fields[k].Field == "cesium_ion_asset_id" {
-									// Update existing value
-									group.Fields[k].Value = tileTypeToCesiumIonAsset[oldTileType]
-									assetIDExists = true
-									break
-								}
-							}
-
-							// Add cesium_ion_asset_id if it doesn't exist
-							if !assetIDExists {
-								group.Fields = append(group.Fields, &mongodoc.PropertyFieldDocument{
-									Field: "cesium_ion_asset_id",
-									Type:  "string",
-									Value: tileTypeToCesiumIonAsset[oldTileType],
-								})
-							}
-						}
+					if doc.Items[i].SchemaGroup != "tiles" || doc.Items[i].Type != "grouplist" {
+						continue
 					}
 
-					// Handle terrain migration
-					if doc.Items[i].SchemaGroup == "terrain" && doc.Items[i].Type == "group" {
-						// Check if terrain is enabled and terrainType is missing
-						var terrainEnabled bool
-						var hasTerrainType bool
+					for j := range doc.Items[i].Groups {
+						group := doc.Items[i].Groups[j]
 
-						for _, field := range doc.Items[i].Fields {
-							if field.Field == "terrain" {
-								if val, ok := field.Value.(bool); ok && val {
-									terrainEnabled = true
+						tileTypeIdx := -1
+						var oldTileType string
+
+						for k, field := range group.Fields {
+							if field.Field == "tile_type" {
+								if val, ok := field.Value.(string); ok {
+									if _, isLegacy := legacyTileTypeToTerravista[val]; isLegacy {
+										tileTypeIdx = k
+										oldTileType = val
+									}
 								}
-							}
-							if field.Field == "terrainType" {
-								hasTerrainType = true
+								break
 							}
 						}
 
-						// If terrain is enabled but terrainType is missing, add it
-						if terrainEnabled && !hasTerrainType {
-							doc.Items[i].Fields = append(doc.Items[i].Fields, &mongodoc.PropertyFieldDocument{
-								Field: "terrainType",
-								Type:  "string",
-								Value: "cesium",
-							})
-							modified = true
-							fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: adding terrainType to property %q\n", doc.ID)
+						if tileTypeIdx == -1 {
+							continue
 						}
+
+						newType := legacyTileTypeToTerravista[oldTileType]
+						group.Fields[tileTypeIdx].Value = newType
+						fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: %s -> %s (property %q)\n", oldTileType, newType, doc.ID)
+						modified = true
 					}
 				}
 
@@ -225,7 +125,6 @@ func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 			}
 
 			if len(ids) > 0 {
-				fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: saving properties: %v\n", ids)
 				return col.SaveAll(ctx, ids, newRows)
 			}
 
