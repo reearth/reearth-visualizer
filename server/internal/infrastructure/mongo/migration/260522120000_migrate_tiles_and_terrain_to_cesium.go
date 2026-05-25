@@ -21,9 +21,9 @@ var tileTypeToCesiumIonAsset = map[string]string{
 // and adds default terrain type for enabled terrain without explicit type.
 //
 // This migration performs two operations:
-// 1. Tiles: Converts legacy tile types (default, default_label, default_road, black_marble)
-//    to cesium_ion with appropriate asset IDs
-// 2. Terrain: Adds terrainType="cesium" when terrain is enabled but no type is specified
+//  1. Tiles: Converts legacy tile types (default, default_label, default_road, black_marble)
+//     to cesium_ion with appropriate asset IDs
+//  2. Terrain: Adds terrainType="cesium" when terrain is enabled but no type is specified
 func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("property")
 
