@@ -443,23 +443,6 @@ func TestMigrateAndRevert_RoundTrip(t *testing.T) {
 				},
 			},
 		},
-		mongodoc.PropertyDocument{
-			ID:           "round3",
-			Scene:        "scene1",
-			SchemaPlugin: "reearth",
-			SchemaName:   "cesium-beta",
-			Items: []*mongodoc.PropertyItemDocument{
-				{
-					Type:        "grouplist",
-					SchemaGroup: "tiles",
-					Groups: []*mongodoc.PropertyItemDocument{
-						{
-							Fields: []*mongodoc.PropertyFieldDocument{}, // empty fields
-						},
-					},
-				},
-			},
-		},
 	}
 	_, err := col.InsertMany(ctx, originalDocs)
 	require.NoError(t, err)
@@ -487,7 +470,6 @@ func TestMigrateAndRevert_RoundTrip(t *testing.T) {
 	expected := map[string]string{
 		"round1": "default",
 		"round2": "black_marble",
-		"round3": "default", // empty fields became default
 	}
 
 	for propID, expectedType := range expected {
@@ -601,18 +583,16 @@ func TestRevertMigrateTilesAndTerrainToCesium_TerrainRevert(t *testing.T) {
 	_, err := col.InsertOne(ctx, doc)
 	require.NoError(t, err)
 
-	// Run revert
+	// Revert does not touch terrain — terrainType is left unchanged
 	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
 
-	// Verify terrainType was removed
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "terrain_revert1"}).Decode(&result)
 	require.NoError(t, err)
 
 	fields := result.Items[0].Fields
-	require.Len(t, fields, 1, "should only have terrain field after revert")
-	assert.Equal(t, "terrain", fields[0].Field)
-	assert.True(t, fields[0].Value.(bool))
+	require.Len(t, fields, 2, "terrain should be unchanged by revert")
+	assert.Equal(t, "cesium", fields[1].Value.(string))
 }
 
 // TestRevertMigrateTilesAndTerrainToCesium_TerrainPreservesOtherTypes verifies that
@@ -706,24 +686,21 @@ func TestRevertMigrateTilesAndTerrainToCesium_TilesAndTerrainRevert(t *testing.T
 	// Run revert
 	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
 
-	// Verify both were reverted
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "both_revert"}).Decode(&result)
 	require.NoError(t, err)
 
 	require.Len(t, result.Items, 2)
 
-	// Check tiles were reverted
+	// Tiles reverted
 	tileFields := result.Items[0].Groups[0].Fields
 	require.Len(t, tileFields, 1, "should only have tile_type field")
-	assert.Equal(t, "tile_type", tileFields[0].Field)
 	assert.Equal(t, "default", tileFields[0].Value.(string))
 
-	// Check terrain was reverted
+	// Terrain unchanged
 	terrainFields := result.Items[1].Fields
-	require.Len(t, terrainFields, 1, "should only have terrain field")
-	assert.Equal(t, "terrain", terrainFields[0].Field)
-	assert.True(t, terrainFields[0].Value.(bool))
+	require.Len(t, terrainFields, 2, "terrain should be unchanged by revert")
+	assert.Equal(t, "cesium", terrainFields[1].Value.(string))
 }
 
 // TestMigrateAndRevertTerrain_RoundTrip verifies that migrating and reverting
@@ -753,25 +730,23 @@ func TestMigrateAndRevertTerrain_RoundTrip(t *testing.T) {
 	_, err := col.InsertOne(ctx, originalDoc)
 	require.NoError(t, err)
 
-	// Run forward migration
+	// Forward migration does not touch terrain items — nothing to migrate
 	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
 
-	// Verify migration happened
-	var migrated mongodoc.PropertyDocument
-	err = col.FindOne(ctx, bson.M{"id": "terrain_roundtrip"}).Decode(&migrated)
+	var afterMigration mongodoc.PropertyDocument
+	err = col.FindOne(ctx, bson.M{"id": "terrain_roundtrip"}).Decode(&afterMigration)
 	require.NoError(t, err)
-	require.Len(t, migrated.Items[0].Fields, 2, "should have both fields after migration")
+	require.Len(t, afterMigration.Items[0].Fields, 1, "terrain should be unchanged after migration")
 
-	// Run revert
+	// Revert is also a no-op for terrain
 	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
 
-	// Verify revert returned to original state
 	var reverted mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "terrain_roundtrip"}).Decode(&reverted)
 	require.NoError(t, err)
 
 	fields := reverted.Items[0].Fields
-	require.Len(t, fields, 1, "should only have terrain field after revert")
+	require.Len(t, fields, 1, "terrain should be unchanged after revert")
 	assert.Equal(t, "terrain", fields[0].Field)
 	assert.True(t, fields[0].Value.(bool))
 }

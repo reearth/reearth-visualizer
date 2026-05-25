@@ -20,42 +20,23 @@ var cesiumIonAssetToTileType = map[string]string{
 
 // RevertMigrateTilesAndTerrainToCesium reverts the MigrateTilesAndTerrainToCesium migration.
 // It converts tiles with type "cesium_ion" and specific asset IDs back to their
-// original legacy tile types, removes the cesium_ion_asset_id field, and removes
-// the terrainType="cesium" field from terrain items.
+// original legacy tile types and removes the cesium_ion_asset_id field.
 //
 // NOTE: This is a revert/rollback migration and should NOT be added to migrations.go
 // unless you need to actually revert the migration in production.
 func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("property")
 
-	// Find all properties with cesium_ion tiles or terrain with terrainType="cesium"
-	// These were migrated by MigrateTilesAndTerrainToCesium
 	filter := bson.M{
 		"items": bson.M{
 			"$elemMatch": bson.M{
-				"$or": []bson.M{
-					// Case 1: Tiles with cesium_ion type
-					{
-						"schemagroup": "tiles",
-						"groups": bson.M{
-							"$elemMatch": bson.M{
-								"fields": bson.M{
-									"$elemMatch": bson.M{
-										"field": "tile_type",
-										"value": "cesium_ion",
-									},
-								},
-							},
-						},
-					},
-					// Case 2: Terrain with terrainType="cesium"
-					{
-						"schemagroup": "terrain",
-						"type":        "group",
+				"schemagroup": "tiles",
+				"groups": bson.M{
+					"$elemMatch": bson.M{
 						"fields": bson.M{
 							"$elemMatch": bson.M{
-								"field": "terrainType",
-								"value": "cesium",
+								"field": "tile_type",
+								"value": "cesium_ion",
 							},
 						},
 					},
@@ -149,28 +130,6 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 							group.Fields = append(group.Fields[:assetIDIndex], group.Fields[assetIDIndex+1:]...)
 
 							modified = true
-						}
-					}
-
-					// Handle terrain revert
-					if doc.Items[i].SchemaGroup == "terrain" && doc.Items[i].Type == "group" {
-						// Find terrainType field with value "cesium"
-						var terrainTypeIndex = -1
-
-						for k, field := range doc.Items[i].Fields {
-							if field.Field == "terrainType" {
-								if val, ok := field.Value.(string); ok && val == "cesium" {
-									terrainTypeIndex = k
-									break
-								}
-							}
-						}
-
-						// If terrainType="cesium" exists, remove it
-						if terrainTypeIndex != -1 {
-							doc.Items[i].Fields = append(doc.Items[i].Fields[:terrainTypeIndex], doc.Items[i].Fields[terrainTypeIndex+1:]...)
-							modified = true
-							fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: removing terrainType from property %q\n", doc.ID)
 						}
 					}
 				}
