@@ -3,8 +3,9 @@ import {
   LayerNameUpdateProps
 } from "@reearth/app/features/Editor/hooks/useLayers";
 import { Collapse } from "@reearth/app/lib/reearth-ui";
-import { InputField, SwitchField } from "@reearth/app/ui/fields";
+import { InputField, SelectField, SwitchField } from "@reearth/app/ui/fields";
 import type { NLSLayer } from "@reearth/services/api/layer";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -103,6 +104,39 @@ const DataSource: FC<Props> = ({
     [onLayerConfigUpdate, selectedLayer.config, selectedLayer.id]
   );
 
+  const isEE = useMemo(() => config()?.featureCollection === "ee", []);
+  const googlePhotorealisticProviderOptions = useMemo(() => {
+    const options = [];
+    if (isEE) {
+      options.push({
+        label: t("Re:Earth"),
+        value: "reearth" as const
+      });
+    }
+    options.push({
+      label: "Cesium ion",
+      value: "cesium-ion" as const
+    });
+    return options;
+  }, [t, isEE]);
+
+  const handleGooglePhotorealisticProviderChange = useCallback(
+    (value: string | string[]) => {
+      const provider = Array.isArray(value) ? value[0] : value;
+
+      onLayerConfigUpdate?.({
+        layerId: selectedLayer.id,
+        config: {
+          data: {
+            ...selectedLayer.config.data,
+            provider
+          }
+        }
+      });
+    },
+    [onLayerConfigUpdate, selectedLayer.config, selectedLayer.id]
+  );
+
   return (
     <Wrapper data-testid="data-source-wrapper">
       <Collapse
@@ -146,6 +180,14 @@ const DataSource: FC<Props> = ({
               description={t(
                 "When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer."
               )}
+            />
+          )}
+          {selectedLayer.config?.data?.type === "google-photorealistic" && (
+            <SelectField
+              title={t("Provider")}
+              options={googlePhotorealisticProviderOptions}
+              value={selectedLayer.config.data.provider}
+              onChange={handleGooglePhotorealisticProviderChange}
             />
           )}
         </InputWrapper>

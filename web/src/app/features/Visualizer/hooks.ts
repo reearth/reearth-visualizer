@@ -1,19 +1,23 @@
 import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { Camera } from "@reearth/app/utils/value";
 import { ComputedFeature, ComputedLayer } from "@reearth/core";
+import { config } from "@reearth/services/config";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 import { useOverriddenProperty } from "./utils";
+import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
 
 export default function useHooks({
   ownBuiltinWidgets,
   viewerProperty,
   onCoreLayerSelect,
   currentCamera,
-  handleCoreAPIReady
+  handleCoreAPIReady,
+  engineMeta
 }: {
   ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   viewerProperty?: ViewerProperty;
@@ -24,6 +28,9 @@ export default function useHooks({
   ) => void;
   currentCamera?: Camera;
   handleCoreAPIReady?: () => void;
+  engineMeta?: {
+    cesiumIonAccessToken: string | undefined;
+  };
 }) {
   const shouldRender = useMemo(() => {
     const shouldWidgetAnimate = ownBuiltinWidgets?.some(
@@ -32,8 +39,26 @@ export default function useHooks({
     return shouldWidgetAnimate;
   }, [ownBuiltinWidgets]);
 
+  // Apply overrides first
   const [overriddenViewerProperty, overrideViewerProperty] =
     useOverriddenProperty(viewerProperty);
+
+  // Apply migration (backward compatibility) and fallback
+  // Migration: Deprecated tile types → new types (EE), default tile/terrain types
+  // Fallback: Cesium Ion assets → alternatives when token missing
+  // Note: Migration maps are defined in utils/tilesMigration.ts
+  const migratedViewerProperty = useMemo(() => {
+    const configData = config();
+    const isEE = configData?.featureCollection === "ee";
+    const defaultTileType = appFeature()?.defaultTileType;
+    const hasAccessToken = !!engineMeta?.cesiumIonAccessToken;
+
+    return migrateViewerPropertyTiles(overriddenViewerProperty, {
+      isEE,
+      defaultTileType,
+      hasAccessToken
+    });
+  }, [overriddenViewerProperty, engineMeta]);
 
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +91,7 @@ export default function useHooks({
 
   return {
     shouldRender,
-    overriddenViewerProperty,
+    overriddenViewerProperty: migratedViewerProperty,
     overrideViewerProperty,
     storyWrapperRef,
     visualizerCamera,
