@@ -247,11 +247,13 @@ func UpdateImportStatus(
 	}
 }
 
-var legacyTileTypeMap = map[string]string{
-	"default":       "google_satellite",
-	"default_label": "google_satellite",
-	"default_road":  "google_roadmap",
-	"black_marble":  "nasa_black_marble",
+// legacyTileTypeToAssetID maps legacy tile types to their cesium_ion asset IDs,
+// matching the DB migration (260525120000).
+var legacyTileTypeToAssetID = map[string]string{
+	"default":       "2",
+	"default_label": "3",
+	"default_road":  "4",
+	"black_marble":  "3812",
 }
 
 func migrateLegacyTileTypes(data *[]byte) error {
@@ -287,9 +289,15 @@ func migrateLegacyTileTypes(data *[]byte) error {
 		if !ok {
 			continue
 		}
-		if mapped, exists := legacyTileTypeMap[tileType]; exists {
-			log.Infof("[Import] migrating legacy tile_type %q -> %q", tileType, mapped)
-			tileTypeObj["value"] = mapped
+		assetID, exists := legacyTileTypeToAssetID[tileType]
+		if !exists {
+			continue
+		}
+		log.Infof("[Import] migrating legacy tile_type %q -> cesium_ion (asset_id=%s)", tileType, assetID)
+		tileTypeObj["value"] = "cesium_ion"
+		tile["cesium_ion_asset_id"] = map[string]any{
+			"type":  "string",
+			"value": assetID,
 		}
 	}
 
