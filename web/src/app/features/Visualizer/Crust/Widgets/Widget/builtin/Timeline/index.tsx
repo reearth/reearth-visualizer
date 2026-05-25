@@ -26,8 +26,7 @@ import Channel from "./Channel";
 import {
   TIMELINE_CHANNEL_DISPLAY_MAX,
   TIMELINE_CHANNEL_LABEL_WIDTH,
-  TIMELINE_MIN_WIDTH,
-  TIMELINE_PLAY_SPEED_OPTIONS
+  TIMELINE_MIN_WIDTH
 } from "./constants";
 import useHooks from "./hooks";
 import TicksBar from "./TicksBar";
@@ -81,7 +80,8 @@ const Timeline: FC<TimelineProps> = ({ widget, context }) => {
     isLooping,
     toggleLoop,
     speed,
-    handleSpeedChange
+    handleSpeedChange,
+    playSpeedOptions
   } = useHooks({
     widget,
     context
@@ -107,7 +107,7 @@ const Timeline: FC<TimelineProps> = ({ widget, context }) => {
                 avoidCollisions
                 position="popper"
               >
-                {TIMELINE_PLAY_SPEED_OPTIONS.map((option) => (
+                {playSpeedOptions.map((option) => (
                   <SelectItem key={option.seconds} value={option.seconds}>
                     {option.timeString}
                   </SelectItem>

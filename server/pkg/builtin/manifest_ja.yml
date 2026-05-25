@@ -1301,6 +1301,20 @@ extensions:
           playMode:
             title: プレイモード
             description: タイムラインの再生モードを設定します
+            choices:
+              once: 一回
+              loop: ループ
+          playSpeed:
+            title: 再生速度
+            description: 再生速度を指定します。
+            choices:
+              control_by_user: ユーザーが制御
+              one_sec_per_sec: 1秒/秒
+              half_min_per_sec: 0.5分/秒
+              one_min_per_sec: 1分/秒
+              one_tenth_hr_per_sec: 0.1時間/秒
+              half_hr_per_sec: 0.5時間/秒
+              one_hr_per_sec: 1時間/秒
   showLayersStoryBlock:
     name: レイヤーボタン
     description: ストーリーテリングのレイヤー変更出来るボタンブロック

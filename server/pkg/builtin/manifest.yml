@@ -2784,6 +2784,26 @@ extensions:
                   label: Once
                 - key: loop
                   label: Loop
+            - id: playSpeed
+              type: string
+              title: Play Speed
+              description: Specify play speed.
+              defaultValue: control_by_user
+              choices:
+                - key: control_by_user
+                  label: Control by user
+                - key: one_sec_per_sec
+                  label: 1sec/sec
+                - key: half_min_per_sec
+                  label: 0.5min/sec
+                - key: one_min_per_sec
+                  label: 1min/sec
+                - key: one_tenth_hr_per_sec
+                  label: 0.1hr/sec
+                - key: half_hr_per_sec
+                  label: 0.5hr/sec
+                - key: one_hr_per_sec
+                  label: 1hr/sec
   - id: nextPageStoryBlock
     name: Next Page Button
     type: storyBlock
