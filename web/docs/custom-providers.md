@@ -9,12 +9,14 @@ Re:Earth Visualizer supports custom providers that allow you to override imagery
 ### Architecture
 
 **Backend (Server):**
+
 - Defines the **complete list** of all available provider types in `server/pkg/builtin/manifest.yml`
 - Controls which provider types are visible in the UI via manifest choices
 - Validates that saved provider selections match defined types
 - Ensures data integrity across all environments
 
 **Frontend (Per Environment):**
+
 - **Overrides** specific provider data (URLs, credentials, settings)
 - Does **not** control which providers are visible in the UI
 - Allows different deployments to use different data sources without backend changes
@@ -29,17 +31,20 @@ Re:Earth Visualizer supports custom providers that allow you to override imagery
 ## How It Works
 
 **Backend Controls UI Options:**
+
 - The backend `manifest.yml` defines which provider types exist and which are visible in the UI
 - To show/hide provider options, modify the `choices` in `manifest.yml` or use `appFeature().disabledTileTypes`
 - This ensures consistent UI across all environments
 
 **Frontend Provides Data:**
+
 - Custom providers configuration only overrides the data for existing provider types
 - You can change URLs, credentials, and settings per environment
 - You cannot add new provider types or hide providers via configuration
 - Providers not mentioned in the configuration use default values from the backend
 
 **Example Flow:**
+
 1. Backend defines visible providers: `google_satellite`, `open_street_map`, `cesium_ion`, `url`
 2. Production config overrides: `open_street_map` URL to point to production tile server
 3. Staging config overrides: `open_street_map` URL to point to staging tile server
@@ -106,6 +111,7 @@ The configuration uses a JSON structure with three main categories: `imagery`, `
 - **`providers`** array: Override specific preset providers by matching their `id`. Any provider ID not in this array uses default backend values.
 
 **Important**:
+
 - You can only override **existing** providers defined in `server/pkg/builtin/manifest.yml`
 - You cannot hide providers via this configuration (use backend manifest or `appFeature().disabledTileTypes` instead)
 - You cannot add entirely new provider types (must be defined in backend manifest first)
@@ -239,6 +245,7 @@ The configuration uses a JSON structure with three main categories: `imagery`, `
 **Available Provider IDs:**
 
 All available provider IDs are defined in `server/pkg/builtin/manifest.yml`. Current provider IDs include:
+
 - `google_satellite`, `google_roadmap` - Google Maps tiles (EE only)
 - `nasa_black_marble` - NASA Black Marble
 - `open_street_map` - OpenStreetMap
@@ -248,6 +255,7 @@ All available provider IDs are defined in `server/pkg/builtin/manifest.yml`. Cur
 - `default`, `default_label`, `default_road`, `black_marble` - **Deprecated** (legacy tile types)
 
 **Notes**:
+
 - To control which providers are visible in the UI, modify the backend `manifest.yml` or use `appFeature().disabledTileTypes` configuration. Custom providers configuration only overrides data, not visibility.
 - Default values for new tiles are controlled by `appFeature().defaultTileType` (separate from custom providers)
 
@@ -520,6 +528,7 @@ This filters options in the UI without modifying the backend manifest.
 Control what tile type is selected by default when creating new tiles using `appFeature().defaultTileType`:
 
 **Open Source Version** (`src/services/config/appFeatureConfig.ts`):
+
 ```typescript
 const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
   // ... other config
@@ -528,6 +537,7 @@ const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
 ```
 
 **Enterprise Edition** (`src/ee/featureConfig.ts`):
+
 ```typescript
 export const getFeatureConfig = (): AppFeatureConfig => {
   return {
@@ -538,6 +548,7 @@ export const getFeatureConfig = (): AppFeatureConfig => {
 ```
 
 **How it works:**
+
 - When users create a new tile without explicitly setting tile_type, the frontend displays the `defaultTileType` value
 - Database stores empty fields array (`fields: []`)
 - Only stores actual values when user explicitly changes them
@@ -598,18 +609,19 @@ Custom providers works alongside other configuration features:
 
 ### Feature Comparison
 
-| Feature | Purpose | Scope | Configuration Location |
-|---------|---------|-------|----------------------|
-| **Custom Providers** | Override data source URLs | Per environment | `REEARTH_WEB_CUSTOM_PROVIDERS` env var |
-| **Default Tile Type** | Set default tile for new tiles | OSS vs EE | `appFeatureConfig.ts` / `ee/featureConfig.ts` |
-| **Disabled Tile Types** | Hide tile options from UI | OSS vs EE | `appFeatureConfig.ts` / `ee/featureConfig.ts` |
-| **Manifest Choices** | Define all available tile types | Global (all deployments) | `server/pkg/builtin/manifest.yml` |
+| Feature                 | Purpose                         | Scope                    | Configuration Location                        |
+| ----------------------- | ------------------------------- | ------------------------ | --------------------------------------------- |
+| **Custom Providers**    | Override data source URLs       | Per environment          | `REEARTH_WEB_CUSTOM_PROVIDERS` env var        |
+| **Default Tile Type**   | Set default tile for new tiles  | OSS vs EE                | `appFeatureConfig.ts` / `ee/featureConfig.ts` |
+| **Disabled Tile Types** | Hide tile options from UI       | OSS vs EE                | `appFeatureConfig.ts` / `ee/featureConfig.ts` |
+| **Manifest Choices**    | Define all available tile types | Global (all deployments) | `server/pkg/builtin/manifest.yml`             |
 
 ### Example: Complete Configuration
 
 **Scenario**: Internal deployment wanting to use private tile servers
 
 1. **Backend Manifest** (defines all options):
+
    ```yaml
    choices:
      - key: google_satellite
@@ -618,9 +630,10 @@ Custom providers works alongside other configuration features:
    ```
 
 2. **Frontend Config** (OSS sets default):
+
    ```typescript
-   defaultTileType: "open_street_map"
-   disabledTileTypes: ["cesium_ion"]  // Hide Cesium Ion option
+   defaultTileType: "open_street_map";
+   disabledTileTypes: ["cesium_ion"]; // Hide Cesium Ion option
    ```
 
 3. **Environment Config** (override data URLs):
@@ -629,6 +642,7 @@ Custom providers works alongside other configuration features:
    ```
 
 **Result**:
+
 - Users see: "Google Satellite", "OpenStreetMap" (Cesium Ion hidden)
 - New tiles default to: "OpenStreetMap"
 - OpenStreetMap fetches from: Internal tile server
@@ -641,45 +655,3 @@ Custom providers works alongside other configuration features:
 - [Environment Variables Setup](../README.md#environment-configuration)
 - [1Password CLI Integration](1password-setup.md)
 - [Configuration System](../CLAUDE.md#configuration-system)
-
-## Implementation Status
-
-### Completed ✅
-
-**Configuration Architecture:**
-- [x] Backend-defined provider types in manifest.yml (complete list of all available IDs and display names)
-- [x] Frontend data override design by ID: match provider ID and replace URL/settings
-- [x] Configuration format and structure (JSON with three categories: imagery, terrain, layers)
-- [x] TypeScript type definitions (`CustomProviders` in `services/config/index.ts`)
-
-**Provider Options:**
-- [x] Imagery provider options (id, url, credit, maximumLevel, minimumLevel)
-- [x] Terrain provider options (id, url, requestVertexNormals, requestWaterMask, credit)
-- [x] Layer provider options (id, url, options)
-- [x] Layer support design (google-photorealistic-3d-tiles)
-
-**UI and Configuration:**
-- [x] Display names and internationalization defined in backend manifest (label field)
-- [x] Environment variable configuration (REEARTH_WEB_CUSTOM_PROVIDERS)
-- [x] UI option visibility controlled by backend manifest and appFeature().disabledTileTypes
-- [x] Default tile type feature (`appFeature().defaultTileType`)
-- [x] Configuration loading infrastructure in services/config
-
-### To Be Implemented 🚧
-
-**Core Integration:**
-- [ ] Pass configuration to @reearth/core library (currently commented out in Visualizer/index.tsx)
-- [ ] Core library data override implementation
-- [ ] URL template processing for imagery ({z}/{x}/{y}, {reverseY})
-- [ ] Terrain provider initialization in core
-- [ ] Layer provider initialization in core
-- [ ] Data override by ID matching logic (imagery, terrain, layers)
-
-**Production Readiness:**
-- [ ] Validation and error handling
-- [ ] Fallback behavior when custom sources fail
-- [ ] Unit tests and integration tests
-- [ ] Performance testing with custom providers
-- [ ] Documentation for core library integration
-
-**Current Status**: Custom providers configuration can be loaded but is not yet passed to the core library (temporarily disabled due to Cesium error). The infrastructure is ready, pending core library integration.
