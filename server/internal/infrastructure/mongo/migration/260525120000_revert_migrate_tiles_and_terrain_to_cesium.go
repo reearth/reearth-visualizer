@@ -18,13 +18,13 @@ var cesiumIonAssetToTileType = map[string]string{
 	"3812": "black_marble",
 }
 
-// RevertMigrateTilesAndTerrainToCesium reverts the MigrateTilesAndTerrainToCesium migration.
+// RevertMigrateLegacyTilesToCesiumIon reverts the MigrateLegacyTilesToCesiumIon migration.
 // It converts tiles with type "cesium_ion" and specific asset IDs back to their
 // original legacy tile types and removes the cesium_ion_asset_id field.
 //
 // NOTE: This is a revert/rollback migration and should NOT be added to migrations.go
 // unless you need to actually revert the migration in production.
-func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
+func RevertMigrateLegacyTilesToCesiumIon(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("property")
 
 	filter := bson.M{
@@ -51,10 +51,10 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 	if err != nil {
 		return fmt.Errorf("count failed: %w", err)
 	}
-	fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: found %d properties to check\n", n)
+	fmt.Printf("[revert migration] RevertMigrateLegacyTilesToCesiumIon: found %d properties to check\n", n)
 
 	if n == 0 {
-		fmt.Println("[revert migration] RevertMigrateTilesAndTerrainToCesium: nothing to do")
+		fmt.Println("[revert migration] RevertMigrateLegacyTilesToCesiumIon: nothing to do")
 		return nil
 	}
 
@@ -66,7 +66,7 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 			ids := make([]string, 0, len(rows))
 			newRows := make([]interface{}, 0, len(rows))
 
-			fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: processing batch of %d properties\n", len(rows))
+			fmt.Printf("[revert migration] RevertMigrateLegacyTilesToCesiumIon: processing batch of %d properties\n", len(rows))
 
 			for _, row := range rows {
 				var doc mongodoc.PropertyDocument
@@ -75,7 +75,7 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 						ID string `bson:"id"`
 					}
 					_ = bson.Unmarshal(row, &raw)
-					fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: failed to unmarshal document id=%q: %v\n", raw.ID, err)
+					fmt.Printf("[revert migration] RevertMigrateLegacyTilesToCesiumIon: failed to unmarshal document id=%q: %v\n", raw.ID, err)
 					totalFailed++
 					return err
 				}
@@ -123,7 +123,7 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 
 							// Revert tile_type to original
 							group.Fields[tileTypeIndex].Value = originalTileType
-							fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: reverting property %q: cesium_ion (asset %s) → %s\n",
+							fmt.Printf("[revert migration] RevertMigrateLegacyTilesToCesiumIon: reverting property %q: cesium_ion (asset %s) → %s\n",
 								doc.ID, assetIDValue, originalTileType)
 
 							// Remove cesium_ion_asset_id field
@@ -145,7 +145,7 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 			}
 
 			if len(ids) > 0 {
-				fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: saving properties: %v\n", ids)
+				fmt.Printf("[revert migration] RevertMigrateLegacyTilesToCesiumIon: saving properties: %v\n", ids)
 				return col.SaveAll(ctx, ids, newRows)
 			}
 
@@ -153,7 +153,7 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 		},
 	})
 
-	fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: total=%d reverted=%d skipped=%d failed=%d\n",
+	fmt.Printf("[revert migration] RevertMigrateLegacyTilesToCesiumIon: total=%d reverted=%d skipped=%d failed=%d\n",
 		totalProcessed, totalReverted, totalSkipped, totalFailed)
 	return err
 }
