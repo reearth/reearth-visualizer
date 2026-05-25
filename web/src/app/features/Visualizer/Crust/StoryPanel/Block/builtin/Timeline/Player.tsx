@@ -56,7 +56,7 @@ const TimelineEditor = ({
     isPlaying,
     isPlayingReversed,
     isOpen,
-    selected,
+    selectedSpeedKey,
     sliderPosition,
     isActive,
     blockRef,
@@ -136,7 +136,13 @@ const TimelineEditor = ({
                 onOpenChange={handlePopOver}
                 trigger={
                   <InputWrapper onClick={handlePopOver}>
-                    <Select>{selected && t(`${selected}`)}</Select>
+                    <Select>
+                      {
+                        playSpeedOptions.find(
+                          (o) => o.speedKey === selectedSpeedKey
+                        )?.timeString
+                      }
+                    </Select>
                     <ArrowIcon icon="caretDown" open={isOpen} />
                   </InputWrapper>
                 }
@@ -147,7 +153,7 @@ const TimelineEditor = ({
                       key={key}
                       value={playSpeed.seconds}
                       onClick={() => {
-                        handleOnSelect(playSpeed.timeString, playSpeed.seconds);
+                        handleOnSelect(playSpeed.speedKey, playSpeed.seconds);
                       }}
                     >
                       {playSpeed.timeString}

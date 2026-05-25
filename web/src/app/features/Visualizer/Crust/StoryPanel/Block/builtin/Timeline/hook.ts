@@ -12,7 +12,6 @@ import type {
   PanelProperty
 } from "@reearth/app/features/Visualizer/shared/types";
 import { TickEventCallback, TimelineCommitter } from "@reearth/core";
-import { useT } from "@reearth/services/i18n/hooks";
 import {
   ChangeEventHandler,
   MouseEventHandler,
@@ -81,7 +80,6 @@ export default ({
   removeTickEventListener,
   setCurrentTime
 }: TimelineProps) => {
-  const t = useT();
   const [isPause, setIsPause] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [activeBlock, setActiveBlock] = useState("");
@@ -96,7 +94,7 @@ export default ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selected, setSelected] = useState(t("1sec/sec"));
+  const [selectedSpeedKey, setSelectedSpeedKey] = useState("one_sec_per_sec");
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(
       currentTime,
@@ -146,10 +144,10 @@ export default ({
   }, [inEditor, isOpen]);
 
   const handleOnSelect = useCallback(
-    (value: string, second: number) => {
+    (speedKey: string, second: number) => {
       if (!inEditor) {
         setIsOpen(false);
-        if (value !== selected) setSelected(value);
+        if (speedKey !== selectedSpeedKey) setSelectedSpeedKey(speedKey);
         if (isPlayingReversed) {
           onSpeedChange?.(second * -1, committer.id);
         } else {
@@ -157,7 +155,7 @@ export default ({
         }
       }
     },
-    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selected]
+    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selectedSpeedKey]
   );
 
   useEffect(() => {
@@ -448,7 +446,7 @@ export default ({
     isPause,
     sliderPosition,
     isOpen,
-    selected,
+    selectedSpeedKey,
     isActive,
     isMinimized,
     blockRef,

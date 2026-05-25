@@ -44,12 +44,24 @@ export default (timelineValues?: TimelineValues, playSpeed?: string) => {
 
   const playSpeedOptions = useMemo(
     () => [
-      { timeString: t("1sec/sec"), seconds: 1 },
-      { timeString: t("0.5min/sec"), seconds: 30 },
-      { timeString: t("1min/sec"), seconds: 60 },
-      { timeString: t("0.1hr/sec"), seconds: 360 },
-      { timeString: t("0.5hr/sec"), seconds: 1800 },
-      { timeString: t("1hr/sec"), seconds: 3600 }
+      { timeString: t("1sec/sec"), seconds: 1, speedKey: "one_sec_per_sec" },
+      {
+        timeString: t("0.5min/sec"),
+        seconds: 30,
+        speedKey: "half_min_per_sec"
+      },
+      { timeString: t("1min/sec"), seconds: 60, speedKey: "one_min_per_sec" },
+      {
+        timeString: t("0.1hr/sec"),
+        seconds: 360,
+        speedKey: "one_tenth_hr_per_sec"
+      },
+      {
+        timeString: t("0.5hr/sec"),
+        seconds: 1800,
+        speedKey: "half_hr_per_sec"
+      },
+      { timeString: t("1hr/sec"), seconds: 3600, speedKey: "one_hr_per_sec" }
     ],
     [t]
   );
