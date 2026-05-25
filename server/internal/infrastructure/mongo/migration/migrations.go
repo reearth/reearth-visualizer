@@ -44,5 +44,5 @@ var migrations = migration.Migrations[DBClient]{
 	251222111114: AddUnifiedCaseInsensitiveAliasIndex,
 	260518143901: AddProjectVisibilityAndTopicsIndexes,
 	260520220637: AddProjectMetadataStarcountIndex,
-	260522120000: MigrateTilesAndTerrainToCesium,
+	260525120000: MigrateTilesAndTerrainToCesium,
 }
