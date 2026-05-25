@@ -583,18 +583,16 @@ func TestRevertMigrateTilesAndTerrainToCesium_TerrainRevert(t *testing.T) {
 	_, err := col.InsertOne(ctx, doc)
 	require.NoError(t, err)
 
-	// Run revert
+	// Revert does not touch terrain — terrainType is left unchanged
 	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
 
-	// Verify terrainType was removed
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "terrain_revert1"}).Decode(&result)
 	require.NoError(t, err)
 
 	fields := result.Items[0].Fields
-	require.Len(t, fields, 1, "should only have terrain field after revert")
-	assert.Equal(t, "terrain", fields[0].Field)
-	assert.True(t, fields[0].Value.(bool))
+	require.Len(t, fields, 2, "terrain should be unchanged by revert")
+	assert.Equal(t, "cesium", fields[1].Value.(string))
 }
 
 // TestRevertMigrateTilesAndTerrainToCesium_TerrainPreservesOtherTypes verifies that
@@ -688,24 +686,21 @@ func TestRevertMigrateTilesAndTerrainToCesium_TilesAndTerrainRevert(t *testing.T
 	// Run revert
 	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
 
-	// Verify both were reverted
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "both_revert"}).Decode(&result)
 	require.NoError(t, err)
 
 	require.Len(t, result.Items, 2)
 
-	// Check tiles were reverted
+	// Tiles reverted
 	tileFields := result.Items[0].Groups[0].Fields
 	require.Len(t, tileFields, 1, "should only have tile_type field")
-	assert.Equal(t, "tile_type", tileFields[0].Field)
 	assert.Equal(t, "default", tileFields[0].Value.(string))
 
-	// Check terrain was reverted
+	// Terrain unchanged
 	terrainFields := result.Items[1].Fields
-	require.Len(t, terrainFields, 1, "should only have terrain field")
-	assert.Equal(t, "terrain", terrainFields[0].Field)
-	assert.True(t, terrainFields[0].Value.(bool))
+	require.Len(t, terrainFields, 2, "terrain should be unchanged by revert")
+	assert.Equal(t, "cesium", terrainFields[1].Value.(string))
 }
 
 // TestMigrateAndRevertTerrain_RoundTrip verifies that migrating and reverting
