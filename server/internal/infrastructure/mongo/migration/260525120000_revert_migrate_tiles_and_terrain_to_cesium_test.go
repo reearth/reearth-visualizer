@@ -12,9 +12,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// TestRevertMigrateTilesAndTerrainToCesium_AllLegacyTypes verifies that all 4 legacy
+// TestRevertMigrateLegacyTilesToCesiumIon_AllLegacyTypes verifies that all 4 legacy
 // tile types can be reverted from cesium_ion back to their original types.
-func TestRevertMigrateTilesAndTerrainToCesium_AllLegacyTypes(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_AllLegacyTypes(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -107,7 +107,7 @@ func TestRevertMigrateTilesAndTerrainToCesium_AllLegacyTypes(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run revert migration
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	// Verify all types are reverted and asset IDs removed
 	expected := map[string]string{
@@ -133,9 +133,9 @@ func TestRevertMigrateTilesAndTerrainToCesium_AllLegacyTypes(t *testing.T) {
 	}
 }
 
-// TestRevertMigrateTilesAndTerrainToCesium_PreservesCustomAssetIDs verifies that
+// TestRevertMigrateLegacyTilesToCesiumIon_PreservesCustomAssetIDs verifies that
 // cesium_ion tiles with custom asset IDs (not in the migration map) are not reverted.
-func TestRevertMigrateTilesAndTerrainToCesium_PreservesCustomAssetIDs(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_PreservesCustomAssetIDs(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -188,7 +188,7 @@ func TestRevertMigrateTilesAndTerrainToCesium_PreservesCustomAssetIDs(t *testing
 	require.NoError(t, err)
 
 	// Run revert migration
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	// Verify custom cesium_ion tiles are unchanged
 	for _, propID := range []string{"custom1", "custom2"} {
@@ -214,9 +214,9 @@ func TestRevertMigrateTilesAndTerrainToCesium_PreservesCustomAssetIDs(t *testing
 	}
 }
 
-// TestRevertMigrateTilesAndTerrainToCesium_PreservesModernTypes verifies that
+// TestRevertMigrateLegacyTilesToCesiumIon_PreservesModernTypes verifies that
 // modern tile types (google_satellite, etc.) are not affected by revert.
-func TestRevertMigrateTilesAndTerrainToCesium_PreservesModernTypes(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_PreservesModernTypes(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -246,7 +246,7 @@ func TestRevertMigrateTilesAndTerrainToCesium_PreservesModernTypes(t *testing.T)
 	require.NoError(t, err)
 
 	// Run revert migration
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	// Verify modern type is unchanged
 	var result mongodoc.PropertyDocument
@@ -258,9 +258,9 @@ func TestRevertMigrateTilesAndTerrainToCesium_PreservesModernTypes(t *testing.T)
 	assert.Equal(t, "google_satellite", fields[0].Value.(string))
 }
 
-// TestRevertMigrateTilesAndTerrainToCesium_MultipleTileGroups verifies that revert
+// TestRevertMigrateLegacyTilesToCesiumIon_MultipleTileGroups verifies that revert
 // works correctly with multiple tile groups in a single property.
-func TestRevertMigrateTilesAndTerrainToCesium_MultipleTileGroups(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_MultipleTileGroups(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -308,7 +308,7 @@ func TestRevertMigrateTilesAndTerrainToCesium_MultipleTileGroups(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run revert migration
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	// Verify all groups handled correctly
 	var result mongodoc.PropertyDocument
@@ -336,9 +336,9 @@ func TestRevertMigrateTilesAndTerrainToCesium_MultipleTileGroups(t *testing.T) {
 	assert.Equal(t, "google_satellite", groups[3].Fields[0].Value.(string))
 }
 
-// TestRevertMigrateTilesAndTerrainToCesium_Idempotent ensures that re-running the
+// TestRevertMigrateLegacyTilesToCesiumIon_Idempotent ensures that re-running the
 // revert migration is safe and doesn't cause errors or data corruption.
-func TestRevertMigrateTilesAndTerrainToCesium_Idempotent(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_Idempotent(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -369,8 +369,8 @@ func TestRevertMigrateTilesAndTerrainToCesium_Idempotent(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run revert twice
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	// Verify property is correctly reverted and stable
 	var result mongodoc.PropertyDocument
@@ -383,15 +383,15 @@ func TestRevertMigrateTilesAndTerrainToCesium_Idempotent(t *testing.T) {
 	assert.Equal(t, "default_road", fields[0].Value.(string))
 }
 
-// TestRevertMigrateTilesAndTerrainToCesium_NoProperties verifies that running the
+// TestRevertMigrateLegacyTilesToCesiumIon_NoProperties verifies that running the
 // revert on an empty collection completes successfully.
-func TestRevertMigrateTilesAndTerrainToCesium_NoProperties(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_NoProperties(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
 
 	// Run revert on empty collection
-	err := RevertMigrateTilesAndTerrainToCesium(ctx, client)
+	err := RevertMigrateLegacyTilesToCesiumIon(ctx, client)
 	assert.NoError(t, err, "revert should succeed on empty collection")
 }
 
@@ -448,7 +448,7 @@ func TestMigrateAndRevert_RoundTrip(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run forward migration
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	// Verify migration happened
 	var migrated mongodoc.PropertyDocument
@@ -464,7 +464,7 @@ func TestMigrateAndRevert_RoundTrip(t *testing.T) {
 	assert.True(t, hasCesiumIon, "migration should have converted to cesium_ion")
 
 	// Run revert migration
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	// Verify all properties reverted to original state
 	expected := map[string]string{
@@ -496,9 +496,9 @@ func TestMigrateAndRevert_RoundTrip(t *testing.T) {
 	}
 }
 
-// TestRevertMigrateTilesAndTerrainToCesium_PartialMigration verifies that revert
+// TestRevertMigrateLegacyTilesToCesiumIon_PartialMigration verifies that revert
 // works correctly when some tiles were migrated and others weren't.
-func TestRevertMigrateTilesAndTerrainToCesium_PartialMigration(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_PartialMigration(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -536,7 +536,7 @@ func TestRevertMigrateTilesAndTerrainToCesium_PartialMigration(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run revert
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	// Verify migrated tile is reverted, unmigrated tile unchanged
 	var result mongodoc.PropertyDocument
@@ -555,9 +555,9 @@ func TestRevertMigrateTilesAndTerrainToCesium_PartialMigration(t *testing.T) {
 	assert.Equal(t, "google_satellite", groups[1].Fields[0].Value.(string))
 }
 
-// TestRevertMigrateTilesAndTerrainToCesium_TerrainRevert verifies that terrain with
+// TestRevertMigrateLegacyTilesToCesiumIon_TerrainRevert verifies that terrain with
 // terrainType="cesium" gets the terrainType field removed.
-func TestRevertMigrateTilesAndTerrainToCesium_TerrainRevert(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_TerrainRevert(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -584,7 +584,7 @@ func TestRevertMigrateTilesAndTerrainToCesium_TerrainRevert(t *testing.T) {
 	require.NoError(t, err)
 
 	// Revert does not touch terrain — terrainType is left unchanged
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "terrain_revert1"}).Decode(&result)
@@ -595,9 +595,9 @@ func TestRevertMigrateTilesAndTerrainToCesium_TerrainRevert(t *testing.T) {
 	assert.Equal(t, "cesium", fields[1].Value.(string))
 }
 
-// TestRevertMigrateTilesAndTerrainToCesium_TerrainPreservesOtherTypes verifies that
+// TestRevertMigrateLegacyTilesToCesiumIon_TerrainPreservesOtherTypes verifies that
 // terrain with terrainType other than "cesium" is not modified.
-func TestRevertMigrateTilesAndTerrainToCesium_TerrainPreservesOtherTypes(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_TerrainPreservesOtherTypes(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -624,7 +624,7 @@ func TestRevertMigrateTilesAndTerrainToCesium_TerrainPreservesOtherTypes(t *test
 	require.NoError(t, err)
 
 	// Run revert
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	// Verify terrainType was not removed
 	var result mongodoc.PropertyDocument
@@ -643,9 +643,9 @@ func TestRevertMigrateTilesAndTerrainToCesium_TerrainPreservesOtherTypes(t *test
 	assert.Equal(t, "cesiumion", terrainType, "terrainType should remain unchanged")
 }
 
-// TestRevertMigrateTilesAndTerrainToCesium_TilesAndTerrainRevert verifies that both
+// TestRevertMigrateLegacyTilesToCesiumIon_TilesAndTerrainRevert verifies that both
 // tiles and terrain are reverted in the same property.
-func TestRevertMigrateTilesAndTerrainToCesium_TilesAndTerrainRevert(t *testing.T) {
+func TestRevertMigrateLegacyTilesToCesiumIon_TilesAndTerrainRevert(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -684,7 +684,7 @@ func TestRevertMigrateTilesAndTerrainToCesium_TilesAndTerrainRevert(t *testing.T
 	require.NoError(t, err)
 
 	// Run revert
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "both_revert"}).Decode(&result)
@@ -731,7 +731,7 @@ func TestMigrateAndRevertTerrain_RoundTrip(t *testing.T) {
 	require.NoError(t, err)
 
 	// Forward migration does not touch terrain items — nothing to migrate
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var afterMigration mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "terrain_roundtrip"}).Decode(&afterMigration)
@@ -739,7 +739,7 @@ func TestMigrateAndRevertTerrain_RoundTrip(t *testing.T) {
 	require.Len(t, afterMigration.Items[0].Fields, 1, "terrain should be unchanged after migration")
 
 	// Revert is also a no-op for terrain
-	require.NoError(t, RevertMigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, RevertMigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var reverted mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "terrain_roundtrip"}).Decode(&reverted)

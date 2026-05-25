@@ -17,7 +17,7 @@ var tileTypeToCesiumIonAsset = map[string]string{
 	"black_marble":  "3812",
 }
 
-// MigrateTilesAndTerrainToCesium migrates legacy tile types to cesium_ion with appropriate asset IDs.
+// MigrateLegacyTilesToCesiumIon migrates legacy tile types to cesium_ion with appropriate asset IDs.
 //
 // Only tiles with an explicit legacy tile_type are migrated:
 //   - default       -> cesium_ion (asset ID: 2)
@@ -26,7 +26,7 @@ var tileTypeToCesiumIonAsset = map[string]string{
 //   - black_marble  -> cesium_ion (asset ID: 3812)
 //
 // Tiles with no tile_type (empty fields) and terrain items are intentionally left unchanged.
-func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
+func MigrateLegacyTilesToCesiumIon(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("property")
 
 	filter := bson.M{
@@ -51,10 +51,10 @@ func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 	if err != nil {
 		return fmt.Errorf("count failed: %w", err)
 	}
-	fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: found %d properties to migrate\n", n)
+	fmt.Printf("[migration] MigrateLegacyTilesToCesiumIon: found %d properties to migrate\n", n)
 
 	if n == 0 {
-		fmt.Println("[migration] MigrateTilesAndTerrainToCesium: nothing to do")
+		fmt.Println("[migration] MigrateLegacyTilesToCesiumIon: nothing to do")
 		return nil
 	}
 
@@ -73,7 +73,7 @@ func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 						ID string `bson:"id"`
 					}
 					_ = bson.Unmarshal(row, &raw)
-					fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: failed to unmarshal document id=%q: %v\n", raw.ID, err)
+					fmt.Printf("[migration] MigrateLegacyTilesToCesiumIon: failed to unmarshal document id=%q: %v\n", raw.ID, err)
 					totalFailed++
 					return err
 				}
@@ -125,7 +125,7 @@ func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 							})
 						}
 
-						fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: %s -> cesium_ion (asset_id=%s, property %q)\n",
+						fmt.Printf("[migration] MigrateLegacyTilesToCesiumIon: %s -> cesium_ion (asset_id=%s, property %q)\n",
 							oldTileType, tileTypeToCesiumIonAsset[oldTileType], doc.ID)
 						modified = true
 					}
@@ -149,7 +149,7 @@ func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 		},
 	})
 
-	fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: total=%d migrated=%d skipped=%d failed=%d\n",
+	fmt.Printf("[migration] MigrateLegacyTilesToCesiumIon: total=%d migrated=%d skipped=%d failed=%d\n",
 		totalProcessed, totalMigrated, totalSkipped, totalFailed)
 	return err
 }

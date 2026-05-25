@@ -12,9 +12,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// TestMigrateTilesAndTerrainToCesium_ExplicitOldTileTypes verifies that properties with
+// TestMigrateLegacyTilesToCesiumIon_ExplicitOldTileTypes verifies that properties with
 // explicit old tile types are migrated to cesium_ion with appropriate asset IDs.
-func TestMigrateTilesAndTerrainToCesium_ExplicitOldTileTypes(t *testing.T) {
+func TestMigrateLegacyTilesToCesiumIon_ExplicitOldTileTypes(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -69,7 +69,7 @@ func TestMigrateTilesAndTerrainToCesium_ExplicitOldTileTypes(t *testing.T) {
 	_, err := col.InsertMany(ctx, docs)
 	require.NoError(t, err)
 
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	expected := map[string]struct{ tileType, assetID string }{
 		"prop1": {"cesium_ion", "2"},
@@ -100,9 +100,9 @@ func TestMigrateTilesAndTerrainToCesium_ExplicitOldTileTypes(t *testing.T) {
 	}
 }
 
-// TestMigrateTilesAndTerrainToCesium_EmptyFields verifies that tiles with no tile_type
+// TestMigrateLegacyTilesToCesiumIon_EmptyFields verifies that tiles with no tile_type
 // (empty fields) are left unchanged.
-func TestMigrateTilesAndTerrainToCesium_EmptyFields(t *testing.T) {
+func TestMigrateLegacyTilesToCesiumIon_EmptyFields(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -120,7 +120,7 @@ func TestMigrateTilesAndTerrainToCesium_EmptyFields(t *testing.T) {
 	_, err := col.InsertOne(ctx, doc)
 	require.NoError(t, err)
 
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "prop_empty"}).Decode(&result)
@@ -129,9 +129,9 @@ func TestMigrateTilesAndTerrainToCesium_EmptyFields(t *testing.T) {
 	assert.Empty(t, result.Items[0].Groups[0].Fields, "empty fields should remain untouched")
 }
 
-// TestMigrateTilesAndTerrainToCesium_PreservesModernTypes verifies that modern tile types
+// TestMigrateLegacyTilesToCesiumIon_PreservesModernTypes verifies that modern tile types
 // and cesium_ion with custom asset IDs are not modified.
-func TestMigrateTilesAndTerrainToCesium_PreservesModernTypes(t *testing.T) {
+func TestMigrateLegacyTilesToCesiumIon_PreservesModernTypes(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -165,7 +165,7 @@ func TestMigrateTilesAndTerrainToCesium_PreservesModernTypes(t *testing.T) {
 	_, err := col.InsertMany(ctx, docs)
 	require.NoError(t, err)
 
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var doc1 mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "modern1"}).Decode(&doc1)
@@ -181,8 +181,8 @@ func TestMigrateTilesAndTerrainToCesium_PreservesModernTypes(t *testing.T) {
 	assert.Equal(t, "12345", fields2[1].Value.(string))
 }
 
-// TestMigrateTilesAndTerrainToCesium_MultipleTileGroups verifies mixed groups are handled correctly.
-func TestMigrateTilesAndTerrainToCesium_MultipleTileGroups(t *testing.T) {
+// TestMigrateLegacyTilesToCesiumIon_MultipleTileGroups verifies mixed groups are handled correctly.
+func TestMigrateLegacyTilesToCesiumIon_MultipleTileGroups(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -208,7 +208,7 @@ func TestMigrateTilesAndTerrainToCesium_MultipleTileGroups(t *testing.T) {
 	_, err := col.InsertOne(ctx, doc)
 	require.NoError(t, err)
 
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "multi_tiles"}).Decode(&result)
@@ -230,8 +230,8 @@ func TestMigrateTilesAndTerrainToCesium_MultipleTileGroups(t *testing.T) {
 	assert.Equal(t, "google_satellite", groups[2].Fields[0].Value.(string))
 }
 
-// TestMigrateTilesAndTerrainToCesium_NonTilesItems verifies terrain and other items are not affected.
-func TestMigrateTilesAndTerrainToCesium_NonTilesItems(t *testing.T) {
+// TestMigrateLegacyTilesToCesiumIon_NonTilesItems verifies terrain and other items are not affected.
+func TestMigrateLegacyTilesToCesiumIon_NonTilesItems(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -249,7 +249,7 @@ func TestMigrateTilesAndTerrainToCesium_NonTilesItems(t *testing.T) {
 	_, err := col.InsertOne(ctx, doc)
 	require.NoError(t, err)
 
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "non_tiles"}).Decode(&result)
@@ -259,9 +259,9 @@ func TestMigrateTilesAndTerrainToCesium_NonTilesItems(t *testing.T) {
 	assert.Equal(t, "cesiumion", result.Items[0].Fields[0].Value.(string))
 }
 
-// TestMigrateTilesAndTerrainToCesium_UpdatesExistingAssetID verifies that an existing
+// TestMigrateLegacyTilesToCesiumIon_UpdatesExistingAssetID verifies that an existing
 // cesium_ion_asset_id is updated rather than duplicated.
-func TestMigrateTilesAndTerrainToCesium_UpdatesExistingAssetID(t *testing.T) {
+func TestMigrateLegacyTilesToCesiumIon_UpdatesExistingAssetID(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -282,7 +282,7 @@ func TestMigrateTilesAndTerrainToCesium_UpdatesExistingAssetID(t *testing.T) {
 	_, err := col.InsertOne(ctx, doc)
 	require.NoError(t, err)
 
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "update_asset"}).Decode(&result)
@@ -304,8 +304,8 @@ func TestMigrateTilesAndTerrainToCesium_UpdatesExistingAssetID(t *testing.T) {
 	assert.Equal(t, "4", assetID)
 }
 
-// TestMigrateTilesAndTerrainToCesium_Idempotent ensures re-running the migration is safe.
-func TestMigrateTilesAndTerrainToCesium_Idempotent(t *testing.T) {
+// TestMigrateLegacyTilesToCesiumIon_Idempotent ensures re-running the migration is safe.
+func TestMigrateLegacyTilesToCesiumIon_Idempotent(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -325,8 +325,8 @@ func TestMigrateTilesAndTerrainToCesium_Idempotent(t *testing.T) {
 	_, err := col.InsertOne(ctx, doc)
 	require.NoError(t, err)
 
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "idempotent"}).Decode(&result)
@@ -348,17 +348,17 @@ func TestMigrateTilesAndTerrainToCesium_Idempotent(t *testing.T) {
 	assert.Equal(t, "2", assetID)
 }
 
-// TestMigrateTilesAndTerrainToCesium_NoProperties verifies migration on empty collection succeeds.
-func TestMigrateTilesAndTerrainToCesium_NoProperties(t *testing.T) {
+// TestMigrateLegacyTilesToCesiumIon_NoProperties verifies migration on empty collection succeeds.
+func TestMigrateLegacyTilesToCesiumIon_NoProperties(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
 
-	assert.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	assert.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 }
 
-// TestMigrateTilesAndTerrainToCesium_TerrainUnchanged verifies terrain items are not modified.
-func TestMigrateTilesAndTerrainToCesium_TerrainUnchanged(t *testing.T) {
+// TestMigrateLegacyTilesToCesiumIon_TerrainUnchanged verifies terrain items are not modified.
+func TestMigrateLegacyTilesToCesiumIon_TerrainUnchanged(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -376,7 +376,7 @@ func TestMigrateTilesAndTerrainToCesium_TerrainUnchanged(t *testing.T) {
 	_, err := col.InsertOne(ctx, doc)
 	require.NoError(t, err)
 
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "terrain1"}).Decode(&result)
@@ -386,9 +386,9 @@ func TestMigrateTilesAndTerrainToCesium_TerrainUnchanged(t *testing.T) {
 	assert.Equal(t, "terrain", result.Items[0].Fields[0].Field)
 }
 
-// TestMigrateTilesAndTerrainToCesium_TilesAndTerrain verifies tiles are migrated
+// TestMigrateLegacyTilesToCesiumIon_TilesAndTerrain verifies tiles are migrated
 // but terrain is left unchanged in the same property.
-func TestMigrateTilesAndTerrainToCesium_TilesAndTerrain(t *testing.T) {
+func TestMigrateLegacyTilesToCesiumIon_TilesAndTerrain(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -416,7 +416,7 @@ func TestMigrateTilesAndTerrainToCesium_TilesAndTerrain(t *testing.T) {
 	_, err := col.InsertOne(ctx, doc)
 	require.NoError(t, err)
 
-	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateLegacyTilesToCesiumIon(ctx, client))
 
 	var result mongodoc.PropertyDocument
 	err = col.FindOne(ctx, bson.M{"id": "both1"}).Decode(&result)
