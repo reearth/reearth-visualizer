@@ -36,7 +36,7 @@ describe("tilesMigration", () => {
       expect(result).toBe(viewerProperty);
     });
 
-    it("should NOT migrate tiles without type (use schema defaults)", () => {
+    it("should apply defaultTileType to tiles without type when defaultTileType is provided", () => {
       const viewerProperty = {
         tiles: [
           { id: "1" },
@@ -46,6 +46,23 @@ describe("tilesMigration", () => {
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
         defaultTileType: "open_street_map",
+        hasAccessToken: false
+      });
+      expect(result?.tiles).toEqual([
+        { id: "1", type: "open_street_map" },
+        { id: "2", type: "open_street_map" }
+      ]);
+    });
+
+    it("should NOT apply type to tiles without type when defaultTileType is not provided", () => {
+      const viewerProperty = {
+        tiles: [
+          { id: "1" },
+          { id: "2", type: undefined }
+        ]
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
         hasAccessToken: false
       });
       expect(result).toBe(viewerProperty); // No migration, returns original
@@ -124,7 +141,7 @@ describe("tilesMigration", () => {
       const viewerProperty = {
         tiles: [
           { id: "1", type: "open_street_map" }, // No migration
-          { id: "2" }, // No migration (undefined uses schema default)
+          { id: "2" }, // Needs default application
           { id: "3", type: "default" }, // Needs EE migration
           { id: "4", type: "cesium_ion", cesiumIonAssetId: 2 }, // Needs fallback
           { id: "5", type: "google_satellite" } // No migration
@@ -137,7 +154,7 @@ describe("tilesMigration", () => {
       });
       expect(result?.tiles).toEqual([
         { id: "1", type: "open_street_map" },
-        { id: "2" }, // Unchanged
+        { id: "2", type: "open_street_map" }, // Default applied
         { id: "3", type: "google_satellite" },
         { id: "4", type: "google_satellite", cesiumIonAssetId: 2 },
         { id: "5", type: "google_satellite" }
@@ -283,7 +300,15 @@ describe("tilesMigration", () => {
   });
 
   describe("needsTileMigration", () => {
-    it("should return false for tiles without type (use schema defaults)", () => {
+    it("should return true for tiles without type when defaultTileType is provided", () => {
+      const result = needsTileMigration(
+        { type: undefined },
+        { isEE: false, defaultTileType: "open_street_map", hasAccessToken: false }
+      );
+      expect(result).toBe(true);
+    });
+
+    it("should return false for tiles without type when defaultTileType is not provided", () => {
       const result = needsTileMigration(
         { type: undefined },
         { isEE: false, hasAccessToken: false }
@@ -349,11 +374,24 @@ describe("tilesMigration", () => {
   });
 
   describe("migrateTile", () => {
-    it("should NOT migrate when type is missing (use schema defaults)", () => {
+    it("should apply defaultTileType when type is missing", () => {
       const tile = { id: "1", type: undefined, opacity: 0.8 };
       const result = migrateTile(tile, {
         isEE: false,
         defaultTileType: "open_street_map",
+        hasAccessToken: false
+      });
+      expect(result).toEqual({
+        id: "1",
+        type: "open_street_map",
+        opacity: 0.8
+      });
+    });
+
+    it("should NOT apply type when type is missing and defaultTileType is not provided", () => {
+      const tile = { id: "1", type: undefined, opacity: 0.8 };
+      const result = migrateTile(tile, {
+        isEE: false,
         hasAccessToken: false
       });
       expect(result).toBe(tile); // Returns original unchanged
