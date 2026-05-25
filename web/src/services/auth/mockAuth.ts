@@ -26,7 +26,7 @@ export const useMockAuth = (): AuthHook => {
   }, []);
 
   const logout = useCallback(() => {
-    clearSentinelToken();
+    void clearSentinelToken();
     setIsLoading(true);
     setTimeout(() => {
       setIsAuthenticated(false);

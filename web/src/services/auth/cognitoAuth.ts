@@ -46,7 +46,7 @@ export const useCognitoAuth = (): AuthHook => {
 
   const logout = async () => {
     logOutFromTenant();
-    await clearSentinelToken();
+    void clearSentinelToken();
     try {
       await signOut();
       setUser(null);

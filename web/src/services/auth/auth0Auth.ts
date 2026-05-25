@@ -62,7 +62,7 @@ export const useAuth0Auth = (): AuthHook => {
     },
     logout: () => {
       logOutFromTenant();
-      clearSentinelToken();
+      void clearSentinelToken();
 
       return logout({
         logoutParams: {
