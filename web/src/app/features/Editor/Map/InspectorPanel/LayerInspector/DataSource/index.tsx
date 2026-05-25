@@ -122,12 +122,14 @@ const DataSource: FC<Props> = ({
 
   const handleGooglePhotorealisticProviderChange = useCallback(
     (value: string | string[]) => {
+      const provider = Array.isArray(value) ? value[0] : value;
+
       onLayerConfigUpdate?.({
         layerId: selectedLayer.id,
         config: {
           data: {
             ...selectedLayer.config.data,
-            provider: value
+            provider
           }
         }
       });
