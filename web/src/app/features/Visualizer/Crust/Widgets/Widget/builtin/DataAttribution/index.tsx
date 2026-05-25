@@ -53,7 +53,7 @@ const DataAttribution = ({
     const credits: Credit[] = [];
 
     // Hardcode for reearth-buildings
-    // This is a workaround for now since the copyright doesn't got detected by engine automatically.
+    // This is a workaround for now since the copyright is not detected automatically by the engine.
     if (nlsLayers.some((l) => l.config?.data?.type === "reearth-buildings")) {
       credits.push({
         builtinHtml:
