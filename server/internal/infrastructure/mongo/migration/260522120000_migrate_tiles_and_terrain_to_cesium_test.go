@@ -12,10 +12,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// TestMigrateTilesToCesiumIon_ExplicitOldTileTypes verifies that properties with
+// TestMigrateTilesAndTerrainToCesium_ExplicitOldTileTypes verifies that properties with
 // explicit old tile types (default, default_label, default_road, black_marble)
 // are migrated to cesium_ion with the appropriate asset IDs.
-func TestMigrateTilesToCesiumIon_ExplicitOldTileTypes(t *testing.T) {
+func TestMigrateTilesAndTerrainToCesium_ExplicitOldTileTypes(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -104,7 +104,7 @@ func TestMigrateTilesToCesiumIon_ExplicitOldTileTypes(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run migration
-	require.NoError(t, MigrateTilesToCesiumIon(ctx, client))
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
 
 	// Verify results
 	expected := map[string]struct {
@@ -142,10 +142,10 @@ func TestMigrateTilesToCesiumIon_ExplicitOldTileTypes(t *testing.T) {
 	}
 }
 
-// TestMigrateTilesToCesiumIon_EmptyFields verifies that properties with tiles
+// TestMigrateTilesAndTerrainToCesium_EmptyFields verifies that properties with tiles
 // that have empty fields arrays (which means they were using the old default)
 // are migrated to cesium_ion with asset ID "2".
-func TestMigrateTilesToCesiumIon_EmptyFields(t *testing.T) {
+func TestMigrateTilesAndTerrainToCesium_EmptyFields(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -173,7 +173,7 @@ func TestMigrateTilesToCesiumIon_EmptyFields(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run migration
-	require.NoError(t, MigrateTilesToCesiumIon(ctx, client))
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
 
 	// Verify result
 	var result mongodoc.PropertyDocument
@@ -197,10 +197,10 @@ func TestMigrateTilesToCesiumIon_EmptyFields(t *testing.T) {
 	assert.Equal(t, "2", assetID, "empty fields should get asset ID 2 (old default)")
 }
 
-// TestMigrateTilesToCesiumIon_PreservesModernTypes verifies that properties
+// TestMigrateTilesAndTerrainToCesium_PreservesModernTypes verifies that properties
 // with modern tile types (google_satellite, open_street_map, etc.) or already
 // cesium_ion are not modified.
-func TestMigrateTilesToCesiumIon_PreservesModernTypes(t *testing.T) {
+func TestMigrateTilesAndTerrainToCesium_PreservesModernTypes(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -252,7 +252,7 @@ func TestMigrateTilesToCesiumIon_PreservesModernTypes(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run migration
-	require.NoError(t, MigrateTilesToCesiumIon(ctx, client))
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
 
 	// Verify google_satellite is unchanged
 	var doc1 mongodoc.PropertyDocument
@@ -272,9 +272,9 @@ func TestMigrateTilesToCesiumIon_PreservesModernTypes(t *testing.T) {
 	assert.Equal(t, "12345", fields2[1].Value.(string), "asset ID should be unchanged")
 }
 
-// TestMigrateTilesToCesiumIon_MultipleTileGroups verifies that properties with
+// TestMigrateTilesAndTerrainToCesium_MultipleTileGroups verifies that properties with
 // multiple tile groups (array of tiles) are handled correctly.
-func TestMigrateTilesToCesiumIon_MultipleTileGroups(t *testing.T) {
+func TestMigrateTilesAndTerrainToCesium_MultipleTileGroups(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -314,7 +314,7 @@ func TestMigrateTilesToCesiumIon_MultipleTileGroups(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run migration
-	require.NoError(t, MigrateTilesToCesiumIon(ctx, client))
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
 
 	// Verify all groups are handled correctly
 	var result mongodoc.PropertyDocument
@@ -355,9 +355,9 @@ func TestMigrateTilesToCesiumIon_MultipleTileGroups(t *testing.T) {
 	assert.Equal(t, "google_satellite", groups[2].Fields[0].Value.(string))
 }
 
-// TestMigrateTilesToCesiumIon_NonTilesItems verifies that properties with
+// TestMigrateTilesAndTerrainToCesium_NonTilesItems verifies that properties with
 // non-tiles items (like terrain, navigator, etc.) are not affected.
-func TestMigrateTilesToCesiumIon_NonTilesItems(t *testing.T) {
+func TestMigrateTilesAndTerrainToCesium_NonTilesItems(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -383,7 +383,7 @@ func TestMigrateTilesToCesiumIon_NonTilesItems(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run migration
-	require.NoError(t, MigrateTilesToCesiumIon(ctx, client))
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
 
 	// Verify property is unchanged
 	var result mongodoc.PropertyDocument
@@ -396,9 +396,9 @@ func TestMigrateTilesToCesiumIon_NonTilesItems(t *testing.T) {
 	assert.Equal(t, "cesiumion", result.Items[0].Fields[0].Value.(string))
 }
 
-// TestMigrateTilesToCesiumIon_UpdatesExistingAssetID verifies that if a property
+// TestMigrateTilesAndTerrainToCesium_UpdatesExistingAssetID verifies that if a property
 // already has cesium_ion_asset_id field, it is updated (not duplicated).
-func TestMigrateTilesToCesiumIon_UpdatesExistingAssetID(t *testing.T) {
+func TestMigrateTilesAndTerrainToCesium_UpdatesExistingAssetID(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -429,7 +429,7 @@ func TestMigrateTilesToCesiumIon_UpdatesExistingAssetID(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run migration
-	require.NoError(t, MigrateTilesToCesiumIon(ctx, client))
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
 
 	// Verify asset ID is updated, not duplicated
 	var result mongodoc.PropertyDocument
@@ -453,9 +453,9 @@ func TestMigrateTilesToCesiumIon_UpdatesExistingAssetID(t *testing.T) {
 	assert.Equal(t, "4", assetID, "asset ID should be updated to correct value")
 }
 
-// TestMigrateTilesToCesiumIon_Idempotent ensures that re-running the migration
+// TestMigrateTilesAndTerrainToCesium_Idempotent ensures that re-running the migration
 // on already-migrated data is a no-op and does not cause errors or duplicate fields.
-func TestMigrateTilesToCesiumIon_Idempotent(t *testing.T) {
+func TestMigrateTilesAndTerrainToCesium_Idempotent(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
@@ -485,8 +485,8 @@ func TestMigrateTilesToCesiumIon_Idempotent(t *testing.T) {
 	require.NoError(t, err)
 
 	// Run migration twice
-	require.NoError(t, MigrateTilesToCesiumIon(ctx, client))
-	require.NoError(t, MigrateTilesToCesiumIon(ctx, client))
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
 
 	// Verify property is correctly migrated and no duplicates
 	var result mongodoc.PropertyDocument
@@ -510,14 +510,235 @@ func TestMigrateTilesToCesiumIon_Idempotent(t *testing.T) {
 	assert.Equal(t, "2", assetID)
 }
 
-// TestMigrateTilesToCesiumIon_NoProperties verifies that running the migration
+// TestMigrateTilesAndTerrainToCesium_NoProperties verifies that running the migration
 // on an empty collection completes successfully.
-func TestMigrateTilesToCesiumIon_NoProperties(t *testing.T) {
+func TestMigrateTilesAndTerrainToCesium_NoProperties(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
 
 	// Run migration on empty collection
-	err := MigrateTilesToCesiumIon(ctx, client)
+	err := MigrateTilesAndTerrainToCesium(ctx, client)
 	assert.NoError(t, err, "migration should succeed on empty collection")
+}
+
+// TestMigrateTilesAndTerrainToCesium_TerrainEnabledNoType verifies that terrain with
+// terrain=true but no terrainType gets terrainType="cesium" added.
+func TestMigrateTilesAndTerrainToCesium_TerrainEnabledNoType(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+	col := client.WithCollection("property").Client()
+
+	// Seed property with terrain enabled but no terrainType
+	doc := mongodoc.PropertyDocument{
+		ID:           "terrain1",
+		Scene:        "scene1",
+		SchemaPlugin: "reearth",
+		SchemaName:   "cesium-beta",
+		Items: []*mongodoc.PropertyItemDocument{
+			{
+				Type:        "group",
+				SchemaGroup: "terrain",
+				Fields: []*mongodoc.PropertyFieldDocument{
+					{Field: "terrain", Type: "bool", Value: true},
+				},
+			},
+		},
+	}
+	_, err := col.InsertOne(ctx, doc)
+	require.NoError(t, err)
+
+	// Run migration
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+
+	// Verify terrainType was added
+	var result mongodoc.PropertyDocument
+	err = col.FindOne(ctx, bson.M{"id": "terrain1"}).Decode(&result)
+	require.NoError(t, err)
+
+	fields := result.Items[0].Fields
+	require.Len(t, fields, 2, "should have terrain and terrainType fields")
+
+	var terrainValue bool
+	var terrainType string
+	for _, f := range fields {
+		if f.Field == "terrain" {
+			terrainValue = f.Value.(bool)
+		}
+		if f.Field == "terrainType" {
+			terrainType = f.Value.(string)
+		}
+	}
+
+	assert.True(t, terrainValue, "terrain should still be true")
+	assert.Equal(t, "cesium", terrainType, "terrainType should be cesium")
+}
+
+// TestMigrateTilesAndTerrainToCesium_TerrainWithExistingType verifies that terrain
+// with existing terrainType is not modified.
+func TestMigrateTilesAndTerrainToCesium_TerrainWithExistingType(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+	col := client.WithCollection("property").Client()
+
+	// Seed property with terrain that already has terrainType
+	doc := mongodoc.PropertyDocument{
+		ID:           "terrain2",
+		Scene:        "scene1",
+		SchemaPlugin: "reearth",
+		SchemaName:   "cesium-beta",
+		Items: []*mongodoc.PropertyItemDocument{
+			{
+				Type:        "group",
+				SchemaGroup: "terrain",
+				Fields: []*mongodoc.PropertyFieldDocument{
+					{Field: "terrain", Type: "bool", Value: true},
+					{Field: "terrainType", Type: "string", Value: "cesiumion"},
+				},
+			},
+		},
+	}
+	_, err := col.InsertOne(ctx, doc)
+	require.NoError(t, err)
+
+	// Run migration
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+
+	// Verify terrainType was not changed
+	var result mongodoc.PropertyDocument
+	err = col.FindOne(ctx, bson.M{"id": "terrain2"}).Decode(&result)
+	require.NoError(t, err)
+
+	fields := result.Items[0].Fields
+	require.Len(t, fields, 2, "should still have 2 fields")
+
+	var terrainType string
+	for _, f := range fields {
+		if f.Field == "terrainType" {
+			terrainType = f.Value.(string)
+		}
+	}
+
+	assert.Equal(t, "cesiumion", terrainType, "terrainType should be unchanged")
+}
+
+// TestMigrateTilesAndTerrainToCesium_TerrainDisabled verifies that terrain with
+// terrain=false does not get terrainType added.
+func TestMigrateTilesAndTerrainToCesium_TerrainDisabled(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+	col := client.WithCollection("property").Client()
+
+	// Seed property with terrain disabled
+	doc := mongodoc.PropertyDocument{
+		ID:           "terrain3",
+		Scene:        "scene1",
+		SchemaPlugin: "reearth",
+		SchemaName:   "cesium-beta",
+		Items: []*mongodoc.PropertyItemDocument{
+			{
+				Type:        "group",
+				SchemaGroup: "terrain",
+				Fields: []*mongodoc.PropertyFieldDocument{
+					{Field: "terrain", Type: "bool", Value: false},
+				},
+			},
+		},
+	}
+	_, err := col.InsertOne(ctx, doc)
+	require.NoError(t, err)
+
+	// Run migration
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+
+	// Verify terrainType was not added
+	var result mongodoc.PropertyDocument
+	err = col.FindOne(ctx, bson.M{"id": "terrain3"}).Decode(&result)
+	require.NoError(t, err)
+
+	fields := result.Items[0].Fields
+	require.Len(t, fields, 1, "should still have only 1 field")
+	assert.Equal(t, "terrain", fields[0].Field)
+	assert.False(t, fields[0].Value.(bool))
+}
+
+// TestMigrateTilesAndTerrainToCesium_TilesAndTerrain verifies that both tiles and
+// terrain are migrated in the same property.
+func TestMigrateTilesAndTerrainToCesium_TilesAndTerrain(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+	col := client.WithCollection("property").Client()
+
+	// Seed property with both tiles and terrain needing migration
+	doc := mongodoc.PropertyDocument{
+		ID:           "both1",
+		Scene:        "scene1",
+		SchemaPlugin: "reearth",
+		SchemaName:   "cesium-beta",
+		Items: []*mongodoc.PropertyItemDocument{
+			{
+				Type:        "grouplist",
+				SchemaGroup: "tiles",
+				Groups: []*mongodoc.PropertyItemDocument{
+					{
+						Fields: []*mongodoc.PropertyFieldDocument{
+							{Field: "tile_type", Type: "string", Value: "default"},
+						},
+					},
+				},
+			},
+			{
+				Type:        "group",
+				SchemaGroup: "terrain",
+				Fields: []*mongodoc.PropertyFieldDocument{
+					{Field: "terrain", Type: "bool", Value: true},
+				},
+			},
+		},
+	}
+	_, err := col.InsertOne(ctx, doc)
+	require.NoError(t, err)
+
+	// Run migration
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+
+	// Verify both were migrated
+	var result mongodoc.PropertyDocument
+	err = col.FindOne(ctx, bson.M{"id": "both1"}).Decode(&result)
+	require.NoError(t, err)
+
+	require.Len(t, result.Items, 2)
+
+	// Check tiles
+	tileFields := result.Items[0].Groups[0].Fields
+	var tileType, assetID string
+	for _, f := range tileFields {
+		if f.Field == "tile_type" {
+			tileType = f.Value.(string)
+		}
+		if f.Field == "cesium_ion_asset_id" {
+			assetID = f.Value.(string)
+		}
+	}
+	assert.Equal(t, "cesium_ion", tileType)
+	assert.Equal(t, "2", assetID)
+
+	// Check terrain
+	terrainFields := result.Items[1].Fields
+	var terrainEnabled bool
+	var terrainType string
+	for _, f := range terrainFields {
+		if f.Field == "terrain" {
+			terrainEnabled = f.Value.(bool)
+		}
+		if f.Field == "terrainType" {
+			terrainType = f.Value.(string)
+		}
+	}
+	assert.True(t, terrainEnabled)
+	assert.Equal(t, "cesium", terrainType)
 }
