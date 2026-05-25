@@ -10,20 +10,20 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// legacyTileTypeToTerravista maps explicit legacy tile types to their Terravista equivalents.
-var legacyTileTypeToTerravista = map[string]string{
-	"default":       "google_satellite",
-	"default_label": "google_satellite",
-	"default_road":  "google_roadmap",
-	"black_marble":  "nasa_black_marble",
+var tileTypeToCesiumIonAsset = map[string]string{
+	"default":       "2",
+	"default_label": "3",
+	"default_road":  "4",
+	"black_marble":  "3812",
 }
 
-// MigrateTilesAndTerrainToCesium migrates legacy tile types to Terravista equivalents.
+// MigrateTilesAndTerrainToCesium migrates legacy tile types to cesium_ion with appropriate asset IDs.
 //
 // Only tiles with an explicit legacy tile_type are migrated:
-//   - default, default_label -> google_satellite
-//   - default_road           -> google_roadmap
-//   - black_marble           -> nasa_black_marble
+//   - default       -> cesium_ion (asset ID: 2)
+//   - default_label -> cesium_ion (asset ID: 3)
+//   - default_road  -> cesium_ion (asset ID: 4)
+//   - black_marble  -> cesium_ion (asset ID: 3812)
 //
 // Tiles with no tile_type (empty fields) and terrain items are intentionally left unchanged.
 func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
@@ -94,7 +94,7 @@ func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 						for k, field := range group.Fields {
 							if field.Field == "tile_type" {
 								if val, ok := field.Value.(string); ok {
-									if _, isLegacy := legacyTileTypeToTerravista[val]; isLegacy {
+									if _, exists := tileTypeToCesiumIonAsset[val]; exists {
 										tileTypeIdx = k
 										oldTileType = val
 									}
@@ -107,9 +107,26 @@ func MigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 							continue
 						}
 
-						newType := legacyTileTypeToTerravista[oldTileType]
-						group.Fields[tileTypeIdx].Value = newType
-						fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: %s -> %s (property %q)\n", oldTileType, newType, doc.ID)
+						group.Fields[tileTypeIdx].Value = "cesium_ion"
+
+						assetIDExists := false
+						for k := range group.Fields {
+							if group.Fields[k].Field == "cesium_ion_asset_id" {
+								group.Fields[k].Value = tileTypeToCesiumIonAsset[oldTileType]
+								assetIDExists = true
+								break
+							}
+						}
+						if !assetIDExists {
+							group.Fields = append(group.Fields, &mongodoc.PropertyFieldDocument{
+								Field: "cesium_ion_asset_id",
+								Type:  "string",
+								Value: tileTypeToCesiumIonAsset[oldTileType],
+							})
+						}
+
+						fmt.Printf("[migration] MigrateTilesAndTerrainToCesium: %s -> cesium_ion (asset_id=%s, property %q)\n",
+							oldTileType, tileTypeToCesiumIonAsset[oldTileType], doc.ID)
 						modified = true
 					}
 				}

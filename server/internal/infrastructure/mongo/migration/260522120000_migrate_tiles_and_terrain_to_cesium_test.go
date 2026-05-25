@@ -13,7 +13,7 @@ import (
 )
 
 // TestMigrateTilesAndTerrainToCesium_ExplicitOldTileTypes verifies that properties with
-// explicit old tile types are migrated to their Terravista equivalents.
+// explicit old tile types are migrated to cesium_ion with appropriate asset IDs.
 func TestMigrateTilesAndTerrainToCesium_ExplicitOldTileTypes(t *testing.T) {
 	ctx := context.Background()
 	db := mongotest.Connect(t)(t)
@@ -71,21 +71,32 @@ func TestMigrateTilesAndTerrainToCesium_ExplicitOldTileTypes(t *testing.T) {
 
 	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
 
-	expected := map[string]string{
-		"prop1": "google_satellite",
-		"prop2": "google_satellite",
-		"prop3": "google_roadmap",
-		"prop4": "nasa_black_marble",
+	expected := map[string]struct{ tileType, assetID string }{
+		"prop1": {"cesium_ion", "2"},
+		"prop2": {"cesium_ion", "3"},
+		"prop3": {"cesium_ion", "4"},
+		"prop4": {"cesium_ion", "3812"},
 	}
 
-	for propID, expType := range expected {
+	for propID, exp := range expected {
 		var doc mongodoc.PropertyDocument
 		err := col.FindOne(ctx, bson.M{"id": propID}).Decode(&doc)
 		require.NoError(t, err)
 
 		fields := doc.Items[0].Groups[0].Fields
-		require.Len(t, fields, 1, "property %s should have exactly 1 field (no cesium_ion_asset_id)", propID)
-		assert.Equal(t, expType, fields[0].Value.(string), "property %s tile_type mismatch", propID)
+		require.Len(t, fields, 2, "property %s should have tile_type and cesium_ion_asset_id", propID)
+
+		var tileType, assetID string
+		for _, f := range fields {
+			if f.Field == "tile_type" {
+				tileType = f.Value.(string)
+			}
+			if f.Field == "cesium_ion_asset_id" {
+				assetID = f.Value.(string)
+			}
+		}
+		assert.Equal(t, exp.tileType, tileType, "property %s tile_type mismatch", propID)
+		assert.Equal(t, exp.assetID, assetID, "property %s asset ID mismatch", propID)
 	}
 }
 
@@ -205,8 +216,17 @@ func TestMigrateTilesAndTerrainToCesium_MultipleTileGroups(t *testing.T) {
 
 	groups := result.Items[0].Groups
 	require.Len(t, groups, 3)
-	assert.Equal(t, "google_satellite", groups[0].Fields[0].Value.(string))
-	assert.Equal(t, "nasa_black_marble", groups[1].Fields[0].Value.(string))
+
+	// default -> cesium_ion asset 2
+	assert.Equal(t, "cesium_ion", groups[0].Fields[0].Value.(string))
+	assert.Equal(t, "2", groups[0].Fields[1].Value.(string))
+
+	// black_marble -> cesium_ion asset 3812
+	assert.Equal(t, "cesium_ion", groups[1].Fields[0].Value.(string))
+	assert.Equal(t, "3812", groups[1].Fields[1].Value.(string))
+
+	// google_satellite unchanged
+	assert.Len(t, groups[2].Fields, 1)
 	assert.Equal(t, "google_satellite", groups[2].Fields[0].Value.(string))
 }
 
@@ -235,9 +255,53 @@ func TestMigrateTilesAndTerrainToCesium_NonTilesItems(t *testing.T) {
 	err = col.FindOne(ctx, bson.M{"id": "non_tiles"}).Decode(&result)
 	require.NoError(t, err)
 
-	assert.Len(t, result.Items, 1)
 	assert.Equal(t, "terrain", result.Items[0].SchemaGroup)
 	assert.Equal(t, "cesiumion", result.Items[0].Fields[0].Value.(string))
+}
+
+// TestMigrateTilesAndTerrainToCesium_UpdatesExistingAssetID verifies that an existing
+// cesium_ion_asset_id is updated rather than duplicated.
+func TestMigrateTilesAndTerrainToCesium_UpdatesExistingAssetID(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+	col := client.WithCollection("property").Client()
+
+	doc := mongodoc.PropertyDocument{
+		ID: "update_asset", Scene: "scene1", SchemaPlugin: "reearth", SchemaName: "cesium-beta",
+		Items: []*mongodoc.PropertyItemDocument{{
+			Type: "grouplist", SchemaGroup: "tiles",
+			Groups: []*mongodoc.PropertyItemDocument{{
+				Fields: []*mongodoc.PropertyFieldDocument{
+					{Field: "tile_type", Type: "string", Value: "default_road"},
+					{Field: "cesium_ion_asset_id", Type: "string", Value: "wrong_id"},
+				},
+			}},
+		}},
+	}
+	_, err := col.InsertOne(ctx, doc)
+	require.NoError(t, err)
+
+	require.NoError(t, MigrateTilesAndTerrainToCesium(ctx, client))
+
+	var result mongodoc.PropertyDocument
+	err = col.FindOne(ctx, bson.M{"id": "update_asset"}).Decode(&result)
+	require.NoError(t, err)
+
+	fields := result.Items[0].Groups[0].Fields
+	assert.Len(t, fields, 2, "should have exactly 2 fields (no duplication)")
+
+	var tileType, assetID string
+	for _, f := range fields {
+		if f.Field == "tile_type" {
+			tileType = f.Value.(string)
+		}
+		if f.Field == "cesium_ion_asset_id" {
+			assetID = f.Value.(string)
+		}
+	}
+	assert.Equal(t, "cesium_ion", tileType)
+	assert.Equal(t, "4", assetID)
 }
 
 // TestMigrateTilesAndTerrainToCesium_Idempotent ensures re-running the migration is safe.
@@ -269,8 +333,19 @@ func TestMigrateTilesAndTerrainToCesium_Idempotent(t *testing.T) {
 	require.NoError(t, err)
 
 	fields := result.Items[0].Groups[0].Fields
-	assert.Len(t, fields, 1)
-	assert.Equal(t, "google_satellite", fields[0].Value.(string))
+	assert.Len(t, fields, 2, "should have exactly 2 fields after multiple runs")
+
+	var tileType, assetID string
+	for _, f := range fields {
+		if f.Field == "tile_type" {
+			tileType = f.Value.(string)
+		}
+		if f.Field == "cesium_ion_asset_id" {
+			assetID = f.Value.(string)
+		}
+	}
+	assert.Equal(t, "cesium_ion", tileType)
+	assert.Equal(t, "2", assetID)
 }
 
 // TestMigrateTilesAndTerrainToCesium_NoProperties verifies migration on empty collection succeeds.
@@ -348,7 +423,21 @@ func TestMigrateTilesAndTerrainToCesium_TilesAndTerrain(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Len(t, result.Items, 2)
-	assert.Equal(t, "google_satellite", result.Items[0].Groups[0].Fields[0].Value.(string))
+
+	// Tile migrated to cesium_ion
+	var tileType, assetID string
+	for _, f := range result.Items[0].Groups[0].Fields {
+		if f.Field == "tile_type" {
+			tileType = f.Value.(string)
+		}
+		if f.Field == "cesium_ion_asset_id" {
+			assetID = f.Value.(string)
+		}
+	}
+	assert.Equal(t, "cesium_ion", tileType)
+	assert.Equal(t, "2", assetID)
+
+	// Terrain unchanged
 	assert.Len(t, result.Items[1].Fields, 1, "terrain should be unchanged")
 	assert.Equal(t, "terrain", result.Items[1].Fields[0].Field)
 }

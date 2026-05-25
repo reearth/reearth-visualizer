@@ -10,36 +10,53 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// terravistaToLegacyTileType reverses the migration: maps Terravista types back to legacy.
-// Note: google_satellite maps back to "default" since both default and default_label
-// were migrated to google_satellite, and the original type cannot be recovered.
-var terravistaToLegacyTileType = map[string]string{
-	"google_satellite":  "default",
-	"google_roadmap":    "default_road",
-	"nasa_black_marble": "black_marble",
+// Reverse mapping: cesium ion asset ID -> original tile type
+var cesiumIonAssetToTileType = map[string]string{
+	"2":    "default",
+	"3":    "default_label",
+	"4":    "default_road",
+	"3812": "black_marble",
 }
 
 // RevertMigrateTilesAndTerrainToCesium reverts the MigrateTilesAndTerrainToCesium migration.
-// It converts Terravista tile types (google_satellite, google_roadmap, nasa_black_marble)
-// back to their original legacy tile types.
+// It converts tiles with type "cesium_ion" and specific asset IDs back to their
+// original legacy tile types, removes the cesium_ion_asset_id field, and removes
+// the terrainType="cesium" field from terrain items.
 //
-// NOTE: This revert is best-effort. google_satellite cannot be distinguished from
-// a user-set value vs a migrated value. Use only in emergency rollback scenarios.
-//
-// This is a revert/rollback migration and should NOT be added to migrations.go
+// NOTE: This is a revert/rollback migration and should NOT be added to migrations.go
 // unless you need to actually revert the migration in production.
 func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("property")
 
+	// Find all properties with cesium_ion tiles or terrain with terrainType="cesium"
+	// These were migrated by MigrateTilesAndTerrainToCesium
 	filter := bson.M{
 		"items": bson.M{
 			"$elemMatch": bson.M{
-				"schemagroup": "tiles",
-				"groups.fields": bson.M{
-					"$elemMatch": bson.M{
-						"field": "tile_type",
-						"value": bson.M{
-							"$in": []string{"google_satellite", "google_roadmap", "nasa_black_marble"},
+				"$or": []bson.M{
+					// Case 1: Tiles with cesium_ion type
+					{
+						"schemagroup": "tiles",
+						"groups": bson.M{
+							"$elemMatch": bson.M{
+								"fields": bson.M{
+									"$elemMatch": bson.M{
+										"field": "tile_type",
+										"value": "cesium_ion",
+									},
+								},
+							},
+						},
+					},
+					// Case 2: Terrain with terrainType="cesium"
+					{
+						"schemagroup": "terrain",
+						"type":        "group",
+						"fields": bson.M{
+							"$elemMatch": bson.M{
+								"field": "terrainType",
+								"value": "cesium",
+							},
 						},
 					},
 				},
@@ -68,6 +85,8 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 			ids := make([]string, 0, len(rows))
 			newRows := make([]interface{}, 0, len(rows))
 
+			fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: processing batch of %d properties\n", len(rows))
+
 			for _, row := range rows {
 				var doc mongodoc.PropertyDocument
 				if err := bson.Unmarshal(row, &doc); err != nil {
@@ -82,38 +101,77 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 
 				modified := false
 
+				// Iterate through items
 				for i := range doc.Items {
-					if doc.Items[i].SchemaGroup != "tiles" || doc.Items[i].Type != "grouplist" {
-						continue
-					}
+					// Handle tiles revert
+					if doc.Items[i].SchemaGroup == "tiles" && doc.Items[i].Type == "grouplist" {
+						// Iterate through groups (tile instances)
+						for j := range doc.Items[i].Groups {
+							group := doc.Items[i].Groups[j]
 
-					for j := range doc.Items[i].Groups {
-						group := doc.Items[i].Groups[j]
+							// Find tile_type and cesium_ion_asset_id fields
+							var tileTypeIndex = -1
+							var assetIDIndex = -1
+							var assetIDValue string
 
-						tileTypeIdx := -1
-						var currentType string
-
-						for k, field := range group.Fields {
-							if field.Field == "tile_type" {
-								if val, ok := field.Value.(string); ok {
-									if _, isTarget := terravistaToLegacyTileType[val]; isTarget {
-										tileTypeIdx = k
-										currentType = val
+							for k, field := range group.Fields {
+								if field.Field == "tile_type" {
+									if val, ok := field.Value.(string); ok && val == "cesium_ion" {
+										tileTypeIndex = k
 									}
 								}
-								break
+								if field.Field == "cesium_ion_asset_id" {
+									if val, ok := field.Value.(string); ok {
+										assetIDIndex = k
+										assetIDValue = val
+									}
+								}
+							}
+
+							// Skip if not a revert target
+							// (no cesium_ion tile_type, or no asset_id, or asset_id not in our map)
+							if tileTypeIndex == -1 || assetIDIndex == -1 {
+								continue
+							}
+
+							originalTileType, exists := cesiumIonAssetToTileType[assetIDValue]
+							if !exists {
+								// This cesium_ion tile has a custom asset ID, not one we migrated
+								continue
+							}
+
+							// Revert tile_type to original
+							group.Fields[tileTypeIndex].Value = originalTileType
+							fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: reverting property %q: cesium_ion (asset %s) → %s\n",
+								doc.ID, assetIDValue, originalTileType)
+
+							// Remove cesium_ion_asset_id field
+							group.Fields = append(group.Fields[:assetIDIndex], group.Fields[assetIDIndex+1:]...)
+
+							modified = true
+						}
+					}
+
+					// Handle terrain revert
+					if doc.Items[i].SchemaGroup == "terrain" && doc.Items[i].Type == "group" {
+						// Find terrainType field with value "cesium"
+						var terrainTypeIndex = -1
+
+						for k, field := range doc.Items[i].Fields {
+							if field.Field == "terrainType" {
+								if val, ok := field.Value.(string); ok && val == "cesium" {
+									terrainTypeIndex = k
+									break
+								}
 							}
 						}
 
-						if tileTypeIdx == -1 {
-							continue
+						// If terrainType="cesium" exists, remove it
+						if terrainTypeIndex != -1 {
+							doc.Items[i].Fields = append(doc.Items[i].Fields[:terrainTypeIndex], doc.Items[i].Fields[terrainTypeIndex+1:]...)
+							modified = true
+							fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: removing terrainType from property %q\n", doc.ID)
 						}
-
-						originalType := terravistaToLegacyTileType[currentType]
-						group.Fields[tileTypeIdx].Value = originalType
-						fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: %s -> %s (property %q)\n",
-							currentType, originalType, doc.ID)
-						modified = true
 					}
 				}
 
@@ -128,6 +186,7 @@ func RevertMigrateTilesAndTerrainToCesium(ctx context.Context, c DBClient) error
 			}
 
 			if len(ids) > 0 {
+				fmt.Printf("[revert migration] RevertMigrateTilesAndTerrainToCesium: saving properties: %v\n", ids)
 				return col.SaveAll(ctx, ids, newRows)
 			}
 
