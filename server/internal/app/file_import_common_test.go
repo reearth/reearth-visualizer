@@ -35,6 +35,15 @@ func getTileTypeValue(t *testing.T, data *[]byte, index int) string {
 	return tile["tile_type"].(map[string]any)["value"].(string)
 }
 
+func getAssetIDValue(t *testing.T, data *[]byte, index int) string {
+	t.Helper()
+	var d map[string]any
+	require.NoError(t, json.Unmarshal(*data, &d))
+	raw := d["scene"].(map[string]any)["property"].(map[string]any)["tiles"].([]any)
+	tile := raw[index].(map[string]any)
+	return tile["cesium_ion_asset_id"].(map[string]any)["value"].(string)
+}
+
 func TestMigrateLegacyTileTypes(t *testing.T) {
 	t.Run("legacy types are remapped", func(t *testing.T) {
 		data := buildImportData(t, []map[string]any{
@@ -46,10 +55,17 @@ func TestMigrateLegacyTileTypes(t *testing.T) {
 
 		require.NoError(t, migrateLegacyTileTypes(data))
 
-		assert.Equal(t, "google_satellite", getTileTypeValue(t, data, 0))
-		assert.Equal(t, "google_satellite", getTileTypeValue(t, data, 1))
-		assert.Equal(t, "google_roadmap", getTileTypeValue(t, data, 2))
-		assert.Equal(t, "nasa_black_marble", getTileTypeValue(t, data, 3))
+		assert.Equal(t, "cesium_ion", getTileTypeValue(t, data, 0))
+		assert.Equal(t, "2", getAssetIDValue(t, data, 0))
+
+		assert.Equal(t, "cesium_ion", getTileTypeValue(t, data, 1))
+		assert.Equal(t, "3", getAssetIDValue(t, data, 1))
+
+		assert.Equal(t, "cesium_ion", getTileTypeValue(t, data, 2))
+		assert.Equal(t, "4", getAssetIDValue(t, data, 2))
+
+		assert.Equal(t, "cesium_ion", getTileTypeValue(t, data, 3))
+		assert.Equal(t, "3812", getAssetIDValue(t, data, 3))
 	})
 
 	t.Run("non-legacy types are left alone", func(t *testing.T) {
