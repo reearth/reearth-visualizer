@@ -36,7 +36,7 @@ describe("tilesMigration", () => {
       expect(result).toBe(viewerProperty);
     });
 
-    it("should apply default tile type for tiles without type", () => {
+    it("should NOT migrate tiles without type (use schema defaults)", () => {
       const viewerProperty = {
         tiles: [
           { id: "1" },
@@ -48,10 +48,7 @@ describe("tilesMigration", () => {
         defaultTileType: "open_street_map",
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([
-        { id: "1", type: "open_street_map" },
-        { id: "2", type: "open_street_map" }
-      ]);
+      expect(result).toBe(viewerProperty); // No migration, returns original
     });
 
     it("should migrate deprecated tile types in EE environment", () => {
@@ -127,7 +124,7 @@ describe("tilesMigration", () => {
       const viewerProperty = {
         tiles: [
           { id: "1", type: "open_street_map" }, // No migration
-          { id: "2" }, // Needs default
+          { id: "2" }, // No migration (undefined uses schema default)
           { id: "3", type: "default" }, // Needs EE migration
           { id: "4", type: "cesium_ion", cesiumIonAssetId: 2 }, // Needs fallback
           { id: "5", type: "google_satellite" } // No migration
@@ -140,7 +137,7 @@ describe("tilesMigration", () => {
       });
       expect(result?.tiles).toEqual([
         { id: "1", type: "open_street_map" },
-        { id: "2", type: "open_street_map" },
+        { id: "2" }, // Unchanged
         { id: "3", type: "google_satellite" },
         { id: "4", type: "google_satellite", cesiumIonAssetId: 2 },
         { id: "5", type: "google_satellite" }
@@ -260,23 +257,9 @@ describe("tilesMigration", () => {
       expect(result).toBe(viewerProperty); // No migration
     });
 
-    it("should migrate terrain when enabled without type", () => {
+    it("should NOT migrate terrain when enabled without type (use schema defaults)", () => {
       const viewerProperty = {
         terrain: { enabled: true }
-      };
-      const result = migrateViewerPropertyTiles(viewerProperty, {
-        isEE: false,
-        hasAccessToken: false
-      });
-      expect(result?.terrain).toEqual({
-        enabled: true,
-        type: "reearth_terrain"
-      });
-    });
-
-    it("should NOT migrate terrain when disabled without type", () => {
-      const viewerProperty = {
-        terrain: { enabled: false }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -285,7 +268,7 @@ describe("tilesMigration", () => {
       expect(result).toBe(viewerProperty); // No migration
     });
 
-    it("should migrate terrain when enabled without type alongside tiles migration", () => {
+    it("should only migrate tiles when terrain has no type (no terrain migration)", () => {
       const viewerProperty = {
         tiles: [{ id: "1", type: "default" as const }],
         terrain: { enabled: true }
@@ -295,20 +278,17 @@ describe("tilesMigration", () => {
         hasAccessToken: false
       });
       expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite" }]);
-      expect(result?.terrain).toEqual({
-        enabled: true,
-        type: "reearth_terrain"
-      });
+      expect(result?.terrain).toBe(viewerProperty.terrain); // Unchanged
     });
   });
 
   describe("needsTileMigration", () => {
-    it("should return true for tiles without type", () => {
+    it("should return false for tiles without type (use schema defaults)", () => {
       const result = needsTileMigration(
         { type: undefined },
         { isEE: false, hasAccessToken: false }
       );
-      expect(result).toBe(true);
+      expect(result).toBe(false);
     });
 
     it("should return true for deprecated tile types in EE", () => {
@@ -369,18 +349,14 @@ describe("tilesMigration", () => {
   });
 
   describe("migrateTile", () => {
-    it("should apply default tile type when type is missing", () => {
+    it("should NOT migrate when type is missing (use schema defaults)", () => {
       const tile = { id: "1", type: undefined, opacity: 0.8 };
       const result = migrateTile(tile, {
         isEE: false,
         defaultTileType: "open_street_map",
         hasAccessToken: false
       });
-      expect(result).toEqual({
-        id: "1",
-        type: "open_street_map",
-        opacity: 0.8
-      });
+      expect(result).toBe(tile); // Returns original unchanged
     });
 
     it("should NOT apply default type when tile already has type", () => {
@@ -563,28 +539,22 @@ describe("tilesMigration", () => {
       });
     });
 
-    it("should fallback to reearth_terrain when enabled without type", () => {
+    it("should NOT migrate when enabled without type (use schema defaults)", () => {
       const terrain = { enabled: true };
       const result = migrateTerrain(terrain, {
         isEE: false,
         hasAccessToken: false
       });
-      expect(result).toEqual({
-        enabled: true,
-        type: "reearth_terrain"
-      });
+      expect(result).toBe(terrain); // Returns original unchanged
     });
 
-    it("should fallback to reearth_terrain when enabled with empty type", () => {
+    it("should NOT migrate when enabled with empty type (use schema defaults)", () => {
       const terrain = { enabled: true, type: undefined };
       const result = migrateTerrain(terrain, {
         isEE: false,
         hasAccessToken: false
       });
-      expect(result).toEqual({
-        enabled: true,
-        type: "reearth_terrain"
-      });
+      expect(result).toBe(terrain); // Returns original unchanged
     });
 
     it("should NOT fallback when terrain is disabled without type", () => {

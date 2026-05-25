@@ -9,7 +9,7 @@ export type TilesMigrationConfig = {
    */
   isEE: boolean;
   /**
-   * Default tile type to apply for tiles without explicit type (migration)
+   * Default tile type (used for UI display only, not for migration)
    */
   defaultTileType?: string;
   /**
@@ -46,8 +46,8 @@ function needsTileMigration(
   tile: { type?: string; cesiumIonAssetId?: number | string },
   config: TilesMigrationConfig
 ): boolean {
-  // Check for tiles without type (need default)
-  if (!tile.type) return true;
+  // Skip tiles without type - they will use schema defaults
+  if (!tile.type) return false;
 
   // Check for deprecated tile types (EE only)
   if (config.isEE && tile.type in TILE_TYPE_MIGRATION_MAP) return true;
@@ -68,28 +68,20 @@ function needsTileMigration(
 
 /**
  * Applies migration and fallback to a single tile
- * - Migration: Apply defaults, migrate deprecated types (backward compatibility)
- * - Fallback: Use alternatives when Cesium Ion requires token but it's missing
+ * - Migration: Migrate deprecated types (backward compatibility, EE only)
+ * - Fallback: Use alternatives when Cesium Ion requires token but it's missing (EE only)
  */
 function migrateTile<
   T extends { type?: string; cesiumIonAssetId?: number | string }
 >(tile: T, config: TilesMigrationConfig): T {
-  // Apply default tile type for tiles without explicit type (MIGRATION)
-  if (!tile.type && config.defaultTileType) {
-    console.warn(
-      `[Tiles Migration] Applying default tile type "${config.defaultTileType}" to tile without type`
-    );
-    return {
-      ...tile,
-      type: config.defaultTileType
-    };
-  }
+  // Skip tiles without type - they will use schema defaults
+  if (!tile.type) return tile;
 
   // EE-specific migrations only apply when featureCollection is 'ee'
   if (!config.isEE) return tile;
 
   // Migrate deprecated tile types (MIGRATION - backward compatibility)
-  if (tile.type && tile.type in TILE_TYPE_MIGRATION_MAP) {
+  if (tile.type in TILE_TYPE_MIGRATION_MAP) {
     const newType = TILE_TYPE_MIGRATION_MAP[tile.type];
     console.warn(
       `[Tiles Migration] Migrating deprecated tile type "${tile.type}" to "${newType}" (backward compatibility, EE environment)`
@@ -119,9 +111,8 @@ function migrateTile<
 }
 
 /**
- * Applies migration and fallback to terrain property
- * - Migration: Apply default type when enabled without type
- * - Fallback: Use reearth_terrain when cesiumion requires token but it's missing
+ * Applies fallback to terrain property
+ * - Fallback: Use reearth_terrain when cesium requires token but it's missing
  */
 function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
   terrain: T | undefined,
@@ -142,31 +133,20 @@ function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
     };
   }
 
-  // Apply default terrain type when enabled without type (MIGRATION)
-  if (terrain.enabled && !terrain.type) {
-    console.warn(
-      '[Terrain Migration] Setting terrain type to "reearth_terrain" (terrain enabled without type)'
-    );
-    return {
-      ...terrain,
-      type: "reearth_terrain"
-    };
-  }
-
   return terrain;
 }
 
 /**
  * Applies migration (backward compatibility) and fallback logic to viewer property
  *
- * Migration (backward compatibility + defaults):
- * 1. Apply default tile types for tiles without explicit type
- * 2. Migrate deprecated tile types to new types (EE only)
- * 3. Apply default terrain type when enabled without type
+ * Migration (backward compatibility):
+ * 1. Migrate deprecated tile types to new types (EE only)
  *
  * Fallback (when requirements not met):
- * 4. Fallback Cesium Ion tiles to alternatives when token missing (EE only)
- * 5. Fallback Cesium Ion terrain to reearth_terrain when token missing
+ * 2. Fallback Cesium Ion tiles to alternatives when token missing (EE only)
+ * 3. Fallback Cesium terrain to reearth_terrain when token missing
+ *
+ * Note: Tiles/terrain without explicit type will use schema defaults (no migration needed)
  *
  * @param viewerProperty - The viewer property containing tiles and terrain
  * @param config - Migration and fallback configuration
@@ -186,14 +166,12 @@ export function migrateViewerPropertyTiles(
   const tilesNeedProcessing =
     hasTiles && tiles.some((tile) => needsTileMigration(tile, config));
 
-  // Check if terrain needs migration
-  const terrainNeedsMigration =
-    hasTerrain &&
-    ((terrain.type === "cesium" && !config.hasAccessToken) ||
-      (terrain.enabled && !terrain.type));
+  // Check if terrain needs fallback
+  const terrainNeedsFallback =
+    hasTerrain && terrain.type === "cesium" && !config.hasAccessToken;
 
-  // Return original if nothing needs migration
-  if (!tilesNeedProcessing && !terrainNeedsMigration) {
+  // Return original if nothing needs processing
+  if (!tilesNeedProcessing && !terrainNeedsFallback) {
     return viewerProperty;
   }
 
@@ -204,8 +182,8 @@ export function migrateViewerPropertyTiles(
     result.tiles = tiles.map((tile) => migrateTile(tile, config));
   }
 
-  // Migrate terrain if needed
-  if (terrainNeedsMigration) {
+  // Apply terrain fallback if needed
+  if (terrainNeedsFallback) {
     result.terrain = migrateTerrain(terrain, config);
   }
 
