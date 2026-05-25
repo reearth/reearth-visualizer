@@ -231,10 +231,9 @@ const Wrapper = styled("div")(({ theme }) => ({
 }));
 
 const TimelineWrapper = styled("div")<{ isMinimized: boolean }>(
-  ({ isMinimized, theme }) => ({
+  ({ isMinimized }) => ({
     display: css.display.flex,
     alignItems: css.alignItems.center,
-    paddingBottom: theme.spacing.small - 2,
     gap: isMinimized ? "" : "25px",
     flexDirection: isMinimized ? "column" : "row"
   })
@@ -300,7 +299,7 @@ const ArrowIcon = styled(Icon)<{ open: boolean }>(({ open, theme }) => ({
 }));
 
 const Select = styled("div")(({ theme }) => ({
-  fontSize: "14px",
+  fontSize: "12px",
   lineHeight: 1,
   paddingRight: theme.spacing.normal,
   color: theme.content.weaker
