@@ -56,6 +56,7 @@ export default function useHooks({
     return migrateViewerPropertyTiles(overriddenViewerProperty, {
       isEE,
       defaultTileType,
+      defaultTerrainType: "reearth_terrain",
       hasAccessToken
     });
   }, [overriddenViewerProperty, engineMeta]);
