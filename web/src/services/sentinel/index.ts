@@ -17,6 +17,66 @@ export type { AssetSecurityStatus, TokenUpdateOptions };
 let isInitialized = false;
 
 /**
+ * Wait for service worker to control the page
+ *
+ * On hard reload, navigator.serviceWorker.controller is null even though the SW
+ * is registered and active. Without a controller, the SW cannot intercept fetch
+ * requests, causing 401 errors for protected tile requests.
+ *
+ * This function sends a CLAIM_CLIENTS message to force the SW to call clients.claim(),
+ * which triggers the controllerchange event and allows the SW to intercept requests.
+ *
+ * @param timeoutMs - Maximum time to wait for control in milliseconds (default: 5000ms)
+ */
+async function waitForServiceWorkerControl(timeoutMs = 5000): Promise<void> {
+  console.log("[Sentinel] Waiting for service worker to control page...");
+
+  // If already controlling, return immediately
+  if (navigator.serviceWorker.controller) {
+    console.log("[Sentinel] Service worker already controlling the page");
+    return;
+  }
+
+  // Send CLAIM_CLIENTS message to force SW to take control
+  const registration = await navigator.serviceWorker.getRegistration();
+  if (registration?.active) {
+    registration.active.postMessage({ type: "CLAIM_CLIENTS" });
+    console.log("[Sentinel] Sent CLAIM_CLIENTS message to service worker");
+  }
+
+  // Wait for controllerchange event (fired when SW calls clients.claim())
+  return new Promise<void>((resolve) => {
+    const onControllerChange = () => {
+      clearTimeout(timeout);
+      console.log("[Sentinel] Service worker gained control via controllerchange event");
+      resolve();
+    };
+
+    const timeout = setTimeout(() => {
+      // Remove listener to prevent it firing after timeout
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+
+      // Double-check if control was gained between listener setup and timeout
+      if (navigator.serviceWorker.controller) {
+        console.log("[Sentinel] Service worker control detected (race condition)");
+        resolve();
+      } else {
+        console.warn(
+          "[Sentinel] Service worker did not gain control after",
+          timeoutMs,
+          "ms - requests may not be intercepted"
+        );
+        resolve();
+      }
+    }, timeoutMs);
+
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange, {
+      once: true
+    });
+  });
+}
+
+/**
  * Initialize Sentinel Service Worker
  * Must be called after loadConfig() resolves, before the viewer mounts.
  */
@@ -69,10 +129,20 @@ export async function initializeSentinel(): Promise<void> {
       }
     });
 
-    await updateToken({
+    // Wait for service worker to control the page
+    // On hard reload, the SW must gain control before it can intercept requests
+    await waitForServiceWorkerControl();
+
+    // Send token to service worker
+    const tokenUpdated = await updateToken({
       accessToken: appConfig.tileServerToken,
       expiresAt: Date.now() + 24 * 60 * 60 * 1000 // re-check in 24h via onTokenExpired
     });
+
+    if (!tokenUpdated) {
+      console.error("[Sentinel] Failed to update token in service worker - initialization incomplete");
+      return;
+    }
 
     isInitialized = true;
     console.log("[Sentinel] Initialized for", protectedDomain);

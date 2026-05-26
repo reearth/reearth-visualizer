@@ -680,6 +680,10 @@ self.addEventListener("message", async (t) => {
       const i = await ce();
       (a = t.ports[0]) == null || a.postMessage(i);
       break;
+    case "CLAIM_CLIENTS":
+      await self.clients.claim();
+      console.log("[ServiceWorker] Claimed clients via explicit CLAIM_CLIENTS message");
+      break;
     default:
       console.warn("[ServiceWorker] Unknown message type:", e.type);
   }
