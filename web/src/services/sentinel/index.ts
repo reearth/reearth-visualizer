@@ -25,8 +25,10 @@ let isInitialized = false;
  *
  * This function sends a CLAIM_CLIENTS message to force the SW to call clients.claim(),
  * which triggers the controllerchange event and allows the SW to intercept requests.
+ *
+ * @param timeoutMs - Maximum time to wait for control in milliseconds (default: 5000ms)
  */
-async function waitForServiceWorkerControl(maxAttempts = 100, delayMs = 50): Promise<void> {
+async function waitForServiceWorkerControl(timeoutMs = 5000): Promise<void> {
   console.log("[Sentinel] Waiting for service worker to control page...");
 
   // If already controlling, return immediately
@@ -44,24 +46,33 @@ async function waitForServiceWorkerControl(maxAttempts = 100, delayMs = 50): Pro
 
   // Wait for controllerchange event (fired when SW calls clients.claim())
   return new Promise<void>((resolve) => {
-    const timeout = setTimeout(() => {
-      console.warn(
-        "[Sentinel] Service worker did not gain control after",
-        maxAttempts * delayMs,
-        "ms - requests may not be intercepted"
-      );
+    const onControllerChange = () => {
+      clearTimeout(timeout);
+      console.log("[Sentinel] Service worker gained control via controllerchange event");
       resolve();
-    }, maxAttempts * delayMs);
+    };
 
-    navigator.serviceWorker.addEventListener(
-      "controllerchange",
-      () => {
-        clearTimeout(timeout);
-        console.log("[Sentinel] Service worker gained control via controllerchange event");
+    const timeout = setTimeout(() => {
+      // Remove listener to prevent it firing after timeout
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+
+      // Double-check if control was gained between listener setup and timeout
+      if (navigator.serviceWorker.controller) {
+        console.log("[Sentinel] Service worker control detected (race condition)");
         resolve();
-      },
-      { once: true }
-    );
+      } else {
+        console.warn(
+          "[Sentinel] Service worker did not gain control after",
+          timeoutMs,
+          "ms - requests may not be intercepted"
+        );
+        resolve();
+      }
+    }, timeoutMs);
+
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange, {
+      once: true
+    });
   });
 }
 
@@ -129,7 +140,8 @@ export async function initializeSentinel(): Promise<void> {
     });
 
     if (!tokenUpdated) {
-      console.warn("[Sentinel] Failed to update token in service worker");
+      console.error("[Sentinel] Failed to update token in service worker - initialization incomplete");
+      return;
     }
 
     isInitialized = true;
