@@ -69,6 +69,19 @@ export async function initializeSentinel(): Promise<void> {
       }
     });
 
+    // On first install the SW won't control this page until clients.claim() fires.
+    // Wait for it before mounting the app so tile requests aren't made without auth.
+    if (navigator.serviceWorker && !navigator.serviceWorker.controller) {
+      await new Promise<void>(resolve => {
+        navigator.serviceWorker.addEventListener(
+          "controllerchange",
+          () => resolve(),
+          { once: true }
+        );
+        setTimeout(resolve, 3000); // fallback: don't block indefinitely
+      });
+    }
+
     await updateToken({
       accessToken: appConfig.tileServerToken,
       expiresAt: Date.now() + 24 * 60 * 60 * 1000 // re-check in 24h via onTokenExpired
