@@ -133,11 +133,15 @@ function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
   if (!terrain) return terrain;
 
   // Fallback cesium (Cesium World Terrain) to reearth_terrain when token is missing (FALLBACK)
+  // Also covers undefined type: the manifest defaultValue "reearth_terrain" is only a UI hint and is
+  // never persisted until the user explicitly changes the field, so a brand-new project will have
+  // terrain.type === undefined here, which the core would silently default to "cesium" (requiring a
+  // token). Treating undefined the same as "cesium" closes that gap.
   // Note: cesiumion is intentionally excluded — if the user chose a custom Ion asset
   // and provides no token, terrain simply won't load (expected behaviour).
-  if (terrain.type === "cesium" && !config.hasAccessToken) {
+  if ((!terrain.type || terrain.type === "cesium") && terrain.enabled && !config.hasAccessToken) {
     console.warn(
-      `[Terrain Fallback] Terrain type "cesium" → "reearth_terrain" (Cesium Ion access token required but missing)`
+      `[Terrain Fallback] Terrain type "${terrain.type ?? "undefined (default cesium)"}" → "reearth_terrain" (Cesium Ion access token required but missing)`
     );
     return {
       ...terrain,
@@ -182,8 +186,12 @@ export function migrateViewerPropertyTiles(
     hasTiles && tiles.some((tile) => needsTileMigration(tile, config));
 
   // Check if terrain needs fallback
+  // Also handles undefined type: core defaults undefined to "cesium" (requires token)
   const terrainNeedsFallback =
-    hasTerrain && terrain.type === "cesium" && !config.hasAccessToken;
+    hasTerrain &&
+    (!terrain.type || terrain.type === "cesium") &&
+    !!terrain.enabled &&
+    !config.hasAccessToken;
 
   // Return original if nothing needs processing
   if (!tilesNeedProcessing && !terrainNeedsFallback) {

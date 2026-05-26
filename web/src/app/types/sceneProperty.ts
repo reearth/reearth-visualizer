@@ -4,7 +4,7 @@
 
 type TerrainProperty = {
   terrain?: boolean;
-  terrainType?: "cesium" | "cesiumion"; // default: cesium
+  terrainType?: "cesium" | "cesiumion" | "reearth_terrain"; // default: reearth_terrain
   terrainCesiumIonAsset?: string;
   terrainCesiumIonAccessToken?: string;
   terrainCesiumIonUrl?: string;
@@ -110,7 +110,7 @@ type LegacySceneProperty = {
   }[];
   terrain?: {
     terrain?: boolean;
-    terrainType?: "cesium" | "cesiumion"; // default: cesium
+    terrainType?: "cesium" | "cesiumion" | "reearth_terrain"; // default: reearth_terrain
     terrainExaggeration?: number; // default: 1
     terrainExaggerationRelativeHeight?: number; // default: 0
     depthTestAgainstTerrain?: boolean;
