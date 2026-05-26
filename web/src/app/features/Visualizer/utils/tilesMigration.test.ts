@@ -274,7 +274,22 @@ describe("tilesMigration", () => {
       expect(result).toBe(viewerProperty); // No migration
     });
 
-    it("should NOT migrate terrain when enabled without type (use schema defaults)", () => {
+    it("should apply defaultTerrainType to terrain without type when defaultTerrainType is provided", () => {
+      const viewerProperty = {
+        terrain: { enabled: true }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        defaultTerrainType: "reearth_terrain",
+        hasAccessToken: false
+      });
+      expect(result?.terrain).toEqual({
+        enabled: true,
+        type: "reearth_terrain"
+      });
+    });
+
+    it("should NOT apply type to terrain without type when defaultTerrainType is not provided", () => {
       const viewerProperty = {
         terrain: { enabled: true }
       };
@@ -285,7 +300,24 @@ describe("tilesMigration", () => {
       expect(result).toBe(viewerProperty); // No migration
     });
 
-    it("should only migrate tiles when terrain has no type (no terrain migration)", () => {
+    it("should migrate tiles and apply defaultTerrainType when both need processing", () => {
+      const viewerProperty = {
+        tiles: [{ id: "1", type: "default" as const }],
+        terrain: { enabled: true }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: true,
+        defaultTerrainType: "reearth_terrain",
+        hasAccessToken: false
+      });
+      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite" }]);
+      expect(result?.terrain).toEqual({
+        enabled: true,
+        type: "reearth_terrain"
+      });
+    });
+
+    it("should only migrate tiles when terrain has no type and no defaultTerrainType", () => {
       const viewerProperty = {
         tiles: [{ id: "1", type: "default" as const }],
         terrain: { enabled: true }
@@ -586,10 +618,33 @@ describe("tilesMigration", () => {
       expect(result).toBe(terrain); // Returns original unchanged
     });
 
-    it("should NOT migrate when enabled with empty type (use schema defaults)", () => {
+    it("should apply defaultTerrainType when type is undefined", () => {
       const terrain = { enabled: true, type: undefined };
       const result = migrateTerrain(terrain, {
         isEE: false,
+        defaultTerrainType: "reearth_terrain",
+        hasAccessToken: false
+      });
+      expect(result).toEqual({
+        enabled: true,
+        type: "reearth_terrain"
+      });
+    });
+
+    it("should NOT apply type when type is undefined and defaultTerrainType is not provided", () => {
+      const terrain = { enabled: true, type: undefined };
+      const result = migrateTerrain(terrain, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(result).toBe(terrain); // Returns original unchanged
+    });
+
+    it("should NOT apply defaultTerrainType when terrain already has a type", () => {
+      const terrain = { enabled: true, type: "cesiumion" };
+      const result = migrateTerrain(terrain, {
+        isEE: false,
+        defaultTerrainType: "reearth_terrain",
         hasAccessToken: false
       });
       expect(result).toBe(terrain); // Returns original unchanged
