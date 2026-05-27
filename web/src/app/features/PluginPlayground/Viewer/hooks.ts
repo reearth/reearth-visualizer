@@ -1,7 +1,6 @@
 import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { Camera } from "@reearth/app/utils/value";
 import { MapRef } from "@reearth/core";
-import { config } from "@reearth/services/config";
 import {
   MutableRefObject,
   useCallback,
@@ -35,7 +34,7 @@ export default ({
 
   const engineMeta = useMemo(
     () => ({
-      cesiumIonAccessToken: config()?.cesiumIonAccessToken
+      cesiumIonAccessToken: undefined
     }),
     []
   );

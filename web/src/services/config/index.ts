@@ -53,7 +53,6 @@ export type Config = {
   googleClientId?: string;
   sentryDsn?: string;
   sentryEnv?: string;
-  cesiumIonAccessToken?: string;
   customProviders?: CustomProviders;
   earlyAccessAdmins?: string[];
   brand?: {
@@ -130,7 +129,8 @@ export default async function loadConfig() {
   }
 
   // strictly remove cesium ion token
-  config.cesiumIonAccessToken = undefined;
+  if ("cesiumIonAccessToken" in (config as any))
+    delete (config as any).cesiumIonAccessToken;
 
   window.REEARTH_CONFIG = config;
 
