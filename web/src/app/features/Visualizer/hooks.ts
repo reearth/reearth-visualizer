@@ -51,10 +51,14 @@ export default function useHooks({
     const configData = config();
     const isEE = configData?.featureCollection === "ee";
     const defaultTileType = appFeature()?.defaultTileType;
+
     // Check both global token override and engineMeta token
+    // Validate tokens are non-empty strings
+    const globalToken = overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
+    const engineToken = engineMeta?.cesiumIonAccessToken;
     const hasAccessToken = !!(
-      overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken ||
-      engineMeta?.cesiumIonAccessToken
+      (typeof globalToken === "string" && globalToken.trim().length > 0) ||
+      (typeof engineToken === "string" && engineToken.trim().length > 0)
     );
 
     return migrateViewerPropertyTiles(overriddenViewerProperty, {

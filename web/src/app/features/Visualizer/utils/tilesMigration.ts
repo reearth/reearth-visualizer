@@ -102,7 +102,7 @@ function migrateTile<
   let processedTile = tile;
 
   // Step 1: Migrate deprecated tile types to cesium_ion (MIGRATION - backward compatibility)
-  if (tile.type in TILE_TYPE_MIGRATION_MAP) {
+  if (tile.type && Object.hasOwn(TILE_TYPE_MIGRATION_MAP, tile.type)) {
     const migration = TILE_TYPE_MIGRATION_MAP[tile.type];
     console.warn(
       `[Tiles Migration] Migrating deprecated tile type "${tile.type}" to "${migration.type}" with asset ID ${migration.cesiumIonAssetId} (backward compatibility, EE environment)`
@@ -117,7 +117,7 @@ function migrateTile<
   // Step 2: Fallback cesium_ion tiles to EE types when token is missing (FALLBACK)
   if (processedTile.type === "cesium_ion" && !config.hasAccessToken) {
     const assetId = processedTile.cesiumIonAssetId;
-    if (assetId && String(assetId) in CESIUM_ION_ASSET_ID_FALLBACK_MAP) {
+    if (assetId && Object.hasOwn(CESIUM_ION_ASSET_ID_FALLBACK_MAP, String(assetId))) {
       const newType = CESIUM_ION_ASSET_ID_FALLBACK_MAP[String(assetId)];
       console.warn(
         `[Tiles Fallback] Cesium Ion tile (asset ID: ${assetId}) → "${newType}" (Cesium Ion access token required but missing)`
