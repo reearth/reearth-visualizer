@@ -421,7 +421,7 @@ export default ({
       cesiumIonAccessToken:
         typeof cesiumIonAccessToken === "string" && cesiumIonAccessToken
           ? cesiumIonAccessToken
-          : config()?.cesiumIonAccessToken
+          : undefined
     }),
     [cesiumIonAccessToken]
   );
