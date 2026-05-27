@@ -24,11 +24,7 @@ import {
 
 import { TimelineValues } from ".";
 
-export type Range = {
-  start: number;
-  mid: number;
-  end: number;
-};
+export type Range = { start: number; mid: number; end: number };
 
 export type TimelineBlockProperty = {
   panel?: PanelProperty;
@@ -98,7 +94,7 @@ export default ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selected, setSelected] = useState("1sec/sec");
+  const [selectedSpeedKey, setSelectedSpeedKey] = useState("one_sec_per_sec");
   const formattedCurrentTime = useMemo(() => {
     const textDate = formatDateForTimeline(
       currentTime,
@@ -148,10 +144,10 @@ export default ({
   }, [inEditor, isOpen]);
 
   const handleOnSelect = useCallback(
-    (value: string, second: number) => {
+    (speedKey: string, second: number) => {
       if (!inEditor) {
         setIsOpen(false);
-        if (value !== selected) setSelected(value);
+        if (speedKey !== selectedSpeedKey) setSelectedSpeedKey(speedKey);
         if (isPlayingReversed) {
           onSpeedChange?.(second * -1, committer.id);
         } else {
@@ -159,7 +155,7 @@ export default ({
         }
       }
     },
-    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selected]
+    [committer.id, inEditor, isPlayingReversed, onSpeedChange, selectedSpeedKey]
   );
 
   useEffect(() => {
@@ -450,7 +446,7 @@ export default ({
     isPause,
     sliderPosition,
     isOpen,
-    selected,
+    selectedSpeedKey,
     isActive,
     isMinimized,
     blockRef,
