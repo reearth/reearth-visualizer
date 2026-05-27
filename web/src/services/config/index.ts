@@ -129,7 +129,7 @@ export default async function loadConfig() {
   }
 
   // strictly remove cesium ion token
-  if ((config as any).cesiumIonAccessToken)
+  if ("cesiumIonAccessToken" in (config as any))
     delete (config as any).cesiumIonAccessToken;
 
   window.REEARTH_CONFIG = config;
