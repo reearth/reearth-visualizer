@@ -18,7 +18,6 @@ import { useLayerStyles } from "@reearth/services/api/layerStyle";
 import { usePropertyMutations } from "@reearth/services/api/property";
 import { useStoryBlockMutations } from "@reearth/services/api/storytelling";
 import { useWidgetMutations } from "@reearth/services/api/widget";
-import { config } from "@reearth/services/config";
 import { useAtomValue } from "jotai";
 import {
   useMemo,
