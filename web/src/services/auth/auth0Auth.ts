@@ -1,6 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { logOutFromTenant } from "@reearth/services/config";
-import { clearSentinelToken } from "@reearth/services/sentinel";
 import { useLatestLogoutAt } from "@reearth/services/state";
 import { useCallback, useEffect } from "react";
 
@@ -62,7 +61,6 @@ export const useAuth0Auth = (): AuthHook => {
     },
     logout: () => {
       logOutFromTenant();
-      void clearSentinelToken();
 
       return logout({
         logoutParams: {

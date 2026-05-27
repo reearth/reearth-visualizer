@@ -23,7 +23,7 @@ import type { NLSLayer } from "@reearth/services/api/layer";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, MutableRefObject, SetStateAction, useMemo, useRef } from "react";
+import { FC, MutableRefObject, SetStateAction, useRef } from "react";
 
 import { VISUALIZER_CORE_DOM_ID } from "./constaints";
 import Crust from "./Crust";
@@ -41,7 +41,6 @@ import {
 import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
 import useViewport from "./hooks/useViewport";
-import { migrateLayers } from "./utils";
 
 type VisualizerProps = {
   engine?: EngineType;
@@ -239,34 +238,8 @@ const Visualizer: FC<VisualizerProps> = ({
     viewerProperty,
     onCoreLayerSelect,
     currentCamera,
-    handleCoreAPIReady,
-    engineMeta
+    handleCoreAPIReady
   });
-
-  // Override engineMeta cesiumIonAccessToken with global token from viewer property if set
-  const overriddenEngineMeta = useMemo(() => {
-    const globalIonToken = overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
-
-    if (globalIonToken && typeof globalIonToken === "string") {
-      return {
-        ...engineMeta,
-        cesiumIonAccessToken: globalIonToken
-      };
-    }
-
-    return engineMeta;
-  }, [overriddenViewerProperty, engineMeta]);
-
-  // Apply layers fallback when requirements not met:
-  // 1. OSM Buildings: fallback to reearth-buildings when Cesium Ion token missing
-  // 2. Google Photorealistic (EE): fallback provider to reearth when token missing or no provider
-  const migratedLayers = useMemo(() => {
-    const configData = config();
-    const isEE = configData?.featureCollection === "ee";
-    // Check both global token override and engineMeta token (overriddenEngineMeta already includes global token)
-    const hasAccessToken = !!overriddenEngineMeta?.cesiumIonAccessToken;
-    return migrateLayers(layers, { isEE, hasAccessToken });
-  }, [layers, overriddenEngineMeta]);
 
   const coreWrapperRef = useRef<HTMLDivElement>(null);
   const { viewport } = useViewport({
@@ -274,8 +247,6 @@ const Visualizer: FC<VisualizerProps> = ({
     forceDevice,
     onDeviceChange
   });
-
-  const customProviders = useMemo(() => config()?.customProviders, []);
 
   return (
     <Wrapper
@@ -289,12 +260,11 @@ const Visualizer: FC<VisualizerProps> = ({
           engine={engine}
           isBuilt={!!isBuilt}
           isEditable={!isBuilt}
-          layers={migratedLayers}
+          layers={layers}
           zoomedLayerId={zoomedLayerId}
           viewerProperty={overriddenViewerProperty}
           ready={ready}
-          meta={overriddenEngineMeta}
-          customProvider={customProviders}
+          meta={engineMeta}
           camera={visualizerCamera}
           interactionMode={interactionMode}
           shouldRender={shouldRender}
@@ -316,7 +286,7 @@ const Visualizer: FC<VisualizerProps> = ({
             inEditor={inEditor}
             mapRef={visualizerRef}
             mapAPIReady={mapAPIReady}
-            layers={migratedLayers}
+            layers={layers}
             // Viewer
             viewport={viewport}
             viewerProperty={overriddenViewerProperty}

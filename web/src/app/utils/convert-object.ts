@@ -66,7 +66,6 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
       tile_zoomLevel: "zoomLevel",
       tile_zoomLevelForURL: "zoomLevelForURL",
       tile_opacity: "opacity",
-      cesium_ion_asset_id: "cesiumIonAssetId",
       heatmap: "heatmap"
     }
   ],

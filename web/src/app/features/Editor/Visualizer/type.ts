@@ -1,9 +1,9 @@
 import { Block } from "@reearth/app/features/Visualizer/Crust";
 import { SceneMode } from "@reearth/app/types";
 import {
-  AssetsProperty as CoreAssetsProperty,
-  AssetsCesiumProperty as CoreAssetsCesiumProperty,
-  SceneProperty as CoreSceneProperty,
+  ImageBasedLighting,
+  LightProperty,
+  ShadowProperty,
   ViewerProperty as CoreViewerProperty
 } from "@reearth/core";
 
@@ -15,15 +15,15 @@ export interface Item {
 
 export type BlockType = Item & Pick<Block, "pluginId" | "extensionId">;
 
-export declare type ViewerProperty = Omit<CoreViewerProperty, "scene" | "assets"> & {
-  scene?: Omit<CoreSceneProperty, "mode"> & {
+export declare type ViewerProperty = {
+  scene?: {
+    backgroundColor?: string;
     mode?: SceneMode;
+    verticalExaggeration?: number;
+    verticalExaggerationRelativeHeight?: number;
+    vr?: boolean;
+    light?: LightProperty;
+    shadow?: ShadowProperty;
+    imageBasedLighting?: ImageBasedLighting;
   };
-  assets?: Omit<CoreAssetsProperty, "cesium"> & {
-    cesium?: CoreAssetsCesiumProperty & {
-      global?: {
-        ionAccessToken?: string;
-      };
-    };
-  };
-};
+} & Omit<CoreViewerProperty, "scene">;

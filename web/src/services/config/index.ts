@@ -16,34 +16,6 @@ export {
   logOutFromTenant
 } from "./authInfo";
 
-export type CustomProviders = {
-  imagery?: {
-    providers?: {
-      id: string;
-      url: string;
-      credit?: string;
-      maximumLevel?: number;
-      minimumLevel?: number;
-    }[];
-  };
-  terrain?: {
-    providers?: {
-      id: string;
-      url: string;
-      requestVertexNormals?: boolean;
-      requestWaterMask?: boolean;
-      credit?: string;
-    }[];
-  };
-  layers?: {
-    providers?: {
-      id: string;
-      url: string;
-      options?: Record<string, unknown>;
-    }[];
-  };
-};
-
 export type Config = {
   version?: string;
   api: string;
@@ -54,7 +26,6 @@ export type Config = {
   sentryDsn?: string;
   sentryEnv?: string;
   cesiumIonAccessToken?: string;
-  customProviders?: CustomProviders;
   earlyAccessAdmins?: string[];
   brand?: {
     logoUrl?: string;
@@ -86,8 +57,6 @@ export type Config = {
   featureCollection?: string;
   enableGqlPlayground?: boolean;
   platformUrl?: string;
-  tileServerBaseUrl?: string;
-  tileServerToken?: string;
 } & AuthInfo;
 
 declare global {
@@ -128,9 +97,6 @@ export default async function loadConfig() {
       config.unsafePluginUrls
     );
   }
-
-  // strictly remove cesium ion token
-  config.cesiumIonAccessToken = undefined;
 
   window.REEARTH_CONFIG = config;
 

@@ -41,10 +41,7 @@
  * - `[USER_ALIAS]` → Replaced with me.alias
  */
 
-import { EE_TILE_TYPES } from "@reearth/ee/constants";
 import { getFeatureConfig } from "@reearth/ee/featureConfig";
-
-import { DEFAULT_TILE_TYPE, DEPRECATED_TILE_TYPES } from "./constants";
 
 import { config } from ".";
 
@@ -58,8 +55,6 @@ export type AppFeatureConfig = {
   projectVisibility?: boolean;
   builtinTimelineWidget?: boolean;
   useProjectSplitImport?: boolean;
-  disabledTileTypes?: string[];
-  defaultTileType?: string;
 };
 
 const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
@@ -71,9 +66,7 @@ const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
   projectVisibility: false,
   externalAccountManagementUrl: undefined,
   builtinTimelineWidget: true,
-  useProjectSplitImport: true,
-  disabledTileTypes: [...EE_TILE_TYPES, ...DEPRECATED_TILE_TYPES],
-  defaultTileType: DEFAULT_TILE_TYPE
+  useProjectSplitImport: true
 };
 
 let appFeatureConfig: AppFeatureConfig = {

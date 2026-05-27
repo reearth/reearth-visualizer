@@ -47,10 +47,6 @@ const config: StorybookConfig = {
             replacement: resolve(__dirname, "..", "node_modules/@reearth/core")
           },
           {
-            find: "@reearth/sentinel",
-            replacement: resolve(__dirname, "..", "node_modules/@reearth/sentinel")
-          },
-          {
             find: "@reearth",
             replacement: resolve(__dirname, "..", "src")
           }

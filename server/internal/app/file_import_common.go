@@ -247,68 +247,6 @@ func UpdateImportStatus(
 	}
 }
 
-// legacyTileTypeToAssetID maps legacy tile types to their cesium_ion asset IDs,
-// matching the DB migration (260525120000).
-var legacyTileTypeToAssetID = map[string]string{
-	"default":       "2",
-	"default_label": "3",
-	"default_road":  "4",
-	"black_marble":  "3812",
-}
-
-func migrateLegacyTileTypes(data *[]byte) error {
-	var d map[string]any
-	if err := json.Unmarshal(*data, &d); err != nil {
-		return err
-	}
-
-	scene, ok := d["scene"].(map[string]any)
-	if !ok {
-		return nil
-	}
-	property, ok := scene["property"].(map[string]any)
-	if !ok {
-		return nil
-	}
-	tiles, ok := property["tiles"].([]any)
-	if !ok {
-		return nil
-	}
-
-	for _, t := range tiles {
-		tile, ok := t.(map[string]any)
-		if !ok {
-			continue
-		}
-		// tile_type is stored as {"type": "string", "value": "<tile_type>"}
-		tileTypeObj, ok := tile["tile_type"].(map[string]any)
-		if !ok {
-			continue
-		}
-		tileType, ok := tileTypeObj["value"].(string)
-		if !ok {
-			continue
-		}
-		assetID, exists := legacyTileTypeToAssetID[tileType]
-		if !exists {
-			continue
-		}
-		log.Infof("[Import] migrating legacy tile_type %q -> cesium_ion (asset_id=%s)", tileType, assetID)
-		tileTypeObj["value"] = "cesium_ion"
-		tile["cesium_ion_asset_id"] = map[string]any{
-			"type":  "string",
-			"value": assetID,
-		}
-	}
-
-	b, err := json.Marshal(d)
-	if err != nil {
-		return err
-	}
-	*data = b
-	return nil
-}
-
 func ImportProject(
 	ctx context.Context,
 	usecases *interfaces.Container,
@@ -321,10 +259,6 @@ func ImportProject(
 	result map[string]any,
 	version *string,
 ) bool {
-
-	if err := migrateLegacyTileTypes(importData); err != nil {
-		log.Warnf("[Import] failed to migrate legacy tile types: %v", err)
-	}
 
 	// project ----------
 	newProject, err := usecases.Project.ImportProjectData(ctx, wsId.String(), pid.Ref().StringRef(), importData, op)

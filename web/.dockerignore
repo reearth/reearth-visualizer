@@ -1,7 +1,6 @@
 *
 
 !docker/
-!public/
 !src/
 
 !.yarnrc.yml

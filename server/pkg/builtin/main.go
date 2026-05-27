@@ -77,8 +77,7 @@ func E2ETestChange() {
 			for _, g := range e.Groups().Groups() {
 				if g.ID().String() == "tiles" {
 					// "tile_zoomLevel" <=> "tile_opacity"
-					// Updated from Move(2, 3) to Move(3, 4) after adding cesium_ion_asset_id field
-					g.Move(3, 4)
+					g.Move(2, 3)
 				}
 			}
 		}
