@@ -162,11 +162,6 @@ Vector Tile: ベクトルタイル
 Data Source Manager: データソースマネージャー
 Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
   KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
-Please provide cesium ion access token on Main settings to use Cesium Ion.: Cesium Ionを使用するには、メイン設定でCesium Ionアクセストークンを提供してください。
-Re:Earth: Re:Earth
-Cesium Ion: Cesium Ion
-Provider: プロバイダー
-Re:Earth Buildings: Re:Earth Buildings
 Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
 Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
 URL: URL

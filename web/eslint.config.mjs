@@ -22,7 +22,7 @@ export default [
   ...config("@reearth"),
   ...themeConfig,
   {
-    ignores: ["bin/pluginDoc.ts", "public/sw.js"]
+    ignores: ["bin/pluginDoc.ts"]
   },
   ...storybook.configs["flat/recommended"]
 ];

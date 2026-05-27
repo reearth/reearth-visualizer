@@ -50,34 +50,19 @@ const DataAttribution = ({
   const layerCredits: Credit[] = useMemo(() => {
     if (!nlsLayers) return [];
 
-    const credits: Credit[] = [];
-
-    // Hardcode for reearth-buildings
-    // This is a workaround for now since the copyright is not detected automatically by the engine.
-    if (nlsLayers.some((l) => l.config?.data?.type === "reearth-buildings")) {
-      credits.push({
-        builtinHtml:
-          '<a href="https://buildings.reearth.land/" target="_blank" rel="noopener">Re:Earth Buildings</a> — Buildings © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>, <a href="https://overturemaps.org/" target="_blank" rel="noopener">Overture Maps Foundation</a> (ODbL)<br/> Terrain by <a href="https://terrain.reearth.land/" target="_blank" rel="noopener">Re:Earth Terrain</a> (Mapterhorn / EGM2008)'
-      });
-    }
-
     const dataSourceNames = nlsLayers
       .map((l) => l.dataSourceName)
       .filter((name): name is BuiltinDataSourceName => name !== undefined);
+    if (dataSourceNames.length === 0) return [];
 
-    let creditsByDataSourceNames: Credit[] = [];
-    if (dataSourceNames.length !== 0) {
-      creditsByDataSourceNames = Array.from(new Set(dataSourceNames))
-        .map((name) => ({
-          description: BUILTIN_DATA_SOURCES[name]?.label,
-          logo: BUILTIN_DATA_SOURCES[name]?.icon,
-          creditUrl: BUILTIN_DATA_SOURCES[name]?.url,
-          disableLogoBackground: true
-        }))
-        .filter((c): c is NonNullable<typeof c> => !!c);
-    }
-
-    return [...credits, ...creditsByDataSourceNames];
+    return Array.from(new Set(dataSourceNames))
+      .map((name) => ({
+        description: BUILTIN_DATA_SOURCES[name]?.label,
+        logo: BUILTIN_DATA_SOURCES[name]?.icon,
+        creditUrl: BUILTIN_DATA_SOURCES[name]?.url,
+        disableLogoBackground: true
+      }))
+      .filter((c): c is NonNullable<typeof c> => !!c);
   }, [nlsLayers]);
 
   const { cesiumCredit, otherCredits, googleCredit } = useDataAttribution({
@@ -96,26 +81,13 @@ const DataAttribution = ({
           target="_blank"
           href={cesiumCredit.creditUrl}
           rel="noreferrer"
-          aria-label={cesiumCredit.description}
         >
-          <img
-            src={cesiumCredit.logo}
-            alt={cesiumCredit.description}
-            title={cesiumCredit.description}
-          />
+          <img src={cesiumCredit.logo} title={cesiumCredit.description} />
         </CesiumLink>
       )}
       {googleCredit && (
-        <GoogleLink
-          target="_blank"
-          rel="noreferrer"
-          aria-label={googleCredit.description}
-        >
-          <img
-            src={googleCredit.logo}
-            alt={googleCredit.description}
-            title={googleCredit.description}
-          />
+        <GoogleLink target="_blank" rel="noreferrer">
+          <img src={googleCredit.logo} title={googleCredit.description} />
         </GoogleLink>
       )}
       <DataLink onClick={handleModalOpen}>{t("Data Attribution")}</DataLink>

@@ -24,7 +24,6 @@ RUN --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
     --mount=type=bind,source=tsconfig.json,target=tsconfig.json \
     --mount=type=bind,source=vite.config.ts,target=vite.config.ts \
     --mount=type=bind,source=postcss.config.js,target=postcss.config.js \
-    --mount=type=bind,source=public,target=public \
     --mount=type=bind,source=src,target=src \
     --mount=type=cache,target=/root/.yarn,sharing=locked \
     yarn build
@@ -52,7 +51,6 @@ ENV REEARTH_BRAND=null
 ENV REEARTH_CESIUM_ION_ACCESS_TOKEN=null
 ENV REEARTH_CLOUD_API=null
 ENV REEARTH_CURRENT_TOS=null
-ENV REEARTH_CUSTOM_PROVIDERS=null
 ENV REEARTH_DOCUMENTATION_URL=null
 ENV REEARTH_EARLY_ACCESS_ADMINS=[]
 ENV REEARTH_ENABLE_GQL_PLAYGROUND=false
@@ -67,8 +65,6 @@ ENV REEARTH_PLATFORM_URL=null
 ENV REEARTH_PLUGINS=null
 ENV REEARTH_POLICY=null
 ENV REEARTH_PUBLISHED=null
-ENV REEARTH_TILE_SERVER_BASE_URL=null
-ENV REEARTH_TILE_SERVER_TOKEN=null
 ENV REEARTH_TITLE=
 ENV REEARTH_UNSAFE_PLUGIN_URLS=[]
 
