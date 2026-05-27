@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.5 - 2026-05-27
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Sentinel has 401 error on hard reload ([#2223](https://github.com/reearth/reearth-visualizer/pull/2223)) [`b8ed92`](https://github.com/reearth/reearth-visualizer/commit/b8ed92)
+- Set default terrain type as reearth_terrain ([#2221](https://github.com/reearth/reearth-visualizer/pull/2221)) [`d083bb`](https://github.com/reearth/reearth-visualizer/commit/d083bb)
+- Tile without type should apply default tile type ([#2220](https://github.com/reearth/reearth-visualizer/pull/2220)) [`bb22bf`](https://github.com/reearth/reearth-visualizer/commit/bb22bf)
+
+#### ✨ Refactor
+
+- Temporarily remove recent changes for release ([#2226](https://github.com/reearth/reearth-visualizer/pull/2226)) [`695c28`](https://github.com/reearth/reearth-visualizer/commit/695c28)
+- Support override cesium ion token &amp; correct tile migration map ([#2224](https://github.com/reearth/reearth-visualizer/pull/2224)) [`03895c`](https://github.com/reearth/reearth-visualizer/commit/03895c)
+- Support config play speed on story timeline block ([#2213](https://github.com/reearth/reearth-visualizer/pull/2213)) [`ce4eb3`](https://github.com/reearth/reearth-visualizer/commit/ce4eb3)
+
+#### Miscellaneous Tasks
+
+- Update version to 1.0.0-beta.16.5 ([#2227](https://github.com/reearth/reearth-visualizer/pull/2227)) [`9cb53b`](https://github.com/reearth/reearth-visualizer/commit/9cb53b)
+
+### web, server
+
+#### 🚀 Features
+
+- Support custom providers ([#2193](https://github.com/reearth/reearth-visualizer/pull/2193)) [`ac8f19`](https://github.com/reearth/reearth-visualizer/commit/ac8f19)
+
 ## 1.0.0-beta.16.4 - 2026-05-21
 
 ### Web
