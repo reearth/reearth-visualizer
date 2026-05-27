@@ -30,7 +30,7 @@ const TILE_TYPE_MIGRATION_MAP: Record<
   string,
   { type: "cesium_ion"; cesiumIonAssetId: number }
 > = {
-  default: { type: "cesium_ion", cesiumIonAssetId: 3 },
+  default: { type: "cesium_ion", cesiumIonAssetId: 2 },
   default_label: { type: "cesium_ion", cesiumIonAssetId: 3 },
   default_road: { type: "cesium_ion", cesiumIonAssetId: 4 },
   black_marble: { type: "cesium_ion", cesiumIonAssetId: 3812 }
