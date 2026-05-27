@@ -51,7 +51,11 @@ export default function useHooks({
     const configData = config();
     const isEE = configData?.featureCollection === "ee";
     const defaultTileType = appFeature()?.defaultTileType;
-    const hasAccessToken = !!engineMeta?.cesiumIonAccessToken;
+    // Check both global token override and engineMeta token
+    const hasAccessToken = !!(
+      overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken ||
+      engineMeta?.cesiumIonAccessToken
+    );
 
     return migrateViewerPropertyTiles(overriddenViewerProperty, {
       isEE,

@@ -243,15 +243,30 @@ const Visualizer: FC<VisualizerProps> = ({
     engineMeta
   });
 
+  // Override engineMeta cesiumIonAccessToken with global token from viewer property if set
+  const overriddenEngineMeta = useMemo(() => {
+    const globalIonToken = overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
+
+    if (globalIonToken && typeof globalIonToken === "string") {
+      return {
+        ...engineMeta,
+        cesiumIonAccessToken: globalIonToken
+      };
+    }
+
+    return engineMeta;
+  }, [overriddenViewerProperty, engineMeta]);
+
   // Apply layers fallback when requirements not met:
   // 1. OSM Buildings: fallback to reearth-buildings when Cesium Ion token missing
   // 2. Google Photorealistic (EE): fallback provider to reearth when token missing or no provider
   const migratedLayers = useMemo(() => {
     const configData = config();
     const isEE = configData?.featureCollection === "ee";
-    const hasAccessToken = !!engineMeta?.cesiumIonAccessToken;
+    // Check both global token override and engineMeta token (overriddenEngineMeta already includes global token)
+    const hasAccessToken = !!overriddenEngineMeta?.cesiumIonAccessToken;
     return migrateLayers(layers, { isEE, hasAccessToken });
-  }, [layers, engineMeta]);
+  }, [layers, overriddenEngineMeta]);
 
   const coreWrapperRef = useRef<HTMLDivElement>(null);
   const { viewport } = useViewport({
@@ -278,7 +293,7 @@ const Visualizer: FC<VisualizerProps> = ({
           zoomedLayerId={zoomedLayerId}
           viewerProperty={overriddenViewerProperty}
           ready={ready}
-          meta={engineMeta}
+          meta={overriddenEngineMeta}
           customProvider={customProviders}
           camera={visualizerCamera}
           interactionMode={interactionMode}

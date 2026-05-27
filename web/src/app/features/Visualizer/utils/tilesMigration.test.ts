@@ -68,7 +68,7 @@ describe("tilesMigration", () => {
       expect(result).toBe(viewerProperty); // No migration, returns original
     });
 
-    it("should migrate deprecated tile types in EE environment", () => {
+    it("should migrate deprecated tile types in EE environment without token (applies fallback)", () => {
       const viewerProperty = {
         tiles: [
           { id: "1", type: "default" },
@@ -81,11 +81,34 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
+      // Without token: deprecated → cesium_ion → fallback to google_satellite/etc
       expect(result?.tiles).toEqual([
-        { id: "1", type: "google_satellite" },
-        { id: "2", type: "google_satellite" },
-        { id: "3", type: "google_roadmap" },
-        { id: "4", type: "nasa_black_marble" }
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 3 },
+        { id: "2", type: "google_satellite", cesiumIonAssetId: 3 },
+        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4 },
+        { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812 }
+      ]);
+    });
+
+    it("should migrate deprecated tile types to cesium_ion in EE environment with token (no fallback)", () => {
+      const viewerProperty = {
+        tiles: [
+          { id: "1", type: "default" },
+          { id: "2", type: "default_label" },
+          { id: "3", type: "default_road" },
+          { id: "4", type: "black_marble" }
+        ]
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: true,
+        hasAccessToken: true
+      });
+      // With token: deprecated → cesium_ion (stays as cesium_ion, no fallback)
+      expect(result?.tiles).toEqual([
+        { id: "1", type: "cesium_ion", cesiumIonAssetId: 3 },
+        { id: "2", type: "cesium_ion", cesiumIonAssetId: 3 },
+        { id: "3", type: "cesium_ion", cesiumIonAssetId: 4 },
+        { id: "4", type: "cesium_ion", cesiumIonAssetId: 3812 }
       ]);
     });
 
@@ -142,7 +165,7 @@ describe("tilesMigration", () => {
         tiles: [
           { id: "1", type: "open_street_map" }, // No migration
           { id: "2" }, // Needs default application
-          { id: "3", type: "default" }, // Needs EE migration
+          { id: "3", type: "default" }, // Needs EE migration + fallback
           { id: "4", type: "cesium_ion", cesiumIonAssetId: 2 }, // Needs fallback
           { id: "5", type: "google_satellite" } // No migration
         ]
@@ -155,8 +178,8 @@ describe("tilesMigration", () => {
       expect(result?.tiles).toEqual([
         { id: "1", type: "open_street_map" },
         { id: "2", type: "open_street_map" }, // Default applied
-        { id: "3", type: "google_satellite" },
-        { id: "4", type: "google_satellite", cesiumIonAssetId: 2 },
+        { id: "3", type: "google_satellite", cesiumIonAssetId: 3 }, // Migrated + fallback
+        { id: "4", type: "google_satellite", cesiumIonAssetId: 2 }, // Fallback
         { id: "5", type: "google_satellite" }
       ]);
     });
@@ -223,8 +246,8 @@ describe("tilesMigration", () => {
         hasAccessToken: false
       });
       expect(result?.tiles).toEqual([
-        { id: "1", type: "google_satellite" },
-        { id: "2", type: "google_satellite", cesiumIonAssetId: 2 }
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 3 }, // Migrated + fallback
+        { id: "2", type: "google_satellite", cesiumIonAssetId: 2 } // Fallback
       ]);
       expect(result?.terrain).toEqual({
         type: "reearth_terrain",
@@ -241,7 +264,7 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite" }]);
+      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 3 }]); // Migrated + fallback
       expect(result?.terrain).toEqual({ type: "reearth_terrain", enabled: true });
     });
 
@@ -310,7 +333,7 @@ describe("tilesMigration", () => {
         defaultTerrainType: "reearth_terrain",
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite" }]);
+      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 3 }]); // Migrated + fallback
       expect(result?.terrain).toEqual({
         enabled: true,
         type: "reearth_terrain"
@@ -326,7 +349,7 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite" }]);
+      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 3 }]); // Migrated + fallback
       expect(result?.terrain).toBe(viewerProperty.terrain); // Unchanged
     });
   });
@@ -439,15 +462,31 @@ describe("tilesMigration", () => {
       expect(result).toBe(tile); // Returns original unchanged
     });
 
-    it("should migrate deprecated types in EE environment", () => {
+    it("should migrate deprecated types in EE environment without token (applies fallback)", () => {
       const tile = { id: "1", type: "default" };
       const result = migrateTile(tile, {
         isEE: true,
         hasAccessToken: false
       });
+      // Without token: deprecated → cesium_ion → fallback to google_satellite
       expect(result).toEqual({
         id: "1",
-        type: "google_satellite"
+        type: "google_satellite",
+        cesiumIonAssetId: 3
+      });
+    });
+
+    it("should migrate deprecated types to cesium_ion in EE environment with token (no fallback)", () => {
+      const tile = { id: "1", type: "default" };
+      const result = migrateTile(tile, {
+        isEE: true,
+        hasAccessToken: true
+      });
+      // With token: deprecated → cesium_ion (stays as cesium_ion)
+      expect(result).toEqual({
+        id: "1",
+        type: "cesium_ion",
+        cesiumIonAssetId: 3
       });
     });
 
@@ -519,6 +558,7 @@ describe("tilesMigration", () => {
       expect(result).toEqual({
         id: "1",
         type: "google_satellite",
+        cesiumIonAssetId: 3,
         opacity: 0.5,
         zoomLevel: [1, 10],
         customProp: "value"
@@ -672,10 +712,10 @@ describe("tilesMigration", () => {
   describe("Migration maps", () => {
     it("should have correct tile type migration map", () => {
       expect(TILE_TYPE_MIGRATION_MAP).toEqual({
-        default: "google_satellite",
-        default_label: "google_satellite",
-        default_road: "google_roadmap",
-        black_marble: "nasa_black_marble"
+        default: { type: "cesium_ion", cesiumIonAssetId: 3 },
+        default_label: { type: "cesium_ion", cesiumIonAssetId: 3 },
+        default_road: { type: "cesium_ion", cesiumIonAssetId: 4 },
+        black_marble: { type: "cesium_ion", cesiumIonAssetId: 3812 }
       });
     });
 

@@ -24,13 +24,16 @@ export type TilesMigrationConfig = {
 };
 
 /**
- * Mapping of deprecated tile types to EE tile types
+ * Mapping of deprecated tile types to cesium_ion with asset IDs
  */
-const TILE_TYPE_MIGRATION_MAP: Record<string, string> = {
-  default: "google_satellite",
-  default_label: "google_satellite",
-  default_road: "google_roadmap",
-  black_marble: "nasa_black_marble"
+const TILE_TYPE_MIGRATION_MAP: Record<
+  string,
+  { type: "cesium_ion"; cesiumIonAssetId: number }
+> = {
+  default: { type: "cesium_ion", cesiumIonAssetId: 3 },
+  default_label: { type: "cesium_ion", cesiumIonAssetId: 3 },
+  default_road: { type: "cesium_ion", cesiumIonAssetId: 4 },
+  black_marble: { type: "cesium_ion", cesiumIonAssetId: 3812 }
 };
 
 /**
@@ -76,8 +79,8 @@ function needsTileMigration(
 /**
  * Applies migration and fallback to a single tile
  * - Default Application: Apply defaultTileType when no type is set
- * - Migration: Migrate deprecated types (backward compatibility, EE only)
- * - Fallback: Use alternatives when Cesium Ion requires token but it's missing (EE only)
+ * - Migration: Migrate deprecated types to cesium_ion with proper asset IDs (backward compatibility, EE only)
+ * - Fallback: If no token available, fallback cesium_ion tiles to alternative EE types (EE only)
  */
 function migrateTile<
   T extends { type?: string; cesiumIonAssetId?: number | string }
@@ -96,34 +99,37 @@ function migrateTile<
   // EE-specific migrations only apply when featureCollection is 'ee'
   if (!config.isEE) return tile;
 
-  // Migrate deprecated tile types (MIGRATION - backward compatibility)
+  let processedTile = tile;
+
+  // Step 1: Migrate deprecated tile types to cesium_ion (MIGRATION - backward compatibility)
   if (tile.type in TILE_TYPE_MIGRATION_MAP) {
-    const newType = TILE_TYPE_MIGRATION_MAP[tile.type];
+    const migration = TILE_TYPE_MIGRATION_MAP[tile.type];
     console.warn(
-      `[Tiles Migration] Migrating deprecated tile type "${tile.type}" to "${newType}" (backward compatibility, EE environment)`
+      `[Tiles Migration] Migrating deprecated tile type "${tile.type}" to "${migration.type}" with asset ID ${migration.cesiumIonAssetId} (backward compatibility, EE environment)`
     );
-    return {
+    processedTile = {
       ...tile,
-      type: newType
+      type: migration.type,
+      cesiumIonAssetId: migration.cesiumIonAssetId
     };
   }
 
-  // Fallback cesium_ion tiles to EE types when token is missing (FALLBACK)
-  if (tile.type === "cesium_ion" && !config.hasAccessToken) {
-    const assetId = tile.cesiumIonAssetId;
+  // Step 2: Fallback cesium_ion tiles to EE types when token is missing (FALLBACK)
+  if (processedTile.type === "cesium_ion" && !config.hasAccessToken) {
+    const assetId = processedTile.cesiumIonAssetId;
     if (assetId && String(assetId) in CESIUM_ION_ASSET_ID_FALLBACK_MAP) {
       const newType = CESIUM_ION_ASSET_ID_FALLBACK_MAP[String(assetId)];
       console.warn(
         `[Tiles Fallback] Cesium Ion tile (asset ID: ${assetId}) → "${newType}" (Cesium Ion access token required but missing)`
       );
       return {
-        ...tile,
+        ...processedTile,
         type: newType
       };
     }
   }
 
-  return tile;
+  return processedTile;
 }
 
 /**
@@ -171,11 +177,12 @@ function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
  * 1. Apply defaultTileType to tiles without explicit type
  * 2. Apply defaultTerrainType to terrain without explicit type
  *
- * Migration (backward compatibility):
- * 3. Migrate deprecated tile types to new types (EE only)
+ * Migration (backward compatibility, EE only):
+ * 3. Migrate deprecated tile types (default, default_label, default_road, black_marble)
+ *    to cesium_ion with proper asset IDs
  *
  * Fallback (when requirements not met):
- * 4. Fallback Cesium Ion tiles to alternatives when token missing (EE only)
+ * 4. If no Cesium Ion token available, fallback cesium_ion tiles to alternative EE types (EE only)
  * 5. Fallback Cesium terrain to reearth_terrain when token missing
  *
  * Note: Tiles/terrain without type and without default config will use schema defaults
