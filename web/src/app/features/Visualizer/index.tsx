@@ -311,6 +311,7 @@ const Visualizer: FC<VisualizerProps> = ({
         >
           <Crust
             engineName={engine}
+            engineMeta={overriddenEngineMeta}
             isBuilt={!!isBuilt}
             isEditable={!isBuilt}
             inEditor={inEditor}

@@ -1,6 +1,8 @@
-import { ComputedFeature, NaiveLayer } from "@reearth/core";
+import { ComputedFeature, Layer, NaiveLayer } from "@reearth/core";
+import { config } from "@reearth/services/config";
 import { useCallback, useEffect, useMemo } from "react";
 
+import { migrateLayer } from "../../../utils/layersMigration";
 import { useGet } from "../../utils";
 import { LayersEventType } from "../pluginAPI/types";
 import { Props } from "../types";
@@ -8,6 +10,8 @@ import { events, useEmit } from "../utils/events";
 
 export default ({
   mapRef,
+  engineMeta,
+  viewerProperty,
   selectedLayer,
   selectedFeature,
   onLayerEdit,
@@ -16,6 +20,8 @@ export default ({
 }: Pick<
   Props,
   | "mapRef"
+  | "engineMeta"
+  | "viewerProperty"
   | "selectedLayer"
   | "selectedFeature"
   | "onLayerEdit"
@@ -26,6 +32,19 @@ export default ({
   const engineRef = mapRef?.current?.engine;
 
   const getLayers = useGet(layersRef);
+
+  // Migration config for applying fallback logic to plugin-added layers
+  const migrationConfig = useMemo(() => {
+    const configData = config();
+    const isEE = configData?.featureCollection === "ee";
+    // Check both global token override and engineMeta token
+    const globalIonToken = viewerProperty?.assets?.cesium?.global?.ionAccessToken;
+    const hasAccessToken = !!(
+      (typeof globalIonToken === "string" && globalIonToken.trim().length > 0) ||
+      engineMeta?.cesiumIonAccessToken
+    );
+    return { isEE, hasAccessToken };
+  }, [engineMeta, viewerProperty]);
 
   const hideLayer = useCallback(
     (...args: string[]) => {
@@ -43,11 +62,28 @@ export default ({
 
   const addLayer = useCallback(
     (layer: NaiveLayer) => {
-      const layerId = layersRef?.add(layer)?.id;
+      // Apply migration/fallback logic before adding layer
+      // This ensures osm-buildings falls back to reearth-buildings when token is missing
+      const migratedLayer = migrateLayer(layer as Layer, migrationConfig) as NaiveLayer;
+      const layerId = layersRef?.add(migratedLayer)?.id;
       // TODO: handle infobox
       return layerId;
     },
-    [layersRef]
+    [layersRef, migrationConfig]
+  );
+
+  const overrideLayer = useCallback(
+    (id: string, layer?: (Partial<Layer> & { property?: any }) | null) => {
+      if (!layer) {
+        // If layer is null/undefined, just pass through (removes override)
+        layersRef?.override(id, layer);
+        return;
+      }
+      // Apply migration/fallback logic before overriding layer
+      const migratedLayer = migrateLayer(layer as Layer, migrationConfig);
+      layersRef?.override(id, migratedLayer);
+    },
+    [layersRef, migrationConfig]
   );
 
   const findFeatureById = useCallback(
@@ -181,6 +217,7 @@ export default ({
     hideLayer,
     showLayer,
     addLayer,
+    overrideLayer,
     findFeatureById,
     findFeaturesByIds,
     selectLayer,

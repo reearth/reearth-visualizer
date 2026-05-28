@@ -172,6 +172,11 @@ function checkLayerTreeNeedsMigration(
 }
 
 /**
+ * Export migrateLayer for use in plugin API
+ */
+export { migrateLayer };
+
+/**
  * Export functions for testing purposes
  */
 export const __testing__ = {
