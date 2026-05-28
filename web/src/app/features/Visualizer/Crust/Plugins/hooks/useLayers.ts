@@ -80,7 +80,10 @@ export default ({
         return;
       }
       // Apply migration/fallback logic before overriding layer
-      const migratedLayer = migrateLayer(layer as Layer, migrationConfig);
+      // Use skipTypeCheck for partial overrides from plugin API
+      const migratedLayer = migrateLayer(layer as Layer, migrationConfig, {
+        skipTypeCheck: true
+      });
       layersRef?.override(id, migratedLayer);
     },
     [layersRef, migrationConfig]
