@@ -70,6 +70,9 @@ export { isBuiltinWidget } from "./Widgets";
 export type Props = {
   // common
   engineName?: string;
+  engineMeta?: {
+    cesiumIonAccessToken: string | undefined;
+  };
   isEditable?: boolean;
   inEditor?: boolean;
   isBuilt?: boolean;
@@ -178,6 +181,7 @@ export type Props = {
 
 export default function Crust({
   engineName,
+  engineMeta,
   isBuilt,
   isEditable,
   inEditor,
@@ -323,6 +327,7 @@ export default function Crust({
   return (
     <Plugins
       engineName={engineName}
+      engineMeta={engineMeta}
       mapRef={mapRef}
       mapAPIReady={mapAPIReady}
       viewerProperty={viewerProperty}

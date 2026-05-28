@@ -186,7 +186,10 @@ const DataSource: FC<Props> = ({
             <SelectField
               title={t("Provider")}
               options={googlePhotorealisticProviderOptions}
-              value={selectedLayer.config.data.provider}
+              value={
+                selectedLayer.config.data.provider ||
+                (isEE ? "reearth" : "cesium-ion")
+              }
               onChange={handleGooglePhotorealisticProviderChange}
             />
           )}

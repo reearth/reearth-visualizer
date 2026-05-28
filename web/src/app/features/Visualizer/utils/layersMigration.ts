@@ -16,18 +16,33 @@ export type LayersMigrationConfig = {
 };
 
 /**
+ * Options for layer migration
+ */
+export type LayerMigrationOptions = {
+  /**
+   * Skip the layer type check (useful for plugin API partial overrides)
+   */
+  skipTypeCheck?: boolean;
+};
+
+/**
  * Checks if a layer needs migration/processing
  */
 function needsLayerMigration(
   layer: Layer,
-  config: LayersMigrationConfig
+  config: LayersMigrationConfig,
+  options?: LayerMigrationOptions
 ): boolean {
-  // Only LayerSimple can have data
-  if (layer.type !== "simple") return false;
+  // Only LayerSimple can have data (unless skipTypeCheck is true)
+  if (!options?.skipTypeCheck && layer.type !== "simple") return false;
+
+  // Check if layer has data property (LayerGroup doesn't have data)
+  const layerData = "data" in layer ? layer.data : undefined;
+  if (!layerData) return false;
 
   // Check for osm-buildings without token
   if (
-    layer.data?.type === "osm-buildings" &&
+    layerData.type === "osm-buildings" &&
     !config.hasAccessToken
   ) {
     return true;
@@ -36,9 +51,9 @@ function needsLayerMigration(
   // Check for google-photorealistic provider fallback (EE only)
   if (
     config.isEE &&
-    layer.data?.type === "google-photorealistic" &&
-    (!layer.data.provider ||
-      (layer.data.provider === "cesium-ion" && !config.hasAccessToken))
+    layerData.type === "google-photorealistic" &&
+    (!layerData.provider ||
+      (layerData.provider === "cesium-ion" && !config.hasAccessToken))
   ) {
     return true;
   }
@@ -53,33 +68,38 @@ function needsLayerMigration(
  */
 function migrateLayer(
   layer: Layer,
-  config: LayersMigrationConfig
+  config: LayersMigrationConfig,
+  options?: LayerMigrationOptions
 ): Layer {
-  // Only process simple layers with data
-  if (layer.type !== "simple" || !layer.data) return layer;
+  // Only process simple layers with data (unless skipTypeCheck is true)
+  if (!options?.skipTypeCheck && layer.type !== "simple") return layer;
+
+  // Check if layer has data property (LayerGroup doesn't have data)
+  const layerData = "data" in layer ? layer.data : undefined;
+  if (!layerData) return layer;
 
   // Fallback osm-buildings when token is missing (FALLBACK)
-  if (layer.data.type === "osm-buildings" && !config.hasAccessToken) {
+  if (layerData.type === "osm-buildings" && !config.hasAccessToken) {
     console.warn(
       `[Layers Fallback] Layer "${layer.id}": Data type "osm-buildings" → "reearth-buildings" (Cesium Ion access token required but missing)`
     );
     return {
       ...layer,
       data: {
-        ...layer.data,
+        ...layerData,
         type: "reearth-buildings"
       }
-    };
+    } as Layer;
   }
 
   // Fallback google-photorealistic provider when requirements not met (FALLBACK - EE only)
   if (
     config.isEE &&
-    layer.data.type === "google-photorealistic" &&
-    (!layer.data.provider ||
-      (layer.data.provider === "cesium-ion" && !config.hasAccessToken))
+    layerData.type === "google-photorealistic" &&
+    (!layerData.provider ||
+      (layerData.provider === "cesium-ion" && !config.hasAccessToken))
   ) {
-    const reason = !layer.data.provider
+    const reason = !layerData.provider
       ? "provider not specified"
       : "Cesium Ion access token required but missing";
     console.warn(
@@ -88,10 +108,10 @@ function migrateLayer(
     return {
       ...layer,
       data: {
-        ...layer.data,
+        ...layerData,
         provider: "reearth"
       }
-    };
+    } as Layer;
   }
 
   return layer;
@@ -102,17 +122,18 @@ function migrateLayer(
  */
 function migrateLayerRecursive(
   layer: Layer,
-  config: LayersMigrationConfig
+  config: LayersMigrationConfig,
+  options?: LayerMigrationOptions
 ): Layer {
   // Migrate the current layer
-  const migratedLayer = migrateLayer(layer, config);
+  const migratedLayer = migrateLayer(layer, config, options);
 
   // If it's a group, recursively migrate children
   if (migratedLayer.type === "group" && migratedLayer.children && migratedLayer.children.length > 0) {
     return {
       ...migratedLayer,
       children: migratedLayer.children.map(child =>
-        migrateLayerRecursive(child, config)
+        migrateLayerRecursive(child, config, options)
       )
     };
   }
@@ -132,23 +153,25 @@ function migrateLayerRecursive(
  *
  * @param layers - Array of layers to process
  * @param config - Fallback configuration
+ * @param options - Migration options
  * @returns Processed layers array or original if no fallback needed
  */
 export function migrateLayers(
   layers: Layer[] | undefined,
-  config: LayersMigrationConfig
+  config: LayersMigrationConfig,
+  options?: LayerMigrationOptions
 ): Layer[] | undefined {
   if (!layers || layers.length === 0) return layers;
 
   // Check if any layer (or nested layer) needs migration
   const needsProcessing = layers.some(layer =>
-    checkLayerTreeNeedsMigration(layer, config)
+    checkLayerTreeNeedsMigration(layer, config, options)
   );
 
   if (!needsProcessing) return layers;
 
   // Migrate all layers recursively
-  return layers.map(layer => migrateLayerRecursive(layer, config));
+  return layers.map(layer => migrateLayerRecursive(layer, config, options));
 }
 
 /**
@@ -156,20 +179,26 @@ export function migrateLayers(
  */
 function checkLayerTreeNeedsMigration(
   layer: Layer,
-  config: LayersMigrationConfig
+  config: LayersMigrationConfig,
+  options?: LayerMigrationOptions
 ): boolean {
   // Check current layer
-  if (needsLayerMigration(layer, config)) return true;
+  if (needsLayerMigration(layer, config, options)) return true;
 
   // Check children if it's a group
   if (layer.type === "group" && layer.children) {
     return layer.children.some(child =>
-      checkLayerTreeNeedsMigration(child, config)
+      checkLayerTreeNeedsMigration(child, config, options)
     );
   }
 
   return false;
 }
+
+/**
+ * Export migrateLayer for use in plugin API
+ */
+export { migrateLayer };
 
 /**
  * Export functions for testing purposes
