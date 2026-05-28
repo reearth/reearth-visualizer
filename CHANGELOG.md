@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.6 - 2026-05-28
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Missing initialize step for sentinel on published page ([#2229](https://github.com/reearth/reearth-visualizer/pull/2229)) [`6332c0`](https://github.com/reearth/reearth-visualizer/commit/6332c0)
+
+#### ✨ Refactor
+
+- Add default value for google photorealistic 3dtiles provider &amp; support layer fallback on plugin api ([#2231](https://github.com/reearth/reearth-visualizer/pull/2231)) [`f5ac0f`](https://github.com/reearth/reearth-visualizer/commit/f5ac0f)
+- Revert: temporarily remove recent changes for release ([#2228](https://github.com/reearth/reearth-visualizer/pull/2228)) [`40eeda`](https://github.com/reearth/reearth-visualizer/commit/40eeda)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.6 ([#2232](https://github.com/reearth/reearth-visualizer/pull/2232)) [`e89ef6`](https://github.com/reearth/reearth-visualizer/commit/e89ef6)
+- Clean up config of token ([#2230](https://github.com/reearth/reearth-visualizer/pull/2230)) [`97978c`](https://github.com/reearth/reearth-visualizer/commit/97978c)
+
 ## 1.0.0-beta.16.5 - 2026-05-27
 
 ### Web
