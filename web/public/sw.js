@@ -225,7 +225,7 @@ function C(t) {
       ...t.assetPatterns
     },
     extractAssetId: t.extractAssetId
-  }, c.protectedDomains.length === 0 && console.warn("[ServiceWorker] Warning: No protected domains configured. Authentication will not be applied."), c.api.proxyEndpoint || console.warn("[ServiceWorker] Warning: No proxy endpoint configured. Signed URL functionality will not work."), \__debug && console.log(`[ServiceWorker] Configuration updated with namespace: ${p}`, c);
+  }, c.protectedDomains.length === 0 && console.warn("[ServiceWorker] Warning: No protected domains configured. Authentication will not be applied."), c.api.proxyEndpoint || console.warn("[ServiceWorker] Warning: No proxy endpoint configured. Signed URL functionality will not work."), __debug && console.log(`[ServiceWorker] Configuration updated with namespace: ${p}`, c);
 }
 function g() {
   return c.cache.name || `${p}-v1`;
@@ -315,19 +315,19 @@ class Y {
    * Get token following the hierarchy: Memory -> IndexedDB -> Fresh request
    */
   async getToken() {
-    if (\__debug && console.log("[TokenManager] Getting token..."), this.memoryCache && !this.isTokenExpired(this.memoryCache))
-      return \__debug && console.log("[TokenManager] Token found in memory cache"), this.memoryCache.token;
+    if (__debug && console.log("[TokenManager] Getting token..."), this.memoryCache && !this.isTokenExpired(this.memoryCache))
+      return __debug && console.log("[TokenManager] Token found in memory cache"), this.memoryCache.token;
     try {
       await this.initDB();
       const e = await this.db.get("tokens", "current");
       if (e && !this.isTokenExpired(e))
-        return \__debug && console.log("[TokenManager] Token found in IndexedDB"), this.memoryCache = e, e.token;
+        return __debug && console.log("[TokenManager] Token found in IndexedDB"), this.memoryCache = e, e.token;
       if (e && this.shouldRefresh(e))
-        return \__debug && console.log("[TokenManager] Token needs refresh"), await this.refreshToken();
+        return __debug && console.log("[TokenManager] Token needs refresh"), await this.refreshToken();
     } catch (e) {
       console.error("[TokenManager] Error accessing IndexedDB:", e);
     }
-    return \__debug && console.log("[TokenManager] Requesting fresh token from main thread"), await this.requestFreshToken();
+    return __debug && console.log("[TokenManager] Requesting fresh token from main thread"), await this.requestFreshToken();
   }
   /**
    * Store token in both memory and IndexedDB
@@ -340,7 +340,7 @@ class Y {
     };
     this.memoryCache = n;
     try {
-      await this.initDB(), await this.db.put("tokens", n, "current"), \__debug && console.log("[TokenManager] Token stored successfully");
+      await this.initDB(), await this.db.put("tokens", n, "current"), __debug && console.log("[TokenManager] Token stored successfully");
     } catch (r) {
       console.error("[TokenManager] Error storing token:", r);
     }
@@ -350,13 +350,13 @@ class Y {
    */
   async refreshToken() {
     var e;
-    \__debug && console.log("[TokenManager] Refreshing token...");
+    __debug && console.log("[TokenManager] Refreshing token...");
     try {
       const n = this.memoryCache || await ((e = this.db) == null ? void 0 : e.get("tokens", "current"));
       if (!(n != null && n.refreshToken))
-        return \__debug && console.log("[TokenManager] No refresh token available"), await this.requestFreshToken();
+        return __debug && console.log("[TokenManager] No refresh token available"), await this.requestFreshToken();
       const r = await self.clients.matchAll();
-      return r.length === 0 ? (\__debug && console.log("[TokenManager] No clients available for token refresh"), null) : new Promise((o) => {
+      return r.length === 0 ? (__debug && console.log("[TokenManager] No clients available for token refresh"), null) : new Promise((o) => {
         const s = new MessageChannel();
         s.port1.onmessage = async (a) => {
           a.data.type === "TOKEN_REFRESHED" && a.data.token ? (await this.setToken(a.data.token), o(a.data.token.access_token)) : o(null);
@@ -378,7 +378,7 @@ class Y {
   async clearToken() {
     this.memoryCache = null;
     try {
-      await this.initDB(), await this.db.delete("tokens", "current"), \__debug && console.log("[TokenManager] Tokens cleared");
+      await this.initDB(), await this.db.delete("tokens", "current"), __debug && console.log("[TokenManager] Tokens cleared");
     } catch (e) {
       console.error("[TokenManager] Error clearing tokens:", e);
     }
@@ -402,7 +402,7 @@ class Y {
   async requestFreshToken() {
     try {
       const e = await self.clients.matchAll();
-      return e.length === 0 ? (\__debug && console.log("[TokenManager] No clients available"), null) : new Promise((n) => {
+      return e.length === 0 ? (__debug && console.log("[TokenManager] No clients available"), null) : new Promise((n) => {
         const r = new MessageChannel();
         r.port1.onmessage = async (o) => {
           o.data.type === "TOKEN_PROVIDED" && o.data.token ? (await this.setToken(o.data.token), n(o.data.token.access_token)) : n(null);
@@ -410,7 +410,7 @@ class Y {
           { type: "REQUEST_TOKEN" },
           [r.port2]
         ), setTimeout(() => {
-          \__debug && console.log("[TokenManager] Token request timeout"), n(null);
+          __debug && console.log("[TokenManager] Token request timeout"), n(null);
         }, 5e3);
       });
     } catch (e) {
@@ -432,7 +432,7 @@ class Z {
    */
   addAuthentication(e, n) {
     const r = new Headers(e.headers);
-    return r.set("Authorization", `Bearer ${n}`), \__debug && console.log("[RequestInterceptor] Adding Authorization header:", `Bearer ${n.substring(0, 20)}...`), new Request(e.url, {
+    return r.set("Authorization", `Bearer ${n}`), __debug && console.log("[RequestInterceptor] Adding Authorization header:", `Bearer ${n.substring(0, 20)}...`), new Request(e.url, {
       method: e.method,
       headers: r,
       body: e.body,
@@ -451,17 +451,17 @@ class Z {
    * Handle authentication errors (401/403)
    */
   async handleAuthError(e) {
-    \__debug && console.log("[RequestInterceptor] Handling auth error, attempting token refresh...");
+    __debug && console.log("[RequestInterceptor] Handling auth error, attempting token refresh...");
     const n = await d.refreshToken();
     if (!n)
-      return \__debug && console.log("[RequestInterceptor] Token refresh failed"), new Response("Authentication failed", {
+      return __debug && console.log("[RequestInterceptor] Token refresh failed"), new Response("Authentication failed", {
         status: 401,
         statusText: "Unauthorized",
         headers: {
           "Content-Type": "text/plain"
         }
       });
-    \__debug && console.log("[RequestInterceptor] Retrying request with refreshed token");
+    __debug && console.log("[RequestInterceptor] Retrying request with refreshed token");
     const r = this.addAuthentication(e, n);
     try {
       const o = await fetch(r);
@@ -481,14 +481,14 @@ class Z {
    */
   async processRequest(e) {
     const n = new URL(e.url), r = y(n), o = A(n);
-    \__debug && console.log(`[RequestInterceptor] Processing ${r} request:`, {
+    __debug && console.log(`[RequestInterceptor] Processing ${r} request:`, {
       url: n.pathname,
       assetId: o,
       assetType: r
     });
     const s = await d.getToken();
     if (!s)
-      return \__debug && console.log("[RequestInterceptor] No token available"), fetch(e);
+      return __debug && console.log("[RequestInterceptor] No token available"), fetch(e);
     const a = this.addAuthentication(e, s);
     try {
       const i = await fetch(a);
@@ -497,7 +497,7 @@ class Z {
       console.error("[RequestInterceptor] Network error:", i);
       const u = await (await caches.open(g())).match(e);
       if (u)
-        return \__debug && console.log("[RequestInterceptor] Returning cached response"), u;
+        return __debug && console.log("[RequestInterceptor] Returning cached response"), u;
       throw i;
     }
   }
@@ -508,13 +508,13 @@ class Z {
     const n = new URL(e.url), r = A(n);
     if (!r)
       return fetch(e);
-    \__debug && console.log("[RequestInterceptor] Processing tile request:", {
+    __debug && console.log("[RequestInterceptor] Processing tile request:", {
       url: n.pathname,
       assetId: r
     });
     const o = await d.getToken();
     if (!o)
-      return \__debug && console.log("[RequestInterceptor] No token for tile request"), fetch(e);
+      return __debug && console.log("[RequestInterceptor] No token for tile request"), fetch(e);
     const s = await this.getSignedUrl(r, o);
     if (s != null && s.url) {
       const a = new Request(s.url, {
@@ -559,15 +559,15 @@ class Z {
 }
 const m = new Z();
 self.addEventListener("install", (t) => {
-  \__debug && console.log("[ServiceWorker] Installing..."), self.skipWaiting();
+  __debug && console.log("[ServiceWorker] Installing..."), self.skipWaiting();
 });
 self.addEventListener("activate", (t) => {
-  \__debug && console.log("[ServiceWorker] Activating..."), t.waitUntil(
+  __debug && console.log("[ServiceWorker] Activating..."), t.waitUntil(
     (async () => {
       const e = g(), n = await caches.keys();
       await Promise.all(
         n.filter((r) => r !== e).map((r) => caches.delete(r))
-      ), await self.clients.claim(), \__debug && console.log("[ServiceWorker] Active and controlling all clients");
+      ), await self.clients.claim(), __debug && console.log("[ServiceWorker] Active and controlling all clients");
     })()
   );
 });
@@ -585,7 +585,7 @@ self.addEventListener("fetch", (t) => {
 });
 async function ee(t) {
   const e = new URL(t.url), n = y(e), r = O(n);
-  switch (\__debug && console.log(`[ServiceWorker] Handling ${n} with ${r} strategy:`, e.pathname), r) {
+  switch (__debug && console.log(`[ServiceWorker] Handling ${n} with ${r} strategy:`, e.pathname), r) {
     case "cache-first":
       return te(t);
     case "network-first":
@@ -600,8 +600,8 @@ async function ee(t) {
 async function te(t) {
   const e = await caches.open(g()), n = k(t), r = await e.match(n);
   if (r)
-    return \__debug && console.log("[ServiceWorker] Cache hit:", t.url), se(t, e), r;
-  \__debug && console.log("[ServiceWorker] Cache miss, fetching:", t.url);
+    return __debug && console.log("[ServiceWorker] Cache hit:", t.url), se(t, e), r;
+  __debug && console.log("[ServiceWorker] Cache miss, fetching:", t.url);
   try {
     const o = await m.processRequest(t);
     if (o.ok) {
@@ -628,7 +628,7 @@ async function ne(t) {
   } catch (r) {
     console.error("[ServiceWorker] Network error, trying cache:", r);
     const o = await e.match(n);
-    return o ? (\__debug && console.log("[ServiceWorker] Returning cached response"), o) : new Response("Network error", {
+    return o ? (__debug && console.log("[ServiceWorker] Returning cached response"), o) : new Response("Network error", {
       status: 503,
       statusText: "Service Unavailable"
     });
@@ -656,7 +656,7 @@ async function se(t, e) {
     const n = await m.processRequest(t);
     if (n.ok) {
       const r = k(t);
-      await e.put(r, n), \__debug && console.log("[ServiceWorker] Cache refreshed:", t.url);
+      await e.put(r, n), __debug && console.log("[ServiceWorker] Cache refreshed:", t.url);
     }
   } catch (n) {
     console.debug("[ServiceWorker] Background refresh failed:", n);
@@ -665,7 +665,7 @@ async function se(t, e) {
 self.addEventListener("message", async (t) => {
   var n, r, o, s, a;
   const e = t.data;
-  switch (\__debug && console.log("[ServiceWorker] Received message:", e.type), e.type) {
+  switch (__debug && console.log("[ServiceWorker] Received message:", e.type), e.type) {
     case "CONFIG":
       e.payload && (__debug = !!(e.payload.debug), C(e.payload), (n = t.ports[0]) == null || n.postMessage({ success: !0 }));
       break;
@@ -683,7 +683,7 @@ self.addEventListener("message", async (t) => {
       break;
     case "CLAIM_CLIENTS":
       await self.clients.claim();
-      \__debug && console.log("[ServiceWorker] Claimed clients via explicit CLAIM_CLIENTS message");
+      __debug && console.log("[ServiceWorker] Claimed clients via explicit CLAIM_CLIENTS message");
       break;
     default:
       console.warn("[ServiceWorker] Unknown message type:", e.type);
@@ -691,7 +691,7 @@ self.addEventListener("message", async (t) => {
 });
 async function ae() {
   const t = await caches.keys();
-  await Promise.all(t.map((e) => caches.delete(e))), await d.clearToken(), \__debug && console.log("[ServiceWorker] All caches cleared");
+  await Promise.all(t.map((e) => caches.delete(e))), await d.clearToken(), __debug && console.log("[ServiceWorker] All caches cleared");
 }
 async function ce() {
   const t = await caches.keys(), n = await (await caches.open(g())).keys();
@@ -702,5 +702,5 @@ async function ce() {
     hasToken: !!await d.getToken()
   };
 }
-\__debug && console.log("[ServiceWorker] Script loaded, waiting for events...");
+__debug && console.log("[ServiceWorker] Script loaded, waiting for events...");
 //# sourceMappingURL=sw.js.map
