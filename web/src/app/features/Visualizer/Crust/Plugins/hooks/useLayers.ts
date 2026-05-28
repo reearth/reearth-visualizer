@@ -39,9 +39,10 @@ export default ({
     const isEE = configData?.featureCollection === "ee";
     // Check both global token override and engineMeta token
     const globalIonToken = viewerProperty?.assets?.cesium?.global?.ionAccessToken;
+    const engineToken = engineMeta?.cesiumIonAccessToken;
     const hasAccessToken = !!(
       (typeof globalIonToken === "string" && globalIonToken.trim().length > 0) ||
-      engineMeta?.cesiumIonAccessToken
+      (typeof engineToken === "string" && engineToken.trim().length > 0)
     );
     return { isEE, hasAccessToken };
   }, [engineMeta, viewerProperty]);
