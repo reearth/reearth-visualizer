@@ -7,8 +7,6 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
-	"sync"
-
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
@@ -194,10 +192,6 @@ func (r *Asset) RemoveByProjectWithFile(ctx context.Context, pid id.ProjectID, f
 			}
 		}
 
-		var (
-			mu      sync.Mutex
-			failIDs = map[string]struct{}{}
-		)
 		g, gctx := errgroup.WithContext(ctx)
 		g.SetLimit(removeByProjectMaxConcurrent)
 		for _, a := range batch {
@@ -207,11 +201,10 @@ func (r *Asset) RemoveByProjectWithFile(ctx context.Context, pid id.ProjectID, f
 					return nil
 				}
 				if err := f.RemoveAsset(gctx, u); err != nil {
-					// Log and skip DB deletion so the row survives for retry.
+					// GCS delete failed; log for investigation. The DB row is
+					// still removed below so the loop terminates — orphaned
+					// objects must be cleaned up via GCS lifecycle rules.
 					log.Errorfc(gctx, "asset: gcs delete failed for %s: %v", a.ID(), err)
-					mu.Lock()
-					failIDs[a.ID().String()] = struct{}{}
-					mu.Unlock()
 				}
 				return nil
 			})
@@ -220,9 +213,7 @@ func (r *Asset) RemoveByProjectWithFile(ctx context.Context, pid id.ProjectID, f
 
 		ids := make([]string, 0, len(batch))
 		for _, a := range batch {
-			if _, failed := failIDs[a.ID().String()]; !failed {
-				ids = append(ids, a.ID().String())
-			}
+			ids = append(ids, a.ID().String())
 		}
 		writeFilter := applyWorkspaceFilter(bson.M{"id": bson.M{"$in": ids}}, r.f.Writable)
 		if err := r.client.RemoveAll(ctx, writeFilter); err != nil {
