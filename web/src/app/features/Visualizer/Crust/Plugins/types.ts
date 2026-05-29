@@ -36,6 +36,9 @@ import { Events } from "./utils/events";
 
 export type Props = PropsWithChildren<{
   engineName?: string;
+  engineMeta?: {
+    cesiumIonAccessToken: string | undefined;
+  };
   mapRef?: RefObject<MapRef | null>;
   mapAPIReady?: boolean;
   viewerProperty?: ViewerProperty;

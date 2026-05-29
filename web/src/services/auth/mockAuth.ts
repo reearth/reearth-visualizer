@@ -1,3 +1,4 @@
+import { clearSentinelToken } from "@reearth/services/sentinel";
 import { useState, useCallback, useEffect } from "react";
 
 import type { AuthHook } from "./authHook";
@@ -25,6 +26,7 @@ export const useMockAuth = (): AuthHook => {
   }, []);
 
   const logout = useCallback(() => {
+    void clearSentinelToken();
     setIsLoading(true);
     setTimeout(() => {
       setIsAuthenticated(false);

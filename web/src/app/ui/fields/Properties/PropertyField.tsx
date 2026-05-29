@@ -1,6 +1,7 @@
 import { Camera, LatLng } from "@reearth/app/utils/value";
 import { FlyTo } from "@reearth/core";
 import type { Field, SchemaField } from "@reearth/services/api/property";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { FC, useMemo } from "react";
 
@@ -45,10 +46,25 @@ const PropertyField: FC<Props> = ({
 }) => {
   const t = useT();
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
-  const value = useMemo(
-    () => field?.mergedValue ?? field?.value ?? schema.defaultValue,
-    [field?.mergedValue, field?.value, schema.defaultValue]
-  );
+  const value = useMemo(() => {
+    // Apply default tile type override for tile_type field in tiles group
+    if (schema.id === "tile_type" && schemaGroup === "tiles") {
+      const overriddenDefault = appFeature()?.defaultTileType;
+      return (
+        field?.mergedValue ??
+        field?.value ??
+        overriddenDefault ??
+        schema.defaultValue
+      );
+    }
+    return field?.mergedValue ?? field?.value ?? schema.defaultValue;
+  }, [
+    field?.mergedValue,
+    field?.value,
+    schema.defaultValue,
+    schema.id,
+    schemaGroup
+  ]);
 
   const assetTypes = useMemo(
     () =>
@@ -61,6 +77,23 @@ const PropertyField: FC<Props> = ({
         : undefined,
     [schema.type, schema.ui]
   );
+
+  const filteredOptions = useMemo(() => {
+    if (!schema.choices) return [];
+
+    // Apply filter only for tile_type field in tiles group
+    if (schema.id === "tile_type" && schemaGroup === "tiles") {
+      // Hard-coded allowed tile types
+      const disabledTileTypes = appFeature()?.disabledTileTypes || [];
+
+      return schema.choices
+        .filter((choice) => !disabledTileTypes.includes(choice.key))
+        .map(({ key, label }) => ({ value: key, label }));
+    }
+
+    // For all other fields, return all choices
+    return schema.choices.map(({ key, label }) => ({ value: key, label }));
+  }, [schema.choices, schema.id, schemaGroup]);
 
   const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
   return (
@@ -89,12 +122,7 @@ const PropertyField: FC<Props> = ({
             value={(value as string) ?? ""}
             description={schema.description}
             placeholder={schema.placeholder}
-            options={
-              schema?.choices?.map(({ key, label }) => ({
-                value: key,
-                label: label
-              })) || []
-            }
+            options={filteredOptions}
             onChange={handleChange}
           />
         ) : schema.ui === "buttons" ? (
