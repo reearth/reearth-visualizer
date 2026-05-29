@@ -34,18 +34,20 @@ export default ({
   const getLayers = useGet(layersRef);
 
   // Migration config for applying fallback logic to plugin-added layers
+  // Extract only the specific token value rather than depending on the whole viewerProperty
+  // reference, which changes on every overrideViewerProperty call even when the token hasn't changed.
+  const globalIonToken = viewerProperty?.assets?.cesium?.global?.ionAccessToken;
+  const engineToken = engineMeta?.cesiumIonAccessToken;
   const migrationConfig = useMemo(() => {
     const configData = config();
     const isEE = configData?.featureCollection === "ee";
-    // Check both global token override and engineMeta token
-    const globalIonToken = viewerProperty?.assets?.cesium?.global?.ionAccessToken;
-    const engineToken = engineMeta?.cesiumIonAccessToken;
     const hasAccessToken = !!(
-      (typeof globalIonToken === "string" && globalIonToken.trim().length > 0) ||
+      (typeof globalIonToken === "string" &&
+        globalIonToken.trim().length > 0) ||
       (typeof engineToken === "string" && engineToken.trim().length > 0)
     );
     return { isEE, hasAccessToken };
-  }, [engineMeta, viewerProperty]);
+  }, [engineToken, globalIonToken]);
 
   const hideLayer = useCallback(
     (...args: string[]) => {
@@ -65,7 +67,10 @@ export default ({
     (layer: NaiveLayer) => {
       // Apply migration/fallback logic before adding layer
       // This ensures osm-buildings falls back to reearth-buildings when token is missing
-      const migratedLayer = migrateLayer(layer as Layer, migrationConfig) as NaiveLayer;
+      const migratedLayer = migrateLayer(
+        layer as Layer,
+        migrationConfig
+      ) as NaiveLayer;
       const layerId = layersRef?.add(migratedLayer)?.id;
       // TODO: handle infobox
       return layerId;
