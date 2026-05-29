@@ -343,18 +343,7 @@ func (i *Storytelling) CheckStorytellingAlias(ctx context.Context, newAlias stri
 }
 
 func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryInput, op *usecase.Operator) (*storytelling.Story, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
+	// Phase 1: reads + validation — no transaction held during this work.
 	story, err := i.storytellingRepo.FindByID(ctx, inp.ID)
 	if err != nil {
 		return nil, err
@@ -389,13 +378,11 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		newAlias := strings.ToLower(*inp.Alias)
 
 		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixScene) {
-			// error 'c-' prefix
 			return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
 			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixStory)
 			// only allow self ID
 			if id != story.Id().String() {
-				// error 'c-' prefix
 				return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 			}
 		}
@@ -419,7 +406,9 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 
 	story.UpdatePublishmentStatus(inp.Status)
 
-	// publish
+	// Phase 2: GCS upload outside the transaction. Previously this ran inside
+	// the transaction and held document locks for the entire upload duration,
+	// causing MongoDB WriteConflict when concurrent publish calls overlapped.
 	if story.PublishmentStatus() != storytelling.PublishmentStatusPrivate {
 		if err := i.uploadPublishStory(ctx, story, op); err != nil {
 			return nil, err
@@ -427,24 +416,25 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		story.SetPublishedAt(time.Now())
 	}
 
-	// unpublish
+	// Phase 3: short transaction containing only the DB saves, with retry on
+	// TransientTransactionError. Each attempt gets a fresh session.
+	if err := runWithTxRetry(ctx, i.transaction, 3, func(txCtx context.Context) error {
+		if err := i.storytellingRepo.Save(txCtx, *story); err != nil {
+			return err
+		}
+		return updateProjectUpdatedAtByScene(txCtx, story.Scene(), i.projectRepo, i.sceneRepo)
+	}); err != nil {
+		return nil, err
+	}
+
+	// Phase 4: GCS cleanup after the commit. A stale file at the old alias is
+	// harmless if this fails, so we log and continue rather than returning an error.
 	if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate || prevAlias != story.Alias() {
-		// always delete previous aliase
-		if err = i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
-			return story, err
+		if err := i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
+			log.Warnfc(ctx, "failed to remove old built story %q: %v", prevAlias, err)
 		}
 	}
 
-	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
-		return nil, err
-	}
-
-	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
-	if err != nil {
-		return nil, err
-	}
-
-	tx.Commit()
 	return story, nil
 }
 

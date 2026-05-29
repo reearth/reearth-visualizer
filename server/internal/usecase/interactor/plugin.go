@@ -59,7 +59,26 @@ func (i *Plugin) pluginCommon() *pluginCommon {
 }
 
 func (i *Plugin) Fetch(ctx context.Context, ids []id.PluginID, operator *usecase.Operator) ([]*plugin.Plugin, error) {
-	return i.pluginRepo.FindByIDs(ctx, ids)
+	if operator == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+	res, err := i.pluginRepo.FindByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for idx, p := range res {
+		if p == nil {
+			continue
+		}
+		// Global/marketplace plugins (no scene) are public.
+		if p.Scene() == nil {
+			continue
+		}
+		if !operator.IsReadableScene(*p.Scene()) {
+			res[idx] = nil
+		}
+	}
+	return res, nil
 }
 
 func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter *zip.Writer) ([]*plugin.Plugin, []*property.Schema, error) {
@@ -77,6 +96,10 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 	if err != nil {
 		return nil, nil, err
 	}
+
+	// Cache schema lookups by ID to avoid redundant FindByID calls when
+	// multiple extensions share the same schema (SCA-05).
+	schemaByID := make(map[id.PropertySchemaID]*property.Schema)
 
 	schemas := make([]*property.Schema, 0)
 	for _, p := range plugins {
@@ -102,12 +125,15 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 				_ = stream.Close()
 			}
 
-			schema, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
-			if err != nil {
-				return nil, nil, err
+			sid := extension.Schema()
+			if _, seen := schemaByID[sid]; !seen {
+				s, err := i.propertySchemaRepo.FindByID(ctx, sid)
+				if err != nil {
+					return nil, nil, err
+				}
+				schemaByID[sid] = s
 			}
-
-			schemas = append(schemas, schema)
+			schemas = append(schemas, schemaByID[sid])
 		}
 	}
 

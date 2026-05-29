@@ -59,9 +59,13 @@ func (r *Asset) FindByID(_ context.Context, id id.AssetID) (*asset.Asset, error)
 }
 
 func (r *Asset) FindByIDs(_ context.Context, ids id.AssetIDList) ([]*asset.Asset, error) {
-	return r.data.FindAll(func(k id.AssetID, v *asset.Asset) bool {
-		return ids.Has(k) && r.f.CanRead(v.Workspace())
-	}), nil
+	result := make([]*asset.Asset, len(ids))
+	for i, id := range ids {
+		if a, ok := r.data.Load(id); ok && r.f.CanRead(a.Workspace()) {
+			result[i] = a
+		}
+	}
+	return result, nil
 }
 
 func (r *Asset) FindByWorkspaceProject(_ context.Context, wid accountsID.WorkspaceID, pid *id.ProjectID, filter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {

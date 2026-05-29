@@ -8,7 +8,7 @@ import (
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
-	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
+	pb "github.com/reearth/reearth-proto/gen/go/visualizer/v1"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"

@@ -38,7 +38,13 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
             credits.map((credit, i) => (
               <ListItem key={i}>
                 <ListMarker>•</ListMarker>
-                {credit.creditUrl ? (
+                {credit.builtinHtml ? (
+                  <CreditItem>
+                    <CreditText
+                      dangerouslySetInnerHTML={{ __html: credit.builtinHtml }}
+                    />
+                  </CreditItem>
+                ) : credit.creditUrl ? (
                   <CreditItemLink
                     target="_blank"
                     href={credit.creditUrl}
