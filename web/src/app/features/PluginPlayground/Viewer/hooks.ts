@@ -1,6 +1,7 @@
 import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { Camera } from "@reearth/app/utils/value";
 import { MapRef } from "@reearth/core";
+import { config } from "@reearth/services/config";
 import {
   MutableRefObject,
   useCallback,
@@ -39,16 +40,22 @@ export default ({
     []
   );
 
+  const isEE = useMemo(() => config()?.featureCollection === "ee", []);
+  const defaultTileType = useMemo(
+    () => (isEE ? "google_satellite" : "open_street_map"),
+    [isEE]
+  );
+
   const viewerProperty: ViewerProperty = useMemo(
     () => ({
       tiles: [
         {
           id: "default",
-          type: "default"
+          type: defaultTileType
         }
       ]
     }),
-    []
+    [defaultTileType]
   );
 
   useEffect(() => {
