@@ -44,7 +44,7 @@ export default ({
       tiles: [
         {
           id: "default",
-          type: "default"
+          type: "google_satellite"
         }
       ]
     }),

@@ -34,18 +34,19 @@ export default ({
   const getLayers = useGet(layersRef);
 
   // Migration config for applying fallback logic to plugin-added layers
+  // Extract only the specific token value rather than depending on the whole viewerProperty
+  // reference, which changes on every overrideViewerProperty call even when the token hasn't changed.
+  const globalIonToken = viewerProperty?.assets?.cesium?.global?.ionAccessToken;
   const migrationConfig = useMemo(() => {
     const configData = config();
     const isEE = configData?.featureCollection === "ee";
-    // Check both global token override and engineMeta token
-    const globalIonToken = viewerProperty?.assets?.cesium?.global?.ionAccessToken;
     const engineToken = engineMeta?.cesiumIonAccessToken;
     const hasAccessToken = !!(
       (typeof globalIonToken === "string" && globalIonToken.trim().length > 0) ||
       (typeof engineToken === "string" && engineToken.trim().length > 0)
     );
     return { isEE, hasAccessToken };
-  }, [engineMeta, viewerProperty]);
+  }, [engineMeta, globalIonToken]);
 
   const hideLayer = useCallback(
     (...args: string[]) => {
