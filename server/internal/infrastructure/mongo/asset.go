@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
