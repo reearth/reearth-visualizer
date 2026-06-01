@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.7 - 2026-06-01
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Prevent infinite plugin re-initialization loop in plugin playground ([#2234](https://github.com/reearth/reearth-visualizer/pull/2234)) [`284f75`](https://github.com/reearth/reearth-visualizer/commit/284f75)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.7 ([#2236](https://github.com/reearth/reearth-visualizer/pull/2236)) [`be93b4`](https://github.com/reearth/reearth-visualizer/commit/be93b4)
+- Update core package to 0.0.7-alpha.66 ([#2235](https://github.com/reearth/reearth-visualizer/pull/2235)) [`379923`](https://github.com/reearth/reearth-visualizer/commit/379923)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to ff086d7 ([#2171](https://github.com/reearth/reearth-visualizer/pull/2171)) [`9fa79f`](https://github.com/reearth/reearth-visualizer/commit/9fa79f)
+- Update actions&#x2F;github-script action to v9 ([#2172](https://github.com/reearth/reearth-visualizer/pull/2172)) [`bf9a87`](https://github.com/reearth/reearth-visualizer/commit/bf9a87)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to ff086d7 ([#2171](https://github.com/reearth/reearth-visualizer/pull/2171)) [`9fa79f`](https://github.com/reearth/reearth-visualizer/commit/9fa79f)
+- Update actions&#x2F;github-script action to v9 ([#2172](https://github.com/reearth/reearth-visualizer/pull/2172)) [`bf9a87`](https://github.com/reearth/reearth-visualizer/commit/bf9a87)
+
 ## 1.0.0-beta.16.6 - 2026-05-28
 
 ### Web
