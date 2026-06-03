@@ -172,14 +172,6 @@ jobs:
       id-token: write
     uses: ./.github/workflows/deploy_server_nightly.yml
     secrets: inherit
-  playwright-tests:
-    needs: deploy-web
-    permissions:
-      contents: read
-      id-token: write
-    uses: ./.github/workflows/playwright_ui_tests.yml
-    secrets: inherit
-
   playwright-tests-pr:
     needs: deploy-web-pr
     permissions:
