@@ -336,6 +336,20 @@ func ImportProject(
 	result["project"] = gqlmodel.ToProject(newProject)
 	log.Infof("[Import] imported Project data")
 
+	// Roll back all committed writes if any subsequent step fails. Project.Delete
+	// cascades through scene, assets (DB + GCS), plugins, styles, NLS layers, and
+	// story so a single call undoes the entire partial import.
+	succeeded := false
+	defer func() {
+		if succeeded {
+			return
+		}
+		log.Warnf("[Import] rolling back partial import for project %s", newProject.ID())
+		if delErr := usecases.Project.Delete(context.Background(), newProject.ID(), op); delErr != nil {
+			log.Errorf("[Import] rollback failed for project %s: %v", newProject.ID(), delErr)
+		}
+	}()
+
 	// asset ----------
 	importData, asset, err := usecases.Asset.ImportAssetFiles(ctx, assetsZip, importData, newProject, op)
 	if err != nil {
@@ -411,6 +425,7 @@ func ImportProject(
 	result["story"] = story
 	log.Infof("[Import] imported Story data")
 
+	succeeded = true
 	msg := fmt.Sprintf("[Import Completed] Imported project: %s into workspace: %s", pid.String(), wsId)
 	UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusSuccess, msg, result) // SUCCESS
 	return true

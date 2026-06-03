@@ -84,6 +84,17 @@ export default ({
             ? result.data.node.metadata?.importStatus
             : undefined;
 
+        // Project deleted by rollback — stop polling and surface as failure.
+        if (result.data?.node === null) {
+          setImportStatus(ProjectImportStatus.Failed);
+          setImportResultLog(
+            t("Import failed. All partially imported data has been cleaned up.")
+          );
+          clearInterval(interval);
+          onImportCompleted?.();
+          return;
+        }
+
         switch (status) {
           case ProjectImportStatus.Failed:
             setImportStatus(status);

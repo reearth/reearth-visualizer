@@ -47,12 +47,14 @@ const ProjectImportErrorModal: FC<Props> = ({
             {t(
               "Since this file was exported from the system, the structure should be valid. The issue may be caused by:"
             )}
-            <CausesList>
-              <li>{t("File corruption or incomplete upload")}</li>
-              <li>{t("Version incompatibility")}</li>
-              <li>{t("Permission restrictions")}</li>
-              <li>{t("A temporary system error")}</li>
-            </CausesList>
+          </Typography>
+          <CausesList>
+            <li>{t("File corruption or incomplete upload")}</li>
+            <li>{t("Version incompatibility")}</li>
+            <li>{t("Permission restrictions")}</li>
+            <li>{t("A temporary system error")}</li>
+          </CausesList>
+          <Typography size="body">
             {t(
               "Please check the issue and try importing again from the start."
             )}

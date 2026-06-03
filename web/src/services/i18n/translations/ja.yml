@@ -110,6 +110,7 @@ Project Visibility: プロジェクトの公開範囲
 Private projects are only available on paid plans. Please upgrade your plan.: 非公開プロジェクトは有料プランでのみ利用可能です。プランをアップグレードしてください。
 Starred: スター付き
 Successfully imported project!: プロジェクトのインポートに成功しました！
+Import failed. All partially imported data has been cleaned up.: インポートに失敗しました。インポートされたデータはすべて削除されました。
 No Project in Recycle bin.: ゴミ箱にプロジェクトはありません。
 Recover: 復元
 Delete: 削除
