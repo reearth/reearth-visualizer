@@ -174,7 +174,7 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
         },
         {
           key: "2x",
-          label: ""
+          label: "",
           // No title - should fall back to key "2x"
         }
       ];
