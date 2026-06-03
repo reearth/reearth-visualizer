@@ -5,7 +5,8 @@ import (
 	"crypto/tls"
 	"io"
 
-	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
+	pb "github.com/reearth/reearth-proto/gen/go/visualizer/v1"
+
 	"github.com/reearth/reearthx/log"
 	"google.golang.org/api/idtoken"
 	"google.golang.org/grpc"

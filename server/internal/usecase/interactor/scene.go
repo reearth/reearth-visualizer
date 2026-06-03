@@ -72,13 +72,25 @@ func (i *Scene) pluginCommon() *pluginCommon {
 }
 
 func (i *Scene) Fetch(ctx context.Context, ids []id.SceneID, operator *usecase.Operator) ([]*scene.Scene, error) {
+	if operator == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+
 	s, err := i.sceneRepo.FindByIDs(ctx, ids)
 	if err != nil {
 		return nil, err
 	}
 
+	for idx, sc := range s {
+		if sc != nil && !operator.IsReadableWorkspace(sc.Workspace()) {
+			s[idx] = nil
+		}
+	}
+
 	lo.ForEach(s, func(s *scene.Scene, _ int) {
-		injectExtensionsToScene(s, i.extensions)
+		if s != nil {
+			injectExtensionsToScene(s, i.extensions)
+		}
 	})
 
 	return s, nil

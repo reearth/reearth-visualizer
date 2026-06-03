@@ -38,6 +38,12 @@ Re:Earth Visualizer is a web-based GIS (Geographic Information System) applicati
 - `yarn i18n` - Extract i18n strings for translation
 - `yarn coverage` - Run tests with coverage report
 
+### 1Password Integration (Optional)
+
+- `yarn start:op` - Start dev server with 1Password secrets (replaces `yarn start`)
+
+See [docs/1password-setup.md](docs/1password-setup.md) for setup guide.
+
 ## Project Structure
 
 ### Key Directories
@@ -194,7 +200,8 @@ The `appFeature()` function provides access to runtime feature configuration. **
 
 ### Environment Setup
 
-1. Copy `env.example` to `.env` and configure environment variables
+1. Copy `.env.example` to `.env` and configure environment variables
+   - Or use 1Password CLI: create `.env.op` based on `.env.example` (see docs/1password-setup.md)
 2. Ensure Node.js >= 20.11.0 is installed
 3. Use Yarn 4.6.0 as the package manager
 

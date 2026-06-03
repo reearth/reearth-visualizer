@@ -21,16 +21,18 @@ const TimelineBlock: FC<BlockProps<StoryBlock>> = ({
     return {
       timelineValues: block?.property?.default?.timelineSetting?.value,
       blockId: block?.id,
-      playMode: block?.property?.default?.playMode?.value
+      playMode: block?.property?.default?.playMode?.value,
+      playSpeed: block?.property?.default?.playSpeed?.value
     };
   }, [
     block?.id,
     block?.property?.default?.playMode?.value,
-    block?.property?.default?.timelineSetting?.value
+    block?.property?.default?.timelineSetting?.value,
+    block?.property?.default?.playSpeed?.value
   ]);
 
-  const { blockId, timelineValues, playMode } = timeline;
-
+  const { blockId, timelineValues, playMode, playSpeed } = timeline;
+  
   return (
     <BlockWrapper
       name={block?.name}
@@ -46,6 +48,7 @@ const TimelineBlock: FC<BlockProps<StoryBlock>> = ({
         timelineValues={timelineValues}
         blockId={blockId}
         playMode={playMode}
+        playSpeed={playSpeed}
         property={block?.property}
       />
     </BlockWrapper>
