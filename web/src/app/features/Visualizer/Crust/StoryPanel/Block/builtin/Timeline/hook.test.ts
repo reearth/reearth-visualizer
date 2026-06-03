@@ -30,7 +30,7 @@ describe("Timeline Block - Timestamp Comparison Logic", () => {
       };
       const currentTime = 2000000000000; // Exactly at range.end
 
-      // The actual condition from hook.ts:354
+      // Boundary condition for forward playback
       const shouldStopPlayback = currentTime >= range.end;
 
       expect(shouldStopPlayback).toBe(true);
@@ -45,7 +45,7 @@ describe("Timeline Block - Timestamp Comparison Logic", () => {
       };
       const currentTime = 1000000000000; // Exactly at range.start
 
-      // The actual condition from hook.ts:355
+      // Boundary condition for reverse playback
       const shouldStopReversePlayback = currentTime <= range.start;
 
       expect(shouldStopReversePlayback).toBe(true);

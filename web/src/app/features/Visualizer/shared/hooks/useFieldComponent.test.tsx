@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
  * useFieldComponent - Choice Label Fallback Logic Tests
  *
  * These tests verify that SelectField option labels properly fall back through
- * available fields to ensure every option has a displayable label.
+ * available fields using nullish coalescing (??) operator.
  *
  * Fallback Priority (highest to lowest):
  * 1. label - Primary display text
@@ -12,8 +12,9 @@ import { describe, expect, it } from "vitest";
  * 3. title - Default title
  * 4. key - Unique identifier (guaranteed to exist)
  *
- * This ensures options always have readable labels even when optional fields
- * like 'label' or 'title' are missing or empty.
+ * Important: Uses ?? (nullish coalescing), which only treats null/undefined as
+ * triggering fallback. Empty strings ("") are considered valid values and will
+ * NOT trigger fallback.
  */
 
 type Choice = {
@@ -24,14 +25,14 @@ type Choice = {
 };
 
 /**
- * This function replicates the exact logic from useFieldComponent.tsx:228-242
+ * This function replicates the exact logic from useFieldComponent.tsx:241
  * to test the fallback behavior in isolation.
  *
- * Note: Using || instead of ?? to treat empty strings as falsy,
- * which matches the intended behavior for fallback logic.
+ * Production code uses ?? (nullish coalescing), which only falls back for
+ * null/undefined, NOT for empty strings. Empty strings will be displayed as-is.
  */
 function getLabelFromChoice(choice: Choice): string {
-  return choice.label || choice.translatedTitle || choice.title || choice.key;
+  return choice.label ?? choice.translatedTitle ?? choice.title ?? choice.key;
 }
 
 describe("useFieldComponent - Choice Label Fallback Logic", () => {
@@ -48,10 +49,10 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
       expect(result).toBe("Primary Label");
     });
 
-    it("should fallback to 'translatedTitle' when label is missing", () => {
+    it("should fallback to 'translatedTitle' when label is undefined", () => {
       const choice: Choice = {
         key: "option1",
-        label: "", // Empty label
+        label: undefined, // Undefined label
         title: "Regular Title",
         translatedTitle: "Translated Title"
       };
@@ -60,10 +61,11 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
       expect(result).toBe("Translated Title");
     });
 
-    it("should fallback to 'title' when label and translatedTitle are missing", () => {
+    it("should fallback to 'title' when label and translatedTitle are undefined", () => {
       const choice: Choice = {
         key: "option1",
-        label: "",
+        label: undefined,
+        translatedTitle: undefined,
         title: "Title Only"
       };
 
@@ -71,10 +73,12 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
       expect(result).toBe("Title Only");
     });
 
-    it("should fallback to 'key' when all other fields are missing (lowest priority)", () => {
+    it("should fallback to 'key' when all other fields are undefined (lowest priority)", () => {
       const choice: Choice = {
         key: "option1",
-        label: ""
+        label: undefined,
+        translatedTitle: undefined,
+        title: undefined
       };
 
       const result = getLabelFromChoice(choice);
@@ -91,18 +95,21 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
         },
         {
           key: "option2",
-          label: "",
+          label: undefined,
           title: "Title 2",
           translatedTitle: "Translated 2"
         },
         {
           key: "option3",
-          label: "",
+          label: undefined,
+          translatedTitle: undefined,
           title: "Title 3"
         },
         {
           key: "option4",
-          label: ""
+          label: undefined,
+          translatedTitle: undefined,
+          title: undefined
         }
       ];
 
@@ -126,30 +133,37 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
       expect(result).toBe("Preferred Label");
     });
 
-    it("should handle undefined vs empty string correctly", () => {
+    it("should fallback for undefined but NOT for empty strings", () => {
+      // Undefined triggers fallback
       const choiceWithUndefined: Choice = {
         key: "option1",
         label: undefined,
         title: "Should Use Title"
       };
+      expect(getLabelFromChoice(choiceWithUndefined)).toBe("Should Use Title");
 
-      const result = getLabelFromChoice(choiceWithUndefined);
-      expect(result).toBe("Should Use Title");
+      // Empty string does NOT trigger fallback with ??
+      const choiceWithEmptyString: Choice = {
+        key: "option2",
+        label: "",
+        title: "Should NOT Use This"
+      };
+      expect(getLabelFromChoice(choiceWithEmptyString)).toBe(""); // Returns empty string
     });
   });
 
   describe("Timeline Block Context - Missing Labels", () => {
-    it("should handle timeline playMode options with missing labels", () => {
-      // Timeline blocks often have options with missing label fields
+    it("should handle timeline playMode options with undefined labels", () => {
+      // Timeline blocks often have options with undefined label fields
       const playModeChoices: Choice[] = [
         {
           key: "once",
-          label: "",
+          label: undefined,
           title: "Play Once"
         },
         {
           key: "loop",
-          label: "",
+          label: undefined,
           title: "Loop"
         }
       ];
@@ -169,13 +183,15 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
         },
         {
           key: "1x",
-          label: "",
+          label: undefined,
           title: "Normal Speed"
         },
         {
           key: "2x",
-          label: "",
-          // No title - should fall back to key "2x"
+          label: undefined,
+          translatedTitle: undefined,
+          title: undefined
+          // No label/title - should fall back to key "2x"
         }
       ];
 
@@ -191,35 +207,42 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
     it("should handle choices with only key field", () => {
       const choice: Choice = {
         key: "minimalist",
-        label: ""
+        label: undefined,
+        translatedTitle: undefined,
+        title: undefined
       };
 
       const result = getLabelFromChoice(choice);
       expect(result).toBe("minimalist");
     });
 
-    it("should handle null values as undefined", () => {
+    it("should handle null values as triggering fallback", () => {
       const choice: Choice = {
         key: "safe",
-        label: null as unknown as string,
+        label: null as unknown as undefined,
         title: undefined,
-        translatedTitle: ""
+        translatedTitle: null as unknown as undefined
       };
 
       const result = getLabelFromChoice(choice);
       expect(result).toBe("safe"); // Falls back to key
     });
 
-    it("should handle whitespace-only strings as truthy", () => {
-      // Note: The ?? operator treats whitespace strings as truthy
-      const choice: Choice = {
+    it("should NOT fallback for empty or whitespace strings with ??", () => {
+      // The ?? operator treats empty/whitespace strings as truthy (not nullish)
+      const choiceEmptyString: Choice = {
+        key: "empty",
+        label: "",
+        title: "Should Not Use This"
+      };
+      expect(getLabelFromChoice(choiceEmptyString)).toBe(""); // Returns empty string
+
+      const choiceWhitespace: Choice = {
         key: "whitespace",
         label: "   ",
         title: "Should Not Use This"
       };
-
-      const result = getLabelFromChoice(choice);
-      expect(result).toBe("   "); // Uses the whitespace string
+      expect(getLabelFromChoice(choiceWhitespace)).toBe("   "); // Returns whitespace
     });
   });
 
@@ -241,7 +264,7 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
     it("should not use JSON.stringify or object serialization", () => {
       const choice: Choice = {
         key: "test",
-        label: "",
+        label: undefined,
         title: "Proper Title"
       };
 
@@ -256,7 +279,7 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
     it("should maintain deterministic behavior", () => {
       const choice: Choice = {
         key: "stable",
-        label: "",
+        label: undefined,
         title: "Stable Title"
       };
 
@@ -269,10 +292,10 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
   });
 
   describe("Internationalization Support", () => {
-    it("should prioritize translatedTitle over title when label is missing", () => {
+    it("should prioritize translatedTitle over title when label is undefined", () => {
       const choice: Choice = {
         key: "en",
-        label: "",
+        label: undefined,
         title: "English",
         translatedTitle: "英語" // Japanese translation
       };
@@ -290,13 +313,14 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
         },
         {
           key: "option2",
-          label: "",
+          label: undefined,
           translatedTitle: "中文",
           title: "Chinese"
         },
         {
           key: "option3",
-          label: "",
+          label: undefined,
+          translatedTitle: undefined,
           title: "Français"
         }
       ];
@@ -311,7 +335,7 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
     it("should handle RTL languages correctly", () => {
       const choice: Choice = {
         key: "ar",
-        label: "",
+        label: undefined,
         title: "Arabic",
         translatedTitle: "العربية" // Arabic
       };
@@ -322,15 +346,44 @@ describe("useFieldComponent - Choice Label Fallback Logic", () => {
   });
 
   describe("Fallback Chain Verification", () => {
-    it("should correctly apply the complete fallback chain", () => {
-      // Verify the fallback chain: label || translatedTitle || title || key
+    it("should correctly apply the complete fallback chain with ??", () => {
+      // Verify the fallback chain: label ?? translatedTitle ?? title ?? key
+      // With ??, only null/undefined trigger fallback, NOT empty strings
       // Each test case progressively removes fields to test each fallback level
 
       const testCases: [Choice, string][] = [
         [{ key: "k", label: "L", translatedTitle: "T", title: "Ti" }, "L"],
-        [{ key: "k", label: "", translatedTitle: "T", title: "Ti" }, "T"],
-        [{ key: "k", label: "", translatedTitle: "", title: "Ti" }, "Ti"],
-        [{ key: "k", label: "", translatedTitle: "", title: "" }, "k"]
+        [{ key: "k", label: undefined, translatedTitle: "T", title: "Ti" }, "T"],
+        [
+          { key: "k", label: undefined, translatedTitle: undefined, title: "Ti" },
+          "Ti"
+        ],
+        [
+          {
+            key: "k",
+            label: undefined,
+            translatedTitle: undefined,
+            title: undefined
+          },
+          "k"
+        ]
+      ];
+
+      testCases.forEach(([choice, expected]) => {
+        const result = getLabelFromChoice(choice);
+        expect(result).toBe(expected);
+      });
+    });
+
+    it("should NOT fallback for empty strings (demonstrating ?? behavior)", () => {
+      // Empty strings are not nullish, so they don't trigger fallback
+      const testCases: [Choice, string][] = [
+        [{ key: "k", label: "", translatedTitle: "T", title: "Ti" }, ""], // Returns empty
+        [{ key: "k", label: undefined, translatedTitle: "", title: "Ti" }, ""], // Returns empty
+        [
+          { key: "k", label: undefined, translatedTitle: undefined, title: "" },
+          ""
+        ] // Returns empty
       ];
 
       testCases.forEach(([choice, expected]) => {
