@@ -29,6 +29,8 @@ __debug_bin
 !/.env.example
 !/.env.docker.example
 !/.env.accounts.docker.example
+!/app.env
+!/app.accounts.env
 /coverage.txt
 /web
 tmp

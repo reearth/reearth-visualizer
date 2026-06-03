@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.8 - 2026-06-02
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.8 ([#2240](https://github.com/reearth/reearth-visualizer/pull/2240)) [`674b06`](https://github.com/reearth/reearth-visualizer/commit/674b06)
+- Bump core version to 0.0.7-alpha.68 ([#2239](https://github.com/reearth/reearth-visualizer/pull/2239)) [`f196d3`](https://github.com/reearth/reearth-visualizer/commit/f196d3)
+- Bump core version to 0.0.7-alpha.67 ([#2237](https://github.com/reearth/reearth-visualizer/pull/2237)) [`2460dc`](https://github.com/reearth/reearth-visualizer/commit/2460dc)
+
 ## 1.0.0-beta.16.7 - 2026-06-01
 
 ### Web
