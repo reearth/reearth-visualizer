@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { Range } from "./hook";
-
+import type { Range } from "./hook";
 /**
  * Timeline Block Boundary Detection Tests
  *
