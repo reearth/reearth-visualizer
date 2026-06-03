@@ -563,24 +563,12 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		visibility = *pFilter.Visibility
 	}
 
-	// Check if we need to filter by topics (which requires joining with projectmetadata)
-	if len(pFilter.Topics) > 0 {
-		return r.findAllWithTopicsFilter(ctx, pFilter, visibility)
-	}
-
-	// Check if we need to sort by starcount (which requires joining with projectmetadata)
-	if pFilter.Sort != nil && pFilter.Sort.Key == "starcount" {
-		return r.findAllWithStarcountSort(ctx, pFilter, visibility)
-	}
-
-	// Original implementation for non-topics search
 	filter := bson.M{
 		"visibility": visibility,
 		"deleted":    false,
 	}
 
 	if pFilter.Keyword != nil {
-		// Add name regex search directly to the filter
 		filter["name"] = bson.M{
 			"$regex": primitive.Regex{
 				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
@@ -589,30 +577,28 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		}
 	}
 
-	count, err := r.client.Count(ctx, filter)
-	if err != nil {
-		log.Errorf("FindAll: Error counting public projects: %v", err)
-	} else {
-		// If count is 0, do a broader search just to verify projects exist
-		if count == 0 {
-			// Check if there are any projects at all
-			totalCount, err := r.client.Count(ctx, bson.M{})
-			if err != nil {
-				log.Errorf("FindAll: Error counting all projects: %v", err)
-			} else {
-				log.Infof("FindAll: Total projects in MongoDB: %d", totalCount)
-			}
-
-			log.Warnf("FindAll: No public projects found, returning empty list")
-			return []*project.Project{}, usecasex.EmptyPageInfo(), nil
-		}
+	// Topics filter or starcount sort needs to join projectmetadata. The
+	// topics path keeps the join entirely server-side via a pipeline-form
+	// $lookup that filters on the projectmetadata.topics index, which avoids
+	// transferring potentially large ID sets through the client.
+	if len(pFilter.Topics) > 0 {
+		return r.findAllWithTopicsFilter(ctx, pFilter, filter)
+	}
+	if pFilter.Sort != nil && pFilter.Sort.Key == "starcount" {
+		return r.findAllWithStarcountSort(ctx, pFilter, filter)
 	}
 
+	return r.findAllWithFilter(ctx, pFilter, filter)
+}
+
+func (r *Project) findAllWithFilter(ctx context.Context, pFilter repo.ProjectFilter, filter bson.M) ([]*project.Project, *usecasex.PageInfo, error) {
 	if pFilter.Limit != nil && pFilter.Offset != nil {
 		totalCount, err := r.client.Count(ctx, filter)
 		if err != nil {
-			log.Errorf("FindAll: Count error: %v", err)
 			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
+		}
+		if totalCount == 0 {
+			return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 		}
 
 		var sortDoc bson.D
@@ -645,8 +631,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 
 		c := mongodoc.NewProjectConsumer(nil)
 		if err := r.client.Find(ctx, filter, c, findOptions); err != nil {
-			log.Errorf("FindAll: Find error: %v", err)
-			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
+			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Find error:", err)
 		}
 
 		pageInfo := &usecasex.PageInfo{
@@ -663,13 +648,192 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	}
 
 	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
-	if err == nil {
-		log.Infof("FindAll: Filter succeeded, found %d projects", len(projects))
-		return projects, pageInfo, nil
-	} else {
-		log.Warnf("FindAll: Error in pagination: %v, trying simplified query", err)
+	if err != nil {
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: pagination error", err)
+	}
+	return projects, pageInfo, nil
+}
+
+// aggregationFacetCap is the hard upper bound on documents materialized into
+// the $facet "data" sub-pipeline. The cap keeps the single facet result
+// document well below MongoDB's 16MB limit when callers provide no
+// pagination (or request more than the cap). When the cap actually
+// truncates a result set, callers can detect it by comparing the returned
+// project count against PageInfo.TotalCount.
+const aggregationFacetCap int64 = 1000
+
+// warnIfUnsupportedCursor surfaces a warning when callers request Relay-style
+// cursor positioning (After/Before) on the aggregation paths. These paths do
+// not implement cursor-position $match — they only honor First/Last as a
+// bounded $limit — so After/Before are silently ignored, which matches the
+// pre-existing behavior of the topics aggregation prior to this PR. The
+// warning lets operators spot mis-paginated calls.
+func warnIfUnsupportedCursor(ctx context.Context, path string, pagination *usecasex.Pagination) {
+	if pagination == nil || pagination.Cursor == nil {
+		return
+	}
+	if pagination.Cursor.After == nil && pagination.Cursor.Before == nil {
+		return
+	}
+	log.Warnfc(ctx, "FindAll: %s ignored cursor positioning (After/Before); aggregation paths only honor First/Last as $limit", path)
+}
+
+// effectiveSkipLimit derives an effective ($skip, $limit) pair for the
+// aggregation paths. Precedence: explicit pFilter.Limit/Offset → Pagination
+// Offset → Pagination Cursor First/Last → the hard cap. The returned limit
+// is always clamped to (0, aggregationFacetCap] regardless of caller input,
+// since unauthenticated GetAllProjects reaches these paths and the $facet
+// "data" array must stay well below MongoDB's 16MB document limit.
+//
+// Relay-style cursor positioning (Cursor.After / Cursor.Before) is not
+// implemented on the aggregation paths and is therefore ignored here; see
+// warnIfUnsupportedCursor.
+func effectiveSkipLimit(pFilter repo.ProjectFilter) (skip, lim int64) {
+	switch {
+	case pFilter.Limit != nil && pFilter.Offset != nil:
+		skip, lim = *pFilter.Offset, *pFilter.Limit
+	case pFilter.Pagination != nil && pFilter.Pagination.Offset != nil:
+		skip, lim = pFilter.Pagination.Offset.Offset, pFilter.Pagination.Offset.Limit
+	case pFilter.Pagination != nil && pFilter.Pagination.Cursor != nil && pFilter.Pagination.Cursor.First != nil:
+		lim = *pFilter.Pagination.Cursor.First
+	case pFilter.Pagination != nil && pFilter.Pagination.Cursor != nil && pFilter.Pagination.Cursor.Last != nil:
+		lim = *pFilter.Pagination.Cursor.Last
+	default:
+		lim = aggregationFacetCap
+	}
+	if skip < 0 {
+		skip = 0
+	}
+	if lim <= 0 || lim > aggregationFacetCap {
+		lim = aggregationFacetCap
+	}
+	return skip, lim
+}
+
+// findAllWithTopicsFilter runs the FindAll aggregation when a topics filter is
+// active. The topics match is pushed into the $lookup sub-pipeline so only
+// metadata matching the requested topics is joined (predicate pushdown,
+// exercising both the projectmetadata.project and projectmetadata.topics
+// indexes). The lookup itself still runs per input project document — the
+// improvement is reduced joined payload and an early non-empty-array check
+// in place of the previous post-lookup `metadata.topics: $all` scan.
+//
+// When no explicit sort is given, ordering defaults to metadata.starcount
+// descending, matching the previous topics path's behavior.
+func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.ProjectFilter, filter bson.M) ([]*project.Project, *usecasex.PageInfo, error) {
+	warnIfUnsupportedCursor(ctx, "topics", pFilter.Pagination)
+	matchStage := bson.M{"$match": filter}
+
+	lookupStage := bson.M{
+		"$lookup": bson.M{
+			"from": "projectmetadata",
+			"let":  bson.M{"pid": "$id"},
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"$expr":  bson.M{"$eq": bson.A{"$project", "$$pid"}},
+					"topics": bson.M{"$all": pFilter.Topics},
+				}},
+			},
+			"as": "metadata",
+		},
+	}
+
+	matchHasMetadata := bson.M{
+		"$match": bson.M{"metadata.0": bson.M{"$exists": true}},
+	}
+
+	sortKey := "metadata.starcount"
+	sortOrder := -1
+	if pFilter.Sort != nil {
+		if pFilter.Sort.Key == "starcount" {
+			sortKey = "metadata.starcount"
+		} else {
+			sortKey = pFilter.Sort.Key
+		}
+		if pFilter.Sort.Desc {
+			sortOrder = -1
+		} else {
+			sortOrder = 1
+		}
+	}
+	sortStage := bson.M{
+		"$sort": bson.D{
+			{Key: sortKey, Value: sortOrder},
+			{Key: "_id", Value: sortOrder},
+		},
+	}
+
+	// When ordering does not depend on the joined metadata (e.g. by
+	// updatedat on the project itself), drop the metadata array before
+	// $sort to reduce sort buffer/spill cost. When sorting by
+	// metadata.starcount the array must survive until after $sort and is
+	// dropped once $limit has reduced the row count.
+	skip, lim := effectiveSkipLimit(pFilter)
+	sortNeedsMetadata := strings.HasPrefix(sortKey, "metadata.")
+	dataPipeline := make([]bson.M, 0, 6)
+	if !sortNeedsMetadata {
+		dataPipeline = append(dataPipeline, bson.M{"$unset": "metadata"})
+	}
+	dataPipeline = append(dataPipeline, sortStage)
+	if skip > 0 {
+		dataPipeline = append(dataPipeline, bson.M{"$skip": skip})
+	}
+	dataPipeline = append(dataPipeline, bson.M{"$limit": lim})
+	if sortNeedsMetadata {
+		dataPipeline = append(dataPipeline, bson.M{"$unset": "metadata"})
+	}
+
+	facetStage := bson.M{
+		"$facet": bson.M{
+			"data":  dataPipeline,
+			"count": []bson.M{{"$count": "total"}},
+		},
+	}
+
+	pipeline := []bson.M{matchStage, lookupStage, matchHasMetadata, facetStage}
+
+	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var totalCount int64 = 0
+	consumer := mongodoc.NewProjectConsumer(nil)
+	if cursor.Next(ctx) {
+		var result struct {
+			Data  []bson.Raw `bson:"data"`
+			Count []struct {
+				Total int64 `bson:"total"`
+			} `bson:"count"`
+		}
+		if err := cursor.Decode(&result); err != nil {
+			return nil, nil, err
+		}
+		if len(result.Count) > 0 {
+			totalCount = result.Count[0].Total
+		}
+		for _, raw := range result.Data {
+			if err := consumer.Consume(raw); err != nil {
+				return nil, nil, err
+			}
+		}
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	if totalCount == 0 {
 		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
+
+	pageInfo := &usecasex.PageInfo{
+		TotalCount:      totalCount,
+		HasNextPage:     skip+lim < totalCount,
+		HasPreviousPage: skip > 0,
+	}
+
+	return consumer.Result, pageInfo, nil
 }
 
 func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountsID.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
@@ -926,226 +1090,109 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 	return res
 }
 
-func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.ProjectFilter, visibility string) ([]*project.Project, *usecasex.PageInfo, error) {
-	// Build aggregation pipeline
-	matchStage := bson.M{
-		"$match": bson.M{
-			"visibility": visibility,
-			"deleted":    false,
-		},
-	}
+// findAllWithStarcountSort runs the FindAll path that orders by starcount.
+// The previous implementation matched projects first, $lookup'd every
+// metadata, computed sort_star_count, and sorted in memory — so the work
+// scaled with the size of the public project set even when only the top N
+// projects were needed.
+//
+// This implementation starts from projectmetadata and uses its
+// (starcount, project) index for an index-backed $sort. A pipeline-form
+// $lookup brings in the matching project with the visibility/deleted/
+// keyword filter applied inline; non-matching metadata (private/deleted
+// projects, projects filtered out by keyword) is dropped via the
+// post-lookup $match. MongoDB can stream the index-ordered scan and stop
+// once $limit is satisfied, so realistic top-N queries only touch the
+// metadata entries near the top of the ordering.
+//
+// The total count for the response is independent of metadata and is
+// computed by a direct Count on the project collection using the same
+// project filter. This relies on the 1:1 invariant between project and
+// projectmetadata established by the AddProjectMetadata backfill and
+// createProject; when len(consumer.Result) falls short of the expected
+// page size, we log a warning so that a regression in that invariant is
+// observable in production.
+//
+// Cursor.After/Before are still ignored on this path; First/Last/Limit
+// are clamped via effectiveSkipLimit.
+func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.ProjectFilter, filter bson.M) ([]*project.Project, *usecasex.PageInfo, error) {
+	warnIfUnsupportedCursor(ctx, "starcount", pFilter.Pagination)
 
-	// Add keyword search for name if provided
-	if pFilter.Keyword != nil {
-		matchStage["$match"].(bson.M)["name"] = bson.M{
-			"$regex": primitive.Regex{
-				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
-				Options: "i",
-			},
-		}
-	}
-
-	lookupStage := bson.M{
-		"$lookup": bson.M{
-			"from":         "projectmetadata",
-			"localField":   "id",
-			"foreignField": "project",
-			"as":           "metadata",
-		},
-	}
-
-	// Build topics match condition
-	topicsMatchStage := bson.M{
-		"$match": bson.M{
-			"metadata.topics": bson.M{"$all": pFilter.Topics},
-		},
-	}
-
-	pipeline := []bson.M{matchStage, lookupStage, topicsMatchStage}
-
-	// Handle sorting
-	sortOrder := 1
-	if pFilter.Sort != nil {
-		sortKey := pFilter.Sort.Key
-		if sortKey == "starcount" {
-			sortKey = "metadata.starcount"
-		}
-		if pFilter.Sort.Desc {
-			sortOrder = -1
-		}
-		sortStage := bson.M{
-			"$sort": bson.D{{Key: sortKey, Value: sortOrder}, {Key: "_id", Value: sortOrder}},
-		}
-		pipeline = append(pipeline, sortStage)
-	} else {
-		// Default sort by starcount descending
-		sortStage := bson.M{
-			"$sort": bson.D{{Key: "metadata.starcount", Value: -1}, {Key: "_id", Value: -1}},
-		}
-		pipeline = append(pipeline, sortStage)
-	}
-
-	// Count total documents with aggregation
-	countPipeline := make([]bson.M, len(pipeline))
-	copy(countPipeline, pipeline)
-	countPipeline = append(countPipeline, bson.M{"$count": "total"})
-
-	countCursor, err := r.client.Client().Aggregate(ctx, countPipeline)
+	totalCount, err := r.client.Count(ctx, filter)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: starcount count error", err)
 	}
-	defer countCursor.Close(ctx)
-
-	var totalCount int64 = 0
-	if countCursor.Next(ctx) {
-		var result struct {
-			Total int64 `bson:"total"`
-		}
-		if err := countCursor.Decode(&result); err == nil {
-			totalCount = result.Total
-		}
+	if totalCount == 0 {
+		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
 
-	// Handle pagination
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		pipeline = append(pipeline, bson.M{"$skip": *pFilter.Offset})
-		pipeline = append(pipeline, bson.M{"$limit": *pFilter.Limit})
-	}
+	skip, lim := effectiveSkipLimit(pFilter)
 
-	// Execute aggregation
-	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer cursor.Close(ctx)
-
-	consumer := mongodoc.NewProjectConsumer(nil)
-	for cursor.Next(ctx) {
-		raw := cursor.Current
-		if err := consumer.Consume(raw); err != nil {
-			return nil, nil, err
-		}
-	}
-	if err := cursor.Err(); err != nil {
-		return nil, nil, err
-	}
-
-	var hasNextPage, hasPreviousPage bool
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
-		hasPreviousPage = *pFilter.Offset > 0
-	}
-
-	pageInfo := &usecasex.PageInfo{
-		TotalCount:      totalCount,
-		HasNextPage:     hasNextPage,
-		HasPreviousPage: hasPreviousPage,
-	}
-
-	return consumer.Result, pageInfo, nil
-}
-
-func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.ProjectFilter, visibility string) ([]*project.Project, *usecasex.PageInfo, error) {
-	// Build aggregation pipeline
-	matchStage := bson.M{
-		"$match": bson.M{
-			"visibility": visibility,
-			"deleted":    false,
-		},
-	}
-
-	// Add keyword search for name if provided
-	if pFilter.Keyword != nil {
-		matchStage["$match"].(bson.M)["name"] = bson.M{
-			"$regex": primitive.Regex{
-				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
-				Options: "i",
-			},
-		}
-	}
-
-	lookupStage := bson.M{
-		"$lookup": bson.M{
-			"from":         "projectmetadata",
-			"localField":   "id",
-			"foreignField": "project",
-			"as":           "metadata",
-		},
-	}
-
-	// Handle sorting by starcount
-	// For projects without metadata, we need to handle them specially
-	// Add a field for sorting that handles missing metadata
-	addFieldsStage := bson.M{
-		"$addFields": bson.M{
-			"sort_star_count": bson.M{
-				"$cond": bson.M{
-					"if": bson.M{"$gt": bson.A{bson.M{"$size": "$metadata"}, 0}},
-					"then": bson.M{
-						"$toInt": bson.M{
-							"$ifNull": bson.A{
-								bson.M{"$arrayElemAt": bson.A{"$metadata.starcount", 0}},
-								0,
-							},
-						},
-					},
-					"else": 0, // Projects without metadata get 0 for sorting
-				},
-			},
-		},
+	// Skip is already beyond the matched set, so the page is empty by
+	// construction. Return a fully-populated PageInfo without running the
+	// metadata-first aggregation; this saves a sort/lookup over the whole
+	// collection for out-of-range pagination requests.
+	if skip >= totalCount {
+		return []*project.Project{}, &usecasex.PageInfo{
+			TotalCount:      totalCount,
+			HasNextPage:     false,
+			HasPreviousPage: skip > 0,
+		}, nil
 	}
 
 	sortOrder := 1
-	if pFilter.Sort.Desc {
+	if pFilter.Sort != nil && pFilter.Sort.Desc {
 		sortOrder = -1
 	}
-	sortStage := bson.M{
-		"$sort": bson.D{
-			{Key: "sort_star_count", Value: sortOrder},
-			{Key: "_id", Value: sortOrder},
-		},
+
+	// Build the $lookup sub-pipeline: correlate metadata.project with
+	// project.id and apply the same project filter (visibility, deleted,
+	// optional keyword) inline so private/deleted/non-matching projects
+	// are dropped before they reach the post-lookup $match.
+	lookupMatch := bson.M{"$expr": bson.M{"$eq": bson.A{"$id", "$$pid"}}}
+	for k, v := range filter {
+		lookupMatch[k] = v
 	}
 
-	pipeline := []bson.M{matchStage, lookupStage, addFieldsStage, sortStage}
+	pipeline := []bson.M{
+		// Tie-break by projectmetadata.project (= project.id) for stable
+		// ordering across deployments. The metadata document's _id is
+		// unstable because the legacy AddProjectMetadata backfill
+		// generated _ids in one pass at backfill time rather than at
+		// project creation time.
+		{"$sort": bson.D{
+			{Key: "starcount", Value: sortOrder},
+			{Key: "project", Value: sortOrder},
+		}},
+		{"$lookup": bson.M{
+			"from":     "project",
+			"let":      bson.M{"pid": "$project"},
+			"pipeline": []bson.M{{"$match": lookupMatch}},
+			// "joinedProject" rather than "project" so we don't clobber the
+			// existing projectmetadata.project scalar that the lookup
+			// correlates against — keeps the pipeline easier to extend.
+			"as": "joinedProject",
+		}},
+		{"$match": bson.M{"joinedProject.0": bson.M{"$exists": true}}},
+	}
+	if skip > 0 {
+		pipeline = append(pipeline, bson.M{"$skip": skip})
+	}
+	pipeline = append(pipeline,
+		bson.M{"$limit": lim},
+		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$arrayElemAt": bson.A{"$joinedProject", 0}}}},
+	)
 
-	// Count total documents with aggregation
-	countPipeline := make([]bson.M, len(pipeline))
-	copy(countPipeline, pipeline)
-	countPipeline = append(countPipeline, bson.M{"$count": "total"})
-
-	countCursor, err := r.client.Client().Aggregate(ctx, countPipeline)
+	metadataColl := r.client.Client().Database().Collection("projectmetadata")
+	cursor, err := metadataColl.Aggregate(ctx, pipeline)
 	if err != nil {
-		return nil, nil, err
-	}
-	defer countCursor.Close(ctx)
-
-	var totalCount int64 = 0
-	if countCursor.Next(ctx) {
-		var result struct {
-			Total int64 `bson:"total"`
-		}
-		if err := countCursor.Decode(&result); err == nil {
-			totalCount = result.Total
-		}
-	}
-
-	// Handle pagination
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		pipeline = append(pipeline, bson.M{"$skip": *pFilter.Offset})
-		pipeline = append(pipeline, bson.M{"$limit": *pFilter.Limit})
-	}
-
-	// Execute aggregation
-	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
-	if err != nil {
-		return nil, nil, err
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: starcount aggregate error", err)
 	}
 	defer cursor.Close(ctx)
 
 	consumer := mongodoc.NewProjectConsumer(nil)
 	for cursor.Next(ctx) {
-		raw := cursor.Current
-		if err := consumer.Consume(raw); err != nil {
+		if err := consumer.Consume(cursor.Current); err != nil {
 			return nil, nil, err
 		}
 	}
@@ -1153,16 +1200,25 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		return nil, nil, err
 	}
 
-	var hasNextPage, hasPreviousPage bool
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
-		hasPreviousPage = *pFilter.Offset > 0
+	// Defensive check for the 1:1 project↔projectmetadata invariant.
+	// totalCount comes from the project collection while the result rows
+	// come from the metadata-first aggregation, so a project without a
+	// metadata document would silently disappear here. Surface the gap.
+	expected := lim
+	if remaining := totalCount - skip; remaining < expected {
+		expected = remaining
+	}
+	if expected < 0 {
+		expected = 0
+	}
+	if int64(len(consumer.Result)) < expected {
+		log.Warnfc(ctx, "FindAll: starcount returned %d projects, expected %d (skip=%d, lim=%d, totalCount=%d); some projects may be missing projectmetadata documents", len(consumer.Result), expected, skip, lim, totalCount)
 	}
 
 	pageInfo := &usecasex.PageInfo{
 		TotalCount:      totalCount,
-		HasNextPage:     hasNextPage,
-		HasPreviousPage: hasPreviousPage,
+		HasNextPage:     skip+lim < totalCount,
+		HasPreviousPage: skip > 0,
 	}
 
 	return consumer.Result, pageInfo, nil

@@ -14,6 +14,7 @@ import useViewer from "./useViewer";
 
 export default function ({
   engineName,
+  engineMeta,
   mapRef,
   mapAPIReady,
   viewerProperty,
@@ -112,6 +113,7 @@ export default function ({
     hideLayer,
     showLayer,
     addLayer,
+    overrideLayer,
     findFeatureById,
     findFeaturesByIds,
     selectLayer,
@@ -127,6 +129,8 @@ export default function ({
     layersEvents
   } = useLayers({
     mapRef,
+    engineMeta,
+    viewerProperty,
     selectedLayer,
     selectedFeature,
     onLayerEdit,
@@ -226,6 +230,7 @@ export default function ({
         hideLayer,
         showLayer,
         addLayer,
+        overrideLayer,
         findFeatureById,
         findFeaturesByIds,
         selectLayer,
@@ -316,6 +321,7 @@ export default function ({
       hideLayer,
       showLayer,
       addLayer,
+      overrideLayer,
       findFeatureById,
       findFeaturesByIds,
       selectLayer,

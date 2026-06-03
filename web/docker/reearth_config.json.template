@@ -4,9 +4,9 @@
     "auth0ClientId": ${REEARTH_AUTH0_CLIENT_ID},
     "auth0Domain": ${REEARTH_AUTH0_DOMAIN},
     "brand": ${REEARTH_BRAND},
-    "cesiumIonAccessToken": ${REEARTH_CESIUM_ION_ACCESS_TOKEN},
     "cloudApi": ${REEARTH_CLOUD_API},
     "currentTos": ${REEARTH_CURRENT_TOS},
+    "customProviders": ${REEARTH_CUSTOM_PROVIDERS},
     "documentationUrl": ${REEARTH_DOCUMENTATION_URL},
     "earlyAccessAdmins": ${REEARTH_EARLY_ACCESS_ADMINS},
     "enableGqlPlayground": ${REEARTH_ENABLE_GQL_PLAYGROUND},
@@ -20,5 +20,7 @@
     "plugins": ${REEARTH_PLUGINS},
     "policy": ${REEARTH_POLICY},
     "published": ${REEARTH_PUBLISHED},
+    "tileServerBaseUrl": ${REEARTH_TILE_SERVER_BASE_URL},
+    "tileServerToken": ${REEARTH_TILE_SERVER_TOKEN},
     "unsafePluginUrls": ${REEARTH_UNSAFE_PLUGIN_URLS}
 }
