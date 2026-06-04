@@ -1,3 +1,14 @@
+---
+title: "1Password CLI Setup Guide"
+category: "setup"
+tags: ["1password", "security", "environment", "secrets"]
+last_updated: "2026-06-04"
+related:
+  - ../reference/environment-variables.md
+  - ../guides/getting-started.md
+  - ./local-development.md
+---
+
 # 1Password CLI Setup Guide
 
 ## Overview

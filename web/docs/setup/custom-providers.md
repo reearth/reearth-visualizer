@@ -1,3 +1,14 @@
+---
+title: "Custom Providers Configuration"
+category: "setup"
+tags: ["configuration", "providers", "tiles", "terrain", "cesium"]
+last_updated: "2026-06-04"
+related:
+  - ../modules/services/config.md
+  - ../concepts/3d-rendering.md
+  - ../reference/environment-variables.md
+---
+
 # Custom Providers Configuration
 
 ## Overview
@@ -654,4 +665,4 @@ Custom providers works alongside other configuration features:
 
 - [Environment Variables Setup](../README.md#environment-configuration)
 - [1Password CLI Integration](1password-setup.md)
-- [Configuration System](../CLAUDE.md#configuration-system)
+- [Configuration System](../modules/services/config.md)
