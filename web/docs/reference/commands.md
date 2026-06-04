@@ -476,27 +476,34 @@ rm -rf node_modules yarn.lock
 yarn install
 ```
 
-## Command Aliases
+## All Available Commands
 
-Common command shortcuts:
+For a complete list of all available commands, see the `scripts` section in `package.json`:
 
 ```bash
-# Development
-yarn dev        # alias for yarn start
-
-# Testing
-yarn t          # alias for yarn test
-yarn tw         # alias for yarn test --watch
-
-# Type checking
-yarn tc         # alias for yarn type
-
-# Linting
-yarn l          # alias for yarn lint
-yarn lf         # alias for yarn fix
+# View all available commands
+yarn run
 ```
 
-**Note**: Check `package.json` scripts section for all available commands.
+**Main commands**:
+- `start`, `start:op` - Development
+- `test`, `coverage` - Testing
+- `type`, `lint`, `fix`, `format` - Code quality
+- `build`, `build:preview` - Building
+- `check` - Run all quality checks
+- `storybook`, `storybook:build` - Component development
+- `gql`, `gql:plateau` - GraphQL code generation
+- `i18n` - Internationalization
+- `docs:generate`, `docs:validate`, `docs:update-index` - Documentation tools
+
+**Tip**: You can create shell aliases for frequently used commands in your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+# Example shell aliases (optional)
+alias ys="yarn start"
+alias yt="yarn test"
+alias yc="yarn check"
+```
 
 ## Related Documentation
 
