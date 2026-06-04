@@ -2,6 +2,180 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.8 - 2026-06-02
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.8 ([#2240](https://github.com/reearth/reearth-visualizer/pull/2240)) [`674b06`](https://github.com/reearth/reearth-visualizer/commit/674b06)
+- Bump core version to 0.0.7-alpha.68 ([#2239](https://github.com/reearth/reearth-visualizer/pull/2239)) [`f196d3`](https://github.com/reearth/reearth-visualizer/commit/f196d3)
+- Bump core version to 0.0.7-alpha.67 ([#2237](https://github.com/reearth/reearth-visualizer/pull/2237)) [`2460dc`](https://github.com/reearth/reearth-visualizer/commit/2460dc)
+
+## 1.0.0-beta.16.7 - 2026-06-01
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Prevent infinite plugin re-initialization loop in plugin playground ([#2234](https://github.com/reearth/reearth-visualizer/pull/2234)) [`284f75`](https://github.com/reearth/reearth-visualizer/commit/284f75)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.7 ([#2236](https://github.com/reearth/reearth-visualizer/pull/2236)) [`be93b4`](https://github.com/reearth/reearth-visualizer/commit/be93b4)
+- Update core package to 0.0.7-alpha.66 ([#2235](https://github.com/reearth/reearth-visualizer/pull/2235)) [`379923`](https://github.com/reearth/reearth-visualizer/commit/379923)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to ff086d7 ([#2171](https://github.com/reearth/reearth-visualizer/pull/2171)) [`9fa79f`](https://github.com/reearth/reearth-visualizer/commit/9fa79f)
+- Update actions&#x2F;github-script action to v9 ([#2172](https://github.com/reearth/reearth-visualizer/pull/2172)) [`bf9a87`](https://github.com/reearth/reearth-visualizer/commit/bf9a87)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to ff086d7 ([#2171](https://github.com/reearth/reearth-visualizer/pull/2171)) [`9fa79f`](https://github.com/reearth/reearth-visualizer/commit/9fa79f)
+- Update actions&#x2F;github-script action to v9 ([#2172](https://github.com/reearth/reearth-visualizer/pull/2172)) [`bf9a87`](https://github.com/reearth/reearth-visualizer/commit/bf9a87)
+
+## 1.0.0-beta.16.6 - 2026-05-28
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Missing initialize step for sentinel on published page ([#2229](https://github.com/reearth/reearth-visualizer/pull/2229)) [`6332c0`](https://github.com/reearth/reearth-visualizer/commit/6332c0)
+
+#### ✨ Refactor
+
+- Add default value for google photorealistic 3dtiles provider &amp; support layer fallback on plugin api ([#2231](https://github.com/reearth/reearth-visualizer/pull/2231)) [`f5ac0f`](https://github.com/reearth/reearth-visualizer/commit/f5ac0f)
+- Revert: temporarily remove recent changes for release ([#2228](https://github.com/reearth/reearth-visualizer/pull/2228)) [`40eeda`](https://github.com/reearth/reearth-visualizer/commit/40eeda)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.6 ([#2232](https://github.com/reearth/reearth-visualizer/pull/2232)) [`e89ef6`](https://github.com/reearth/reearth-visualizer/commit/e89ef6)
+- Clean up config of token ([#2230](https://github.com/reearth/reearth-visualizer/pull/2230)) [`97978c`](https://github.com/reearth/reearth-visualizer/commit/97978c)
+
+## 1.0.0-beta.16.5 - 2026-05-27
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Sentinel has 401 error on hard reload ([#2223](https://github.com/reearth/reearth-visualizer/pull/2223)) [`b8ed92`](https://github.com/reearth/reearth-visualizer/commit/b8ed92)
+- Set default terrain type as reearth_terrain ([#2221](https://github.com/reearth/reearth-visualizer/pull/2221)) [`d083bb`](https://github.com/reearth/reearth-visualizer/commit/d083bb)
+- Tile without type should apply default tile type ([#2220](https://github.com/reearth/reearth-visualizer/pull/2220)) [`bb22bf`](https://github.com/reearth/reearth-visualizer/commit/bb22bf)
+
+#### ✨ Refactor
+
+- Temporarily remove recent changes for release ([#2226](https://github.com/reearth/reearth-visualizer/pull/2226)) [`695c28`](https://github.com/reearth/reearth-visualizer/commit/695c28)
+- Support override cesium ion token &amp; correct tile migration map ([#2224](https://github.com/reearth/reearth-visualizer/pull/2224)) [`03895c`](https://github.com/reearth/reearth-visualizer/commit/03895c)
+- Support config play speed on story timeline block ([#2213](https://github.com/reearth/reearth-visualizer/pull/2213)) [`ce4eb3`](https://github.com/reearth/reearth-visualizer/commit/ce4eb3)
+
+#### Miscellaneous Tasks
+
+- Update version to 1.0.0-beta.16.5 ([#2227](https://github.com/reearth/reearth-visualizer/pull/2227)) [`9cb53b`](https://github.com/reearth/reearth-visualizer/commit/9cb53b)
+
+### web, server
+
+#### 🚀 Features
+
+- Support custom providers ([#2193](https://github.com/reearth/reearth-visualizer/pull/2193)) [`ac8f19`](https://github.com/reearth/reearth-visualizer/commit/ac8f19)
+
+## 1.0.0-beta.16.4 - 2026-05-21
+
+### Web
+
+#### 🧪 Testing
+
+- Skip flaky e2e test suites temporarily ([#2199](https://github.com/reearth/reearth-visualizer/pull/2199)) [`db0311`](https://github.com/reearth/reearth-visualizer/commit/db0311)
+
+### Server
+
+#### ⚡️ Performance
+
+- Metadata-first aggregation for most_starred sort ([#2206](https://github.com/reearth/reearth-visualizer/pull/2206)) [`6b394d`](https://github.com/reearth/reearth-visualizer/commit/6b394d)
+- Optimize InternalAPI GetAllProjects query path ([#2202](https://github.com/reearth/reearth-visualizer/pull/2202)) [`ad3714`](https://github.com/reearth/reearth-visualizer/commit/ad3714)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.4 ([#2207](https://github.com/reearth/reearth-visualizer/pull/2207)) [`d3706a`](https://github.com/reearth/reearth-visualizer/commit/d3706a)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update dawidd6&#x2F;action-download-artifact action to v21 ([#2181](https://github.com/reearth/reearth-visualizer/pull/2181)) [`c0732f`](https://github.com/reearth/reearth-visualizer/commit/c0732f)
+- Update code owners ([#2204](https://github.com/reearth/reearth-visualizer/pull/2204)) [`00b4e2`](https://github.com/reearth/reearth-visualizer/commit/00b4e2)
+- Limit renovate auto-rebase to conflicted branches only ([#2200](https://github.com/reearth/reearth-visualizer/pull/2200)) [`01b8b1`](https://github.com/reearth/reearth-visualizer/commit/01b8b1)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Add contents: write permission to release jobs ([#2198](https://github.com/reearth/reearth-visualizer/pull/2198)) [`e9b543`](https://github.com/reearth/reearth-visualizer/commit/e9b543)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update dawidd6&#x2F;action-download-artifact action to v21 ([#2181](https://github.com/reearth/reearth-visualizer/pull/2181)) [`c0732f`](https://github.com/reearth/reearth-visualizer/commit/c0732f)
+- Update code owners ([#2204](https://github.com/reearth/reearth-visualizer/pull/2204)) [`00b4e2`](https://github.com/reearth/reearth-visualizer/commit/00b4e2)
+- Limit renovate auto-rebase to conflicted branches only ([#2200](https://github.com/reearth/reearth-visualizer/pull/2200)) [`01b8b1`](https://github.com/reearth/reearth-visualizer/commit/01b8b1)
+
+## 1.0.0-beta.16.3 - 2026-05-15
+
+### Web
+
+#### 🚀 Features
+
+- Support reload page on plugin API [VIZ-DEV-24] ([#2190](https://github.com/reearth/reearth-visualizer/pull/2190)) [`dae310`](https://github.com/reearth/reearth-visualizer/commit/dae310)
+- Support list field in plugin-playground ([#2164](https://github.com/reearth/reearth-visualizer/pull/2164)) [`03161f`](https://github.com/reearth/reearth-visualizer/commit/03161f)
+
+#### 🔧 Bug Fixes
+
+- Incorrect time limit check on story timeline block ([#2195](https://github.com/reearth/reearth-visualizer/pull/2195)) [`bcb940`](https://github.com/reearth/reearth-visualizer/commit/bcb940)
+- Fixed button&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s widget padding ([#2161](https://github.com/reearth/reearth-visualizer/pull/2161)) [`da62d6`](https://github.com/reearth/reearth-visualizer/commit/da62d6)
+
+#### ✨ Refactor
+
+- Improve plugin playground content sharing ([#2178](https://github.com/reearth/reearth-visualizer/pull/2178)) [`a76a2d`](https://github.com/reearth/reearth-visualizer/commit/a76a2d)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.3 ([#2197](https://github.com/reearth/reearth-visualizer/pull/2197)) [`181828`](https://github.com/reearth/reearth-visualizer/commit/181828)
+- Missing write permission on release-nightly-rc ([#2196](https://github.com/reearth/reearth-visualizer/pull/2196)) [`4faecf`](https://github.com/reearth/reearth-visualizer/commit/4faecf)
+- Support load env from 1password ([#2184](https://github.com/reearth/reearth-visualizer/pull/2184)) [`17bc2a`](https://github.com/reearth/reearth-visualizer/commit/17bc2a)
+- Bump version to 1.0.0-beta.16.2 ([#2191](https://github.com/reearth/reearth-visualizer/pull/2191)) [`e5dfbc`](https://github.com/reearth/reearth-visualizer/commit/e5dfbc)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Safe type assertion for GraphQL context loaders (REL-05) ([#2187](https://github.com/reearth/reearth-visualizer/pull/2187)) [`6d73e8`](https://github.com/reearth/reearth-visualizer/commit/6d73e8)
+- Deduplicate property schema lookups in plugin export (SCA-05) ([#2188](https://github.com/reearth/reearth-visualizer/pull/2188)) [`8bac75`](https://github.com/reearth/reearth-visualizer/commit/8bac75)
+- Enforce workspace&#x2F;scene ownership in GraphQL node&#x2F;nodes Fetch ([#2179](https://github.com/reearth/reearth-visualizer/pull/2179)) [`82a609`](https://github.com/reearth/reearth-visualizer/commit/82a609)
+- Batch User and Workspace DataLoader fetches via FindByIDs ([#2176](https://github.com/reearth/reearth-visualizer/pull/2176)) [`402052`](https://github.com/reearth/reearth-visualizer/commit/402052)
+- Hold RLock when reading activeUploads in handleChunkedUpload ([#2175](https://github.com/reearth/reearth-visualizer/pull/2175)) [`1f9d91`](https://github.com/reearth/reearth-visualizer/commit/1f9d91)
+- Fix publishProject&#x2F;Story WriteConflict by moving GCS upload outside transaction ([#2177](https://github.com/reearth/reearth-visualizer/pull/2177)) [`945827`](https://github.com/reearth/reearth-visualizer/commit/945827)
+
+#### Miscellaneous Tasks
+
+- Import reearth-proto instead of internal definition ([#2189](https://github.com/reearth/reearth-visualizer/pull/2189)) [`33d118`](https://github.com/reearth/reearth-visualizer/commit/33d118)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Ignore aidlc workflow files ([#2174](https://github.com/reearth/reearth-visualizer/pull/2174)) [`7732a4`](https://github.com/reearth/reearth-visualizer/commit/7732a4)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Ignore aidlc workflow files ([#2174](https://github.com/reearth/reearth-visualizer/pull/2174)) [`7732a4`](https://github.com/reearth/reearth-visualizer/commit/7732a4)
+
 ## 1.0.0-beta.16.1 - 2026-04-22
 
 ### Web

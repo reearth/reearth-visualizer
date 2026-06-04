@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-import { isValidUrl, isSafeHttpUrl, openUrlInNewTab } from "./url";
+import { isValidUrl, isSafeHttpUrl, openUrlInNewTab, reloadCurrentWebPage } from "./url";
 
 describe("isValidUrl", () => {
   it("should return true for valid HTTP URLs", () => {
@@ -268,5 +268,41 @@ describe("openUrlInNewTab", () => {
         expect.any(String)
       );
     });
+  });
+});
+
+describe("reloadCurrentWebPage", () => {
+  let reloadMock: ReturnType<typeof vi.fn>;
+  let originalLocation: Location;
+
+  beforeEach(() => {
+    // Save original location
+    originalLocation = window.location;
+
+    // Create mock reload function
+    reloadMock = vi.fn();
+
+    // Replace window.location with a mock that includes our reload mock
+    delete (window as { location?: Location }).location;
+    (window as { location: Location }).location = {
+      ...originalLocation,
+      reload: reloadMock
+    } as Location;
+  });
+
+  afterEach(() => {
+    // Restore original location
+    (window as { location: Location }).location = originalLocation;
+    vi.clearAllMocks();
+  });
+
+  it("should call window.location.reload", () => {
+    reloadCurrentWebPage();
+    expect(reloadMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("should call window.location.reload without arguments", () => {
+    reloadCurrentWebPage();
+    expect(reloadMock).toHaveBeenCalledWith();
   });
 });
