@@ -57,10 +57,13 @@ export async function initializeSentinel(): Promise<void> {
           const freshConfig = await res.json();
           const newToken: string | undefined = freshConfig?.tileServerToken;
           if (newToken) {
-            await updateToken({
+            const refreshed = await updateToken({
               accessToken: newToken,
               expiresAt: Date.now() + 24 * 60 * 60 * 1000
             });
+            if (!refreshed) {
+              console.warn("[Sentinel] Token refresh succeeded but SW did not acknowledge — protected requests may fail");
+            }
           } else {
             console.warn("[Sentinel] Token expired and no new token found in config");
           }
@@ -70,10 +73,15 @@ export async function initializeSentinel(): Promise<void> {
       }
     });
 
-    await updateToken({
+    const tokenStored = await updateToken({
       accessToken: appConfig.tileServerToken,
       expiresAt: Date.now() + 24 * 60 * 60 * 1000
     });
+
+    if (!tokenStored) {
+      console.error("[Sentinel] SW did not acknowledge token — initialization aborted, tiles may return 401");
+      return;
+    }
 
     isInitialized = true;
     console.log("[Sentinel] Initialized for", protectedDomain);
