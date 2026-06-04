@@ -201,14 +201,8 @@ yarn docs:generate --module services/config
 # Validate documentation
 yarn docs:validate
 
-# Check for outdated docs
-yarn docs:check-freshness
-
 # Update documentation index
 yarn docs:update-index
-
-# Check documentation coverage
-yarn docs:coverage
 ```
 
 ## Maintaining Documentation
