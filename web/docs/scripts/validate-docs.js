@@ -22,7 +22,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const docsRoot = path.join(__dirname, "..");
-const srcRoot = path.join(__dirname, "../../src");
+const webRoot = path.resolve(docsRoot, "..");
+const srcRoot = path.join(webRoot, "src");
 
 let errors = 0;
 let warnings = 0;
@@ -140,18 +141,35 @@ function validateMarkdownFile(filePath) {
   }
 
   // Check code references
-  const codeRefRegex = /`([^`]+\.(ts|tsx|js|jsx))(?::(\d+))?`/g;
+  const codeRefRegex = /`([^`]+\.(ts|tsx|js|jsx|cjs|mjs))(?::(\d+))?`/g;
 
   while ((match = codeRefRegex.exec(content)) !== null) {
     const filePart = match[1];
 
-    // Skip if it's just a filename example
-    if (filePart.includes("[") || filePart.includes("/path/")) {
+    // Skip if it's just a filename example, template placeholder, or simple filename mention
+    if (
+      filePart.includes("[") ||
+      filePart.includes("/path/") ||
+      filePart.startsWith("*.") ||
+      !filePart.includes("/") // Skip simple filenames like "index.ts" - they're contextual mentions, not code refs
+    ) {
       continue;
     }
 
-    // Check if file exists
-    const codePath = path.join(srcRoot, filePart);
+    // Determine the correct base path
+    let codePath;
+    if (filePart.startsWith("src/")) {
+      // Path like "src/services/config/index.ts" - resolve from webRoot
+      codePath = path.join(webRoot, filePart);
+    } else if (filePart.includes("/")) {
+      // Path with directory like "services/config/index.ts" - try srcRoot first, then webRoot
+      const srcPath = path.join(srcRoot, filePart);
+      const webPath = path.join(webRoot, filePart);
+      codePath = fs.existsSync(srcPath) ? srcPath : webPath;
+    } else {
+      // Simple filename - resolve from webRoot
+      codePath = path.join(webRoot, filePart);
+    }
 
     if (!fs.existsSync(codePath)) {
       console.log(`  ⚠️  Code reference may be invalid: ${filePart}`);
