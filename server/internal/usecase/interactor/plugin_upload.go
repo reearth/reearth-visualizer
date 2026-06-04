@@ -29,7 +29,7 @@ var pluginPackageSizeLimit int64 = 10 * 1024 * 1024 // 10MB
 // the full request lifecycle.
 // See: https://github.com/eukarya-inc/compliance/issues/7
 var remotePluginClient = &http.Client{
-	Timeout: 60 * time.Second,
+	Timeout: 30 * time.Second,
 	Transport: &http.Transport{
 		Proxy:                 http.ProxyFromEnvironment,
 		DialContext:           (&net.Dialer{Timeout: 5 * time.Second, KeepAlive: 30 * time.Second}).DialContext,
