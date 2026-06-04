@@ -5,7 +5,7 @@ last_updated: "2026-06-04"
 
 # Re:Earth Visualizer Web - Documentation
 
-Welcome to the comprehensive documentation for Re:Earth Visualizer Web, a cutting-edge GIS application built with React 18, TypeScript, and Cesium for 3D geospatial visualization.
+Welcome to the comprehensive documentation for Re:Earth Visualizer Web, a cutting-edge GIS application built with React 19, TypeScript, and Cesium for 3D geospatial visualization.
 
 ## Quick Links
 
