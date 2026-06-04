@@ -1,6 +1,6 @@
 {
   "name": "@reearth/visualizer",
-  "version": "1.0.0-beta.16.6",
+  "version": "1.0.0-beta.16.8",
   "repository": "https://github.com/reearth/reearth-visualizer.git",
   "author": "Re:Earth contributors <community@reearth.io>",
   "license": "Apache-2.0",
@@ -26,7 +26,10 @@
     "gql:plateau": "graphql-codegen --config ./src/services/plateau/graphql/codegen_catelog.ts",
     "i18n": "i18next",
     "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc",
-    "scan:lock": "sh ./bin/scan-yarn-lock.sh"
+    "scan:lock": "sh ./bin/scan-yarn-lock.sh",
+    "docs:generate": "node docs/scripts/generate-module-docs.js",
+    "docs:validate": "node docs/scripts/validate-docs.js",
+    "docs:update-index": "node docs/scripts/update-index.js"
   },
   "engines": {
     "node": ">=20.11.0"
@@ -128,7 +131,7 @@
     "@popperjs/core": "2.11.8",
     "@radix-ui/react-select": "2.2.6",
     "@radix-ui/react-slot": "1.2.4",
-    "@reearth/core": "0.0.7-alpha.65",
+    "@reearth/core": "0.0.7-alpha.68",
     "@reearth/sentinel": "0.1.0",
     "@rot1024/use-transition": "1.0.0",
     "@sentry/browser": "7.77.0",
