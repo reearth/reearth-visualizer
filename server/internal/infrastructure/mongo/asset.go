@@ -199,6 +199,7 @@ func (r *Asset) RemoveByProjectWithFile(ctx context.Context, pid id.ProjectID, f
 			g.Go(func() error {
 				u, perr := url.Parse(a.URL())
 				if perr != nil || u == nil {
+					log.Warnfc(gctx, "asset: skipping gcs delete for %s — invalid url %q: %v", a.ID(), a.URL(), perr)
 					return nil
 				}
 				if err := f.RemoveAsset(gctx, u); err != nil {
