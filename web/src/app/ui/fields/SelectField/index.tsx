@@ -11,12 +11,18 @@ export type SelectorFieldProps = CommonFieldProps & SelectorProps & {
 const SelectorField: FC<SelectorFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   ...props
 }) => {
   return (
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="selectorfield-commonfield"
     >
       <Selector {...props} dataTestid={props["data-testid"]} />

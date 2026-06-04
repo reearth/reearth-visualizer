@@ -45,16 +45,37 @@ vitest.mock("@reearth/app/ui/fields/CommonField", () => ({
   default: ({
     children,
     title,
-    description
+    description,
+    titleAdornment,
+    beforeInput,
+    afterInput
   }: {
     children?: React.ReactNode;
     title?: string;
     description?: string;
+    titleAdornment?: React.ReactNode;
+    beforeInput?: React.ReactNode;
+    afterInput?: React.ReactNode;
   }) => (
-    <div data-testid="common-field">
-      {title && <div data-testid="field-title">{title}</div>}
-      {description && <div data-testid="field-description">{description}</div>}
+    <div data-testid="commonfield-wrapper">
+      {title && (
+        <div data-testid="commonfield-title-row">
+          <div data-testid="commonfield-title">{title}</div>
+          {titleAdornment && (
+            <div data-testid="commonfield-title-adornment">{titleAdornment}</div>
+          )}
+        </div>
+      )}
+      {beforeInput && (
+        <div data-testid="commonfield-before-input">{beforeInput}</div>
+      )}
       {children}
+      {afterInput && (
+        <div data-testid="commonfield-after-input">{afterInput}</div>
+      )}
+      {description && (
+        <div data-testid="commonfield-description">{description}</div>
+      )}
     </div>
   )
 }));

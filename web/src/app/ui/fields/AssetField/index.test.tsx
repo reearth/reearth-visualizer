@@ -93,7 +93,7 @@ describe("AssetField", () => {
 
   it("renders AssetField without any props", () => {
     render(<AssetField />);
-    expect(screen.getByTestId("common-field")).toBeDefined();
+    expect(screen.getByTestId("commonfield-wrapper")).toBeDefined();
     expect(screen.getByTestId("text-input")).toBeDefined();
     expect(screen.queryByTestId("button-image")).toBeNull();
     expect(screen.queryByTestId("button-uploadSimple")).toBeNull();
@@ -102,11 +102,11 @@ describe("AssetField", () => {
   it("renders with default props", () => {
     render(<AssetField {...defaultProps} />);
 
-    expect(screen.getByTestId("common-field")).toBeDefined();
-    expect(screen.getByTestId("field-title")).toHaveTextContent(
+    expect(screen.getByTestId("commonfield-wrapper")).toBeDefined();
+    expect(screen.getByTestId("commonfield-title")).toHaveTextContent(
       "Asset Field Title"
     );
-    expect(screen.getByTestId("field-description")).toHaveTextContent(
+    expect(screen.getByTestId("commonfield-description")).toHaveTextContent(
       "Asset Field Description"
     );
     expect(screen.getByTestId("text-input")).toBeDefined();

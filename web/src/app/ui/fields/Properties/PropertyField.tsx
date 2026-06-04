@@ -1,9 +1,11 @@
 import { Camera, LatLng } from "@reearth/app/utils/value";
+import { Badge, WarningBanner } from "@reearth/app/ui/components";
+import { CommonFieldProps } from "@reearth/app/ui/fields/CommonField";
 import { FlyTo } from "@reearth/core";
 import type { Field, SchemaField } from "@reearth/services/api/property";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
-import { FC, useMemo } from "react";
+import { FC, ReactNode, useMemo } from "react";
 
 import {
   AssetField,
@@ -95,6 +97,38 @@ const PropertyField: FC<Props> = ({
     return schema.choices.map(({ key, label }) => ({ value: key, label }));
   }, [schema.choices, schema.id, schemaGroup]);
 
+  // Compute decorations based on schema and value context
+  const decorations = useMemo(() => {
+    const result: {
+      titleAdornment?: ReactNode;
+      beforeInput?: ReactNode;
+      afterInput?: ReactNode;
+    } = {};
+
+    // Example: Warning for Cesium Ion tile type requiring access token
+    if (
+      schema.id === "tile_type" &&
+      schemaGroup === "tiles" &&
+      value === "cesium-ion"
+    ) {
+      result.beforeInput = (
+        <WarningBanner data-testid="cesium-ion-warning">
+          Cesium Ion access token is required for this tile type
+        </WarningBanner>
+      );
+    }
+
+    // Example: Badge for experimental features
+    // Uncomment when needed:
+    // if (schema.id === "experimental_feature") {
+    //   result.titleAdornment = (
+    //     <Badge variant="warning">Experimental</Badge>
+    //   );
+    // }
+
+    return result;
+  }, [schema.id, schemaGroup, value]);
+
   const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
   return (
     <>
@@ -106,6 +140,7 @@ const PropertyField: FC<Props> = ({
             value={(value as string) ?? ""}
             description={schema.description}
             onChange={handleChange}
+            {...decorations}
           />
         ) : schema.ui === "color" ? (
           <ColorField
@@ -114,6 +149,7 @@ const PropertyField: FC<Props> = ({
             value={(value as string) ?? ""}
             description={schema.description}
             onChange={handleChange}
+            {...decorations}
           />
         ) : schema.ui === "selection" || schema.choices ? (
           <SelectField
@@ -124,6 +160,7 @@ const PropertyField: FC<Props> = ({
             placeholder={schema.placeholder}
             options={filteredOptions}
             onChange={handleChange}
+            {...decorations}
           />
         ) : schema.ui === "buttons" ? (
           <p key={schema.id}>Button radio field</p>
@@ -136,6 +173,7 @@ const PropertyField: FC<Props> = ({
             description={schema.description}
             placeholder={schema.placeholder}
             onChangeComplete={handleChange}
+            {...decorations}
           />
         ) : (
           <InputField
@@ -145,6 +183,7 @@ const PropertyField: FC<Props> = ({
             description={schema.description}
             placeholder={schema.placeholder}
             onChangeComplete={handleChange}
+            {...decorations}
           />
         )
       ) : schema.type === "url" ? (
@@ -159,6 +198,7 @@ const PropertyField: FC<Props> = ({
           description={schema.description}
           placeholder={schema.placeholder}
           onChange={handleChange}
+          {...decorations}
         />
       ) : schema.type === "spacing" ? (
         <SpacingField
@@ -169,6 +209,7 @@ const PropertyField: FC<Props> = ({
           min={schema.min}
           max={schema.max}
           onBlur={handleChange}
+          {...decorations}
         />
       ) : schema.type === "bool" ? (
         <SwitchField
@@ -177,6 +218,7 @@ const PropertyField: FC<Props> = ({
           value={!!value}
           description={schema.description}
           onChange={handleChange}
+          {...decorations}
         />
       ) : schema.type === "number" ? (
         schema.ui === "slider" ? (
@@ -188,6 +230,7 @@ const PropertyField: FC<Props> = ({
             max={schema.max}
             description={schema.description}
             onChangeComplete={handleChange}
+            {...decorations}
           />
         ) : (
           <NumberField
@@ -200,6 +243,7 @@ const PropertyField: FC<Props> = ({
             placeholder={schema.placeholder}
             description={schema.description}
             onChangeComplete={handleChange}
+            {...decorations}
           />
         )
       ) : schema.type === "latlng" ? (
@@ -209,6 +253,7 @@ const PropertyField: FC<Props> = ({
           values={[(value as LatLng)?.lat, (value as LatLng)?.lng]}
           description={schema.description}
           onBlur={handleChange}
+          {...decorations}
         />
       ) : schema.type === "camera" ? (
         <CameraField
@@ -218,6 +263,7 @@ const PropertyField: FC<Props> = ({
           description={schema.description}
           onSave={handleChange}
           onFlyTo={onFlyTo}
+          {...decorations}
         />
       ) : schema.type === "array" && schema.ui === "zoomLevel" ? (
         <ZoomLevelField
@@ -228,6 +274,7 @@ const PropertyField: FC<Props> = ({
           max={schema.max}
           description={schema.description}
           onChange={handleChange}
+          {...decorations}
         />
       ) : schema.type === "array" && schema.ui === "range" ? (
         <RangeField
@@ -240,6 +287,7 @@ const PropertyField: FC<Props> = ({
           content={[t("min"), t("max")]}
           description={schema.description}
           onBlur={handleChange}
+          {...decorations}
         />
       ) : schema.type === "timeline" ? (
         <TimePeriodField
@@ -248,6 +296,7 @@ const PropertyField: FC<Props> = ({
           value={value as TimePeriodFieldProp}
           description={schema.description}
           onChange={handleChange}
+          {...decorations}
         />
       ) : (
         <p key={schema.id}>{schema.title} field</p>

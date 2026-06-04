@@ -404,6 +404,101 @@ describe("PropertyItem", () => {
     expect(screen.getByText("Choose an option")).toBeInTheDocument();
   });
 
+  describe("Field Decorations", () => {
+    test("shows warning for cesium-ion tile type", () => {
+      const mockItem = {
+        id: "1",
+        schemaGroup: "tiles",
+        schemaFields: [
+          {
+            id: "tile_type",
+            type: "string",
+            title: "Tile Type",
+            choices: [
+              { key: "default", label: "Default" },
+              { key: "cesium-ion", label: "Cesium Ion" }
+            ]
+          }
+        ],
+        fields: [
+          {
+            id: "tile_type",
+            type: "string",
+            value: "cesium-ion"
+          }
+        ],
+        representativeField: "tile_type"
+      } as unknown as Item;
+
+      render(<PropertyItem propertyId="testId" item={mockItem} />);
+
+      expect(screen.getByTestId("cesium-ion-warning")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Cesium Ion access token is required/i)
+      ).toBeInTheDocument();
+    });
+
+    test("does not show warning for non-cesium-ion tile types", () => {
+      const mockItem = {
+        id: "1",
+        schemaGroup: "tiles",
+        schemaFields: [
+          {
+            id: "tile_type",
+            type: "string",
+            title: "Tile Type",
+            choices: [
+              { key: "default", label: "Default" },
+              { key: "cesium-ion", label: "Cesium Ion" }
+            ]
+          }
+        ],
+        fields: [
+          {
+            id: "tile_type",
+            type: "string",
+            value: "default"
+          }
+        ],
+        representativeField: "tile_type"
+      } as unknown as Item;
+
+      render(<PropertyItem propertyId="testId" item={mockItem} />);
+
+      expect(screen.queryByTestId("cesium-ion-warning")).not.toBeInTheDocument();
+    });
+
+    test("does not show warning for cesium-ion in non-tiles group", () => {
+      const mockItem = {
+        id: "1",
+        schemaGroup: "appearance",
+        schemaFields: [
+          {
+            id: "tile_type",
+            type: "string",
+            title: "Tile Type",
+            choices: [
+              { key: "default", label: "Default" },
+              { key: "cesium-ion", label: "Cesium Ion" }
+            ]
+          }
+        ],
+        fields: [
+          {
+            id: "tile_type",
+            type: "string",
+            value: "cesium-ion"
+          }
+        ],
+        representativeField: "tile_type"
+      } as unknown as Item;
+
+      render(<PropertyItem propertyId="testId" item={mockItem} />);
+
+      expect(screen.queryByTestId("cesium-ion-warning")).not.toBeInTheDocument();
+    });
+  });
+
   test("renders multiline field with placeholder", () => {
     const mockItem = {
       id: "1",
