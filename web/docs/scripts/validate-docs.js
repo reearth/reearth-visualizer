@@ -116,7 +116,12 @@ function validateMarkdownFile(filePath) {
   let match;
 
   while ((match = linkRegex.exec(content)) !== null) {
-    const linkPath = match[2];
+    let linkPath = match[2];
+
+    // Remove angle brackets if present (markdown allows <url> format)
+    if (linkPath.startsWith("<") && linkPath.endsWith(">")) {
+      linkPath = linkPath.slice(1, -1);
+    }
 
     // Skip external links
     if (linkPath.startsWith("http://") || linkPath.startsWith("https://")) {
@@ -130,6 +135,11 @@ function validateMarkdownFile(filePath) {
 
     // Remove anchor from path
     const pathWithoutAnchor = linkPath.split("#")[0];
+
+    // Skip if no path (only anchor)
+    if (!pathWithoutAnchor) {
+      continue;
+    }
 
     // Resolve relative path
     const absolutePath = path.resolve(path.dirname(filePath), pathWithoutAnchor);

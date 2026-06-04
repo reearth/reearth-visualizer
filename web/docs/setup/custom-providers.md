@@ -665,4 +665,4 @@ Custom providers works alongside other configuration features:
 
 - [Environment Variables Setup](../README.md#environment-configuration)
 - [1Password CLI Integration](1password-setup.md)
-- [Configuration System](../CLAUDE.md#configuration-system)
+- [Configuration System](../modules/services/config.md)
