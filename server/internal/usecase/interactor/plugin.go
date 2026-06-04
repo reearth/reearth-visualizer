@@ -102,6 +102,9 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 	seenIDs := make(map[id.PropertySchemaID]bool)
 	var schemaIDs []id.PropertySchemaID
 	for _, p := range plugins {
+		if p == nil {
+			continue
+		}
 		for _, ext := range p.Extensions() {
 			sid := ext.Schema()
 			if !seenIDs[sid] {
@@ -124,6 +127,9 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 
 	schemas := make([]*property.Schema, 0)
 	for _, p := range plugins {
+		if p == nil {
+			continue
+		}
 		for _, extension := range p.Extensions() {
 			extensionFileName := fmt.Sprintf("%s.js", extension.ID().String())
 
