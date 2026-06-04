@@ -114,7 +114,7 @@ When analyzing this codebase:
 
 ## Key Technologies
 
-- **Frontend**: React 18 + TypeScript + Vite
+- **Frontend**: React 19 + TypeScript + Vite
 - **3D Engine**: Cesium (3D globes and maps)
 - **State Management**: Jotai
 - **GraphQL**: Apollo Client with code generation
