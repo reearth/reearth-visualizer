@@ -59,6 +59,19 @@ function extractFrontmatter(content) {
     // Reset array tracking
     currentArray = null;
 
+    // Parse JSON-like arrays/objects (e.g. tags: ["a", "b"], tags: [])
+    if (
+      (value.startsWith("[") && value.endsWith("]")) ||
+      (value.startsWith("{") && value.endsWith("}"))
+    ) {
+      try {
+        frontmatter[key] = JSON.parse(value);
+        continue;
+      } catch {
+        // fall through to string handling
+      }
+    }
+
     // Remove quotes if present
     if (value.startsWith('"') && value.endsWith('"')) {
       value = value.slice(1, -1);
