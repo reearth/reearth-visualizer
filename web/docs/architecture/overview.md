@@ -17,7 +17,7 @@ High-level overview of Re:Earth Visualizer Web architecture, design principles, 
 
 Re:Earth Visualizer Web is a modern single-page application (SPA) built with:
 
-- **React 18** - UI framework with concurrent features
+- **React 19** - UI framework with concurrent features
 - **TypeScript** - Type-safe JavaScript
 - **Vite** - Fast build tool and dev server
 - **Cesium** - 3D geospatial visualization engine
