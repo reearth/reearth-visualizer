@@ -1,0 +1,129 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-04T02:19:28.637Z",
+  "totalDocs": 10,
+  "categories": {
+    "uncategorized": [
+      "README.md"
+    ],
+    "architecture": [
+      "architecture/overview.md"
+    ],
+    "concept": [
+      "concepts/feature-flags.md"
+    ],
+    "guide": [
+      "guides/getting-started.md"
+    ],
+    "module": [
+      "modules/services/config.md"
+    ],
+    "reference": [
+      "reference/code-conventions.md",
+      "reference/commands.md",
+      "reference/environment-variables.md"
+    ],
+    "setup": [
+      "setup/1password-setup.md",
+      "setup/custom-providers.md"
+    ]
+  },
+  "modules": {
+    "services/config": {
+      "path": "modules/services/config.md",
+      "title": "Configuration System",
+      "tags": [],
+      "related": [
+        "../../concepts/feature-flags.md",
+        "../../setup/custom-providers.md",
+        "../../reference/environment-variables.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    }
+  },
+  "features": {},
+  "concepts": {
+    "feature-flags": {
+      "path": "concepts/feature-flags.md",
+      "title": "Feature Flags",
+      "tags": [],
+      "related": [
+        "../modules/services/config.md",
+        "../setup/custom-providers.md",
+        "../reference/environment-variables.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    }
+  },
+  "guides": {
+    "getting-started": {
+      "path": "guides/getting-started.md",
+      "title": "Getting Started with Re:Earth Visualizer Web",
+      "tags": [],
+      "related": [
+        "../reference/commands.md",
+        "../reference/environment-variables.md",
+        "../setup/1password-setup.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    }
+  },
+  "setup": {
+    "1password-setup": {
+      "path": "setup/1password-setup.md",
+      "title": "1Password CLI Setup Guide",
+      "tags": [],
+      "related": [
+        "../reference/environment-variables.md",
+        "../guides/getting-started.md",
+        "./local-development.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "custom-providers": {
+      "path": "setup/custom-providers.md",
+      "title": "Custom Providers Configuration",
+      "tags": [],
+      "related": [
+        "../modules/services/config.md",
+        "../concepts/3d-rendering.md",
+        "../reference/environment-variables.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    }
+  },
+  "reference": {
+    "code-conventions": {
+      "path": "reference/code-conventions.md",
+      "title": "Code Conventions and Standards",
+      "tags": [],
+      "related": [
+        "../guides/adding-features.md",
+        "./commands.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "commands": {
+      "path": "reference/commands.md",
+      "title": "Development Commands Reference",
+      "tags": [],
+      "related": [
+        "../guides/getting-started.md",
+        "../setup/1password-setup.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "environment-variables": {
+      "path": "reference/environment-variables.md",
+      "title": "Environment Variables Reference",
+      "tags": [],
+      "related": [
+        "../setup/1password-setup.md",
+        "../setup/custom-providers.md",
+        "../modules/services/config.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    }
+  },
+  "tags": {}
+}

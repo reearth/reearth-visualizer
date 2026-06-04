@@ -1,3 +1,14 @@
+---
+title: "Custom Providers Configuration"
+category: "setup"
+tags: ["configuration", "providers", "tiles", "terrain", "cesium"]
+last_updated: "2026-06-04"
+related:
+  - ../modules/services/config.md
+  - ../concepts/3d-rendering.md
+  - ../reference/environment-variables.md
+---
+
 # Custom Providers Configuration
 
 ## Overview
