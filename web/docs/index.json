@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-06-04T02:40:02.887Z",
+  "generated": "2026-06-04T02:43:54.929Z",
   "totalDocs": 10,
   "categories": {
     "uncategorized": [
@@ -32,7 +32,11 @@
     "services/config": {
       "path": "modules/services/config.md",
       "title": "Configuration System",
-      "tags": [],
+      "tags": [
+        "configuration",
+        "feature-flags",
+        "services"
+      ],
       "related": [
         "../../concepts/feature-flags.md",
         "../../setup/custom-providers.md",
@@ -46,7 +50,11 @@
     "feature-flags": {
       "path": "concepts/feature-flags.md",
       "title": "Feature Flags",
-      "tags": [],
+      "tags": [
+        "feature-flags",
+        "configuration",
+        "runtime-config"
+      ],
       "related": [
         "../modules/services/config.md",
         "../setup/custom-providers.md",
@@ -59,7 +67,11 @@
     "getting-started": {
       "path": "guides/getting-started.md",
       "title": "Getting Started with Re:Earth Visualizer Web",
-      "tags": [],
+      "tags": [
+        "setup",
+        "getting-started",
+        "development"
+      ],
       "related": [
         "../reference/commands.md",
         "../reference/environment-variables.md",
@@ -72,7 +84,12 @@
     "1password-setup": {
       "path": "setup/1password-setup.md",
       "title": "1Password CLI Setup Guide",
-      "tags": [],
+      "tags": [
+        "1password",
+        "security",
+        "environment",
+        "secrets"
+      ],
       "related": [
         "../reference/environment-variables.md",
         "../guides/getting-started.md",
@@ -83,7 +100,13 @@
     "custom-providers": {
       "path": "setup/custom-providers.md",
       "title": "Custom Providers Configuration",
-      "tags": [],
+      "tags": [
+        "configuration",
+        "providers",
+        "tiles",
+        "terrain",
+        "cesium"
+      ],
       "related": [
         "../modules/services/config.md",
         "../concepts/3d-rendering.md",
@@ -96,7 +119,11 @@
     "code-conventions": {
       "path": "reference/code-conventions.md",
       "title": "Code Conventions and Standards",
-      "tags": [],
+      "tags": [
+        "coding-standards",
+        "style-guide",
+        "best-practices"
+      ],
       "related": [
         "../guides/adding-features.md",
         "./commands.md"
@@ -106,7 +133,11 @@
     "commands": {
       "path": "reference/commands.md",
       "title": "Development Commands Reference",
-      "tags": [],
+      "tags": [
+        "cli",
+        "commands",
+        "development"
+      ],
       "related": [
         "../guides/getting-started.md",
         "../setup/1password-setup.md"
@@ -116,7 +147,11 @@
     "environment-variables": {
       "path": "reference/environment-variables.md",
       "title": "Environment Variables Reference",
-      "tags": [],
+      "tags": [
+        "configuration",
+        "environment",
+        "setup"
+      ],
       "related": [
         "../setup/1password-setup.md",
         "../setup/custom-providers.md",
@@ -125,5 +160,82 @@
       "lastUpdated": "2026-06-04"
     }
   },
-  "tags": {}
+  "tags": {
+    "architecture": [
+      "architecture/overview.md"
+    ],
+    "system-design": [
+      "architecture/overview.md"
+    ],
+    "overview": [
+      "architecture/overview.md"
+    ],
+    "feature-flags": [
+      "concepts/feature-flags.md",
+      "modules/services/config.md"
+    ],
+    "configuration": [
+      "concepts/feature-flags.md",
+      "modules/services/config.md",
+      "reference/environment-variables.md",
+      "setup/custom-providers.md"
+    ],
+    "runtime-config": [
+      "concepts/feature-flags.md"
+    ],
+    "setup": [
+      "guides/getting-started.md",
+      "reference/environment-variables.md"
+    ],
+    "getting-started": [
+      "guides/getting-started.md"
+    ],
+    "development": [
+      "guides/getting-started.md",
+      "reference/commands.md"
+    ],
+    "services": [
+      "modules/services/config.md"
+    ],
+    "coding-standards": [
+      "reference/code-conventions.md"
+    ],
+    "style-guide": [
+      "reference/code-conventions.md"
+    ],
+    "best-practices": [
+      "reference/code-conventions.md"
+    ],
+    "cli": [
+      "reference/commands.md"
+    ],
+    "commands": [
+      "reference/commands.md"
+    ],
+    "environment": [
+      "reference/environment-variables.md",
+      "setup/1password-setup.md"
+    ],
+    "1password": [
+      "setup/1password-setup.md"
+    ],
+    "security": [
+      "setup/1password-setup.md"
+    ],
+    "secrets": [
+      "setup/1password-setup.md"
+    ],
+    "providers": [
+      "setup/custom-providers.md"
+    ],
+    "tiles": [
+      "setup/custom-providers.md"
+    ],
+    "terrain": [
+      "setup/custom-providers.md"
+    ],
+    "cesium": [
+      "setup/custom-providers.md"
+    ]
+  }
 }
