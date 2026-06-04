@@ -248,7 +248,7 @@ For code-related help:
 
 - **[Re:Earth Project](https://github.com/reearth/reearth-visualizer)** - Main repository
 - **[Cesium Documentation](https://cesium.com/docs/)** - 3D engine docs
-- **[React Documentation](https://react.dev/)** - React 18 docs
+- **[React Documentation](https://react.dev/)** - React docs
 - **[Jotai Documentation](https://jotai.org/)** - State management docs
 - **[Vite Documentation](https://vitejs.dev/)** - Build tool docs
 
