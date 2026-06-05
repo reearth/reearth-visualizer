@@ -167,7 +167,8 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 		go func(session *SplitUploadSession) {
 
 			pid := session.Project.ID()
-			bgctx := context.Background()
+			bgctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+			defer cancel()
 
 			assembledPath := filepath.Join(m.tempDir, session.FileID)
 			defer safeRemove(assembledPath)

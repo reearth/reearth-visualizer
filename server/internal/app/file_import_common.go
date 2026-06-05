@@ -392,7 +392,7 @@ func ImportProject(
 	// style ----------
 	styles, err := usecases.Style.ImportStyles(ctx, newScene.ID(), importData)
 	if err != nil {
-		errMsg := fmt.Sprintf("Error] fail sceneJSON ImportStyles: %v", err)
+		errMsg := fmt.Sprintf("fail sceneJSON ImportStyles: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
