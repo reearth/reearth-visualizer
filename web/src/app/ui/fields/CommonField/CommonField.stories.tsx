@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { TextInput, Selector } from "@reearth/app/lib/reearth-ui";
+import { TextInput, Selector, Banner } from "@reearth/app/lib/reearth-ui";
 import { Badge } from "@reearth/app/ui/components";
-import WarningBanner from "@reearth/app/ui/components/WarningBanner";
 
 import CommonField from "./index";
 
@@ -35,13 +34,13 @@ export const WithTitleAdornment: Story = {
   }
 };
 
-export const WithWarning: Story = {
+export const WithWarningBanner: Story = {
   args: {
     title: "Tile Type",
     beforeInput: (
-      <WarningBanner>
+      <Banner variant="warning">
         Cesium Ion access token is required for this tile type
-      </WarningBanner>
+      </Banner>
     ),
     description: "Select the map tile provider",
     children: (
@@ -75,9 +74,9 @@ export const AllDecorations: Story = {
     title: "Advanced Setting",
     titleAdornment: <Badge variant="info">Beta</Badge>,
     beforeInput: (
-      <WarningBanner>
+      <Banner variant="warning">
         Changing this setting may affect performance
-      </WarningBanner>
+      </Banner>
     ),
     afterInput: (
       <div style={{ fontSize: "12px", color: "#888", marginTop: "4px" }}>
@@ -103,34 +102,40 @@ export const MultipleBadges: Story = {
   }
 };
 
-export const ErrorState: Story = {
+export const WithInfoBanner: Story = {
+  args: {
+    title: "Data Source",
+    beforeInput: (
+      <Banner variant="info">
+        This field accepts URLs from trusted data sources only
+      </Banner>
+    ),
+    description: "Enter the data source URL",
+    children: <TextInput placeholder="https://example.com/data" />
+  }
+};
+
+export const WithErrorBanner: Story = {
   args: {
     title: "Configuration",
     beforeInput: (
-      <div style={{
-        padding: "12px",
-        backgroundColor: "#fee",
-        border: "1px solid #fcc",
-        borderRadius: "4px",
-        color: "#c33",
-        fontSize: "14px"
-      }}>
-        ⚠️ Invalid configuration detected
-      </div>
+      <Banner variant="error">
+        Invalid configuration detected. Please check your settings.
+      </Banner>
     ),
     description: "Fix the errors below to continue",
     children: <TextInput placeholder="Enter value..." />
   }
 };
 
-export const SuccessState: Story = {
+export const WithSuccessBanner: Story = {
   args: {
     title: "Verified Email",
     titleAdornment: <Badge variant="success">Verified</Badge>,
     afterInput: (
-      <div style={{ fontSize: "12px", color: "#0a0", marginTop: "4px" }}>
-        ✓ Email address has been verified
-      </div>
+      <Banner variant="success">
+        Email address has been successfully verified
+      </Banner>
     ),
     children: <TextInput value="user@example.com" disabled />
   }

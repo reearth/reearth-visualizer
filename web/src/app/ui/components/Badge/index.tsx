@@ -26,10 +26,9 @@ const Badge: FC<BadgeProps> = ({ children, variant = "info", ...props }) => {
       text: theme.warning.main
     },
     success: {
-      // Map success to secondary theme colors (green in most themes)
-      bg: theme.secondary.weak,
-      border: theme.secondary.weak,
-      text: theme.secondary.main
+      bg: theme.success.weakest,
+      border: theme.success.weak,
+      text: theme.success.main
     },
     error: {
       // dangerous doesn't have weakest, use weak with reduced opacity effect
