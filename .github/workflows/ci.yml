@@ -31,7 +31,6 @@ jobs:
             .github/workflows/ci_web.yml
             .github/workflows/build_web.yml
             .github/workflows/deploy_web_nightly.yml
-            CHANGELOG.md
 
       - name: changed files for server
         id: server
@@ -42,7 +41,6 @@ jobs:
             .github/workflows/ci_server.yml
             .github/workflows/build_server.yml
             .github/workflows/deploy_server_nightly.yml
-            CHANGELOG.md
 
       - name: changed files for e2e
         id: e2e
