@@ -80,7 +80,7 @@ const Wrapper = styled("div")<{
   display: css.display.flex,
   flexDirection: css.flexDirection.row,
   alignItems: css.alignItems.center,
-  gap: theme.spacing.smallest,
+  gap: theme.spacing.small,
   padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
   backgroundColor: $backgroundColor,
   borderRadius: theme.radius.small,

@@ -39,7 +39,7 @@ export const WithWarningBanner: Story = {
     title: "Tile Type",
     beforeInput: (
       <Banner variant="warning">
-        Cesium Ion access token is required for this tile type
+        Cesium Ion token not set, fallback will be used.
       </Banner>
     ),
     description: "Select the map tile provider",
@@ -47,10 +47,10 @@ export const WithWarningBanner: Story = {
       <Selector
         options={[
           { label: "Default", value: "default" },
-          { label: "Cesium Ion", value: "cesium-ion" },
+          { label: "Cesium Ion", value: "cesium_ion" },
           { label: "OpenStreetMap", value: "osm" }
         ]}
-        value="cesium-ion"
+        value="cesium_ion"
       />
     )
   }

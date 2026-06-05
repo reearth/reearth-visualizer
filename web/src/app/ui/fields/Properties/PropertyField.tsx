@@ -1,6 +1,4 @@
 import { Camera, LatLng } from "@reearth/app/utils/value";
-import { Badge, WarningBanner } from "@reearth/app/ui/components";
-import { CommonFieldProps } from "@reearth/app/ui/fields/CommonField";
 import { FlyTo } from "@reearth/core";
 import type { Field, SchemaField } from "@reearth/services/api/property";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
@@ -29,6 +27,12 @@ import ZoomLevelField from "../ZoomLevelField";
 
 import useHooks from "./hooks";
 
+export type PropertyFieldDecorations = {
+  titleAdornment?: ReactNode;
+  beforeInput?: ReactNode;
+  afterInput?: ReactNode;
+};
+
 type Props = {
   propertyId: string;
   itemId?: string;
@@ -36,6 +40,7 @@ type Props = {
   schema: SchemaField;
   field?: Field;
   onFlyTo?: FlyTo;
+  decorations?: PropertyFieldDecorations; // Optional external decorations (business logic)
 };
 
 const PropertyField: FC<Props> = ({
@@ -44,7 +49,8 @@ const PropertyField: FC<Props> = ({
   field,
   schemaGroup,
   schema,
-  onFlyTo
+  onFlyTo,
+  decorations: externalDecorations
 }) => {
   const t = useT();
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
@@ -97,37 +103,9 @@ const PropertyField: FC<Props> = ({
     return schema.choices.map(({ key, label }) => ({ value: key, label }));
   }, [schema.choices, schema.id, schemaGroup]);
 
-  // Compute decorations based on schema and value context
-  const decorations = useMemo(() => {
-    const result: {
-      titleAdornment?: ReactNode;
-      beforeInput?: ReactNode;
-      afterInput?: ReactNode;
-    } = {};
-
-    // Example: Warning for Cesium Ion tile type requiring access token
-    if (
-      schema.id === "tile_type" &&
-      schemaGroup === "tiles" &&
-      value === "cesium-ion"
-    ) {
-      result.beforeInput = (
-        <WarningBanner data-testid="cesium-ion-warning">
-          Cesium Ion access token is required for this tile type
-        </WarningBanner>
-      );
-    }
-
-    // Example: Badge for experimental features
-    // Uncomment when needed:
-    // if (schema.id === "experimental_feature") {
-    //   result.titleAdornment = (
-    //     <Badge variant="warning">Experimental</Badge>
-    //   );
-    // }
-
-    return result;
-  }, [schema.id, schemaGroup, value]);
+  // Use external decorations if provided (business logic from parent)
+  // Otherwise use empty decorations (generic UI component has no business rules)
+  const decorations = externalDecorations ?? {};
 
   const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
   return (

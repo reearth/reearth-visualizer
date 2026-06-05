@@ -1,8 +1,10 @@
+import { CesiumIonAssetFallbackWarning } from "@reearth/app/features/Editor/common";
 import type { Item } from "@reearth/services/api/property";
 import { render, screen } from "@reearth/test/utils";
 import { describe, expect, test, vi, beforeEach } from "vitest";
 
 import PropertyItem from "./index";
+import { PropertyFieldDecorations } from "./PropertyField";
 
 vi.mock("./hooks", () => ({
   default: () => ({
@@ -405,7 +407,22 @@ describe("PropertyItem", () => {
   });
 
   describe("Field Decorations", () => {
-    test("shows warning for cesium-ion tile type", () => {
+    test("shows warning for cesium_ion tile type when decoration is provided by computeDecorations", () => {
+      const mockComputeDecorations = vi.fn(
+        (schemaId: string, schemaGroup: string, value: unknown): PropertyFieldDecorations => {
+          if (
+            schemaId === "tile_type" &&
+            schemaGroup === "tiles" &&
+            value === "cesium_ion"
+          ) {
+            return {
+              afterInput: <CesiumIonAssetFallbackWarning />
+            };
+          }
+          return {};
+        }
+      );
+
       const mockItem = {
         id: "1",
         schemaGroup: "tiles",
@@ -416,7 +433,7 @@ describe("PropertyItem", () => {
             title: "Tile Type",
             choices: [
               { key: "default", label: "Default" },
-              { key: "cesium-ion", label: "Cesium Ion" }
+              { key: "cesium_ion", label: "Cesium Ion" }
             ]
           }
         ],
@@ -424,21 +441,80 @@ describe("PropertyItem", () => {
           {
             id: "tile_type",
             type: "string",
-            value: "cesium-ion"
+            value: "cesium_ion"
           }
         ],
         representativeField: "tile_type"
       } as unknown as Item;
 
-      render(<PropertyItem propertyId="testId" item={mockItem} />);
+      render(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
 
       expect(screen.getByTestId("cesium-ion-warning")).toBeInTheDocument();
       expect(
-        screen.getByText(/Cesium Ion access token is required/i)
+        screen.getByText("Cesium Ion token not set, fallback will be used.")
       ).toBeInTheDocument();
     });
 
-    test("does not show warning for non-cesium-ion tile types", () => {
+    test("shows warning for cesium terrain type when decoration is provided by computeDecorations", () => {
+      const mockComputeDecorations = vi.fn(
+        (schemaId: string, schemaGroup: string, value: unknown): PropertyFieldDecorations => {
+          if (schemaId === "type" && schemaGroup === "terrain" && value === "cesium") {
+            return {
+              afterInput: <CesiumIonAssetFallbackWarning />
+            };
+          }
+          return {};
+        }
+      );
+
+      const mockItem = {
+        id: "1",
+        schemaGroup: "terrain",
+        schemaFields: [
+          {
+            id: "type",
+            type: "string",
+            title: "Terrain Type",
+            choices: [
+              { key: "none", label: "None" },
+              { key: "cesium", label: "Cesium World Terrain" },
+              { key: "reearth_terrain", label: "Re:Earth Terrain" }
+            ]
+          }
+        ],
+        fields: [
+          {
+            id: "type",
+            type: "string",
+            value: "cesium"
+          }
+        ],
+        representativeField: "type"
+      } as unknown as Item;
+
+      render(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
+
+      expect(screen.getByTestId("cesium-ion-warning")).toBeInTheDocument();
+      expect(
+        screen.getByText("Cesium Ion token not set, fallback will be used.")
+      ).toBeInTheDocument();
+    });
+
+    test("does not show warning when computeDecorations returns empty decorations", () => {
+      const mockComputeDecorations = vi.fn(() => ({}));
+
       const mockItem = {
         id: "1",
         schemaGroup: "tiles",
@@ -449,7 +525,7 @@ describe("PropertyItem", () => {
             title: "Tile Type",
             choices: [
               { key: "default", label: "Default" },
-              { key: "cesium-ion", label: "Cesium Ion" }
+              { key: "cesium_ion", label: "Cesium Ion" }
             ]
           }
         ],
@@ -457,21 +533,27 @@ describe("PropertyItem", () => {
           {
             id: "tile_type",
             type: "string",
-            value: "default"
+            value: "cesium_ion"
           }
         ],
         representativeField: "tile_type"
       } as unknown as Item;
 
-      render(<PropertyItem propertyId="testId" item={mockItem} />);
+      render(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
 
       expect(screen.queryByTestId("cesium-ion-warning")).not.toBeInTheDocument();
     });
 
-    test("does not show warning for cesium-ion in non-tiles group", () => {
+    test("works without computeDecorations (generic usage)", () => {
       const mockItem = {
         id: "1",
-        schemaGroup: "appearance",
+        schemaGroup: "tiles",
         schemaFields: [
           {
             id: "tile_type",
@@ -479,7 +561,7 @@ describe("PropertyItem", () => {
             title: "Tile Type",
             choices: [
               { key: "default", label: "Default" },
-              { key: "cesium-ion", label: "Cesium Ion" }
+              { key: "cesium_ion", label: "Cesium Ion" }
             ]
           }
         ],
@@ -487,14 +569,16 @@ describe("PropertyItem", () => {
           {
             id: "tile_type",
             type: "string",
-            value: "cesium-ion"
+            value: "cesium_ion"
           }
         ],
         representativeField: "tile_type"
       } as unknown as Item;
 
+      // Render without computeDecorations - should work fine (no decorations)
       render(<PropertyItem propertyId="testId" item={mockItem} />);
 
+      expect(screen.getByText("Tile Type")).toBeInTheDocument();
       expect(screen.queryByTestId("cesium-ion-warning")).not.toBeInTheDocument();
     });
   });

@@ -4,6 +4,7 @@ import { FC, useMemo } from "react";
 
 import { useMapPage } from "../context";
 
+import { usePropertyDecorations } from "./hooks";
 import LayerInspector from "./LayerInspector";
 import SceneSettings from "./SceneSettings";
 
@@ -33,6 +34,9 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     [scene?.property?.id]
   );
 
+  // Compute property field decorations with business logic
+  const computeDecorations = usePropertyDecorations();
+
   return (
     <Panel
       title={t("Inspector")}
@@ -49,6 +53,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
           propertyId={scenePropertyId}
           propertyItems={sceneSettings}
           onFlyTo={handleFlyTo}
+          computeDecorations={computeDecorations}
         />
       )}
       {selectedLayer && (

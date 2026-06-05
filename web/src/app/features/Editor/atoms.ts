@@ -20,11 +20,18 @@ export const useWidgetsViewDevice = () => useAtom(widgetsViewDevice);
 const publishViewDevice = atomWithReset<DeviceType>("desktop");
 export const usePublishViewDevice = () => useAtom(publishViewDevice);
 
+// Cesium Ion Access Token
+// Extracted from scene property (Main settings -> default group -> ion field)
+// Used by PropertyField and other components that need to check token availability
+const cesiumIonAccessToken = atomWithReset<string | undefined>(undefined);
+export const useCesiumIonAccessToken = () => useAtom(cesiumIonAccessToken);
+
 // Reset all
 export const useResetAllAtoms = () => {
   const resetCurrentCamera = useResetAtom(currentCamera);
   const resetWidgetsViewDevice = useResetAtom(widgetsViewDevice);
   const resetPublishViewDevice = useResetAtom(publishViewDevice);
+  const resetCesiumIonAccessToken = useResetAtom(cesiumIonAccessToken);
 
   const resetPlateauExpendedFolderIds = useResetAtom(expandedPlateauFolderIds);
   const resetPlateauSelectedDatasetId = useResetAtom(selectedPlateauDatasetId);
@@ -36,6 +43,7 @@ export const useResetAllAtoms = () => {
     resetCurrentCamera();
     resetWidgetsViewDevice();
     resetPublishViewDevice();
+    resetCesiumIonAccessToken();
     resetPlateauExpendedFolderIds();
     resetPlateauSelectedDatasetId();
     resetPlateauSelectedDatasetItem();
