@@ -1510,6 +1510,17 @@ extensions:
           apiKey:
             title: APIキー
             description: GoogleストリートビューAPIキー
+      tiles:
+        title: タイル
+        description: 手持ちのタイルデータを使用し、地球上に表示することができます。
+        fields:
+          tile_type:
+            title: 種類
+            placeholder: タイルのタイプを選択
+            description: Street View で使用する Google マップタイルを設定します。
+            choices:
+              google_satellite: Google Satellite
+              google_roadmap: Google Road Map
       appearance:
         title: 外観
         fields:

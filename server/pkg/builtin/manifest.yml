@@ -2494,7 +2494,7 @@ extensions:
                 - key: google_satellite
                   label: Google Satellite
                 - key: google_roadmap
-                  label: Google Road Map     
+                  label: Google Road Map
         - id: appearance
           title: Appearance
           fields:
