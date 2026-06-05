@@ -1,3 +1,4 @@
+import { useCesiumIonAccessToken } from "@reearth/app/features/Editor/atoms";
 import {
   Button,
   IconButton,
@@ -48,8 +49,17 @@ const LayerItem: FC<LayerItemProps> = ({
     handleFlyTo
   } = useMapPage();
 
+  const [cesiumIonAccessToken] = useCesiumIonAccessToken();
+
   const [showDeleteLayerConfirmModal, setShowDeleteLayerConfirmModal] =
     useState(false);
+
+  // Check if layer needs Cesium Ion warning
+  const showCesiumIonWarning =
+    !cesiumIonAccessToken &&
+    (layer.config?.data?.type === "osm-buildings" ||
+      (layer.config?.data?.type === "google-photorealistic" &&
+        layer.config?.data?.provider === "cesium-ion"));
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -108,6 +118,19 @@ const LayerItem: FC<LayerItemProps> = ({
       editingLayerNameId !== layer.id
         ? [
             {
+              comp: showCesiumIonWarning && (
+                <WarningIconButton
+                  key="warning"
+                  icon="warningFilled"
+                  size="normal"
+                  appearance="simple"
+                  tooltipText={t("Cesium Ion token not set, fallback will be used.")}
+                  placement="top"
+                />
+              ),
+              keepVisible: true
+            },
+            {
               comp: layer.visible && (
                 <IconButton
                   key="zoom"
@@ -140,6 +163,7 @@ const LayerItem: FC<LayerItemProps> = ({
       editingLayerNameId,
       layer.id,
       layer.visible,
+      showCesiumIonWarning,
       t,
       handleZoomToLayer,
       handleToggleLayerVisibility
@@ -254,4 +278,13 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: css.overflow.hidden,
   textOverflow: css.textOverflow.ellipsis,
   whiteSpace: css.whiteSpace.nowrap
+}));
+
+const WarningIconButton = styled(IconButton)(({ theme }) => ({
+  "& svg": {
+    "& path:first-of-type": {
+      // Triangle - fill with warning color
+      fill: theme.warning.main
+    }
+  }
 }));

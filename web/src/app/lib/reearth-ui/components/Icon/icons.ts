@@ -204,6 +204,7 @@ import UsersFour from "./Icons/UsersFour.svg?react";
 import VideoCamers from "./Icons/Video_Camera.svg?react";
 import VideoFilled from "./Icons/VideoFilled.svg?react";
 import Warning from "./Icons/Warning.svg?react";
+import WarningFilled from "./Icons/WarningFilled.svg?react";
 import ZToA from "./Icons/ZToA.svg?react";
 
 export default {
@@ -411,5 +412,6 @@ export default {
   videoFilled: VideoFilled,
   videoCamera: VideoCamers,
   warning: Warning,
+  warningFilled: WarningFilled,
   zToA: ZToA
 };
