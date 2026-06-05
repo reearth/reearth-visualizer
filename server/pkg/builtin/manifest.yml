@@ -2480,6 +2480,21 @@ extensions:
               type: string
               title: API Key
               description: Google Street View API Key
+        - id: tiles
+          collection: tiles
+          title: Tiles
+          representativeField: tile_type
+          fields:
+            - id: tile_type
+              type: string
+              title: Tile type
+              placeholder: please enter tile type
+              description: Set the Google Maps tile to use in Street View.
+              choices:
+                - key: google_satellite
+                  label: Google Satellite
+                - key: google_roadmap
+                  label: Google Road Map     
         - id: appearance
           title: Appearance
           fields:

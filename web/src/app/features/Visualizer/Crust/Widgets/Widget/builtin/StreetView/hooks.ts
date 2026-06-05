@@ -56,6 +56,7 @@ export default ({ widget, layer, setShowPano }: Props) => {
   );
 
   const apiKey = widget.property?.default?.apiKey;
+  const tileType = widget.property?.tiles?.tile_type;
 
   const [lng, lat] =
     layer.feature?.geometry?.type === "Point"
@@ -88,7 +89,6 @@ export default ({ widget, layer, setShowPano }: Props) => {
     navigating: false,
     navTimeout: null as number | null
   });
-
 
   useEffect(() => {
     if (
@@ -227,7 +227,14 @@ export default ({ widget, layer, setShowPano }: Props) => {
       },
       frustum: { zoom: panoState.zoom }
     });
-  }, [layers, layer.layerId, panoState.location, panoState.headingPitch.heading, panoState.headingPitch.pitch, panoState.zoom]);
+  }, [
+    layers,
+    layer.layerId,
+    panoState.location,
+    panoState.headingPitch.heading,
+    panoState.headingPitch.pitch,
+    panoState.zoom
+  ]);
 
   const handleClosePano = useCallback(() => {
     setShowPano?.(false);
@@ -257,6 +264,7 @@ export default ({ widget, layer, setShowPano }: Props) => {
   return {
     themeClass,
     apiKey,
+    tileType,
     location: panoState.location,
     panoDivRef,
     headingPitch: panoState.headingPitch,

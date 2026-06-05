@@ -4,6 +4,9 @@ export type Property = CommonBuiltInWidgetProperty & {
   default?: {
     apiKey?: string;
   };
+  tiles?: {
+    tile_type?: string;
+  };
 };
 
 export type Location = {

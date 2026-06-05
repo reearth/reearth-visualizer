@@ -20,7 +20,7 @@ const StreetView: FC<Props> = ({ widget }) => {
     handleClearLayer
   } = useEvent();
 
-  const { themeClass, panoDivRef, apiKey, handleClosePano } = useHooks({
+  const { themeClass, panoDivRef, apiKey, tileType, handleClosePano } = useHooks({
     widget,
     layer,
     setShowPano
@@ -45,6 +45,7 @@ const StreetView: FC<Props> = ({ widget }) => {
           isTracking={isTracking}
           ref={panoDivRef}
           apiKey={apiKey}
+          tileType={tileType}
           handleClosePano={() => {
             handleClosePano();
             handleClearLayer();

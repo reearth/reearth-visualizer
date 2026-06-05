@@ -56,6 +56,7 @@ export const convertWidgets = (
       alignSystem: WidgetAlignSystem;
       layoutConstraint: Record<string, WidgetLayoutConstraint> | undefined;
       ownBuiltinWidgets: (keyof BuiltinWidgets)[];
+      widgets?: Scene["widgets"];
     }
   | undefined => {
   const layoutConstraint = scene?.plugins
@@ -175,7 +176,8 @@ export const convertWidgets = (
       inner: widgetZone(scene?.widgetAlignSystem?.[device ?? "desktop"]?.inner)
     },
     layoutConstraint,
-    ownBuiltinWidgets: ownBuiltinWidgets ?? []
+    ownBuiltinWidgets: ownBuiltinWidgets ?? [],
+    widgets: scene?.widgets
   };
 };
 
