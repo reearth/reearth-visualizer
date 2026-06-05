@@ -25,6 +25,7 @@ import { convertNLSLayers } from "./convert-nls-layers";
 import { useGA } from "./googleAnalytics/useGA";
 import type {
   PublishedData,
+  Widget,
   WidgetZone,
   WidgetSection,
   WidgetArea,
@@ -114,6 +115,7 @@ export default (alias?: string) => {
         floating: InternalWidget[];
         alignSystem: WidgetAlignSystem | undefined;
         ownBuiltinWidgets: (keyof BuiltinWidgets)[];
+        widgets?: Widget[];
       }
     | undefined
   >(() => {
@@ -207,7 +209,8 @@ export default (alias?: string) => {
             inner: widgetZone(data.widgetAlignSystems[detectedDevice]?.inner)
           }
         : undefined,
-      ownBuiltinWidgets
+      ownBuiltinWidgets,
+      widgets: data.widgets
     };
   }, [data, detectedDevice]);
 

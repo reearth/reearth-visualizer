@@ -35,6 +35,7 @@ import { InteractionModeType, MapRef } from "./Crust/types";
 import {
   Alignment,
   Widget,
+  InternalWidget,
   WidgetAlignSystem,
   WidgetLayoutConstraint
 } from "./Crust/Widgets";
@@ -42,7 +43,6 @@ import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
 import useViewport from "./hooks/useViewport";
 import { migrateLayers } from "./utils";
-import { Scene } from "@reearth/services/gql/__gen__/graphql";
 
 type VisualizerProps = {
   engine?: EngineType;
@@ -61,7 +61,7 @@ type VisualizerProps = {
     alignSystem?: WidgetAlignSystem;
     ownBuiltinWidgets: string[];
     layoutConstraint?: Record<string, WidgetLayoutConstraint> | undefined;
-    widgets?: Scene["widgets"];
+    widgets?: InternalWidget[]
   };
   viewerProperty?: ViewerProperty;
   pluginProperty?: Record<string, unknown> | undefined;
@@ -239,7 +239,7 @@ const Visualizer: FC<VisualizerProps> = ({
   } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
     viewerProperty,
-    sceneWidgets: widgets?.widgets,
+    widgets: widgets?.widgets,
     onCoreLayerSelect,
     currentCamera,
     handleCoreAPIReady,

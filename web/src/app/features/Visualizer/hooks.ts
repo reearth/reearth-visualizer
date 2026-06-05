@@ -3,11 +3,11 @@ import { Camera } from "@reearth/app/utils/value";
 import { ComputedFeature, ComputedLayer, TileProperty } from "@reearth/core";
 import { config } from "@reearth/services/config";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { Scene } from "@reearth/services/gql";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
+import { InternalWidget } from "./Crust/Widgets";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 import { useOverriddenProperty } from "./utils";
 import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
@@ -15,7 +15,7 @@ import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
 export default function useHooks({
   ownBuiltinWidgets,
   viewerProperty,
-  sceneWidgets,
+  widgets,
   onCoreLayerSelect,
   currentCamera,
   handleCoreAPIReady,
@@ -23,7 +23,7 @@ export default function useHooks({
 }: {
   ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   viewerProperty?: ViewerProperty;
-  sceneWidgets?: Scene["widgets"];
+  widgets?: InternalWidget[];
   onCoreLayerSelect?: (
     layerId: string | undefined,
     layer: ComputedLayer | undefined,
@@ -72,28 +72,50 @@ export default function useHooks({
     });
   }, [overriddenViewerProperty, engineMeta]);
 
-
   const streetViewTiles = useMemo(() => {
-    const streetViewWidget = sceneWidgets?.find(
+    const streetViewWidget = widgets?.find(
       (w) => w.extensionId === "streetView"
     );
-    return streetViewWidget?.property?.items?.flatMap((item) => {
-      if (item.schemaGroupId !== "tiles" || !("fields" in item)) return [];
-      const type = item.fields.find((f) => f.fieldId === "tile_type")
-        ?.value as string | undefined;
-      if (!type) return [];
-      return [{ id: item.id, type }];
-    });
-  }, [sceneWidgets]);
+    if (!streetViewWidget?.property) return [];
+
+    const property = streetViewWidget.property as Record<string, unknown>;
+
+    // Editor (GQL): property has raw items array
+    if (Array.isArray(property["items"])) {
+      return (
+        property["items"] as {
+          id: string;
+          schemaGroupId?: string;
+          fields?: { fieldId: string; value?: unknown }[];
+        }[]
+      ).flatMap((item) => {
+        if (item.schemaGroupId !== "tiles" || !item.fields) return [];
+        const type = item.fields.find((f) => f.fieldId === "tile_type")
+          ?.value as string | undefined;
+        if (!type) return [];
+        return [{ id: item.id, type }];
+      });
+    }
+
+    // Published: property is already processed as { tiles: { tile_type } }
+    const tileType = (property["tiles"] as { tile_type?: string } | undefined)
+      ?.tile_type;
+    if (!tileType) return [];
+    return [{ id: streetViewWidget.id, type: tileType }];
+  }, [widgets]);
+
 
   // Append Street View tile when Street View widget exists and has a tile type selected
   const finalViewerProperty = useMemo(() => {
-    if (!streetViewTiles?.length || !migratedViewerProperty) return migratedViewerProperty;
+    if (!streetViewTiles?.length || !migratedViewerProperty)
+      return migratedViewerProperty;
 
-    const newTiles: TileProperty[] = streetViewTiles.map((t) => ({
-      id: t.id,
-      type: t.type
-    }));
+    const newTiles: TileProperty[] = streetViewTiles.map(
+      (t: { id: string; type: string }) => ({
+        id: t.id,
+        type: t.type
+      })
+    );
 
     return {
       ...migratedViewerProperty,
