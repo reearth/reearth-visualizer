@@ -329,7 +329,7 @@ func ImportProject(
 	// project ----------
 	newProject, err := usecases.Project.ImportProjectData(ctx, wsId.String(), pid.Ref().StringRef(), importData, op)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to import project data: %v", err)
+		errMsg := fmt.Sprintf("fail Import ProjectData: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
@@ -347,7 +347,7 @@ func ImportProject(
 	// asset ----------
 	importData, asset, err := usecases.Asset.ImportAssetFiles(ctx, assetsZip, importData, newProject, op)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to import asset files: %v", err)
+		errMsg := fmt.Sprintf("fail Import AssetFiles: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
@@ -356,7 +356,7 @@ func ImportProject(
 
 	newScene, err := usecases.Scene.Create(ctx, newProject.ID(), false, op)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to create scene: %v", err)
+		errMsg := fmt.Sprintf("fail Create Scene: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
@@ -364,7 +364,7 @@ func ImportProject(
 
 	oldSceneID, err := replaceOldSceneID(importData, newScene)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to process scene data: %v", err)
+		errMsg := fmt.Sprintf("fail Get OldSceneID: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
@@ -372,7 +372,7 @@ func ImportProject(
 	// plugins/schemas ----------
 	plugins, err := usecases.Plugin.ImportPlugins(ctx, pluginsZip, oldSceneID, newScene, importData)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to import plugins: %v", err)
+		errMsg := fmt.Sprintf("fail ImportPlugins: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
@@ -382,7 +382,7 @@ func ImportProject(
 	// scene ----------
 	newScene, err = usecases.Scene.ImportSceneData(ctx, newScene, importData)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to import scene configuration: %v", err)
+		errMsg := fmt.Sprintf("fail sceneJSON ImportSceneData: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
@@ -392,7 +392,7 @@ func ImportProject(
 	// style ----------
 	styles, err := usecases.Style.ImportStyles(ctx, newScene.ID(), importData)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to import styles: %v", err)
+		errMsg := fmt.Sprintf("Error] fail sceneJSON ImportStyles: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
@@ -402,7 +402,7 @@ func ImportProject(
 	// NLSLayer ----------
 	layers, err := usecases.NLSLayer.ImportNLSLayers(ctx, newScene.ID(), importData)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to import layers: %v", err)
+		errMsg := fmt.Sprintf("fail sceneJSON ImportNLSLayers: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
@@ -412,7 +412,7 @@ func ImportProject(
 	// story ----------
 	story, err := usecases.StoryTelling.ImportStory(ctx, newScene.ID(), importData)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to import story: %v", err)
+		errMsg := fmt.Sprintf("fail sceneJSON ImportStory: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 		return false
 	}
