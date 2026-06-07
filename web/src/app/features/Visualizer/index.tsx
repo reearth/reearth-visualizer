@@ -61,7 +61,7 @@ type VisualizerProps = {
     alignSystem?: WidgetAlignSystem;
     ownBuiltinWidgets: string[];
     layoutConstraint?: Record<string, WidgetLayoutConstraint> | undefined;
-    widgets?: InternalWidget[]
+    widgets?: InternalWidget[];
   };
   viewerProperty?: ViewerProperty;
   pluginProperty?: Record<string, unknown> | undefined;

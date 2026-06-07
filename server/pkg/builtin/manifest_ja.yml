@@ -1512,7 +1512,6 @@ extensions:
             description: GoogleストリートビューAPIキー
       tiles:
         title: タイル
-        description: 手持ちのタイルデータを使用し、地球上に表示することができます。
         fields:
           tile_type:
             title: 種類
