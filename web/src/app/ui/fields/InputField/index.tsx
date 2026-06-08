@@ -19,6 +19,7 @@ const InputField: FC<InputFieldProps> = ({
   titleAdornment,
   beforeInput,
   afterInput,
+  highlight,
   value,
   onChange,
   onChangeComplete,
@@ -48,6 +49,7 @@ const InputField: FC<InputFieldProps> = ({
       titleAdornment={titleAdornment}
       beforeInput={beforeInput}
       afterInput={afterInput}
+      highlight={highlight}
       data-testid="inputfield-commonfield"
     >
       <TextInput

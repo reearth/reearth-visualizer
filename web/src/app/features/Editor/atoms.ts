@@ -29,8 +29,17 @@ export const useCesiumIonAccessToken = () => useAtom(cesiumIonAccessToken);
 // Scene Setting Navigation Target
 // Used to trigger navigation to a specific scene setting (e.g., "main", "tiles", "terrain")
 // When set, the InspectorPanel will navigate to the specified scene setting and clear the atom
-const sceneSettingNavigationTarget = atomWithReset<string | undefined>(undefined);
+// Optionally includes fieldId to highlight a specific field after navigation
+export type SceneSettingNavigationTarget = {
+  setting: string;
+  fieldId?: string;
+};
+const sceneSettingNavigationTarget = atomWithReset<SceneSettingNavigationTarget | undefined>(undefined);
 export const useSceneSettingNavigationTarget = () => useAtom(sceneSettingNavigationTarget);
+
+// Field highlight target - used to trigger highlight animation on a specific field
+const highlightFieldTarget = atomWithReset<string | undefined>(undefined);
+export const useHighlightFieldTarget = () => useAtom(highlightFieldTarget);
 
 // Reset all
 export const useResetAllAtoms = () => {
@@ -39,6 +48,7 @@ export const useResetAllAtoms = () => {
   const resetPublishViewDevice = useResetAtom(publishViewDevice);
   const resetCesiumIonAccessToken = useResetAtom(cesiumIonAccessToken);
   const resetSceneSettingNavigationTarget = useResetAtom(sceneSettingNavigationTarget);
+  const resetHighlightFieldTarget = useResetAtom(highlightFieldTarget);
 
   const resetPlateauExpendedFolderIds = useResetAtom(expandedPlateauFolderIds);
   const resetPlateauSelectedDatasetId = useResetAtom(selectedPlateauDatasetId);
@@ -52,6 +62,7 @@ export const useResetAllAtoms = () => {
     resetPublishViewDevice();
     resetCesiumIonAccessToken();
     resetSceneSettingNavigationTarget();
+    resetHighlightFieldTarget();
     resetPlateauExpendedFolderIds();
     resetPlateauSelectedDatasetId();
     resetPlateauSelectedDatasetItem();

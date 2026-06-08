@@ -14,6 +14,7 @@ const SelectorField: FC<SelectorFieldProps> = ({
   titleAdornment,
   beforeInput,
   afterInput,
+  highlight,
   ...props
 }) => {
   return (
@@ -23,6 +24,7 @@ const SelectorField: FC<SelectorFieldProps> = ({
       titleAdornment={titleAdornment}
       beforeInput={beforeInput}
       afterInput={afterInput}
+      highlight={highlight}
       data-testid="selectorfield-commonfield"
     >
       <Selector {...props} dataTestid={props["data-testid"]} />

@@ -1,4 +1,4 @@
-import { useSceneSettingNavigationTarget } from "@reearth/app/features/Editor/atoms";
+import { useSceneSettingNavigationTarget, useHighlightFieldTarget } from "@reearth/app/features/Editor/atoms";
 import { Panel, PanelProps } from "@reearth/app/ui/layout";
 import { useT } from "@reearth/services/i18n/hooks";
 import { FC, useEffect, useMemo } from "react";
@@ -41,14 +41,26 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
 
   // Navigation effect: Listen to navigation target atom and trigger navigation
   const [navigationTarget, setNavigationTarget] = useSceneSettingNavigationTarget();
+  const [, setHighlightFieldId] = useHighlightFieldTarget();
 
   useEffect(() => {
     if (navigationTarget) {
-      handleSceneSettingSelect(navigationTarget);
+      handleSceneSettingSelect(navigationTarget.setting);
+      // Set the field to highlight if specified
+      // Delay slightly to ensure the scene settings panel has rendered
+      if (navigationTarget.fieldId) {
+        setTimeout(() => {
+          setHighlightFieldId(navigationTarget.fieldId);
+          // Clear highlight after field has had time to detect it
+          setTimeout(() => {
+            setHighlightFieldId(undefined);
+          }, 500);
+        }, 100);
+      }
       // Clear the navigation target after navigation
       setNavigationTarget(undefined);
     }
-  }, [navigationTarget, handleSceneSettingSelect, setNavigationTarget]);
+  }, [navigationTarget, handleSceneSettingSelect, setNavigationTarget, setHighlightFieldId]);
 
   return (
     <Panel

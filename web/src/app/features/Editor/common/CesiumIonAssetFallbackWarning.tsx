@@ -22,7 +22,10 @@ export const CesiumIonAssetFallbackWarning: FC<Props> = ({
   const [, setNavigationTarget] = useSceneSettingNavigationTarget();
 
   const handleNavigateToSettings = useCallback(() => {
-    setNavigationTarget("main");
+    setNavigationTarget({
+      setting: "main",
+      fieldId: "ion"
+    });
   }, [setNavigationTarget]);
 
   return (

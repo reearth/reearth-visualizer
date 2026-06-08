@@ -66,7 +66,10 @@ const LayerItem: FC<LayerItemProps> = ({
         layer.config?.data?.provider === "cesium-ion"));
 
   const handleNavigateToSettings = useCallback(() => {
-    setNavigationTarget("main");
+    setNavigationTarget({
+      setting: "main",
+      fieldId: "ion"
+    });
   }, [setNavigationTarget]);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);

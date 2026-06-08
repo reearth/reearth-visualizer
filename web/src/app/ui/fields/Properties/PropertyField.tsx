@@ -1,9 +1,10 @@
+import { useHighlightFieldTarget } from "@reearth/app/features/Editor/atoms";
 import { Camera, LatLng } from "@reearth/app/utils/value";
 import { FlyTo } from "@reearth/core";
 import type { Field, SchemaField } from "@reearth/services/api/property";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
-import { FC, ReactNode, useMemo } from "react";
+import { FC, ReactNode, useEffect, useMemo, useState } from "react";
 
 import {
   AssetField,
@@ -31,6 +32,7 @@ export type PropertyFieldDecorations = {
   titleAdornment?: ReactNode;
   beforeInput?: ReactNode;
   afterInput?: ReactNode;
+  highlight?: boolean;
 };
 
 type Props = {
@@ -103,9 +105,28 @@ const PropertyField: FC<Props> = ({
     return schema.choices.map(({ key, label }) => ({ value: key, label }));
   }, [schema.choices, schema.id, schemaGroup]);
 
+  // Check if this field should be highlighted
+  const [highlightFieldId] = useHighlightFieldTarget();
+  const [shouldHighlight, setShouldHighlight] = useState(false);
+
+  useEffect(() => {
+    if (highlightFieldId === schema.id) {
+      setShouldHighlight(true);
+      // Reset after triggering highlight - keep it active long enough for CommonField to detect
+      const timer = setTimeout(() => {
+        setShouldHighlight(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [highlightFieldId, schema.id]);
+
   // Use external decorations if provided (business logic from parent)
   // Otherwise use empty decorations (generic UI component has no business rules)
-  const decorations = externalDecorations ?? {};
+  // Add highlight if this field is targeted
+  const decorations = {
+    ...externalDecorations,
+    ...(shouldHighlight && { highlight: true })
+  };
 
   const handleChange = handlePropertyItemUpdate(schema.id, schema.type, itemId);
   return (
