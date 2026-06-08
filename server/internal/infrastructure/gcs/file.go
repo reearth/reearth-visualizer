@@ -366,6 +366,9 @@ func (f *fileRepo) client(ctx context.Context) (*storage.Client, error) {
 		}
 		return testGCS.Client(), nil
 	}
+	if f.gcsClient == nil {
+		return nil, errors.New("gcs: client not initialized")
+	}
 	return f.gcsClient, nil
 }
 
