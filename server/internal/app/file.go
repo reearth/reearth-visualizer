@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -73,6 +74,10 @@ func serveFiles(
 	ec.GET(
 		"/export/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
+			if adapter.Operator(ctx.Request().Context()) == nil {
+				return nil, "", echo.ErrUnauthorized
+			}
+
 			filename := ctx.Param("filename")
 
 			r, err := fileGateway.ReadExportProjectZip(ctx.Request().Context(), filename)
@@ -85,7 +90,9 @@ func serveFiles(
 			go func() {
 				// download and then delete
 				time.Sleep(3 * time.Second)
-				err := fileGateway.RemoveExportProjectZip(context.Background(), filename)
+				deleteCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+				defer cancel()
+				err := fileGateway.RemoveExportProjectZip(deleteCtx, filename)
 				if err != nil {
 					fmt.Printf("[export] !!!! delete err: %s \n", err.Error())
 				} else {
