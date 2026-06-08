@@ -1,6 +1,7 @@
+import { useSceneSettingNavigationTarget } from "@reearth/app/features/Editor/atoms";
 import { Panel, PanelProps } from "@reearth/app/ui/layout";
 import { useT } from "@reearth/services/i18n/hooks";
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 
 import { useMapPage } from "../context";
 
@@ -24,7 +25,8 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     handleFlyTo,
     handleLayerConfigUpdate,
     handleLayerNameUpdate,
-    handleGeoJsonFeatureUpdate
+    handleGeoJsonFeatureUpdate,
+    handleSceneSettingSelect
   } = useMapPage();
 
   const t = useT();
@@ -36,6 +38,17 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
 
   // Compute property field decorations with business logic
   const computeDecorations = usePropertyDecorations();
+
+  // Navigation effect: Listen to navigation target atom and trigger navigation
+  const [navigationTarget, setNavigationTarget] = useSceneSettingNavigationTarget();
+
+  useEffect(() => {
+    if (navigationTarget) {
+      handleSceneSettingSelect(navigationTarget);
+      // Clear the navigation target after navigation
+      setNavigationTarget(undefined);
+    }
+  }, [navigationTarget, handleSceneSettingSelect, setNavigationTarget]);
 
   return (
     <Panel

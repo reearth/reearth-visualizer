@@ -1,4 +1,7 @@
-import { useCesiumIonAccessToken } from "@reearth/app/features/Editor/atoms";
+import {
+  useCesiumIonAccessToken,
+  useSceneSettingNavigationTarget
+} from "@reearth/app/features/Editor/atoms";
 import {
   Button,
   IconButton,
@@ -50,6 +53,7 @@ const LayerItem: FC<LayerItemProps> = ({
   } = useMapPage();
 
   const [cesiumIonAccessToken] = useCesiumIonAccessToken();
+  const [, setNavigationTarget] = useSceneSettingNavigationTarget();
 
   const [showDeleteLayerConfirmModal, setShowDeleteLayerConfirmModal] =
     useState(false);
@@ -60,6 +64,10 @@ const LayerItem: FC<LayerItemProps> = ({
     (layer.config?.data?.type === "osm-buildings" ||
       (layer.config?.data?.type === "google-photorealistic" &&
         layer.config?.data?.provider === "cesium-ion"));
+
+  const handleNavigateToSettings = useCallback(() => {
+    setNavigationTarget("main");
+  }, [setNavigationTarget]);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -124,8 +132,9 @@ const LayerItem: FC<LayerItemProps> = ({
                   icon="warningFilled"
                   size="normal"
                   appearance="simple"
-                  tooltipText={t("Cesium Ion token not set, fallback will be used.")}
+                  tooltipText={t("Click to configure Cesium Ion token")}
                   placement="top"
+                  onClick={handleNavigateToSettings}
                 />
               ),
               keepVisible: true

@@ -457,7 +457,7 @@ describe("PropertyItem", () => {
 
       expect(screen.getByTestId("cesium-ion-warning")).toBeInTheDocument();
       expect(
-        screen.getByText("Cesium Ion token not set, fallback will be used.")
+        screen.getByText("Cesium Ion token not configured. Using fallback.")
       ).toBeInTheDocument();
     });
 
@@ -508,7 +508,7 @@ describe("PropertyItem", () => {
 
       expect(screen.getByTestId("cesium-ion-warning")).toBeInTheDocument();
       expect(
-        screen.getByText("Cesium Ion token not set, fallback will be used.")
+        screen.getByText("Cesium Ion token not configured. Using fallback.")
       ).toBeInTheDocument();
     });
 

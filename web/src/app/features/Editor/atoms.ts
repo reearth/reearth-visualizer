@@ -26,12 +26,19 @@ export const usePublishViewDevice = () => useAtom(publishViewDevice);
 const cesiumIonAccessToken = atomWithReset<string | undefined>(undefined);
 export const useCesiumIonAccessToken = () => useAtom(cesiumIonAccessToken);
 
+// Scene Setting Navigation Target
+// Used to trigger navigation to a specific scene setting (e.g., "main", "tiles", "terrain")
+// When set, the InspectorPanel will navigate to the specified scene setting and clear the atom
+const sceneSettingNavigationTarget = atomWithReset<string | undefined>(undefined);
+export const useSceneSettingNavigationTarget = () => useAtom(sceneSettingNavigationTarget);
+
 // Reset all
 export const useResetAllAtoms = () => {
   const resetCurrentCamera = useResetAtom(currentCamera);
   const resetWidgetsViewDevice = useResetAtom(widgetsViewDevice);
   const resetPublishViewDevice = useResetAtom(publishViewDevice);
   const resetCesiumIonAccessToken = useResetAtom(cesiumIonAccessToken);
+  const resetSceneSettingNavigationTarget = useResetAtom(sceneSettingNavigationTarget);
 
   const resetPlateauExpendedFolderIds = useResetAtom(expandedPlateauFolderIds);
   const resetPlateauSelectedDatasetId = useResetAtom(selectedPlateauDatasetId);
@@ -44,6 +51,7 @@ export const useResetAllAtoms = () => {
     resetWidgetsViewDevice();
     resetPublishViewDevice();
     resetCesiumIonAccessToken();
+    resetSceneSettingNavigationTarget();
     resetPlateauExpendedFolderIds();
     resetPlateauSelectedDatasetId();
     resetPlateauSelectedDatasetItem();
