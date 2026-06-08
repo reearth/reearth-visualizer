@@ -64,6 +64,8 @@ func TestInternalAPI_export(t *testing.T) {
 
 		// Try download
 		resp := e.GET(exp.ProjectDataPath).
+			WithHeader("authorization", "Bearer test").
+			WithHeader("X-Reearth-Debug-User", uID.String()).
 			Expect().
 			Status(200)
 
@@ -84,15 +86,10 @@ func TestInternalAPI_export(t *testing.T) {
 		assert.NotNil(t, exp.ProjectDataPath)
 		assert.Nil(t, err)
 
-		// Try download
-		resp := e.GET(exp.ProjectDataPath).
+		// Download requires auth — visitor (unauthenticated) should get 401
+		e.GET(exp.ProjectDataPath).
 			Expect().
-			Status(200)
-
-		resp.Header("Content-Type").Contains("application/zip")
-		body := resp.Body().Raw()
-		assert.Greater(t, len(body), 4)
-		assert.Equal(t, "PK\x03\x04", string(body[:4])) // check zip file hedder
+			Status(401)
 
 		// private => Error!
 		exp, err = client.ExportProject(ctx, &pb.ExportProjectRequest{
@@ -130,6 +127,8 @@ func TestInternalAPI_export(t *testing.T) {
 
 		// Try download
 		resp := e.GET(exp.ProjectDataPath).
+			WithHeader("authorization", "Bearer test").
+			WithHeader("X-Reearth-Debug-User", uID3.String()).
 			Expect().
 			Status(200)
 
