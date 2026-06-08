@@ -62,7 +62,7 @@ const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
           {beforeInput}
         </BeforeInputWrapper>
       )}
-      {children}
+      <div data-commonfield-input-slot>{children}</div>
       {afterInput && (
         <AfterInputWrapper data-testid="commonfield-after-input">
           {afterInput}
