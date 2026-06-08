@@ -196,7 +196,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			}
 			log.Infof("[Import] uncompress zip file")
 
-			ok := ImportProject(
+			ImportProject(
 				bgctx,
 				usecases,
 				op,
@@ -209,9 +209,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				version,
 			)
 
-			if ok {
-				m.CleanupSession(session.FileID)
-			}
+			m.CleanupSession(session.FileID)
 
 		}(session)
 	}
