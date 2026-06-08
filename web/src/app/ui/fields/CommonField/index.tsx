@@ -94,8 +94,8 @@ const Wrapper = styled("div", {
   ...theme.scrollBar,
   position: "relative",
   ...($highlight && {
-    "& > *:nth-of-type(2)": {
-      // Target the input field (second child after title)
+    "& [data-commonfield-input-slot]": {
+      // Target the field input slot (independent of which decorations are rendered)
       animation: "border-pulse 1s ease-in-out",
       "@keyframes border-pulse": {
         "0%": {
