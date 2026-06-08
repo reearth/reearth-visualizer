@@ -166,7 +166,12 @@ const LayerItem: FC<LayerItemProps> = ({
                     "Cesium Ion token not configured. Using fallback.\nClick to configure"
                   )}
                   placement="top"
-                  onClick={handleNavigateToSettings}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Blur the button to close the tooltip
+                    (e.currentTarget as HTMLElement).blur();
+                    handleNavigateToSettings();
+                  }}
                 />
               ),
               keepVisible: true

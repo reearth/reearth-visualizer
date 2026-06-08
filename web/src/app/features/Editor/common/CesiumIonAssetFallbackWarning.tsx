@@ -21,7 +21,9 @@ export const CesiumIonAssetFallbackWarning: FC<Props> = ({
   const t = useT();
   const [, setNavigationTarget] = useSceneSettingNavigationTarget();
 
-  const handleNavigateToSettings = useCallback(() => {
+  const handleNavigateToSettings = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    // Blur the button to remove focus
+    e.currentTarget.blur();
     setNavigationTarget({
       setting: "main",
       fieldId: "ion"
