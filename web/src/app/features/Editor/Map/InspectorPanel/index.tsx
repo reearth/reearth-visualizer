@@ -26,7 +26,8 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     handleLayerConfigUpdate,
     handleLayerNameUpdate,
     handleGeoJsonFeatureUpdate,
-    handleSceneSettingSelect
+    handleSceneSettingSelect,
+    handleLayerSelect
   } = useMapPage();
 
   const t = useT();
@@ -45,6 +46,8 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
 
   useEffect(() => {
     if (navigationTarget) {
+      // Deselect any selected layer when navigating to scene settings
+      handleLayerSelect(undefined);
       handleSceneSettingSelect(navigationTarget.setting);
       // Set the field to highlight if specified
       // Delay slightly to ensure the scene settings panel has rendered
@@ -60,7 +63,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
       // Clear the navigation target after navigation
       setNavigationTarget(undefined);
     }
-  }, [navigationTarget, handleSceneSettingSelect, setNavigationTarget, setHighlightFieldId]);
+  }, [navigationTarget, handleSceneSettingSelect, handleLayerSelect, setNavigationTarget, setHighlightFieldId]);
 
   return (
     <Panel
