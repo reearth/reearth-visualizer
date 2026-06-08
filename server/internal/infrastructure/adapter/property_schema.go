@@ -51,13 +51,32 @@ func (r *propertySchema) FindByID(ctx context.Context, id id.PropertySchemaID) (
 }
 
 func (r *propertySchema) FindByIDs(ctx context.Context, ids []id.PropertySchemaID) (property.SchemaList, error) {
-	results := make(property.SchemaList, 0, len(ids))
-	for _, id := range ids {
-		res, err := r.FindByID(ctx, id)
-		if err != nil && err != rerror.ErrNotFound {
+	found := make(map[id.PropertySchemaID]*property.Schema, len(ids))
+	remaining := make([]id.PropertySchemaID, len(ids))
+	copy(remaining, ids)
+
+	for _, reader := range r.readers {
+		if len(remaining) == 0 {
+			break
+		}
+		batch, err := reader.FindByIDs(ctx, remaining)
+		if err != nil {
 			return nil, err
 		}
-		results = append(results, res)
+		var stillMissing []id.PropertySchemaID
+		for i, s := range batch {
+			if s != nil {
+				found[remaining[i]] = s
+			} else {
+				stillMissing = append(stillMissing, remaining[i])
+			}
+		}
+		remaining = stillMissing
+	}
+
+	results := make(property.SchemaList, len(ids))
+	for i, id := range ids {
+		results[i] = found[id]
 	}
 	return results, nil
 }
