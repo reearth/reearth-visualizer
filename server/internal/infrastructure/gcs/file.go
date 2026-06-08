@@ -40,6 +40,7 @@ type fileRepo struct {
 	base            *url.URL
 	cacheControl    string
 	baseFileStorage *infrastructure.BaseFileStorage
+	gcsClient       *storage.Client
 }
 
 func NewFile(isFake bool, bucketName, base string, cacheControl string) (gateway.File, error) {
@@ -58,7 +59,7 @@ func NewFile(isFake bool, bucketName, base string, cacheControl string) (gateway
 		return nil, errors.New("invalid base URL")
 	}
 
-	return &fileRepo{
+	repo := &fileRepo{
 		isFake:       isFake,
 		bucketName:   bucketName,
 		base:         u,
@@ -66,7 +67,17 @@ func NewFile(isFake bool, bucketName, base string, cacheControl string) (gateway
 		baseFileStorage: &infrastructure.BaseFileStorage{
 			MaxFileSize: gateway.UploadFileSizeLimit,
 		},
-	}, nil
+	}
+
+	if !isFake {
+		client, err := storage.NewClient(context.Background())
+		if err != nil {
+			return nil, fmt.Errorf("gcs: failed to create client: %w", err)
+		}
+		repo.gcsClient = client
+	}
+
+	return repo, nil
 }
 
 // asset
@@ -348,28 +359,14 @@ func (f *fileRepo) RemoveImportProjectZip(ctx context.Context, filename string) 
 // helpers
 
 func (f *fileRepo) client(ctx context.Context) (*storage.Client, error) {
-	var client *storage.Client
-	var err error
-
 	if f.isFake {
 		testGCS, err := testutil.NewGCSForTesting()
 		if err != nil {
 			return nil, err
 		}
-		client = testGCS.Client()
-	} else {
-		client, err = storage.NewClient(ctx)
-		if err != nil {
-			return nil, err
-		}
-		go func() {
-			<-ctx.Done()
-			if err := client.Close(); err != nil {
-				log.Errorfc(ctx, "gcs: failed to close client: %v", err)
-			}
-		}()
+		return testGCS.Client(), nil
 	}
-	return client, nil
+	return f.gcsClient, nil
 }
 
 func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
