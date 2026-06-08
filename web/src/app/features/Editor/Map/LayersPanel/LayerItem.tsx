@@ -126,20 +126,6 @@ const LayerItem: FC<LayerItemProps> = ({
       editingLayerNameId !== layer.id
         ? [
             {
-              comp: showCesiumIonWarning && (
-                <WarningIconButton
-                  key="warning"
-                  icon="warningFilled"
-                  size="normal"
-                  appearance="simple"
-                  tooltipText={t("Click to configure Cesium Ion token")}
-                  placement="top"
-                  onClick={handleNavigateToSettings}
-                />
-              ),
-              keepVisible: true
-            },
-            {
               comp: layer.visible && (
                 <IconButton
                   key="zoom"
@@ -165,6 +151,22 @@ const LayerItem: FC<LayerItemProps> = ({
                 />
               ),
               keepVisible: !layer.visible
+            },
+            {
+              comp: showCesiumIonWarning && (
+                <WarningIconButton
+                  key="warning"
+                  icon="warningFilled"
+                  size="normal"
+                  appearance="simple"
+                  tooltipText={t(
+                    "Cesium Ion token not configured. Using fallback.\nClick to configure"
+                  )}
+                  placement="top"
+                  onClick={handleNavigateToSettings}
+                />
+              ),
+              keepVisible: true
             }
           ]
         : undefined,
@@ -175,7 +177,8 @@ const LayerItem: FC<LayerItemProps> = ({
       showCesiumIonWarning,
       t,
       handleZoomToLayer,
-      handleToggleLayerVisibility
+      handleToggleLayerVisibility,
+      handleNavigateToSettings
     ]
   );
 
