@@ -4,6 +4,7 @@ import {
   TickEventCallback,
   TimelineCommitter
 } from "@reearth/core";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { TimelineValues } from "../../Crust/StoryPanel/Block/builtin/Timeline";
@@ -12,6 +13,7 @@ import {
   formatISO8601,
   formatTimezone
 } from "../../Crust/StoryPanel/utils";
+import { PLAY_SPEED_MAP, TRANSITION_SPEED } from "../constants";
 
 export const getNewDate = (d?: Date) => d ?? new Date();
 
@@ -23,17 +25,6 @@ const calculateEndTime = (date: Date) => {
 const calculateMidTime = (startTime: number, stopTime: number) => {
   return (startTime + stopTime) / 2;
 };
-
-const playSpeedOptions = [
-  { timeString: "1sec/sec", seconds: 1 },
-  { timeString: "0.5min/sec", seconds: 30 },
-  { timeString: "1min/sec", seconds: 60 },
-  { timeString: "0.1hr/sec", seconds: 360 },
-  { timeString: "0.5hr/sec", seconds: 1800 },
-  { timeString: "1hr/sec", seconds: 3600 }
-];
-
-const TRANSITION_SPEED = 0;
 
 const timeRange = (startTime?: number, stopTime?: number) => {
   // To avoid out of range error in Cesium, we need to turn back a hour.
@@ -48,7 +39,33 @@ const timeRange = (startTime?: number, stopTime?: number) => {
   };
 };
 
-export default (timelineValues?: TimelineValues) => {
+export default (timelineValues?: TimelineValues, playSpeed?: string) => {
+  const t = useT();
+
+  const playSpeedOptions = useMemo(
+    () => [
+      { timeString: t("1sec/sec"), seconds: 1, speedKey: "one_sec_per_sec" },
+      {
+        timeString: t("0.5min/sec"),
+        seconds: 30,
+        speedKey: "half_min_per_sec"
+      },
+      { timeString: t("1min/sec"), seconds: 60, speedKey: "one_min_per_sec" },
+      {
+        timeString: t("0.1hr/sec"),
+        seconds: 360,
+        speedKey: "one_tenth_hr_per_sec"
+      },
+      {
+        timeString: t("0.5hr/sec"),
+        seconds: 1800,
+        speedKey: "half_hr_per_sec"
+      },
+      { timeString: t("1hr/sec"), seconds: 3600, speedKey: "one_hr_per_sec" }
+    ],
+    [t]
+  );
+
   const visualizerContext = useVisualizer();
 
   const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
@@ -118,10 +135,7 @@ export default (timelineValues?: TimelineValues) => {
     (speed: number, committerId?: string) => {
       return visualizerContext.current?.timeline?.current?.commit({
         cmd: "SET_OPTIONS",
-        payload: {
-          multiplier: speed,
-          stepType: "rate"
-        },
+        payload: { multiplier: speed, stepType: "rate" },
         committer: { source: "storyTimelineBlock", id: committerId }
       });
     },
@@ -164,8 +178,31 @@ export default (timelineValues?: TimelineValues) => {
         throw error;
       }
     },
-    [onSpeedChange]
+    [onSpeedChange, playSpeedOptions]
   );
+
+  useEffect(() => {
+    if (!playSpeed || playSpeed === "control_by_user") return;
+    const mappedSpeed = PLAY_SPEED_MAP[playSpeed];
+    if (mappedSpeed === undefined) return;
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+    try {
+      onSpeedChange(TRANSITION_SPEED);
+      timerId = setTimeout(() => {
+        try {
+          onSpeedChange(mappedSpeed);
+          setSpeed(mappedSpeed);
+        } catch {
+          setSpeed(playSpeedOptions[0].seconds);
+        }
+      }, 0);
+    } catch {
+      setSpeed(playSpeedOptions[0].seconds);
+    }
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [playSpeed, onSpeedChange, playSpeedOptions]);
 
   useEffect(() => {
     if (timelineValues) {

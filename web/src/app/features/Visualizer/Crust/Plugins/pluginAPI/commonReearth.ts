@@ -72,6 +72,7 @@ export function commonReearth({
   hideLayer,
   showLayer,
   addLayer,
+  overrideLayer,
   findFeatureById,
   findFeaturesByIds,
   selectLayer,
@@ -156,6 +157,7 @@ export function commonReearth({
   hideLayer: GlobalThis["reearth"]["layers"]["hide"];
   showLayer: GlobalThis["reearth"]["layers"]["show"];
   addLayer: GlobalThis["reearth"]["layers"]["add"];
+  overrideLayer: GlobalThis["reearth"]["layers"]["override"];
   findFeatureById: GlobalThis["reearth"]["layers"]["findFeatureById"];
   findFeaturesByIds: GlobalThis["reearth"]["layers"]["findFeaturesByIds"];
   selectLayer: GlobalThis["reearth"]["layers"]["select"];
@@ -283,7 +285,7 @@ export function commonReearth({
         return getLayers()?.deleteLayer;
       },
       get override() {
-        return getLayers()?.override;
+        return overrideLayer;
       },
       get overridden() {
         return getLayers()?.overriddenLayers?.();
