@@ -32,6 +32,8 @@ func TestProjectExport(t *testing.T) {
 	projectDataPath := Export(t, e, projectId)
 
 	resp := e.GET(projectDataPath).
+		WithHeader("authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(200)
 

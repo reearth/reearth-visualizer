@@ -44,6 +44,8 @@ func GenProjectZipFile(t *testing.T, e *httpexpect.Expect) (projectZipFilePath s
 	projectId := SetupProject(t, e)
 	projectDataPath := Export(t, e, projectId)
 	resp := e.GET(projectDataPath).
+		WithHeader("authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(200)
 	resp.Header("Content-Type").Contains("application/zip")

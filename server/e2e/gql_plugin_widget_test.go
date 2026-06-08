@@ -287,6 +287,8 @@ func fetchAndParseExport(t *testing.T, e *httpexpect.Expect, projectDataPath str
 	t.Helper()
 
 	resp := e.GET(projectDataPath).
+		WithHeader("authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
 		Status(200)
 
