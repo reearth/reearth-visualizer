@@ -82,7 +82,7 @@ export default function useHooks({
 
     // Editor (GQL): property has raw items array
     if (Array.isArray(property["items"])) {
-      return (
+      const tilesFromItems = (
         property["items"] as {
           id: string;
           schemaGroupId?: string;
@@ -95,6 +95,27 @@ export default function useHooks({
         if (!type) return [];
         return [{ id: item.id, type }];
       });
+
+      if (tilesFromItems.length > 0) return tilesFromItems;
+
+      // No explicit selection — fall back to schema defaultValue
+      const schema = property["schema"] as
+        | {
+            groups?: {
+              schemaGroupId?: string;
+              fields?: { fieldId: string; defaultValue?: unknown }[];
+            }[];
+          }
+        | undefined;
+      const defaultTileType = schema?.groups
+        ?.find((g) => g.schemaGroupId === "tiles")
+        ?.fields?.find((f) => f.fieldId === "tile_type")
+        ?.defaultValue as string | undefined;
+
+      if (defaultTileType) {
+        return [{ id: streetViewWidget.id, type: defaultTileType }];
+      }
+      return [];
     }
 
     // Published: property is already processed as { tiles: { tile_type } }
@@ -103,7 +124,6 @@ export default function useHooks({
     if (!tileType) return [];
     return [{ id: streetViewWidget.id, type: tileType }];
   }, [widgets]);
-
 
   // Append Street View tile when Street View widget exists and has a tile type selected
   const finalViewerProperty = useMemo(() => {

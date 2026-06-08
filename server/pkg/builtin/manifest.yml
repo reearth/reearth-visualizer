@@ -2488,6 +2488,7 @@ extensions:
             - id: tile_type
               type: string
               title: Tile type
+              defaultValue: google_satellite
               placeholder: please enter tile type
               description: Set the Google Maps tile to use in Street View.
               choices:
