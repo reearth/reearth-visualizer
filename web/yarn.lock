@@ -5472,13 +5472,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/sentinel@npm:0.1.0":
-  version: 0.1.0
-  resolution: "@reearth/sentinel@npm:0.1.0"
+"@reearth/sentinel@npm:0.1.1":
+  version: 0.1.1
+  resolution: "@reearth/sentinel@npm:0.1.1"
   dependencies:
     idb: "npm:^8.0.0"
     jose: "npm:^5.0.0"
-  checksum: 10c0/bd4e2ee1bd3e076bd8c96cd4094591eb5d2e5c87702eba0d490012557d8305e0584b010c8c0b96b4648031ebde8ad1bf6ea4ad925d14ed6906453ccaefdc73e2
+  checksum: 10c0/c6f34cf549e46efc5cacca0b03bc3a15fcb42151396d2f7414d860e8da15b7211bac7be90af22d68752e1092985c57fd0f46b575f5013e1909328c0819a7ee25
   languageName: node
   linkType: hard
 
@@ -5531,7 +5531,7 @@ __metadata:
     "@radix-ui/react-select": "npm:2.2.6"
     "@radix-ui/react-slot": "npm:1.2.4"
     "@reearth/core": "npm:0.0.7-alpha.69"
-    "@reearth/sentinel": "npm:0.1.0"
+    "@reearth/sentinel": "npm:0.1.1"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
