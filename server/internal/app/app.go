@@ -148,8 +148,6 @@ func initEcho(
 	apiRoot.GET("/mockuser", MockUser())
 
 	// Asset API for handling GCP files
-	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
-
 	apiPrivateRoute := apiRoot.Group("", privateCache)
 	if cfg.Config.UseMockAuth() {
 		apiPrivateRoute.Use(attachOpMiddlewareMockUser(cfg))
@@ -157,6 +155,8 @@ func initEcho(
 		apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
 	}
 	apiPrivateRoute.Use(LatestLogoutAtHeader)
+
+	serveFiles(e, cfg, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	// Main backend API
 	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, cfg.AccountsAPIClient, gqldev))

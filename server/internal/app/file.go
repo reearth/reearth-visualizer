@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"mime"
@@ -17,6 +18,7 @@ import (
 
 func serveFiles(
 	ec *echo.Echo,
+	cfg *ServerConfig,
 	allowedOrigins []string,
 	domainChecker gateway.DomainChecker,
 	fileGateway gateway.File,
@@ -61,6 +63,13 @@ func serveFiles(
 		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
 	)
 
+	var exportAuthMiddleware echo.MiddlewareFunc
+	if cfg.Config.UseMockAuth() {
+		exportAuthMiddleware = attachOpMiddlewareMockUser(cfg)
+	} else {
+		exportAuthMiddleware = attachOpMiddlewareReearthAccounts(cfg)
+	}
+
 	ec.GET(
 		"/export/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
@@ -73,12 +82,10 @@ func serveFiles(
 			}
 			fmt.Printf("[export] download file: %s \n", filename)
 
-			rctx := ctx.Request().Context()
-
 			go func() {
 				// download and then delete
 				time.Sleep(3 * time.Second)
-				err := fileGateway.RemoveExportProjectZip(rctx, filename)
+				err := fileGateway.RemoveExportProjectZip(context.Background(), filename)
 				if err != nil {
 					fmt.Printf("[export] !!!! delete err: %s \n", err.Error())
 				} else {
@@ -87,6 +94,7 @@ func serveFiles(
 			}()
 			return r, filename, nil
 		}),
+		exportAuthMiddleware,
 		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
 	)
 
