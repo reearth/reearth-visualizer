@@ -198,8 +198,8 @@ extend type Query {
     projectId: ID
   ): ProjectAliasAvailability!
   checkSceneAlias(alias: String!, projectId: ID): SceneAliasAvailability!
-  starredProjects(workspaceId: ID!): ProjectConnection!
-  deletedProjects(workspaceId: ID!): ProjectConnection!
+  starredProjects(workspaceId: ID!, pagination: Pagination): ProjectConnection!
+  deletedProjects(workspaceId: ID!, pagination: Pagination): ProjectConnection!
 }
 
 extend type Mutation {
