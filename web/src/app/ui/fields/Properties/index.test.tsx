@@ -474,7 +474,7 @@ describe("PropertyItem", () => {
           value: unknown
         ): PropertyFieldDecorations => {
           if (
-            schemaId === "type" &&
+            schemaId === "terrainType" &&
             schemaGroup === "terrain" &&
             value === "cesium"
           ) {
@@ -491,7 +491,7 @@ describe("PropertyItem", () => {
         schemaGroup: "terrain",
         schemaFields: [
           {
-            id: "type",
+            id: "terrainType",
             type: "string",
             title: "Terrain Type",
             choices: [
@@ -503,12 +503,12 @@ describe("PropertyItem", () => {
         ],
         fields: [
           {
-            id: "type",
+            id: "terrainType",
             type: "string",
             value: "cesium"
           }
         ],
-        representativeField: "type"
+        representativeField: "terrainType"
       } as unknown as Item;
 
       render(
