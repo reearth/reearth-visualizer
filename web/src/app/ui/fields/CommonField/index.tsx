@@ -36,6 +36,7 @@ const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
       }, 1000); // Animation duration
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [highlight]);
 
   return (

@@ -3,8 +3,9 @@ import type { Item } from "@reearth/services/api/property";
 import { render, screen } from "@reearth/test/utils";
 import { describe, expect, test, vi, beforeEach } from "vitest";
 
-import PropertyItem from "./index";
 import { PropertyFieldDecorations } from "./PropertyField";
+
+import PropertyItem from "./index";
 
 vi.mock("./hooks", () => ({
   default: () => ({
@@ -409,7 +410,11 @@ describe("PropertyItem", () => {
   describe("Field Decorations", () => {
     test("shows warning for cesium_ion tile type when decoration is provided by computeDecorations", () => {
       const mockComputeDecorations = vi.fn(
-        (schemaId: string, schemaGroup: string, value: unknown): PropertyFieldDecorations => {
+        (
+          schemaId: string,
+          schemaGroup: string,
+          value: unknown
+        ): PropertyFieldDecorations => {
           if (
             schemaId === "tile_type" &&
             schemaGroup === "tiles" &&
@@ -463,8 +468,16 @@ describe("PropertyItem", () => {
 
     test("shows warning for cesium terrain type when decoration is provided by computeDecorations", () => {
       const mockComputeDecorations = vi.fn(
-        (schemaId: string, schemaGroup: string, value: unknown): PropertyFieldDecorations => {
-          if (schemaId === "type" && schemaGroup === "terrain" && value === "cesium") {
+        (
+          schemaId: string,
+          schemaGroup: string,
+          value: unknown
+        ): PropertyFieldDecorations => {
+          if (
+            schemaId === "type" &&
+            schemaGroup === "terrain" &&
+            value === "cesium"
+          ) {
             return {
               afterInput: <CesiumIonAssetFallbackWarning />
             };
@@ -547,7 +560,9 @@ describe("PropertyItem", () => {
         />
       );
 
-      expect(screen.queryByTestId("cesium-ion-warning")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("cesium-ion-warning")
+      ).not.toBeInTheDocument();
     });
 
     test("works without computeDecorations (generic usage)", () => {
@@ -579,7 +594,9 @@ describe("PropertyItem", () => {
       render(<PropertyItem propertyId="testId" item={mockItem} />);
 
       expect(screen.getByText("Tile Type")).toBeInTheDocument();
-      expect(screen.queryByTestId("cesium-ion-warning")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("cesium-ion-warning")
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -602,7 +619,9 @@ describe("PropertyItem", () => {
 
     render(<PropertyItem propertyId="testId" item={mockItem} />);
     expect(screen.getByText("Textarea Field")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Enter your text here")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Enter your text here")
+    ).toBeInTheDocument();
   });
 
   test("renders number field with placeholder", () => {
@@ -645,6 +664,8 @@ describe("PropertyItem", () => {
 
     render(<PropertyItem propertyId="testId" item={mockItem} />);
     expect(screen.getByText("URL Field")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("https://example.com")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("https://example.com")
+    ).toBeInTheDocument();
   });
 });

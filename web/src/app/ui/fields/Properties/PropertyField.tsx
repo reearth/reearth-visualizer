@@ -118,6 +118,7 @@ const PropertyField: FC<Props> = ({
       }, 300);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [highlightFieldId, schema.id]);
 
   // Use external decorations if provided (business logic from parent)

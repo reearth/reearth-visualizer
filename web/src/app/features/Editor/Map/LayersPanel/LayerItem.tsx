@@ -17,6 +17,7 @@ import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   Dispatch,
   FC,
+  MouseEvent,
   SetStateAction,
   useCallback,
   useEffect,
@@ -166,10 +167,10 @@ const LayerItem: FC<LayerItemProps> = ({
                     "Cesium Ion token not configured. Using fallback.\nClick to configure"
                   )}
                   placement="top"
-                  onClick={(e) => {
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     // Blur the button to close the tooltip
-                    (e.currentTarget as HTMLElement).blur();
+                    e.currentTarget.blur();
                     handleNavigateToSettings();
                   }}
                 />

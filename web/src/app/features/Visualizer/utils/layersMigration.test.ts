@@ -2,18 +2,29 @@ import { describe, expect, it } from "vitest";
 
 import { migrateLayers, __testing__ } from "./layersMigration";
 
-const { needsLayerMigration, migrateLayer, migrateLayerRecursive, checkLayerTreeNeedsMigration } = __testing__;
+const {
+  needsLayerMigration,
+  migrateLayer,
+  migrateLayerRecursive,
+  checkLayerTreeNeedsMigration
+} = __testing__;
 
 describe("layersMigration", () => {
   describe("migrateLayers", () => {
     it("should return undefined when layers is undefined", () => {
-      const result = migrateLayers(undefined, { isEE: false, hasAccessToken: false });
+      const result = migrateLayers(undefined, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBeUndefined();
     });
 
     it("should return original layers when empty array", () => {
       const layers: any[] = [];
-      const result = migrateLayers(layers, { isEE: false, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(layers);
     });
 
@@ -25,7 +36,10 @@ describe("layersMigration", () => {
           data: { type: "geojson" as const }
         }
       ];
-      const result = migrateLayers(layers, { isEE: false, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(layers);
     });
 
@@ -37,7 +51,10 @@ describe("layersMigration", () => {
           data: { type: "osm-buildings" as const }
         }
       ];
-      const result = migrateLayers(layers, { isEE: false, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toEqual([
         {
           id: "1",
@@ -55,7 +72,10 @@ describe("layersMigration", () => {
           data: { type: "osm-buildings" as const }
         }
       ];
-      const result = migrateLayers(layers, { isEE: false, hasAccessToken: true });
+      const result = migrateLayers(layers, {
+        isEE: false,
+        hasAccessToken: true
+      });
       expect(result).toBe(layers); // No migration
     });
 
@@ -73,7 +93,10 @@ describe("layersMigration", () => {
           ]
         }
       ];
-      const result = migrateLayers(layers, { isEE: false, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toEqual([
         {
           id: "group1",
@@ -109,8 +132,15 @@ describe("layersMigration", () => {
           ]
         }
       ];
-      const result = migrateLayers(layers, { isEE: false, hasAccessToken: false });
-      expect(result?.[0].type === "group" && result[0].children?.[0].type === "group" && result[0].children[0].children).toEqual([
+      const result = migrateLayers(layers, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(
+        result?.[0].type === "group" &&
+          result[0].children?.[0].type === "group" &&
+          result[0].children[0].children
+      ).toEqual([
         {
           id: "3",
           type: "simple",
@@ -137,7 +167,10 @@ describe("layersMigration", () => {
           data: { type: "3dtiles" as const }
         }
       ];
-      const result = migrateLayers(layers, { isEE: false, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toEqual([
         {
           id: "1",
@@ -171,7 +204,10 @@ describe("layersMigration", () => {
           properties: { color: "red" }
         }
       ];
-      const result = migrateLayers(layers, { isEE: false, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toEqual([
         {
           id: "1",
@@ -195,7 +231,10 @@ describe("layersMigration", () => {
           data: { type: "google-photorealistic" as const }
         }
       ];
-      const result = migrateLayers(layers, { isEE: true, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: true,
+        hasAccessToken: false
+      });
       expect(result).toEqual([
         {
           id: "1",
@@ -210,10 +249,16 @@ describe("layersMigration", () => {
         {
           id: "1",
           type: "simple" as const,
-          data: { type: "google-photorealistic" as const, provider: "cesium-ion" }
+          data: {
+            type: "google-photorealistic" as const,
+            provider: "cesium-ion"
+          }
         }
       ];
-      const result = migrateLayers(layers, { isEE: true, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: true,
+        hasAccessToken: false
+      });
       expect(result).toEqual([
         {
           id: "1",
@@ -228,10 +273,16 @@ describe("layersMigration", () => {
         {
           id: "1",
           type: "simple" as const,
-          data: { type: "google-photorealistic" as const, provider: "cesium-ion" }
+          data: {
+            type: "google-photorealistic" as const,
+            provider: "cesium-ion"
+          }
         }
       ];
-      const result = migrateLayers(layers, { isEE: true, hasAccessToken: true });
+      const result = migrateLayers(layers, {
+        isEE: true,
+        hasAccessToken: true
+      });
       expect(result).toBe(layers);
     });
 
@@ -243,7 +294,10 @@ describe("layersMigration", () => {
           data: { type: "google-photorealistic" as const }
         }
       ];
-      const result = migrateLayers(layers, { isEE: false, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(layers);
     });
 
@@ -255,7 +309,10 @@ describe("layersMigration", () => {
           data: { type: "google-photorealistic" as const, provider: "reearth" }
         }
       ];
-      const result = migrateLayers(layers, { isEE: true, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: true,
+        hasAccessToken: false
+      });
       expect(result).toBe(layers);
     });
 
@@ -272,7 +329,10 @@ describe("layersMigration", () => {
           data: { type: "google-photorealistic" as const }
         }
       ];
-      const result = migrateLayers(layers, { isEE: true, hasAccessToken: false });
+      const result = migrateLayers(layers, {
+        isEE: true,
+        hasAccessToken: false
+      });
       expect(result).toEqual([
         {
           id: "1",
@@ -295,7 +355,10 @@ describe("layersMigration", () => {
         type: "group" as const,
         children: []
       };
-      const result = needsLayerMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = needsLayerMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(false);
     });
 
@@ -304,7 +367,10 @@ describe("layersMigration", () => {
         id: "1",
         type: "simple" as const
       };
-      const result = needsLayerMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = needsLayerMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(false);
     });
 
@@ -314,7 +380,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "osm-buildings" as const }
       };
-      const result = needsLayerMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = needsLayerMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(true);
     });
 
@@ -324,7 +393,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "osm-buildings" as const }
       };
-      const result = needsLayerMigration(layer, { isEE: false, hasAccessToken: true });
+      const result = needsLayerMigration(layer, {
+        isEE: false,
+        hasAccessToken: true
+      });
       expect(result).toBe(false);
     });
 
@@ -334,7 +406,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "geojson" as const }
       };
-      const result = needsLayerMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = needsLayerMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(false);
     });
 
@@ -344,7 +419,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "google-photorealistic" as const }
       };
-      const result = needsLayerMigration(layer, { isEE: true, hasAccessToken: false });
+      const result = needsLayerMigration(layer, {
+        isEE: true,
+        hasAccessToken: false
+      });
       expect(result).toBe(true);
     });
 
@@ -354,7 +432,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "google-photorealistic" as const, provider: "cesium-ion" }
       };
-      const result = needsLayerMigration(layer, { isEE: true, hasAccessToken: false });
+      const result = needsLayerMigration(layer, {
+        isEE: true,
+        hasAccessToken: false
+      });
       expect(result).toBe(true);
     });
 
@@ -364,7 +445,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "google-photorealistic" as const, provider: "cesium-ion" }
       };
-      const result = needsLayerMigration(layer, { isEE: true, hasAccessToken: true });
+      const result = needsLayerMigration(layer, {
+        isEE: true,
+        hasAccessToken: true
+      });
       expect(result).toBe(false);
     });
 
@@ -374,7 +458,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "google-photorealistic" as const }
       };
-      const result = needsLayerMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = needsLayerMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(false);
     });
 
@@ -384,7 +471,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "google-photorealistic" as const, provider: "reearth" }
       };
-      const result = needsLayerMigration(layer, { isEE: true, hasAccessToken: false });
+      const result = needsLayerMigration(layer, {
+        isEE: true,
+        hasAccessToken: false
+      });
       expect(result).toBe(false);
     });
   });
@@ -396,7 +486,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "osm-buildings" as const, url: "test.com" }
       };
-      const result = migrateLayer(layer, { isEE: false, hasAccessToken: false });
+      const result = migrateLayer(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toEqual({
         id: "1",
         type: "simple",
@@ -420,7 +513,10 @@ describe("layersMigration", () => {
         type: "group" as const,
         children: []
       };
-      const result = migrateLayer(layer, { isEE: false, hasAccessToken: false });
+      const result = migrateLayer(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(layer);
     });
 
@@ -429,7 +525,10 @@ describe("layersMigration", () => {
         id: "1",
         type: "simple" as const
       };
-      const result = migrateLayer(layer, { isEE: false, hasAccessToken: false });
+      const result = migrateLayer(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(layer);
     });
 
@@ -443,7 +542,10 @@ describe("layersMigration", () => {
           parameters: { foo: "bar" }
         }
       };
-      const result = migrateLayer(layer, { isEE: false, hasAccessToken: false });
+      const result = migrateLayer(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result.type === "simple" && result.data).toEqual({
         type: "reearth-buildings",
         url: "https://example.com",
@@ -461,7 +563,11 @@ describe("layersMigration", () => {
       expect(result).toEqual({
         id: "1",
         type: "simple",
-        data: { type: "google-photorealistic", url: "test.com", provider: "reearth" }
+        data: {
+          type: "google-photorealistic",
+          url: "test.com",
+          provider: "reearth"
+        }
       });
     });
 
@@ -495,7 +601,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "google-photorealistic" as const }
       };
-      const result = migrateLayer(layer, { isEE: false, hasAccessToken: false });
+      const result = migrateLayer(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(layer);
     });
 
@@ -526,7 +635,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "osm-buildings" as const }
       };
-      const result = migrateLayerRecursive(layer, { isEE: false, hasAccessToken: false });
+      const result = migrateLayerRecursive(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toEqual({
         id: "1",
         type: "simple",
@@ -546,7 +658,10 @@ describe("layersMigration", () => {
           }
         ]
       };
-      const result = migrateLayerRecursive(layer, { isEE: false, hasAccessToken: false });
+      const result = migrateLayerRecursive(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toEqual({
         id: "group1",
         type: "group",
@@ -566,7 +681,10 @@ describe("layersMigration", () => {
         type: "group" as const,
         children: []
       };
-      const result = migrateLayerRecursive(layer, { isEE: false, hasAccessToken: false });
+      const result = migrateLayerRecursive(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(layer);
     });
   });
@@ -578,7 +696,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "osm-buildings" as const }
       };
-      const result = checkLayerTreeNeedsMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = checkLayerTreeNeedsMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(true);
     });
 
@@ -588,7 +709,10 @@ describe("layersMigration", () => {
         type: "simple" as const,
         data: { type: "geojson" as const }
       };
-      const result = checkLayerTreeNeedsMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = checkLayerTreeNeedsMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(false);
     });
 
@@ -604,7 +728,10 @@ describe("layersMigration", () => {
           }
         ]
       };
-      const result = checkLayerTreeNeedsMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = checkLayerTreeNeedsMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(true);
     });
 
@@ -626,7 +753,10 @@ describe("layersMigration", () => {
           }
         ]
       };
-      const result = checkLayerTreeNeedsMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = checkLayerTreeNeedsMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(true);
     });
 
@@ -636,7 +766,10 @@ describe("layersMigration", () => {
         type: "group" as const,
         children: []
       };
-      const result = checkLayerTreeNeedsMigration(layer, { isEE: false, hasAccessToken: false });
+      const result = checkLayerTreeNeedsMigration(layer, {
+        isEE: false,
+        hasAccessToken: false
+      });
       expect(result).toBe(false);
     });
   });

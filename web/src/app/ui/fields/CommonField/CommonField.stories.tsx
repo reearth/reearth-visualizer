@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from "@storybook/react";
-
 import { TextInput, Selector, Banner } from "@reearth/app/lib/reearth-ui";
 import { Badge } from "@reearth/app/ui/components";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import CommonField from "./index";
 
