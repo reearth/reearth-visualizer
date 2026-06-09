@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "generated": "2026-06-04T02:43:54.929Z",
-  "totalDocs": 10,
+  "generated": "2026-06-04T03:33:52.532Z",
+  "totalDocs": 11,
   "categories": {
     "uncategorized": [
       "README.md"
@@ -10,7 +10,8 @@
       "architecture/overview.md"
     ],
     "concept": [
-      "concepts/feature-flags.md"
+      "concepts/feature-flags.md",
+      "concepts/schema-driven-field-rendering.md"
     ],
     "guide": [
       "guides/getting-started.md"
@@ -59,6 +60,22 @@
         "../modules/services/config.md",
         "../setup/custom-providers.md",
         "../reference/environment-variables.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "schema-driven-field-rendering": {
+      "path": "concepts/schema-driven-field-rendering.md",
+      "title": "Schema-Driven Field Rendering",
+      "tags": [
+        "ui",
+        "property",
+        "schema",
+        "forms",
+        "rendering"
+      ],
+      "related": [
+        "\"../modules/ui/components.md\"",
+        "\"./feature-flags.md\""
       ],
       "lastUpdated": "2026-06-04"
     }
@@ -182,6 +199,21 @@
     ],
     "runtime-config": [
       "concepts/feature-flags.md"
+    ],
+    "ui": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "property": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "schema": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "forms": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "rendering": [
+      "concepts/schema-driven-field-rendering.md"
     ],
     "setup": [
       "guides/getting-started.md",

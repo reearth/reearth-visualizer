@@ -9,6 +9,9 @@ export type ColorInputFieldProps = CommonFieldProps & ColorInputProps;
 const ColorInputField: FC<ColorInputFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   value,
   onChange,
   ...props
@@ -23,6 +26,9 @@ const ColorInputField: FC<ColorInputFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="colorfield-commonfield"
     >
       <ColorInput

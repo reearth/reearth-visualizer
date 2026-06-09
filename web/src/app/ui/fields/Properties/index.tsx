@@ -14,15 +14,25 @@ import { FC, useMemo, useState } from "react";
 import ListField, { ListItemProps } from "../ListField";
 
 import useHooks from "./hooks";
-import PropertyField from "./PropertyField";
+import PropertyField, { PropertyFieldDecorations } from "./PropertyField";
 
 type Props = {
   propertyId: string;
   item?: Item;
   onFlyTo?: FlyTo;
+  computeDecorations?: (
+    schemaId: string,
+    schemaGroup: string,
+    value: unknown
+  ) => PropertyFieldDecorations;
 };
 
-const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
+const PropertyItem: FC<Props> = ({
+  propertyId,
+  item,
+  onFlyTo,
+  computeDecorations
+}) => {
   const t = useT();
   const [selected, select] = useState<string>();
   const {
@@ -156,6 +166,14 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
             f.hidden
           )
             return null;
+
+          // Compute decorations for this field (business logic from parent)
+          const decorations = computeDecorations?.(
+            f.schemaField.id,
+            item.schemaGroup,
+            f.field?.value
+          );
+
           return (
             <PropertyField
               key={f.schemaField.id}
@@ -165,6 +183,7 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
               itemId={selected}
               schema={f.schemaField}
               onFlyTo={onFlyTo}
+              decorations={decorations}
             />
           );
         })}
