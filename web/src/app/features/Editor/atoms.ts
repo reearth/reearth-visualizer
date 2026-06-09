@@ -20,11 +20,35 @@ export const useWidgetsViewDevice = () => useAtom(widgetsViewDevice);
 const publishViewDevice = atomWithReset<DeviceType>("desktop");
 export const usePublishViewDevice = () => useAtom(publishViewDevice);
 
+// Cesium Ion Access Token
+// Extracted from scene property (Main settings -> default group -> ion field)
+// Used by PropertyField and other components that need to check token availability
+const cesiumIonAccessToken = atomWithReset<string | undefined>(undefined);
+export const useCesiumIonAccessToken = () => useAtom(cesiumIonAccessToken);
+
+// Scene Setting Navigation Target
+// Used to trigger navigation to a specific scene setting (e.g., "main", "tiles", "terrain")
+// When set, the InspectorPanel will navigate to the specified scene setting and clear the atom
+// Optionally includes fieldId to highlight a specific field after navigation
+export type SceneSettingNavigationTarget = {
+  setting: string;
+  fieldId?: string;
+};
+const sceneSettingNavigationTarget = atomWithReset<SceneSettingNavigationTarget | undefined>(undefined);
+export const useSceneSettingNavigationTarget = () => useAtom(sceneSettingNavigationTarget);
+
+// Field highlight target - used to trigger highlight animation on a specific field
+const highlightFieldTarget = atomWithReset<string | undefined>(undefined);
+export const useHighlightFieldTarget = () => useAtom(highlightFieldTarget);
+
 // Reset all
 export const useResetAllAtoms = () => {
   const resetCurrentCamera = useResetAtom(currentCamera);
   const resetWidgetsViewDevice = useResetAtom(widgetsViewDevice);
   const resetPublishViewDevice = useResetAtom(publishViewDevice);
+  const resetCesiumIonAccessToken = useResetAtom(cesiumIonAccessToken);
+  const resetSceneSettingNavigationTarget = useResetAtom(sceneSettingNavigationTarget);
+  const resetHighlightFieldTarget = useResetAtom(highlightFieldTarget);
 
   const resetPlateauExpendedFolderIds = useResetAtom(expandedPlateauFolderIds);
   const resetPlateauSelectedDatasetId = useResetAtom(selectedPlateauDatasetId);
@@ -36,6 +60,9 @@ export const useResetAllAtoms = () => {
     resetCurrentCamera();
     resetWidgetsViewDevice();
     resetPublishViewDevice();
+    resetCesiumIonAccessToken();
+    resetSceneSettingNavigationTarget();
+    resetHighlightFieldTarget();
     resetPlateauExpendedFolderIds();
     resetPlateauSelectedDatasetId();
     resetPlateauSelectedDatasetItem();

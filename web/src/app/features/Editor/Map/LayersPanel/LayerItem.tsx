@@ -1,4 +1,8 @@
 import {
+  useCesiumIonAccessToken,
+  useSceneSettingNavigationTarget
+} from "@reearth/app/features/Editor/atoms";
+import {
   Button,
   IconButton,
   PopupMenuItem,
@@ -13,6 +17,7 @@ import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   Dispatch,
   FC,
+  MouseEvent,
   SetStateAction,
   useCallback,
   useEffect,
@@ -48,8 +53,25 @@ const LayerItem: FC<LayerItemProps> = ({
     handleFlyTo
   } = useMapPage();
 
+  const [cesiumIonAccessToken] = useCesiumIonAccessToken();
+  const [, setNavigationTarget] = useSceneSettingNavigationTarget();
+
   const [showDeleteLayerConfirmModal, setShowDeleteLayerConfirmModal] =
     useState(false);
+
+  // Check if layer needs Cesium Ion warning
+  const showCesiumIonWarning =
+    !cesiumIonAccessToken &&
+    (layer.config?.data?.type === "osm-buildings" ||
+      (layer.config?.data?.type === "google-photorealistic" &&
+        layer.config?.data?.provider === "cesium-ion"));
+
+  const handleNavigateToSettings = useCallback(() => {
+    setNavigationTarget({
+      setting: "main",
+      fieldId: "ion"
+    });
+  }, [setNavigationTarget]);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -133,6 +155,27 @@ const LayerItem: FC<LayerItemProps> = ({
                 />
               ),
               keepVisible: !layer.visible
+            },
+            {
+              comp: showCesiumIonWarning && (
+                <WarningIconButton
+                  key="warning"
+                  icon="warningFilled"
+                  size="normal"
+                  appearance="simple"
+                  tooltipText={t(
+                    "Cesium Ion token not configured. Using fallback.\nClick to configure"
+                  )}
+                  placement="top"
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.stopPropagation();
+                    // Blur the button to close the tooltip
+                    e.currentTarget.blur();
+                    handleNavigateToSettings();
+                  }}
+                />
+              ),
+              keepVisible: true
             }
           ]
         : undefined,
@@ -140,9 +183,11 @@ const LayerItem: FC<LayerItemProps> = ({
       editingLayerNameId,
       layer.id,
       layer.visible,
+      showCesiumIonWarning,
       t,
       handleZoomToLayer,
-      handleToggleLayerVisibility
+      handleToggleLayerVisibility,
+      handleNavigateToSettings
     ]
   );
 
@@ -254,4 +299,13 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: css.overflow.hidden,
   textOverflow: css.textOverflow.ellipsis,
   whiteSpace: css.whiteSpace.nowrap
+}));
+
+const WarningIconButton = styled(IconButton)(({ theme }) => ({
+  "& svg": {
+    "& path:first-of-type": {
+      // Triangle - fill with warning color
+      fill: theme.warning.main
+    }
+  }
 }));
