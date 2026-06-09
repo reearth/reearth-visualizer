@@ -70,7 +70,9 @@ func NewFile(isFake bool, bucketName, base string, cacheControl string) (gateway
 	}
 
 	if !isFake {
-		client, err := storage.NewClient(context.Background())
+		startupCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		client, err := storage.NewClient(startupCtx)
+		cancel()
 		if err != nil {
 			return nil, fmt.Errorf("gcs: failed to create client: %w", err)
 		}
