@@ -23,6 +23,9 @@ export type TwinInputFieldProps = CommonFieldProps &
 const TwinInputField: FC<TwinInputFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   values,
   placeholders,
   content,
@@ -53,7 +56,13 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
   }, [inputValues, onBlur]);
 
   return (
-    <CommonField title={title} description={description}>
+    <CommonField
+      title={title}
+      description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
+    >
       <Wrapper>
         {inputValues.map((value, index) => (
           <InputWrapper key={index}>

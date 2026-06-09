@@ -157,8 +157,8 @@ jobs:
       - uses: reearth/actions/deploy-cloud-run-with-tag@ff086d73d8dfc552101f9a84c9601c5b2b4a6299 # main
         id: deploy
         with:
-          image: '${{ secrets.WEB_IMAGE_BASE }}:${{ needs.build-prepare-pr.outputs.sha_short }}'
-          image_internal: '${{ secrets.WEB_IMAGE_GC_BASE }}:${{ needs.build-prepare-pr.outputs.sha_short }}'
+          image: "${{ secrets.WEB_IMAGE_BASE }}:${{ needs.build-prepare-pr.outputs.sha_short }}"
+          image_internal: "${{ secrets.WEB_IMAGE_GC_BASE }}:${{ needs.build-prepare-pr.outputs.sha_short }}"
           region: ${{ secrets.GC_REGION }}
           service: reearth-visualizer-web
           service_account: ${{ secrets.GC_SA_EMAIL }}
@@ -172,14 +172,6 @@ jobs:
       id-token: write
     uses: ./.github/workflows/deploy_server_nightly.yml
     secrets: inherit
-  playwright-tests:
-    needs: deploy-web
-    permissions:
-      contents: read
-      id-token: write
-    uses: ./.github/workflows/playwright_ui_tests.yml
-    secrets: inherit
-
   playwright-tests-pr:
     needs: deploy-web-pr
     permissions:
