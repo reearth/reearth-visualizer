@@ -78,6 +78,7 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
   "terrain.terrainExaggeration": "scene.verticalExaggeration",
   "terrain.terrainExaggerationRelativeHeight":
     "scene.verticalExaggerationRelativeHeight",
+  "terrain.terrainNormal": "terrain.normal",
   "globeDepthTestAgainstTerrain.depthTestAgainstTerrain":
     "globe.depthTestAgainstTerrain",
   "globeLighting.globeLighting": "globe.enableLighting",

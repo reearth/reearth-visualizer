@@ -75,6 +75,9 @@ extensions:
           terrainExaggerationRelativeHeight:
             title: 地形の強調の基準
             description: 地形が誇張される高さです。デフォルトは0.0です。この高さより上にある地形は上方に、この高さより下にある地形は下方にスケールされます。
+          terrainNormal:
+            title: 常にノーマルを有効化
+            description: Re:Earth Terrain のノーマルマップを常に有効にし、ライティング品質を向上させます。
       globeLighting:
         title: 太陽光の明るさ
         fields:

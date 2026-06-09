@@ -161,6 +161,15 @@ extensions:
                 field: terrain
                 type: bool
                 value: true
+            - id: terrainNormal
+              type: bool
+              title: Normals Extension
+              description: Normals extension provides shading to the terrain and improves its appearance.
+              defaultValue: true
+              availableIf:
+                field: terrainType
+                type: string
+                value: reearth_terrain
         - id: globeLighting
           collection: globe
           title: Globe Lighting

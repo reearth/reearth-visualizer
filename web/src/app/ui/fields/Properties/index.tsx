@@ -104,10 +104,30 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
               condf?.mergedValue ??
               condsf?.defaultValue ??
               (condsf?.type ? zeroValues[condsf.type] : undefined);
+            // Cascade: if the condition field is itself hidden, hide this field too
+            const condFieldHidden =
+              condsf?.only &&
+              (() => {
+                const parentCondf = selectedItem?.fields.find(
+                  (f2) => f2.id === condsf.only?.field
+                );
+                const parentCondsf = item.schemaFields.find(
+                  (f2) => f2.id === condsf.only?.field
+                );
+                const parentCondv =
+                  parentCondf?.value ??
+                  parentCondf?.mergedValue ??
+                  parentCondsf?.defaultValue ??
+                  (parentCondsf?.type
+                    ? zeroValues[parentCondsf.type]
+                    : undefined);
+                return !parentCondv || parentCondv !== condsf.only.value;
+              })();
             return {
               schemaField: f,
               field,
-              hidden: f.only && (!condv || condv !== f.only.value)
+              hidden:
+                f.only && (!condv || condv !== f.only.value || condFieldHidden)
             };
           })
         : [],
