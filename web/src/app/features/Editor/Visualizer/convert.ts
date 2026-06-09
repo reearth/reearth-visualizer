@@ -269,9 +269,14 @@ const processPropertyGroups = (
 
   return Object.fromEntries(
     Object.entries(allFields)
-      .map(([key, { parent, orig }]) => {
+      .map(([key, { schema, parent, orig }]) => {
         const used = orig || parent;
-        if (!used) return [key, null];
+        if (!used) {
+          const defaultVal = schema.defaultValue
+            ? valueFromGQL(schema.defaultValue, schema.type)?.value
+            : undefined;
+          return [key, defaultVal ?? null];
+        }
         return [key, valueFromGQL(used.value, used.type)?.value];
       })
       .filter(([, value]) => typeof value !== "undefined" && value !== null)

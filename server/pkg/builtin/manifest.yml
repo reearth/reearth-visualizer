@@ -163,8 +163,8 @@ extensions:
                 value: true
             - id: terrainNormal
               type: bool
-              title: Normals Extension
-              description: Normals extension provides shading to the terrain and improves its appearance.
+              title: Normals
+              description: Normals provide shading to the terrain and improve its appearance.
               defaultValue: true
               availableIf:
                 field: terrainType
