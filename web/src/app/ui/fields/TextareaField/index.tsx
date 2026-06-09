@@ -13,6 +13,9 @@ export type TextAreaFieldProps = {
 const TextAreaField: FC<TextAreaFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   value,
   onChangeComplete,
   onChange,
@@ -39,6 +42,9 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       dataTestId="textareafield-commonfield"
     >
       <TextArea

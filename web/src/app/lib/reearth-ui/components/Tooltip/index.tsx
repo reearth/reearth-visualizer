@@ -71,6 +71,9 @@ const Tooltip: FC<TooltipProps> = ({
           color={
             type === "experimental" ? theme.warning.weak : theme.content.strong
           }
+          otherProperties={{
+            whiteSpace: "pre-line"
+          }}
         >
           {tooltipText}
         </Typography>

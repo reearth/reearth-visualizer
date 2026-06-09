@@ -5412,9 +5412,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.69":
-  version: 0.0.7-alpha.69
-  resolution: "@reearth/core@npm:0.0.7-alpha.69"
+"@reearth/core@npm:0.0.7-alpha.70":
+  version: 0.0.7-alpha.70
+  resolution: "@reearth/core@npm:0.0.7-alpha.70"
   dependencies:
     "@radix-ui/react-checkbox": "npm:^1.3.3"
     "@radix-ui/react-dialog": "npm:^1.1.15"
@@ -5468,7 +5468,7 @@ __metadata:
     cesium: 1.118.x
     react: ^19.0.0
     react-dom: ^19.0.0
-  checksum: 10c0/89c2398d501f66e3852512d30ba9c3e2b58d6d8fc7f8cf02153747e5675e9e1a8a50214a09a317caa200bd75d77b1d4cb59b6f2179f5ce44ef39376e5c400929
+  checksum: 10c0/479511171ec319d571724b2abd712aa3dd6a0ab52cc2ec52eb830d57f58b1d1b5f2dfa700ec93e678c2d3f0e5dd0446b9a60dbcb772806e739a26744457ef889
   languageName: node
   linkType: hard
 
@@ -5530,7 +5530,7 @@ __metadata:
     "@popperjs/core": "npm:2.11.8"
     "@radix-ui/react-select": "npm:2.2.6"
     "@radix-ui/react-slot": "npm:1.2.4"
-    "@reearth/core": "npm:0.0.7-alpha.69"
+    "@reearth/core": "npm:0.0.7-alpha.70"
     "@reearth/sentinel": "npm:0.1.1"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"

@@ -63,7 +63,10 @@ const config: StorybookConfig = {
         }
       },
       optimizeDeps: {
-        exclude: ["storybook"]
+        exclude: ["@apollo/client", "storybook"]
+      },
+      ssr: {
+        noExternal: ["@apollo/client"]
       }
     });
   },
