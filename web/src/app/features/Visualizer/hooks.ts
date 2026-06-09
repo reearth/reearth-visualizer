@@ -7,7 +7,7 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
-import { InternalWidget } from "./Crust/Widgets";
+import { InternalWidget, WidgetAlignSystem } from "./Crust/Widgets";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 import { useOverriddenProperty } from "./utils";
 import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
@@ -23,7 +23,7 @@ export default function useHooks({
 }: {
   ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   viewerProperty?: ViewerProperty;
-  widgets?: InternalWidget[];
+  widgets?: WidgetAlignSystem;
   onCoreLayerSelect?: (
     layerId: string | undefined,
     layer: ComputedLayer | undefined,
@@ -73,9 +73,26 @@ export default function useHooks({
   }, [overriddenViewerProperty, engineMeta]);
 
   const streetViewTiles = useMemo(() => {
-    const streetViewWidget = widgets?.find(
-      (w) => w.extensionId === "streetView"
-    );
+    const zones = [widgets?.outer, widgets?.inner];
+    const sections = ["left", "center", "right"] as const;
+    const areas = ["top", "middle", "bottom"] as const;
+    let streetViewWidget: InternalWidget | undefined;
+    outer: for (const zone of zones) {
+      if (!zone) continue;
+      for (const section of sections) {
+        const sec = zone[section];
+        if (!sec) continue;
+        for (const area of areas) {
+          const found = sec[area]?.widgets?.find(
+            (w) => w.extensionId === "streetView"
+          );
+          if (found) {
+            streetViewWidget = found;
+            break outer;
+          }
+        }
+      }
+    }
     if (!streetViewWidget?.property) return [];
 
     const property = streetViewWidget.property as Record<string, unknown>;
@@ -124,6 +141,7 @@ export default function useHooks({
     if (!tileType) return [];
     return [{ id: streetViewWidget.id, type: tileType }];
   }, [widgets]);
+
 
   // Append Street View tile when Street View widget exists and has a tile type selected
   const finalViewerProperty = useMemo(() => {

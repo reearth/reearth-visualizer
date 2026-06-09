@@ -35,7 +35,6 @@ import { InteractionModeType, MapRef } from "./Crust/types";
 import {
   Alignment,
   Widget,
-  InternalWidget,
   WidgetAlignSystem,
   WidgetLayoutConstraint
 } from "./Crust/Widgets";
@@ -61,7 +60,6 @@ type VisualizerProps = {
     alignSystem?: WidgetAlignSystem;
     ownBuiltinWidgets: string[];
     layoutConstraint?: Record<string, WidgetLayoutConstraint> | undefined;
-    widgets?: InternalWidget[];
   };
   viewerProperty?: ViewerProperty;
   pluginProperty?: Record<string, unknown> | undefined;
@@ -239,13 +237,13 @@ const Visualizer: FC<VisualizerProps> = ({
   } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
     viewerProperty,
-    widgets: widgets?.widgets,
+    widgets: widgets?.alignSystem,
     onCoreLayerSelect,
     currentCamera,
     handleCoreAPIReady,
     engineMeta
   });
-
+  
   // Override engineMeta cesiumIonAccessToken with global token from viewer property if set
   const overriddenEngineMeta = useMemo(() => {
     const globalIonToken = overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
