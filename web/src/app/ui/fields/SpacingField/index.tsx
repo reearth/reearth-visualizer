@@ -25,6 +25,9 @@ const spacingPosition = ["top", "left", "right", "bottom"];
 const SpacingField: FC<SpacingFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   value,
   onChange,
   onBlur,
@@ -77,6 +80,9 @@ const SpacingField: FC<SpacingFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="spacingfield-commonfield"
     >
       <InputWrapper data-testid="spacingfield-inputwrapper">

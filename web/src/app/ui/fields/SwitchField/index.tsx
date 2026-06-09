@@ -9,12 +9,18 @@ export type SwitchFieldProps = CommonFieldProps & SwitcherProps;
 const SwitchField: FC<SwitchFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   ...props
 }) => {
   return (
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="switchfield-commonfield"
     >
       <Switcher {...props} />

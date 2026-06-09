@@ -1,3 +1,5 @@
+import { useCesiumIonAccessToken } from "@reearth/app/features/Editor/atoms";
+import { CesiumIonAssetFallbackWarning } from "@reearth/app/features/Editor/common";
 import {
   LayerConfigUpdateProps,
   LayerNameUpdateProps
@@ -26,6 +28,7 @@ const DataSource: FC<Props> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
+  const [cesiumIonAccessToken] = useCesiumIonAccessToken();
   const [localUrl, setLocalUrl] = useState(selectedLayer.config?.data?.url);
 
   useEffect(() => {
@@ -114,7 +117,7 @@ const DataSource: FC<Props> = ({
       });
     }
     options.push({
-      label: "Cesium ion",
+      label: "Cesium Ion",
       value: "cesium-ion" as const
     });
     return options;
@@ -136,6 +139,17 @@ const DataSource: FC<Props> = ({
     },
     [onLayerConfigUpdate, selectedLayer.config, selectedLayer.id]
   );
+
+  // Check if we should show Cesium Ion warning for google-photorealistic
+  const showGooglePhotorealisticWarning =
+    selectedLayer.config?.data?.type === "google-photorealistic" &&
+    selectedLayer.config?.data?.provider === "cesium-ion" &&
+    !cesiumIonAccessToken;
+
+  // Check if we should show Cesium Ion warning for osm-buildings
+  const showOsmBuildingsWarning =
+    selectedLayer.config?.data?.type === "osm-buildings" &&
+    !cesiumIonAccessToken;
 
   return (
     <Wrapper data-testid="data-source-wrapper">
@@ -162,6 +176,18 @@ const DataSource: FC<Props> = ({
             disabled
             data-testid="data-source-format-input"
           />
+          {selectedLayer.config?.data?.type === "osm-buildings" && (
+            <ProviderWrapper>
+              <InputField
+                title={t("Provider")}
+                value="Cesium Ion"
+                appearance="present"
+                disabled
+                data-testid="data-source-osm-buildings-provider"
+              />
+              {showOsmBuildingsWarning && <CesiumIonAssetFallbackWarning />}
+            </ProviderWrapper>
+          )}
           {localUrl && (
             <ResourceUrl
               title={t("Resource URL")}
@@ -183,15 +209,20 @@ const DataSource: FC<Props> = ({
             />
           )}
           {selectedLayer.config?.data?.type === "google-photorealistic" && (
-            <SelectField
-              title={t("Provider")}
-              options={googlePhotorealisticProviderOptions}
-              value={
-                selectedLayer.config.data.provider ||
-                (isEE ? "reearth" : "cesium-ion")
-              }
-              onChange={handleGooglePhotorealisticProviderChange}
-            />
+            <ProviderWrapper>
+              <SelectField
+                title={t("Provider")}
+                options={googlePhotorealisticProviderOptions}
+                value={
+                  selectedLayer.config.data.provider ||
+                  (isEE ? "reearth" : "cesium-ion")
+                }
+                onChange={handleGooglePhotorealisticProviderChange}
+              />
+              {showGooglePhotorealisticWarning && (
+                <CesiumIonAssetFallbackWarning />
+              )}
+            </ProviderWrapper>
           )}
         </InputWrapper>
       </Collapse>
@@ -226,6 +257,12 @@ const InputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large
+}));
+
+const ProviderWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small
 }));
 
 export default DataSource;
