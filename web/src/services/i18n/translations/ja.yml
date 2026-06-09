@@ -128,6 +128,8 @@ Switch workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log out: ログアウト
+Cesium Ion token not configured. Using fallback.: Cesium Ionトークンが設定されていません。フォールバックを使用します。
+Configure token: トークンを設定
 Desktop: デスクトップ
 Mobile: モバイル
 Page: ページ
@@ -220,6 +222,7 @@ Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
+"Cesium Ion token not configured. Using fallback.\nClick to configure": Cesium Ionトークンが設定されていません。フォールバックを使用します。\nクリックして設定
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース

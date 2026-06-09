@@ -34,6 +34,9 @@ export type AssetFieldProps = CommonFieldProps & {
 const AssetField: FC<AssetFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   value,
   inputMethod,
   assetsTypes,
@@ -109,6 +112,9 @@ const AssetField: FC<AssetFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="assetfield-commonfield"
     >
       <AssetWrapper data-testid="assetfield-wrapper">

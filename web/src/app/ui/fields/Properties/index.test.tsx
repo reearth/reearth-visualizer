@@ -1,6 +1,9 @@
+import { CesiumIonAssetFallbackWarning } from "@reearth/app/features/Editor/common";
 import type { Item } from "@reearth/services/api/property";
 import { render, screen } from "@reearth/test/utils";
 import { describe, expect, test, vi, beforeEach } from "vitest";
+
+import { PropertyFieldDecorations } from "./PropertyField";
 
 import PropertyItem from "./index";
 
@@ -404,6 +407,199 @@ describe("PropertyItem", () => {
     expect(screen.getByText("Choose an option")).toBeInTheDocument();
   });
 
+  describe("Field Decorations", () => {
+    test("shows warning for cesium_ion tile type when decoration is provided by computeDecorations", () => {
+      const mockComputeDecorations = vi.fn(
+        (
+          schemaId: string,
+          schemaGroup: string,
+          value: unknown
+        ): PropertyFieldDecorations => {
+          if (
+            schemaId === "tile_type" &&
+            schemaGroup === "tiles" &&
+            value === "cesium_ion"
+          ) {
+            return {
+              afterInput: <CesiumIonAssetFallbackWarning />
+            };
+          }
+          return {};
+        }
+      );
+
+      const mockItem = {
+        id: "1",
+        schemaGroup: "tiles",
+        schemaFields: [
+          {
+            id: "tile_type",
+            type: "string",
+            title: "Tile Type",
+            choices: [
+              { key: "default", label: "Default" },
+              { key: "cesium_ion", label: "Cesium Ion" }
+            ]
+          }
+        ],
+        fields: [
+          {
+            id: "tile_type",
+            type: "string",
+            value: "cesium_ion"
+          }
+        ],
+        representativeField: "tile_type"
+      } as unknown as Item;
+
+      render(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
+
+      expect(screen.getByTestId("cesium-ion-warning")).toBeInTheDocument();
+      expect(
+        screen.getByText("Cesium Ion token not configured. Using fallback.")
+      ).toBeInTheDocument();
+    });
+
+    test("shows warning for cesium terrain type when decoration is provided by computeDecorations", () => {
+      const mockComputeDecorations = vi.fn(
+        (
+          schemaId: string,
+          schemaGroup: string,
+          value: unknown
+        ): PropertyFieldDecorations => {
+          if (
+            schemaId === "terrainType" &&
+            schemaGroup === "terrain" &&
+            value === "cesium"
+          ) {
+            return {
+              afterInput: <CesiumIonAssetFallbackWarning />
+            };
+          }
+          return {};
+        }
+      );
+
+      const mockItem = {
+        id: "1",
+        schemaGroup: "terrain",
+        schemaFields: [
+          {
+            id: "terrainType",
+            type: "string",
+            title: "Terrain Type",
+            choices: [
+              { key: "none", label: "None" },
+              { key: "cesium", label: "Cesium World Terrain" },
+              { key: "reearth_terrain", label: "Re:Earth Terrain" }
+            ]
+          }
+        ],
+        fields: [
+          {
+            id: "terrainType",
+            type: "string",
+            value: "cesium"
+          }
+        ],
+        representativeField: "terrainType"
+      } as unknown as Item;
+
+      render(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
+
+      expect(screen.getByTestId("cesium-ion-warning")).toBeInTheDocument();
+      expect(
+        screen.getByText("Cesium Ion token not configured. Using fallback.")
+      ).toBeInTheDocument();
+    });
+
+    test("does not show warning when computeDecorations returns empty decorations", () => {
+      const mockComputeDecorations = vi.fn(() => ({}));
+
+      const mockItem = {
+        id: "1",
+        schemaGroup: "tiles",
+        schemaFields: [
+          {
+            id: "tile_type",
+            type: "string",
+            title: "Tile Type",
+            choices: [
+              { key: "default", label: "Default" },
+              { key: "cesium_ion", label: "Cesium Ion" }
+            ]
+          }
+        ],
+        fields: [
+          {
+            id: "tile_type",
+            type: "string",
+            value: "cesium_ion"
+          }
+        ],
+        representativeField: "tile_type"
+      } as unknown as Item;
+
+      render(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
+
+      expect(
+        screen.queryByTestId("cesium-ion-warning")
+      ).not.toBeInTheDocument();
+    });
+
+    test("works without computeDecorations (generic usage)", () => {
+      const mockItem = {
+        id: "1",
+        schemaGroup: "tiles",
+        schemaFields: [
+          {
+            id: "tile_type",
+            type: "string",
+            title: "Tile Type",
+            choices: [
+              { key: "default", label: "Default" },
+              { key: "cesium_ion", label: "Cesium Ion" }
+            ]
+          }
+        ],
+        fields: [
+          {
+            id: "tile_type",
+            type: "string",
+            value: "cesium_ion"
+          }
+        ],
+        representativeField: "tile_type"
+      } as unknown as Item;
+
+      // Render without computeDecorations - should work fine (no decorations)
+      render(<PropertyItem propertyId="testId" item={mockItem} />);
+
+      expect(screen.getByText("Tile Type")).toBeInTheDocument();
+      expect(
+        screen.queryByTestId("cesium-ion-warning")
+      ).not.toBeInTheDocument();
+    });
+  });
+
   test("renders multiline field with placeholder", () => {
     const mockItem = {
       id: "1",
@@ -423,7 +619,9 @@ describe("PropertyItem", () => {
 
     render(<PropertyItem propertyId="testId" item={mockItem} />);
     expect(screen.getByText("Textarea Field")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Enter your text here")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Enter your text here")
+    ).toBeInTheDocument();
   });
 
   test("renders number field with placeholder", () => {
@@ -466,6 +664,8 @@ describe("PropertyItem", () => {
 
     render(<PropertyItem propertyId="testId" item={mockItem} />);
     expect(screen.getByText("URL Field")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("https://example.com")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("https://example.com")
+    ).toBeInTheDocument();
   });
 });
