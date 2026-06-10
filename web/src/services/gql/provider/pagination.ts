@@ -30,6 +30,23 @@ export function paginationMerge(
   };
 }
 
+export function paginationMergeNodes(
+  existing: {
+    nodes: unknown[];
+    pageInfo: { startCursor: string };
+  } | null,
+  incoming: { nodes: unknown[]; pageInfo: { startCursor: string } }
+) {
+  if (existing && incoming && isEqual(existing, incoming)) return incoming;
+
+  const merged = existing ? existing.nodes.slice(0) : [];
+
+  return {
+    ...incoming,
+    nodes: [...merged, ...incoming.nodes]
+  };
+}
+
 function offsetFromCursor(
   items: { cursor: string }[],
   cursor: string,
