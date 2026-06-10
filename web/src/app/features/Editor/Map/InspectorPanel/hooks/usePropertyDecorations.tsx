@@ -57,21 +57,25 @@ export const usePropertyDecorations = () => {
 
       // Business Rule: Google tiles opacity override
       // Disable opacity field and override its value to 1 for Google tiles
-      if (
-        schemaId === "tile_opacity" &&
-        schemaGroup === "tiles"
-      ) {
+      if (schemaId === "tile_opacity" && schemaGroup === "tiles") {
         const tileTypeField = allFields.find((f) => f.id === "tile_type");
         const tileType = tileTypeField?.value;
 
         // Check if current tile is a Google tile
-        const isCurrentTileGoogle = tileType === "google_satellite" || tileType === "google_roadmap";
+        const isCurrentTileGoogle =
+          tileType === "google_satellite" || tileType === "google_roadmap";
 
         // Check if any other tile in the list is a Google tile
-        const hasGoogleTileInList = allListItemsFields?.some((itemFields) => {
-          const itemTileType = itemFields.find((f) => f.id === "tile_type")?.value;
-          return itemTileType === "google_satellite" || itemTileType === "google_roadmap";
-        }) ?? false;
+        const hasGoogleTileInList =
+          allListItemsFields?.some((itemFields) => {
+            const itemTileType = itemFields.find(
+              (f) => f.id === "tile_type"
+            )?.value;
+            return (
+              itemTileType === "google_satellite" ||
+              itemTileType === "google_roadmap"
+            );
+          }) ?? false;
 
         if (isCurrentTileGoogle) {
           // Current tile is Google - use specific message
@@ -81,7 +85,9 @@ export const usePropertyDecorations = () => {
             <Tooltip
               type="custom"
               icon="informationCircle"
-              text={t("Disabled: Opacity adjustments are not available for Google Maps tile to ensure compliance with Google Maps Terms of Service.")}
+              text={t(
+                "Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies."
+              )}
             />
           );
         } else if (hasGoogleTileInList) {
@@ -92,7 +98,9 @@ export const usePropertyDecorations = () => {
             <Tooltip
               type="custom"
               icon="informationCircle"
-              text={t("Disabled: Opacity adjustments are not available when Google Maps tiles are present, to ensure compliance with the Google Maps Terms of Service.")}
+              text={t(
+                "Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies."
+              )}
             />
           );
         }

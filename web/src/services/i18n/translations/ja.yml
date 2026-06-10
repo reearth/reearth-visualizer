@@ -175,8 +175,8 @@ URL: URL
 Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
-'Disabled: Opacity adjustments are not available for Google Maps tile to ensure compliance with Google Maps Terms of Service.': '無効: Google Maps利用規約に準拠するため、Google Mapsタイルの不透明度調整はできません。'
-'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to ensure compliance with the Google Maps Terms of Service.': '無効: Google Maps利用規約に準拠するため、Google Mapsタイルが存在する場合は不透明度調整はできません。'
+'Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルの不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
+'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルが存在する場合の不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 Inspector: インスペクター
 Layer: レイヤー
 Layer Name: レイヤー名
