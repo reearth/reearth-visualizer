@@ -154,9 +154,20 @@ const PropertyItem: FC<Props> = ({
                 item.schemaFields
                   .map((sf) => {
                     const field = group.fields.find((f) => f.id === sf.id);
+
+                    // Use same value resolution as PropertyField to ensure consistency
+                    let resolvedValue: unknown;
+                    if (sf.id === "tile_type" && item.schemaGroup === "tiles") {
+                      // Apply default tile type override for tile_type field in tiles group
+                      const overriddenDefault = appFeature()?.defaultTileType;
+                      resolvedValue = field?.mergedValue ?? field?.value ?? overriddenDefault ?? sf.defaultValue;
+                    } else {
+                      resolvedValue = field?.mergedValue ?? field?.value ?? sf.defaultValue;
+                    }
+
                     return {
                       id: sf.id,
-                      value: field?.value ?? sf.defaultValue
+                      value: resolvedValue
                     };
                   })
               )
@@ -172,10 +183,22 @@ const PropertyItem: FC<Props> = ({
             // Build context of all fields for decoration computation
             const allFields: FieldContext[] = schemaFields
               .filter((sf) => !sf.hidden)
-              .map((sf) => ({
-                id: sf.schemaField.id,
-                value: sf.field?.value ?? sf.schemaField.defaultValue
-              }));
+              .map((sf) => {
+                // Use same value resolution as PropertyField to ensure consistency
+                let resolvedValue: unknown;
+                if (sf.schemaField.id === "tile_type" && item.schemaGroup === "tiles") {
+                  // Apply default tile type override for tile_type field in tiles group
+                  const overriddenDefault = appFeature()?.defaultTileType;
+                  resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? overriddenDefault ?? sf.schemaField.defaultValue;
+                } else {
+                  resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? sf.schemaField.defaultValue;
+                }
+
+                return {
+                  id: sf.schemaField.id,
+                  value: resolvedValue
+                };
+              });
 
             // Compute decorations for this field (business logic from parent)
             const decorations = computeDecorations?.(

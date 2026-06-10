@@ -838,6 +838,72 @@ describe("PropertyItem", () => {
         screen.queryByTestId("cesium-ion-warning")
       ).not.toBeInTheDocument();
     });
+
+    test("uses mergedValue in allFields context when available", () => {
+      const mockComputeDecorations = vi.fn(
+        (
+          schemaId: string,
+          _schemaGroup: string,
+          _value: unknown,
+          allFields: FieldContext[],
+          _allListItemsFields?: FieldContext[][]
+        ): PropertyFieldDecorations => {
+          // This test verifies that when a field has mergedValue,
+          // the allFields context should use mergedValue, not just value
+          if (schemaId === "tile_opacity") {
+            const tileTypeField = allFields.find((f) => f.id === "tile_type");
+            // Should be "google_roadmap" from mergedValue, not "default" from value
+            expect(tileTypeField?.value).toBe("google_roadmap");
+          }
+          return {};
+        }
+      );
+
+      const mockItem = {
+        id: "1",
+        schemaGroup: "tiles",
+        schemaFields: [
+          {
+            id: "tile_type",
+            type: "string",
+            title: "Tile Type",
+            defaultValue: "open_street_map"
+          },
+          {
+            id: "tile_opacity",
+            type: "number",
+            title: "Opacity",
+            defaultValue: 1
+          }
+        ],
+        fields: [
+          {
+            id: "tile_type",
+            type: "string",
+            value: "default",
+            mergedValue: "google_roadmap" // mergedValue should take precedence
+          },
+          {
+            id: "tile_opacity",
+            type: "number",
+            value: 0.5
+          }
+        ],
+        representativeField: "tile_type"
+      } as unknown as Item;
+
+      render(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
+
+      // The mock computeDecorations includes an expect that verifies
+      // the tile_type value in allFields uses mergedValue
+      expect(mockComputeDecorations).toHaveBeenCalled();
+    });
   });
 
   test("renders multiline field with placeholder", () => {
