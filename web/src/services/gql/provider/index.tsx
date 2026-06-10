@@ -58,6 +58,10 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
             keyArgs: ["workspaceId", "pagination", ["first", "last"]],
             merge: paginationMergeNodes
           },
+          deletedProjects: {
+            keyArgs: ["workspaceId", "pagination", ["first", "last"]],
+            merge: paginationMergeNodes
+          },
           datasetSchemas: {
             keyArgs: ["sceneId", "first", "after"],
             merge: paginationMerge
