@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { migrateViewerPropertyTiles, __testing__ } from "./tilesMigration";
 
-const { TILE_TYPE_MIGRATION_MAP, CESIUM_ION_ASSET_ID_FALLBACK_MAP, needsTileMigration, migrateTile, migrateTerrain } = __testing__;
+const {
+  TILE_TYPE_MIGRATION_MAP,
+  CESIUM_ION_ASSET_ID_FALLBACK_MAP,
+  needsTileMigration,
+  migrateTile,
+  migrateTerrain
+} = __testing__;
 
 describe("tilesMigration", () => {
   describe("migrateViewerPropertyTiles", () => {
@@ -25,9 +31,7 @@ describe("tilesMigration", () => {
 
     it("should return original viewerProperty when no migration needed", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1", type: "open_street_map" }
-        ]
+        tiles: [{ id: "1", type: "open_street_map" }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -38,10 +42,7 @@ describe("tilesMigration", () => {
 
     it("should apply defaultTileType to tiles without type when defaultTileType is provided", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1" },
-          { id: "2", type: undefined }
-        ]
+        tiles: [{ id: "1" }, { id: "2", type: undefined }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -56,10 +57,7 @@ describe("tilesMigration", () => {
 
     it("should NOT apply type to tiles without type when defaultTileType is not provided", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1" },
-          { id: "2", type: undefined }
-        ]
+        tiles: [{ id: "1" }, { id: "2", type: undefined }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -87,7 +85,12 @@ describe("tilesMigration", () => {
         { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
         { id: "2", type: "google_satellite", cesiumIonAssetId: 3, opacity: 1 },
         { id: "3", type: "google_roadmap", cesiumIonAssetId: 4, opacity: 1 },
-        { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812, opacity: 1 }
+        {
+          id: "4",
+          type: "nasa_black_marble",
+          cesiumIonAssetId: 3812,
+          opacity: 1
+        }
       ]);
     });
 
@@ -131,15 +134,18 @@ describe("tilesMigration", () => {
         { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
         { id: "2", type: "google_satellite", cesiumIonAssetId: 3, opacity: 1 },
         { id: "3", type: "google_roadmap", cesiumIonAssetId: 4, opacity: 1 },
-        { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812, opacity: 1 }
+        {
+          id: "4",
+          type: "nasa_black_marble",
+          cesiumIonAssetId: 3812,
+          opacity: 1
+        }
       ]);
     });
 
     it("should NOT apply Cesium Ion fallback when token is available", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1", type: "cesium_ion", cesiumIonAssetId: 2 }
-        ]
+        tiles: [{ id: "1", type: "cesium_ion", cesiumIonAssetId: 2 }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: true,
@@ -189,9 +195,7 @@ describe("tilesMigration", () => {
 
     it("should NOT migrate Cesium Ion tiles with unknown asset IDs", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1", type: "cesium_ion", cesiumIonAssetId: 999999 }
-        ]
+        tiles: [{ id: "1", type: "cesium_ion", cesiumIonAssetId: 999999 }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: true,
@@ -271,8 +275,14 @@ describe("tilesMigration", () => {
         hasAccessToken: false
       });
       // Opacity is set to 1 because Google tiles are present
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }]); // Migrated + fallback
-      expect(result?.terrain).toEqual({ type: "reearth_terrain", enabled: true, normal: true });
+      expect(result?.tiles).toEqual([
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }
+      ]); // Migrated + fallback
+      expect(result?.terrain).toEqual({
+        type: "reearth_terrain",
+        enabled: true,
+        normal: true
+      });
     });
 
     it("should only migrate terrain when tiles don't need migration", () => {
@@ -334,7 +344,7 @@ describe("tilesMigration", () => {
 
     it("should set normal=true for reearth_terrain when enabled", () => {
       const viewerProperty = {
-        terrain: { type: "reearth_terrain", enabled: true }
+        terrain: { type: "reearth_terrain" as const, enabled: true }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -349,7 +359,7 @@ describe("tilesMigration", () => {
 
     it("should NOT set normal=true for reearth_terrain when disabled", () => {
       const viewerProperty = {
-        terrain: { type: "reearth_terrain", enabled: false }
+        terrain: { type: "reearth_terrain" as const, enabled: false }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -360,7 +370,11 @@ describe("tilesMigration", () => {
 
     it("should NOT override normal if already set to true", () => {
       const viewerProperty = {
-        terrain: { type: "reearth_terrain", enabled: true, normal: true }
+        terrain: {
+          type: "reearth_terrain" as const,
+          enabled: true,
+          normal: true
+        }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -371,7 +385,11 @@ describe("tilesMigration", () => {
 
     it("should set normal=true even if it was explicitly false", () => {
       const viewerProperty = {
-        terrain: { type: "reearth_terrain", enabled: true, normal: false }
+        terrain: {
+          type: "reearth_terrain" as const,
+          enabled: true,
+          normal: false
+        }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -386,7 +404,7 @@ describe("tilesMigration", () => {
 
     it("should NOT set normal for non-reearth_terrain types", () => {
       const viewerProperty = {
-        terrain: { type: "cesium", enabled: true }
+        terrain: { type: "cesium" as const, enabled: true }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -406,7 +424,9 @@ describe("tilesMigration", () => {
         hasAccessToken: false
       });
       // Opacity is set to 1 because Google tiles are present
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }]); // Migrated + fallback
+      expect(result?.tiles).toEqual([
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }
+      ]); // Migrated + fallback
       expect(result?.terrain).toEqual({
         enabled: true,
         type: "reearth_terrain",
@@ -424,7 +444,9 @@ describe("tilesMigration", () => {
         hasAccessToken: false
       });
       // Opacity is set to 1 because Google tiles are present
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }]); // Migrated + fallback
+      expect(result?.tiles).toEqual([
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }
+      ]); // Migrated + fallback
       expect(result?.terrain).toBe(viewerProperty.terrain); // Unchanged
     });
   });
@@ -433,7 +455,11 @@ describe("tilesMigration", () => {
     it("should return true for tiles without type when defaultTileType is provided", () => {
       const result = needsTileMigration(
         { type: undefined },
-        { isEE: false, defaultTileType: "open_street_map", hasAccessToken: false }
+        {
+          isEE: false,
+          defaultTileType: "open_street_map",
+          hasAccessToken: false
+        }
       );
       expect(result).toBe(true);
     });
@@ -588,7 +614,11 @@ describe("tilesMigration", () => {
     });
 
     it("should handle asset ID as number", () => {
-      const tile = { id: "1", type: "cesium_ion" as const, cesiumIonAssetId: 3 };
+      const tile = {
+        id: "1",
+        type: "cesium_ion" as const,
+        cesiumIonAssetId: 3
+      };
       const result = migrateTile(tile, {
         isEE: true,
         hasAccessToken: false
@@ -661,10 +691,14 @@ describe("tilesMigration", () => {
 
     it("should NOT fallback cesiumion terrain regardless of token (user's explicit choice)", () => {
       const terrainNoToken = { type: "cesiumion", enabled: true };
-      expect(migrateTerrain(terrainNoToken, { isEE: false, hasAccessToken: false })).toBe(terrainNoToken);
+      expect(
+        migrateTerrain(terrainNoToken, { isEE: false, hasAccessToken: false })
+      ).toBe(terrainNoToken);
 
       const terrainWithToken = { type: "cesiumion", enabled: true };
-      expect(migrateTerrain(terrainWithToken, { isEE: false, hasAccessToken: true })).toBe(terrainWithToken);
+      expect(
+        migrateTerrain(terrainWithToken, { isEE: false, hasAccessToken: true })
+      ).toBe(terrainWithToken);
     });
 
     it("should NOT modify terrain with other types", () => {
@@ -868,7 +902,12 @@ describe("tilesMigration", () => {
           hasAccessToken: false
         });
         expect(result?.tiles).toEqual([
-          { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
+          {
+            id: "1",
+            type: "google_satellite",
+            cesiumIonAssetId: 2,
+            opacity: 1
+          },
           { id: "2", type: "open_street_map", opacity: 1 }
         ]);
       });
@@ -903,7 +942,12 @@ describe("tilesMigration", () => {
           hasAccessToken: false
         });
         expect(result?.tiles).toEqual([
-          { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
+          {
+            id: "1",
+            type: "google_satellite",
+            cesiumIonAssetId: 2,
+            opacity: 1
+          },
           { id: "2", type: "open_street_map", opacity: 1 }
         ]);
       });
@@ -914,8 +958,8 @@ describe("tilesMigration", () => {
         // override for non-Google tiles
         const viewerProperty = {
           tiles: [
-            { id: "1", type: "google_satellite", opacity: 1 },     // Already compliant
-            { id: "2", type: "open_street_map", opacity: 0.5 }     // Needs override!
+            { id: "1", type: "google_satellite", opacity: 1 }, // Already compliant
+            { id: "2", type: "open_street_map", opacity: 0.5 } // Needs override!
           ]
         };
         const result = migrateViewerPropertyTiles(viewerProperty, {
@@ -926,7 +970,7 @@ describe("tilesMigration", () => {
         // Both tiles should have opacity: 1
         expect(result?.tiles).toEqual([
           { id: "1", type: "google_satellite", opacity: 1 },
-          { id: "2", type: "open_street_map", opacity: 1 }  // ✅ Should be overridden!
+          { id: "2", type: "open_street_map", opacity: 1 } // ✅ Should be overridden!
         ]);
       });
     });
