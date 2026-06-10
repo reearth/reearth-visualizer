@@ -16,6 +16,11 @@ import ListField, { ListItemProps } from "../ListField";
 import useHooks from "./hooks";
 import PropertyField, { PropertyFieldDecorations } from "./PropertyField";
 
+export type FieldContext = {
+  id: string;
+  value: unknown;
+};
+
 type Props = {
   propertyId: string;
   item?: Item;
@@ -23,7 +28,9 @@ type Props = {
   computeDecorations?: (
     schemaId: string,
     schemaGroup: string,
-    value: unknown
+    value: unknown,
+    allFields: FieldContext[],
+    allListItemsFields?: FieldContext[][]
   ) => PropertyFieldDecorations;
 };
 
@@ -140,19 +147,44 @@ const PropertyItem: FC<Props> = ({
         />
       )}
       {!!item &&
-        schemaFields?.map((f) => {
-          if (
-            (layerMode && f.schemaField.id === item.representativeField) ||
-            f.hidden
-          )
-            return null;
+        (() => {
+          // Build context of all list items for decoration computation
+          const allListItemsFields: FieldContext[][] | undefined = isList
+            ? groups.map((group) =>
+                item.schemaFields
+                  .map((sf) => {
+                    const field = group.fields.find((f) => f.id === sf.id);
+                    return {
+                      id: sf.id,
+                      value: field?.value ?? sf.defaultValue
+                    };
+                  })
+              )
+            : undefined;
 
-          // Compute decorations for this field (business logic from parent)
-          const decorations = computeDecorations?.(
-            f.schemaField.id,
-            item.schemaGroup,
-            f.field?.value
-          );
+          return schemaFields?.map((f) => {
+            if (
+              (layerMode && f.schemaField.id === item.representativeField) ||
+              f.hidden
+            )
+              return null;
+
+            // Build context of all fields for decoration computation
+            const allFields: FieldContext[] = schemaFields
+              .filter((sf) => !sf.hidden)
+              .map((sf) => ({
+                id: sf.schemaField.id,
+                value: sf.field?.value ?? sf.schemaField.defaultValue
+              }));
+
+            // Compute decorations for this field (business logic from parent)
+            const decorations = computeDecorations?.(
+              f.schemaField.id,
+              item.schemaGroup,
+              f.field?.value,
+              allFields,
+              allListItemsFields
+            );
 
           return (
             <PropertyField
@@ -166,7 +198,8 @@ const PropertyItem: FC<Props> = ({
               decorations={decorations}
             />
           );
-        })}
+        });
+        })()}
     </FieldsWrapper>
   );
 };

@@ -33,6 +33,8 @@ export type PropertyFieldDecorations = {
   beforeInput?: ReactNode;
   afterInput?: ReactNode;
   highlight?: boolean;
+  disabled?: boolean;
+  overrideValue?: unknown;
 };
 
 type Props = {
@@ -57,6 +59,11 @@ const PropertyField: FC<Props> = ({
   const t = useT();
   const { handlePropertyItemUpdate } = useHooks(propertyId, schemaGroup);
   const value = useMemo(() => {
+    // Apply override value from decorations if provided
+    if (externalDecorations?.overrideValue !== undefined) {
+      return externalDecorations.overrideValue;
+    }
+
     // Apply default tile type override for tile_type field in tiles group
     if (schema.id === "tile_type" && schemaGroup === "tiles") {
       const overriddenDefault = appFeature()?.defaultTileType;
@@ -73,7 +80,8 @@ const PropertyField: FC<Props> = ({
     field?.value,
     schema.defaultValue,
     schema.id,
-    schemaGroup
+    schemaGroup,
+    externalDecorations?.overrideValue
   ]);
 
   const assetTypes = useMemo(

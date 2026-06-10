@@ -5,7 +5,7 @@ import { describe, expect, test, vi, beforeEach } from "vitest";
 
 import { PropertyFieldDecorations } from "./PropertyField";
 
-import PropertyItem from "./index";
+import PropertyItem, { FieldContext } from "./index";
 
 vi.mock("./hooks", () => ({
   default: () => ({
@@ -413,7 +413,9 @@ describe("PropertyItem", () => {
         (
           schemaId: string,
           schemaGroup: string,
-          value: unknown
+          value: unknown,
+          allFields: FieldContext[],
+          allListItemsFields?: FieldContext[][]
         ): PropertyFieldDecorations => {
           if (
             schemaId === "tile_type" &&
@@ -471,7 +473,9 @@ describe("PropertyItem", () => {
         (
           schemaId: string,
           schemaGroup: string,
-          value: unknown
+          value: unknown,
+          allFields: FieldContext[],
+          allListItemsFields?: FieldContext[][]
         ): PropertyFieldDecorations => {
           if (
             schemaId === "terrainType" &&
@@ -523,6 +527,225 @@ describe("PropertyItem", () => {
       expect(
         screen.getByText("Cesium Ion token not configured. Using fallback.")
       ).toBeInTheDocument();
+    });
+
+    test("disables and overrides opacity for Google tiles when computeDecorations is provided", () => {
+      const mockComputeDecorations = vi.fn(
+        (
+          schemaId: string,
+          schemaGroup: string,
+          value: unknown,
+          allFields: FieldContext[],
+          allListItemsFields?: FieldContext[][]
+        ): PropertyFieldDecorations => {
+          if (
+            schemaId === "tile_opacity" &&
+            schemaGroup === "tiles"
+          ) {
+            const tileTypeField = allFields.find((f) => f.id === "tile_type");
+            const tileType = tileTypeField?.value;
+
+            if (tileType === "google_satellite" || tileType === "google_roadmap") {
+              return {
+                disabled: true,
+                overrideValue: 1,
+                titleAdornment: <span data-testid="info-icon">Info</span>
+              };
+            }
+          }
+          return {};
+        }
+      );
+
+      const mockItem = {
+        id: "1",
+        schemaGroup: "tiles",
+        schemaFields: [
+          {
+            id: "tile_type",
+            type: "string",
+            title: "Tile Type",
+            choices: [
+              { key: "google_satellite", label: "Google Satellite" },
+              { key: "google_roadmap", label: "Google Roadmap" }
+            ]
+          },
+          {
+            id: "tile_opacity",
+            type: "number",
+            title: "Opacity",
+            min: 0,
+            max: 1,
+            ui: "slider"
+          }
+        ],
+        fields: [
+          {
+            id: "tile_type",
+            type: "string",
+            value: "google_satellite"
+          },
+          {
+            id: "tile_opacity",
+            type: "number",
+            value: 0.5
+          }
+        ],
+        representativeField: "tile_type"
+      } as unknown as Item;
+
+      render(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
+
+      // Verify the opacity field exists
+      expect(screen.getByText("Opacity")).toBeInTheDocument();
+
+      // Verify the titleAdornment (info icon) is rendered
+      expect(screen.getByTestId("info-icon")).toBeInTheDocument();
+
+      // Verify the slider has the disabled attribute (value is overridden to 1)
+      const slider = document.querySelector('.rc-slider-disabled');
+      expect(slider).toBeInTheDocument();
+
+      // Verify the slider handle is at 100% (value = 1)
+      const handle = document.querySelector('.rc-slider-handle');
+      expect(handle).toHaveAttribute('aria-valuenow', '1');
+      expect(handle).toHaveAttribute('aria-disabled', 'true');
+
+      // The computeDecorations should have been called with the correct parameters
+      expect(mockComputeDecorations).toHaveBeenCalledWith(
+        "tile_opacity",
+        "tiles",
+        0.5,
+        expect.arrayContaining([
+          { id: "tile_type", value: "google_satellite" },
+          { id: "tile_opacity", value: 0.5 }
+        ]),
+        undefined // Not a list item
+      );
+    });
+
+    test("disables and overrides opacity for non-Google tiles when Google tiles exist in list", () => {
+      const mockComputeDecorations = vi.fn(
+        (
+          schemaId: string,
+          schemaGroup: string,
+          value: unknown,
+          allFields: FieldContext[],
+          allListItemsFields?: FieldContext[][]
+        ): PropertyFieldDecorations => {
+          if (
+            schemaId === "tile_opacity" &&
+            schemaGroup === "tiles"
+          ) {
+            const tileTypeField = allFields.find((f) => f.id === "tile_type");
+            const tileType = tileTypeField?.value;
+
+            const isCurrentTileGoogle = tileType === "google_satellite" || tileType === "google_roadmap";
+
+            const hasGoogleTileInList = allListItemsFields?.some((itemFields) => {
+              const itemTileType = itemFields.find((f) => f.id === "tile_type")?.value;
+              return itemTileType === "google_satellite" || itemTileType === "google_roadmap";
+            }) ?? false;
+
+            if (isCurrentTileGoogle || hasGoogleTileInList) {
+              return {
+                disabled: true,
+                overrideValue: 1,
+                titleAdornment: <span data-testid="info-icon-other">Info Other</span>
+              };
+            }
+          }
+          return {};
+        }
+      );
+
+      const mockItem = {
+        id: "1",
+        schemaGroup: "tiles",
+        items: [
+          {
+            id: "tile1",
+            schemaGroup: "tiles",
+            fields: [
+              { id: "tile_type", type: "string", value: "google_satellite" },
+              { id: "tile_opacity", type: "number", value: 1 }
+            ]
+          },
+          {
+            id: "tile2",
+            schemaGroup: "tiles",
+            fields: [
+              { id: "tile_type", type: "string", value: "default" },
+              { id: "tile_opacity", type: "number", value: 0.8 }
+            ]
+          }
+        ],
+        schemaFields: [
+          {
+            id: "tile_type",
+            type: "string",
+            title: "Tile Type",
+            choices: [
+              { key: "google_satellite", label: "Google Satellite" },
+              { key: "default", label: "Default" }
+            ]
+          },
+          {
+            id: "tile_opacity",
+            type: "number",
+            title: "Opacity",
+            min: 0,
+            max: 1,
+            ui: "slider"
+          }
+        ],
+        representativeField: "tile_type"
+      } as unknown as Item;
+
+      const { rerender } = render(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
+
+      // Select the second tile (non-Google tile)
+      const listItems = screen.getAllByRole("button");
+      // First item is Google tile, second is default tile
+      if (listItems[1]) {
+        listItems[1].click();
+      }
+
+      // Wait for the selection to take effect
+      rerender(
+        <PropertyItem
+          propertyId="testId"
+          item={mockItem}
+          computeDecorations={mockComputeDecorations}
+        />
+      );
+
+      // Verify the computeDecorations was called with allListItemsFields
+      const callsWithOpacity = mockComputeDecorations.mock.calls.filter(
+        (call) => call[0] === "tile_opacity"
+      );
+
+      expect(callsWithOpacity.length).toBeGreaterThan(0);
+
+      // Verify that allListItemsFields was passed and contains info about both tiles
+      const callWithAllItems = callsWithOpacity.find((call) => call[4] !== undefined);
+      if (callWithAllItems) {
+        const allListItemsFields = callWithAllItems[4];
+        expect(allListItemsFields).toBeDefined();
+        expect(Array.isArray(allListItemsFields)).toBe(true);
+      }
     });
 
     test("does not show warning when computeDecorations returns empty decorations", () => {
