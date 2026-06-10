@@ -50,8 +50,9 @@ const CESIUM_ION_ASSET_ID_FALLBACK_MAP: Record<string, string> = {
  * Checks if a tile needs migration/processing
  */
 function needsTileMigration(
-  tile: { type?: string; cesiumIonAssetId?: number | string },
-  config: TilesMigrationConfig
+  tile: { type?: string; cesiumIonAssetId?: number | string; opacity?: number },
+  config: TilesMigrationConfig,
+  hasGoogleTiles?: boolean
 ): boolean {
   // Check if tile needs default type application
   if (!tile.type && config.defaultTileType) return true;
@@ -73,6 +74,12 @@ function needsTileMigration(
     return true;
   }
 
+  // Check if opacity needs to be set to 1 for Google Maps compliance
+  const isGoogleTile = tile.type === "google_satellite" || tile.type === "google_roadmap";
+  if ((isGoogleTile || hasGoogleTiles) && tile.opacity !== 1) {
+    return true;
+  }
+
   return false;
 }
 
@@ -83,8 +90,8 @@ function needsTileMigration(
  * - Fallback: If no token available, fallback cesium_ion tiles to alternative EE types (EE only)
  */
 function migrateTile<
-  T extends { type?: string; cesiumIonAssetId?: number | string }
->(tile: T, config: TilesMigrationConfig): T {
+  T extends { type?: string; cesiumIonAssetId?: number | string; opacity?: number }
+>(tile: T, config: TilesMigrationConfig, _hasGoogleTiles?: boolean): T {
   // Apply default tile type when no type is set
   if (!tile.type && config.defaultTileType) {
     return {
@@ -122,7 +129,7 @@ function migrateTile<
       console.warn(
         `[Tiles Fallback] Cesium Ion tile (asset ID: ${assetId}) → "${newType}" (Cesium Ion access token required but missing)`
       );
-      return {
+      processedTile = {
         ...processedTile,
         type: newType
       };
@@ -185,6 +192,9 @@ function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
  * 4. If no Cesium Ion token available, fallback cesium_ion tiles to alternative EE types (EE only)
  * 5. Fallback Cesium terrain to reearth_terrain when token missing
  *
+ * Google Maps Compliance:
+ * 6. Set opacity to 1 for all tiles when Google Maps tiles are present
+ *
  * Note: Tiles/terrain without type and without default config will use schema defaults
  *
  * @param viewerProperty - The viewer property containing tiles and terrain
@@ -201,9 +211,9 @@ export function migrateViewerPropertyTiles(
   const hasTiles = tiles && tiles.length > 0;
   const hasTerrain = terrain;
 
-  // Check if tiles need migration
+  // Check if tiles need migration (first pass: type migration and fallback)
   const tilesNeedProcessing =
-    hasTiles && tiles.some((tile) => needsTileMigration(tile, config));
+    hasTiles && tiles.some((tile) => needsTileMigration(tile, config, false));
 
   // Check if terrain needs default application or fallback
   const terrainNeedsProcessing =
@@ -218,9 +228,32 @@ export function migrateViewerPropertyTiles(
 
   const result: ViewerProperty = { ...viewerProperty };
 
-  // Migrate tiles if needed
+  // First pass: Migrate tiles (type defaults, migrations, and fallbacks)
   if (tilesNeedProcessing && tiles) {
-    result.tiles = tiles.map((tile) => migrateTile(tile, config));
+    result.tiles = tiles.map((tile) => migrateTile(tile, config, false));
+  }
+
+  // Second pass: Check if any tile is a Google Maps tile after first pass
+  const processedTiles = result.tiles || tiles;
+  const hasGoogleTiles = processedTiles?.some((tile) =>
+    tile.type === "google_satellite" || tile.type === "google_roadmap"
+  ) ?? false;
+
+  // Third pass: Apply opacity override if Google tiles are present
+  if (hasGoogleTiles && processedTiles) {
+    result.tiles = processedTiles.map((tile) => {
+      const isGoogleTile = tile.type === "google_satellite" || tile.type === "google_roadmap";
+      if ((isGoogleTile || hasGoogleTiles) && tile.opacity !== 1) {
+        console.warn(
+          `[Tiles Opacity Override] Setting opacity to 1 for ${isGoogleTile ? 'Google Maps tile' : 'tile (Google Maps tiles present)'} (Google Maps Terms of Service compliance)`
+        );
+        return {
+          ...tile,
+          opacity: 1
+        };
+      }
+      return tile;
+    });
   }
 
   // Apply terrain default or fallback if needed

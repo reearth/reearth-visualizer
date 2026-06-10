@@ -82,11 +82,12 @@ describe("tilesMigration", () => {
         hasAccessToken: false
       });
       // Without token: deprecated → cesium_ion → fallback to google_satellite/etc
+      // Opacity is set to 1 for all tiles because Google tiles are present
       expect(result?.tiles).toEqual([
-        { id: "1", type: "google_satellite", cesiumIonAssetId: 2 },
-        { id: "2", type: "google_satellite", cesiumIonAssetId: 3 },
-        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4 },
-        { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812 }
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
+        { id: "2", type: "google_satellite", cesiumIonAssetId: 3, opacity: 1 },
+        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4, opacity: 1 },
+        { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812, opacity: 1 }
       ]);
     });
 
@@ -125,11 +126,12 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
+      // Opacity is set to 1 for all tiles because Google tiles are present
       expect(result?.tiles).toEqual([
-        { id: "1", type: "google_satellite", cesiumIonAssetId: 2 },
-        { id: "2", type: "google_satellite", cesiumIonAssetId: 3 },
-        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4 },
-        { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812 }
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
+        { id: "2", type: "google_satellite", cesiumIonAssetId: 3, opacity: 1 },
+        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4, opacity: 1 },
+        { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812, opacity: 1 }
       ]);
     });
 
@@ -175,12 +177,13 @@ describe("tilesMigration", () => {
         defaultTileType: "open_street_map",
         hasAccessToken: false
       });
+      // Opacity is set to 1 for all tiles because Google tiles are present
       expect(result?.tiles).toEqual([
-        { id: "1", type: "open_street_map" },
-        { id: "2", type: "open_street_map" }, // Default applied
-        { id: "3", type: "google_satellite", cesiumIonAssetId: 2 }, // Migrated + fallback
-        { id: "4", type: "google_satellite", cesiumIonAssetId: 2 }, // Fallback
-        { id: "5", type: "google_satellite" }
+        { id: "1", type: "open_street_map", opacity: 1 },
+        { id: "2", type: "open_street_map", opacity: 1 }, // Default applied
+        { id: "3", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }, // Migrated + fallback
+        { id: "4", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }, // Fallback
+        { id: "5", type: "google_satellite", opacity: 1 }
       ]);
     });
 
@@ -245,9 +248,10 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
+      // Opacity is set to 1 for all tiles because Google tiles are present
       expect(result?.tiles).toEqual([
-        { id: "1", type: "google_satellite", cesiumIonAssetId: 2 }, // Migrated + fallback
-        { id: "2", type: "google_satellite", cesiumIonAssetId: 2 } // Fallback
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }, // Migrated + fallback
+        { id: "2", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 } // Fallback
       ]);
       expect(result?.terrain).toEqual({
         type: "reearth_terrain",
@@ -264,7 +268,8 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2 }]); // Migrated + fallback
+      // Opacity is set to 1 because Google tiles are present
+      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }]); // Migrated + fallback
       expect(result?.terrain).toEqual({ type: "reearth_terrain", enabled: true });
     });
 
@@ -333,7 +338,8 @@ describe("tilesMigration", () => {
         defaultTerrainType: "reearth_terrain",
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2 }]); // Migrated + fallback
+      // Opacity is set to 1 because Google tiles are present
+      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }]); // Migrated + fallback
       expect(result?.terrain).toEqual({
         enabled: true,
         type: "reearth_terrain"
@@ -349,7 +355,8 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2 }]); // Migrated + fallback
+      // Opacity is set to 1 because Google tiles are present
+      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }]); // Migrated + fallback
       expect(result?.terrain).toBe(viewerProperty.terrain); // Unchanged
     });
   });
@@ -725,6 +732,168 @@ describe("tilesMigration", () => {
         "3": "google_satellite",
         "4": "google_roadmap",
         "3812": "nasa_black_marble"
+      });
+    });
+  });
+
+  describe("Google Maps opacity override", () => {
+    describe("migrateViewerPropertyTiles", () => {
+      it("should set opacity to 1 for all Google Maps tiles", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "google_satellite", opacity: 0.5 },
+            { id: "2", type: "google_roadmap", opacity: 0.7 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", opacity: 1 },
+          { id: "2", type: "google_roadmap", opacity: 1 }
+        ]);
+      });
+
+      it("should set opacity to 1 for all tiles when Google tiles are present", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "google_satellite", opacity: 0.5 },
+            { id: "2", type: "open_street_map", opacity: 0.7 },
+            { id: "3", type: "cesium_ion", opacity: 0.8, cesiumIonAssetId: 999 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", opacity: 1 },
+          { id: "2", type: "open_street_map", opacity: 1 },
+          { id: "3", type: "cesium_ion", opacity: 1, cesiumIonAssetId: 999 }
+        ]);
+      });
+
+      it("should NOT modify opacity when no Google tiles are present", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "open_street_map", opacity: 0.5 },
+            { id: "2", type: "cesium_ion", opacity: 0.7, cesiumIonAssetId: 999 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          hasAccessToken: false
+        });
+        expect(result).toBe(viewerProperty); // No migration needed
+      });
+
+      it("should set opacity to 1 when Google tile results from fallback", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "cesium_ion", cesiumIonAssetId: 2, opacity: 0.5 }, // Falls back to google_satellite
+            { id: "2", type: "open_street_map", opacity: 0.7 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
+          { id: "2", type: "open_street_map", opacity: 1 }
+        ]);
+      });
+
+      it("should detect Google tiles from defaultTileType", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1" }, // Will get google_satellite from default
+            { id: "2", type: "open_street_map", opacity: 0.7 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          defaultTileType: "google_satellite",
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", opacity: 1 },
+          { id: "2", type: "open_street_map", opacity: 1 }
+        ]);
+      });
+
+      it("should combine fallback and opacity override", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "default", opacity: 0.5 }, // Migrates to cesium_ion, then falls back to google_satellite
+            { id: "2", type: "open_street_map", opacity: 0.7 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
+          { id: "2", type: "open_street_map", opacity: 1 }
+        ]);
+      });
+    });
+
+    describe("needsTileMigration", () => {
+      it("should return true for Google tiles with opacity !== 1", () => {
+        expect(
+          needsTileMigration(
+            { type: "google_satellite", opacity: 0.5 },
+            { isEE: false, hasAccessToken: false }
+          )
+        ).toBe(true);
+
+        expect(
+          needsTileMigration(
+            { type: "google_roadmap", opacity: 0.7 },
+            { isEE: false, hasAccessToken: false }
+          )
+        ).toBe(true);
+      });
+
+      it("should return false for Google tiles with opacity === 1", () => {
+        expect(
+          needsTileMigration(
+            { type: "google_satellite", opacity: 1 },
+            { isEE: false, hasAccessToken: false }
+          )
+        ).toBe(false);
+      });
+
+      it("should return true for non-Google tiles when Google tiles exist", () => {
+        expect(
+          needsTileMigration(
+            { type: "open_street_map", opacity: 0.5 },
+            { isEE: false, hasAccessToken: false },
+            true // hasGoogleTiles = true
+          )
+        ).toBe(true);
+      });
+
+      it("should return false for non-Google tiles when no Google tiles exist", () => {
+        expect(
+          needsTileMigration(
+            { type: "open_street_map", opacity: 0.5 },
+            { isEE: false, hasAccessToken: false },
+            false // hasGoogleTiles = false
+          )
+        ).toBe(false);
+      });
+
+      it("should return true for Google tiles with undefined opacity", () => {
+        expect(
+          needsTileMigration(
+            { type: "google_satellite" },
+            { isEE: false, hasAccessToken: false }
+          )
+        ).toBe(true);
       });
     });
   });
