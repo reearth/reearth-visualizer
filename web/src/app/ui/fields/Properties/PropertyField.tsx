@@ -132,8 +132,10 @@ const PropertyField: FC<Props> = ({
   // Use external decorations if provided (business logic from parent)
   // Otherwise use empty decorations (generic UI component has no business rules)
   // Add highlight if this field is targeted
+  // Note: overrideValue is extracted and NOT spread to child components
+  const { overrideValue: _overrideValue, ...restDecorations } = externalDecorations ?? {};
   const decorations = {
-    ...externalDecorations,
+    ...restDecorations,
     ...(shouldHighlight && { highlight: true })
   };
 

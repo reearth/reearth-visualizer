@@ -174,35 +174,35 @@ const PropertyItem: FC<Props> = ({
               )
             : undefined;
 
+          // Build context of all fields for decoration computation
+          // Only build once (not inside the map loop) to avoid redundant work
+          const allFields: FieldContext[] = computeDecorations && schemaFields
+            ? schemaFields
+                .filter((sf) => !sf.hidden)
+                .map((sf) => {
+                  // Use same value resolution as PropertyField to ensure consistency
+                  let resolvedValue: unknown;
+                  if (sf.schemaField.id === "tile_type" && item.schemaGroup === "tiles") {
+                    // Apply default tile type override for tile_type field in tiles group
+                    const overriddenDefault = appFeature()?.defaultTileType;
+                    resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? overriddenDefault ?? sf.schemaField.defaultValue;
+                  } else {
+                    resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? sf.schemaField.defaultValue;
+                  }
+
+                  return {
+                    id: sf.schemaField.id,
+                    value: resolvedValue
+                  };
+                })
+            : [];
+
           return schemaFields?.map((f) => {
             if (
               (layerMode && f.schemaField.id === item.representativeField) ||
               f.hidden
             )
               return null;
-
-            // Build context of all fields for decoration computation
-            // Only build if computeDecorations is provided to avoid unnecessary work
-            const allFields: FieldContext[] = computeDecorations
-              ? schemaFields
-                  .filter((sf) => !sf.hidden)
-                  .map((sf) => {
-                    // Use same value resolution as PropertyField to ensure consistency
-                    let resolvedValue: unknown;
-                    if (sf.schemaField.id === "tile_type" && item.schemaGroup === "tiles") {
-                      // Apply default tile type override for tile_type field in tiles group
-                      const overriddenDefault = appFeature()?.defaultTileType;
-                      resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? overriddenDefault ?? sf.schemaField.defaultValue;
-                    } else {
-                      resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? sf.schemaField.defaultValue;
-                    }
-
-                    return {
-                      id: sf.schemaField.id,
-                      value: resolvedValue
-                    };
-                  })
-              : [];
 
             // Compute decorations for this field (business logic from parent)
             const decorations = computeDecorations?.(

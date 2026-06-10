@@ -211,17 +211,14 @@ export function migrateViewerPropertyTiles(
   const hasTiles = tiles && tiles.length > 0;
   const hasTerrain = terrain;
 
-  // Check if tiles need migration (first pass: type migration and fallback)
-  const tilesNeedProcessing =
-    hasTiles && tiles.some((tile) => needsTileMigration(tile, config, false));
-
-  // Check if Google tiles are present (for opacity override in pass 3)
+  // Check if Google tiles are present (needed for opacity compliance check)
   const hasGoogleTiles = tiles?.some((tile) =>
     tile.type === "google_satellite" || tile.type === "google_roadmap"
   ) ?? false;
 
-  // Check if any tile needs opacity override for Google Maps compliance
-  const opacityOverrideNeeded = hasGoogleTiles && tiles?.some((tile) => tile.opacity !== 1);
+  // Check if tiles need migration (includes type migration, fallback, and opacity override)
+  const tilesNeedProcessing =
+    hasTiles && tiles.some((tile) => needsTileMigration(tile, config, hasGoogleTiles));
 
   // Check if terrain needs default application or fallback
   const terrainNeedsProcessing =
@@ -230,7 +227,7 @@ export function migrateViewerPropertyTiles(
       (terrain.type === "cesium" && !config.hasAccessToken));
 
   // Return original if nothing needs processing
-  if (!tilesNeedProcessing && !opacityOverrideNeeded && !terrainNeedsProcessing) {
+  if (!tilesNeedProcessing && !terrainNeedsProcessing) {
     return viewerProperty;
   }
 
