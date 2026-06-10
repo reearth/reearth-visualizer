@@ -205,10 +205,13 @@ const PropertyItem: FC<Props> = ({
               return null;
 
             // Compute decorations for this field (business logic from parent)
+            const resolvedValueForDecorations =
+              allFields.find((af) => af.id === f.schemaField.id)?.value ??
+              f.field?.value;
             const decorations = computeDecorations?.(
               f.schemaField.id,
               item.schemaGroup,
-              f.field?.value,
+              resolvedValueForDecorations,
               allFields,
               allListItemsFields
             );
