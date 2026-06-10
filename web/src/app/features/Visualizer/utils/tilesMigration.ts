@@ -226,8 +226,15 @@ export function migrateViewerPropertyTiles(
     ((!terrain.type && config.defaultTerrainType) ||
       (terrain.type === "cesium" && !config.hasAccessToken));
 
+  // Check if terrain needs normal map setting for reearth_terrain
+  const terrainNeedsNormalMap =
+    hasTerrain &&
+    terrain.enabled !== false &&
+    terrain.type === "reearth_terrain" &&
+    terrain.normal !== true;
+
   // Return original if nothing needs processing
-  if (!tilesNeedProcessing && !terrainNeedsProcessing) {
+  if (!tilesNeedProcessing && !terrainNeedsProcessing && !terrainNeedsNormalMap) {
     return viewerProperty;
   }
 
@@ -265,6 +272,20 @@ export function migrateViewerPropertyTiles(
   // Apply terrain default or fallback if needed
   if (terrainNeedsProcessing) {
     result.terrain = migrateTerrain(terrain, config);
+  }
+
+  // Set normal map for reearth_terrain when enabled (if not already set)
+  const finalTerrain = result.terrain || terrain;
+  if (
+    finalTerrain &&
+    finalTerrain.enabled !== false &&
+    finalTerrain.type === "reearth_terrain" &&
+    finalTerrain.normal !== true
+  ) {
+    result.terrain = {
+      ...finalTerrain,
+      normal: true
+    };
   }
 
   return result;

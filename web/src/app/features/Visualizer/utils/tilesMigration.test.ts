@@ -210,7 +210,8 @@ describe("tilesMigration", () => {
       });
       expect(result?.terrain).toEqual({
         type: "reearth_terrain",
-        enabled: true
+        enabled: true,
+        normal: true
       });
     });
 
@@ -255,7 +256,8 @@ describe("tilesMigration", () => {
       ]);
       expect(result?.terrain).toEqual({
         type: "reearth_terrain",
-        enabled: true
+        enabled: true,
+        normal: true
       });
     });
 
@@ -270,7 +272,7 @@ describe("tilesMigration", () => {
       });
       // Opacity is set to 1 because Google tiles are present
       expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }]); // Migrated + fallback
-      expect(result?.terrain).toEqual({ type: "reearth_terrain", enabled: true });
+      expect(result?.terrain).toEqual({ type: "reearth_terrain", enabled: true, normal: true });
     });
 
     it("should only migrate terrain when tiles don't need migration", () => {
@@ -285,7 +287,8 @@ describe("tilesMigration", () => {
       expect(result?.tiles).toBe(viewerProperty.tiles); // Unchanged
       expect(result?.terrain).toEqual({
         type: "reearth_terrain",
-        enabled: true
+        enabled: true,
+        normal: true
       });
     });
 
@@ -293,7 +296,7 @@ describe("tilesMigration", () => {
       const viewerProperty = {
         tiles: [{ id: "1", type: "open_street_map" as const }],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        terrain: { type: "reearth_terrain" as any, enabled: true }
+        terrain: { type: "reearth_terrain" as any, enabled: true, normal: true }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -313,7 +316,8 @@ describe("tilesMigration", () => {
       });
       expect(result?.terrain).toEqual({
         enabled: true,
-        type: "reearth_terrain"
+        type: "reearth_terrain",
+        normal: true
       });
     });
 
@@ -326,6 +330,69 @@ describe("tilesMigration", () => {
         hasAccessToken: false
       });
       expect(result).toBe(viewerProperty); // No migration
+    });
+
+    it("should set normal=true for reearth_terrain when enabled", () => {
+      const viewerProperty = {
+        terrain: { type: "reearth_terrain", enabled: true }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(result?.terrain).toEqual({
+        type: "reearth_terrain",
+        enabled: true,
+        normal: true
+      });
+    });
+
+    it("should NOT set normal=true for reearth_terrain when disabled", () => {
+      const viewerProperty = {
+        terrain: { type: "reearth_terrain", enabled: false }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(result).toBe(viewerProperty); // No change for disabled terrain
+    });
+
+    it("should NOT override normal if already set to true", () => {
+      const viewerProperty = {
+        terrain: { type: "reearth_terrain", enabled: true, normal: true }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(result).toBe(viewerProperty); // No change needed
+    });
+
+    it("should set normal=true even if it was explicitly false", () => {
+      const viewerProperty = {
+        terrain: { type: "reearth_terrain", enabled: true, normal: false }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(result?.terrain).toEqual({
+        type: "reearth_terrain",
+        enabled: true,
+        normal: true
+      });
+    });
+
+    it("should NOT set normal for non-reearth_terrain types", () => {
+      const viewerProperty = {
+        terrain: { type: "cesium", enabled: true }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: true // Token available, no fallback
+      });
+      expect(result).toBe(viewerProperty); // No change for other terrain types
     });
 
     it("should migrate tiles and apply defaultTerrainType when both need processing", () => {
@@ -342,7 +409,8 @@ describe("tilesMigration", () => {
       expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }]); // Migrated + fallback
       expect(result?.terrain).toEqual({
         enabled: true,
-        type: "reearth_terrain"
+        type: "reearth_terrain",
+        normal: true
       });
     });
 
