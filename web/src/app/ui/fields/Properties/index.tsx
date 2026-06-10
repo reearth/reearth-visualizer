@@ -149,7 +149,8 @@ const PropertyItem: FC<Props> = ({
       {!!item &&
         (() => {
           // Build context of all list items for decoration computation
-          const allListItemsFields: FieldContext[][] | undefined = isList
+          // Only build if computeDecorations is provided to avoid unnecessary work
+          const allListItemsFields: FieldContext[][] | undefined = isList && computeDecorations
             ? groups.map((group) =>
                 item.schemaFields
                   .map((sf) => {
@@ -181,24 +182,27 @@ const PropertyItem: FC<Props> = ({
               return null;
 
             // Build context of all fields for decoration computation
-            const allFields: FieldContext[] = schemaFields
-              .filter((sf) => !sf.hidden)
-              .map((sf) => {
-                // Use same value resolution as PropertyField to ensure consistency
-                let resolvedValue: unknown;
-                if (sf.schemaField.id === "tile_type" && item.schemaGroup === "tiles") {
-                  // Apply default tile type override for tile_type field in tiles group
-                  const overriddenDefault = appFeature()?.defaultTileType;
-                  resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? overriddenDefault ?? sf.schemaField.defaultValue;
-                } else {
-                  resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? sf.schemaField.defaultValue;
-                }
+            // Only build if computeDecorations is provided to avoid unnecessary work
+            const allFields: FieldContext[] = computeDecorations
+              ? schemaFields
+                  .filter((sf) => !sf.hidden)
+                  .map((sf) => {
+                    // Use same value resolution as PropertyField to ensure consistency
+                    let resolvedValue: unknown;
+                    if (sf.schemaField.id === "tile_type" && item.schemaGroup === "tiles") {
+                      // Apply default tile type override for tile_type field in tiles group
+                      const overriddenDefault = appFeature()?.defaultTileType;
+                      resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? overriddenDefault ?? sf.schemaField.defaultValue;
+                    } else {
+                      resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? sf.schemaField.defaultValue;
+                    }
 
-                return {
-                  id: sf.schemaField.id,
-                  value: resolvedValue
-                };
-              });
+                    return {
+                      id: sf.schemaField.id,
+                      value: resolvedValue
+                    };
+                  })
+              : [];
 
             // Compute decorations for this field (business logic from parent)
             const decorations = computeDecorations?.(

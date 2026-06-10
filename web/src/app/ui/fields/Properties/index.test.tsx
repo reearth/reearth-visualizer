@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CesiumIonAssetFallbackWarning } from "@reearth/app/features/Editor/common";
 import type { Item } from "@reearth/services/api/property";
 import { render, screen } from "@reearth/test/utils";
@@ -415,8 +414,8 @@ describe("PropertyItem", () => {
           schemaId: string,
           schemaGroup: string,
           value: unknown,
-          allFields: FieldContext[],
-          allListItemsFields?: FieldContext[][]
+          _allFields: FieldContext[],
+          _allListItemsFields?: FieldContext[][]
         ): PropertyFieldDecorations => {
           if (
             schemaId === "tile_type" &&
@@ -475,8 +474,8 @@ describe("PropertyItem", () => {
           schemaId: string,
           schemaGroup: string,
           value: unknown,
-          allFields: FieldContext[],
-          allListItemsFields?: FieldContext[][]
+          _allFields: FieldContext[],
+          _allListItemsFields?: FieldContext[][]
         ): PropertyFieldDecorations => {
           if (
             schemaId === "terrainType" &&
@@ -535,9 +534,9 @@ describe("PropertyItem", () => {
         (
           schemaId: string,
           schemaGroup: string,
-          value: unknown,
+          _value: unknown,
           allFields: FieldContext[],
-          allListItemsFields?: FieldContext[][]
+          _allListItemsFields?: FieldContext[][]
         ): PropertyFieldDecorations => {
           if (schemaId === "tile_opacity" && schemaGroup === "tiles") {
             const tileTypeField = allFields.find((f) => f.id === "tile_type");
@@ -636,7 +635,7 @@ describe("PropertyItem", () => {
         (
           schemaId: string,
           schemaGroup: string,
-          value: unknown,
+          _value: unknown,
           allFields: FieldContext[],
           allListItemsFields?: FieldContext[][]
         ): PropertyFieldDecorations => {

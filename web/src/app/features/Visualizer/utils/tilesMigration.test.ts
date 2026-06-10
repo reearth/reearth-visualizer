@@ -839,6 +839,28 @@ describe("tilesMigration", () => {
           { id: "2", type: "open_street_map", opacity: 1 }
         ]);
       });
+
+      it("should not skip opacity override when Google tile already compliant (regression test)", () => {
+        // Regression test for bug: when Google tile has opacity=1 (already compliant),
+        // needsTileMigration returns false, causing early return that skips opacity
+        // override for non-Google tiles
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "google_satellite", opacity: 1 },     // Already compliant
+            { id: "2", type: "open_street_map", opacity: 0.5 }     // Needs override!
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          hasAccessToken: false
+        });
+
+        // Both tiles should have opacity: 1
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", opacity: 1 },
+          { id: "2", type: "open_street_map", opacity: 1 }  // ✅ Should be overridden!
+        ]);
+      });
     });
 
     describe("needsTileMigration", () => {

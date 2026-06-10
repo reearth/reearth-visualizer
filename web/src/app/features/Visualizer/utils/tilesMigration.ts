@@ -215,6 +215,14 @@ export function migrateViewerPropertyTiles(
   const tilesNeedProcessing =
     hasTiles && tiles.some((tile) => needsTileMigration(tile, config, false));
 
+  // Check if Google tiles are present (for opacity override in pass 3)
+  const hasGoogleTiles = tiles?.some((tile) =>
+    tile.type === "google_satellite" || tile.type === "google_roadmap"
+  ) ?? false;
+
+  // Check if any tile needs opacity override for Google Maps compliance
+  const opacityOverrideNeeded = hasGoogleTiles && tiles?.some((tile) => tile.opacity !== 1);
+
   // Check if terrain needs default application or fallback
   const terrainNeedsProcessing =
     hasTerrain &&
@@ -222,7 +230,7 @@ export function migrateViewerPropertyTiles(
       (terrain.type === "cesium" && !config.hasAccessToken));
 
   // Return original if nothing needs processing
-  if (!tilesNeedProcessing && !terrainNeedsProcessing) {
+  if (!tilesNeedProcessing && !opacityOverrideNeeded && !terrainNeedsProcessing) {
     return viewerProperty;
   }
 
@@ -233,17 +241,18 @@ export function migrateViewerPropertyTiles(
     result.tiles = tiles.map((tile) => migrateTile(tile, config, false));
   }
 
-  // Second pass: Check if any tile is a Google Maps tile after first pass
+  // Second pass: Re-check if Google tiles present after first pass migration
+  // (some tiles might become Google tiles through fallback)
   const processedTiles = result.tiles || tiles;
-  const hasGoogleTiles = processedTiles?.some((tile) =>
+  const hasGoogleTilesAfterMigration = processedTiles?.some((tile) =>
     tile.type === "google_satellite" || tile.type === "google_roadmap"
   ) ?? false;
 
   // Third pass: Apply opacity override if Google tiles are present
-  if (hasGoogleTiles && processedTiles) {
+  if (hasGoogleTilesAfterMigration && processedTiles) {
     result.tiles = processedTiles.map((tile) => {
       const isGoogleTile = tile.type === "google_satellite" || tile.type === "google_roadmap";
-      if ((isGoogleTile || hasGoogleTiles) && tile.opacity !== 1) {
+      if ((isGoogleTile || hasGoogleTilesAfterMigration) && tile.opacity !== 1) {
         console.warn(
           `[Tiles Opacity Override] Setting opacity to 1 for ${isGoogleTile ? 'Google Maps tile' : 'tile (Google Maps tiles present)'} (Google Maps Terms of Service compliance)`
         );
