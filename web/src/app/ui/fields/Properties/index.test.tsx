@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CesiumIonAssetFallbackWarning } from "@reearth/app/features/Editor/common";
 import type { Item } from "@reearth/services/api/property";
 import { render, screen } from "@reearth/test/utils";
@@ -538,14 +539,14 @@ describe("PropertyItem", () => {
           allFields: FieldContext[],
           allListItemsFields?: FieldContext[][]
         ): PropertyFieldDecorations => {
-          if (
-            schemaId === "tile_opacity" &&
-            schemaGroup === "tiles"
-          ) {
+          if (schemaId === "tile_opacity" && schemaGroup === "tiles") {
             const tileTypeField = allFields.find((f) => f.id === "tile_type");
             const tileType = tileTypeField?.value;
 
-            if (tileType === "google_satellite" || tileType === "google_roadmap") {
+            if (
+              tileType === "google_satellite" ||
+              tileType === "google_roadmap"
+            ) {
               return {
                 disabled: true,
                 overrideValue: 1,
@@ -609,13 +610,13 @@ describe("PropertyItem", () => {
       expect(screen.getByTestId("info-icon")).toBeInTheDocument();
 
       // Verify the slider has the disabled attribute (value is overridden to 1)
-      const slider = document.querySelector('.rc-slider-disabled');
+      const slider = document.querySelector(".rc-slider-disabled");
       expect(slider).toBeInTheDocument();
 
       // Verify the slider handle is at 100% (value = 1)
-      const handle = document.querySelector('.rc-slider-handle');
-      expect(handle).toHaveAttribute('aria-valuenow', '1');
-      expect(handle).toHaveAttribute('aria-disabled', 'true');
+      const handle = document.querySelector(".rc-slider-handle");
+      expect(handle).toHaveAttribute("aria-valuenow", "1");
+      expect(handle).toHaveAttribute("aria-disabled", "true");
 
       // The computeDecorations should have been called with the correct parameters
       expect(mockComputeDecorations).toHaveBeenCalledWith(
@@ -639,25 +640,31 @@ describe("PropertyItem", () => {
           allFields: FieldContext[],
           allListItemsFields?: FieldContext[][]
         ): PropertyFieldDecorations => {
-          if (
-            schemaId === "tile_opacity" &&
-            schemaGroup === "tiles"
-          ) {
+          if (schemaId === "tile_opacity" && schemaGroup === "tiles") {
             const tileTypeField = allFields.find((f) => f.id === "tile_type");
             const tileType = tileTypeField?.value;
 
-            const isCurrentTileGoogle = tileType === "google_satellite" || tileType === "google_roadmap";
+            const isCurrentTileGoogle =
+              tileType === "google_satellite" || tileType === "google_roadmap";
 
-            const hasGoogleTileInList = allListItemsFields?.some((itemFields) => {
-              const itemTileType = itemFields.find((f) => f.id === "tile_type")?.value;
-              return itemTileType === "google_satellite" || itemTileType === "google_roadmap";
-            }) ?? false;
+            const hasGoogleTileInList =
+              allListItemsFields?.some((itemFields) => {
+                const itemTileType = itemFields.find(
+                  (f) => f.id === "tile_type"
+                )?.value;
+                return (
+                  itemTileType === "google_satellite" ||
+                  itemTileType === "google_roadmap"
+                );
+              }) ?? false;
 
             if (isCurrentTileGoogle || hasGoogleTileInList) {
               return {
                 disabled: true,
                 overrideValue: 1,
-                titleAdornment: <span data-testid="info-icon-other">Info Other</span>
+                titleAdornment: (
+                  <span data-testid="info-icon-other">Info Other</span>
+                )
               };
             }
           }
@@ -740,7 +747,9 @@ describe("PropertyItem", () => {
       expect(callsWithOpacity.length).toBeGreaterThan(0);
 
       // Verify that allListItemsFields was passed and contains info about both tiles
-      const callWithAllItems = callsWithOpacity.find((call) => call[4] !== undefined);
+      const callWithAllItems = callsWithOpacity.find(
+        (call) => call[4] !== undefined
+      );
       if (callWithAllItems) {
         const allListItemsFields = callWithAllItems[4];
         expect(allListItemsFields).toBeDefined();
@@ -749,7 +758,15 @@ describe("PropertyItem", () => {
     });
 
     test("does not show warning when computeDecorations returns empty decorations", () => {
-      const mockComputeDecorations = vi.fn(() => ({}));
+      const mockComputeDecorations = vi.fn(
+        (
+          _schemaId: string,
+          _schemaGroup: string,
+          _value: unknown,
+          _allFields: FieldContext[],
+          _allListItemsFields?: FieldContext[][]
+        ): PropertyFieldDecorations => ({})
+      );
 
       const mockItem = {
         id: "1",
