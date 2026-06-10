@@ -1,4 +1,4 @@
-const I = (t, e) => e.some((n) => t instanceof n);
+const R = (t, e) => e.some((n) => t instanceof n);
 let x, M;
 function F() {
   return x || (x = [
@@ -19,14 +19,14 @@ function j() {
 const E = /* @__PURE__ */ new WeakMap(), T = /* @__PURE__ */ new WeakMap(), w = /* @__PURE__ */ new WeakMap();
 function _(t) {
   const e = new Promise((n, r) => {
-    const o = () => {
-      t.removeEventListener("success", s), t.removeEventListener("error", a);
-    }, s = () => {
-      n(f(t.result)), o();
+    const s = () => {
+      t.removeEventListener("success", o), t.removeEventListener("error", a);
+    }, o = () => {
+      n(f(t.result)), s();
     }, a = () => {
-      r(t.error), o();
+      r(t.error), s();
     };
-    t.addEventListener("success", s), t.addEventListener("error", a);
+    t.addEventListener("success", o), t.addEventListener("error", a);
   });
   return w.set(e, t), e;
 }
@@ -34,14 +34,14 @@ function $(t) {
   if (E.has(t))
     return;
   const e = new Promise((n, r) => {
-    const o = () => {
-      t.removeEventListener("complete", s), t.removeEventListener("error", a), t.removeEventListener("abort", a);
-    }, s = () => {
-      n(), o();
+    const s = () => {
+      t.removeEventListener("complete", o), t.removeEventListener("error", a), t.removeEventListener("abort", a);
+    }, o = () => {
+      n(), s();
     }, a = () => {
-      r(t.error || new DOMException("AbortError", "AbortError")), o();
+      r(t.error || new DOMException("AbortError", "AbortError")), s();
     };
-    t.addEventListener("complete", s), t.addEventListener("error", a), t.addEventListener("abort", a);
+    t.addEventListener("complete", o), t.addEventListener("error", a), t.addEventListener("abort", a);
   });
   E.set(t, e);
 }
@@ -67,13 +67,13 @@ function B(t) {
 }
 function K(t) {
   return j().includes(t) ? function(...e) {
-    return t.apply(D(this), e), f(this.request);
+    return t.apply(C(this), e), f(this.request);
   } : function(...e) {
-    return f(t.apply(D(this), e));
+    return f(t.apply(C(this), e));
   };
 }
 function q(t) {
-  return typeof t == "function" ? K(t) : (t instanceof IDBTransaction && $(t), I(t, F()) ? new Proxy(t, b) : t);
+  return typeof t == "function" ? K(t) : (t instanceof IDBTransaction && $(t), R(t, F()) ? new Proxy(t, b) : t);
 }
 function f(t) {
   if (t instanceof IDBRequest)
@@ -83,8 +83,8 @@ function f(t) {
   const e = q(t);
   return e !== t && (T.set(t, e), w.set(e, t)), e;
 }
-const D = (t) => w.get(t);
-function G(t, e, { blocked: n, upgrade: r, blocking: o, terminated: s } = {}) {
+const C = (t) => w.get(t);
+function G(t, e, { blocked: n, upgrade: r, blocking: s, terminated: o } = {}) {
   const a = indexedDB.open(t, e), i = f(a);
   return r && a.addEventListener("upgradeneeded", (l) => {
     r(f(a.result), l.oldVersion, l.newVersion, f(a.transaction), l);
@@ -94,44 +94,44 @@ function G(t, e, { blocked: n, upgrade: r, blocking: o, terminated: s } = {}) {
     l.newVersion,
     l
   )), i.then((l) => {
-    s && l.addEventListener("close", () => s()), o && l.addEventListener("versionchange", (u) => o(u.oldVersion, u.newVersion, u));
+    o && l.addEventListener("close", () => o()), s && l.addEventListener("versionchange", (u) => s(u.oldVersion, u.newVersion, u));
   }).catch(() => {
   }), i;
 }
-const V = ["get", "getKey", "getAll", "getAllKeys", "count"], z = ["put", "add", "delete", "clear"], R = /* @__PURE__ */ new Map();
-function P(t, e) {
+const V = ["get", "getKey", "getAll", "getAllKeys", "count"], z = ["put", "add", "delete", "clear"], I = /* @__PURE__ */ new Map();
+function N(t, e) {
   if (!(t instanceof IDBDatabase && !(e in t) && typeof e == "string"))
     return;
-  if (R.get(e))
-    return R.get(e);
-  const n = e.replace(/FromIndex$/, ""), r = e !== n, o = z.includes(n);
+  if (I.get(e))
+    return I.get(e);
+  const n = e.replace(/FromIndex$/, ""), r = e !== n, s = z.includes(n);
   if (
     // Bail if the target doesn't exist on the target. Eg, getAll isn't in Edge.
-    !(n in (r ? IDBIndex : IDBObjectStore).prototype) || !(o || V.includes(n))
+    !(n in (r ? IDBIndex : IDBObjectStore).prototype) || !(s || V.includes(n))
   )
     return;
-  const s = async function(a, ...i) {
-    const l = this.transaction(a, o ? "readwrite" : "readonly");
+  const o = async function(a, ...i) {
+    const l = this.transaction(a, s ? "readwrite" : "readonly");
     let u = l.store;
     return r && (u = u.index(i.shift())), (await Promise.all([
       u[n](...i),
-      o && l.done
+      s && l.done
     ]))[0];
   };
-  return R.set(e, s), s;
+  return I.set(e, o), o;
 }
 B((t) => ({
   ...t,
-  get: (e, n, r) => P(e, n) || t.get(e, n, r),
-  has: (e, n) => !!P(e, n) || t.has(e, n)
+  get: (e, n, r) => N(e, n) || t.get(e, n, r),
+  has: (e, n) => !!N(e, n) || t.has(e, n)
 }));
-const H = ["continue", "continuePrimaryKey", "advance"], N = {}, S = /* @__PURE__ */ new WeakMap(), L = /* @__PURE__ */ new WeakMap(), Q = {
+const H = ["continue", "continuePrimaryKey", "advance"], P = {}, D = /* @__PURE__ */ new WeakMap(), L = /* @__PURE__ */ new WeakMap(), Q = {
   get(t, e) {
     if (!H.includes(e))
       return t[e];
-    let n = N[e];
-    return n || (n = N[e] = function(...r) {
-      S.set(this, L.get(this)[e](...r));
+    let n = P[e];
+    return n || (n = P[e] = function(...r) {
+      D.set(this, L.get(this)[e](...r));
     }), n;
   }
 };
@@ -141,11 +141,11 @@ async function* J(...t) {
     return;
   e = e;
   const n = new Proxy(e, Q);
-  for (L.set(n, e), w.set(n, D(e)); e; )
-    yield n, e = await (S.get(n) || e.continue()), S.delete(n);
+  for (L.set(n, e), w.set(n, C(e)); e; )
+    yield n, e = await (D.get(n) || e.continue()), D.delete(n);
 }
 function v(t, e) {
-  return e === Symbol.asyncIterator && I(t, [IDBIndex, IDBObjectStore, IDBCursor]) || e === "iterate" && I(t, [IDBIndex, IDBObjectStore]);
+  return e === Symbol.asyncIterator && R(t, [IDBIndex, IDBObjectStore, IDBCursor]) || e === "iterate" && R(t, [IDBIndex, IDBObjectStore]);
 }
 B((t) => ({
   ...t,
@@ -199,7 +199,7 @@ const h = {
   }
 };
 let c = { ...h };
-function C(t) {
+function A(t) {
   var e;
   t.namespace && (p = t.namespace), c = {
     ...h,
@@ -232,7 +232,7 @@ function g() {
 function W() {
   return c.token.indexedDBName || `${p}-auth`;
 }
-C({});
+A({});
 function U(t) {
   const e = typeof t == "string" ? new URL(t) : t;
   return c.protectedDomains.some((n) => n.includes(":") ? e.host === n : e.hostname === n || e.hostname.includes(n));
@@ -245,20 +245,20 @@ function y(t) {
   if (c.assetPatterns.customAssets.test(n))
     return "asset";
   if (c.assetPatterns.generalAssets.test(n)) {
-    const o = (r = n.split(".").pop()) == null ? void 0 : r.toLowerCase();
-    return o && ["jpg", "jpeg", "png", "gif", "svg"].includes(o) ? "image" : "document";
+    const s = (r = n.split(".").pop()) == null ? void 0 : r.toLowerCase();
+    return s && ["jpg", "jpeg", "png", "gif", "svg"].includes(s) ? "image" : "document";
   }
   return "unknown";
 }
-function A(t) {
+function S(t) {
   const e = typeof t == "string" ? new URL(t) : t;
   if (c.extractAssetId)
     return c.extractAssetId(e);
   const n = e.pathname, r = n.match(/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/);
   if (r)
     return r[1];
-  const o = n.match(/\/([0-9a-fA-F-]{20,})\//);
-  return o ? o[1] : null;
+  const s = n.match(/\/([0-9a-fA-F-]{20,})\//);
+  return s ? s[1] : null;
 }
 function O(t) {
   switch (t) {
@@ -287,14 +287,14 @@ const X = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   get CONFIG() {
     return c;
   },
-  extractAssetUUID: A,
+  extractAssetUUID: S,
   getAssetType: y,
   getCacheKey: k,
   getCacheName: g,
   getCacheStrategy: O,
   getIndexedDBName: W,
   isProtectedDomain: U,
-  updateConfig: C
+  updateConfig: A
 }, Symbol.toStringTag, { value: "Module" }));
 class Y {
   constructor() {
@@ -355,17 +355,17 @@ class Y {
       if (!(n != null && n.refreshToken))
         return console.log("[TokenManager] No refresh token available"), await this.requestFreshToken();
       const r = await self.clients.matchAll();
-      return r.length === 0 ? (console.log("[TokenManager] No clients available for token refresh"), null) : new Promise((o) => {
-        const s = new MessageChannel();
-        s.port1.onmessage = async (a) => {
-          a.data.type === "TOKEN_REFRESHED" && a.data.token ? (await this.setToken(a.data.token), o(a.data.token.access_token)) : o(null);
+      return r.length === 0 ? (console.log("[TokenManager] No clients available for token refresh"), null) : new Promise((s) => {
+        const o = new MessageChannel();
+        o.port1.onmessage = async (a) => {
+          a.data.type === "TOKEN_REFRESHED" && a.data.token ? (await this.setToken(a.data.token), s(a.data.token.access_token)) : s(null);
         }, r[0].postMessage(
           {
             type: "REFRESH_TOKEN",
             refreshToken: n.refreshToken
           },
-          [s.port2]
-        ), setTimeout(() => o(null), 5e3);
+          [o.port2]
+        ), setTimeout(() => s(null), 5e3);
       });
     } catch (n) {
       return console.error("[TokenManager] Error refreshing token:", n), null;
@@ -403,8 +403,8 @@ class Y {
       const e = await self.clients.matchAll();
       return e.length === 0 ? (console.log("[TokenManager] No clients available"), null) : new Promise((n) => {
         const r = new MessageChannel();
-        r.port1.onmessage = async (o) => {
-          o.data.type === "TOKEN_PROVIDED" && o.data.token ? (await this.setToken(o.data.token), n(o.data.token.access_token)) : n(null);
+        r.port1.onmessage = async (s) => {
+          s.data.type === "TOKEN_PROVIDED" && s.data.token ? (await this.setToken(s.data.token), n(s.data.token.access_token)) : n(null);
         }, e[0].postMessage(
           { type: "REQUEST_TOKEN" },
           [r.port2]
@@ -463,13 +463,13 @@ class Z {
     console.log("[RequestInterceptor] Retrying request with refreshed token");
     const r = this.addAuthentication(e, n);
     try {
-      const o = await fetch(r);
-      return o.status === 401 || o.status === 403 ? (await d.clearToken(), new Response("Authentication failed after refresh", {
+      const s = await fetch(r);
+      return s.status === 401 || s.status === 403 ? (await d.clearToken(), new Response("Authentication failed after refresh", {
         status: 401,
         statusText: "Unauthorized"
-      })) : o;
-    } catch (o) {
-      return console.error("[RequestInterceptor] Error retrying request:", o), new Response("Network error", {
+      })) : s;
+    } catch (s) {
+      return console.error("[RequestInterceptor] Error retrying request:", s), new Response("Network error", {
         status: 503,
         statusText: "Service Unavailable"
       });
@@ -479,16 +479,16 @@ class Z {
    * Process intercepted request
    */
   async processRequest(e) {
-    const n = new URL(e.url), r = y(n), o = A(n);
+    const n = new URL(e.url), r = y(n), s = S(n);
     console.log(`[RequestInterceptor] Processing ${r} request:`, {
       url: n.pathname,
-      assetId: o,
+      assetId: s,
       assetType: r
     });
-    const s = await d.getToken();
-    if (!s)
+    const o = await d.getToken();
+    if (!o)
       return console.log("[RequestInterceptor] No token available"), fetch(e);
-    const a = this.addAuthentication(e, s);
+    const a = this.addAuthentication(e, o);
     try {
       const i = await fetch(a);
       return i.status === 401 || i.status === 403 ? await this.handleAuthError(e) : (i.ok, i);
@@ -504,19 +504,19 @@ class Z {
    * Handle tile requests with special prefix-based authentication
    */
   async processTileRequest(e) {
-    const n = new URL(e.url), r = A(n);
+    const n = new URL(e.url), r = S(n);
     if (!r)
       return fetch(e);
     console.log("[RequestInterceptor] Processing tile request:", {
       url: n.pathname,
       assetId: r
     });
-    const o = await d.getToken();
-    if (!o)
+    const s = await d.getToken();
+    if (!s)
       return console.log("[RequestInterceptor] No token for tile request"), fetch(e);
-    const s = await this.getSignedUrl(r, o);
-    if (s != null && s.url) {
-      const a = new Request(s.url, {
+    const o = await this.getSignedUrl(r, s);
+    if (o != null && o.url) {
+      const a = new Request(o.url, {
         method: e.method,
         headers: e.headers,
         mode: "cors",
@@ -533,10 +533,10 @@ class Z {
    */
   async getSignedUrl(e, n) {
     try {
-      const { CONFIG: r } = await Promise.resolve().then(() => X), o = r.api.proxyEndpoint;
-      if (!o)
+      const { CONFIG: r } = await Promise.resolve().then(() => X), s = r.api.proxyEndpoint;
+      if (!s)
         return console.error("[RequestInterceptor] Proxy endpoint not configured"), null;
-      const s = await fetch(`${o}/api/signed-url`, {
+      const o = await fetch(`${s}/api/signed-url`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -550,7 +550,7 @@ class Z {
           // 15 minutes
         })
       });
-      return s.ok ? await s.json() : (console.error("[RequestInterceptor] Failed to get signed URL"), null);
+      return o.ok ? await o.json() : (console.error("[RequestInterceptor] Failed to get signed URL"), null);
     } catch (r) {
       return console.error("[RequestInterceptor] Error getting signed URL:", r), null;
     }
@@ -593,23 +593,23 @@ async function ee(t) {
       return re(t);
     case "network-only":
     default:
-      return oe(t);
+      return se(t);
   }
 }
 async function te(t) {
   const e = await caches.open(g()), n = k(t), r = await e.match(n);
   if (r)
-    return console.log("[ServiceWorker] Cache hit:", t.url), se(t, e), r;
+    return console.log("[ServiceWorker] Cache hit:", t.url), oe(t, e), r;
   console.log("[ServiceWorker] Cache miss, fetching:", t.url);
   try {
-    const o = await m.processRequest(t);
-    if (o.ok) {
-      const s = o.clone();
-      e.put(n, s);
+    const s = await m.processRequest(t);
+    if (s.ok) {
+      const o = s.clone();
+      e.put(n, o);
     }
-    return o;
-  } catch (o) {
-    return console.error("[ServiceWorker] Network error:", o), new Response("Network error", {
+    return s;
+  } catch (s) {
+    return console.error("[ServiceWorker] Network error:", s), new Response("Network error", {
       status: 503,
       statusText: "Service Unavailable"
     });
@@ -620,14 +620,14 @@ async function ne(t) {
   try {
     const r = await m.processRequest(t);
     if (r.ok) {
-      const o = r.clone();
-      e.put(n, o);
+      const s = r.clone();
+      e.put(n, s);
     }
     return r;
   } catch (r) {
     console.error("[ServiceWorker] Network error, trying cache:", r);
-    const o = await e.match(n);
-    return o ? (console.log("[ServiceWorker] Returning cached response"), o) : new Response("Network error", {
+    const s = await e.match(n);
+    return s ? (console.log("[ServiceWorker] Returning cached response"), s) : new Response("Network error", {
       status: 503,
       statusText: "Service Unavailable"
     });
@@ -640,7 +640,7 @@ async function re(t) {
     statusText: "Not Found"
   });
 }
-async function oe(t) {
+async function se(t) {
   try {
     return await m.processRequest(t);
   } catch (e) {
@@ -650,7 +650,7 @@ async function oe(t) {
     });
   }
 }
-async function se(t, e) {
+async function oe(t, e) {
   try {
     const n = await m.processRequest(t);
     if (n.ok) {
@@ -662,27 +662,26 @@ async function se(t, e) {
   }
 }
 self.addEventListener("message", async (t) => {
-  var n, r, o, s, a;
+  var n, r, s, o, a, i;
   const e = t.data;
   switch (console.log("[ServiceWorker] Received message:", e.type), e.type) {
     case "CONFIG":
-      e.payload && (C(e.payload), (n = t.ports[0]) == null || n.postMessage({ success: !0 }));
+      e.payload && (A(e.payload), (n = t.ports[0]) == null || n.postMessage({ success: !0 }));
       break;
     case "UPDATE_TOKEN":
-      (r = e.payload) != null && r.token && (await d.setToken(e.payload.token), (o = t.ports[0]) == null || o.postMessage({ success: !0 }));
+      (r = e.payload) != null && r.token && (await d.setToken(e.payload.token), (s = t.ports[0]) == null || s.postMessage({ success: !0 }));
       break;
     case "REQUEST_TOKEN":
       break;
     case "CLEAR_CACHE":
-      await ae(), (s = t.ports[0]) == null || s.postMessage({ success: !0 });
+      await ae(), (o = t.ports[0]) == null || o.postMessage({ success: !0 });
       break;
     case "GET_STATUS":
-      const i = await ce();
-      (a = t.ports[0]) == null || a.postMessage(i);
+      const l = await ce();
+      (a = t.ports[0]) == null || a.postMessage(l);
       break;
     case "CLAIM_CLIENTS":
-      await self.clients.claim();
-      console.log("[ServiceWorker] Claimed clients via explicit CLAIM_CLIENTS message");
+      await self.clients.claim(), (i = t.ports[0]) == null || i.postMessage({ success: !0 }), console.log("[ServiceWorker] Claimed clients via explicit message");
       break;
     default:
       console.warn("[ServiceWorker] Unknown message type:", e.type);

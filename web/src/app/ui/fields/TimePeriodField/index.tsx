@@ -23,6 +23,9 @@ export type TimePeriodFieldProps = CommonFieldProps & {
 const TimePeriodField: FC<TimePeriodFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   value,
   onChange
 }) => {
@@ -66,6 +69,9 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="timeperiodfield-commonfield"
     >
       <Wrapper data-testid="timeperiodfield-wrapper">

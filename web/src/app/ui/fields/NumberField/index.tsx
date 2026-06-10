@@ -11,6 +11,9 @@ export type NumberFieldProps = {
 const NumberField: FC<NumberFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   value,
   onChangeComplete,
   onChange,
@@ -44,6 +47,9 @@ const NumberField: FC<NumberFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="numberfield-commonfield"
     >
       <NumberInput
