@@ -778,8 +778,8 @@ console.log("Is EE:", config.isEE);
 
 - `src/app/features/Visualizer/utils/tilesMigration.ts` - Main implementation
 - `src/app/features/Visualizer/utils/tilesMigration.test.ts` - Comprehensive tests
-- `src/app/features/Editor/Map/InspectorPanel/hooks/usePropertyDecorations.tsx:78-115` - UI enforcement
-- `src/services/i18n/translations/en.yml:174-175` - User-facing messages
+- `src/app/features/Editor/Map/InspectorPanel/hooks/usePropertyDecorations.tsx` - UI enforcement
+- `src/services/i18n/translations/en.yml` - User-facing messages
 
 ## Changelog
 
