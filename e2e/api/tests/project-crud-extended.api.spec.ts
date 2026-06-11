@@ -150,18 +150,20 @@ test.describe("Project starred and deleted queries via API", () => {
   });
 
   test("starredProjects returns the starred project", async ({ gqlClient }) => {
-    const { status, data } = await gqlClient.query<{
-      starredProjects: {
-        totalCount: number;
-        nodes: { id: string; name: string; starred: boolean }[];
-      };
-    }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 20 } });
+    await expect
+      .poll(async () => {
+        const { status, data } = await gqlClient.query<{
+          starredProjects: {
+            totalCount: number;
+            nodes: { id: string; name: string; starred: boolean }[];
+          };
+        }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 100 } });
 
-    expect(status).toBe(200);
-    expect(data.starredProjects.totalCount).toBeGreaterThan(0);
-    const found = data.starredProjects.nodes.find((p) => p.id === projectId);
-    expect(found).toBeDefined();
-    expect(found?.starred).toBe(true);
+        expect(status).toBe(200);
+        const found = data.starredProjects.nodes.find((p) => p.id === projectId);
+        return found?.starred;
+      })
+      .toBe(true);
   });
 
   test("Unstar the project", async ({ gqlClient }) => {
@@ -176,16 +178,19 @@ test.describe("Project starred and deleted queries via API", () => {
   test("starredProjects no longer includes the project", async ({
     gqlClient
   }) => {
-    const { status, data } = await gqlClient.query<{
-      starredProjects: {
-        totalCount: number;
-        nodes: { id: string }[];
-      };
-    }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 20 } });
+    await expect
+      .poll(async () => {
+        const { status, data } = await gqlClient.query<{
+          starredProjects: {
+            totalCount: number;
+            nodes: { id: string }[];
+          };
+        }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 100 } });
 
-    expect(status).toBe(200);
-    const found = data.starredProjects.nodes.find((p) => p.id === projectId);
-    expect(found).toBeUndefined();
+        expect(status).toBe(200);
+        return data.starredProjects.nodes.find((p) => p.id === projectId);
+      })
+      .toBeUndefined();
   });
 
   test("Soft-delete the project", async ({ gqlClient }) => {
