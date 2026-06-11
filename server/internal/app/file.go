@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"mime"
@@ -73,12 +74,12 @@ func serveFiles(
 			}
 			fmt.Printf("[export] download file: %s \n", filename)
 
-			rctx := ctx.Request().Context()
-
 			go func() {
 				// download and then delete
 				time.Sleep(3 * time.Second)
-				err := fileGateway.RemoveExportProjectZip(rctx, filename)
+				deleteCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+				defer cancel()
+				err := fileGateway.RemoveExportProjectZip(deleteCtx, filename)
 				if err != nil {
 					fmt.Printf("[export] !!!! delete err: %s \n", err.Error())
 				} else {
