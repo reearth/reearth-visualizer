@@ -13,7 +13,7 @@ const config: StorybookConfig = {
     "@chromatic-com/storybook",
     "@storybook/addon-docs",
     "@storybook/addon-onboarding",
-    "@storybook/addon-a11y",
+    "@storybook/addon-a11y"
   ],
   framework: {
     name: "@storybook/react-vite",
@@ -48,7 +48,11 @@ const config: StorybookConfig = {
           },
           {
             find: "@reearth/sentinel",
-            replacement: resolve(__dirname, "..", "node_modules/@reearth/sentinel")
+            replacement: resolve(
+              __dirname,
+              "..",
+              "node_modules/@reearth/sentinel"
+            )
           },
           {
             find: "@reearth",
@@ -63,13 +67,10 @@ const config: StorybookConfig = {
         }
       },
       optimizeDeps: {
-        exclude: ["@apollo/client", "storybook"]
-      },
-      ssr: {
-        noExternal: ["@apollo/client"]
+        exclude: ["storybook"]
       }
     });
-  },
+  }
 };
 
 export default config;

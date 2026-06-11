@@ -63,6 +63,8 @@ Cross-cutting concepts and patterns:
 - **[Authentication](concepts/authentication.md)** - Authentication architecture
 - **[Feature Flags](concepts/feature-flags.md)** - Feature flag system
 - **[3D Rendering](concepts/3d-rendering.md)** - Cesium integration and 3D rendering
+- **[Tiles Migration and Fallback](concepts/tiles-migration.md)** - Tiles and terrain migration, fallback, and compliance
+- **[Layers Migration and Fallback](concepts/layers-migration.md)** - Layers migration and fallback system
 - **[Internationalization](concepts/internationalization.md)** - i18n system
 - **[Testing Strategy](concepts/testing-strategy.md)** - Testing approach and patterns
 
