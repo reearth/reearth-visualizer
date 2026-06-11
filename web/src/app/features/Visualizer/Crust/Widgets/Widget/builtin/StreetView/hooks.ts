@@ -56,7 +56,6 @@ export default ({ widget, layer, setShowPano }: Props) => {
   );
 
   const apiKey = widget.property?.default?.apiKey;
-  const tileType = widget.property?.tiles?.tile_type;
 
   const [lng, lat] =
     layer.feature?.geometry?.type === "Point"
@@ -264,7 +263,6 @@ export default ({ widget, layer, setShowPano }: Props) => {
   return {
     themeClass,
     apiKey,
-    tileType,
     location: panoState.location,
     panoDivRef,
     headingPitch: panoState.headingPitch,
