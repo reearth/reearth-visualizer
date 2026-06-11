@@ -723,11 +723,7 @@ describe("PropertyItem", () => {
       );
 
       // Select the second tile (non-Google tile)
-      const listItems = screen.getAllByRole("button");
-      // First item is Google tile, second is default tile
-      if (listItems[1]) {
-        listItems[1].click();
-      }
+      screen.getByText("Default").click();
 
       // Wait for the selection to take effect
       rerender(
