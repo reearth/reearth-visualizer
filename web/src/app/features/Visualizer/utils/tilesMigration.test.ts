@@ -370,11 +370,7 @@ describe("tilesMigration", () => {
 
     it("should NOT override normal if already set to true", () => {
       const viewerProperty = {
-        terrain: {
-          type: "reearth_terrain" as const,
-          enabled: true,
-          normal: true
-        }
+        terrain: { type: "reearth_terrain" as const, enabled: true, normal: true }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -385,11 +381,7 @@ describe("tilesMigration", () => {
 
     it("should set normal=true even if it was explicitly false", () => {
       const viewerProperty = {
-        terrain: {
-          type: "reearth_terrain" as const,
-          enabled: true,
-          normal: false
-        }
+        terrain: { type: "reearth_terrain" as const, enabled: true, normal: false }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
