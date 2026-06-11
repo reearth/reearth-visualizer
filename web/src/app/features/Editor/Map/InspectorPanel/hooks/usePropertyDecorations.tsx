@@ -2,8 +2,9 @@ import { useCesiumIonAccessToken } from "@reearth/app/features/Editor/atoms";
 import { CesiumIonAssetFallbackWarning } from "@reearth/app/features/Editor/common";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { FieldContext } from "@reearth/app/ui/fields/Properties";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n/hooks";
-import { ReactNode, useCallback } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
 
 export type PropertyDecorations = {
   titleAdornment?: ReactNode;
@@ -22,6 +23,7 @@ export type PropertyDecorations = {
 export const usePropertyDecorations = () => {
   const [cesiumIonAccessToken] = useCesiumIonAccessToken();
   const t = useT();
+  const isEE = useMemo(() => config()?.featureCollection === "ee", []);
 
   return useCallback(
     (
@@ -61,20 +63,50 @@ export const usePropertyDecorations = () => {
         const tileTypeField = allFields.find((f) => f.id === "tile_type");
         const tileType = tileTypeField?.value;
 
-        // Check if current tile is a Google tile
-        const isCurrentTileGoogle =
-          tileType === "google_satellite" || tileType === "google_roadmap";
+        // Helper: Check if a tile is or will become a Google tile
+        // Asset IDs 2, 3 fallback to google_satellite; 4 to google_roadmap (EE only)
+        const GOOGLE_FALLBACK_ASSET_IDS = ["2", "3", "4"];
+        const isOrWillBeGoogleTile = (
+          type: unknown,
+          assetId: unknown
+        ): boolean => {
+          // Direct Google tile
+          if (type === "google_satellite" || type === "google_roadmap") {
+            return true;
+          }
+          // Cesium Ion tile without token that will fallback to Google (EE only)
+          if (
+            isEE &&
+            type === "cesium_ion" &&
+            !cesiumIonAccessToken &&
+            assetId !== undefined &&
+            GOOGLE_FALLBACK_ASSET_IDS.includes(String(assetId))
+          ) {
+            return true;
+          }
+          return false;
+        };
 
-        // Check if any other tile in the list is a Google tile
+        // Check if current tile is or will become a Google tile
+        const cesiumAssetIdField = allFields.find(
+          (f) => f.id === "cesium_ion_asset_id"
+        );
+        const cesiumAssetId = cesiumAssetIdField?.value;
+        const isCurrentTileGoogle = isOrWillBeGoogleTile(
+          tileType,
+          cesiumAssetId
+        );
+
+        // Check if any other tile in the list is or will become a Google tile
         const hasGoogleTileInList =
           allListItemsFields?.some((itemFields) => {
             const itemTileType = itemFields.find(
               (f) => f.id === "tile_type"
             )?.value;
-            return (
-              itemTileType === "google_satellite" ||
-              itemTileType === "google_roadmap"
-            );
+            const itemAssetId = itemFields.find(
+              (f) => f.id === "cesium_ion_asset_id"
+            )?.value;
+            return isOrWillBeGoogleTile(itemTileType, itemAssetId);
           }) ?? false;
 
         if (isCurrentTileGoogle) {
@@ -114,6 +146,6 @@ export const usePropertyDecorations = () => {
 
       return decorations;
     },
-    [cesiumIonAccessToken, t]
+    [cesiumIonAccessToken, isEE, t]
   );
 };
