@@ -155,9 +155,10 @@ test.describe("Project starred and deleted queries via API", () => {
         totalCount: number;
         nodes: { id: string; name: string; starred: boolean }[];
       };
-    }>(GET_STARRED_PROJECTS, { workspaceId });
+    }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 20 } });
 
     expect(status).toBe(200);
+    expect(data.starredProjects.totalCount).toBeGreaterThan(0);
     const found = data.starredProjects.nodes.find((p) => p.id === projectId);
     expect(found).toBeDefined();
     expect(found?.starred).toBe(true);
@@ -180,7 +181,7 @@ test.describe("Project starred and deleted queries via API", () => {
         totalCount: number;
         nodes: { id: string }[];
       };
-    }>(GET_STARRED_PROJECTS, { workspaceId });
+    }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 20 } });
 
     expect(status).toBe(200);
     const found = data.starredProjects.nodes.find((p) => p.id === projectId);
