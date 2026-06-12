@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/pprof"
 	"os"
+	"strings"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/labstack/echo/v4"
@@ -15,7 +16,9 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	appmiddleware "github.com/reearth/reearth/server/internal/adapter/middleware"
 	"github.com/reearth/reearth/server/internal/app/otel"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
@@ -149,6 +152,7 @@ func initEcho(
 
 	// Asset API for handling GCP files
 	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
+	serveExportFile(e, cfg, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	apiPrivateRoute := apiRoot.Group("", privateCache)
 	if cfg.Config.UseMockAuth() {
@@ -185,6 +189,62 @@ func initEcho(
 	}).Handler(e)
 
 	return e
+}
+
+func serveExportFile(
+	e *echo.Echo,
+	cfg *ServerConfig,
+	allowedOrigins []string,
+	domainChecker gateway.DomainChecker,
+	fileGateway gateway.File,
+) {
+	if fileGateway == nil {
+		return
+	}
+
+	// Optional auth: attach operator if a valid token is present, silently continue without one if not.
+	optionalAuth := func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if strings.TrimPrefix(c.Request().Header.Get("Authorization"), "Bearer ") == "" {
+				return next(c)
+			}
+			if cfg.Config.UseMockAuth() {
+				return attachOpMiddlewareMockUser(cfg)(next)(c)
+			}
+			return attachOpMiddlewareReearthAccounts(cfg)(next)(c)
+		}
+	}
+
+	e.GET(
+		"/export/:filename",
+		func(c echo.Context) error {
+			filename := c.Param("filename")
+			ctx := c.Request().Context()
+
+			projectIDStr := strings.TrimSuffix(filename, ".zip")
+			pid, err := id.ProjectIDFrom(projectIDStr)
+			if err != nil {
+				return echo.ErrNotFound
+			}
+
+			uc := adapter.Usecases(ctx)
+			op := adapter.Operator(ctx)
+			if _, err := uc.Project.CheckProjectExportAccess(ctx, pid, op); err != nil {
+				return echo.ErrUnauthorized
+			}
+
+			r, err := fileGateway.ReadExportProjectZip(ctx, filename)
+			if err != nil {
+				fmt.Printf("[export] !!!! download error: %s \n", filename)
+				return err
+			}
+			fmt.Printf("[export] download file: %s \n", filename)
+
+			return c.Stream(http.StatusOK, "application/zip", r)
+		},
+		optionalAuth,
+		appmiddleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+	)
 }
 
 func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {

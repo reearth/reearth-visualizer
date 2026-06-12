@@ -1,13 +1,11 @@
 package app
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"mime"
 	"net/http"
 	"path"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter/middleware"
@@ -59,35 +57,6 @@ func serveFiles(
 		func(c echo.Context) error {
 			return c.NoContent(http.StatusNoContent)
 		},
-		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
-	)
-
-	ec.GET(
-		"/export/:filename",
-		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
-			filename := ctx.Param("filename")
-
-			r, err := fileGateway.ReadExportProjectZip(ctx.Request().Context(), filename)
-			if err != nil {
-				fmt.Printf("[export] !!!! download error: %s \n", filename)
-				return nil, filename, err
-			}
-			fmt.Printf("[export] download file: %s \n", filename)
-
-			go func() {
-				// download and then delete
-				time.Sleep(3 * time.Second)
-				deleteCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-				defer cancel()
-				err := fileGateway.RemoveExportProjectZip(deleteCtx, filename)
-				if err != nil {
-					fmt.Printf("[export] !!!! delete err: %s \n", err.Error())
-				} else {
-					fmt.Printf("[export] file deleted: %s \n", filename)
-				}
-			}()
-			return r, filename, nil
-		}),
 		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
 	)
 

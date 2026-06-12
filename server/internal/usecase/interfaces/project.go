@@ -112,6 +112,7 @@ type Project interface {
 	CheckProjectAlias(context.Context, string, accountsID.WorkspaceID, *id.ProjectID) (bool, error)
 	CheckSceneAlias(context.Context, string, *id.ProjectID) (bool, error)
 
+	CheckProjectExportAccess(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
 	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *map[string]any, *usecase.Operator) (*project.ProjectMetadata, error)
