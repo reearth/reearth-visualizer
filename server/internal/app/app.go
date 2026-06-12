@@ -230,6 +230,9 @@ func serveExportFile(
 			uc := adapter.Usecases(ctx)
 			op := adapter.Operator(ctx)
 			if _, err := uc.Project.CheckProjectExportAccess(ctx, pid, op); err != nil {
+				if errors.Is(err, rerror.ErrNotFound) {
+					return echo.ErrNotFound
+				}
 				return echo.ErrUnauthorized
 			}
 
@@ -238,11 +241,20 @@ func serveExportFile(
 				fmt.Printf("[export] !!!! download error: %s \n", filename)
 				return err
 			}
+			defer r.Close()
 			fmt.Printf("[export] download file: %s \n", filename)
 
 			return c.Stream(http.StatusOK, "application/zip", r)
 		},
 		optionalAuth,
+		appmiddleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+	)
+
+	e.OPTIONS(
+		"/export/:filename",
+		func(c echo.Context) error {
+			return c.NoContent(http.StatusNoContent)
+		},
 		appmiddleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
 	)
 }
