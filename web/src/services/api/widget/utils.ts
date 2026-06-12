@@ -75,7 +75,7 @@ export const getInstallableWidgets = (
   const { builtinTimelineWidget } = appFeature();
   const isEE = config()?.featureCollection === "ee";
 
-  const avaliableWidgetIds = AVAILABLE_WIDGET_IDS.filter((id) => {
+  const availableWidgetIds = AVAILABLE_WIDGET_IDS.filter((id) => {
     if (id === TIMELINE_BUILTIN_WIDGET_ID && !builtinTimelineWidget) return false;
     if (id === STREET_VIEW_WIDGET_ID && !isEE) return false;
     return true;
@@ -88,7 +88,7 @@ export const getInstallableWidgets = (
         .filter(
           (e) =>
             e.type === PluginExtensionType.Widget &&
-            (avaliableWidgetIds.includes(`reearth/${e.extensionId}`) ||
+            (availableWidgetIds.includes(`reearth/${e.extensionId}`) ||
               plugin.id !== "reearth")
         )
         .map((e): InstallableWidget => {

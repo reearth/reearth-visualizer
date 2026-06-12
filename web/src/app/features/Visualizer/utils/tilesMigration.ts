@@ -263,9 +263,19 @@ function extractStreetViewTiles(
       }
     }
   } else {
-    // Published Mode: property is already processed as { tiles: { tile_type } }
-    const tiles = property.tiles as { tile_type?: string } | undefined;
-    tileType = tiles?.tile_type;
+    // Published Mode: property may be processed as collection array or single object
+    const tiles = property.tiles as
+      | { tile_type?: string }[]
+      | { tile_type?: string }
+      | undefined;
+
+    if (Array.isArray(tiles) && tiles.length > 0) {
+      // Collection format: array of tile objects
+      tileType = tiles[0].tile_type;
+    } else if (tiles && typeof tiles === "object" && "tile_type" in tiles) {
+      // Single object format
+      tileType = tiles.tile_type;
+    }
   }
 
   // Use extracted type or default to google_satellite
@@ -334,8 +344,12 @@ export function migrateViewerPropertyTiles(
     terrain.type === "reearth_terrain" &&
     terrain.normal !== true;
 
+  // Check if Street View widget exists and needs tile appending
+  const streetViewTiles = extractStreetViewTiles(config.widgets);
+  const needsStreetViewTile = streetViewTiles.length > 0;
+
   // Return original if nothing needs processing
-  if (!tilesNeedProcessing && !terrainNeedsProcessing && !terrainNeedsNormalMap) {
+  if (!tilesNeedProcessing && !terrainNeedsProcessing && !terrainNeedsNormalMap && !needsStreetViewTile) {
     return viewerProperty;
   }
 
@@ -390,8 +404,7 @@ export function migrateViewerPropertyTiles(
   }
 
   // Final step: Append Street View widget tiles (if widget exists and has tile configuration)
-  const streetViewTiles = extractStreetViewTiles(config.widgets);
-  if (streetViewTiles.length > 0) {
+  if (needsStreetViewTile) {
     const currentTiles = result.tiles || tiles || [];
     const existingTileIds = new Set(currentTiles.map((t) => t.id));
 
