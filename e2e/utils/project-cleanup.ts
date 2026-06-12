@@ -84,7 +84,7 @@ export async function deleteProjectByName(
     const { data: deletedData } = await client
       .query<{
         deletedProjects: { nodes: { id: string; name: string }[] };
-      }>(GET_DELETED_PROJECTS, { workspaceId })
+      }>(GET_DELETED_PROJECTS, { workspaceId, pagination: { first: 100 } })
       .catch(() => ({
         data: { deletedProjects: { nodes: [] } }
       }));

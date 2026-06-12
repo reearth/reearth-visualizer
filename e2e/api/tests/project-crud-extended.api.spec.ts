@@ -160,7 +160,9 @@ test.describe("Project starred and deleted queries via API", () => {
         }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 100 } });
 
         expect(status).toBe(200);
-        const found = data.starredProjects.nodes.find((p) => p.id === projectId);
+        const found = data.starredProjects.nodes.find(
+          (p) => p.id === projectId
+        );
         return found?.starred;
       })
       .toBe(true);
@@ -205,18 +207,25 @@ test.describe("Project starred and deleted queries via API", () => {
   test("deletedProjects returns the soft-deleted project", async ({
     gqlClient
   }) => {
-    const { status, data } = await gqlClient.query<{
-      deletedProjects: {
-        totalCount: number;
-        nodes: { id: string; name: string; isDeleted: boolean }[];
-      };
-    }>(GET_DELETED_PROJECTS, { workspaceId });
+    await expect
+      .poll(async () => {
+        const { status, data } = await gqlClient.query<{
+          deletedProjects: {
+            totalCount: number;
+            nodes: { id: string; name: string; isDeleted: boolean }[];
+          };
+        }>(GET_DELETED_PROJECTS, {
+          workspaceId,
+          pagination: { first: 100 }
+        });
 
-    expect(status).toBe(200);
-    expect(data.deletedProjects.totalCount).toBeGreaterThan(0);
-    const found = data.deletedProjects.nodes.find((p) => p.id === projectId);
-    expect(found).toBeDefined();
-    expect(found?.isDeleted).toBe(true);
+        expect(status).toBe(200);
+        return data.deletedProjects.nodes.find((p) => p.id === projectId);
+      })
+      .toMatchObject({
+        id: projectId,
+        isDeleted: true
+      });
   });
 });
 
