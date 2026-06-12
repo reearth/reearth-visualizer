@@ -1053,7 +1053,7 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
 	if err != nil {
-		return nil, errors.New("project metadate " + err.Error())
+		return nil, errors.New("project metadata " + err.Error())
 	}
 
 	prj.SetMetadata(meta)
