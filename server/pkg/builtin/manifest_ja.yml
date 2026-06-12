@@ -1516,7 +1516,7 @@ extensions:
           tile_type:
             title: 種類
             placeholder: タイルのタイプを選択
-            description: Street View で使用する Google マップタイルを設定します。
+            description: Street View で画像を表示するには Google マップタイルが必要です。「Google Satellite」または「Google Road Map」を選択してください。
             choices:
               google_satellite: Google Satellite
               google_roadmap: Google Road Map

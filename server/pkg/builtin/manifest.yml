@@ -2490,7 +2490,7 @@ extensions:
               title: Tile type
               defaultValue: google_satellite
               placeholder: please enter tile type
-              description: Set the Google Maps tile to use in Street View.
+              description: Street View requires a Google Maps tile to display imagery. Please select Google Satellite or Google Road Map.
               choices:
                 - key: google_satellite
                   label: Google Satellite

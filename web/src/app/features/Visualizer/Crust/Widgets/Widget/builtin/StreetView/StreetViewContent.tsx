@@ -10,13 +10,12 @@ import { forwardRef } from "react";
 export type StreetViewContentProps = {
   isTracking?: boolean;
   apiKey?: string;
-  tileType?: string;
   theme?: "light" | "dark";
   handleClosePano: () => void;
 };
 
 const StreetViewContent = forwardRef<HTMLDivElement, StreetViewContentProps>(
-  ({ handleClosePano, isTracking, theme, apiKey, tileType }, ref) => {
+  ({ handleClosePano, isTracking, theme, apiKey }, ref) => {
     const t = useT();
 
     return (
@@ -41,11 +40,6 @@ const StreetViewContent = forwardRef<HTMLDivElement, StreetViewContentProps>(
           {isTracking ? (
             <div className="px-2 py-1 text-xs flex flex-col gap-1">
               <span>{t("Select a location on the map to view Street View")}</span>
-              {!tileType && (
-                <span className="text-yellow-500">
-                  {t("Street View requires a Google Maps tile to display imagery. Please select Google Satellite or Google Road Map in the widget settings.")}
-                </span>
-              )}
             </div>
           ) : apiKey ? (
             <div ref={ref} className="w-full h-[250px] overflow-hidden" />

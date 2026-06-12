@@ -524,7 +524,6 @@ aria-label-Go-to-the-home-position: ホームポジションに移動
 aria-label-zoom-out: ズームアウト
 Street View: ストリートビュー
 Select a location on the map to view Street View: 地図上の場所を選択してストリートビューを表示
-Street View requires a Google Maps tile to display imagery. Please select Google Satellite or Google Road Map in the widget settings.: Street View の表示には Google マップタイルが必要です。ウィジェット設定で Google 衛星写真または Google ロードマップを選択してください。
 Please provide the API key: APIキーを入力してください
 1sec/sec: 1秒/秒
 0.5min/sec: 0.5分/秒
