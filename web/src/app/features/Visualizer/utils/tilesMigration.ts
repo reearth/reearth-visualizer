@@ -418,6 +418,21 @@ export function migrateViewerPropertyTiles(
 
     if (newStreetViewTiles.length > 0) {
       result.tiles = [...currentTiles, ...newStreetViewTiles];
+
+      // Apply Google Maps opacity compliance to the newly appended tiles
+      // Check if Google tiles are present (including the newly appended ones)
+      const hasGoogleTilesAfterAppend = result.tiles?.some(
+        (tile) => tile.type === "google_satellite" || tile.type === "google_roadmap"
+      );
+
+      if (hasGoogleTilesAfterAppend) {
+        result.tiles = result.tiles.map((tile) => {
+          if (tile.opacity !== 1) {
+            return { ...tile, opacity: 1 };
+          }
+          return tile;
+        });
+      }
     }
   }
 

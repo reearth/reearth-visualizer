@@ -243,10 +243,11 @@ const Visualizer: FC<VisualizerProps> = ({
     handleCoreAPIReady,
     engineMeta
   });
-  
+
   // Override engineMeta cesiumIonAccessToken with global token from viewer property if set
   const overriddenEngineMeta = useMemo(() => {
-    const globalIonToken = overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
+    const globalIonToken =
+      overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
 
     if (globalIonToken && typeof globalIonToken === "string") {
       return {
