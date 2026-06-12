@@ -1,13 +1,13 @@
 import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { Camera } from "@reearth/app/utils/value";
-import { ComputedFeature, ComputedLayer, TileProperty } from "@reearth/core";
+import { ComputedFeature, ComputedLayer } from "@reearth/core";
 import { config } from "@reearth/services/config";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
-import { InternalWidget, WidgetAlignSystem } from "./Crust/Widgets";
+import { WidgetAlignSystem } from "./Crust/Widgets";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 import { useOverriddenProperty } from "./utils";
 import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
@@ -57,7 +57,8 @@ export default function useHooks({
 
     // Check both global token override and engineMeta token
     // Validate tokens are non-empty strings
-    const globalToken = overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
+    const globalToken =
+      overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
     const engineToken = engineMeta?.cesiumIonAccessToken;
     const hasAccessToken = !!(
       (typeof globalToken === "string" && globalToken.trim().length > 0) ||
@@ -68,98 +69,10 @@ export default function useHooks({
       isEE,
       defaultTileType,
       defaultTerrainType: "reearth_terrain",
-      hasAccessToken
+      hasAccessToken,
+      widgets
     });
-  }, [overriddenViewerProperty, engineMeta]);
-
-  const streetViewTiles = useMemo(() => {
-    const zones = [widgets?.outer, widgets?.inner];
-    const sections = ["left", "center", "right"] as const;
-    const areas = ["top", "middle", "bottom"] as const;
-    let streetViewWidget: InternalWidget | undefined;
-    outer: for (const zone of zones) {
-      if (!zone) continue;
-      for (const section of sections) {
-        const sec = zone[section];
-        if (!sec) continue;
-        for (const area of areas) {
-          const found = sec[area]?.widgets?.find(
-            (w) => w.extensionId === "streetView"
-          );
-          if (found) {
-            streetViewWidget = found;
-            break outer;
-          }
-        }
-      }
-    }
-    if (!streetViewWidget?.property) return [];
-
-    const property = streetViewWidget.property as Record<string, unknown>;
-
-    // Editor (GQL): property has raw items array
-    if (Array.isArray(property["items"])) {
-      const tilesFromItems = (
-        property["items"] as {
-          id: string;
-          schemaGroupId?: string;
-          fields?: { fieldId: string; value?: unknown }[];
-        }[]
-      ).flatMap((item) => {
-        if (item.schemaGroupId !== "tiles" || !item.fields) return [];
-        const type = item.fields.find((f) => f.fieldId === "tile_type")
-          ?.value as string | undefined;
-        if (!type) return [];
-        return [{ id: item.id, type }];
-      });
-
-      if (tilesFromItems.length > 0) return tilesFromItems;
-
-      // No explicit selection — fall back to schema defaultValue
-      const schema = property["schema"] as
-        | {
-            groups?: {
-              schemaGroupId?: string;
-              fields?: { fieldId: string; defaultValue?: unknown }[];
-            }[];
-          }
-        | undefined;
-      const defaultTileType = schema?.groups
-        ?.find((g) => g.schemaGroupId === "tiles")
-        ?.fields?.find((f) => f.fieldId === "tile_type")
-        ?.defaultValue as string | undefined;
-
-      if (defaultTileType) {
-        return [{ id: streetViewWidget.id, type: defaultTileType }];
-      }
-      return [];
-    }
-
-    // Published: property is already processed as { tiles: { tile_type } }
-    const tileType = (property["tiles"] as { tile_type?: string } | undefined)
-      ?.tile_type;
-    if (!tileType) return [];
-    return [{ id: streetViewWidget.id, type: tileType }];
-  }, [widgets]);
-
-
-  // Append Street View tile when Street View widget exists and has a tile type selected
-  const finalViewerProperty = useMemo(() => {
-    if (!streetViewTiles?.length || !migratedViewerProperty)
-      return migratedViewerProperty;
-
-    const newTiles: TileProperty[] = streetViewTiles.map(
-      (t: { id: string; type: string }) => ({
-        id: t.id,
-        type: t.type
-      })
-    );
-
-    return {
-      ...migratedViewerProperty,
-      tiles: [...(migratedViewerProperty.tiles ?? []), ...newTiles]
-    };
-  }, [migratedViewerProperty, streetViewTiles]);
+  }, [overriddenViewerProperty, engineMeta, widgets]);
 
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -192,7 +105,7 @@ export default function useHooks({
 
   return {
     shouldRender,
-    overriddenViewerProperty: finalViewerProperty,
+    overriddenViewerProperty: migratedViewerProperty,
     overrideViewerProperty,
     storyWrapperRef,
     visualizerCamera,
@@ -202,3 +115,4 @@ export default function useHooks({
     currentCameraRef
   };
 }
+
