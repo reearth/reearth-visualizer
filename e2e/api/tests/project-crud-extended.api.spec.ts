@@ -155,7 +155,7 @@ test.describe("Project starred and deleted queries via API", () => {
         totalCount: number;
         nodes: { id: string; name: string; starred: boolean }[];
       };
-    }>(GET_STARRED_PROJECTS, { workspaceId });
+    }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 10 } });
 
     expect(status).toBe(200);
     const found = data.starredProjects.nodes.find((p) => p.id === projectId);
@@ -180,7 +180,7 @@ test.describe("Project starred and deleted queries via API", () => {
         totalCount: number;
         nodes: { id: string }[];
       };
-    }>(GET_STARRED_PROJECTS, { workspaceId });
+    }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 10 } });
 
     expect(status).toBe(200);
     const found = data.starredProjects.nodes.find((p) => p.id === projectId);
@@ -204,7 +204,7 @@ test.describe("Project starred and deleted queries via API", () => {
         totalCount: number;
         nodes: { id: string; name: string; isDeleted: boolean }[];
       };
-    }>(GET_DELETED_PROJECTS, { workspaceId });
+    }>(GET_DELETED_PROJECTS, { workspaceId, pagination: { first: 10 } });
 
     expect(status).toBe(200);
     expect(data.deletedProjects.totalCount).toBeGreaterThan(0);
