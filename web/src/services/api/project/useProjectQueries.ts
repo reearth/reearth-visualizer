@@ -72,13 +72,8 @@ export const useStarredProjects = (input: GetStarredProjectsQueryVariables) => {
     [data?.starredProjects]
   );
   const hasMoreStarredProjects = useMemo(
-    () =>
-      data?.starredProjects.pageInfo?.hasNextPage ||
-      data?.starredProjects.pageInfo?.hasPreviousPage,
-    [
-      data?.starredProjects.pageInfo?.hasNextPage,
-      data?.starredProjects.pageInfo?.hasPreviousPage
-    ]
+    () => data?.starredProjects.pageInfo?.hasNextPage,
+    [data?.starredProjects.pageInfo?.hasNextPage]
   );
   const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
   const endCursor = useMemo(
@@ -108,13 +103,8 @@ export const useDeletedProjects = (input: GetDeletedProjectsQueryVariables) => {
   );
 
   const hasMoreDeletedProjects = useMemo(
-    () =>
-      data?.deletedProjects.pageInfo?.hasNextPage ||
-      data?.deletedProjects.pageInfo?.hasPreviousPage,
-    [
-      data?.deletedProjects.pageInfo?.hasNextPage,
-      data?.deletedProjects.pageInfo?.hasPreviousPage
-    ]
+    () => data?.deletedProjects.pageInfo?.hasNextPage,
+    [data?.deletedProjects.pageInfo?.hasNextPage]
   );
   const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
   const endCursor = useMemo(
