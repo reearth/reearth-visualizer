@@ -1188,6 +1188,9 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 	}
 
 	var input = jsonmodel.ToProjectExportDataFromJSON(projectData)
+	if input == nil {
+		return nil, errors.New("project data parse error")
+	}
 
 	alias := ""
 	archived := false
@@ -1309,9 +1312,9 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		return
 	}
 
-	txCtx := tx.Context()
+	ctx = tx.Context()
 	defer func() {
-		if err2 := tx.End(txCtx); err == nil && err2 != nil {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
 		}
 	}()
@@ -1418,7 +1421,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		return nil, err
 	}
 
-	err = i.projectRepo.Save(txCtx, proj)
+	err = i.projectRepo.Save(ctx, proj)
 	if err != nil {
 		return nil, err
 	}

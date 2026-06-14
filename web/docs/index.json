@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "generated": "2026-06-04T02:43:54.929Z",
-  "totalDocs": 10,
+  "generated": "2026-06-10T00:00:00.000Z",
+  "totalDocs": 13,
   "categories": {
     "uncategorized": [
       "README.md"
@@ -10,7 +10,10 @@
       "architecture/overview.md"
     ],
     "concept": [
-      "concepts/feature-flags.md"
+      "concepts/feature-flags.md",
+      "concepts/schema-driven-field-rendering.md",
+      "concepts/tiles-migration.md",
+      "concepts/layers-migration.md"
     ],
     "guide": [
       "guides/getting-started.md"
@@ -61,6 +64,58 @@
         "../reference/environment-variables.md"
       ],
       "lastUpdated": "2026-06-04"
+    },
+    "schema-driven-field-rendering": {
+      "path": "concepts/schema-driven-field-rendering.md",
+      "title": "Schema-Driven Field Rendering",
+      "tags": [
+        "ui",
+        "property",
+        "schema",
+        "forms",
+        "rendering"
+      ],
+      "related": [
+        "\"../modules/ui/components.md\"",
+        "\"./feature-flags.md\""
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "tiles-migration": {
+      "path": "concepts/tiles-migration.md",
+      "title": "Tiles Migration and Fallback",
+      "tags": [
+        "tiles",
+        "terrain",
+        "migration",
+        "fallback",
+        "cesium",
+        "google-maps"
+      ],
+      "related": [
+        "../modules/features/visualizer.md",
+        "../setup/custom-providers.md",
+        "./feature-flags.md"
+      ],
+      "lastUpdated": "2026-06-10"
+    },
+    "layers-migration": {
+      "path": "concepts/layers-migration.md",
+      "title": "Layers Migration and Fallback",
+      "tags": [
+        "layers",
+        "migration",
+        "fallback",
+        "cesium",
+        "osm-buildings",
+        "google-photorealistic"
+      ],
+      "related": [
+        "./tiles-migration.md",
+        "../modules/features/visualizer.md",
+        "../setup/custom-providers.md"
+      ],
+      "lastUpdated": "2026-06-10"
     }
   },
   "guides": {
@@ -183,6 +238,21 @@
     "runtime-config": [
       "concepts/feature-flags.md"
     ],
+    "ui": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "property": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "schema": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "forms": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "rendering": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
     "setup": [
       "guides/getting-started.md",
       "reference/environment-variables.md"
@@ -229,13 +299,34 @@
       "setup/custom-providers.md"
     ],
     "tiles": [
+      "concepts/tiles-migration.md",
       "setup/custom-providers.md"
     ],
     "terrain": [
+      "concepts/tiles-migration.md",
       "setup/custom-providers.md"
     ],
     "cesium": [
+      "concepts/tiles-migration.md",
       "setup/custom-providers.md"
+    ],
+    "migration": [
+      "concepts/tiles-migration.md"
+    ],
+    "fallback": [
+      "concepts/tiles-migration.md"
+    ],
+    "google-maps": [
+      "concepts/tiles-migration.md"
+    ],
+    "layers": [
+      "concepts/layers-migration.md"
+    ],
+    "osm-buildings": [
+      "concepts/layers-migration.md"
+    ],
+    "google-photorealistic": [
+      "concepts/layers-migration.md"
     ]
   }
 }

@@ -1,9 +1,11 @@
+import { useSceneSettingNavigationTarget, useHighlightFieldTarget } from "@reearth/app/features/Editor/atoms";
 import { Panel, PanelProps } from "@reearth/app/ui/layout";
 import { useT } from "@reearth/services/i18n/hooks";
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 
 import { useMapPage } from "../context";
 
+import { usePropertyDecorations } from "./hooks";
 import LayerInspector from "./LayerInspector";
 import SceneSettings from "./SceneSettings";
 
@@ -23,7 +25,9 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     handleFlyTo,
     handleLayerConfigUpdate,
     handleLayerNameUpdate,
-    handleGeoJsonFeatureUpdate
+    handleGeoJsonFeatureUpdate,
+    handleSceneSettingSelect,
+    handleLayerSelect
   } = useMapPage();
 
   const t = useT();
@@ -32,6 +36,34 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
     () => scene?.property?.id,
     [scene?.property?.id]
   );
+
+  // Compute property field decorations with business logic
+  const computeDecorations = usePropertyDecorations();
+
+  // Navigation effect: Listen to navigation target atom and trigger navigation
+  const [navigationTarget, setNavigationTarget] = useSceneSettingNavigationTarget();
+  const [, setHighlightFieldId] = useHighlightFieldTarget();
+
+  useEffect(() => {
+    if (navigationTarget) {
+      // Deselect any selected layer when navigating to scene settings
+      handleLayerSelect(undefined);
+      handleSceneSettingSelect(navigationTarget.setting);
+      // Set the field to highlight if specified
+      // Delay slightly to ensure the scene settings panel has rendered
+      if (navigationTarget.fieldId) {
+        setTimeout(() => {
+          setHighlightFieldId(navigationTarget.fieldId);
+          // Clear highlight after field has had time to detect it
+          setTimeout(() => {
+            setHighlightFieldId(undefined);
+          }, 500);
+        }, 100);
+      }
+      // Clear the navigation target after navigation
+      setNavigationTarget(undefined);
+    }
+  }, [navigationTarget, handleSceneSettingSelect, handleLayerSelect, setNavigationTarget, setHighlightFieldId]);
 
   return (
     <Panel
@@ -49,6 +81,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
           propertyId={scenePropertyId}
           propertyItems={sceneSettings}
           onFlyTo={handleFlyTo}
+          computeDecorations={computeDecorations}
         />
       )}
       {selectedLayer && (

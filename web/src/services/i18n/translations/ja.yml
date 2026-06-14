@@ -128,6 +128,8 @@ Switch workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log out: ログアウト
+Cesium Ion token not configured. Using fallback.: Cesium Ionトークンが設定されていません。フォールバックを使用します。
+Configure token: トークンを設定
 Desktop: デスクトップ
 Mobile: モバイル
 Page: ページ
@@ -173,6 +175,8 @@ URL: URL
 Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
+'Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルの不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
+'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルが存在する場合の不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 Inspector: インスペクター
 Layer: レイヤー
 Layer Name: レイヤー名
@@ -220,6 +224,7 @@ Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
+"Cesium Ion token not configured. Using fallback.\nClick to configure": Cesium Ionトークンが設定されていません。フォールバックを使用します。\nクリックして設定
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
@@ -509,7 +514,6 @@ Buttons List: ボタンリスト
 New Layers Button: 新しいレイヤーボタン
 New Link Button: 新しいリンクボタン
 Add markdown text here: マークダウンテキストをここに追加
-1sec/sec: 1秒/秒
 Color: 色
 Data Attribution: データ帰属
 'Data Provided by:': データ提供元：
@@ -521,6 +525,7 @@ aria-label-zoom-out: ズームアウト
 Street View: ストリートビュー
 Select a location on the map to view Street View: 地図上の場所を選択してストリートビューを表示
 Please provide the API key: APIキーを入力してください
+1sec/sec: 1秒/秒
 0.5min/sec: 0.5分/秒
 1min/sec: 1分/秒
 0.1hr/sec: 0.1時間/秒
