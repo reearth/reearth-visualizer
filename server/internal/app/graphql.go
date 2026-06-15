@@ -15,9 +15,12 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opentelemetry.io/otel"
@@ -106,6 +109,19 @@ func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *gqlclient.Client, 
 	}
 }
 
+// isUserInputError returns true for errors that represent expected user-facing failures
+// (not found, operation denied, invalid input) which should be logged at WARN rather than ERROR.
+func isUserInputError(e error) bool {
+	return errors.Is(e, rerror.ErrNotFound) ||
+		errors.Is(e, rerror.ErrNotFoundRaw) ||
+		errors.Is(e, rerror.ErrAlreadyExists) ||
+		errors.Is(e, rerror.ErrAlreadyExistsRaw) ||
+		errors.Is(e, rerror.ErrInvalidParams) ||
+		errors.Is(e, rerror.ErrInvalidParamsRaw) ||
+		errors.Is(e, interfaces.ErrOperationDenied) ||
+		errors.Is(e, repo.ErrOperationDenied)
+}
+
 // customErrorPresenter handles custom GraphQL error presentation by converting various error types
 // into localized GraphQL errors.
 func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.Error {
@@ -152,7 +168,11 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 	}
 
 	if systemError != "" {
-		log.Errorfc(ctx, "system error: %+v", e)
+		if isUserInputError(e) {
+			log.Warnfc(ctx, "system error: %+v", e)
+		} else {
+			log.Errorfc(ctx, "system error: %+v", e)
+		}
 	}
 
 	log.Warnfc(ctx, "graphqlErr: %+v", graphqlErr)
