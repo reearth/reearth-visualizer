@@ -101,7 +101,11 @@ export const useValidateProjectAlias = () => {
 
       try {
         const result = await fetchCheckProjectAlias({
-          variables: { alias, workspaceId, projectId },
+          variables: {
+            alias,
+            workspaceId,
+            projectId
+          },
           context: {
             headers: {
               [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
@@ -112,13 +116,17 @@ export const useValidateProjectAlias = () => {
         const data = result.data;
         const error = result.error;
 
-        if (error || !data?.checkProjectAlias) {
+        const errors =
+          "errors" in result && result.errors
+            ? (result.errors as { extensions?: { description?: string } }[])
+            : error && "errors" in error
+              ? (error.errors as { extensions?: { description?: string } }[])
+              : undefined;
+
+        if (errors?.length || error || !data?.checkProjectAlias) {
           return {
             status: "error",
-            errors:
-              error && "errors" in error
-                ? (error.errors as { extensions?: { description?: string } }[])
-                : undefined
+            errors
           };
         }
 
@@ -132,20 +140,19 @@ export const useValidateProjectAlias = () => {
           available: data.checkProjectAlias.available,
           alias: data.checkProjectAlias.alias
         };
-      } catch (err) {
-
+      } catch (error) {
         return {
           status: "error",
-          errors:
-            err instanceof Error
-              ? [
-                  {
-                    extensions: {
-                      description: err.message
-                    }
-                  }
-                ]
-              : undefined
+          errors: [
+            {
+              extensions: {
+                description:
+                  error instanceof Error
+                    ? error.message
+                    : "Something went wrong"
+              }
+            }
+          ]
         };
       }
     },
