@@ -113,4 +113,17 @@ func serveFiles(
 		}),
 		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
 	)
+
+	ec.GET(
+		"/api/import-status/:projectId",
+		func(c echo.Context) error {
+			r, err := fileGateway.ReadImportStatus(c.Request().Context(), c.Param("projectId"))
+			if err != nil {
+				return echo.ErrNotFound
+			}
+			defer r.Close()
+			return c.Stream(http.StatusOK, "application/json", r)
+		},
+		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+	)
 }

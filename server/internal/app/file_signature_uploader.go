@@ -3,6 +3,7 @@ package app
 import (
 	"archive/zip"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -94,12 +95,18 @@ func servSignatureUploadFiles(
 
 			defer removeGcsZip(ctx, cfg.Gateways.File, base)
 
+			if cfg.Gateways.File != nil && pid != nil {
+				if data, err := json.Marshal(map[string]any{"status": "processing"}); err == nil {
+					_ = cfg.Gateways.File.UploadImportStatus(ctx, pid.String(), data)
+				}
+			}
+
 			result := map[string]any{}
 
 			f, err := cfg.Gateways.File.ReadImportProjectZip(ctx, base)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail ReadImportProjectZip: %v", err)
-				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result, cfg.Gateways.File)
 				return nil, err
 			}
 			defer f.Close()
@@ -125,7 +132,7 @@ func servSignatureUploadFiles(
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
 				if errors.Is(err, zip.ErrFormat) || errors.Is(err, zip.ErrAlgorithm) || errors.Is(err, zip.ErrChecksum) {
 					// Corrupt or invalid zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
-					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result, cfg.Gateways.File)
 					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
 				}
 				// I/O or other transient error — return 500 to allow Pub/Sub to retry
@@ -143,6 +150,7 @@ func servSignatureUploadFiles(
 				pluginsZip,
 				result,
 				version,
+				cfg.Gateways.File,
 			)
 
 			if ok {
@@ -179,13 +187,19 @@ func servSignatureUploadFiles(
 
 			defer removeGcsZip(ctx, cfg.Gateways.File, base)
 
+			if cfg.Gateways.File != nil && pid != nil {
+				if data, err := json.Marshal(map[string]any{"status": "processing"}); err == nil {
+					_ = cfg.Gateways.File.UploadImportStatus(ctx, pid.String(), data)
+				}
+			}
+
 			result := map[string]any{}
 
 			f, err := cfg.Gateways.File.ReadImportProjectZip(ctx, base)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail ReadImportProjectZip: %v", err)
 				log.Errorf("[Import] %s", errMsg)
-				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result, cfg.Gateways.File)
 				if errors.Is(err, rerror.ErrNotFound) {
 					// File is gone — retrying will never recover it, acknowledge to stop Pub/Sub retries
 					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
@@ -222,7 +236,7 @@ func servSignatureUploadFiles(
 				log.Errorf("[Import] %s", errMsg)
 				if errors.Is(err, zip.ErrFormat) || errors.Is(err, zip.ErrAlgorithm) || errors.Is(err, zip.ErrChecksum) {
 					// Corrupt or invalid zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
-					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result, cfg.Gateways.File)
 					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
 				}
 				// I/O or other transient error — return 500 to allow Pub/Sub to retry
@@ -240,6 +254,7 @@ func servSignatureUploadFiles(
 				pluginsZip,
 				result,
 				version,
+				cfg.Gateways.File,
 			)
 
 			if ok {

@@ -133,7 +133,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to SaveChunk: %v", err)
 		if pid != nil {
-			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result, m.fileGateway)
 		}
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 	}
@@ -144,7 +144,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 		if err != nil {
 			errMsg := fmt.Sprintf("Failed to CreateTemporaryProject: %v", err)
 			if pid != nil {
-				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result, m.fileGateway)
 			}
 			return nil, err
 		}
@@ -154,7 +154,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to UpdateSession: %v", err)
 		if pid != nil {
-			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result, m.fileGateway)
 		}
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 	}
@@ -171,12 +171,18 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 
 			defer m.CleanupSession(session.FileID)
 
+			if m.fileGateway != nil {
+				if data, err := json.Marshal(map[string]any{"status": "processing"}); err == nil {
+					_ = m.fileGateway.UploadImportStatus(bgctx, pid.String(), data)
+				}
+			}
+
 			assembledPath := filepath.Join(m.tempDir, session.FileID)
 			defer safeRemove(assembledPath)
 
 			if err := m.AssembleChunks(session, assembledPath); err != nil {
 				errMsg := fmt.Sprintf("failed to assemble chunks: %v", err)
-				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, m.fileGateway)
 				return
 			}
 			log.Infof("[Import] assemble chunks")
@@ -185,7 +191,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			f, err := fs.Open(assembledPath)
 			if err != nil {
 				errMsg := fmt.Sprintf("failed to open assembled file: %v", err)
-				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, m.fileGateway)
 				return
 			}
 			defer closeWithError(f, &err)
@@ -193,7 +199,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(currentHost, f)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
-				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, m.fileGateway)
 				return
 			}
 			log.Infof("[Import] uncompress zip file")
@@ -209,6 +215,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				pluginsZip,
 				result,
 				version,
+				m.fileGateway,
 			)
 
 		}(session)

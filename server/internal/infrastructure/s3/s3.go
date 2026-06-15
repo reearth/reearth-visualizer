@@ -252,6 +252,18 @@ func (f *fileRepo) RemoveImportProjectZip(context.Context, string) error {
 	return nil
 }
 
+func (f *fileRepo) UploadImportStatus(context.Context, string, []byte) error {
+	return nil
+}
+
+func (f *fileRepo) ReadImportStatus(context.Context, string) (io.ReadCloser, error) {
+	return nil, nil
+}
+
+func (f *fileRepo) GenerateImportStatusSignedURL(context.Context, string) (string, error) {
+	return "", nil
+}
+
 // helpers
 
 func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {

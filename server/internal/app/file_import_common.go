@@ -18,6 +18,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -234,16 +235,46 @@ func UpdateImportStatus(
 	status project.ProjectImportStatus,
 	message string,
 	result map[string]any,
+	fileGateway gateway.File,
 ) {
 	importResultLog := map[string]any{}
 	importResultLog["message"] = message
 	importResultLog["result"] = result
-	if project.ProjectImportStatusFailed == status {
-		log.Errorf("[Import Error] %s", message)
+
+	if fileGateway != nil {
+		statusPayload := map[string]any{
+			"status":  string(status),
+			"message": message,
+		}
+		if status == project.ProjectImportStatusFailed {
+			log.Errorf("[Import Error] %s", message)
+			if signedURL, err := fileGateway.GenerateImportStatusSignedURL(ctx, pid.String()); err != nil {
+				log.Errorf("[Import] failed to generate signed URL: %v", err)
+			} else {
+				statusPayload["errorLogUrl"] = signedURL
+				importResultLog["errorLogUrl"] = signedURL
+			}
+		}
+		if data, err := json.Marshal(statusPayload); err == nil {
+			if err := fileGateway.UploadImportStatus(ctx, pid.String(), data); err != nil {
+				log.Errorf("[Import] failed to upload status to GCS: %v", err)
+			} else {
+				log.Infof("[Import] status uploaded to GCS for project %s: %s", pid.String(), string(status))
+			}
+		}
 	}
+
 	_, err := usecases.Project.UpdateImportStatus(ctx, pid, status, &importResultLog, op)
 	if err != nil {
 		log.Printf("failed to update import status: %v", err)
+	}
+
+	if status == project.ProjectImportStatusFailed && op != nil {
+		if err := usecases.Project.Delete(ctx, pid, op); err != nil {
+			log.Errorf("[Import] failed to delete project after failed import %s: %v", pid.String(), err)
+		} else {
+			log.Infof("[Import] deleted project %s after failed import", pid.String())
+		}
 	}
 }
 
@@ -320,6 +351,7 @@ func ImportProject(
 	pluginsZip map[string]*zip.File,
 	result map[string]any,
 	version *string,
+	fileGateway gateway.File,
 ) bool {
 
 	if err := migrateLegacyTileTypes(importData); err != nil {
@@ -330,25 +362,17 @@ func ImportProject(
 	newProject, err := usecases.Project.ImportProjectData(ctx, wsId.String(), pid.Ref().StringRef(), importData, op)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail Import ProjectData: %v", err)
-		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, fileGateway)
 		return false
 	}
 	result["project"] = gqlmodel.ToProject(newProject)
 	log.Infof("[Import] imported Project data")
 
-	succeeded := false
-	defer func() {
-		if succeeded {
-			return
-		}
-		log.Warnf("[Import] import failed for project %s — project left with Failed status", newProject.ID())
-	}()
-
 	// asset ----------
 	importData, asset, err := usecases.Asset.ImportAssetFiles(ctx, assetsZip, importData, newProject, op)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail Import AssetFiles: %v", err)
-		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, fileGateway)
 		return false
 	}
 	result["asset"] = asset
@@ -357,7 +381,7 @@ func ImportProject(
 	newScene, err := usecases.Scene.Create(ctx, newProject.ID(), false, op)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail Create Scene: %v", err)
-		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, fileGateway)
 		return false
 	}
 	log.Infof("[Import] creating temporary scene id: %s", newScene.ID().String())
@@ -365,7 +389,7 @@ func ImportProject(
 	oldSceneID, err := replaceOldSceneID(importData, newScene)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail Get OldSceneID: %v", err)
-		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, fileGateway)
 		return false
 	}
 
@@ -373,7 +397,7 @@ func ImportProject(
 	plugins, err := usecases.Plugin.ImportPlugins(ctx, pluginsZip, oldSceneID, newScene, importData)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail ImportPlugins: %v", err)
-		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, fileGateway)
 		return false
 	}
 	result["plugins"] = plugins
@@ -383,7 +407,7 @@ func ImportProject(
 	newScene, err = usecases.Scene.ImportSceneData(ctx, newScene, importData)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail sceneJSON ImportSceneData: %v", err)
-		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, fileGateway)
 		return false
 	}
 	result["scene"] = gqlmodel.ToScene(newScene)
@@ -393,7 +417,7 @@ func ImportProject(
 	styles, err := usecases.Style.ImportStyles(ctx, newScene.ID(), importData)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail sceneJSON ImportStyles: %v", err)
-		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, fileGateway)
 		return false
 	}
 	result["styles"] = styles
@@ -403,7 +427,7 @@ func ImportProject(
 	layers, err := usecases.NLSLayer.ImportNLSLayers(ctx, newScene.ID(), importData)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail sceneJSON ImportNLSLayers: %v", err)
-		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, fileGateway)
 		return false
 	}
 	result["layers"] = layers
@@ -413,15 +437,15 @@ func ImportProject(
 	story, err := usecases.StoryTelling.ImportStory(ctx, newScene.ID(), importData)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail sceneJSON ImportStory: %v", err)
-		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result, fileGateway)
 		return false
 	}
 	result["story"] = story
 	log.Infof("[Import] imported Story data")
 
-	succeeded = true
+	// all steps succeeded
 	msg := fmt.Sprintf("[Import Completed] Imported project: %s into workspace: %s", pid.String(), wsId)
-	UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusSuccess, msg, result) // SUCCESS
+	UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusSuccess, msg, result, fileGateway) // SUCCESS
 	return true
 
 }

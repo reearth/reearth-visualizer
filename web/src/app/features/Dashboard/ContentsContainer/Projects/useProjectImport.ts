@@ -1,7 +1,4 @@
-import {
-  useProject,
-  useProjectImportExportMutations
-} from "@reearth/services/api/project";
+import { useProjectImportExportMutations } from "@reearth/services/api/project";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { ProjectImportStatus } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
@@ -29,6 +26,9 @@ export default ({
   const [importResultLog, setImportResultLog] = useState<string | undefined>(
     undefined
   );
+  const [importErrorLogUrl, setImportErrorLogUrl] = useState<
+    string | undefined
+  >(undefined);
 
   const { importProject, importProjectWithSplitImport } =
     useProjectImportExportMutations();
@@ -64,83 +64,99 @@ export default ({
     [workspaceId, importProject, importProjectWithSplitImport]
   );
 
-  const { refetch: refetchProject } = useProject(importingProjectId);
-
   useEffect(() => {
     if (!importingProjectId) return;
 
     let retries = 0;
-    const MAX_RETRIES = 100;
+    let consecutiveErrors = 0;
+    const MAX_RETRIES = 20;
+    const MAX_CONSECUTIVE_ERRORS = 3;
 
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       if (++retries > MAX_RETRIES) {
         clearInterval(interval);
         return;
       }
 
-      refetchProject().then((result) => {
-        const status =
-          result.data?.node?.__typename === "Project"
-            ? result.data.node.metadata?.importStatus
-            : undefined;
+      try {
+        const backendUrl =
+          window.REEARTH_CONFIG?.api?.replace(/\/api$/, "") ?? "";
+        const res = await fetch(
+          `${backendUrl}/api/import-status/${importingProjectId}`
+        );
+        if (!res.ok) return;
+
+        consecutiveErrors = 0;
+        const data = await res.json();
+        const status = data?.status as string | undefined;
 
         switch (status) {
-          case ProjectImportStatus.Failed:
-            setImportStatus(status);
-            setImportResultLog(
-              result.data?.node?.__typename === "Project"
-                ? JSON.stringify(result.data.node.metadata?.importResultLog)
-                : undefined
-            );
+          case "FAILED":
+            setImportStatus(ProjectImportStatus.Failed);
+            setImportErrorLogUrl(data?.errorLogUrl ?? undefined);
+            setImportResultLog(JSON.stringify(data));
+            setImportingProjectId(undefined);
             clearInterval(interval);
             onImportCompleted?.();
             break;
-          case ProjectImportStatus.Success:
+          case "SUCCESS":
             setNotification({
               type: "success",
               text: t("Successfully imported project!")
             });
             refetchProjectList();
             setImportStatus(ProjectImportStatus.None);
+            setImportingProjectId(undefined);
             clearInterval(interval);
             onImportCompleted?.();
             break;
-          case ProjectImportStatus.Processing:
-          case ProjectImportStatus.Uploading:
-            setImportStatus(status);
+          case "PROCESSING":
+            setImportStatus(ProjectImportStatus.Processing);
             break;
           default:
-            setImportStatus(ProjectImportStatus.None);
             break;
         }
-      });
+      } catch {
+        if (++consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+          setNotification({
+            type: "error",
+            text: t("Failed to check import status")
+          });
+          clearInterval(interval);
+        }
+      }
     }, 3000);
 
     return () => clearInterval(interval);
   }, [
     importingProjectId,
     refetchProjectList,
-    refetchProject,
     setNotification,
     onImportCompleted,
     t
   ]);
 
   const handleProjectImportErrorDownload = useCallback(() => {
-    if (!importResultLog) return;
-
     const element = document.createElement("a");
-    const file = new Blob([importResultLog], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
-    element.download = "import_error_log.txt";
+    if (importErrorLogUrl) {
+      element.href = importErrorLogUrl;
+      element.download = "import_error_log.json";
+    } else if (importResultLog) {
+      const file = new Blob([importResultLog], { type: "text/plain" });
+      element.href = URL.createObjectURL(file);
+      element.download = "import_error_log.txt";
+    } else {
+      return;
+    }
     document.body.appendChild(element);
     element.click();
-  }, [importResultLog]);
+  }, [importErrorLogUrl, importResultLog]);
 
   const handleProjectImportErrorClose = useCallback(() => {
     setImportStatus(ProjectImportStatus.None);
     setImportingProjectId(undefined);
     setImportResultLog(undefined);
+    setImportErrorLogUrl(undefined);
   }, []);
 
   return {

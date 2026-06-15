@@ -50,4 +50,8 @@ type File interface {
 
 	ReadImportProjectZip(context.Context, string) (io.ReadCloser, error)
 	RemoveImportProjectZip(context.Context, string) error
+
+	UploadImportStatus(ctx context.Context, projectID string, data []byte) error
+	ReadImportStatus(ctx context.Context, projectID string) (io.ReadCloser, error)
+	GenerateImportStatusSignedURL(ctx context.Context, projectID string) (string, error)
 }

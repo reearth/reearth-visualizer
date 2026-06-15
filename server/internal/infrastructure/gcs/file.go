@@ -358,6 +358,44 @@ func (f *fileRepo) RemoveImportProjectZip(ctx context.Context, filename string) 
 	return f.delete(ctx, path.Join(gcsImportBasePath, filename))
 }
 
+// import status
+
+const gcsImportStatusBasePath string = "import-status"
+
+func (f *fileRepo) UploadImportStatus(ctx context.Context, projectID string, data []byte) error {
+	client, err := f.client(ctx)
+	if err != nil {
+		return err
+	}
+	objectName := path.Join(gcsImportStatusBasePath, projectID+".json")
+	w := client.Bucket(f.bucketName).Object(objectName).NewWriter(ctx)
+	w.ContentType = "application/json"
+	if _, err := w.Write(data); err != nil {
+		_ = w.Close()
+		return err
+	}
+	return w.Close()
+}
+
+func (f *fileRepo) ReadImportStatus(ctx context.Context, projectID string) (io.ReadCloser, error) {
+	objectName := path.Join(gcsImportStatusBasePath, projectID+".json")
+	return f.read(ctx, objectName)
+}
+
+func (f *fileRepo) GenerateImportStatusSignedURL(ctx context.Context, projectID string) (string, error) {
+	client, err := f.client(ctx)
+	if err != nil {
+		return "", err
+	}
+	objectName := path.Join(gcsImportStatusBasePath, projectID+".json")
+	opts := &storage.SignedURLOptions{
+		Scheme:  storage.SigningSchemeV4,
+		Method:  "GET",
+		Expires: time.Now().Add(7 * 24 * time.Hour),
+	}
+	return client.Bucket(f.bucketName).SignedURL(objectName, opts)
+}
+
 // helpers
 
 func (f *fileRepo) client(ctx context.Context) (*storage.Client, error) {
