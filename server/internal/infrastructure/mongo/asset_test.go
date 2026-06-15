@@ -169,6 +169,15 @@ func (c *countingFileGateway) ReadImportProjectZip(_ context.Context, _ string) 
 	return nil, nil
 }
 func (c *countingFileGateway) RemoveImportProjectZip(_ context.Context, _ string) error { return nil }
+func (c *countingFileGateway) UploadImportStatus(_ context.Context, _ string, _ []byte) error {
+	return nil
+}
+func (c *countingFileGateway) ReadImportStatus(_ context.Context, _ string) (io.ReadCloser, error) {
+	return nil, nil
+}
+func (c *countingFileGateway) GenerateImportStatusSignedURL(_ context.Context, _ string) (string, error) {
+	return "", nil
+}
 
 func TestAsset_RemoveByProjectWithFile(t *testing.T) {
 	c := mongotest.Connect(t)(t)
