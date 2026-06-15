@@ -171,7 +171,7 @@ test.describe("Project starred and deleted queries via API", () => {
       found = res.data.starredProjects.nodes.find((p) => p.id === projectId);
       hasNextPage = res.data.starredProjects.pageInfo.hasNextPage;
       cursor = res.data.starredProjects.pageInfo.endCursor;
-      if (found) break;
+      if (found || !cursor) break;
     }
     expect(found).toBeDefined();
     expect(found?.starred).toBe(true);
@@ -207,7 +207,7 @@ test.describe("Project starred and deleted queries via API", () => {
       found = res.data.starredProjects.nodes.find((p) => p.id === projectId);
       hasNextPage = res.data.starredProjects.pageInfo.hasNextPage;
       cursor = res.data.starredProjects.pageInfo.endCursor;
-      if (found) break;
+      if (found || !cursor) break;
     }
     expect(found).toBeUndefined();
   });
@@ -243,7 +243,7 @@ test.describe("Project starred and deleted queries via API", () => {
       found = res.data.deletedProjects.nodes.find((p) => p.id === projectId);
       hasNextPage = res.data.deletedProjects.pageInfo.hasNextPage;
       cursor = res.data.deletedProjects.pageInfo.endCursor;
-      if (found) break;
+      if (found || !cursor) break;
     }
     expect(found).toBeDefined();
     expect(found?.isDeleted).toBe(true);
