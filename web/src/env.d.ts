@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /// <reference types="vite/client" />
+/// <reference types="@types/google.maps" />
 
 declare module "*.yml" {
   const yml: any;
