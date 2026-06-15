@@ -264,16 +264,18 @@ func UpdateImportStatus(
 		}
 	}
 
-	_, err := usecases.Project.UpdateImportStatus(ctx, pid, status, &importResultLog, op)
-	if err != nil {
-		log.Printf("failed to update import status: %v", err)
-	}
-
-	if status == project.ProjectImportStatusFailed && op != nil {
-		if err := usecases.Project.Delete(ctx, pid, op); err != nil {
-			log.Errorf("[Import] failed to delete project after failed import %s: %v", pid.String(), err)
-		} else {
-			log.Infof("[Import] deleted project %s after failed import", pid.String())
+	if status == project.ProjectImportStatusFailed {
+		if op != nil {
+			if err := usecases.Project.Delete(ctx, pid, op); err != nil {
+				log.Errorf("[Import] failed to delete project after failed import %s: %v", pid.String(), err)
+			} else {
+				log.Infof("[Import] deleted project %s after failed import", pid.String())
+			}
+		}
+	} else {
+		_, err := usecases.Project.UpdateImportStatus(ctx, pid, status, &importResultLog, op)
+		if err != nil {
+			log.Printf("failed to update import status: %v", err)
 		}
 	}
 }
