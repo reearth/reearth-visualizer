@@ -165,7 +165,7 @@ test.describe("Project starred and deleted queries via API", () => {
         };
       }> = await gqlClient.query(GET_STARRED_PROJECTS, {
         workspaceId,
-        pagination: cursor ? { after: cursor } : undefined
+        pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
       });
       expect(res.status).toBe(200);
       found = res.data.starredProjects.nodes.find((p) => p.id === projectId);
@@ -201,7 +201,7 @@ test.describe("Project starred and deleted queries via API", () => {
         };
       }> = await gqlClient.query(GET_STARRED_PROJECTS, {
         workspaceId,
-        pagination: cursor ? { after: cursor } : undefined
+        pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
       });
       expect(res.status).toBe(200);
       found = res.data.starredProjects.nodes.find((p) => p.id === projectId);
@@ -236,7 +236,7 @@ test.describe("Project starred and deleted queries via API", () => {
         };
       }> = await gqlClient.query(GET_DELETED_PROJECTS, {
         workspaceId,
-        pagination: cursor ? { after: cursor } : undefined
+        pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
       });
       expect(res.status).toBe(200);
       expect(res.data.deletedProjects.totalCount).toBeGreaterThan(0);
