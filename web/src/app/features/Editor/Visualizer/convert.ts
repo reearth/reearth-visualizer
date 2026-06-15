@@ -175,7 +175,7 @@ export const convertWidgets = (
       inner: widgetZone(scene?.widgetAlignSystem?.[device ?? "desktop"]?.inner)
     },
     layoutConstraint,
-    ownBuiltinWidgets: ownBuiltinWidgets ?? []
+    ownBuiltinWidgets: ownBuiltinWidgets ?? [],
   };
 };
 
