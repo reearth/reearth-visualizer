@@ -55,8 +55,8 @@ test.describe("Move story via API", () => {
     storyId = s.createStory.story.id;
   });
 
-  test.fixme("Move story to index 0", async ({ gqlClient }) => {
-    // Server returns "not implemented" for moveStory mutation
+  test.skip("Move story to index 0", async ({ gqlClient }) => {
+    // Skipped: server returns "not implemented" for moveStory mutation
     const { status, data } = await gqlClient.mutate<{
       moveStory: {
         storyId: string;
