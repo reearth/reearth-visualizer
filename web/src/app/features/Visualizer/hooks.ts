@@ -7,7 +7,7 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
-import { WidgetAlignSystem } from "./Crust/Widgets";
+import type { WidgetAlignSystem } from "./Crust/Widgets";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 import { useOverriddenProperty } from "./utils";
 import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
