@@ -18,7 +18,6 @@ import {
   useMemo,
   useState,
   MouseEvent,
-  UIEvent,
   useEffect,
   useRef
 } from "react";
@@ -329,14 +328,13 @@ export default (workspaceId?: string) => {
     }
   }, [hasMoreStarredProjects, fetchMoreStarred, starredEndCursor]);
 
-  const handleStarredScroll = useCallback(
-    (e: UIEvent<HTMLDivElement>) => {
-      const el = e.currentTarget;
-      if (el.scrollHeight - el.scrollTop - el.clientHeight < 50)
-        handleGetMoreStarredProjects();
-    },
-    [handleGetMoreStarredProjects]
-  );
+  const {
+    wrapperRef: starredWrapperRef,
+    contentRef: starredContentRef
+  } = useLoadMore({
+    data: starredProjects,
+    onLoadMore: handleGetMoreStarredProjects
+  });
 
   return {
     filtedProjects,
@@ -350,7 +348,8 @@ export default (workspaceId?: string) => {
     sortValue,
     contentWidth,
     starredProjects,
-    handleStarredScroll,
+    starredWrapperRef,
+    starredContentRef,
     importStatus,
     fileInputRef,
     projectVisibility,

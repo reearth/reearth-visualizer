@@ -11,7 +11,8 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const theme = useTheme();
   const {
     starredProjects,
-    handleStarredScroll,
+    starredWrapperRef,
+    starredContentRef,
     handleProjectOpen
   } = useHooks(workspaceId);
 
@@ -24,8 +25,8 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         noPadding
         data-testid="starred-projects-collapse"
       >
-        <ProjectsWrapper onScroll={handleStarredScroll} data-testid="starred-projects-list">
-          <ProjectsContent>
+        <ProjectsWrapper ref={starredWrapperRef} data-testid="starred-projects-list">
+          <ProjectsContent ref={starredContentRef}>
           {starredProjects?.map((project) =>
             project ? (
               <Item
