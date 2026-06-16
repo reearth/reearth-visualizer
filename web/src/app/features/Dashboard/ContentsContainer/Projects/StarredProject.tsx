@@ -9,7 +9,12 @@ import useHooks from "./hooks";
 const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const t = useT();
   const theme = useTheme();
-  const { starredProjects, handleProjectOpen } = useHooks(workspaceId);
+  const {
+    starredProjects,
+    starredWrapperRef,
+    starredContentRef,
+    handleProjectOpen
+  } = useHooks(workspaceId);
 
   return (
     <Wrapper data-testid="starred-projects-wrapper">
@@ -20,7 +25,8 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         noPadding
         data-testid="starred-projects-collapse"
       >
-        <ProjectsWrapper data-testid="starred-projects-list">
+        <ProjectsWrapper ref={starredWrapperRef} data-testid="starred-projects-list">
+          <ProjectsContent ref={starredContentRef}>
           {starredProjects?.map((project) =>
             project ? (
               <Item
@@ -42,6 +48,7 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               </Item>
             ) : null
           )}
+          </ProjectsContent>
         </ProjectsWrapper>
       </Collapse>
     </Wrapper>
@@ -62,7 +69,13 @@ const ProjectsWrapper = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   padding: `0 ${theme.spacing.small}px`,
-  flex: 1
+  flex: 1,
+  overflow: css.overflow.auto
+}));
+
+const ProjectsContent = styled("div")(() => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column
 }));
 
 const Item = styled("div")(({ theme }) => ({

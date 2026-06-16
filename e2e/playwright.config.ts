@@ -20,8 +20,8 @@ export default defineConfig({
   testDir: "./",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : 5,
+  retries: process.env.CI ? 2 : 1,
+  workers: 1,
   reporter: [
     [
       "allure-playwright",
