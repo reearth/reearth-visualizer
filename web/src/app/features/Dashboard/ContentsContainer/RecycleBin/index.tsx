@@ -17,6 +17,8 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     filteredDeletedProjects,
     isLoading,
     disabled,
+    wrapperRef,
+    contentRef,
     handleProjectRecovery,
     handleProjectDelete
   } = useHooks(workspaceId);
@@ -29,8 +31,8 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       {filteredDeletedProjects?.length ? (
         <ManagerContent>
           <ContentWrapper>
-            <ProjectsWrapper>
-              <ProjectsContainer>
+            <ProjectsWrapper ref={wrapperRef}>
+              <ProjectsContainer ref={contentRef}>
                 <ProjectsGroup>
                   {filteredDeletedProjects?.map((project) => (
                     <RecycleBinItem
@@ -74,6 +76,7 @@ const ContentWrapper = styled("div")(({ theme }) => ({
 }));
 
 const ProjectsWrapper = styled("div")(() => ({
+  flex: 1,
   overflow: css.overflow.auto
 }));
 

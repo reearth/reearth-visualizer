@@ -30,6 +30,7 @@ import useProjectImport from "./useProjectImport";
 const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
 
 const PROJECTS_PER_PAGE = 16;
+const STARRED_PROJECTS_PER_PAGE = 12;
 
 export type SortType =
   | "date"
@@ -53,7 +54,15 @@ export default (workspaceId?: string) => {
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
 
-  const { starredProjects } = useStarredProjects(workspaceId);
+  const {
+    starredProjects,
+    hasMoreStarredProjects,
+    endCursor: starredEndCursor,
+    fetchMore: fetchMoreStarred
+  } = useStarredProjects({
+    workspaceId: workspaceId || "",
+    pagination: { first: STARRED_PROJECTS_PER_PAGE }
+  });
 
   const {
     projects,
@@ -301,9 +310,34 @@ export default (workspaceId?: string) => {
     [client, publishProject, updateProjectRecycleBin]
   );
 
+  const isFetchingMoreStarred = useRef(false);
+
+  const handleGetMoreStarredProjects = useCallback(async () => {
+    if (isFetchingMoreStarred.current) return;
+    if (hasMoreStarredProjects) {
+      isFetchingMoreStarred.current = true;
+      await fetchMoreStarred({
+        variables: {
+          pagination: {
+            after: starredEndCursor,
+            first: STARRED_PROJECTS_PER_PAGE
+          }
+        }
+      });
+      isFetchingMoreStarred.current = false;
+    }
+  }, [hasMoreStarredProjects, fetchMoreStarred, starredEndCursor]);
+
+  const {
+    wrapperRef: starredWrapperRef,
+    contentRef: starredContentRef
+  } = useLoadMore({
+    data: starredProjects,
+    onLoadMore: handleGetMoreStarredProjects
+  });
+
   return {
     filtedProjects,
-    hasMoreProjects,
     isLoading,
     selectedProject,
     wrapperRef,
@@ -314,12 +348,13 @@ export default (workspaceId?: string) => {
     sortValue,
     contentWidth,
     starredProjects,
+    starredWrapperRef,
+    starredContentRef,
     importStatus,
     fileInputRef,
     projectVisibility,
     showProjectCreator,
     closeProjectCreator,
-    handleGetMoreProjects,
     handleProjectUpdate,
     handleProjectOpen,
     handleProjectCreate,
