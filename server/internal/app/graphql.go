@@ -110,7 +110,7 @@ func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *gqlclient.Client, 
 }
 
 // isUserInputError returns true for errors that represent expected user-facing failures
-// (not found, operation denied, invalid input) which should be logged at WARN rather than ERROR.
+// (not found, already exists, operation denied, invalid params) which should be logged at WARN rather than ERROR.
 func isUserInputError(e error) bool {
 	return errors.Is(e, rerror.ErrNotFound) ||
 		errors.Is(e, rerror.ErrNotFoundRaw) ||
@@ -169,7 +169,7 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 
 	if systemError != "" {
 		if isUserInputError(e) {
-			log.Warnfc(ctx, "system error: %+v", e)
+			log.Warnfc(ctx, "input error: %+v", e)
 		} else {
 			log.Errorfc(ctx, "system error: %+v", e)
 		}
