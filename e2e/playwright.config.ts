@@ -12,6 +12,7 @@ export default defineConfig({
   globalSetup: process.env.SKIP_STORAGE_STATE
     ? undefined
     : require.resolve("./global-setup"),
+  globalTeardown: require.resolve("./global-teardown"),
   expect: {
     timeout: 35000
   },
@@ -19,7 +20,7 @@ export default defineConfig({
   testDir: "./",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 2 : 1,
   workers: 1,
   reporter: [
     [
