@@ -1,6 +1,8 @@
 import { useLazyQuery, useQuery } from "@apollo/client/react";
 import {
+  GetDeletedProjectsQueryVariables,
   GetProjectsQueryVariables,
+  GetStarredProjectsQueryVariables,
   HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION
 } from "@reearth/services/gql";
 import {
@@ -58,24 +60,41 @@ export const useProjects = (input: GetProjectsQueryVariables) => {
   return { projects, hasMoreProjects, isRefetching, endCursor, ...rest };
 };
 
-export const useStarredProjects = (workspaceId?: string) => {
-  const { data, ...rest } = useQuery(GET_STARRED_PROJECTS, {
-    variables: { workspaceId: workspaceId ?? "" },
-    skip: !workspaceId
+export const useStarredProjects = (input: GetStarredProjectsQueryVariables) => {
+  const { data, networkStatus, ...rest } = useQuery(GET_STARRED_PROJECTS, {
+    variables: input,
+    skip: !input.workspaceId,
+    notifyOnNetworkStatusChange: true
   });
 
   const starredProjects = useMemo(
     () => data?.starredProjects.nodes,
     [data?.starredProjects]
   );
+  const hasMoreStarredProjects = useMemo(
+    () => data?.starredProjects.pageInfo?.hasNextPage,
+    [data?.starredProjects.pageInfo?.hasNextPage]
+  );
+  const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
+  const endCursor = useMemo(
+    () => data?.starredProjects.pageInfo?.endCursor,
+    [data?.starredProjects.pageInfo?.endCursor]
+  );
 
-  return { starredProjects, ...rest };
+  return {
+    starredProjects,
+    hasMoreStarredProjects,
+    isRefetching,
+    endCursor,
+    ...rest
+  };
 };
 
-export const useDeletedProjects = (workspaceId?: string) => {
-  const { data, ...rest } = useQuery(GET_DELETED_PROJECTS, {
-    variables: { workspaceId: workspaceId ?? "" },
-    skip: !workspaceId
+export const useDeletedProjects = (input: GetDeletedProjectsQueryVariables) => {
+  const { data, networkStatus, ...rest } = useQuery(GET_DELETED_PROJECTS, {
+    variables: input,
+    skip: !input.workspaceId,
+    notifyOnNetworkStatusChange: true
   });
 
   const deletedProjects = useMemo(
@@ -83,7 +102,22 @@ export const useDeletedProjects = (workspaceId?: string) => {
     [data?.deletedProjects]
   );
 
-  return { deletedProjects, ...rest };
+  const hasMoreDeletedProjects = useMemo(
+    () => data?.deletedProjects.pageInfo?.hasNextPage,
+    [data?.deletedProjects.pageInfo?.hasNextPage]
+  );
+  const isRefetching = useMemo(() => networkStatus < 7, [networkStatus]);
+  const endCursor = useMemo(
+    () => data?.deletedProjects.pageInfo?.endCursor,
+    [data?.deletedProjects.pageInfo?.endCursor]
+  );
+  return {
+    deletedProjects,
+    hasMoreDeletedProjects,
+    isRefetching,
+    endCursor,
+    ...rest
+  };
 };
 
 export const useValidateProjectAlias = () => {
