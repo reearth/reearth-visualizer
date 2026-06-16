@@ -48,7 +48,11 @@ async function globalTeardown(_config: FullConfig) {
     return;
   }
 
-  const ctx = await request.newContext();
+  const ctx = await request.newContext().catch((err) => {
+    console.warn("[teardown] Could not create request context (non-fatal):", err);
+    return null;
+  });
+  if (!ctx) return;
   try {
     const client = new GraphQLClient(ctx, auth.token, auth.extraHeaders);
 
