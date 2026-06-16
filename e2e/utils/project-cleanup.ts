@@ -3,7 +3,7 @@ import path from "path";
 
 import { APIRequestContext } from "@playwright/test";
 
-import { GraphQLClient } from "../api/graphql/client";
+import { GraphQLClient, GQLResult } from "../api/graphql/client";
 import { DELETE_PROJECT, UPDATE_PROJECT } from "../api/graphql/mutations";
 import { GET_ME, GET_DELETED_PROJECTS, GET_PROJECTS } from "../api/graphql/queries";
 
@@ -80,18 +80,33 @@ export async function deleteProjectByName(
       (p) => p.name === projectName
     );
 
-    // Also find soft-deleted projects (in recycle bin)
-    const { data: deletedData } = await client
-      .query<{
-        deletedProjects: { nodes: { id: string; name: string }[] };
-      }>(GET_DELETED_PROJECTS, { workspaceId, pagination: { first: 100 } })
-      .catch(() => ({
-        data: { deletedProjects: { nodes: [] } }
-      }));
-
-    const deletedProjects = deletedData.deletedProjects.nodes.filter(
-      (p) => p.name === projectName
-    );
+    // Also find soft-deleted projects (in recycle bin), paginating through all pages
+    const deletedProjects: { id: string; name: string }[] = [];
+    let cursor: string | null = null;
+    let hasNextPage = true;
+    while (hasNextPage) {
+      let res: GQLResult<{
+        deletedProjects: {
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          nodes: { id: string; name: string }[];
+        };
+      }>;
+      try {
+        res = await client.query(GET_DELETED_PROJECTS, {
+          workspaceId,
+          pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
+        });
+      } catch {
+        break;
+      }
+      const matched = res.data.deletedProjects.nodes.filter(
+        (p) => p.name === projectName
+      );
+      deletedProjects.push(...matched);
+      hasNextPage = res.data.deletedProjects.pageInfo.hasNextPage;
+      cursor = res.data.deletedProjects.pageInfo.endCursor;
+      if (!cursor) break;
+    }
 
     const allProjects = [...activeProjects, ...deletedProjects];
 

@@ -99,6 +99,7 @@ export const GET_STARRED_PROJECTS = `
   query GetStarredProjects($workspaceId: ID!, $pagination: Pagination) {
     starredProjects(workspaceId: $workspaceId, pagination: $pagination) {
       totalCount
+      pageInfo { hasNextPage endCursor }
       nodes { id name starred }
     }
   }
@@ -108,6 +109,7 @@ export const GET_DELETED_PROJECTS = `
   query GetDeletedProjects($workspaceId: ID!, $pagination: Pagination) {
     deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
       totalCount
+      pageInfo { hasNextPage endCursor }
       nodes { id name isDeleted }
     }
   }

@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 
 import { test, expect } from "../fixtures/api-test-fixtures";
+import { GQLResult } from "../graphql/client";
 import {
   CREATE_PROJECT,
   CREATE_SCENE,
@@ -30,8 +31,9 @@ test.describe("Project alias checks via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+      console.log(`[afterAll] deleted project ${projectId}`);
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
@@ -116,8 +118,9 @@ test.describe("Project starred and deleted queries via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+      console.log(`[afterAll] deleted project ${projectId}`);
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
@@ -150,15 +153,26 @@ test.describe("Project starred and deleted queries via API", () => {
   });
 
   test("starredProjects returns the starred project", async ({ gqlClient }) => {
-    const { status, data } = await gqlClient.query<{
-      starredProjects: {
-        totalCount: number;
-        nodes: { id: string; name: string; starred: boolean }[];
-      };
-    }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 10 } });
-
-    expect(status).toBe(200);
-    const found = data.starredProjects.nodes.find((p) => p.id === projectId);
+    let cursor: string | null = null;
+    let hasNextPage = true;
+    let found: { id: string; name: string; starred: boolean } | undefined;
+    while (hasNextPage) {
+      const res: GQLResult<{
+        starredProjects: {
+          totalCount: number;
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          nodes: { id: string; name: string; starred: boolean }[];
+        };
+      }> = await gqlClient.query(GET_STARRED_PROJECTS, {
+        workspaceId,
+        pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
+      });
+      expect(res.status).toBe(200);
+      found = res.data.starredProjects.nodes.find((p) => p.id === projectId);
+      hasNextPage = res.data.starredProjects.pageInfo.hasNextPage;
+      cursor = res.data.starredProjects.pageInfo.endCursor;
+      if (found || !cursor) break;
+    }
     expect(found).toBeDefined();
     expect(found?.starred).toBe(true);
   });
@@ -175,15 +189,26 @@ test.describe("Project starred and deleted queries via API", () => {
   test("starredProjects no longer includes the project", async ({
     gqlClient
   }) => {
-    const { status, data } = await gqlClient.query<{
-      starredProjects: {
-        totalCount: number;
-        nodes: { id: string }[];
-      };
-    }>(GET_STARRED_PROJECTS, { workspaceId, pagination: { first: 10 } });
-
-    expect(status).toBe(200);
-    const found = data.starredProjects.nodes.find((p) => p.id === projectId);
+    let cursor: string | null = null;
+    let hasNextPage = true;
+    let found: { id: string } | undefined;
+    while (hasNextPage) {
+      const res: GQLResult<{
+        starredProjects: {
+          totalCount: number;
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          nodes: { id: string }[];
+        };
+      }> = await gqlClient.query(GET_STARRED_PROJECTS, {
+        workspaceId,
+        pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
+      });
+      expect(res.status).toBe(200);
+      found = res.data.starredProjects.nodes.find((p) => p.id === projectId);
+      hasNextPage = res.data.starredProjects.pageInfo.hasNextPage;
+      cursor = res.data.starredProjects.pageInfo.endCursor;
+      if (found || !cursor) break;
+    }
     expect(found).toBeUndefined();
   });
 
@@ -199,16 +224,27 @@ test.describe("Project starred and deleted queries via API", () => {
   test("deletedProjects returns the soft-deleted project", async ({
     gqlClient
   }) => {
-    const { status, data } = await gqlClient.query<{
-      deletedProjects: {
-        totalCount: number;
-        nodes: { id: string; name: string; isDeleted: boolean }[];
-      };
-    }>(GET_DELETED_PROJECTS, { workspaceId, pagination: { first: 10 } });
-
-    expect(status).toBe(200);
-    expect(data.deletedProjects.totalCount).toBeGreaterThan(0);
-    const found = data.deletedProjects.nodes.find((p) => p.id === projectId);
+    let cursor: string | null = null;
+    let hasNextPage = true;
+    let found: { id: string; name: string; isDeleted: boolean } | undefined;
+    while (hasNextPage) {
+      const res: GQLResult<{
+        deletedProjects: {
+          totalCount: number;
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          nodes: { id: string; name: string; isDeleted: boolean }[];
+        };
+      }> = await gqlClient.query(GET_DELETED_PROJECTS, {
+        workspaceId,
+        pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
+      });
+      expect(res.status).toBe(200);
+      expect(res.data.deletedProjects.totalCount).toBeGreaterThan(0);
+      found = res.data.deletedProjects.nodes.find((p) => p.id === projectId);
+      hasNextPage = res.data.deletedProjects.pageInfo.hasNextPage;
+      cursor = res.data.deletedProjects.pageInfo.endCursor;
+      if (found || !cursor) break;
+    }
     expect(found).toBeDefined();
     expect(found?.isDeleted).toBe(true);
   });
@@ -221,8 +257,9 @@ test.describe("Project export and metadata via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+      console.log(`[afterAll] deleted project ${projectId}`);
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
