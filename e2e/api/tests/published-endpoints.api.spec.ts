@@ -11,12 +11,10 @@ import {
   PUBLISH_STORY,
   UPDATE_PROJECT
 } from "../graphql/mutations";
-import { GET_ME } from "../graphql/queries";
 
 test.describe.configure({ mode: "serial" });
 
 test.describe("Published project endpoints", () => {
-  let workspaceId: string;
   let projectId: string;
   const projectAlias = `pub-proj-${faker.string.alphanumeric(8).toLowerCase()}`;
 
@@ -24,17 +22,12 @@ test.describe("Published project endpoints", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted or does not exist
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create and publish project", async ({ gqlClient }) => {
-    const { data: meData } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = meData.me.myWorkspaceId;
-
+  test("Setup: create and publish project", async ({ gqlClient, workspaceId }) => {
     const { data: projData } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
@@ -120,23 +113,17 @@ test.describe("Published story endpoints", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted or does not exist
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project, scene, story and publish story", async ({
-    gqlClient
-  }) => {
-    const { data: meData } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project, scene, story and publish story", async ({ gqlClient, workspaceId }) => {
     const { data: projData } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: meData.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Story Publish Test",
         coreSupport: true
@@ -207,23 +194,17 @@ test.describe("Published endpoint: unpublish removes access", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted or does not exist
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create, publish, then unpublish project", async ({
-    gqlClient
-  }) => {
-    const { data: meData } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create, publish, then unpublish project", async ({ gqlClient, workspaceId }) => {
     const { data: projData } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: meData.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Unpublish Test",
         coreSupport: true
@@ -262,23 +243,17 @@ test.describe("Published endpoint: basic auth", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted or does not exist
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project with basic auth and publish", async ({
-    gqlClient
-  }) => {
-    const { data: meData } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project with basic auth and publish", async ({ gqlClient, workspaceId }) => {
     const { data: projData } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: meData.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "BasicAuth Test",
         coreSupport: true
@@ -368,23 +343,17 @@ test.describe("Published endpoint: LIMITED status", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted or does not exist
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create and publish project with LIMITED status", async ({
-    gqlClient
-  }) => {
-    const { data: meData } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create and publish project with LIMITED status", async ({ gqlClient, workspaceId }) => {
     const { data: projData } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: meData.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Limited Publish Test",
         coreSupport: true
@@ -447,23 +416,17 @@ test.describe("Published endpoint: re-publish with new alias", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted or does not exist
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create, publish, then re-publish with a different alias", async ({
-    gqlClient
-  }) => {
-    const { data: meData } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create, publish, then re-publish with a different alias", async ({ gqlClient, workspaceId }) => {
     const { data: projData } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: meData.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Republish Alias Test",
         coreSupport: true

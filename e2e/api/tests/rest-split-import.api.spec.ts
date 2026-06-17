@@ -3,7 +3,6 @@ import { faker } from "@faker-js/faker";
 import { API_BASE_URL } from "../config/env";
 import { test, expect } from "../fixtures/api-test-fixtures";
 import { DELETE_PROJECT } from "../graphql/mutations";
-import { GET_ME } from "../graphql/queries";
 
 import { getAuthHeaders } from "./test-helpers";
 
@@ -71,7 +70,6 @@ function createMinimalZip(): Buffer {
 test.describe.configure({ mode: "serial" });
 
 test.describe("POST /api/split-import — chunked project import", () => {
-  let workspaceId: string;
   let createdProjectId: string;
 
   test.afterAll(async ({ gqlClient }) => {
@@ -80,20 +78,13 @@ test.describe("POST /api/split-import — chunked project import", () => {
         await gqlClient.mutate(DELETE_PROJECT, {
           input: { projectId: createdProjectId }
         });
-      } catch {
-        // already deleted
+      } catch (e) {
+        console.warn(`[afterAll] failed to delete project ${createdProjectId}:`, e);
       }
     }
   });
 
-  test("Setup: get workspace", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
-  });
-
-  test("Upload a single-chunk import", async ({ request }) => {
+  test("Upload a single-chunk import", async ({ request, workspaceId }) => {
     const zipBuffer = createMinimalZip();
     const fileId = faker.string.alphanumeric(16);
     const boundary = `----FormBoundary${Date.now()}`;

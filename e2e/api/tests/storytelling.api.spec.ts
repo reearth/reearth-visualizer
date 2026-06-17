@@ -19,7 +19,7 @@ import {
   UPDATE_STORY,
   UPDATE_STORY_PAGE
 } from "../graphql/mutations";
-import { CHECK_STORY_ALIAS, GET_ME } from "../graphql/queries";
+import { CHECK_STORY_ALIAS } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -36,21 +36,17 @@ test.describe("Story CRUD lifecycle via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project and scene", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project and scene", async ({ gqlClient, workspaceId }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Story Test Project",
         coreSupport: true
@@ -121,21 +117,17 @@ test.describe("Story page lifecycle via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project, scene, and story", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project, scene, and story", async ({ gqlClient, workspaceId }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Story Page Test",
         coreSupport: true
@@ -284,23 +276,17 @@ test.describe("Story block lifecycle via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project, scene, story, and page", async ({
-    gqlClient
-  }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project, scene, story, and page", async ({ gqlClient, workspaceId }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Story Block Test",
         coreSupport: true
@@ -411,9 +397,7 @@ test.describe("checkStoryAlias query", () => {
 
 // Negative scenarios
 test.describe("Storytelling negative scenarios", () => {
-  test("Cannot create a story on a non-existent scene", async ({
-    gqlClient
-  }) => {
+  test("Cannot create a story on a non-existent scene", async ({ gqlClient }) => {
     const fakeSceneId = generateFakeId();
     await expect(
       gqlClient.mutate(CREATE_STORY, {
@@ -442,9 +426,7 @@ test.describe("Storytelling negative scenarios", () => {
     ).rejects.toThrow();
   });
 
-  test("Cannot create a page on a non-existent story", async ({
-    gqlClient
-  }) => {
+  test("Cannot create a page on a non-existent story", async ({ gqlClient }) => {
     const fakeSceneId = generateFakeId();
     const fakeStoryId = generateFakeId();
     await expect(
@@ -469,9 +451,7 @@ test.describe("Storytelling negative scenarios", () => {
     ).rejects.toThrow();
   });
 
-  test("Cannot create a block on a non-existent story", async ({
-    gqlClient
-  }) => {
+  test("Cannot create a block on a non-existent story", async ({ gqlClient }) => {
     const fakeStoryId = generateFakeId();
     const fakePageId = generateFakeId();
     await expect(

@@ -1,8 +1,13 @@
 import { faker } from "@faker-js/faker";
 
 import { test, expect } from "../fixtures/api-test-fixtures";
-import { CREATE_PROJECT, CREATE_SCENE, UPDATE_PROJECT, DELETE_PROJECT } from "../graphql/mutations";
-import { GET_ME, GET_PROJECT, GET_PROJECTS } from "../graphql/queries";
+import {
+  CREATE_PROJECT,
+  CREATE_SCENE,
+  UPDATE_PROJECT,
+  DELETE_PROJECT
+} from "../graphql/mutations";
+import { GET_PROJECT, GET_PROJECTS } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -12,20 +17,9 @@ const projectAlias = faker.string.alphanumeric(15);
 test.describe.configure({ mode: "serial" });
 
 test.describe("Project CRUD lifecycle via API", () => {
-  let workspaceId: string;
   let projectId: string;
 
-  test("Verify auth and get workspace", async ({ gqlClient }) => {
-    const { status, data } = await gqlClient.query<{
-      me: { id: string; email: string; myWorkspaceId: string };
-    }>(GET_ME);
-
-    expect(status).toBe(200);
-    expect(data.me.id).toBeTruthy();
-    workspaceId = data.me.myWorkspaceId;
-  });
-
-  test("Create a new project", async ({ gqlClient }) => {
+  test("Create a new project", async ({ gqlClient, workspaceId }) => {
     const { status, data } = await gqlClient.mutate<{
       createProject: { project: { id: string; name: string } };
     }>(CREATE_PROJECT, {
@@ -64,14 +58,21 @@ test.describe("Project CRUD lifecycle via API", () => {
     expect(data.node.description).toBe("API test project");
   });
 
-  test("Verify project appears in workspace project list", async ({ gqlClient }) => {
+  test("Verify project appears in workspace project list", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { status, data } = await gqlClient.query<{
       projects: { totalCount: number; nodes: { id: string; name: string }[] };
-    }>(GET_PROJECTS, { workspaceId, sort: { field: "CREATEDAT", direction: "DESC" }, pagination: { first: 20 } });
+    }>(GET_PROJECTS, {
+      workspaceId,
+      sort: { field: "CREATEDAT", direction: "DESC" },
+      pagination: { first: 20 }
+    });
 
     expect(status).toBe(200);
     expect(data.projects.totalCount).toBeGreaterThan(0);
-    const match = data.projects.nodes.find(p => p.id === projectId);
+    const match = data.projects.nodes.find((p) => p.id === projectId);
     expect(match).toBeDefined();
   });
 

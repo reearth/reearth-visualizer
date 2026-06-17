@@ -8,7 +8,6 @@ import {
   DELETE_PROJECT,
   EXPORT_PROJECT
 } from "../graphql/mutations";
-import { GET_ME } from "../graphql/queries";
 
 test.describe.configure({ mode: "serial" });
 
@@ -20,23 +19,17 @@ test.describe("GET /export/:filename — project export download", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project with scene and export it", async ({
-    gqlClient
-  }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project with scene and export it", async ({ gqlClient, workspaceId }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: `Export Test ${faker.string.alphanumeric(6)}`,
         coreSupport: true

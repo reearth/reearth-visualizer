@@ -3,7 +3,6 @@ import { faker } from "@faker-js/faker";
 import { API_BASE_URL } from "../config/env";
 import { test, expect } from "../fixtures/api-test-fixtures";
 import { CREATE_ASSET, REMOVE_ASSET } from "../graphql/mutations";
-import { GET_ME } from "../graphql/queries";
 
 /**
  * Builds a small PNG buffer for upload tests.
@@ -19,7 +18,6 @@ function createTestPng(): Buffer {
 test.describe.configure({ mode: "serial" });
 
 test.describe("GET /assets/:filename — asset file download", () => {
-  let workspaceId: string;
   let assetId: string;
   let assetUrl: string;
 
@@ -27,18 +25,13 @@ test.describe("GET /assets/:filename — asset file download", () => {
     if (assetId) {
       try {
         await gqlClient.mutate(REMOVE_ASSET, { input: { assetId } });
-      } catch {
-        // already removed
+      } catch (e) {
+        console.warn(`[afterAll] failed to remove asset ${assetId}:`, e);
       }
     }
   });
 
-  test("Setup: upload an asset", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
-
+  test("Setup: upload an asset", async ({ gqlClient, workspaceId }) => {
     const png = createTestPng();
     const { data } = await gqlClient.uploadFile<{
       createAsset: {

@@ -11,7 +11,7 @@ import {
   REMOVE_PROPERTY_ITEM,
   UPDATE_PROPERTY_ITEMS
 } from "../graphql/mutations";
-import { GET_ME, GET_SCENE } from "../graphql/queries";
+import { GET_SCENE } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -61,7 +61,6 @@ function extractSceneNode(data: SceneNode) {
 test.describe.configure({ mode: "serial" });
 
 test.describe("Property operations via API", () => {
-  let workspaceId: string;
   let projectId: string;
   let sceneId: string;
   let propertyId: string;
@@ -73,17 +72,12 @@ test.describe("Property operations via API", () => {
       await gqlClient.mutate(DELETE_PROJECT, {
         input: { projectId }
       });
-    } catch {
-      // already deleted or does not exist
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project with scene", async ({ gqlClient }) => {
-    const { data: meData } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = meData.me.myWorkspaceId;
-
+  test("Setup: create project with scene", async ({ gqlClient, workspaceId }) => {
     const { data: projData } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
@@ -114,9 +108,7 @@ test.describe("Property operations via API", () => {
     }
   });
 
-  test("UpdatePropertyValue: set tile_type on scene property", async ({
-    gqlClient
-  }) => {
+  test("UpdatePropertyValue: set tile_type on scene property", async ({ gqlClient }) => {
     // If no group exists yet, add one
     if (!tilesGroupId) {
       const { data } = await gqlClient.mutate<{
@@ -153,9 +145,7 @@ test.describe("Property operations via API", () => {
     );
   });
 
-  test("RemovePropertyField: remove tile_type field", async ({
-    gqlClient
-  }) => {
+  test("RemovePropertyField: remove tile_type field", async ({ gqlClient }) => {
     const { status, data } = await gqlClient.mutate<{
       removePropertyField: { property: { id: string } };
     }>(REMOVE_PROPERTY_FIELD, {
@@ -169,9 +159,7 @@ test.describe("Property operations via API", () => {
     expect(data.removePropertyField.property.id).toBe(propertyId);
   });
 
-  test("UpdatePropertyValue and UnlinkPropertyValue: set then unlink", async ({
-    gqlClient
-  }) => {
+  test("UpdatePropertyValue and UnlinkPropertyValue: set then unlink", async ({ gqlClient }) => {
     // Set a value first
     await gqlClient.mutate(UPDATE_PROPERTY_VALUE, {
       propertyId,
@@ -286,9 +274,7 @@ test.describe("Property operations via API", () => {
 });
 
 test.describe("Property negative scenarios via API", () => {
-  test("Cannot update property value on a non-existent property", async ({
-    gqlClient
-  }) => {
+  test("Cannot update property value on a non-existent property", async ({ gqlClient }) => {
     const fakePropertyId = generateFakeId();
     const fakeItemId = generateFakeId();
     await expect(
@@ -303,9 +289,7 @@ test.describe("Property negative scenarios via API", () => {
     ).rejects.toThrow();
   });
 
-  test("Cannot remove field from a non-existent property", async ({
-    gqlClient
-  }) => {
+  test("Cannot remove field from a non-existent property", async ({ gqlClient }) => {
     const fakePropertyId = generateFakeId();
     const fakeItemId = generateFakeId();
     await expect(
@@ -318,9 +302,7 @@ test.describe("Property negative scenarios via API", () => {
     ).rejects.toThrow();
   });
 
-  test("Cannot add property item to a non-existent property", async ({
-    gqlClient
-  }) => {
+  test("Cannot add property item to a non-existent property", async ({ gqlClient }) => {
     const fakePropertyId = generateFakeId();
     await expect(
       gqlClient.mutate(ADD_PROPERTY_ITEM, {
@@ -330,9 +312,7 @@ test.describe("Property negative scenarios via API", () => {
     ).rejects.toThrow();
   });
 
-  test("Cannot remove a non-existent property item", async ({
-    gqlClient
-  }) => {
+  test("Cannot remove a non-existent property item", async ({ gqlClient }) => {
     const fakePropertyId = generateFakeId();
     const fakeItemId = generateFakeId();
     await expect(

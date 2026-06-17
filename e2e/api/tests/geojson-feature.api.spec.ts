@@ -8,7 +8,6 @@ import {
   DELETE_PROJECT,
   UPDATE_GEOJSON_FEATURE
 } from "../graphql/mutations";
-import { GET_ME } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -23,21 +22,20 @@ test.describe("GeoJSON feature CRUD lifecycle via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project, scene, and layer", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project, scene, and layer", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "GeoJSON Feature Test",
         coreSupport: true
@@ -159,9 +157,7 @@ test.describe("GeoJSON feature CRUD lifecycle via API", () => {
 
 // Negative scenarios
 test.describe("GeoJSON feature negative scenarios", () => {
-  test("Cannot add feature to a non-existent layer", async ({
-    gqlClient
-  }) => {
+  test("Cannot add feature to a non-existent layer", async ({ gqlClient }) => {
     const fakeLayerId = generateFakeId();
     await expect(
       gqlClient.mutate(ADD_GEOJSON_FEATURE, {

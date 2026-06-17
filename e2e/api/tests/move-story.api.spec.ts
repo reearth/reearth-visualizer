@@ -6,7 +6,6 @@ import {
   DELETE_PROJECT,
   MOVE_STORY
 } from "../graphql/mutations";
-import { GET_ME } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -20,21 +19,20 @@ test.describe("Move story via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project, scene, and story", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project, scene, and story", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Move Story Test",
         coreSupport: true

@@ -10,7 +10,7 @@ import {
   UPDATE_WIDGET,
   UPDATE_WIDGET_ALIGN_SYSTEM
 } from "../graphql/mutations";
-import { GET_ME, GET_SCENE_WIDGETS } from "../graphql/queries";
+import { GET_SCENE_WIDGETS } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -25,21 +25,20 @@ test.describe("Widget CRUD lifecycle via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project and scene", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project and scene", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: `Widget Test ${faker.string.alphanumeric(6)}`,
         coreSupport: true
@@ -56,7 +55,10 @@ test.describe("Widget CRUD lifecycle via API", () => {
   test("Add a widget to the scene", async ({ gqlClient }) => {
     const { status, data } = await gqlClient.mutate<{
       addWidget: {
-        scene: { id: string; widgets: { id: string; pluginId: string; extensionId: string }[] };
+        scene: {
+          id: string;
+          widgets: { id: string; pluginId: string; extensionId: string }[];
+        };
         sceneWidget: {
           id: string;
           pluginId: string;

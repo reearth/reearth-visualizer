@@ -3,16 +3,18 @@ import path from "path";
 
 import { FullConfig, request } from "@playwright/test";
 
-import { GraphQLClient } from "./api/graphql/client";
-import { DELETE_PROJECT, UPDATE_PROJECT } from "./api/graphql/mutations";
+import { GQLResult, GraphQLClient } from "./api/graphql/client";
+import { DELETE_PROJECT, DELETE_WORKSPACE } from "./api/graphql/mutations";
 import { GET_ME, GET_PROJECTS, GET_DELETED_PROJECTS } from "./api/graphql/queries";
-
-const E2E_PROJECT_PREFIX = "e2e-";
 
 const apiTokenPath = path.join(__dirname, ".auth/api-token.json");
 const storagePath = path.join(__dirname, ".auth/user.json");
+const workspacePath = path.join(__dirname, ".auth/workspace.json");
 
-function loadAuthToken(): { token: string; extraHeaders: Record<string, string> } | null {
+function loadAuthToken(): {
+  token: string;
+  extraHeaders: Record<string, string>;
+} | null {
   if (fs.existsSync(apiTokenPath)) {
     try {
       return JSON.parse(fs.readFileSync(apiTokenPath, "utf-8"));
@@ -41,70 +43,157 @@ function loadAuthToken(): { token: string; extraHeaders: Record<string, string> 
   return null;
 }
 
+function loadTestWorkspace(): { workspaceId: string; name: string } | null {
+  if (!fs.existsSync(workspacePath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(workspacePath, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+async function deleteAllProjectsInWorkspace(
+  client: GraphQLClient,
+  workspaceId: string
+): Promise<void> {
+  // Delete active projects
+  const { data } = await client.query<{
+    projects: { nodes: { id: string; name: string }[] };
+  }>(GET_PROJECTS, {
+    workspaceId,
+    pagination: { first: 1000 }
+  });
+
+  for (const project of data.projects.nodes) {
+    await client
+      .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+      .then(() =>
+        console.log(`[teardown] Deleted project "${project.name}" (${project.id})`)
+      )
+      .catch((err) =>
+        console.warn(`[teardown] Could not delete project "${project.name}":`, err)
+      );
+  }
+
+  // Delete soft-deleted projects (paginated)
+  let cursor: string | null = null;
+  let hasNextPage = true;
+  while (hasNextPage) {
+    const res: GQLResult<{
+      deletedProjects: {
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+        nodes: { id: string; name: string }[];
+      };
+    }> = await client.query(GET_DELETED_PROJECTS, {
+      workspaceId,
+      pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
+    });
+
+    for (const project of res.data.deletedProjects.nodes) {
+      await client
+        .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+        .then(() =>
+          console.log(`[teardown] Deleted soft-deleted project "${project.name}" (${project.id})`)
+        )
+        .catch((err) =>
+          console.warn(`[teardown] Could not delete soft-deleted project "${project.name}":`, err)
+        );
+    }
+
+    hasNextPage = res.data.deletedProjects.pageInfo.hasNextPage;
+    cursor = res.data.deletedProjects.pageInfo.endCursor;
+    if (!cursor) break;
+  }
+}
+
+async function cleanupPersonalWorkspaceSoftDeleted(
+  client: GraphQLClient
+): Promise<void> {
+  const email = process.env.REEARTH_E2E_EMAIL;
+  if (!email) return;
+
+  console.log(`[teardown] Cleaning soft-deleted projects for ${email}...`);
+
+  const { data: meData } = await client.query<{ me: { myWorkspaceId: string } }>(GET_ME);
+  const workspaceId = meData.me.myWorkspaceId;
+
+  let cursor: string | null = null;
+  let hasNextPage = true;
+  let deleted = 0;
+
+  while (hasNextPage) {
+    const res: GQLResult<{
+      deletedProjects: {
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+        nodes: { id: string; name: string }[];
+      };
+    }> = await client.query(GET_DELETED_PROJECTS, {
+      workspaceId,
+      pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
+    });
+
+    for (const project of res.data.deletedProjects.nodes) {
+      await client
+        .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+        .then(() => {
+          console.log(`[teardown] Deleted soft-deleted "${project.name}" (${project.id})`);
+          deleted++;
+        })
+        .catch((err) =>
+          console.warn(`[teardown] Could not delete "${project.name}":`, err)
+        );
+    }
+
+    hasNextPage = res.data.deletedProjects.pageInfo.hasNextPage;
+    cursor = res.data.deletedProjects.pageInfo.endCursor;
+    if (!cursor) break;
+  }
+
+  console.log(`[teardown] Personal workspace cleanup done — ${deleted} project(s) deleted.`);
+}
+
 async function globalTeardown(_config: FullConfig) {
   const auth = loadAuthToken();
   if (!auth) {
-    console.log("[teardown] No auth token found — skipping e2e project cleanup.");
+    console.log("[teardown] No auth token found — skipping cleanup.");
+    return;
+  }
+
+  const workspace = loadTestWorkspace();
+  if (!workspace) {
+    console.log("[teardown] No test workspace found — skipping cleanup.");
     return;
   }
 
   const ctx = await request.newContext().catch((err) => {
-    console.warn("[teardown] Could not create request context (non-fatal):", err);
+    console.warn(
+      "[teardown] Could not create request context (non-fatal):",
+      err
+    );
     return null;
   });
   if (!ctx) return;
+
   try {
     const client = new GraphQLClient(ctx, auth.token, auth.extraHeaders);
+    const { workspaceId, name } = workspace;
 
-    const { data: meData } = await client.query<{ me: { myWorkspaceId: string } }>(GET_ME);
-    const workspaceId = meData.me.myWorkspaceId;
+    console.log(`[teardown] Cleaning up test workspace "${name}" (${workspaceId})...`);
 
-    // Collect active e2e projects
-    const { data: activeData } = await client.query<{
-      projects: { nodes: { id: string; name: string }[] };
-    }>(GET_PROJECTS, {
-      workspaceId,
-      pagination: { first: 500 },
-      keyword: E2E_PROJECT_PREFIX
-    });
+    await deleteAllProjectsInWorkspace(client, workspaceId);
 
-    const activeProjects = activeData.projects.nodes.filter((p) =>
-      p.name.startsWith(E2E_PROJECT_PREFIX)
-    );
-
-    // Collect soft-deleted e2e projects (recycle bin)
-    const { data: deletedData } = await client
-      .query<{ deletedProjects: { nodes: { id: string; name: string }[] } }>(
-        GET_DELETED_PROJECTS,
-        { workspaceId }
+    await client
+      .mutate(DELETE_WORKSPACE, { input: { workspaceId } })
+      .then(() =>
+        console.log(`[teardown] Deleted workspace "${name}" (${workspaceId})`)
       )
-      .catch(() => ({ data: { deletedProjects: { nodes: [] } } }));
+      .catch((err) =>
+        console.warn(`[teardown] Could not delete workspace "${name}":`, err)
+      );
 
-    const deletedProjects = deletedData.deletedProjects.nodes.filter((p) =>
-      p.name.startsWith(E2E_PROJECT_PREFIX)
-    );
+    console.log("[teardown] Workspace cleanup complete.");
 
-    const all = [...activeProjects, ...deletedProjects];
-
-    if (all.length === 0) {
-      console.log("[teardown] No leaked e2e projects found.");
-      return;
-    }
-
-    console.log(`[teardown] Cleaning up ${all.length} leaked e2e project(s)…`);
-
-    for (const project of all) {
-      await client
-        .mutate(UPDATE_PROJECT, { input: { projectId: project.id, deleted: true } })
-        .catch(() => {});
-      await client
-        .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
-        .catch((err) => {
-          console.warn(`[teardown] Could not delete "${project.name}" (${project.id}):`, err);
-        });
-    }
-
-    console.log("[teardown] e2e project cleanup complete.");
+    await cleanupPersonalWorkspaceSoftDeleted(client);
   } catch (err) {
     // Best-effort: never let teardown failures mask a green suite
     console.warn("[teardown] Cleanup error (non-fatal):", err);

@@ -7,7 +7,6 @@ import {
   UNINSTALL_PLUGIN,
   UPGRADE_PLUGIN
 } from "../graphql/mutations";
-import { GET_ME } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -20,21 +19,20 @@ test.describe("Plugin install/uninstall lifecycle via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project and scene", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project and scene", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Plugin Test Project",
         coreSupport: true
@@ -48,38 +46,36 @@ test.describe("Plugin install/uninstall lifecycle via API", () => {
     sceneId = sc.createScene.scene.id;
   });
 
-  test.fixme(
-    "Uninstall and re-install the reearth plugin",
-    // Server returns "not found" when uninstalling the built-in reearth plugin.
-    // The built-in plugin cannot be managed via install/uninstall mutations.
-    async ({ gqlClient }) => {
-      const { status: uninstallStatus, data: uninstallData } =
-        await gqlClient.mutate<{
-          uninstallPlugin: {
-            pluginId: string;
-            scene: { id: string };
-          };
-        }>(UNINSTALL_PLUGIN, {
-          input: { sceneId, pluginId: "reearth" }
-        });
+  test.fixme("Uninstall and re-install the reearth plugin", async ({
+    // The built-in plugin cannot be managed via install/uninstall mutations. // Server returns "not found" when uninstalling the built-in reearth plugin.
+    gqlClient
+  }) => {
+    const { status: uninstallStatus, data: uninstallData } =
+      await gqlClient.mutate<{
+        uninstallPlugin: {
+          pluginId: string;
+          scene: { id: string };
+        };
+      }>(UNINSTALL_PLUGIN, {
+        input: { sceneId, pluginId: "reearth" }
+      });
 
-      expect(uninstallStatus).toBe(200);
-      expect(uninstallData.uninstallPlugin.pluginId).toBe("reearth");
+    expect(uninstallStatus).toBe(200);
+    expect(uninstallData.uninstallPlugin.pluginId).toBe("reearth");
 
-      const { status: installStatus, data: installData } =
-        await gqlClient.mutate<{
-          installPlugin: {
-            scene: { id: string };
-            scenePlugin: { pluginId: string };
-          };
-        }>(INSTALL_PLUGIN, {
-          input: { sceneId, pluginId: "reearth" }
-        });
+    const { status: installStatus, data: installData } =
+      await gqlClient.mutate<{
+        installPlugin: {
+          scene: { id: string };
+          scenePlugin: { pluginId: string };
+        };
+      }>(INSTALL_PLUGIN, {
+        input: { sceneId, pluginId: "reearth" }
+      });
 
-      expect(installStatus).toBe(200);
-      expect(installData.installPlugin.scenePlugin.pluginId).toBe("reearth");
-    }
-  );
+    expect(installStatus).toBe(200);
+    expect(installData.installPlugin.scenePlugin.pluginId).toBe("reearth");
+  });
 });
 
 // Negative scenarios
@@ -106,16 +102,15 @@ test.describe("Plugin negative scenarios", () => {
     ).rejects.toThrow();
   });
 
-  test("Cannot install a non-existent plugin", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Cannot install a non-existent plugin", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Plugin Neg Test",
         coreSupport: true

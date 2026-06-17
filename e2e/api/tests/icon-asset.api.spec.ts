@@ -7,7 +7,7 @@ import {
   DELETE_PROJECT,
   REMOVE_ASSET
 } from "../graphql/mutations";
-import { GET_ASSETS, GET_ME } from "../graphql/queries";
+import { GET_ASSETS } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -25,7 +25,6 @@ function createTestPng(): Buffer {
 test.describe.configure({ mode: "serial" });
 
 test.describe("Icon asset CRUD lifecycle", () => {
-  let workspaceId: string;
   let projectId: string;
   let iconAssetId: string;
 
@@ -35,25 +34,23 @@ test.describe("Icon asset CRUD lifecycle", () => {
         await gqlClient.mutate(REMOVE_ASSET, {
           input: { assetId: iconAssetId }
         });
-      } catch {
-        // already removed
+      } catch (e) {
+        console.warn(`[afterAll] failed to remove asset ${iconAssetId}:`, e);
       }
     }
     if (projectId) {
       try {
         await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-      } catch {
-        // already deleted
+      } catch (e) {
+        console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
       }
     }
   });
 
-  test("Setup: get workspace and create project", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
-
+  test("Setup: get workspace and create project", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
@@ -67,7 +64,10 @@ test.describe("Icon asset CRUD lifecycle", () => {
     projectId = data.createProject.project.id;
   });
 
-  test("Upload an icon asset to the workspace", async ({ gqlClient }) => {
+  test("Upload an icon asset to the workspace", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const png = createTestPng();
 
     const { status, data } = await gqlClient.uploadFile<{
@@ -97,7 +97,10 @@ test.describe("Icon asset CRUD lifecycle", () => {
     iconAssetId = data.createIconAsset.asset.id;
   });
 
-  test("Upload an icon asset linked to a project", async ({ gqlClient }) => {
+  test("Upload an icon asset linked to a project", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const png = createTestPng();
 
     const { status, data } = await gqlClient.uploadFile<{
@@ -130,7 +133,8 @@ test.describe("Icon asset CRUD lifecycle", () => {
   });
 
   test("Icon asset appears in workspace asset listing", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     const { data } = await gqlClient.query<{
       assets: { nodes: { id: string; name: string }[] };

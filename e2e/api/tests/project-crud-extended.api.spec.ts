@@ -14,7 +14,6 @@ import {
   CHECK_PROJECT_ALIAS,
   CHECK_SCENE_ALIAS,
   GET_DELETED_PROJECTS,
-  GET_ME,
   GET_STARRED_PROJECTS
 } from "../graphql/queries";
 
@@ -23,7 +22,6 @@ import { generateFakeId } from "./test-helpers";
 test.describe.configure({ mode: "serial" });
 
 test.describe("Project alias checks via API", () => {
-  let workspaceId: string;
   let projectId: string;
   const projectAlias = faker.string.alphanumeric(15).toLowerCase();
 
@@ -37,12 +35,10 @@ test.describe("Project alias checks via API", () => {
     }
   });
 
-  test("Setup: create project with alias", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
-
+  test("Setup: create project with alias", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string; alias: string } };
     }>(CREATE_PROJECT, {
@@ -67,7 +63,8 @@ test.describe("Project alias checks via API", () => {
   });
 
   test("checkProjectAlias: random alias is available", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     const randomAlias = faker.string.alphanumeric(20).toLowerCase();
     const { status, data } = await gqlClient.query<{
@@ -83,7 +80,8 @@ test.describe("Project alias checks via API", () => {
   });
 
   test("checkProjectAlias: own alias is available for same project", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     const { status, data } = await gqlClient.query<{
       checkProjectAlias: { alias: string; available: boolean };
@@ -111,7 +109,6 @@ test.describe("Project alias checks via API", () => {
 });
 
 test.describe("Project starred and deleted queries via API", () => {
-  let workspaceId: string;
   let projectId: string;
 
   test.afterAll(async ({ gqlClient }) => {
@@ -124,11 +121,10 @@ test.describe("Project starred and deleted queries via API", () => {
     }
   });
 
-  test("Setup: create project", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
+  test("Setup: create project", async ({
+    gqlClient,
+    workspaceId
+  }) => {
 
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
@@ -152,7 +148,7 @@ test.describe("Project starred and deleted queries via API", () => {
     expect(data.updateProject.project.starred).toBe(true);
   });
 
-  test("starredProjects returns the starred project", async ({ gqlClient }) => {
+  test("starredProjects returns the starred project", async ({ gqlClient, workspaceId }) => {
     let cursor: string | null = null;
     let hasNextPage = true;
     let found: { id: string; name: string; starred: boolean } | undefined;
@@ -187,7 +183,8 @@ test.describe("Project starred and deleted queries via API", () => {
   });
 
   test("starredProjects no longer includes the project", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     let cursor: string | null = null;
     let hasNextPage = true;
@@ -222,7 +219,8 @@ test.describe("Project starred and deleted queries via API", () => {
   });
 
   test("deletedProjects returns the soft-deleted project", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     let cursor: string | null = null;
     let hasNextPage = true;
@@ -251,7 +249,6 @@ test.describe("Project starred and deleted queries via API", () => {
 });
 
 test.describe("Project export and metadata via API", () => {
-  let workspaceId: string;
   let projectId: string;
   test.afterAll(async ({ gqlClient }) => {
     if (!projectId) return;
@@ -263,12 +260,10 @@ test.describe("Project export and metadata via API", () => {
     }
   });
 
-  test("Setup: create project with scene", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
-
+  test("Setup: create project with scene", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {

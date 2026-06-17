@@ -19,7 +19,6 @@ import {
   UPDATE_NLS_LAYER,
   UPDATE_NLS_LAYERS
 } from "../graphql/mutations";
-import { GET_ME } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -51,21 +50,20 @@ test.describe("Layer and infobox operations via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project, scene, and layer", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project, scene, and layer", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: "Layer Test Project",
         coreSupport: true

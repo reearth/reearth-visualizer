@@ -8,7 +8,7 @@ import {
   REMOVE_ASSET,
   UPDATE_ASSET
 } from "../graphql/mutations";
-import { GET_ASSETS, GET_ME } from "../graphql/queries";
+import { GET_ASSETS } from "../graphql/queries";
 
 import { generateFakeId } from "./test-helpers";
 
@@ -35,7 +35,6 @@ function createTestCsv(): Buffer {
 // ────────────────────────────────────────────────────────────────────────────
 
 test.describe("Asset CRUD lifecycle", () => {
-  let workspaceId: string;
   let projectId: string;
   let assetId: string;
 
@@ -43,18 +42,16 @@ test.describe("Asset CRUD lifecycle", () => {
     if (projectId) {
       try {
         await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-      } catch {
-        // already cleaned up
+      } catch (e) {
+        console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
       }
     }
   });
 
-  test("Setup: get workspace and create a project", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
-
+  test("Setup: get workspace and create a project", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
@@ -68,7 +65,10 @@ test.describe("Asset CRUD lifecycle", () => {
     projectId = data.createProject.project.id;
   });
 
-  test("Upload a PNG asset to the workspace", async ({ gqlClient }) => {
+  test("Upload a PNG asset to the workspace", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const png = createTestPng();
 
     const { status, data } = await gqlClient.uploadFile<{
@@ -100,12 +100,20 @@ test.describe("Asset CRUD lifecycle", () => {
     assetId = data.createAsset.asset.id;
   });
 
-  test("Upload a CSV asset linked to a project", async ({ gqlClient }) => {
+  test("Upload a CSV asset linked to a project", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const csv = createTestCsv();
 
     const { data } = await gqlClient.uploadFile<{
       createAsset: {
-        asset: { id: string; name: string; projectId: string; coreSupport: boolean };
+        asset: {
+          id: string;
+          name: string;
+          projectId: string;
+          coreSupport: boolean;
+        };
       };
     }>(
       CREATE_ASSET,
@@ -119,7 +127,10 @@ test.describe("Asset CRUD lifecycle", () => {
     expect(data.createAsset.asset.projectId).toBe(projectId);
   });
 
-  test("List assets in workspace returns uploaded files", async ({ gqlClient }) => {
+  test("List assets in workspace returns uploaded files", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data } = await gqlClient.query<{
       assets: {
         totalCount: number;
@@ -133,13 +144,14 @@ test.describe("Asset CRUD lifecycle", () => {
 
     expect(data.assets.totalCount).toBeGreaterThanOrEqual(2);
 
-    const names = data.assets.nodes.map(n => n.name);
+    const names = data.assets.nodes.map((n) => n.name);
     expect(names).toContain("test-image.png");
     expect(names).toContain("data.csv");
   });
 
   test("Filter assets by project returns only linked assets", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     const { data } = await gqlClient.query<{
       assets: { totalCount: number; nodes: { id: string; name: string }[] };
@@ -151,12 +163,15 @@ test.describe("Asset CRUD lifecycle", () => {
     });
 
     expect(data.assets.totalCount).toBeGreaterThanOrEqual(1);
-    const names = data.assets.nodes.map(n => n.name);
+    const names = data.assets.nodes.map((n) => n.name);
     expect(names).toContain("data.csv");
     expect(names).not.toContain("test-image.png");
   });
 
-  test("Move an asset to a different project", async ({ gqlClient }) => {
+  test("Move an asset to a different project", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { status, data } = await gqlClient.mutate<{
       updateAsset: { assetId: string; projectId: string };
     }>(UPDATE_ASSET, { input: { assetId, projectId } });
@@ -195,7 +210,10 @@ test.describe("Asset CRUD lifecycle", () => {
     expect(data.removeAsset.assetId).toBe(assetId);
   });
 
-  test("Removed asset no longer appears in listing", async ({ gqlClient }) => {
+  test("Removed asset no longer appears in listing", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const { data } = await gqlClient.query<{
       assets: { nodes: { id: string }[] };
     }>(GET_ASSETS, {
@@ -204,7 +222,7 @@ test.describe("Asset CRUD lifecycle", () => {
       sort: { field: "DATE", direction: "DESC" }
     });
 
-    const ids = data.assets.nodes.map(n => n.id);
+    const ids = data.assets.nodes.map((n) => n.id);
     expect(ids).not.toContain(assetId);
   });
 });
@@ -214,7 +232,6 @@ test.describe("Asset CRUD lifecycle", () => {
 // ────────────────────────────────────────────────────────────────────────────
 
 test.describe("Asset keyword search", () => {
-  let workspaceId: string;
   const uniqueTag = faker.string.alphanumeric(8).toLowerCase();
   const uploadedAssetIds: string[] = [];
 
@@ -222,18 +239,16 @@ test.describe("Asset keyword search", () => {
     for (const id of uploadedAssetIds) {
       try {
         await gqlClient.mutate(REMOVE_ASSET, { input: { assetId: id } });
-      } catch {
-        // already removed
+      } catch (e) {
+        console.warn(`[afterAll] failed to remove asset ${id}:`, e);
       }
     }
   });
 
-  test("Setup: upload two assets with distinct names", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
-
+  test("Setup: upload two assets with distinct names", async ({
+    gqlClient,
+    workspaceId
+  }) => {
     const png = createTestPng();
     const { data: pngData } = await gqlClient.uploadFile<{
       createAsset: { asset: { id: string } };
@@ -260,7 +275,8 @@ test.describe("Asset keyword search", () => {
   });
 
   test("Keyword filter narrows results to matching assets", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     const { data } = await gqlClient.query<{
       assets: { nodes: { id: string; name: string }[] };
@@ -281,17 +297,9 @@ test.describe("Asset keyword search", () => {
 // ────────────────────────────────────────────────────────────────────────────
 
 test.describe("Asset sort ordering", () => {
-  let workspaceId: string;
-
-  test("Setup: get workspace", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
-  });
-
   test("Sort by NAME ascending returns alphabetical order", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     const { data } = await gqlClient.query<{
       assets: { nodes: { name: string }[] };
@@ -301,7 +309,7 @@ test.describe("Asset sort ordering", () => {
       sort: { field: "NAME", direction: "ASC" }
     });
 
-    const names = data.assets.nodes.map(n => n.name);
+    const names = data.assets.nodes.map((n) => n.name);
     const sorted = [...names].sort((a, b) => a.localeCompare(b));
     expect(names).toEqual(sorted);
   });
@@ -312,15 +320,6 @@ test.describe("Asset sort ordering", () => {
 // ────────────────────────────────────────────────────────────────────────────
 
 test.describe("Asset negative scenarios", () => {
-  let workspaceId: string;
-
-  test("Setup: get workspace", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    workspaceId = me.me.myWorkspaceId;
-  });
-
   test("Cannot upload asset to a non-existent workspace", async ({
     gqlClient
   }) => {
@@ -329,7 +328,12 @@ test.describe("Asset negative scenarios", () => {
     await expect(
       gqlClient.uploadFile(
         CREATE_ASSET,
-        { workspaceId: fakeWsId, projectId: null, file: null, coreSupport: true },
+        {
+          workspaceId: fakeWsId,
+          projectId: null,
+          file: null,
+          coreSupport: true
+        },
         png,
         "orphan.png",
         "image/png"
@@ -354,7 +358,8 @@ test.describe("Asset negative scenarios", () => {
   });
 
   test("Keyword search with no matches returns empty list", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     const { data } = await gqlClient.query<{
       assets: { totalCount: number; nodes: { id: string }[] };
@@ -370,7 +375,8 @@ test.describe("Asset negative scenarios", () => {
   });
 
   test("Assets query with non-existent project returns empty list", async ({
-    gqlClient
+    gqlClient,
+    workspaceId
   }) => {
     const fakeProjectId = generateFakeId();
     const { data } = await gqlClient.query<{

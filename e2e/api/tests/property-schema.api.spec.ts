@@ -8,7 +8,6 @@ import {
   UPLOAD_FILE_TO_PROPERTY
 } from "../graphql/mutations";
 import {
-  GET_ME,
   GET_PROPERTY_SCHEMA,
   GET_PROPERTY_SCHEMAS,
   GET_SCENE
@@ -44,21 +43,17 @@ test.describe("Property schema queries via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project with scene", async ({ gqlClient }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project with scene", async ({ gqlClient, workspaceId }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: `PropSchema Test ${faker.string.alphanumeric(6)}`,
         coreSupport: true
@@ -132,9 +127,7 @@ test.describe("Property schema queries via API", () => {
     expect(data.propertySchemas[0].groups.length).toBeGreaterThan(0);
   });
 
-  test("propertySchema: non-existent schema returns null", async ({
-    gqlClient
-  }) => {
+  test("propertySchema: non-existent schema returns null", async ({ gqlClient }) => {
     const { status, data } = await gqlClient.query<{
       propertySchema: { id: string } | null;
     }>(GET_PROPERTY_SCHEMA, { id: "reearth/notfound" });
@@ -143,9 +136,7 @@ test.describe("Property schema queries via API", () => {
     expect(data.propertySchema).toBeNull();
   });
 
-  test("propertySchemas: non-existent schemas throws error", async ({
-    gqlClient
-  }) => {
+  test("propertySchemas: non-existent schemas throws error", async ({ gqlClient }) => {
     await expect(
       gqlClient.query(GET_PROPERTY_SCHEMAS, { id: ["reearth/notfound"] })
     ).rejects.toThrow();
@@ -161,23 +152,17 @@ test.describe("Upload file to property via API", () => {
     if (!projectId) return;
     try {
       await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
-    } catch {
-      // already deleted
+    } catch (e) {
+      console.warn(`[afterAll] failed to delete project ${projectId}:`, e);
     }
   });
 
-  test("Setup: create project, scene, and get property", async ({
-    gqlClient
-  }) => {
-    const { data: me } = await gqlClient.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-
+  test("Setup: create project, scene, and get property", async ({ gqlClient, workspaceId }) => {
     const { data: proj } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId: me.me.myWorkspaceId,
+        workspaceId,
         visualizer: "CESIUM",
         name: `UploadProp Test ${faker.string.alphanumeric(6)}`,
         coreSupport: true
@@ -239,9 +224,7 @@ test.describe("Upload file to property via API", () => {
 });
 
 test.describe("Property upload negative scenarios", () => {
-  test("Cannot upload file to a non-existent property", async ({
-    gqlClient
-  }) => {
+  test("Cannot upload file to a non-existent property", async ({ gqlClient }) => {
     const fakePropertyId = generateFakeId();
     const png = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
