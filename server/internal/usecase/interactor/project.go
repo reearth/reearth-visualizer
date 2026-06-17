@@ -1010,7 +1010,7 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 func (i *Project) CheckProjectExportAccess(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
 	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
-		return nil, err // preserve rerror.ErrNotFound so callers can distinguish not-found from unauthorized
+		return nil, err
 	}
 
 	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
