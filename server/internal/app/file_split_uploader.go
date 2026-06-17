@@ -172,7 +172,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			defer m.CleanupSession(session.FileID)
 
 			if m.fileGateway != nil {
-				if data, err := json.Marshal(map[string]any{"status": "processing"}); err == nil {
+				if data, err := json.Marshal(map[string]any{"status": string(project.ProjectImportStatusProcessing)}); err == nil {
 					_ = m.fileGateway.UploadImportStatus(bgctx, pid.String(), data)
 				}
 			}

@@ -96,7 +96,7 @@ func servSignatureUploadFiles(
 			defer removeGcsZip(ctx, cfg.Gateways.File, base)
 
 			if cfg.Gateways.File != nil && pid != nil {
-				if data, err := json.Marshal(map[string]any{"status": "processing"}); err == nil {
+				if data, err := json.Marshal(map[string]any{"status": string(project.ProjectImportStatusProcessing)}); err == nil {
 					_ = cfg.Gateways.File.UploadImportStatus(ctx, pid.String(), data)
 				}
 			}
@@ -188,7 +188,7 @@ func servSignatureUploadFiles(
 			defer removeGcsZip(ctx, cfg.Gateways.File, base)
 
 			if cfg.Gateways.File != nil && pid != nil {
-				if data, err := json.Marshal(map[string]any{"status": "processing"}); err == nil {
+				if data, err := json.Marshal(map[string]any{"status": string(project.ProjectImportStatusProcessing)}); err == nil {
 					_ = cfg.Gateways.File.UploadImportStatus(ctx, pid.String(), data)
 				}
 			}
