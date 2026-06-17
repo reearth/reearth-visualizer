@@ -154,12 +154,7 @@ export const getInstalledWidgets = (
   return scene?.widgets
     .filter((w) => installedWidgetIds.includes(w.id))
     .filter(
-      (w) =>
-        !(
-          !isEE &&
-          w.pluginId === "reearth" &&
-          w.extensionId === "streetView"
-        )
+      (w) => isEE || `${w.pluginId}/${w.extensionId}` !== STREET_VIEW_WIDGET_ID
     )
     .map((w) => {
       const e = installableWidgets?.find(
