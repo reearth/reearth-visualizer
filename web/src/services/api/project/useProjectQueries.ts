@@ -91,7 +91,7 @@ export const useValidateProjectAlias = () => {
   const [, setNotification] = useNotification();
 
   const [fetchCheckProjectAlias] = useLazyQuery(CHECK_PROJECT_ALIAS, {
-    fetchPolicy: "network-only",
+    fetchPolicy: "network-only", // Disable caching for this query
     errorPolicy: "all"
   });
 
@@ -99,62 +99,33 @@ export const useValidateProjectAlias = () => {
     async (alias: string, workspaceId: string, projectId?: string) => {
       if (!alias) return null;
 
-      try {
-        const result = await fetchCheckProjectAlias({
-          variables: {
-            alias,
-            workspaceId,
-            projectId
-          },
-          context: {
-            headers: {
-              [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
-            }
+      const { data, error } = await fetchCheckProjectAlias({
+        variables: { alias, workspaceId, projectId },
+        context: {
+          headers: {
+            [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
           }
-        });
-
-        const data = result.data;
-        const error = result.error;
-
-        const errors =
-          "errors" in result && result.errors
-            ? (result.errors as { extensions?: { description?: string } }[])
-            : error && "errors" in error
-              ? (error.errors as { extensions?: { description?: string } }[])
-              : undefined;
-
-        if (errors?.length || error || !data?.checkProjectAlias) {
-          return {
-            status: "error",
-            errors
-          };
         }
+      });
 
-        setNotification({
-          type: "success",
-          text: t("Successfully checked alias!")
-        });
-
-        return {
-          status: "success",
-          available: data.checkProjectAlias.available,
-          alias: data.checkProjectAlias.alias
-        };
-      } catch (error) {
-        return {
-          status: "error",
-          errors: [
-            {
-              extensions: {
-                description:
-                  error instanceof Error
-                    ? error.message
-                    : "Something went wrong"
-              }
-            }
-          ]
-        };
+      if (error || !data?.checkProjectAlias) {
+        // Extract graphQLErrors for backward compatibility with UI code
+        const errors =
+          error && "errors" in error
+            ? (error.errors as { extensions?: { description?: string } }[])
+            : undefined;
+        return { status: "error", errors };
       }
+
+      setNotification({
+        type: "success",
+        text: t("Successfully checked alias!")
+      });
+      return {
+        available: data?.checkProjectAlias.available,
+        alias: data?.checkProjectAlias.alias,
+        status: "success"
+      };
     },
     [fetchCheckProjectAlias, setNotification, t]
   );
