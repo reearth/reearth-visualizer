@@ -1,7 +1,6 @@
 package app
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -11,7 +10,6 @@ import (
 	appmiddleware "github.com/reearth/reearth/server/internal/adapter/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/rerror"
 )
 
 func serveExportFile(
@@ -53,10 +51,7 @@ func serveExportFile(
 			uc := adapter.Usecases(ctx)
 			op := adapter.Operator(ctx)
 			if _, err := uc.Project.CheckProjectExportAccess(ctx, pid, op); err != nil {
-				if errors.Is(err, rerror.ErrNotFound) {
-					return echo.ErrNotFound
-				}
-				return echo.ErrUnauthorized
+				return err
 			}
 
 			r, err := fileGateway.ReadExportProjectZip(ctx, filename)
