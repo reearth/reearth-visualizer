@@ -1,5 +1,5 @@
 import { Collapse } from "@reearth/app/lib/reearth-ui";
-import PropertyItem from "@reearth/app/ui/fields/Properties";
+import PropertyItem, { FieldContext } from "@reearth/app/ui/fields/Properties";
 import { PropertyFieldDecorations } from "@reearth/app/ui/fields/Properties/PropertyField";
 import { filterVisibleItems } from "@reearth/app/ui/fields/utils";
 import type { FlyTo } from "@reearth/core";
@@ -15,7 +15,9 @@ type Props = {
   computeDecorations?: (
     schemaId: string,
     schemaGroup: string,
-    value: unknown
+    value: unknown,
+    allFields: FieldContext[],
+    allListItemsFields?: FieldContext[][]
   ) => PropertyFieldDecorations;
 };
 

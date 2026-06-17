@@ -191,8 +191,8 @@ export const DELETE_PROJECT = gql(`
 `);
 
 export const GET_STARRED_PROJECTS = gql(`
-  query GetStarredProjects($workspaceId: ID!) {
-    starredProjects(workspaceId: $workspaceId) {
+  query GetStarredProjects($workspaceId: ID!, $pagination: Pagination) {
+    starredProjects(workspaceId: $workspaceId, pagination: $pagination) {
 				nodes {
 					id
 					name
@@ -201,6 +201,12 @@ export const GET_STARRED_PROJECTS = gql(`
             id
           }
 				}
+        pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        }
 				totalCount
 			}
   }
@@ -215,8 +221,8 @@ export const EXPORT_PROJECT = gql(`
 `);
 
 export const GET_DELETED_PROJECTS = gql(`
-  query GetDeletedProjects($workspaceId: ID!) {
-    deletedProjects(workspaceId: $workspaceId) {
+  query GetDeletedProjects($workspaceId: ID!, $pagination: Pagination) {
+    deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
 			nodes {
 				id
 				name
@@ -225,6 +231,12 @@ export const GET_DELETED_PROJECTS = gql(`
         visibility
         starred
 			}
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
 			totalCount
 		}
   }
