@@ -91,25 +91,20 @@ func TestCustomErrorPresenter(t *testing.T) {
 
 }
 
-func TestIsUserInputError(t *testing.T) {
-	t.Run("returns true for user-input sentinel errors", func(t *testing.T) {
-		assert.True(t, isUserInputError(rerror.ErrNotFound))
-		assert.True(t, isUserInputError(rerror.ErrNotFoundRaw))
-		assert.True(t, isUserInputError(rerror.ErrAlreadyExists))
-		assert.True(t, isUserInputError(rerror.ErrAlreadyExistsRaw))
-		assert.True(t, isUserInputError(rerror.ErrInvalidParams))
-		assert.True(t, isUserInputError(rerror.ErrInvalidParamsRaw))
-		assert.True(t, isUserInputError(interfaces.ErrOperationDenied))
-		assert.True(t, isUserInputError(repo.ErrOperationDenied))
+func TestIsHandledError(t *testing.T) {
+	t.Run("returns true for handled sentinel errors", func(t *testing.T) {
+		assert.True(t, isHandledError(rerror.ErrNotFound))
+		assert.True(t, isHandledError(interfaces.ErrOperationDenied))
+		assert.True(t, isHandledError(repo.ErrOperationDenied))
 	})
 
-	t.Run("returns true for wrapped user-input errors", func(t *testing.T) {
-		assert.True(t, isUserInputError(fmt.Errorf("wrapped: %w", rerror.ErrNotFound)))
-		assert.True(t, isUserInputError(fmt.Errorf("wrapped: %w", interfaces.ErrOperationDenied)))
+	t.Run("returns true for wrapped handled errors", func(t *testing.T) {
+		assert.True(t, isHandledError(fmt.Errorf("wrapped: %w", rerror.ErrNotFound)))
+		assert.True(t, isHandledError(fmt.Errorf("wrapped: %w", interfaces.ErrOperationDenied)))
 	})
 
 	t.Run("returns false for unrelated errors", func(t *testing.T) {
-		assert.False(t, isUserInputError(errors.New("some unexpected error")))
-		assert.False(t, isUserInputError(rerror.ErrNotImplemented))
+		assert.False(t, isHandledError(errors.New("some unexpected error")))
+		assert.False(t, isHandledError(rerror.ErrNotImplemented))
 	})
 }
