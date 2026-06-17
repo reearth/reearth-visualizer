@@ -64,7 +64,11 @@ let cachedBuiltin:
 const builtin = () => {
   if (cachedBuiltin) return cachedBuiltin;
   if (config()) {
+    const isEE = config()?.featureCollection === "ee";
     cachedBuiltin = merge({}, reearthBuiltin, unsafeBuiltinWidgets());
+    if (!isEE) {
+      cachedBuiltin[STREET_VIEW_WIDGET_ID] = undefined as unknown as Component;
+    }
     return cachedBuiltin;
   } else {
     return reearthBuiltin;
