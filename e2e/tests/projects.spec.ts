@@ -14,7 +14,7 @@ const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing required variables.");
 }
-const projectName = faker.string.alpha(15);
+const projectName = "e2e-" + faker.string.alpha(15);
 const projectDescription = faker.lorem.sentence();
 const layerName = faker.string.alpha(5);
 const projectAlias = faker.string.alpha(20);
