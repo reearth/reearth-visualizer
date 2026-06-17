@@ -91,7 +91,7 @@ export default ({
         const status = data?.status as string | undefined;
 
         switch (status) {
-          case "FAILED":
+          case ProjectImportStatus.Failed:
             setImportStatus(ProjectImportStatus.Failed);
             setImportErrorLogUrl(data?.errorLogUrl ?? undefined);
             setImportResultLog(JSON.stringify(data));
@@ -99,7 +99,7 @@ export default ({
             clearInterval(interval);
             onImportCompleted?.();
             break;
-          case "SUCCESS":
+          case ProjectImportStatus.Success:
             setNotification({
               type: "success",
               text: t("Successfully imported project!")
@@ -110,7 +110,7 @@ export default ({
             clearInterval(interval);
             onImportCompleted?.();
             break;
-          case "PROCESSING":
+          case ProjectImportStatus.Processing:
             setImportStatus(ProjectImportStatus.Processing);
             break;
           default:
