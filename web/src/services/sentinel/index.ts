@@ -48,7 +48,9 @@ export async function initializeSentinel(): Promise<void> {
         memoryCacheTTL: 300_000, // 5 min
         refreshThreshold: 60_000 // refresh 1 min before expiry
       },
-      debug: import.meta.env.DEV,
+      //TODO: disable debug temporarily due to verbose logging in some environments that may cause performance issues. Can be re-enabled when the underlying issue is resolved.
+      // debug: import.meta.env.DEV,
+      debug: false,
       onTokenExpired: async () => {
         try {
           const res = await fetch("/reearth_config.json", {
@@ -62,10 +64,14 @@ export async function initializeSentinel(): Promise<void> {
               expiresAt: Date.now() + 24 * 60 * 60 * 1000
             });
             if (!refreshed) {
-              console.warn("[Sentinel] Token refresh succeeded but SW did not acknowledge — protected requests may fail");
+              console.warn(
+                "[Sentinel] Token refresh succeeded but SW did not acknowledge — protected requests may fail"
+              );
             }
           } else {
-            console.warn("[Sentinel] Token expired and no new token found in config");
+            console.warn(
+              "[Sentinel] Token expired and no new token found in config"
+            );
           }
         } catch (err) {
           console.error("[Sentinel] Token refresh failed:", err);
@@ -79,7 +85,9 @@ export async function initializeSentinel(): Promise<void> {
     });
 
     if (!tokenStored) {
-      console.error("[Sentinel] SW did not acknowledge token — initialization aborted, tiles may return 401");
+      console.error(
+        "[Sentinel] SW did not acknowledge token — initialization aborted, tiles may return 401"
+      );
       return;
     }
 
