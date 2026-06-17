@@ -48,8 +48,8 @@ export async function initializeSentinel(): Promise<void> {
         memoryCacheTTL: 300_000, // 5 min
         refreshThreshold: 60_000 // refresh 1 min before expiry
       },
-      //TODO: disable debug temporarily due to verbose logging in some environments that may cause performance issues. Can be re-enabled when the underlying issue is resolved.
-      // debug: import.meta.env.DEV,
+      // TODO: Debug logging is temporarily disabled due to verbose logging in some environments that
+      // may cause performance issues. Re-enable once the underlying issue is resolved.
       debug: false,
       onTokenExpired: async () => {
         try {
