@@ -13,7 +13,7 @@ if (!REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing REEARTH_WEB_E2E_BASEURL");
 }
 
-const projectName = faker.lorem.words(2);
+const projectName = "e2e-" + faker.lorem.words(2);
 const projectAlias = faker.string.alphanumeric(15);
 
 test.describe.configure({ mode: "serial" });
