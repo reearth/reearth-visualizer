@@ -117,8 +117,15 @@ func serveFiles(
 	ec.GET(
 		"/api/import-status/:projectId",
 		func(c echo.Context) error {
-			r, err := fileGateway.ReadImportStatus(c.Request().Context(), c.Param("projectId"))
+			pid, err := id.ProjectIDFrom(c.Param("projectId"))
 			if err != nil {
+				return echo.ErrNotFound
+			}
+			r, err := fileGateway.ReadImportStatus(c.Request().Context(), pid.String())
+			if err != nil {
+				return echo.ErrNotFound
+			}
+			if r == nil {
 				return echo.ErrNotFound
 			}
 			defer r.Close()
