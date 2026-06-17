@@ -5,6 +5,8 @@ import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
+const IMPORT_PROJECT_ID_KEY = "reearth_importing_project_id";
+
 export default ({
   workspaceId,
   refetchProjectList,
@@ -17,12 +19,14 @@ export default ({
   const [, setNotification] = useNotification();
   const t = useT();
 
-  const [importStatus, setImportStatus] = useState<ProjectImportStatus>(
-    ProjectImportStatus.None
-  );
+  const [importStatus, setImportStatus] = useState<ProjectImportStatus>(() => {
+    return localStorage.getItem(IMPORT_PROJECT_ID_KEY)
+      ? ProjectImportStatus.Processing
+      : ProjectImportStatus.None;
+  });
   const [importingProjectId, setImportingProjectId] = useState<
     string | undefined
-  >(undefined);
+  >(() => localStorage.getItem(IMPORT_PROJECT_ID_KEY) ?? undefined);
   const [importResultLog, setImportResultLog] = useState<string | undefined>(
     undefined
   );
@@ -58,6 +62,7 @@ export default ({
       }
 
       const projectId = result.project_id;
+      localStorage.setItem(IMPORT_PROJECT_ID_KEY, projectId);
       setImportStatus(ProjectImportStatus.Processing);
       setImportingProjectId(projectId);
     },
@@ -75,6 +80,7 @@ export default ({
     const interval = setInterval(async () => {
       if (++retries > MAX_RETRIES) {
         clearInterval(interval);
+        localStorage.removeItem(IMPORT_PROJECT_ID_KEY);
         setImportStatus(ProjectImportStatus.Failed);
         setImportingProjectId(undefined);
         setNotification({
@@ -98,6 +104,7 @@ export default ({
 
         switch (status) {
           case ProjectImportStatus.Failed:
+            localStorage.removeItem(IMPORT_PROJECT_ID_KEY);
             setImportStatus(ProjectImportStatus.Failed);
             setImportErrorLogUrl(data?.errorLogUrl ?? undefined);
             setImportResultLog(JSON.stringify(data));
@@ -106,6 +113,7 @@ export default ({
             onImportCompleted?.();
             break;
           case ProjectImportStatus.Success:
+            localStorage.removeItem(IMPORT_PROJECT_ID_KEY);
             setNotification({
               type: "success",
               text: t("Successfully imported project!")
@@ -124,6 +132,7 @@ export default ({
         }
       } catch {
         if (++consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+          localStorage.removeItem(IMPORT_PROJECT_ID_KEY);
           setNotification({
             type: "error",
             text: t("Failed to check import status")
@@ -159,6 +168,7 @@ export default ({
   }, [importErrorLogUrl, importResultLog]);
 
   const handleProjectImportErrorClose = useCallback(() => {
+    localStorage.removeItem(IMPORT_PROJECT_ID_KEY);
     setImportStatus(ProjectImportStatus.None);
     setImportingProjectId(undefined);
     setImportResultLog(undefined);
