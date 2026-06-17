@@ -75,6 +75,12 @@ export default ({
     const interval = setInterval(async () => {
       if (++retries > MAX_RETRIES) {
         clearInterval(interval);
+        setImportStatus(ProjectImportStatus.Failed);
+        setImportingProjectId(undefined);
+        setNotification({
+          type: "error",
+          text: t("Import timed out. Please check your project and try again.")
+        });
         return;
       }
 
