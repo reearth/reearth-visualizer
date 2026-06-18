@@ -31,7 +31,8 @@ export const useValidateStoryAlias = () => {
   const [, setNotification] = useNotification();
 
   const [fetchCheckProjectAlias] = useLazyQuery(CHECK_STORY_ALIAS, {
-    fetchPolicy: "network-only" // Disable caching for this query
+    fetchPolicy: "network-only", // Disable caching for this query
+    errorPolicy: "all"
   });
 
   const validateStoryAlias = useCallback(

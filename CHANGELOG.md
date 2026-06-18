@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.10 - 2026-06-18
+
+### Web
+
+#### 🚀 Features
+
+- Support pagination on starredProjects and deletedProjects ([#2261](https://github.com/reearth/reearth-visualizer/pull/2261)) [`c54038`](https://github.com/reearth/reearth-visualizer/commit/c54038)
+
+#### ✨ Refactor
+
+- Append google map when using street view widget ([#2249](https://github.com/reearth/reearth-visualizer/pull/2249)) [`149130`](https://github.com/reearth/reearth-visualizer/commit/149130)
+- Disable opacity option regarding google map tile [VIZ-DEV-42] ([#2258](https://github.com/reearth/reearth-visualizer/pull/2258)) [`68e88e`](https://github.com/reearth/reearth-visualizer/commit/68e88e)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.10 ([#2271](https://github.com/reearth/reearth-visualizer/pull/2271)) [`bf7a69`](https://github.com/reearth/reearth-visualizer/commit/bf7a69)
+- Disable sentinel debug logging to reduce excessive logs in production ([#2269](https://github.com/reearth/reearth-visualizer/pull/2269)) [`a8a19e`](https://github.com/reearth/reearth-visualizer/commit/a8a19e)
+- Upgrade sentinel to 0.1.2 ([#2268](https://github.com/reearth/reearth-visualizer/pull/2268)) [`1c8c83`](https://github.com/reearth/reearth-visualizer/commit/1c8c83)
+
+### e2e
+
+#### 🔧 Bug Fixes
+
+- Paginate starredProjects and deletedProjects queries to handle stale data ([#2264](https://github.com/reearth/reearth-visualizer/pull/2264)) [`a2fc53`](https://github.com/reearth/reearth-visualizer/commit/a2fc53)
+
+#### 🧪 Testing
+
+- Add global teardown for e2e project cleanup and prefix test projects with &quot;e2e-&quot; ([#2263](https://github.com/reearth/reearth-visualizer/pull/2263)) [`cf83ca`](https://github.com/reearth/reearth-visualizer/commit/cf83ca)
+- Skip moveStory tests until server-side implemented ([#2265](https://github.com/reearth/reearth-visualizer/pull/2265)) [`a19879`](https://github.com/reearth/reearth-visualizer/commit/a19879)
+
 ## 1.0.0-beta.16.9 - 2026-06-10
 
 ### Web
