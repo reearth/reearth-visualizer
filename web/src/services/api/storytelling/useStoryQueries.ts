@@ -48,8 +48,6 @@ export const useValidateStoryAlias = () => {
         }
       });
 
-      console.log("validateStoryAlias", data, error);
-
       if (error || !data?.checkStoryAlias) {
         // Extract graphQLErrors for backward compatibility with UI code
         const errors =
