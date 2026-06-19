@@ -344,8 +344,8 @@ export function migrateViewerPropertyTiles(
     terrain.type === "reearth_terrain" &&
     terrain.normal !== true;
 
-  // Check if Street View widget exists and needs tile appending
-  const streetViewTiles = extractStreetViewTiles(config.widgets);
+  // Check if Street View widget exists and needs tile appending (EE only)
+  const streetViewTiles = config.isEE ? extractStreetViewTiles(config.widgets) : [];
   const needsStreetViewTile = streetViewTiles.length > 0;
 
   // Return original if nothing needs processing

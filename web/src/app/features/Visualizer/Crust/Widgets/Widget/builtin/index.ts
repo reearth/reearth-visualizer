@@ -63,12 +63,16 @@ let cachedBuiltin:
   | undefined = undefined;
 const builtin = () => {
   if (cachedBuiltin) return cachedBuiltin;
-  if (config()) {
-    const isEE = config()?.featureCollection === "ee";
-    cachedBuiltin = merge({}, reearthBuiltin, unsafeBuiltinWidgets());
-    if (!isEE) {
-      cachedBuiltin[STREET_VIEW_WIDGET_ID] = undefined as unknown as Component;
-    }
+  const cfg = config();
+  if (cfg) {
+    const isEE = cfg.featureCollection === "ee";
+    const { [STREET_VIEW_WIDGET_ID]: _omitted, ...reearthBuiltinWithoutStreetView } =
+      reearthBuiltin;
+    cachedBuiltin = merge(
+      {},
+      isEE ? reearthBuiltin : reearthBuiltinWithoutStreetView,
+      unsafeBuiltinWidgets()
+    ) as BuiltinWidgets<Component>;
     return cachedBuiltin;
   } else {
     return reearthBuiltin;
