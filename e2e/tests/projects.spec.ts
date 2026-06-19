@@ -6,6 +6,7 @@ import { DashBoardPage } from "../pages/dashBoardPage";
 import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { createIAPContext } from "../utils/iap-auth";
+import { deleteProjectByName } from "../utils/project-cleanup";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -13,7 +14,7 @@ const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing required variables.");
 }
-const projectName = faker.string.alpha(15);
+const projectName = "e2e-" + faker.string.alpha(15);
 const projectDescription = faker.lorem.sentence();
 const layerName = faker.string.alpha(5);
 const projectAlias = faker.string.alpha(20);
@@ -69,6 +70,7 @@ test.describe("Project Management", () => {
   });
 
   test.afterAll(async () => {
+    await deleteProjectByName(page.request, projectName);
     await context.close();
   });
 

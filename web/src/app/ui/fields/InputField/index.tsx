@@ -16,6 +16,10 @@ export type InputFieldProps = {
 const InputField: FC<InputFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
+  highlight,
   value,
   onChange,
   onChangeComplete,
@@ -42,6 +46,10 @@ const InputField: FC<InputFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
+      highlight={highlight}
       data-testid="inputfield-commonfield"
     >
       <TextInput

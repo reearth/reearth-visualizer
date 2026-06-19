@@ -9,6 +9,7 @@ import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { RecycleBinPage } from "../pages/recycleBinPage";
 import { createIAPContext } from "../utils/iap-auth";
+import { deleteProjectsByName } from "../utils/project-cleanup";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -16,9 +17,9 @@ const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing required variables.");
 }
-const projectName = faker.lorem.words(2);
+const projectName = "e2e-" + faker.lorem.words(2);
 const projectDescription = faker.lorem.sentence();
-const specialProjectName = faker.lorem.words(2) + "!@#$%^&*()_+";
+const specialProjectName = "e2e-" + faker.lorem.words(2) + "!@#$%^&*()_+";
 const projectAlias = faker.string.alphanumeric(15);
 
 const fileName = "Test_Asset_migration.zip";
@@ -63,6 +64,10 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test.afterAll(async () => {
+    await deleteProjectsByName(page.request, [
+      projectName,
+      specialProjectName
+    ]);
     await context.close();
   });
 

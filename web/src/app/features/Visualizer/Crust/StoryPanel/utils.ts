@@ -203,6 +203,7 @@ export const getIconName = (icon?: string | IconName): IconName => {
     case "propertyInfoboxBetaBlock":
       return "listDashes";
     case "linkButtonStoryBlock":
+    case "linkInfoboxBetaBlock":
       return "linkSimple";
     default:
       return "puzzlePiece";

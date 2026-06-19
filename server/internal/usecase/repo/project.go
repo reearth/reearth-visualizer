@@ -28,13 +28,13 @@ type Project interface {
 	FindByScene(context.Context, id.SceneID) (*project.Project, error)
 	FindByWorkspace(context.Context, accountsID.WorkspaceID, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
 	FindByWorkspaces(context.Context, bool, ProjectFilter, []string, []string, []string) ([]*project.Project, *usecasex.PageInfo, error)
-	FindStarredByWorkspace(context.Context, accountsID.WorkspaceID) ([]*project.Project, error)
-	FindDeletedByWorkspace(context.Context, accountsID.WorkspaceID) ([]*project.Project, error)
+	FindStarredByWorkspace(context.Context, accountsID.WorkspaceID, *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error)
+	FindDeletedByWorkspace(context.Context, accountsID.WorkspaceID, *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error)
 	FindActiveById(context.Context, id.ProjectID) (*project.Project, error)
 
 	// TODO should be removed because project id is not unique
 	FindActiveByAlias(context.Context, string) (*project.Project, error)
-	FindByWorkspaceIDAndProjectAlias(context.Context, accountsID.WorkspaceID, string) (*project.Project, error)
+	FindByWorkspaceIDAndProjectAlias(context.Context, accountsID.WorkspaceID, string, bool) (*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
 	FindAll(context.Context, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
 	CheckProjectAliasUnique(context.Context, accountsID.WorkspaceID, string, *id.ProjectID) error

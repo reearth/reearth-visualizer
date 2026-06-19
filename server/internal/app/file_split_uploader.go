@@ -107,13 +107,23 @@ func servSplitUploadFiles(
 
 }
 
+func (m *SplitUploadManager) readSessionProjectID(fileID string) *id.ProjectID {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	session := m.activeUploads[fileID]
+	if session != nil && session.Project != nil {
+		return session.Project.ID().Ref()
+	}
+	return nil
+}
+
 func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId accountsID.WorkspaceID, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
 
 	var pid *id.ProjectID
 	result := map[string]any{}
 
-	if session := m.activeUploads[fileID]; session != nil {
-		pid = m.activeUploads[fileID].Project.ID().Ref()
+	pid = m.readSessionProjectID(fileID)
+	if pid != nil {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d Project: %s", fileID, chunkNum+1, totalChunks, pid.String())
 	} else {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d ", fileID, chunkNum+1, totalChunks)
@@ -159,6 +169,8 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			pid := session.Project.ID()
 			bgctx := context.Background()
 
+			defer m.CleanupSession(session.FileID)
+
 			assembledPath := filepath.Join(m.tempDir, session.FileID)
 			defer safeRemove(assembledPath)
 
@@ -186,7 +198,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			}
 			log.Infof("[Import] uncompress zip file")
 
-			ok := ImportProject(
+			ImportProject(
 				bgctx,
 				usecases,
 				op,
@@ -198,10 +210,6 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				result,
 				version,
 			)
-
-			if ok {
-				m.CleanupSession(session.FileID)
-			}
 
 		}(session)
 	}

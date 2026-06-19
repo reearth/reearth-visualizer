@@ -91,13 +91,13 @@ type ProjectListParam struct {
 type Project interface {
 	Fetch(context.Context, []id.ProjectID, *usecase.Operator) ([]*project.Project, error)
 	FindByWorkspace(context.Context, accountsID.WorkspaceID, *string, *project.SortType, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
-	FindStarredByWorkspace(context.Context, accountsID.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
-	FindDeletedByWorkspace(context.Context, accountsID.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
+	FindStarredByWorkspace(context.Context, accountsID.WorkspaceID, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
+	FindDeletedByWorkspace(context.Context, accountsID.WorkspaceID, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
 
 	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
 	FindActiveByAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
-	FindByWorkspaceAliasAndProjectAlias(context.Context, string, string, *usecase.Operator) (*project.Project, error)
-	FindByWorkspaceIDAndProjectAlias(context.Context, accountsID.WorkspaceID, string, *usecase.Operator) (*project.Project, error)
+	FindByWorkspaceAliasAndProjectAlias(context.Context, string, string, bool, *usecase.Operator) (*project.Project, error)
+	FindByWorkspaceIDAndProjectAlias(context.Context, accountsID.WorkspaceID, string, bool, *usecase.Operator) (*project.Project, error)
 
 	FindVisibilityByUser(context.Context, *accountsUser.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	FindVisibilityByWorkspace(context.Context, accountsID.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)

@@ -22,7 +22,22 @@ export default [
   ...config("@reearth"),
   ...themeConfig,
   {
-    ignores: ["bin/pluginDoc.ts"]
+    ignores: ["bin/pluginDoc.ts", "public/sw.js"]
+  },
+  // Configuration for documentation scripts
+  {
+    files: ["docs/scripts/**/*.js"],
+    languageOptions: {
+      globals: {
+        console: "readonly",
+        process: "readonly",
+        __dirname: "readonly",
+        __filename: "readonly"
+      }
+    },
+    rules: {
+      "no-console": "off"
+    }
   },
   ...storybook.configs["flat/recommended"]
 ];

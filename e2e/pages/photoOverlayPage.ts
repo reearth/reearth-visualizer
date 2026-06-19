@@ -1,34 +1,48 @@
 import { Locator, Page, expect } from "@playwright/test";
 
 export class PhotoOverlayPage {
-  constructor(private page: Page) {}
+  photoOverlayTab: Locator;
+  featureInspectorTab: Locator;
+  editPhotoOverlayButton: Locator;
+  editorPanel: Locator;
+  editorCancelButton: Locator;
+  editorSubmitButton: Locator;
+  assetChooseButton: Locator;
+  assetUploadButton: Locator;
+  transparencyPanel: Locator;
+  transparencySlider: Locator;
+  photoDescriptionTextarea: Locator;
+  canvas: Locator;
+  deletePhotoOverlayButton: Locator;
 
-  photoOverlayTab: Locator = this.page.getByTestId("tab-photoOverlaySettings");
-  featureInspectorTab: Locator = this.page.getByTestId("tab-featureInspector");
-  editPhotoOverlayButton: Locator = this.page.getByTestId(
-    "photooverlay-edit-btn"
-  );
-  editorPanel: Locator = this.page.getByTestId("photooverlay-editor-panel");
-  editorCancelButton: Locator = this.page.getByTestId(
-    "photooverlay-cancel-btn"
-  );
-  editorSubmitButton: Locator = this.page.getByTestId(
-    "photooverlay-submit-btn"
-  );
-  assetChooseButton: Locator = this.page.getByTestId("assetfield-choose-btn");
-  assetUploadButton: Locator = this.page.getByTestId("assetfield-upload-btn");
-  transparencyPanel: Locator = this.page.getByTestId(
-    "photooverlay-transparency-panel"
-  );
-  transparencySlider: Locator =
-    this.transparencyPanel.locator(".rc-slider-handle");
-  photoDescriptionTextarea: Locator = this.editorPanel.getByTestId(
-    "textareafield-input"
-  );
-  canvas: Locator = this.page.locator("canvas").first();
-  deletePhotoOverlayButton: Locator = this.page.getByTestId(
-    "photooverlay-delete-btn"
-  );
+  constructor(private page: Page) {
+    this.photoOverlayTab = this.page.getByTestId("tab-photoOverlaySettings");
+    this.featureInspectorTab = this.page.getByTestId("tab-featureInspector");
+    this.editPhotoOverlayButton = this.page.getByTestId(
+      "photooverlay-edit-btn"
+    );
+    this.editorPanel = this.page.getByTestId("photooverlay-editor-panel");
+    this.editorCancelButton = this.page.getByTestId(
+      "photooverlay-cancel-btn"
+    );
+    this.editorSubmitButton = this.page.getByTestId(
+      "photooverlay-submit-btn"
+    );
+    this.assetChooseButton = this.page.getByTestId("assetfield-choose-btn");
+    this.assetUploadButton = this.page.getByTestId("assetfield-upload-btn");
+    this.transparencyPanel = this.page.getByTestId(
+      "photooverlay-transparency-panel"
+    );
+    this.transparencySlider =
+      this.transparencyPanel.locator(".rc-slider-handle");
+    this.photoDescriptionTextarea = this.editorPanel.getByTestId(
+      "textareafield-input"
+    );
+    this.canvas = this.page.locator("canvas").first();
+    this.deletePhotoOverlayButton = this.page.getByTestId(
+      "photooverlay-delete-btn"
+    );
+  }
 
   async clickOnCanvas(x: number, y: number) {
     await this.canvas.waitFor({ state: "visible" });

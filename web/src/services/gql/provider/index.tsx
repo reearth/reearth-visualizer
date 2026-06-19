@@ -5,7 +5,8 @@ import {
   GQLTask,
   useAddApiTask,
   useRemoveApiTask,
-  useSetError
+  useSetError,
+  useUpdateLatestLogoutAt
 } from "@reearth/services/state";
 import { useCallback, type ReactNode } from "react";
 
@@ -13,7 +14,7 @@ import fragmentMatcher from "../__gen__/fragmentMatcher.json";
 
 import { authLink, sentryLink, errorLink, uploadLink, taskLink } from "./links";
 import langLink from "./links/langLink";
-import { paginationMerge } from "./pagination";
+import { paginationMerge, paginationMergeNodes } from "./pagination";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api
@@ -53,6 +54,14 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
             ],
             merge: paginationMerge
           },
+          starredProjects: {
+            keyArgs: ["workspaceId", "pagination", ["first", "last"]],
+            merge: paginationMergeNodes
+          },
+          deletedProjects: {
+            keyArgs: ["workspaceId", "pagination", ["first", "last"]],
+            merge: paginationMergeNodes
+          },
           datasetSchemas: {
             keyArgs: ["sceneId", "first", "after"],
             merge: paginationMerge
@@ -86,6 +95,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   // Call hooks at component level, then pass to link factories
   const { getAccessToken } = useAuth();
   const { setErrors } = useSetError();
+  const updateLatestLogoutAt = useUpdateLatestLogoutAt();
 
   const client = new ApolloClient({
     link: ApolloLink.from([
@@ -95,7 +105,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       authLink(getAccessToken),
       langLink(),
       // https://github.com/apollographql/apollo-client/issues/6011#issuecomment-619468320
-      uploadLink(endpoint) as unknown as ApolloLink
+      uploadLink(endpoint, updateLatestLogoutAt) as unknown as ApolloLink
     ]),
     cache,
     defaultOptions: {

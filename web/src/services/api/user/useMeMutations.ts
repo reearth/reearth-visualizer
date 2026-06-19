@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client/react";
-import { UPDATE_ME } from "@reearth/services/gql/queries/user";
+import { LOGOUT, UPDATE_ME } from "@reearth/services/gql/queries/user";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback } from "react";
 
@@ -64,8 +64,18 @@ export const useMeMutations = () => {
     [updateMeMutation, t, setNotification]
   );
 
+  const [logoutMutation] = useMutation(LOGOUT);
+  const logoutFromAccount = useCallback(async () => {
+    try {
+      await logoutMutation();
+    } catch {
+      // Best-effort: don't block logout if mutation fails
+    }
+  }, [logoutMutation]);
+
   return {
     updatePassword,
-    updateLanguage
+    updateLanguage,
+    logoutFromAccount
   };
 };

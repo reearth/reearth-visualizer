@@ -39,62 +39,39 @@ Visualizer is a powerful tool for visualizing GIS data, offering a range of feat
 
 # Getting Started
 
-### Setup Server and Database
+### Start Backend Services
 
 Before you begin, please ensure that **Docker** is properly installed and running on your machine.
 
-### 🖥️ macOS / Linux
+> **Windows users**: Please use [WSL (Windows Subsystem for Linux)](https://learn.microsoft.com/en-us/windows/wsl/install) for development. All commands below work within WSL.
 
-1. Navigate to the `server` directory and start the backend server.  
-   This command will automatically start the database and mock GCS storage:
+1. Clone the repository:
 
    ```bash
-   cd server
-   make run
+   git clone https://github.com/reearth/reearth-visualizer.git
+   cd reearth-visualizer/server
    ```
 
-2. Initialize the development environment.  
-   This creates a mock user and sets up the mock GCS bucket.  
+2. Start the backend server.
+   This command will automatically start the database, mock GCS storage, and create `.env` files if they don't exist:
+
+   ```bash
+   make d-run
+   ```
+
+3. Initialize the development environment.
+   This creates a mock user and sets up the mock GCS bucket.
    This step is only required for the first-time setup:
 
    ```bash
-   make init
+   make setup-dev
    ```
 
-### <img src="https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/16x16/WIN.png" /> Windows (PowerShell)
-
-1. Open PowerShell and navigate to the `server` directory:
-
-   ```powershell
-   cd server
-   ```
-
-2. Set an alias to use `dv` as a shortcut for `make`:
-
-   ```powershell
-   Set-Alias dv .\dev.bat
-   ```
-
-3. Start the backend server.  
-   This will automatically start the database and mock GCS storage:
-
-   ```powershell
-   dv run
-   ```
-
-4. Initialize the development environment.  
-   This creates a mock user and sets up the mock GCS bucket.  
-   This step is only required for the first-time setup:
-
-   ```powershell
-   dv init
-   ```
+> For more details on backend development commands, see [server/README.md](server/README.md).
 
 ---
 
-## Setup Web
-
-### 🖥️ macOS / Linux
+## Start Frontend Service
 
 1. Navigate to the `web` directory of your visualizer project and create a local `.env` file:
 
@@ -113,43 +90,13 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    REEARTH_WEB_AUTH_PROVIDER=mock
    ```
 
-   > To obtain a Cesium Ion Access Token, please follow  
+   > To obtain a Cesium Ion Access Token, please follow
    > [this official guide](https://cesium.com/learn/ion/cesium-ion-access-tokens/).
 
 3. Install dependencies and start the frontend server:
 
    ```bash
    yarn && yarn start
-   ```
-
-### <img src="https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/16x16/WIN.png" /> Windows (PowerShell)
-
-1. Open PowerShell and navigate to the `web` directory:
-
-   ```powershell
-   cd web
-   ```
-
-2. Create a new `.env` file:
-
-   ```powershell
-   New-Item .env -ItemType File
-   ```
-
-3. Add the following environment variables:
-
-   ```powershell
-   Add-Content .env "REEARTH_WEB_API=http://localhost:8080/api"
-   Add-Content .env "REEARTH_WEB_PLUGINS=http://localhost:8080/plugins"
-   Add-Content .env "REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN=your_cesium_ion_access_token_here"
-   Add-Content .env "REEARTH_WEB_AUTH_PROVIDER=mock"
-   ```
-
-4. Install dependencies and start the frontend server:
-
-   ```powershell
-   yarn
-   yarn start
    ```
 
 ---

@@ -47,6 +47,14 @@ export const GET_ME = gql(`
   }
 `);
 
+export const LOGOUT = gql(`
+  mutation Logout {
+    logout {
+      id
+    }
+  }
+`);
+
 export const UPDATE_ME = gql(`
   mutation UpdateMe(
     $name: String

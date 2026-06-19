@@ -1,0 +1,32 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: reearth-visualizer
+  namespace: reearth
+  description: 3D WebGIS visualization platform with storytelling, plugin marketplace,
+    and Cesium-based rendering
+  annotations:
+    github.com/project-slug: reearth/reearth-visualizer
+  links:
+  - url: https://github.com/reearth/reearth-visualizer
+    title: GitHub
+    icon: github
+  - url: https://reearth.io
+    title: Production
+    icon: web
+  - url: https://visualizer.developer.reearth.io
+    title: Developer Docs
+    icon: docs
+  - url: https://reearth.io/product/visualizer
+    title: Website
+    icon: web
+  tags:
+  - typescript
+  - go
+  - webgis
+  - cesium
+  - wasm
+spec:
+  type: service
+  lifecycle: production
+  owner: reearth/visualizer

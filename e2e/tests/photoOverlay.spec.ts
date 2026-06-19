@@ -9,6 +9,7 @@ import { PhotoOverlayPage } from "../pages/photoOverlayPage";
 import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { createIAPContext } from "../utils/iap-auth";
+import { deleteProjectByName } from "../utils/project-cleanup";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -17,7 +18,7 @@ if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing required variables.");
 }
 
-const projectName = faker.string.alpha(15);
+const projectName = "e2e-" + faker.string.alpha(15);
 const projectAlias = faker.string.alpha(20);
 const projectDescription = "Photo Overlay E2E Test";
 const layerName = faker.string.alpha(5);
@@ -76,6 +77,7 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test.afterAll(async () => {
+    await deleteProjectByName(page.request, projectName);
     await context.close();
   });
 

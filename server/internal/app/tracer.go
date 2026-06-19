@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearthx/log"
@@ -58,7 +59,10 @@ func detailedOperationTracer() graphql.OperationMiddleware {
 		res := next(ctx)
 
 		return func(ctx context.Context) *graphql.Response {
+			log.Infofc(ctx, "graphql: operation '%s' started", spanName)
+			start := time.Now()
 			response := res(ctx)
+			elapsed := time.Since(start).Milliseconds()
 
 			// Record errors
 			if response != nil && len(response.Errors) > 0 {
@@ -71,10 +75,10 @@ func detailedOperationTracer() graphql.OperationMiddleware {
 						span.SetAttributes(attribute.String("graphql.error."+string(rune(i)), err.Message))
 					}
 				}
-				log.Warnfc(ctx, "graphql: operation '%s' completed with %d errors", spanName, len(response.Errors))
+				log.Warnfc(ctx, "graphql: operation '%s' completed with %d errors in %dms", spanName, len(response.Errors), elapsed)
 			} else {
 				span.SetStatus(codes.Ok, "GraphQL operation completed successfully")
-				log.Infofc(ctx, "graphql: operation '%s' completed successfully", spanName)
+				log.Infofc(ctx, "graphql: operation '%s' completed successfully in %dms", spanName, elapsed)
 			}
 
 			return response

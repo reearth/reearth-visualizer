@@ -59,7 +59,26 @@ func (i *Plugin) pluginCommon() *pluginCommon {
 }
 
 func (i *Plugin) Fetch(ctx context.Context, ids []id.PluginID, operator *usecase.Operator) ([]*plugin.Plugin, error) {
-	return i.pluginRepo.FindByIDs(ctx, ids)
+	if operator == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+	res, err := i.pluginRepo.FindByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for idx, p := range res {
+		if p == nil {
+			continue
+		}
+		// Global/marketplace plugins (no scene) are public.
+		if p.Scene() == nil {
+			continue
+		}
+		if !operator.IsReadableScene(*p.Scene()) {
+			res[idx] = nil
+		}
+	}
+	return res, nil
 }
 
 func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter *zip.Writer) ([]*plugin.Plugin, []*property.Schema, error) {
@@ -78,8 +97,39 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 		return nil, nil, err
 	}
 
+	// Collect all unique schema IDs across every plugin extension, then fetch
+	// them in a single batch (SCA-05: previously one FindByID per extension).
+	seenIDs := make(map[id.PropertySchemaID]bool)
+	var schemaIDs []id.PropertySchemaID
+	for _, p := range plugins {
+		if p == nil {
+			continue
+		}
+		for _, ext := range p.Extensions() {
+			sid := ext.Schema()
+			if !seenIDs[sid] {
+				seenIDs[sid] = true
+				schemaIDs = append(schemaIDs, sid)
+			}
+		}
+	}
+
+	fetchedSchemas, err := i.propertySchemaRepo.FindByIDs(ctx, schemaIDs)
+	if err != nil {
+		return nil, nil, err
+	}
+	schemaByID := make(map[id.PropertySchemaID]*property.Schema, len(fetchedSchemas))
+	for _, s := range fetchedSchemas {
+		if s != nil {
+			schemaByID[s.ID()] = s
+		}
+	}
+
 	schemas := make([]*property.Schema, 0)
 	for _, p := range plugins {
+		if p == nil {
+			continue
+		}
 		for _, extension := range p.Extensions() {
 			extensionFileName := fmt.Sprintf("%s.js", extension.ID().String())
 
@@ -102,12 +152,7 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 				_ = stream.Close()
 			}
 
-			schema, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
-			if err != nil {
-				return nil, nil, err
-			}
-
-			schemas = append(schemas, schema)
+			schemas = append(schemas, schemaByID[extension.Schema()])
 		}
 	}
 
@@ -272,14 +317,17 @@ func (i *Plugin) uploadPluginFile(ctx context.Context, plugins map[string]*zip.F
 	return nil
 }
 
-func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaField {
+func parsePropertySchemaField(fieldMap map[string]interface{}) (*property.SchemaField, error) {
 
 	// SchemaFieldChoice -------------
 	chs := make([]property.SchemaFieldChoice, 0)
 	if choices, ok := fieldMap["choices"].([]interface{}); ok {
 
 		for _, choice := range choices {
-			choiceMap := choice.(map[string]interface{})
+			choiceMap, ok := choice.(map[string]interface{})
+			if !ok {
+				return nil, fmt.Errorf("parsePropertySchemaField: unexpected choice entry type %T", choice)
+			}
 
 			chBuilder := property.NewSchemaFieldChoice()
 			if v, ok := choiceMap["key"].(string); ok {
@@ -292,10 +340,17 @@ func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaF
 				chBuilder = chBuilder.Icon(v)
 			}
 
-			chs = append(chs, *chBuilder.MustBuild())
+			ch, err := chBuilder.Build()
+			if err != nil {
+				return nil, fmt.Errorf("parsePropertySchemaField: failed to build choice: %w", err)
+			}
+			chs = append(chs, *ch)
 		}
 	}
-	fieldId := fieldMap["fieldId"].(string)
+	fieldId, ok := fieldMap["fieldId"].(string)
+	if !ok {
+		return nil, fmt.Errorf("parsePropertySchemaField: missing or invalid fieldId")
+	}
 	fid := id.PropertyFieldIDFromRef(&fieldId)
 	fiBuilder := property.NewSchemaField().ID(*fid)
 	if len(chs) > 0 {
@@ -305,7 +360,7 @@ func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaF
 	if v, ok := fieldMap["type"].(string); ok {
 		t := gqlmodel.ToPropertyValueType(v)
 		fiBuilder = fiBuilder.Type(t)
-		if dv, ok := fieldMap["defaultValue"]; ok {
+		if dv, ok := fieldMap["defaultValue"]; ok && dv != nil {
 			fiBuilder = fiBuilder.DefaultValue(property.ValueType(t).ValueFrom(dv))
 		}
 	}
@@ -322,8 +377,9 @@ func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaF
 		fiBuilder = fiBuilder.Suffix(v)
 	}
 	if v, ok := fieldMap["ui"].(string); ok {
-		ui := gqlmodel.FromPropertySchemaFieldUI(&v)
-		fiBuilder = fiBuilder.UI(*ui)
+		if ui := gqlmodel.FromPropertySchemaFieldUI(&v); ui != nil {
+			fiBuilder = fiBuilder.UI(*ui)
+		}
 	}
 	if v, ok := fieldMap["min"].(float64); ok {
 		fiBuilder = fiBuilder.Min(v)
@@ -334,7 +390,7 @@ func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaF
 	if v, ok := fieldMap["isAvailableIf"].(map[string]interface{}); ok {
 		fiBuilder = fiBuilder.IsAvailableIf(parseIsAvailableIf(v))
 	}
-	return fiBuilder.MustBuild()
+	return fiBuilder.Build()
 }
 
 func parseIsAvailableIf(conditionMap map[string]any) *property.Condition {
@@ -370,8 +426,17 @@ func parsePropertySchema(psid id.PropertySchemaID, schemaMap map[string]any) (*p
 		fil := make([]*property.SchemaField, 0)
 		if fields, ok := groupMap["fields"].([]any); ok {
 			for _, field := range fields {
-				fieldMap := field.(map[string]any)
-				fi := parsePropertySchemaField(fieldMap)
+				fieldMap, ok := field.(map[string]any)
+				if !ok {
+					return nil, fmt.Errorf("failed to parse schema field: unexpected field entry type %T", field)
+				}
+				schemaGroupID, _ := groupMap["schemaGroupId"].(string)
+				fieldID, _ := fieldMap["fieldId"].(string)
+				rawType, _ := fieldMap["type"].(string)
+				fi, err := parsePropertySchemaField(fieldMap)
+				if err != nil {
+					return nil, fmt.Errorf("failed to parse schema field (schemaGroupId=%q, fieldId=%q, type=%q): %w", schemaGroupID, fieldID, rawType, err)
+				}
 				fil = append(fil, fi)
 			}
 		}

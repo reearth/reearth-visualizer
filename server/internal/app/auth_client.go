@@ -60,7 +60,7 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			if u != nil {
 				ctx = adapter.AttachUser(ctx, u)
-				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+				log.Debugfc(ctx, "auth: user: id=%s", u.ID())
 
 				op, err := generateOperator(ctx, cfg, u)
 				if err != nil {
@@ -69,9 +69,10 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				ctx = adapter.AttachOperator(ctx, op)
 				log.Debugfc(ctx, "auth: op: %#v", op)
+				log.Infofc(ctx, "auth: request context (user_id=%s, path=%s)", u.ID(), c.Path())
 
 			} else {
-				log.Errorfc(ctx, "Demo User information not found: %s", req.URL.Path)
+				log.Errorfc(ctx, "Demo User information not found: %s", c.Path())
 			}
 
 			c.SetRequest(req.WithContext(ctx))
@@ -142,7 +143,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			if u != nil {
 				ctx = adapter.AttachUser(ctx, u)
-				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+				log.Debugfc(ctx, "auth: user: id=%s", u.ID())
 
 				op, err := generateOperator(ctx, cfg, u)
 				if err != nil {
@@ -151,9 +152,10 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				ctx = adapter.AttachOperator(ctx, op)
 				log.Debugfc(ctx, "auth: op: %#v", op)
+				log.Infofc(ctx, "auth: request context (user_id=%s, path=%s)", u.ID(), c.Path())
 
 			} else {
-				log.Errorfc(ctx, "User information not found: %s", req.URL.Path)
+				log.Errorfc(ctx, "User information not found: %s", c.Path())
 			}
 
 			c.SetRequest(req.WithContext(ctx))
@@ -195,15 +197,20 @@ func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *account
 		auths = append(auths, accountsUser.AuthFrom(authStr.String()))
 	}
 
-	u, err := accountsUser.New().
+	b := accountsUser.New().
 		ID(uId).
 		Name(userModel.Name()).
 		Alias(userModel.Alias()).
 		Email(userModel.Email()).
 		Metadata(usermetadata).
 		Workspace(wid).
-		Auths(auths).
-		Build()
+		Auths(auths)
+
+	if !userModel.LatestLogoutAt().IsZero() {
+		b = b.LatestLogoutAt(userModel.LatestLogoutAt())
+	}
+
+	u, err := b.Build()
 
 	if err != nil {
 		log.Errorfc(ctx, "accounts API: failed to build user: %v", err)
@@ -222,20 +229,18 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *accountsUser.Us
 
 	var workspaces accountsWorkspace.List
 	var err error
-	if cfg.AccountsAPIClient != nil {
+	// TODO: Internal API behavior has not been fully considered yet.
+	// Skip the accounts API when there is no JWT in context (e.g. Pub/Sub-triggered
+	// endpoints like /api/storage-event) and fall back to the local repo directly.
+	if cfg.AccountsAPIClient != nil && !cfg.Config.Visualizer.InternalApi.Active && adapter.JwtToken(ctx) != "" {
 		workspaces, err = cfg.AccountsAPIClient.WorkspaceRepo.FindByUser(ctx, uid.String())
-		if err != nil {
-			log.Warnfc(ctx, "auth: accounts API FindByUser failed, falling back to local repo: %v", err)
-			workspaces, err = cfg.Repos.Workspace.FindByUser(ctx, uid)
-			if err != nil {
-				return nil, err
-			}
-		}
 	} else {
 		workspaces, err = cfg.Repos.Workspace.FindByUser(ctx, uid)
-		if err != nil {
-			return nil, err
-		}
+	}
+
+	if err != nil {
+		log.Errorfc(ctx, "auth: failed to fetch workspaces: %v", err)
+		return nil, err
 	}
 
 	wsList := accountsWorkspace.List(workspaces)

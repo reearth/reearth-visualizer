@@ -47,6 +47,21 @@ func (r *mutationResolver) UpdateMe(ctx context.Context, input gqlmodel.UpdateMe
 	return &gqlmodel.UpdateMePayload{Me: gqlmodel.ToMe(u)}, nil
 }
 
+func (r *mutationResolver) Logout(ctx context.Context) (*gqlmodel.Me, error) {
+	userModel, err := r.AccountsAPIClient.UserRepo.Logout(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	u, err := buildAccountDomainUserFromAccountsUserModel(ctx, userModel)
+	if err != nil {
+		log.Errorfc(ctx, "failed to build user from accounts model: %v", err)
+		return nil, err
+	}
+
+	return gqlmodel.ToMe(u), nil
+}
+
 func buildAccountDomainUserFromAccountsUserModel(ctx context.Context, userModel *accountsUser.User) (*accountsUser.User, error) {
 	uId, _ := accountsUser.IDFrom(userModel.ID().String())
 	wid, _ := accountsWorkspace.IDFrom(userModel.Workspace().String())
@@ -65,15 +80,20 @@ func buildAccountDomainUserFromAccountsUserModel(ctx context.Context, userModel 
 		auths = append(auths, accountsUser.AuthFrom(authStr.String()))
 	}
 
-	u, err := accountsUser.New().
+	b := accountsUser.New().
 		ID(uId).
 		Name(userModel.Name()).
 		Alias(userModel.Alias()).
 		Email(userModel.Email()).
 		Metadata(usermetadata).
 		Workspace(wid).
-		Auths(auths).
-		Build()
+		Auths(auths)
+
+	if !userModel.LatestLogoutAt().IsZero() {
+		b = b.LatestLogoutAt(userModel.LatestLogoutAt())
+	}
+
+	u, err := b.Build()
 
 	if err != nil {
 		log.Errorfc(ctx, "failed to build user: %v", err)

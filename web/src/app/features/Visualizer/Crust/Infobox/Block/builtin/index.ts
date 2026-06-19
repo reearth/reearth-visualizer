@@ -6,10 +6,12 @@ import {
   TEXT_BUILTIN_INFOBOX_BLOCK_ID,
   PROPERTY_BUILTIN_INFOBOX_BLOCK_ID,
   VIDEO_BUILTIN_INFOBOX_BLOCK_ID,
-  MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID
+  MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID,
+  LINK_BUILTIN_INFOBOX_BLOCK_ID
 } from "../../constants";
 
 import ImageBlock from "./Image";
+import LinkBlock from "./Link";
 import MarkdownBlock from "./Markdown";
 import PropertyListBlock from "./PropertyList";
 import TextBlock from "./Text";
@@ -20,7 +22,8 @@ export type ReEarthBuiltinInfoboxBlocks<T = unknown> = Record<
   | typeof PROPERTY_BUILTIN_INFOBOX_BLOCK_ID
   | typeof IMAGE_BUILTIN_INFOBOX_BLOCK_ID
   | typeof VIDEO_BUILTIN_INFOBOX_BLOCK_ID
-  | typeof MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID,
+  | typeof MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID
+  | typeof LINK_BUILTIN_INFOBOX_BLOCK_ID,
   T
 >;
 
@@ -32,7 +35,8 @@ const reearthBuiltin: BuiltinInfoboxBlocks<Component> = {
   [TEXT_BUILTIN_INFOBOX_BLOCK_ID]: TextBlock,
   [PROPERTY_BUILTIN_INFOBOX_BLOCK_ID]: PropertyListBlock,
   [VIDEO_BUILTIN_INFOBOX_BLOCK_ID]: VideoBlock,
-  [MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID]: MarkdownBlock
+  [MARKDOWN_BUILTIN_INFOBOX_BLOCK_ID]: MarkdownBlock,
+  [LINK_BUILTIN_INFOBOX_BLOCK_ID]: LinkBlock
 };
 
 const builtin = merge({}, reearthBuiltin);

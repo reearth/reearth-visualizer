@@ -107,11 +107,12 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
           key={field.id}
           title={field.title}
           assetsTypes={assetTypes}
-          description={field.description}
           inputMethod={
             field.ui === "video" || field.ui === undefined ? "URL" : "asset"
           }
-          value={value as string}
+          value={(value as string) ?? ""}
+          description={field.description}
+          placeholder={field.placeholder}
           onChange={handleChange}
         />
       ) : field.type === "spacing" ? (

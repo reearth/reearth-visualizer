@@ -128,6 +128,8 @@ Switch workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log out: ログアウト
+Cesium Ion token not configured. Using fallback.: Cesium Ionトークンが設定されていません。フォールバックを使用します。
+Configure token: トークンを設定
 Desktop: デスクトップ
 Mobile: モバイル
 Page: ページ
@@ -162,12 +164,19 @@ Vector Tile: ベクトルタイル
 Data Source Manager: データソースマネージャー
 Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
   KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
+Please provide cesium ion access token on Main settings to use Cesium Ion.: Cesium Ionを使用するには、メイン設定でCesium Ionアクセストークンを提供してください。
+Re:Earth: Re:Earth
+Cesium Ion: Cesium Ion
+Provider: プロバイダー
+Re:Earth Buildings: Re:Earth Buildings
 Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
 Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
 URL: URL
 Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
+'Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルの不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
+'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルが存在する場合の不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 Inspector: インスペクター
 Layer: レイヤー
 Layer Name: レイヤー名
@@ -215,6 +224,7 @@ Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
+"Cesium Ion token not configured. Using fallback.\nClick to configure": Cesium Ionトークンが設定されていません。フォールバックを使用します。\nクリックして設定
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
@@ -346,7 +356,6 @@ Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 HTML Editor: HTML エディター
 Run Code: コードを実行
-This plugin does not have a valid reearth.yml file.: このプラグインには有効な reearth.yml ファイルがありません。
 No valid schema defined.: 有効なスキーマが定義されていません。
 Chiyoda 3D Tiles: 千代田区 3D Tiles
 Japanese Heritage Sites: 日本の遺産
@@ -359,6 +368,8 @@ Export Plugin: プラグインをエクスポート
 Share Plugin: プラグインを共有
 Shared: 共有
 No plugins: プラグインがありません
+Close: 閉じる
+This plugin is too large to share via URL. Please use the Export function to download the plugin and share the file directly.: このプラグインはURLで共有するには大きすぎます。エクスポート機能を使用してプラグインをダウンロードし、ファイルを直接共有してください。
 Custom: カスタム
 User Interface: ユーザーインターフェース
 Data: データ
@@ -514,6 +525,12 @@ aria-label-zoom-out: ズームアウト
 Street View: ストリートビュー
 Select a location on the map to view Street View: 地図上の場所を選択してストリートビューを表示
 Please provide the API key: APIキーを入力してください
+1sec/sec: 1秒/秒
+0.5min/sec: 0.5分/秒
+1min/sec: 1分/秒
+0.1hr/sec: 0.1時間/秒
+0.5hr/sec: 0.5時間/秒
+1hr/sec: 1時間/秒
 New Channel: 新しいチャンネル
 Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定

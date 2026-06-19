@@ -253,16 +253,17 @@ type ComplexityRoot struct {
 	}
 
 	Me struct {
-		Auths         func(childComplexity int) int
-		Email         func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Lang          func(childComplexity int) int
-		Metadata      func(childComplexity int) int
-		MyWorkspace   func(childComplexity int) int
-		MyWorkspaceID func(childComplexity int) int
-		Name          func(childComplexity int) int
-		Theme         func(childComplexity int) int
-		Workspaces    func(childComplexity int) int
+		Auths          func(childComplexity int) int
+		Email          func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Lang           func(childComplexity int) int
+		LatestLogoutAt func(childComplexity int) int
+		Metadata       func(childComplexity int) int
+		MyWorkspace    func(childComplexity int) int
+		MyWorkspaceID  func(childComplexity int) int
+		Name           func(childComplexity int) int
+		Theme          func(childComplexity int) int
+		Workspaces     func(childComplexity int) int
 	}
 
 	MergedProperty struct {
@@ -360,6 +361,7 @@ type ComplexityRoot struct {
 		DuplicateStyle            func(childComplexity int, input gqlmodel.DuplicateStyleInput) int
 		ExportProject             func(childComplexity int, input gqlmodel.ExportProjectInput) int
 		InstallPlugin             func(childComplexity int, input gqlmodel.InstallPluginInput) int
+		Logout                    func(childComplexity int) int
 		MoveNLSInfoboxBlock       func(childComplexity int, input gqlmodel.MoveNLSInfoboxBlockInput) int
 		MovePropertyItem          func(childComplexity int, input gqlmodel.MovePropertyItemInput) int
 		MoveStory                 func(childComplexity int, input gqlmodel.MoveStoryInput) int
@@ -712,7 +714,7 @@ type ComplexityRoot struct {
 		CheckProjectAlias    func(childComplexity int, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) int
 		CheckSceneAlias      func(childComplexity int, alias string, projectID *gqlmodel.ID) int
 		CheckStoryAlias      func(childComplexity int, alias string, storyID *gqlmodel.ID) int
-		DeletedProjects      func(childComplexity int, workspaceID gqlmodel.ID) int
+		DeletedProjects      func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination) int
 		Me                   func(childComplexity int) int
 		Node                 func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Nodes                func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
@@ -723,7 +725,7 @@ type ComplexityRoot struct {
 		PropertySchemas      func(childComplexity int, id []gqlmodel.ID) int
 		Scene                func(childComplexity int, projectID gqlmodel.ID) int
 		SearchUser           func(childComplexity int, nameOrEmail string) int
-		StarredProjects      func(childComplexity int, workspaceID gqlmodel.ID) int
+		StarredProjects      func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination) int
 		WorkspacePolicyCheck func(childComplexity int, input gqlmodel.PolicyCheckInput) int
 	}
 
@@ -1153,6 +1155,7 @@ type MutationResolver interface {
 	RemoveStyle(ctx context.Context, input gqlmodel.RemoveStyleInput) (*gqlmodel.RemoveStylePayload, error)
 	DuplicateStyle(ctx context.Context, input gqlmodel.DuplicateStyleInput) (*gqlmodel.DuplicateStylePayload, error)
 	UpdateMe(ctx context.Context, input gqlmodel.UpdateMeInput) (*gqlmodel.UpdateMePayload, error)
+	Logout(ctx context.Context) (*gqlmodel.Me, error)
 	AddWidget(ctx context.Context, input gqlmodel.AddWidgetInput) (*gqlmodel.AddWidgetPayload, error)
 	UpdateWidget(ctx context.Context, input gqlmodel.UpdateWidgetInput) (*gqlmodel.UpdateWidgetPayload, error)
 	UpdateWidgetAlignSystem(ctx context.Context, input gqlmodel.UpdateWidgetAlignSystemInput) (*gqlmodel.UpdateWidgetAlignSystemPayload, error)
@@ -1238,8 +1241,8 @@ type QueryResolver interface {
 	Projects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
 	CheckProjectAlias(ctx context.Context, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error)
 	CheckSceneAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.SceneAliasAvailability, error)
-	StarredProjects(ctx context.Context, workspaceID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
-	DeletedProjects(ctx context.Context, workspaceID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
+	StarredProjects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error)
+	DeletedProjects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
@@ -1822,6 +1825,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Me.Lang(childComplexity), true
+	case "Me.latestLogoutAt":
+		if e.complexity.Me.LatestLogoutAt == nil {
+			break
+		}
+
+		return e.complexity.Me.LatestLogoutAt(childComplexity), true
 	case "Me.metadata":
 		if e.complexity.Me.Metadata == nil {
 			break
@@ -2427,6 +2436,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.InstallPlugin(childComplexity, args["input"].(gqlmodel.InstallPluginInput)), true
+	case "Mutation.logout":
+		if e.complexity.Mutation.Logout == nil {
+			break
+		}
+
+		return e.complexity.Mutation.Logout(childComplexity), true
 	case "Mutation.moveNLSInfoboxBlock":
 		if e.complexity.Mutation.MoveNLSInfoboxBlock == nil {
 			break
@@ -4329,7 +4344,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.DeletedProjects(childComplexity, args["workspaceId"].(gqlmodel.ID)), true
+		return e.complexity.Query.DeletedProjects(childComplexity, args["workspaceId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination)), true
 	case "Query.me":
 		if e.complexity.Query.Me == nil {
 			break
@@ -4445,7 +4460,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.StarredProjects(childComplexity, args["workspaceId"].(gqlmodel.ID)), true
+		return e.complexity.Query.StarredProjects(childComplexity, args["workspaceId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination)), true
 	case "Query.workspacePolicyCheck":
 		if e.complexity.Query.WorkspacePolicyCheck == nil {
 			break
@@ -6653,8 +6668,8 @@ extend type Query {
     projectId: ID
   ): ProjectAliasAvailability!
   checkSceneAlias(alias: String!, projectId: ID): SceneAliasAvailability!
-  starredProjects(workspaceId: ID!): ProjectConnection!
-  deletedProjects(workspaceId: ID!): ProjectConnection!
+  starredProjects(workspaceId: ID!, pagination: Pagination): ProjectConnection!
+  deletedProjects(workspaceId: ID!, pagination: Pagination): ProjectConnection!
 }
 
 extend type Mutation {
@@ -7342,6 +7357,7 @@ type Me {
   lang: Lang!
   theme: Theme!
   metadata: UserMetadata
+  latestLogoutAt: DateTime
   myWorkspaceId: ID!
   auths: [String!]!
   workspaces: [Workspace!]!
@@ -7378,6 +7394,7 @@ extend type Query {
 
 extend type Mutation {
   updateMe(input: UpdateMeInput!): UpdateMePayload
+  logout: Me
 }
 `, BuiltIn: false},
 	{Name: "../../../gql/was.graphql", Input: `type WidgetAlignSystems {
@@ -8689,6 +8706,11 @@ func (ec *executionContext) field_Query_deletedProjects_args(ctx context.Context
 		return nil, err
 	}
 	args["workspaceId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "pagination", ec.unmarshalOPagination2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPagination)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg1
 	return args, nil
 }
 
@@ -8824,6 +8846,11 @@ func (ec *executionContext) field_Query_starredProjects_args(ctx context.Context
 		return nil, err
 	}
 	args["workspaceId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "pagination", ec.unmarshalOPagination2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPagination)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg1
 	return args, nil
 }
 
@@ -11969,6 +11996,35 @@ func (ec *executionContext) fieldContext_Me_metadata(_ context.Context, field gr
 				return ec.fieldContext_UserMetadata_photoURL(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserMetadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Me_latestLogoutAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Me_latestLogoutAt,
+		func(ctx context.Context) (any, error) {
+			return obj.LatestLogoutAt, nil
+		},
+		nil,
+		ec.marshalODateTime2ᚖtimeᚐTime,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Me_latestLogoutAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Me",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
 		},
 	}
 	return fc, nil
@@ -16589,6 +16645,59 @@ func (ec *executionContext) fieldContext_Mutation_updateMe(ctx context.Context, 
 	if fc.Args, err = ec.field_Mutation_updateMe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_logout(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_logout,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Mutation().Logout(ctx)
+		},
+		nil,
+		ec.marshalOMe2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐMe,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_logout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Me_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Me_name(ctx, field)
+			case "email":
+				return ec.fieldContext_Me_email(ctx, field)
+			case "lang":
+				return ec.fieldContext_Me_lang(ctx, field)
+			case "theme":
+				return ec.fieldContext_Me_theme(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Me_metadata(ctx, field)
+			case "latestLogoutAt":
+				return ec.fieldContext_Me_latestLogoutAt(ctx, field)
+			case "myWorkspaceId":
+				return ec.fieldContext_Me_myWorkspaceId(ctx, field)
+			case "auths":
+				return ec.fieldContext_Me_auths(ctx, field)
+			case "workspaces":
+				return ec.fieldContext_Me_workspaces(ctx, field)
+			case "myWorkspace":
+				return ec.fieldContext_Me_myWorkspace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Me", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -25039,7 +25148,7 @@ func (ec *executionContext) _Query_starredProjects(ctx context.Context, field gr
 		ec.fieldContext_Query_starredProjects,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().StarredProjects(ctx, fc.Args["workspaceId"].(gqlmodel.ID))
+			return ec.resolvers.Query().StarredProjects(ctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination))
 		},
 		nil,
 		ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection,
@@ -25090,7 +25199,7 @@ func (ec *executionContext) _Query_deletedProjects(ctx context.Context, field gr
 		ec.fieldContext_Query_deletedProjects,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().DeletedProjects(ctx, fc.Args["workspaceId"].(gqlmodel.ID))
+			return ec.resolvers.Query().DeletedProjects(ctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination))
 		},
 		nil,
 		ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection,
@@ -25389,6 +25498,8 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_Me_theme(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Me_metadata(ctx, field)
+			case "latestLogoutAt":
+				return ec.fieldContext_Me_latestLogoutAt(ctx, field)
 			case "myWorkspaceId":
 				return ec.fieldContext_Me_myWorkspaceId(ctx, field)
 			case "auths":
@@ -30058,6 +30169,8 @@ func (ec *executionContext) fieldContext_UpdateMePayload_me(_ context.Context, f
 				return ec.fieldContext_Me_theme(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Me_metadata(ctx, field)
+			case "latestLogoutAt":
+				return ec.fieldContext_Me_latestLogoutAt(ctx, field)
 			case "myWorkspaceId":
 				return ec.fieldContext_Me_myWorkspaceId(ctx, field)
 			case "auths":
@@ -38990,6 +39103,8 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 			}
 		case "metadata":
 			out.Values[i] = ec._Me_metadata(ctx, field, obj)
+		case "latestLogoutAt":
+			out.Values[i] = ec._Me_latestLogoutAt(ctx, field, obj)
 		case "myWorkspaceId":
 			out.Values[i] = ec._Me_myWorkspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -40198,6 +40313,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateMe":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateMe(ctx, field)
+			})
+		case "logout":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_logout(ctx, field)
 			})
 		case "addWidget":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {

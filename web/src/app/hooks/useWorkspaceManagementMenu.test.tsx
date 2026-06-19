@@ -24,7 +24,8 @@ vi.mock("react-router", () => ({
 }));
 
 vi.mock("@reearth/services/state", () => ({
-  useAddWorkspaceModal: vi.fn()
+  useAddWorkspaceModal: vi.fn(),
+  useLatestLogoutAt: () => [null, vi.fn()]
 }));
 
 vi.mock("@reearth/services/config/appFeatureConfig", () => ({

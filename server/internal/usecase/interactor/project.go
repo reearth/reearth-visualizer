@@ -85,10 +85,19 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 
 // GetProject invoked by loader
 func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Operator) ([]*project.Project, error) {
+	if op == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
 
 	projects, err := i.projectRepo.FindByIDs(ctx, ids)
 	if err != nil {
 		return []*project.Project{}, err
+	}
+
+	for idx, p := range projects {
+		if p != nil && !op.IsReadableWorkspace(p.Workspace()) {
+			projects[idx] = nil
+		}
 	}
 
 	projects, err = i.addMetadatas(ctx, projects, false, op)
@@ -138,10 +147,15 @@ func (i *Project) addMetadatas(ctx context.Context, projects []*project.Project,
 	}
 
 	// projects with a FAILED status will be deleted and excluded.
-	excludedProjects := make([]*project.Project, 0)
+	excludedProjects := make([]*project.Project, 0, len(projects))
 	for _, p := range projects {
+		if p == nil {
+			excludedProjects = append(excludedProjects, nil)
+			continue
+		}
 		metadata := matchMetadata(p.ID(), metadatas)
 		if metadata == nil {
+			excludedProjects = append(excludedProjects, p)
 			continue
 		}
 		if *metadata.ImportStatus() == project.ProjectImportStatusFailed {
@@ -168,12 +182,12 @@ func matchMetadata(pid id.ProjectID, metadatas []*project.ProjectMetadata) *proj
 	return nil
 }
 
-func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
-	return i.projectRepo.FindStarredByWorkspace(ctx, id)
+func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.WorkspaceID, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+	return i.projectRepo.FindStarredByWorkspace(ctx, id, p)
 }
 
-func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
-	return i.projectRepo.FindDeletedByWorkspace(ctx, id)
+func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+	return i.projectRepo.FindDeletedByWorkspace(ctx, id, p)
 }
 
 func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
@@ -210,17 +224,17 @@ func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator 
 	return pj, nil
 }
 
-func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, excludeDeleted bool, operator *usecase.Operator) (*project.Project, error) {
 	ws, err := i.workspaceRepo.FindByAlias(ctx, workspaceAlias)
 	if err != nil {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
 	}
 
-	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)
+	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, excludeDeleted, operator)
 }
 
-func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountsID.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
-	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias)
+func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountsID.WorkspaceID, projectAlias string, excludeDeleted bool, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias, excludeDeleted)
 	if err != nil {
 		return nil, err
 	}
@@ -787,19 +801,8 @@ func (i *Project) CheckSceneAlias(ctx context.Context, newAlias string, pid *id.
 	return true, nil
 }
 
-func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, op *usecase.Operator) (_ *project.Project, err error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
+func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, op *usecase.Operator) (*project.Project, error) {
+	// Phase 1: reads + validation — no transaction held during this work.
 	prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, &params.ID)
 	if err != nil {
 		return nil, err
@@ -832,27 +835,19 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		}
 		// if anything is set, do nothing
 	} else {
-
 		newAlias := strings.ToLower(*params.Alias)
 
 		if newAlias == dedicatedID1 || newAlias == dedicatedID2 || prevAlias == newAlias {
-
 			// allow self sceneId or current alias
-
 		} else {
-
 			// story prefix check
 			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixStory); found {
-				// error 's-' prefix
 				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 			}
-
 			// scene prefix check
 			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixScene); found {
-				// error 'c-' prefix
 				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 			}
-
 			if err := alias.CheckAliasPatternScene(newAlias); err != nil {
 				return nil, err
 			}
@@ -869,7 +864,9 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	prj.UpdatePublishmentStatus(params.Status)
 
-	// publish
+	// Phase 2: GCS upload outside the transaction. Previously this ran inside
+	// the transaction and held document locks for the entire upload duration,
+	// causing MongoDB WriteConflict when concurrent publish calls overlapped.
 	if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
 		if err := i.uploadPublishScene(ctx, prj, sc, op); err != nil {
 			return nil, err
@@ -877,25 +874,26 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		prj.SetPublishedAt(time.Now())
 	}
 
-	// unpublish
+	// Phase 3: short transaction containing only the two DB saves, with retry
+	// on TransientTransactionError. Each attempt gets a fresh session.
+	sc.UpdateAlias(prj.Alias())
+	if err := runWithTxRetry(ctx, i.transaction, 3, func(txCtx context.Context) error {
+		if err := i.projectRepo.Save(txCtx, prj); err != nil {
+			return err
+		}
+		return i.sceneRepo.Save(txCtx, sc)
+	}); err != nil {
+		return nil, err
+	}
+
+	// Phase 4: GCS cleanup after the commit. A stale file at the old alias is
+	// harmless if this fails, so we log and continue rather than returning an error.
 	if prj.PublishmentStatus() == project.PublishmentStatusPrivate || prevAlias != prj.Alias() {
-		// always delete previous aliase
-		if err = i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
-			return prj, err
+		if err := i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
+			log.Warnfc(ctx, "failed to remove old built scene %q: %v", prevAlias, err)
 		}
 	}
 
-	if err := i.projectRepo.Save(ctx, prj); err != nil {
-		return nil, err
-	}
-
-	sc.UpdateAlias(prj.Alias())
-
-	if err := i.sceneRepo.Save(ctx, sc); err != nil {
-		return nil, err
-	}
-
-	tx.Commit()
 	return prj, nil
 }
 
@@ -1190,6 +1188,9 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 	}
 
 	var input = jsonmodel.ToProjectExportDataFromJSON(projectData)
+	if input == nil {
+		return nil, errors.New("project data parse error")
+	}
 
 	alias := ""
 	archived := false
@@ -1311,9 +1312,9 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		return
 	}
 
-	txCtx := tx.Context()
+	ctx = tx.Context()
 	defer func() {
-		if err2 := tx.End(txCtx); err == nil && err2 != nil {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
 			err = err2
 		}
 	}()
@@ -1420,7 +1421,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		return nil, err
 	}
 
-	err = i.projectRepo.Save(txCtx, proj)
+	err = i.projectRepo.Save(ctx, proj)
 	if err != nil {
 		return nil, err
 	}

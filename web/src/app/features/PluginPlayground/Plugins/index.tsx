@@ -1,4 +1,4 @@
-import { Collapse, Typography, IconButton } from "@reearth/app/lib/reearth-ui";
+import { Collapse, Typography, IconButton, Modal, ModalPanel, Button } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
@@ -13,6 +13,8 @@ import usePlugins from "./usePlugins";
 type UsePluginsReturn = Pick<
   ReturnType<typeof usePlugins>,
   | "encodeAndSharePlugin"
+  | "showShareLimitModal"
+  | "closeShareLimitModal"
   | "presetPlugins"
   | "selectPlugin"
   | "selectedPlugin"
@@ -30,6 +32,8 @@ type Props = UsePluginsReturn;
 
 const Plugins: FC<Props> = ({
   encodeAndSharePlugin,
+  showShareLimitModal,
+  closeShareLimitModal,
   presetPlugins,
   selectedPlugin,
   selectPlugin,
@@ -208,6 +212,37 @@ const Plugins: FC<Props> = ({
           </FileSubList>
         </FileList>
       </PluginBrowser>
+      <Modal visible={showShareLimitModal} size="small">
+        <ModalPanel
+          title={t("Export Plugin")}
+          onCancel={closeShareLimitModal}
+          actions={
+            <>
+              <Button
+                appearance="secondary"
+                title={t("Close")}
+                onClick={closeShareLimitModal}
+              />
+              <Button
+                appearance="primary"
+                title={t("Export Plugin")}
+                onClick={() => {
+                  closeShareLimitModal();
+                  handlePluginDownload();
+                }}
+              />
+            </>
+          }
+        >
+          <ModalContent>
+            <Typography size="body">
+              {t(
+                "This plugin is too large to share via URL. Please use the Export function to download the plugin and share the file directly."
+              )}
+            </Typography>
+          </ModalContent>
+        </ModalPanel>
+      </Modal>
     </Wrapper>
   );
 };
@@ -274,6 +309,10 @@ const FileSubList = styled("div")(({ theme }) => ({
 const EmptyTip = styled("div")(({ theme }) => ({
   padding: theme.spacing.smallest,
   paddingLeft: theme.spacing.small
+}));
+
+const ModalContent = styled("div")(({ theme }) => ({
+  padding: theme.spacing.large
 }));
 
 export default Plugins;

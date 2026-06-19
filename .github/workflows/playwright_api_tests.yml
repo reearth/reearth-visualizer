@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - "server/**"
+      - "server/**/*.go"
+      - "server/go.mod"
+      - "server/go.sum"
       - "e2e/api/**"
       - "e2e/playwright.config.ts"
       - "e2e/package.json"
@@ -22,7 +24,7 @@ jobs:
       id-token: write
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.56.1-noble
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
     environment: dev
     env:
       BUCKET: reearth-oss-visualizer-allure-reports
@@ -31,6 +33,10 @@ jobs:
         working-directory: e2e
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
       - name: Checkout code
         uses: actions/checkout@v6
 

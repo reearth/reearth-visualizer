@@ -2,12 +2,15 @@ import UploadHttpLink from "apollo-upload-client/UploadHttpLink.mjs";
 
 type RequestInitWithTimeout = RequestInit & { __timeout?: number };
 
-export default (endpoint: string) => {
+export default (
+  endpoint: string,
+  onLatestLogoutAt?: (timestamp: number) => void
+) => {
   return new UploadHttpLink({
     uri: endpoint,
     fetch: (input: RequestInfo | URL, init?: RequestInit) => {
       const timeout = (init as RequestInitWithTimeout)?.__timeout ?? 30000;
-      return fetchWithTimeout(input, init, Number(timeout));
+      return fetchWithTimeout(input, init, Number(timeout), onLatestLogoutAt);
     }
   });
 };
@@ -15,7 +18,8 @@ export default (endpoint: string) => {
 const fetchWithTimeout = (
   input: RequestInfo | URL,
   init: RequestInit = {},
-  timeout = 30000
+  timeout = 30000,
+  onLatestLogoutAt?: (timestamp: number) => void
 ): Promise<Response> => {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
@@ -23,5 +27,18 @@ const fetchWithTimeout = (
   return fetch(input, {
     ...init,
     signal: controller.signal
-  }).finally(() => clearTimeout(timer));
+  })
+    .then((response) => {
+      if (onLatestLogoutAt) {
+        const logoutAt = response.headers.get("X-Latest-Logout-At");
+        if (logoutAt) {
+          const timestamp = parseInt(logoutAt, 10);
+          if (!isNaN(timestamp)) {
+            onLatestLogoutAt(timestamp);
+          }
+        }
+      }
+      return response;
+    })
+    .finally(() => clearTimeout(timer));
 };
