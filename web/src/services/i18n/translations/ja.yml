@@ -104,10 +104,6 @@ A temporary system error: 一時的なシステムエラー
 Please check the issue and try importing again from the start.: 問題を確認し、最初からインポートを再試行してください。
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
-Change Visibility: 表示を変更する
-Confirm visibility: 表示を確認する
-Project Visibility: プロジェクトの公開範囲
-Private projects are only available on paid plans. Please upgrade your plan.: 非公開プロジェクトは有料プランでのみ利用可能です。プランをアップグレードしてください。
 Starred: スター付き
 Successfully imported project!: プロジェクトのインポートに成功しました！
 No Project in Recycle bin.: ゴミ箱にプロジェクトはありません。
@@ -448,6 +444,10 @@ This setting helps you control who can view and collaborate on your project. You
 Change visibility: 表示を変更する
 Remove this project: このプロジェクトを削除
 This process will move this project to Recycle bin.: この操作によりプロジェクトがゴミ箱に移動します。
+Change Visibility: 表示を変更する
+Confirm visibility: 表示を確認する
+Project Visibility: プロジェクトの公開範囲
+Please upgrade your plan to create a private project.: 非公開プロジェクトを作成するには、プランをアップグレードしてください。
 Preview: プレビュー
 Choose a template: テンプレートを選択してください
 Save License: ライセンスを保存

@@ -1,6 +1,6 @@
 import { IMAGE_TYPES } from "@reearth/app/features/AssetsManager/constants";
 import ProjectRemoveModal from "@reearth/app/features/Dashboard/ContentsContainer/Projects/ProjectRemoveModal";
-import ProjectVisibilityModal from "@reearth/app/features/Dashboard/ContentsContainer/Projects/ProjectVisibilityModal";
+import ProjectVisibilityModal from "@reearth/app/features/ProjectSettings/innerPages/GeneralSettings/ProjectVisibilityModal";
 import { Button, Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { InputField, AssetField, TextareaField } from "@reearth/app/ui/fields";
