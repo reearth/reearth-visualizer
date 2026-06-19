@@ -35,9 +35,15 @@ export default ({
 
   const engineMeta = useMemo(
     () => ({
-      cesiumIonAccessToken: config()?.cesiumIonAccessToken
+      cesiumIonAccessToken: undefined
     }),
     []
+  );
+
+  const isEE = useMemo(() => config()?.featureCollection === "ee", []);
+  const defaultTileType = useMemo(
+    () => (isEE ? "google_satellite" : "open_street_map"),
+    [isEE]
   );
 
   const viewerProperty: ViewerProperty = useMemo(
@@ -45,11 +51,11 @@ export default ({
       tiles: [
         {
           id: "default",
-          type: "default"
+          type: defaultTileType
         }
       ]
     }),
-    []
+    [defaultTileType]
   );
 
   useEffect(() => {

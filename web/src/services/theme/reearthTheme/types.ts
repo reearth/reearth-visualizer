@@ -49,6 +49,11 @@ export type Theme = Common & {
     weak: string;
     strong: string;
   };
+  success: {
+    main: string;
+    weak: string;
+    weakest: string;
+  };
   warning: {
     main: string;
     weak: string;

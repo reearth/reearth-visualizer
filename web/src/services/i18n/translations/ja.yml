@@ -104,10 +104,6 @@ A temporary system error: 一時的なシステムエラー
 Please check the issue and try importing again from the start.: 問題を確認し、最初からインポートを再試行してください。
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
-Change Visibility: 表示を変更する
-Confirm visibility: 表示を確認する
-Project Visibility: プロジェクトの公開範囲
-Private projects are only available on paid plans. Please upgrade your plan.: 非公開プロジェクトは有料プランでのみ利用可能です。プランをアップグレードしてください。
 Starred: スター付き
 Successfully imported project!: プロジェクトのインポートに成功しました！
 No Project in Recycle bin.: ゴミ箱にプロジェクトはありません。
@@ -128,6 +124,8 @@ Switch workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log out: ログアウト
+Cesium Ion token not configured. Using fallback.: Cesium Ionトークンが設定されていません。フォールバックを使用します。
+Configure token: トークンを設定
 Desktop: デスクトップ
 Mobile: モバイル
 Page: ページ
@@ -162,12 +160,19 @@ Vector Tile: ベクトルタイル
 Data Source Manager: データソースマネージャー
 Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
   KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
+Please provide cesium ion access token on Main settings to use Cesium Ion.: Cesium Ionを使用するには、メイン設定でCesium Ionアクセストークンを提供してください。
+Re:Earth: Re:Earth
+Cesium Ion: Cesium Ion
+Provider: プロバイダー
+Re:Earth Buildings: Re:Earth Buildings
 Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
 Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
 URL: URL
 Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
+'Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルの不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
+'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルが存在する場合の不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 Inspector: インスペクター
 Layer: レイヤー
 Layer Name: レイヤー名
@@ -215,6 +220,7 @@ Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
+"Cesium Ion token not configured. Using fallback.\nClick to configure": Cesium Ionトークンが設定されていません。フォールバックを使用します。\nクリックして設定
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
@@ -438,6 +444,10 @@ This setting helps you control who can view and collaborate on your project. You
 Change visibility: 表示を変更する
 Remove this project: このプロジェクトを削除
 This process will move this project to Recycle bin.: この操作によりプロジェクトがゴミ箱に移動します。
+Change Visibility: 表示を変更する
+Confirm visibility: 表示を確認する
+Project Visibility: プロジェクトの公開範囲
+Please upgrade your plan to create a private project.: 非公開プロジェクトを作成するには、プランをアップグレードしてください。
 Preview: プレビュー
 Choose a template: テンプレートを選択してください
 Save License: ライセンスを保存
@@ -515,6 +525,12 @@ aria-label-zoom-out: ズームアウト
 Street View: ストリートビュー
 Select a location on the map to view Street View: 地図上の場所を選択してストリートビューを表示
 Please provide the API key: APIキーを入力してください
+1sec/sec: 1秒/秒
+0.5min/sec: 0.5分/秒
+1min/sec: 1分/秒
+0.1hr/sec: 0.1時間/秒
+0.5hr/sec: 0.5時間/秒
+1hr/sec: 1時間/秒
 New Channel: 新しいチャンネル
 Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定

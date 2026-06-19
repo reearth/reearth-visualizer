@@ -2,6 +2,7 @@
 
 import AddFile from "./Icons/AddFile.svg?react";
 import AddStyle from "./Icons/AddStyle.svg?react";
+import AlertCircle from "./Icons/AlertCircle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
 import ArrowCounterClockWise from "./Icons/ArrowCounterClockWise.svg?react";
 import ArrowLeftRight from "./Icons/ArrowLeftRight.svg?react";
@@ -29,6 +30,7 @@ import CaretRight from "./Icons/CaretRight.svg?react";
 import CaretUp from "./Icons/CaretUp.svg?react";
 import Check from "./Icons/Check.svg?react";
 import Checked from "./Icons/Checked.svg?react";
+import CheckmarkCircle from "./Icons/CheckmarkCircle.svg?react";
 import Circle from "./Icons/Circle.svg?react";
 import CirclesThreePlus from "./Icons/CirclesThreePlus.svg?react";
 import ClipBoard from "./Icons/ClipBoard.svg?react";
@@ -87,6 +89,7 @@ import Image from "./Icons/Image.svg?react";
 import ImageFilled from "./Icons/ImageFilled.svg?react";
 import ImageSquare from "./Icons/ImageSquare.svg?react";
 import Import from "./Icons/Import.svg?react";
+import InformationCircle from "./Icons/InformationCircle.svg?react";
 import Install from "./Icons/Install.svg?react";
 import LayerFilled from "./Icons/LayerFilled.svg?react";
 import Layers from "./Icons/Layers.svg?react";
@@ -201,11 +204,13 @@ import UsersFour from "./Icons/UsersFour.svg?react";
 import VideoCamers from "./Icons/Video_Camera.svg?react";
 import VideoFilled from "./Icons/VideoFilled.svg?react";
 import Warning from "./Icons/Warning.svg?react";
+import WarningFilled from "./Icons/WarningFilled.svg?react";
 import ZToA from "./Icons/ZToA.svg?react";
 
 export default {
   addFile: AddFile,
   addStyle: AddStyle,
+  alertCircle: AlertCircle,
   appearance: Appearance,
   arrowCounterClockWise: ArrowCounterClockWise,
   arrowLeftRight: ArrowLeftRight,
@@ -233,6 +238,7 @@ export default {
   caretUp: CaretUp,
   check: Check,
   checked: Checked,
+  checkmarkCircle: CheckmarkCircle,
   circle: Circle,
   circlesThreePlus: CirclesThreePlus,
   clipBoard: ClipBoard,
@@ -291,6 +297,7 @@ export default {
   imageFilled: ImageFilled,
   imageSquare: ImageSquare,
   import: Import,
+  informationCircle: InformationCircle,
   install: Install,
   layers: Layers,
   layerFilled: LayerFilled,
@@ -405,5 +412,6 @@ export default {
   videoFilled: VideoFilled,
   videoCamera: VideoCamers,
   warning: Warning,
+  warningFilled: WarningFilled,
   zToA: ZToA
 };

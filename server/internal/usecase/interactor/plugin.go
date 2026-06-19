@@ -59,7 +59,26 @@ func (i *Plugin) pluginCommon() *pluginCommon {
 }
 
 func (i *Plugin) Fetch(ctx context.Context, ids []id.PluginID, operator *usecase.Operator) ([]*plugin.Plugin, error) {
-	return i.pluginRepo.FindByIDs(ctx, ids)
+	if operator == nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+	res, err := i.pluginRepo.FindByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for idx, p := range res {
+		if p == nil {
+			continue
+		}
+		// Global/marketplace plugins (no scene) are public.
+		if p.Scene() == nil {
+			continue
+		}
+		if !operator.IsReadableScene(*p.Scene()) {
+			res[idx] = nil
+		}
+	}
+	return res, nil
 }
 
 func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter *zip.Writer) ([]*plugin.Plugin, []*property.Schema, error) {
@@ -78,8 +97,39 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 		return nil, nil, err
 	}
 
+	// Collect all unique schema IDs across every plugin extension, then fetch
+	// them in a single batch (SCA-05: previously one FindByID per extension).
+	seenIDs := make(map[id.PropertySchemaID]bool)
+	var schemaIDs []id.PropertySchemaID
+	for _, p := range plugins {
+		if p == nil {
+			continue
+		}
+		for _, ext := range p.Extensions() {
+			sid := ext.Schema()
+			if !seenIDs[sid] {
+				seenIDs[sid] = true
+				schemaIDs = append(schemaIDs, sid)
+			}
+		}
+	}
+
+	fetchedSchemas, err := i.propertySchemaRepo.FindByIDs(ctx, schemaIDs)
+	if err != nil {
+		return nil, nil, err
+	}
+	schemaByID := make(map[id.PropertySchemaID]*property.Schema, len(fetchedSchemas))
+	for _, s := range fetchedSchemas {
+		if s != nil {
+			schemaByID[s.ID()] = s
+		}
+	}
+
 	schemas := make([]*property.Schema, 0)
 	for _, p := range plugins {
+		if p == nil {
+			continue
+		}
 		for _, extension := range p.Extensions() {
 			extensionFileName := fmt.Sprintf("%s.js", extension.ID().String())
 
@@ -102,12 +152,7 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 				_ = stream.Close()
 			}
 
-			schema, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
-			if err != nil {
-				return nil, nil, err
-			}
-
-			schemas = append(schemas, schema)
+			schemas = append(schemas, schemaByID[extension.Schema()])
 		}
 	}
 

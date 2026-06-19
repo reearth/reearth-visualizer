@@ -17,6 +17,9 @@ import EditPanel from "./EditPanel";
 export type ZoomLevelFieldProps = CommonFieldProps & RangeSliderProps;
 const ZoomLevelField: FC<ZoomLevelFieldProps> = ({
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   value,
   disabled,
   title,
@@ -35,7 +38,12 @@ const ZoomLevelField: FC<ZoomLevelFieldProps> = ({
   }, [onChange]);
 
   return (
-    <CommonField title={title}>
+    <CommonField
+      title={title}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
+    >
       <InputWrapper>
         <TextInput
           value={

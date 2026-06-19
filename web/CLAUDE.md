@@ -1,5 +1,27 @@
 # Claude Development Guide for Re:Earth Visualizer Web
 
+> **📚 Comprehensive Documentation**: This file provides a quick overview. For detailed documentation organized by modules and concepts, see **[docs/README.md](docs/README.md)**.
+
+## Documentation Structure
+
+The project now has comprehensive modular documentation:
+
+- **[Getting Started](docs/guides/getting-started.md)** - Setup and first steps
+- **[Architecture](docs/architecture/)** - System architecture and design decisions
+- **[Modules](docs/modules/)** - Detailed module documentation (services, features, UI)
+- **[Concepts](docs/concepts/)** - Cross-cutting concerns and patterns
+- **[Guides](docs/guides/)** - How-to guides and workflows
+- **[Reference](docs/reference/)** - Commands, environment variables, coding standards
+
+### Key Documentation
+
+- **Configuration System**: [docs/modules/services/config.md](docs/modules/services/config.md)
+- **Commands Reference**: [docs/reference/commands.md](docs/reference/commands.md)
+- **Environment Variables**: [docs/reference/environment-variables.md](docs/reference/environment-variables.md)
+- **Code Conventions**: [docs/reference/code-conventions.md](docs/reference/code-conventions.md)
+- **1Password Setup**: [docs/setup/1password-setup.md](docs/setup/1password-setup.md)
+- **Custom Providers**: [docs/setup/custom-providers.md](docs/setup/custom-providers.md)
+
 ## Project Overview
 
 Re:Earth Visualizer is a web-based GIS (Geographic Information System) application built with React 18, TypeScript, and Vite. It provides geospatial data visualization capabilities with 3D mapping using Cesium.
@@ -37,6 +59,12 @@ Re:Earth Visualizer is a web-based GIS (Geographic Information System) applicati
 - `yarn gql` - Generate GraphQL types and operations
 - `yarn i18n` - Extract i18n strings for translation
 - `yarn coverage` - Run tests with coverage report
+
+### 1Password Integration (Optional)
+
+- `yarn start:op` - Start dev server with 1Password secrets (replaces `yarn start`)
+
+See [docs/1password-setup.md](docs/1password-setup.md) for setup guide.
 
 ## Project Structure
 
@@ -194,7 +222,8 @@ The `appFeature()` function provides access to runtime feature configuration. **
 
 ### Environment Setup
 
-1. Copy `env.example` to `.env` and configure environment variables
+1. Copy `.env.example` to `.env` and configure environment variables
+   - Or use 1Password CLI: create `.env.op` based on `.env.example` (see docs/1password-setup.md)
 2. Ensure Node.js >= 20.11.0 is installed
 3. Use Yarn 4.6.0 as the package manager
 

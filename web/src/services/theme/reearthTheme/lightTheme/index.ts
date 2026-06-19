@@ -1,4 +1,4 @@
-import { gray, blue, white, coolGray, red, yellow, rgba } from "@carbon/colors";
+import { gray, blue, white, coolGray, red, green, yellow, rgba } from "@carbon/colors";
 
 import commonTheme from "../common";
 import { brandBlue, brandRed } from "../common/colors";
@@ -50,6 +50,11 @@ const lightTheme: Theme = {
     main: red[60],
     weak: red[70],
     strong: brandRed.dark
+  },
+  success: {
+    main: green[50],
+    weak: green[70],
+    weakest: green[80]
   },
   warning: { main: yellow[30], weak: yellow[50], weakest: yellow[70] },
   relative: {

@@ -1,10 +1,10 @@
 import { TimelineCommitter } from "@reearth/core";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   TIMELINE_COMMITER,
-  TIMELINE_DEFAULT_TIMEZONE_OFFSET,
-  TIMELINE_PLAY_SPEED_OPTIONS
+  TIMELINE_DEFAULT_TIMEZONE_OFFSET
 } from "./constants";
 import useChannels from "./useChannels";
 import useIndicator from "./useIndicator";
@@ -13,6 +13,19 @@ import usePanel from "./usePanel";
 import { TimelineProps } from ".";
 
 export default ({ widget, context }: TimelineProps) => {
+  const t = useT();
+  const playSpeedOptions = useMemo(
+    () => [
+      { timeString: t("1sec/sec"), seconds: "1" },
+      { timeString: t("0.5min/sec"), seconds: "30" },
+      { timeString: t("1min/sec"), seconds: "60" },
+      { timeString: t("0.1hr/sec"), seconds: "360" },
+      { timeString: t("0.5hr/sec"), seconds: "1800" },
+      { timeString: t("1hr/sec"), seconds: "3600" }
+    ],
+    [t]
+  );
+
   const { channels, toggleChannelVisibility } = useChannels({ widget });
 
   const displayTimezoneOffset = useMemo(() => {
@@ -138,7 +151,7 @@ export default ({ widget, context }: TimelineProps) => {
     }
   }, [isLooping, setLoop, setNoLoop]);
 
-  const [speed, setSpeed] = useState(TIMELINE_PLAY_SPEED_OPTIONS[0].seconds);
+  const [speed, setSpeed] = useState(playSpeedOptions[0].seconds);
 
   const changeSpeed = useCallback(
     (speed: number) => {
@@ -270,6 +283,7 @@ export default ({ widget, context }: TimelineProps) => {
     isLooping,
     toggleLoop,
     speed,
-    handleSpeedChange
+    handleSpeedChange,
+    playSpeedOptions
   };
 };

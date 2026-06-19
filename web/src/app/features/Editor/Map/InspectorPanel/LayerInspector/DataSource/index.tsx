@@ -1,10 +1,13 @@
+import { useCesiumIonAccessToken } from "@reearth/app/features/Editor/atoms";
+import { CesiumIonAssetFallbackWarning } from "@reearth/app/features/Editor/common";
 import {
   LayerConfigUpdateProps,
   LayerNameUpdateProps
 } from "@reearth/app/features/Editor/hooks/useLayers";
 import { Collapse } from "@reearth/app/lib/reearth-ui";
-import { InputField, SwitchField } from "@reearth/app/ui/fields";
+import { InputField, SelectField, SwitchField } from "@reearth/app/ui/fields";
 import type { NLSLayer } from "@reearth/services/api/layer";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -25,6 +28,7 @@ const DataSource: FC<Props> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
+  const [cesiumIonAccessToken] = useCesiumIonAccessToken();
   const [localUrl, setLocalUrl] = useState(selectedLayer.config?.data?.url);
 
   useEffect(() => {
@@ -103,6 +107,50 @@ const DataSource: FC<Props> = ({
     [onLayerConfigUpdate, selectedLayer.config, selectedLayer.id]
   );
 
+  const isEE = useMemo(() => config()?.featureCollection === "ee", []);
+  const googlePhotorealisticProviderOptions = useMemo(() => {
+    const options = [];
+    if (isEE) {
+      options.push({
+        label: t("Re:Earth"),
+        value: "reearth" as const
+      });
+    }
+    options.push({
+      label: "Cesium Ion",
+      value: "cesium-ion" as const
+    });
+    return options;
+  }, [t, isEE]);
+
+  const handleGooglePhotorealisticProviderChange = useCallback(
+    (value: string | string[]) => {
+      const provider = Array.isArray(value) ? value[0] : value;
+
+      onLayerConfigUpdate?.({
+        layerId: selectedLayer.id,
+        config: {
+          data: {
+            ...selectedLayer.config.data,
+            provider
+          }
+        }
+      });
+    },
+    [onLayerConfigUpdate, selectedLayer.config, selectedLayer.id]
+  );
+
+  // Check if we should show Cesium Ion warning for google-photorealistic
+  const showGooglePhotorealisticWarning =
+    selectedLayer.config?.data?.type === "google-photorealistic" &&
+    selectedLayer.config?.data?.provider === "cesium-ion" &&
+    !cesiumIonAccessToken;
+
+  // Check if we should show Cesium Ion warning for osm-buildings
+  const showOsmBuildingsWarning =
+    selectedLayer.config?.data?.type === "osm-buildings" &&
+    !cesiumIonAccessToken;
+
   return (
     <Wrapper data-testid="data-source-wrapper">
       <Collapse
@@ -128,6 +176,18 @@ const DataSource: FC<Props> = ({
             disabled
             data-testid="data-source-format-input"
           />
+          {selectedLayer.config?.data?.type === "osm-buildings" && (
+            <ProviderWrapper>
+              <InputField
+                title={t("Provider")}
+                value="Cesium Ion"
+                appearance="present"
+                disabled
+                data-testid="data-source-osm-buildings-provider"
+              />
+              {showOsmBuildingsWarning && <CesiumIonAssetFallbackWarning />}
+            </ProviderWrapper>
+          )}
           {localUrl && (
             <ResourceUrl
               title={t("Resource URL")}
@@ -147,6 +207,22 @@ const DataSource: FC<Props> = ({
                 "When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer."
               )}
             />
+          )}
+          {selectedLayer.config?.data?.type === "google-photorealistic" && (
+            <ProviderWrapper>
+              <SelectField
+                title={t("Provider")}
+                options={googlePhotorealisticProviderOptions}
+                value={
+                  selectedLayer.config.data.provider ||
+                  (isEE ? "reearth" : "cesium-ion")
+                }
+                onChange={handleGooglePhotorealisticProviderChange}
+              />
+              {showGooglePhotorealisticWarning && (
+                <CesiumIonAssetFallbackWarning />
+              )}
+            </ProviderWrapper>
           )}
         </InputWrapper>
       </Collapse>
@@ -181,6 +257,12 @@ const InputWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large
+}));
+
+const ProviderWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small
 }));
 
 export default DataSource;

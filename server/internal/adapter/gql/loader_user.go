@@ -29,13 +29,20 @@ func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.
 	}
 
 	if c.client != nil {
-		users := make([]*gqlmodel.User, 0, len(uids))
-		for _, uid := range uids {
-			u, err := c.client.UserRepo.FindByID(ctx, uid.String())
-			if err != nil {
-				return nil, []error{err}
+		stringIDs := util.Map(uids, func(u accountsID.UserID) string { return u.String() })
+		res, err := c.client.UserRepo.FindByIDs(ctx, stringIDs)
+		if err != nil {
+			return nil, []error{err}
+		}
+		byID := make(map[string]*gqlmodel.User, len(res))
+		for _, u := range res {
+			if u != nil {
+				byID[u.ID().String()] = gqlmodel.ToUser(u)
 			}
-			users = append(users, gqlmodel.ToUser(u))
+		}
+		users := make([]*gqlmodel.User, len(uids))
+		for i, uid := range uids {
+			users[i] = byID[uid.String()]
 		}
 		return users, nil
 	}

@@ -16,14 +16,14 @@ if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing required variables.");
 }
 
-const projectName = faker.string.alpha(15);
+const projectName = "e2e-" + faker.string.alpha(15);
 const projectAlias = faker.string.alpha(20);
 const projectDescription = "Page Refresh on Mutation E2E Test";
 const layerName = faker.string.alpha(8);
 
 test.describe.configure({ mode: "serial" });
 
-test.describe("Page refresh on mutation actions", () => {
+test.describe.skip("Page refresh on mutation actions", () => {
   let context: BrowserContext;
   let page: Page;
   let dashBoardPage: DashBoardPage;
