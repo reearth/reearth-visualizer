@@ -1,0 +1,332 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-06-10T00:00:00.000Z",
+  "totalDocs": 13,
+  "categories": {
+    "uncategorized": [
+      "README.md"
+    ],
+    "architecture": [
+      "architecture/overview.md"
+    ],
+    "concept": [
+      "concepts/feature-flags.md",
+      "concepts/schema-driven-field-rendering.md",
+      "concepts/tiles-migration.md",
+      "concepts/layers-migration.md"
+    ],
+    "guide": [
+      "guides/getting-started.md"
+    ],
+    "module": [
+      "modules/services/config.md"
+    ],
+    "reference": [
+      "reference/code-conventions.md",
+      "reference/commands.md",
+      "reference/environment-variables.md"
+    ],
+    "setup": [
+      "setup/1password-setup.md",
+      "setup/custom-providers.md"
+    ]
+  },
+  "modules": {
+    "services/config": {
+      "path": "modules/services/config.md",
+      "title": "Configuration System",
+      "tags": [
+        "configuration",
+        "feature-flags",
+        "services"
+      ],
+      "related": [
+        "../../concepts/feature-flags.md",
+        "../../setup/custom-providers.md",
+        "../../reference/environment-variables.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    }
+  },
+  "features": {},
+  "concepts": {
+    "feature-flags": {
+      "path": "concepts/feature-flags.md",
+      "title": "Feature Flags",
+      "tags": [
+        "feature-flags",
+        "configuration",
+        "runtime-config"
+      ],
+      "related": [
+        "../modules/services/config.md",
+        "../setup/custom-providers.md",
+        "../reference/environment-variables.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "schema-driven-field-rendering": {
+      "path": "concepts/schema-driven-field-rendering.md",
+      "title": "Schema-Driven Field Rendering",
+      "tags": [
+        "ui",
+        "property",
+        "schema",
+        "forms",
+        "rendering"
+      ],
+      "related": [
+        "\"../modules/ui/components.md\"",
+        "\"./feature-flags.md\""
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "tiles-migration": {
+      "path": "concepts/tiles-migration.md",
+      "title": "Tiles Migration and Fallback",
+      "tags": [
+        "tiles",
+        "terrain",
+        "migration",
+        "fallback",
+        "cesium",
+        "google-maps"
+      ],
+      "related": [
+        "../modules/features/visualizer.md",
+        "../setup/custom-providers.md",
+        "./feature-flags.md"
+      ],
+      "lastUpdated": "2026-06-10"
+    },
+    "layers-migration": {
+      "path": "concepts/layers-migration.md",
+      "title": "Layers Migration and Fallback",
+      "tags": [
+        "layers",
+        "migration",
+        "fallback",
+        "cesium",
+        "osm-buildings",
+        "google-photorealistic"
+      ],
+      "related": [
+        "./tiles-migration.md",
+        "../modules/features/visualizer.md",
+        "../setup/custom-providers.md"
+      ],
+      "lastUpdated": "2026-06-10"
+    }
+  },
+  "guides": {
+    "getting-started": {
+      "path": "guides/getting-started.md",
+      "title": "Getting Started with Re:Earth Visualizer Web",
+      "tags": [
+        "setup",
+        "getting-started",
+        "development"
+      ],
+      "related": [
+        "../reference/commands.md",
+        "../reference/environment-variables.md",
+        "../setup/1password-setup.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    }
+  },
+  "setup": {
+    "1password-setup": {
+      "path": "setup/1password-setup.md",
+      "title": "1Password CLI Setup Guide",
+      "tags": [
+        "1password",
+        "security",
+        "environment",
+        "secrets"
+      ],
+      "related": [
+        "../reference/environment-variables.md",
+        "../guides/getting-started.md",
+        "./local-development.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "custom-providers": {
+      "path": "setup/custom-providers.md",
+      "title": "Custom Providers Configuration",
+      "tags": [
+        "configuration",
+        "providers",
+        "tiles",
+        "terrain",
+        "cesium"
+      ],
+      "related": [
+        "../modules/services/config.md",
+        "../concepts/3d-rendering.md",
+        "../reference/environment-variables.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    }
+  },
+  "reference": {
+    "code-conventions": {
+      "path": "reference/code-conventions.md",
+      "title": "Code Conventions and Standards",
+      "tags": [
+        "coding-standards",
+        "style-guide",
+        "best-practices"
+      ],
+      "related": [
+        "../guides/adding-features.md",
+        "./commands.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "commands": {
+      "path": "reference/commands.md",
+      "title": "Development Commands Reference",
+      "tags": [
+        "cli",
+        "commands",
+        "development"
+      ],
+      "related": [
+        "../guides/getting-started.md",
+        "../setup/1password-setup.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    },
+    "environment-variables": {
+      "path": "reference/environment-variables.md",
+      "title": "Environment Variables Reference",
+      "tags": [
+        "configuration",
+        "environment",
+        "setup"
+      ],
+      "related": [
+        "../setup/1password-setup.md",
+        "../setup/custom-providers.md",
+        "../modules/services/config.md"
+      ],
+      "lastUpdated": "2026-06-04"
+    }
+  },
+  "tags": {
+    "architecture": [
+      "architecture/overview.md"
+    ],
+    "system-design": [
+      "architecture/overview.md"
+    ],
+    "overview": [
+      "architecture/overview.md"
+    ],
+    "feature-flags": [
+      "concepts/feature-flags.md",
+      "modules/services/config.md"
+    ],
+    "configuration": [
+      "concepts/feature-flags.md",
+      "modules/services/config.md",
+      "reference/environment-variables.md",
+      "setup/custom-providers.md"
+    ],
+    "runtime-config": [
+      "concepts/feature-flags.md"
+    ],
+    "ui": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "property": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "schema": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "forms": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "rendering": [
+      "concepts/schema-driven-field-rendering.md"
+    ],
+    "setup": [
+      "guides/getting-started.md",
+      "reference/environment-variables.md"
+    ],
+    "getting-started": [
+      "guides/getting-started.md"
+    ],
+    "development": [
+      "guides/getting-started.md",
+      "reference/commands.md"
+    ],
+    "services": [
+      "modules/services/config.md"
+    ],
+    "coding-standards": [
+      "reference/code-conventions.md"
+    ],
+    "style-guide": [
+      "reference/code-conventions.md"
+    ],
+    "best-practices": [
+      "reference/code-conventions.md"
+    ],
+    "cli": [
+      "reference/commands.md"
+    ],
+    "commands": [
+      "reference/commands.md"
+    ],
+    "environment": [
+      "reference/environment-variables.md",
+      "setup/1password-setup.md"
+    ],
+    "1password": [
+      "setup/1password-setup.md"
+    ],
+    "security": [
+      "setup/1password-setup.md"
+    ],
+    "secrets": [
+      "setup/1password-setup.md"
+    ],
+    "providers": [
+      "setup/custom-providers.md"
+    ],
+    "tiles": [
+      "concepts/tiles-migration.md",
+      "setup/custom-providers.md"
+    ],
+    "terrain": [
+      "concepts/tiles-migration.md",
+      "setup/custom-providers.md"
+    ],
+    "cesium": [
+      "concepts/tiles-migration.md",
+      "setup/custom-providers.md"
+    ],
+    "migration": [
+      "concepts/tiles-migration.md"
+    ],
+    "fallback": [
+      "concepts/tiles-migration.md"
+    ],
+    "google-maps": [
+      "concepts/tiles-migration.md"
+    ],
+    "layers": [
+      "concepts/layers-migration.md"
+    ],
+    "osm-buildings": [
+      "concepts/layers-migration.md"
+    ],
+    "google-photorealistic": [
+      "concepts/layers-migration.md"
+    ]
+  }
+}

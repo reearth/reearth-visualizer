@@ -44,7 +44,8 @@ export const useValidateSceneAlias = () => {
   const [, setNotification] = useNotification();
 
   const [fetchCheckSceneAlias] = useLazyQuery(CHECK_SCENE_ALIAS, {
-    fetchPolicy: "network-only" // Disable caching for this query
+    fetchPolicy: "network-only", // Disable caching for this query
+    errorPolicy: "all"
   });
 
   const validateSceneAlias = useCallback(

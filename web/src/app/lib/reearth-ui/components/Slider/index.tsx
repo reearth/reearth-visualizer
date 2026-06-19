@@ -98,6 +98,10 @@ const SliderStyled = styled("div")<{ disabled: boolean }>(
       backgroundColor: theme.primary.weak,
       height: "8px"
     },
+    ".rc-slider-disabled .rc-slider-track": {
+      backgroundColor: theme.bg[3],
+      height: "8px"
+    },
     ".rc-slider-tooltip-arrow": {
       backgroundColor: "transparent",
       borderTopColor: theme.bg[2],

@@ -5412,9 +5412,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.65":
-  version: 0.0.7-alpha.65
-  resolution: "@reearth/core@npm:0.0.7-alpha.65"
+"@reearth/core@npm:0.0.7-alpha.70":
+  version: 0.0.7-alpha.70
+  resolution: "@reearth/core@npm:0.0.7-alpha.70"
   dependencies:
     "@radix-ui/react-checkbox": "npm:^1.3.3"
     "@radix-ui/react-dialog": "npm:^1.1.15"
@@ -5468,17 +5468,17 @@ __metadata:
     cesium: 1.118.x
     react: ^19.0.0
     react-dom: ^19.0.0
-  checksum: 10c0/977b6dbccb3d4c115bd23c50d9d9736567196340afc7bd712e5c89d54eb7c491a12f11b5f47aeb8617646e5a1e50aeb0597242a1f39bbc7aba4e26871075955a
+  checksum: 10c0/479511171ec319d571724b2abd712aa3dd6a0ab52cc2ec52eb830d57f58b1d1b5f2dfa700ec93e678c2d3f0e5dd0446b9a60dbcb772806e739a26744457ef889
   languageName: node
   linkType: hard
 
-"@reearth/sentinel@npm:0.1.0":
-  version: 0.1.0
-  resolution: "@reearth/sentinel@npm:0.1.0"
+"@reearth/sentinel@npm:0.1.2":
+  version: 0.1.2
+  resolution: "@reearth/sentinel@npm:0.1.2"
   dependencies:
     idb: "npm:^8.0.0"
     jose: "npm:^5.0.0"
-  checksum: 10c0/bd4e2ee1bd3e076bd8c96cd4094591eb5d2e5c87702eba0d490012557d8305e0584b010c8c0b96b4648031ebde8ad1bf6ea4ad925d14ed6906453ccaefdc73e2
+  checksum: 10c0/c2a8d6acb1de74989123b014083c989b60e536b7fb2be994acb363d25574256c9769c722118bccc125c8eb952306cc18f72c3c347be1ec2d6040f55b99273d0f
   languageName: node
   linkType: hard
 
@@ -5530,8 +5530,8 @@ __metadata:
     "@popperjs/core": "npm:2.11.8"
     "@radix-ui/react-select": "npm:2.2.6"
     "@radix-ui/react-slot": "npm:1.2.4"
-    "@reearth/core": "npm:0.0.7-alpha.65"
-    "@reearth/sentinel": "npm:0.1.0"
+    "@reearth/core": "npm:0.0.7-alpha.70"
+    "@reearth/sentinel": "npm:0.1.2"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"

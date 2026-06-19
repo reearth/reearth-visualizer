@@ -7,6 +7,7 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
+import type { WidgetAlignSystem } from "./Crust/Widgets";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 import { useOverriddenProperty } from "./utils";
 import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
@@ -14,6 +15,7 @@ import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
 export default function useHooks({
   ownBuiltinWidgets,
   viewerProperty,
+  widgets,
   onCoreLayerSelect,
   currentCamera,
   handleCoreAPIReady,
@@ -21,6 +23,7 @@ export default function useHooks({
 }: {
   ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   viewerProperty?: ViewerProperty;
+  widgets?: WidgetAlignSystem;
   onCoreLayerSelect?: (
     layerId: string | undefined,
     layer: ComputedLayer | undefined,
@@ -54,7 +57,8 @@ export default function useHooks({
 
     // Check both global token override and engineMeta token
     // Validate tokens are non-empty strings
-    const globalToken = overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
+    const globalToken =
+      overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
     const engineToken = engineMeta?.cesiumIonAccessToken;
     const hasAccessToken = !!(
       (typeof globalToken === "string" && globalToken.trim().length > 0) ||
@@ -65,9 +69,10 @@ export default function useHooks({
       isEE,
       defaultTileType,
       defaultTerrainType: "reearth_terrain",
-      hasAccessToken
+      hasAccessToken,
+      widgets
     });
-  }, [overriddenViewerProperty, engineMeta]);
+  }, [overriddenViewerProperty, engineMeta, widgets]);
 
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -110,3 +115,4 @@ export default function useHooks({
     currentCameraRef
   };
 }
+

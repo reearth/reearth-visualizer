@@ -4,6 +4,12 @@ export type Property = CommonBuiltInWidgetProperty & {
   default?: {
     apiKey?: string;
   };
+  // Collection field - may be array (collection) or object (processed)
+  tiles?: {
+    tile_type?: string;
+  }[] | {
+    tile_type?: string;
+  };
 };
 
 export type Location = {

@@ -1,4 +1,5 @@
 import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
+import type { WidgetAlignSystem } from "@reearth/app/features/Visualizer/Crust/Widgets";
 
 /**
  * Configuration for viewer property migration and fallback (tiles and terrain)
@@ -21,6 +22,11 @@ export type TilesMigrationConfig = {
    * Used for tiles and terrain fallback when token is required but missing
    */
   hasAccessToken: boolean;
+  /**
+   * Widget alignment system containing all widgets
+   * Used to extract Street View widget tile configuration
+   */
+  widgets?: WidgetAlignSystem;
 };
 
 /**
@@ -50,8 +56,9 @@ const CESIUM_ION_ASSET_ID_FALLBACK_MAP: Record<string, string> = {
  * Checks if a tile needs migration/processing
  */
 function needsTileMigration(
-  tile: { type?: string; cesiumIonAssetId?: number | string },
-  config: TilesMigrationConfig
+  tile: { type?: string; cesiumIonAssetId?: number | string; opacity?: number },
+  config: TilesMigrationConfig,
+  hasGoogleTiles?: boolean
 ): boolean {
   // Check if tile needs default type application
   if (!tile.type && config.defaultTileType) return true;
@@ -73,6 +80,12 @@ function needsTileMigration(
     return true;
   }
 
+  // Check if opacity needs to be set to 1 for Google Maps compliance
+  const isGoogleTile = tile.type === "google_satellite" || tile.type === "google_roadmap";
+  if ((isGoogleTile || hasGoogleTiles) && tile.opacity !== 1) {
+    return true;
+  }
+
   return false;
 }
 
@@ -83,8 +96,8 @@ function needsTileMigration(
  * - Fallback: If no token available, fallback cesium_ion tiles to alternative EE types (EE only)
  */
 function migrateTile<
-  T extends { type?: string; cesiumIonAssetId?: number | string }
->(tile: T, config: TilesMigrationConfig): T {
+  T extends { type?: string; cesiumIonAssetId?: number | string; opacity?: number }
+>(tile: T, config: TilesMigrationConfig, _hasGoogleTiles?: boolean): T {
   // Apply default tile type when no type is set
   if (!tile.type && config.defaultTileType) {
     return {
@@ -122,7 +135,7 @@ function migrateTile<
       console.warn(
         `[Tiles Fallback] Cesium Ion tile (asset ID: ${assetId}) → "${newType}" (Cesium Ion access token required but missing)`
       );
-      return {
+      processedTile = {
         ...processedTile,
         type: newType
       };
@@ -171,6 +184,108 @@ function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
 }
 
 /**
+ * Constants for Street View widget extraction
+ */
+const STREET_VIEW_EXTENSION_ID = "streetView";
+const TILES_SCHEMA_GROUP_ID = "tiles";
+const TILE_TYPE_FIELD_ID = "tile_type";
+const DEFAULT_STREET_VIEW_TILE_TYPE = "google_satellite";
+const STREET_VIEW_TILE_ID = "reearth-streetview-tile";
+
+/**
+ * Extracts Street View widget tile configuration from widget alignment system.
+ * Handles both editor mode (GQL with items array) and published mode (processed properties).
+ *
+ * If Street View widget exists, always returns a tile configuration.
+ * Uses explicit user selection if available, otherwise defaults to google_satellite.
+ *
+ * @param widgets - Widget alignment system containing all widgets
+ * @returns Array of tile configurations for Street View widget, or empty array if widget not found
+ */
+function extractStreetViewTiles(
+  widgets?: WidgetAlignSystem
+): { id: string; type: string }[] {
+  if (!widgets) return [];
+
+  // Search for Street View widget across all zones, sections, and areas
+  const zones = [widgets.outer, widgets.inner];
+  const sections = ["left", "center", "right"] as const;
+  const areas = ["top", "middle", "bottom"] as const;
+
+  type WidgetWithProperty = {
+    id: string;
+    extensionId?: string;
+    property?: Record<string, unknown>;
+  };
+
+  let streetViewWidget: WidgetWithProperty | undefined;
+
+  // Use labeled break to exit nested loops when widget is found
+  outer: for (const zone of zones) {
+    if (!zone) continue;
+    for (const section of sections) {
+      const sec = zone[section];
+      if (!sec) continue;
+      for (const area of areas) {
+        const found = sec[area]?.widgets?.find(
+          (w) => w.extensionId === STREET_VIEW_EXTENSION_ID
+        );
+        if (found) {
+          streetViewWidget = found;
+          break outer;
+        }
+      }
+    }
+  }
+
+  if (!streetViewWidget?.property) return [];
+
+  const property = streetViewWidget.property;
+  let tileType: string | undefined;
+
+  // Extract tile type based on property format
+  if (Array.isArray(property.items)) {
+    // Editor Mode: property contains raw items array (GQL format)
+    const items = property.items as {
+      id: string;
+      schemaGroupId?: string;
+      fields?: { fieldId: string; value?: unknown }[];
+    }[];
+
+    // Find tile type in items array
+    for (const item of items) {
+      if (item.schemaGroupId === TILES_SCHEMA_GROUP_ID && item.fields) {
+        const field = item.fields.find((f) => f.fieldId === TILE_TYPE_FIELD_ID);
+        if (field?.value && typeof field.value === "string") {
+          tileType = field.value;
+          break;
+        }
+      }
+    }
+  } else {
+    // Published Mode: property may be processed as collection array or single object
+    const tiles = property.tiles as
+      | { tile_type?: string }[]
+      | { tile_type?: string }
+      | undefined;
+
+    if (Array.isArray(tiles) && tiles.length > 0) {
+      // Collection format: array of tile objects
+      tileType = tiles[0].tile_type;
+    } else if (tiles && typeof tiles === "object" && "tile_type" in tiles) {
+      // Single object format
+      tileType = tiles.tile_type;
+    }
+  }
+
+  // Use extracted type or default to google_satellite
+  return [{
+    id: STREET_VIEW_TILE_ID,
+    type: tileType || DEFAULT_STREET_VIEW_TILE_TYPE
+  }];
+}
+
+/**
  * Applies migration (backward compatibility) and fallback logic to viewer property
  *
  * Default Application:
@@ -185,10 +300,16 @@ function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
  * 4. If no Cesium Ion token available, fallback cesium_ion tiles to alternative EE types (EE only)
  * 5. Fallback Cesium terrain to reearth_terrain when token missing
  *
+ * Google Maps Compliance:
+ * 6. Set opacity to 1 for all tiles when Google Maps tiles are present
+ *
+ * Street View Widget Integration:
+ * 7. Extract tile configuration from Street View widget (if present) and append to tiles array
+ *
  * Note: Tiles/terrain without type and without default config will use schema defaults
  *
  * @param viewerProperty - The viewer property containing tiles and terrain
- * @param config - Migration and fallback configuration (includes defaultTileType and defaultTerrainType)
+ * @param config - Migration and fallback configuration (includes defaultTileType, defaultTerrainType, and widgets)
  * @returns Processed viewer property or original if no processing needed
  */
 export function migrateViewerPropertyTiles(
@@ -201,9 +322,14 @@ export function migrateViewerPropertyTiles(
   const hasTiles = tiles && tiles.length > 0;
   const hasTerrain = terrain;
 
-  // Check if tiles need migration
+  // Check if Google tiles are present (needed for opacity compliance check)
+  const hasGoogleTiles = tiles?.some((tile) =>
+    tile.type === "google_satellite" || tile.type === "google_roadmap"
+  ) ?? false;
+
+  // Check if tiles need migration (includes type migration, fallback, and opacity override)
   const tilesNeedProcessing =
-    hasTiles && tiles.some((tile) => needsTileMigration(tile, config));
+    hasTiles && tiles.some((tile) => needsTileMigration(tile, config, hasGoogleTiles));
 
   // Check if terrain needs default application or fallback
   const terrainNeedsProcessing =
@@ -211,21 +337,103 @@ export function migrateViewerPropertyTiles(
     ((!terrain.type && config.defaultTerrainType) ||
       (terrain.type === "cesium" && !config.hasAccessToken));
 
+  // Check if terrain needs normal map setting for reearth_terrain
+  const terrainNeedsNormalMap =
+    hasTerrain &&
+    terrain.enabled !== false &&
+    terrain.type === "reearth_terrain" &&
+    terrain.normal !== true;
+
+  // Check if Street View widget exists and needs tile appending
+  const streetViewTiles = extractStreetViewTiles(config.widgets);
+  const needsStreetViewTile = streetViewTiles.length > 0;
+
   // Return original if nothing needs processing
-  if (!tilesNeedProcessing && !terrainNeedsProcessing) {
+  if (!tilesNeedProcessing && !terrainNeedsProcessing && !terrainNeedsNormalMap && !needsStreetViewTile) {
     return viewerProperty;
   }
 
   const result: ViewerProperty = { ...viewerProperty };
 
-  // Migrate tiles if needed
+  // First pass: Migrate tiles (type defaults, migrations, and fallbacks)
   if (tilesNeedProcessing && tiles) {
-    result.tiles = tiles.map((tile) => migrateTile(tile, config));
+    result.tiles = tiles.map((tile) => migrateTile(tile, config, false));
+  }
+
+  // Second pass: Re-check if Google tiles present after first pass migration
+  // (some tiles might become Google tiles through fallback)
+  const processedTiles = result.tiles || tiles;
+  const hasGoogleTilesAfterMigration = processedTiles?.some((tile) =>
+    tile.type === "google_satellite" || tile.type === "google_roadmap"
+  ) ?? false;
+
+  // Third pass: Apply opacity override if Google tiles are present
+  if (hasGoogleTilesAfterMigration && processedTiles) {
+    result.tiles = processedTiles.map((tile) => {
+      const isGoogleTile = tile.type === "google_satellite" || tile.type === "google_roadmap";
+      if ((isGoogleTile || hasGoogleTilesAfterMigration) && tile.opacity !== 1) {
+        console.warn(
+          `[Tiles Opacity Override] Setting opacity to 1 for ${isGoogleTile ? 'Google Maps tile' : 'tile (Google Maps tiles present)'} (Google Maps Terms of Service compliance)`
+        );
+        return {
+          ...tile,
+          opacity: 1
+        };
+      }
+      return tile;
+    });
   }
 
   // Apply terrain default or fallback if needed
   if (terrainNeedsProcessing) {
     result.terrain = migrateTerrain(terrain, config);
+  }
+
+  // Set normal map for reearth_terrain when enabled (if not already set)
+  const finalTerrain = result.terrain || terrain;
+  if (
+    finalTerrain &&
+    finalTerrain.enabled !== false &&
+    finalTerrain.type === "reearth_terrain" &&
+    finalTerrain.normal !== true
+  ) {
+    result.terrain = {
+      ...finalTerrain,
+      normal: true
+    };
+  }
+
+  // Final step: Append Street View widget tiles (if widget exists and has tile configuration)
+  if (needsStreetViewTile) {
+    const currentTiles = result.tiles || tiles || [];
+    const existingTileIds = new Set(currentTiles.map((t) => t.id));
+
+    // Only append tiles that don't already exist (avoid duplicates)
+    const newStreetViewTiles = streetViewTiles
+      .filter((t) => !existingTileIds.has(t.id))
+      .map((t) => ({
+        id: t.id,
+        type: t.type
+      }));
+
+    if (newStreetViewTiles.length > 0) {
+      result.tiles = [...currentTiles, ...newStreetViewTiles];
+
+      // Apply Google Maps opacity compliance to the newly appended tiles
+      // Check if Google tiles are present (including the newly appended ones)
+      const hasGoogleTilesAfterAppend = result.tiles?.some(
+        (tile) => tile.type === "google_satellite" || tile.type === "google_roadmap"
+      );
+
+      if (hasGoogleTilesAfterAppend) {
+        result.tiles = result.tiles.map((tile) => {
+          if (tile.opacity !== 1) {
+            return { ...tile, opacity: 1 };
+          }
+          return tile;
+        });
+      }
+    }
   }
 
   return result;
@@ -239,5 +447,6 @@ export const __testing__ = {
   CESIUM_ION_ASSET_ID_FALLBACK_MAP,
   needsTileMigration,
   migrateTile,
-  migrateTerrain
+  migrateTerrain,
+  extractStreetViewTiles
 };

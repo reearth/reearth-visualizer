@@ -1,5 +1,6 @@
 import { Collapse } from "@reearth/app/lib/reearth-ui";
-import PropertyItem from "@reearth/app/ui/fields/Properties";
+import PropertyItem, { FieldContext } from "@reearth/app/ui/fields/Properties";
+import { PropertyFieldDecorations } from "@reearth/app/ui/fields/Properties/PropertyField";
 import { filterVisibleItems } from "@reearth/app/ui/fields/utils";
 import type { FlyTo } from "@reearth/core";
 import type { Item } from "@reearth/services/api/property";
@@ -11,9 +12,21 @@ type Props = {
   propertyId: string;
   propertyItems?: Item[];
   onFlyTo?: FlyTo;
+  computeDecorations?: (
+    schemaId: string,
+    schemaGroup: string,
+    value: unknown,
+    allFields: FieldContext[],
+    allListItemsFields?: FieldContext[][]
+  ) => PropertyFieldDecorations;
 };
 
-const Settings: FC<Props> = ({ propertyId, propertyItems, onFlyTo }) => {
+const Settings: FC<Props> = ({
+  propertyId,
+  propertyItems,
+  onFlyTo,
+  computeDecorations
+}) => {
   const t = useT();
   const visibleItems = useMemo(
     () => filterVisibleItems(propertyItems),
@@ -33,6 +46,7 @@ const Settings: FC<Props> = ({ propertyId, propertyItems, onFlyTo }) => {
             propertyId={propertyId}
             item={i}
             onFlyTo={onFlyTo}
+            computeDecorations={computeDecorations}
           />
         </Collapse>
       ))}
