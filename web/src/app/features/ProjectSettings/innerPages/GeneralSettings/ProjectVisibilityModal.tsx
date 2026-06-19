@@ -38,11 +38,10 @@ const ProjectVisibilityModal: FC<Props> = ({
       { value: "public", label: t("Public") },
       {
         value: "private",
-        label: t("Private"),
-        disabled: !enableToCreatePrivateProject
+        label: t("Private")
       }
     ],
-    [t, enableToCreatePrivateProject]
+    [t]
   );
 
   return (
@@ -77,9 +76,7 @@ const ProjectVisibilityModal: FC<Props> = ({
           />
           {projectVisibility === "private" && !enableToCreatePrivateProject && (
             <Typography size="body" color={theme.dangerous.main}>
-              {t(
-                "Private projects are only available on paid plans. Please upgrade your plan."
-              )}
+              {t("Please upgrade your plan to create a private project.")}
             </Typography>
           )}
         </Wrapper>
