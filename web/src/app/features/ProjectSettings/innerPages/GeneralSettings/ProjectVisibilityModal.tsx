@@ -38,12 +38,12 @@ const ProjectVisibilityModal: FC<Props> = ({
       { value: "public", label: t("Public") },
       {
         value: "private",
-        label: t("Private"),
-        disabled: !enableToCreatePrivateProject
+        label: t("Private")
       }
     ],
-    [t, enableToCreatePrivateProject]
+    [t]
   );
+
   return (
     <Modal size="small" visible={true}>
       <ModalPanel
@@ -72,16 +72,11 @@ const ProjectVisibilityModal: FC<Props> = ({
             value={projectVisibility}
             onChange={(value) => setProjectVisibility(value as string)}
             data-testid="change-project-visibility-input"
-            options={projectVisibilityOptions.map(({ label, value }) => ({
-              value,
-              label
-            }))}
+            options={projectVisibilityOptions}
           />
-          {projectVisibility === "private" && (
+          {projectVisibility === "private" && !enableToCreatePrivateProject && (
             <Typography size="body" color={theme.dangerous.main}>
-              {t(
-                "Private projects are only available on paid plans. Please upgrade your plan."
-              )}
+              {t("Please upgrade your plan to create a private project.")}
             </Typography>
           )}
         </Wrapper>
