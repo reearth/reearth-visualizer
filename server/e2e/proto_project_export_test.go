@@ -130,6 +130,8 @@ func TestInternalAPI_export(t *testing.T) {
 
 		// Try download
 		resp := e.GET(exp.ProjectDataPath).
+			WithHeader("Authorization", "Bearer test").
+			WithHeader("X-Reearth-Debug-User", uID3.String()).
 			Expect().
 			Status(200)
 
