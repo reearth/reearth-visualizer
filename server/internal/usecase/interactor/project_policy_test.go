@@ -334,6 +334,95 @@ func TestProject_PolicyChecker(t *testing.T) {
 			assert.Nil(t, result)
 			env.mockPolicyChecker.AssertExpectations(t)
 		})
+
+		t.Run("should set publicNoIndex to false when publishing as PUBLIC", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
+
+			// Create a project with publicNoIndex set to true
+			prj := project.New().NewID().Workspace(env.wsID).Name("Test Project").PublicNoIndex(true).MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
+
+			// Act
+			result, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
+				ID:     prj.ID(),
+				Status: project.PublishmentStatusPublic,
+			}, env.operator)
+
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			assert.Equal(t, project.PublishmentStatusPublic, result.PublishmentStatus())
+			assert.False(t, result.PublicNoIndex(), "publicNoIndex should be false for PUBLIC status")
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+
+		t.Run("should set publicNoIndex to true when publishing as LIMITED", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
+
+			// Create a project with publicNoIndex set to false
+			prj := project.New().NewID().Workspace(env.wsID).Name("Test Project").PublicNoIndex(false).MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
+
+			// Act
+			result, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
+				ID:     prj.ID(),
+				Status: project.PublishmentStatusLimited,
+			}, env.operator)
+
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			assert.Equal(t, project.PublishmentStatusLimited, result.PublishmentStatus())
+			assert.True(t, result.PublicNoIndex(), "publicNoIndex should be true for LIMITED status")
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+
+		t.Run("should toggle publicNoIndex when changing from PUBLIC to LIMITED", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
+
+			// Create a project and publish as PUBLIC
+			prj := project.New().NewID().Workspace(env.wsID).Name("Test Project").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
+
+			// First publish as PUBLIC
+			result1, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
+				ID:     prj.ID(),
+				Status: project.PublishmentStatusPublic,
+			}, env.operator)
+			assert.NoError(t, err)
+			assert.False(t, result1.PublicNoIndex())
+
+			// Act - Re-publish as LIMITED
+			result2, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
+				ID:     prj.ID(),
+				Status: project.PublishmentStatusLimited,
+			}, env.operator)
+
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result2)
+			assert.Equal(t, project.PublishmentStatusLimited, result2.PublishmentStatus())
+			assert.True(t, result2.PublicNoIndex(), "publicNoIndex should be true after changing to LIMITED")
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
 	})
 
 	t.Run("UpdateVisibility", func(t *testing.T) {
