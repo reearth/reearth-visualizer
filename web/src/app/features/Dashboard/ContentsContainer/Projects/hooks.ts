@@ -125,6 +125,8 @@ export default (workspaceId?: string) => {
             }
           }
         });
+      } catch (_err) {
+        console.error("Failed to fetch more projects:", _err);
       } finally {
         isFetchingMore.current = false;
       }
@@ -328,6 +330,8 @@ export default (workspaceId?: string) => {
             }
           }
         });
+      } catch (_err) {
+        console.error("Failed to fetch more starred projects:", _err);
       } finally {
         isFetchingMoreStarred.current = false;
       }

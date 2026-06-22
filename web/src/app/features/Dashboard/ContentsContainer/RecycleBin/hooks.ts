@@ -49,6 +49,8 @@ export default (workspaceId?: string) => {
             }
           }
         });
+      } catch (_err) {
+        console.error("Failed to fetch more deleted projects:", _err);
       } finally {
         isFetchingMore.current = false;
       }
