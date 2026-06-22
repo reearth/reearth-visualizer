@@ -128,7 +128,7 @@ func TestProjectExportDownloadAuth(t *testing.T) {
 	privatePath := Export(t, e, privateProjectId)
 	e.GET(privatePath).
 		Expect().
-		Status(http.StatusUnauthorized)
+		Status(http.StatusBadRequest)
 
 	// private project: owner can download
 	privatePath2 := Export(t, e, privateProjectId)
@@ -154,7 +154,7 @@ func TestProjectExportDownloadAuth(t *testing.T) {
 		WithHeader("Authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", uID2.String()).
 		Expect().
-		Status(http.StatusUnauthorized)
+		Status(http.StatusBadRequest)
 }
 
 func TestProjectExportDownloadNotFound(t *testing.T) {
@@ -186,7 +186,7 @@ func TestProjectExportDownloadDeletedProject(t *testing.T) {
 		WithHeader("Authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().
-		Status(http.StatusUnauthorized)
+		Status(http.StatusBadRequest)
 }
 
 func SetupProject(t *testing.T, e *httpexpect.Expect) string {
