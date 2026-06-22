@@ -1012,11 +1012,13 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	return nil
 }
 
-func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
-
+// CheckProjectExportAccess validates that the operator is allowed to export the given project.
+// It checks seat policy, deleted status, and visibility-based access control.
+// Returns the project if access is granted.
+func (i *Project) CheckProjectExportAccess(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
 	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
-		return nil, errors.New("project " + err.Error())
+		return nil, err
 	}
 
 	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
@@ -1034,7 +1036,6 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 
 	// In the case of private, only the owner or members are allowed.
 	if prj.Visibility() == string(project.VisibilityPrivate) {
-
 		if operator == nil || operator.AcOperator == nil {
 			return nil, errors.New("Unauthorized project : " + prj.Name())
 		}
@@ -1047,18 +1048,25 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 				return nil, errors.New("Unauthorized project : " + prj.Name())
 			}
 		}
+	}
 
+	return prj, nil
+}
+
+func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
+	prj, err := i.CheckProjectExportAccess(ctx, pid, operator)
+	if err != nil {
+		return nil, err
 	}
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
 	if err != nil {
-		return nil, errors.New("project metadate " + err.Error())
+		return nil, errors.New("project metadata " + err.Error())
 	}
 
 	prj.SetMetadata(meta)
 
 	return prj, nil
-
 }
 
 func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, assetNames map[string]string) error {
