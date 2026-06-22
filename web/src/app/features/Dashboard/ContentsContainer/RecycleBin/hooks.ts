@@ -40,15 +40,18 @@ export default (workspaceId?: string) => {
     if (isFetchingMore.current) return;
     if (hasMoreDeletedProjects) {
       isFetchingMore.current = true;
-      await fetchMoreDeleted({
-        variables: {
-          pagination: {
-            after: deletedEndCursor,
-            first: DELETED_PROJECTS_PER_PAGE
+      try {
+        await fetchMoreDeleted({
+          variables: {
+            pagination: {
+              after: deletedEndCursor,
+              first: DELETED_PROJECTS_PER_PAGE
+            }
           }
-        }
-      });
-      isFetchingMore.current = false;
+        });
+      } finally {
+        isFetchingMore.current = false;
+      }
     }
   }, [hasMoreDeletedProjects, fetchMoreDeleted, deletedEndCursor]);
 
