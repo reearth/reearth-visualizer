@@ -45,7 +45,7 @@ func serveExportFile(
 			projectIDStr := strings.TrimSuffix(filename, ".zip")
 			pid, err := id.ProjectIDFrom(projectIDStr)
 			if err != nil {
-				return echo.ErrNotFound
+				return echo.ErrBadRequest
 			}
 
 			uc := adapter.Usecases(ctx)
