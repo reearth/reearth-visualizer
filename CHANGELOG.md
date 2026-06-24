@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.11 - 2026-06-24
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Remove terrain workarounds made obsolete by core fix[VIZ-DEV-85] ([#2276](https://github.com/reearth/reearth-visualizer/pull/2276)) [`e66c74`](https://github.com/reearth/reearth-visualizer/commit/e66c74)
+- Filter streetview widget for oss ([#2270](https://github.com/reearth/reearth-visualizer/pull/2270)) [`ef8bf3`](https://github.com/reearth/reearth-visualizer/commit/ef8bf3)
+- Fix alias validation error handling[VIZ-DEV-69] ([#2267](https://github.com/reearth/reearth-visualizer/pull/2267)) [`f57825`](https://github.com/reearth/reearth-visualizer/commit/f57825)
+
+#### ✨ Refactor
+
+- Prevent infinite scroll from getting stuck after fetchMore error[VIZ-DEV-84] ([#2275](https://github.com/reearth/reearth-visualizer/pull/2275)) [`64f8ea`](https://github.com/reearth/reearth-visualizer/commit/64f8ea)
+- Improve visibility option on project settings page ([#2117](https://github.com/reearth/reearth-visualizer/pull/2117)) [`357e37`](https://github.com/reearth/reearth-visualizer/commit/357e37)
+
+#### 🧪 Testing
+
+- Add tests for layers and styles ([#2157](https://github.com/reearth/reearth-visualizer/pull/2157)) [`a34911`](https://github.com/reearth/reearth-visualizer/commit/a34911)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.11 ([#2277](https://github.com/reearth/reearth-visualizer/pull/2277)) [`f2d09d`](https://github.com/reearth/reearth-visualizer/commit/f2d09d)
+- Sync public&#x2F;sw.js with @reearth&#x2F;sentinel 0.1.2 to remove verbose logging[VIZ-DEV-61] ([#2272](https://github.com/reearth/reearth-visualizer/pull/2272)) [`d6f18e`](https://github.com/reearth/reearth-visualizer/commit/d6f18e)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Downgrade user-input GraphQL errors from ERROR to WARN ([#2266](https://github.com/reearth/reearth-visualizer/pull/2266)) [`0c05d4`](https://github.com/reearth/reearth-visualizer/commit/0c05d4)
+- Enforce auth on private project export downloads (SEC-02) ([#2262](https://github.com/reearth/reearth-visualizer/pull/2262)) [`93f394`](https://github.com/reearth/reearth-visualizer/commit/93f394)
+- Set publicNoIndex correctly when publishing projects or stories ([#2274](https://github.com/reearth/reearth-visualizer/pull/2274)) [`41f429`](https://github.com/reearth/reearth-visualizer/commit/41f429)
+
+#### Miscellaneous Tasks
+
+- Upgrade Go from 1.26.1 to 1.26.4 ([#2273](https://github.com/reearth/reearth-visualizer/pull/2273)) [`e44a02`](https://github.com/reearth/reearth-visualizer/commit/e44a02)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to 0e91ef4 ([#2242](https://github.com/reearth/reearth-visualizer/pull/2242)) [`74568a`](https://github.com/reearth/reearth-visualizer/commit/74568a)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to 0e91ef4 ([#2242](https://github.com/reearth/reearth-visualizer/pull/2242)) [`74568a`](https://github.com/reearth/reearth-visualizer/commit/74568a)
+
 ## 1.0.0-beta.16.10 - 2026-06-18
 
 ### Web
