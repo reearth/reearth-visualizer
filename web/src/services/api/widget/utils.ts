@@ -149,9 +149,13 @@ export const getInstalledWidgets = (
   );
 
   const installableWidgets = getInstallableWidgets(rawScene, type);
+  const isEE = config()?.featureCollection === "ee";
 
   return scene?.widgets
     .filter((w) => installedWidgetIds.includes(w.id))
+    .filter(
+      (w) => isEE || `${w.pluginId}/${w.extensionId}` !== STREET_VIEW_WIDGET_ID
+    )
     .map((w) => {
       const e = installableWidgets?.find(
         (e) => e.extensionId === w.extensionId

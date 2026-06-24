@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"testing"
@@ -90,6 +91,102 @@ func TestProjectExport(t *testing.T) {
 	_, hasExportDataVersion := exportedInfo["exportDataVersion"]
 	require.True(t, hasExportDataVersion, "`exportedInfo.exportDataVersion` key must exist in project.json")
 
+}
+
+func TestProjectExportDownloadAuth(t *testing.T) {
+	e := Server(t, fullSeeder)
+
+	// --- public project ---
+	publicProjectId := SetupProject(t, e)
+	publicPath := Export(t, e, publicProjectId)
+
+	// public project: unauthenticated download allowed
+	e.GET(publicPath).
+		Expect().
+		Status(http.StatusOK).
+		Header("Content-Type").Contains("application/zip")
+
+	// public project: authenticated download allowed
+	publicPath2 := Export(t, e, publicProjectId)
+	e.GET(publicPath2).
+		WithHeader("Authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		Expect().
+		Status(http.StatusOK).
+		Header("Content-Type").Contains("application/zip")
+
+	// --- private project ---
+	privateProjectId := SetupProject(t, e)
+	updateProject(e, uID, map[string]any{
+		"input": map[string]any{
+			"projectId":  privateProjectId,
+			"visibility": "private",
+		},
+	})
+
+	// private project: unauthenticated download blocked
+	privatePath := Export(t, e, privateProjectId)
+	e.GET(privatePath).
+		Expect().
+		Status(http.StatusBadRequest)
+
+	// private project: owner can download
+	privatePath2 := Export(t, e, privateProjectId)
+	e.GET(privatePath2).
+		WithHeader("Authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		Expect().
+		Status(http.StatusOK).
+		Header("Content-Type").Contains("application/zip")
+
+	// private project: workspace member (uID3) can download
+	privatePath3 := Export(t, e, privateProjectId)
+	e.GET(privatePath3).
+		WithHeader("Authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID3.String()).
+		Expect().
+		Status(http.StatusOK).
+		Header("Content-Type").Contains("application/zip")
+
+	// private project: non-member (uID2, different workspace) blocked
+	privatePath4 := Export(t, e, privateProjectId)
+	e.GET(privatePath4).
+		WithHeader("Authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID2.String()).
+		Expect().
+		Status(http.StatusBadRequest)
+}
+
+func TestProjectExportDownloadNotFound(t *testing.T) {
+	e := Server(t, fullSeeder)
+
+	// non-existent project ID
+	e.GET("/export/00000000000000000000000000.zip").
+		Expect().
+		Status(http.StatusNotFound)
+
+	// project that exists but has never been exported (no GCS file)
+	projectId := SetupProject(t, e)
+	e.GET("/export/" + projectId + ".zip").
+		Expect().
+		Status(http.StatusNotFound)
+}
+
+func TestProjectExportDownloadDeletedProject(t *testing.T) {
+	e := Server(t, fullSeeder)
+
+	projectId := SetupProject(t, e)
+	path := Export(t, e, projectId)
+
+	// soft-delete the project
+	deleteProject(e, projectId)
+
+	// deleted project download should be blocked
+	e.GET(path).
+		WithHeader("Authorization", "Bearer test").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		Expect().
+		Status(http.StatusBadRequest)
 }
 
 func SetupProject(t *testing.T, e *httpexpect.Expect) string {

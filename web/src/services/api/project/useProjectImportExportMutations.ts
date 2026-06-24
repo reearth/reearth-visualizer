@@ -1,4 +1,5 @@
 import { useMutation } from "@apollo/client/react";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import { EXPORT_PROJECT } from "@reearth/services/gql/queries/project";
 import { useT } from "@reearth/services/i18n/hooks";
 import useRestful from "@reearth/services/restful/useRestful";
@@ -25,6 +26,7 @@ type LastResponse = {
 
 export const useProjectImportExportMutations = () => {
   const { axios } = useRestful();
+  const { getAccessToken } = useAuth();
   const [, setNotification] = useNotification();
   const t = useT();
 
@@ -64,7 +66,10 @@ export const useProjectImportExportMutations = () => {
         const backendUrl = getBackendUrl();
         const downloadUrl = `${backendUrl}${projectDataPath}`;
 
-        const response = await fetch(downloadUrl);
+        const token = await getAccessToken();
+        const response = await fetch(downloadUrl, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -94,7 +99,7 @@ export const useProjectImportExportMutations = () => {
         return { status: "error" };
       }
     },
-    [exportProjectMutation, t, setNotification, getBackendUrl]
+    [exportProjectMutation, t, setNotification, getBackendUrl, getAccessToken]
   );
 
   const importProject = useCallback(

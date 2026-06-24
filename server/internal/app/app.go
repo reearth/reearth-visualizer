@@ -149,6 +149,7 @@ func initEcho(
 
 	// Asset API for handling GCP files
 	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
+	serveExportFile(e, cfg, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	apiPrivateRoute := apiRoot.Group("", privateCache)
 	if cfg.Config.UseMockAuth() {
