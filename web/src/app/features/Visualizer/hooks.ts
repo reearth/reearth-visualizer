@@ -65,13 +65,14 @@ export default function useHooks({
       (typeof engineToken === "string" && engineToken.trim().length > 0)
     );
 
-    return migrateViewerPropertyTiles(overriddenViewerProperty, {
+    const migrated = migrateViewerPropertyTiles(overriddenViewerProperty, {
       isEE,
       defaultTileType,
       defaultTerrainType: "reearth_terrain",
       hasAccessToken,
       widgets
     });
+    return migrated;
   }, [overriddenViewerProperty, engineMeta, widgets]);
 
   const storyWrapperRef = useRef<HTMLDivElement>(null);
