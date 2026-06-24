@@ -116,15 +116,20 @@ export default (workspaceId?: string) => {
     if (isFetchingMore.current) return;
     if (hasMoreProjects) {
       isFetchingMore.current = true;
-      await fetchMore({
-        variables: {
-          pagination: {
-            after: endCursor,
-            first: PROJECTS_PER_PAGE
+      try {
+        await fetchMore({
+          variables: {
+            pagination: {
+              after: endCursor,
+              first: PROJECTS_PER_PAGE
+            }
           }
-        }
-      });
-      isFetchingMore.current = false;
+        });
+      } catch (_err) {
+        console.error("Failed to fetch more projects:", _err);
+      } finally {
+        isFetchingMore.current = false;
+      }
     }
   }, [hasMoreProjects, fetchMore, endCursor]);
 
@@ -316,15 +321,20 @@ export default (workspaceId?: string) => {
     if (isFetchingMoreStarred.current) return;
     if (hasMoreStarredProjects) {
       isFetchingMoreStarred.current = true;
-      await fetchMoreStarred({
-        variables: {
-          pagination: {
-            after: starredEndCursor,
-            first: STARRED_PROJECTS_PER_PAGE
+      try {
+        await fetchMoreStarred({
+          variables: {
+            pagination: {
+              after: starredEndCursor,
+              first: STARRED_PROJECTS_PER_PAGE
+            }
           }
-        }
-      });
-      isFetchingMoreStarred.current = false;
+        });
+      } catch (_err) {
+        console.error("Failed to fetch more starred projects:", _err);
+      } finally {
+        isFetchingMoreStarred.current = false;
+      }
     }
   }, [hasMoreStarredProjects, fetchMoreStarred, starredEndCursor]);
 
