@@ -1275,7 +1275,7 @@ describe("tilesMigration", () => {
           }
         };
         const result = migrateViewerPropertyTiles(viewerProperty, {
-          isEE: false,
+          isEE: true,
           hasAccessToken: false,
           widgets: widgets as any
         });
@@ -1309,7 +1309,7 @@ describe("tilesMigration", () => {
           }
         };
         const result = migrateViewerPropertyTiles(viewerProperty, {
-          isEE: false,
+          isEE: true,
           hasAccessToken: false,
           widgets: widgets as any
         });
@@ -1341,7 +1341,7 @@ describe("tilesMigration", () => {
           }
         };
         const result = migrateViewerPropertyTiles(viewerProperty, {
-          isEE: false,
+          isEE: true,
           hasAccessToken: false,
           widgets: widgets as any
         });
@@ -1377,7 +1377,7 @@ describe("tilesMigration", () => {
           }
         };
         const result = migrateViewerPropertyTiles(viewerProperty, {
-          isEE: false,
+          isEE: true,
           hasAccessToken: false,
           widgets: widgets as any
         });
@@ -1414,7 +1414,7 @@ describe("tilesMigration", () => {
           }
         };
         const result = migrateViewerPropertyTiles(viewerProperty, {
-          isEE: false,
+          isEE: true,
           hasAccessToken: false,
           widgets: widgets as any
         });
@@ -1446,7 +1446,7 @@ describe("tilesMigration", () => {
           }
         };
         const result = migrateViewerPropertyTiles(viewerProperty, {
-          isEE: false,
+          isEE: true,
           hasAccessToken: false,
           widgets: widgets as any
         });
@@ -1484,7 +1484,7 @@ describe("tilesMigration", () => {
           }
         };
         const result = migrateViewerPropertyTiles(viewerProperty, {
-          isEE: false,
+          isEE: true,
           hasAccessToken: false,
           widgets: widgets as any
         });
@@ -1516,7 +1516,7 @@ describe("tilesMigration", () => {
           }
         };
         const result = migrateViewerPropertyTiles(viewerProperty, {
-          isEE: false,
+          isEE: true,
           hasAccessToken: false,
           widgets: widgets as any
         });
