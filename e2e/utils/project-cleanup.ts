@@ -189,3 +189,56 @@ export async function getRecycleBinCount(
     return -1;
   }
 }
+
+/**
+ * Permanently deletes all projects in the recycle bin.
+ * Called from global setup when count >= 16 to prevent recycle bin tests from failing.
+ */
+export async function cleanupRecycleBin(
+  request: APIRequestContext
+): Promise<void> {
+  try {
+    const { token, extraHeaders } = getAuthToken();
+    const client = new GraphQLClient(request, token, extraHeaders);
+
+    const { data: meData } = await client.query<{
+      me: { myWorkspaceId: string };
+    }>(GET_ME);
+    const workspaceId = meData.me.myWorkspaceId;
+
+    let cursor: string | null = null;
+    let total = 0;
+    let deleted = 0;
+
+    do {
+      const { data } = await client.query<{
+        deletedProjects: {
+          totalCount: number;
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          nodes: { id: string; name: string }[];
+        };
+      }>(GET_DELETED_PROJECTS, {
+        workspaceId,
+        pagination: { first: 50, ...(cursor ? { after: cursor } : {}) }
+      });
+
+      const page = data.deletedProjects;
+      total = page.totalCount;
+
+      for (const project of page.nodes) {
+        await client
+          .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+          .then(() => { deleted++; })
+          .catch((err) => {
+            console.warn(`[recycle-bin-cleanup] Failed to delete "${project.name}":`, err);
+          });
+      }
+
+      cursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null;
+    } while (cursor);
+
+    console.log(`[recycle-bin-cleanup] Permanently deleted ${deleted}/${total} projects.`);
+  } catch (err) {
+    console.warn("[recycle-bin-cleanup] Cleanup failed (non-fatal):", err);
+  }
+}

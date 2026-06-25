@@ -5,7 +5,7 @@ import { FullConfig, webkit, request as playwrightRequest } from "@playwright/te
 
 import { LoginPage } from "./pages/loginPage";
 import { createIAPContext } from "./utils/iap-auth";
-import { getRecycleBinCount } from "./utils/project-cleanup";
+import { getRecycleBinCount, cleanupRecycleBin } from "./utils/project-cleanup";
 
 export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
 
@@ -82,10 +82,11 @@ async function globalSetup(_config: FullConfig) {
 
     if (recycleBinCount >= 16) {
       console.warn(
-        `⚠️  Recycle bin has ${recycleBinCount} deleted project(s). ` +
-        `Tests that rely on the recycle bin will be skipped (first page shows 16 items). ` +
-        `Clean up the recycle bin for the test account to re-enable these tests.`
+        `⚠️  Recycle bin has ${recycleBinCount} deleted project(s) — cleaning up before tests run...`
       );
+      const apiContext2 = await playwrightRequest.newContext();
+      await cleanupRecycleBin(apiContext2);
+      await apiContext2.dispose();
     } else {
       console.log(`🗑️  Recycle bin count: ${recycleBinCount}`);
     }
