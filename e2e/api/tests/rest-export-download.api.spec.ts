@@ -38,7 +38,7 @@ test.describe("GET /export/:filename — project export download", () => {
       input: {
         workspaceId: me.me.myWorkspaceId,
         visualizer: "CESIUM",
-        name: `Export Test ${faker.string.alphanumeric(6)}`,
+        name: `e2e-Export Test ${faker.string.alphanumeric(6)}`,
         coreSupport: true
       }
     });
