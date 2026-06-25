@@ -218,7 +218,7 @@ export async function cleanupRecycleBin(
       }
     `;
 
-    const SAFE_THRESHOLD = 16;
+    const SAFE_THRESHOLD = 0;
 
     // Fetch one project at a time and delete it until we're below the threshold
     while (true) {

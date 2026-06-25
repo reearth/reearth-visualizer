@@ -80,7 +80,7 @@ async function globalSetup(_config: FullConfig) {
       JSON.stringify(recycleBinInfo)
     );
 
-    if (recycleBinCount >= 16) {
+    if (recycleBinCount > 0) {
       console.warn(
         `⚠️  Recycle bin has ${recycleBinCount} deleted project(s) — cleaning up before tests run...`
       );
