@@ -129,7 +129,6 @@ test.describe("Adding Layers from External Resources", () => {
   });
 
   test("Add a GeoJSON layer from inline value", async () => {
-    test.skip(!!process.env.CI, "Cesium layer rendering unreliable in CI headless webkit");
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
