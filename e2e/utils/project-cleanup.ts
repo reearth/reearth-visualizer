@@ -212,56 +212,69 @@ export async function cleanupRecycleBin(
     }>(GET_ME);
     const workspaceId = meData.me.myWorkspaceId;
 
-    let total = 0;
-    let deleted = 0;
-
     const FETCH_ONE = `
       query($workspaceId: ID!, $pagination: Pagination) {
         deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
           totalCount
+          pageInfo { hasNextPage endCursor }
           nodes { id name }
         }
       }
     `;
 
-    const SAFE_THRESHOLD = 0;
+    type DeletedPage = {
+      deletedProjects: {
+        totalCount: number;
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+        nodes: { id: string; name: string }[];
+      };
+    };
 
-    // Fetch one project at a time and delete it until we're below the threshold
-    while (true) {
-      const { data } = await client.query<{
-        deletedProjects: {
-          totalCount: number;
-          nodes: { id: string; name: string }[];
-        };
-      }>(FETCH_ONE, { workspaceId, pagination: { first: 1 } });
+    // Phase 1: collect all IDs via cursor-based pagination
+    const ids: string[] = [];
+    let cursor: string | null = null;
+    let total = 0;
+    let page: DeletedPage;
 
-      total = data.deletedProjects.totalCount;
+    do {
+      ({ data: page } = await client.query<DeletedPage>(FETCH_ONE, {
+        workspaceId,
+        pagination: { first: 1, ...(cursor ? { after: cursor } : {}) }
+      }));
 
-      if (total < SAFE_THRESHOLD || data.deletedProjects.nodes.length === 0)
-        break;
+      total = page.deletedProjects.totalCount;
+      ids.push(...page.deletedProjects.nodes.map((p) => p.id));
+      cursor = page.deletedProjects.pageInfo.hasNextPage
+        ? page.deletedProjects.pageInfo.endCursor
+        : null;
+    } while (cursor);
 
-      const project = data.deletedProjects.nodes[0];
-      await client
-        .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
-        .then(() => {
-          deleted++;
-        })
-        .catch((err) => {
-          console.warn(
-            `[recycle-bin-cleanup] Failed to delete "${project.name}":`,
-            err
-          );
-        });
+    if (ids.length === 0) return;
 
-      if (deleted % 50 === 0) {
-        console.log(
-          `[recycle-bin-cleanup] Progress: ${deleted} deleted, ${total} remaining...`
-        );
-      }
+    // Phase 2: delete in parallel chunks of 10
+    const CHUNK = 10;
+    let deleted = 0;
+    for (let i = 0; i < ids.length; i += CHUNK) {
+      const chunk = ids.slice(i, i + CHUNK);
+      const results = await Promise.all(
+        chunk.map((id) =>
+          client
+            .mutate(DELETE_PROJECT, { input: { projectId: id } })
+            .then(() => true)
+            .catch((err) => {
+              console.warn(
+                `[recycle-bin-cleanup] Failed to delete ${id}:`,
+                err
+              );
+              return false;
+            })
+        )
+      );
+      deleted += results.filter(Boolean).length;
     }
 
     console.log(
-      `[recycle-bin-cleanup] Permanently deleted ${deleted} project(s).`
+      `[recycle-bin-cleanup] Permanently deleted ${deleted}/${total} project(s).`
     );
   } catch (err) {
     console.warn("[recycle-bin-cleanup] Cleanup failed (non-fatal):", err);
@@ -307,30 +320,32 @@ export async function cleanupStaleE2eProjects(
         }
       }
     `;
+    type E2EDeletedPage = {
+      deletedProjects: {
+        totalCount: number;
+        nodes: { id: string; name: string }[];
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+      };
+    };
+    const emptyE2EPage: E2EDeletedPage = {
+      deletedProjects: {
+        totalCount: 0,
+        nodes: [],
+        pageInfo: { hasNextPage: false, endCursor: null }
+      }
+    };
+
     const deletedE2eProjects: { id: string; name: string }[] = [];
     let cursor: string | null = null;
     let hasMore = true;
     while (hasMore) {
-      const { data } = await client
-        .query<{
-          deletedProjects: {
-            totalCount: number;
-            nodes: { id: string; name: string }[];
-            pageInfo: { hasNextPage: boolean; endCursor: string | null };
-          };
-        }>(FETCH_DELETED_E2E, {
+      const result = await client
+        .query<E2EDeletedPage>(FETCH_DELETED_E2E, {
           workspaceId,
           pagination: { first: 1, ...(cursor ? { after: cursor } : {}) }
         })
-        .catch(() => ({
-          data: {
-            deletedProjects: {
-              totalCount: 0,
-              nodes: [],
-              pageInfo: { hasNextPage: false, endCursor: null }
-            }
-          }
-        }));
+        .catch(() => ({ data: emptyE2EPage }));
+      const data: E2EDeletedPage = result.data;
       const matched = data.deletedProjects.nodes.filter((p) =>
         p.name.startsWith(E2E_PREFIX)
       );
