@@ -153,7 +153,6 @@ test.describe("Adding Layers from External Resources", () => {
   });
 
   test("Add a 3D Tiles layer (Cesium OSM)", async () => {
-    test.skip(!!process.env.CI, "Cesium layer rendering unreliable in CI headless webkit");
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
