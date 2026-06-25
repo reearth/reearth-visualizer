@@ -1,5 +1,7 @@
 import { Locator, Page, expect } from "@playwright/test";
 
+import { MAX_SCROLL_ATTEMPTS, SCROLL_WAIT_MS } from "../utils";
+
 export class ProjectsPage {
   newProjectButton: Locator;
   importButton: Locator;
@@ -174,7 +176,47 @@ export class ProjectsPage {
     await expect(this.applyButton).toBeEnabled();
     await this.applyButton.click();
   }
+  /**
+   * Scrolls the projects list until the target project's grid card is in the
+   * DOM, or no further content loads. Required because the projects list uses
+   * infinite-scroll (load-more) and only shows 16 items per page.
+   */
+  async scrollToFindProject(projectName: string): Promise<void> {
+    const wrapper = this.page.getByTestId("projects-wrapper");
+
+    try {
+      await wrapper.waitFor({ state: "visible", timeout: 10000 });
+    } catch {
+      return;
+    }
+
+    let previousScrollHeight = -1;
+
+    for (let attempt = 0; attempt < MAX_SCROLL_ATTEMPTS; attempt++) {
+      const card = this.gridProjectItem(projectName);
+      const found = (await card.count()) > 0;
+      if (found) return;
+
+      const currentScrollHeight = await wrapper.evaluate(
+        (el) => el.scrollHeight
+      );
+
+      if (currentScrollHeight === previousScrollHeight) {
+        return;
+      }
+
+      previousScrollHeight = currentScrollHeight;
+
+      await wrapper.evaluate((el) => {
+        el.scrollTop = el.scrollHeight;
+      });
+
+      await this.page.waitForTimeout(SCROLL_WAIT_MS);
+    }
+  }
+
   async deleteProject(projectName: string) {
+    await this.scrollToFindProject(projectName);
     const projectMenuButton = this.gridProjectMenuButton(projectName).first();
     await projectMenuButton.click();
     await this.moveToRecycleBinButton.click();
@@ -228,6 +270,7 @@ export class ProjectsPage {
   }
 
   async goToProjectPage(projectName: string) {
+    await this.scrollToFindProject(projectName);
     const projectRow = this.page.getByTestId(
       `project-grid-item-${projectName}`
     );

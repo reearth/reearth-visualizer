@@ -1,5 +1,7 @@
 import { Locator, Page } from "@playwright/test";
 
+import { MAX_SCROLL_ATTEMPTS, SCROLL_WAIT_MS } from "../utils";
+
 export class RecycleBinPage {
   projectTitles: Locator;
   recoverButton: Locator;
@@ -42,6 +44,47 @@ export class RecycleBinPage {
     return this.page.getByTestId(`recycle-bin-item-menu-btn-${projectName}`);
   }
 
+  /**
+   * Scrolls the recycle bin list until the target project's menu button is in
+   * the DOM, or no further content loads. Required because the recycle bin uses
+   * infinite-scroll (load-more) and only shows 16 items per page — the deleted
+   * project may not appear on the first load.
+   */
+  async scrollToFindProject(projectName: string): Promise<void> {
+    const wrapper = this.page.getByTestId("recycle-bin-wrapper");
+
+    try {
+      await wrapper.waitFor({ state: "visible", timeout: 10000 });
+    } catch {
+      return;
+    }
+
+    let previousScrollHeight = -1;
+
+    for (let attempt = 0; attempt < MAX_SCROLL_ATTEMPTS; attempt++) {
+      const menuButton = this.recycleBinMenuButton(projectName);
+      const found = (await menuButton.count()) > 0;
+      if (found) return;
+
+      const currentScrollHeight = await wrapper.evaluate(
+        (el) => el.scrollHeight
+      );
+
+      if (currentScrollHeight === previousScrollHeight) {
+        // No new content loaded — reached the end without finding the project
+        return;
+      }
+
+      previousScrollHeight = currentScrollHeight;
+
+      await wrapper.evaluate((el) => {
+        el.scrollTop = el.scrollHeight;
+      });
+
+      await this.page.waitForTimeout(SCROLL_WAIT_MS);
+    }
+  }
+
   async confirmDeletion(projectName: string) {
     await this.projectNameInput.fill(projectName);
   }
@@ -59,6 +102,7 @@ export class RecycleBinPage {
   }
 
   async recoverProject(projectName: string) {
+    await this.scrollToFindProject(projectName);
     const menuButton = this.recycleBinMenuButton(projectName);
     await menuButton.waitFor({ state: "visible", timeout: 10000 });
     await menuButton.click();
@@ -67,6 +111,7 @@ export class RecycleBinPage {
   }
 
   async deleteProject(projectName: string) {
+    await this.scrollToFindProject(projectName);
     const menuButton = this.recycleBinMenuButton(projectName);
     await menuButton.waitFor({ state: "visible", timeout: 10000 });
     await menuButton.click();
