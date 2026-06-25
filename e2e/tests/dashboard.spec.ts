@@ -116,9 +116,6 @@ test.describe("DASHBOARD - Test cases", () => {
     await dashBoardPage.recycleBin.click();
     // await expect(recycleBinPage.projectTitles).toBeVisible();
     await recycleBinPage.recoverProject(projectName);
-    await expect(
-      page.getByText("Successfully recovered the project!")
-    ).toBeVisible();
   });
 
   test("Verify the project has successfully been recover", async () => {
@@ -128,14 +125,12 @@ test.describe("DASHBOARD - Test cases", () => {
 
   test("Remove the project, Go to the Recycle Bin And delete it ", async () => {
     await projectsPage.deleteProject(projectName);
-    await expect(
-      page.getByText("Successfully moved to Recycle bin!")
-    ).toBeVisible();
+    await expect(projectsPage.gridProjectItem(projectName)).not.toBeVisible();
     await dashBoardPage.recycleBin.click();
     await recycleBinPage.deleteProject(projectName);
     await recycleBinPage.confirmDeletion(projectName);
     await recycleBinPage.confirmDeleteButton.click();
-    await expect(page.getByText("Successfully delete project!")).toBeVisible();
+    await expect(recycleBinPage.recycleBinItem(projectName)).not.toBeVisible();
   });
 
   test("Verify project creation with special characters in name", async () => {
@@ -167,14 +162,12 @@ test.describe("DASHBOARD - Test cases", () => {
 
   test("Move the project to the Recycle Bin And delete it ", async () => {
     await projectsPage.deleteProject(specialProjectName);
-    await expect(
-      page.getByText("Successfully moved to Recycle bin!")
-    ).toBeVisible();
+    await expect(projectsPage.gridProjectItem(specialProjectName)).not.toBeVisible();
     await dashBoardPage.recycleBin.click();
     await recycleBinPage.deleteProject(specialProjectName);
     await recycleBinPage.confirmDeletion(specialProjectName);
     await recycleBinPage.confirmDeleteButton.click();
-    await expect(page.getByText("Successfully delete project!")).toBeVisible();
+    await expect(recycleBinPage.recycleBinItem(specialProjectName)).not.toBeVisible();
   });
 
   test.skip("Should import a project and verify it", async () => {

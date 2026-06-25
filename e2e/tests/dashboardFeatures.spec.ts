@@ -210,15 +210,13 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     await page.waitForTimeout(500);
 
     await projectsPage.deleteProject(renamedProjectName);
-    await expect(
-      page.getByText("Successfully moved to Recycle bin!")
-    ).toBeVisible();
+    await expect(projectsPage.gridProjectItem(renamedProjectName)).not.toBeVisible();
 
     await dashBoardPage.recycleBin.click();
     await page.waitForTimeout(1000);
     await recycleBinPage.deleteProject(renamedProjectName);
     await recycleBinPage.confirmDeletion(renamedProjectName);
     await recycleBinPage.confirmDeleteButton.click();
-    await expect(page.getByText("Successfully delete project!")).toBeVisible();
+    await expect(recycleBinPage.recycleBinItem(renamedProjectName)).not.toBeVisible();
   });
 });
