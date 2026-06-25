@@ -47,39 +47,60 @@ export class RecycleBinPage {
   /**
    * Scrolls the recycle bin list until the target project's menu button is in
    * the DOM, or no further content loads. Required because the recycle bin uses
-   * infinite-scroll (load-more) and only shows 16 items per page — the deleted
-   * project may not appear on the first load.
+   * infinite-scroll (load-more) and only shows 16 items per page.
+   *
+   * Scroll strategy (in priority order):
+   *   1. `data-testid="recycle-bin-wrapper"` — available once the frontend
+   *      change is deployed.
+   *   2. DOM traversal upward from the first visible item — works on any
+   *      deploy, looks for the nearest ancestor with overflow auto/scroll.
    */
   async scrollToFindProject(projectName: string): Promise<void> {
-    const wrapper = this.page.getByTestId("recycle-bin-wrapper");
-
-    try {
-      await wrapper.waitFor({ state: "visible", timeout: 10000 });
-    } catch {
-      return;
-    }
-
-    let previousScrollHeight = -1;
+    let previousItemCount = -1;
 
     for (let attempt = 0; attempt < MAX_SCROLL_ATTEMPTS; attempt++) {
-      const menuButton = this.recycleBinMenuButton(projectName);
-      const found = (await menuButton.count()) > 0;
-      if (found) return;
+      if ((await this.recycleBinMenuButton(projectName).count()) > 0) return;
 
-      const currentScrollHeight = await wrapper.evaluate(
-        (el) => el.scrollHeight
-      );
+      const currentItemCount = await this.page
+        .locator('[data-testid^="recycle-bin-item-menu-btn-"]')
+        .count();
 
-      if (currentScrollHeight === previousScrollHeight) {
-        // No new content loaded — reached the end without finding the project
-        return;
+      // Item count stopped growing — no more pages to load.
+      if (currentItemCount > 0 && currentItemCount === previousItemCount) return;
+
+      previousItemCount = currentItemCount;
+
+      // Try the testid shortcut first; fall back to DOM traversal.
+      const scrolledViaTestId = await this.page
+        .getByTestId("recycle-bin-wrapper")
+        .evaluate((el) => {
+          el.scrollTop = el.scrollHeight;
+          return true;
+        })
+        .catch(() => false);
+
+      if (!scrolledViaTestId) {
+        await this.page.evaluate(() => {
+          const item = document.querySelector(
+            '[data-testid^="recycle-bin-item-menu-btn-"]'
+          );
+          if (!item) return;
+          let el: Element | null = item.parentElement;
+          while (el && el !== document.body) {
+            const { overflow, overflowY } = getComputedStyle(el);
+            if (
+              overflow === "auto" ||
+              overflowY === "auto" ||
+              overflow === "scroll" ||
+              overflowY === "scroll"
+            ) {
+              el.scrollTop = el.scrollHeight;
+              return;
+            }
+            el = el.parentElement;
+          }
+        });
       }
-
-      previousScrollHeight = currentScrollHeight;
-
-      await wrapper.evaluate((el) => {
-        el.scrollTop = el.scrollHeight;
-      });
 
       await this.page.waitForTimeout(SCROLL_WAIT_MS);
     }

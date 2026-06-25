@@ -180,36 +180,52 @@ export class ProjectsPage {
    * Scrolls the projects list until the target project's grid card is in the
    * DOM, or no further content loads. Required because the projects list uses
    * infinite-scroll (load-more) and only shows 16 items per page.
+   *
+   * Uses `data-testid="projects-wrapper"` which already exists in the
+   * frontend; falls back to DOM traversal for resilience.
    */
   async scrollToFindProject(projectName: string): Promise<void> {
-    const wrapper = this.page.getByTestId("projects-wrapper");
-
-    try {
-      await wrapper.waitFor({ state: "visible", timeout: 10000 });
-    } catch {
-      return;
-    }
-
-    let previousScrollHeight = -1;
+    let previousItemCount = -1;
 
     for (let attempt = 0; attempt < MAX_SCROLL_ATTEMPTS; attempt++) {
-      const card = this.gridProjectItem(projectName);
-      const found = (await card.count()) > 0;
-      if (found) return;
+      if ((await this.gridProjectItem(projectName).count()) > 0) return;
 
-      const currentScrollHeight = await wrapper.evaluate(
-        (el) => el.scrollHeight
-      );
+      const currentItemCount = await this.page
+        .locator('[data-testid^="project-grid-item-"]')
+        .count();
 
-      if (currentScrollHeight === previousScrollHeight) {
-        return;
+      if (currentItemCount > 0 && currentItemCount === previousItemCount) return;
+
+      previousItemCount = currentItemCount;
+
+      const scrolledViaTestId = await this.page
+        .getByTestId("projects-wrapper")
+        .evaluate((el) => {
+          el.scrollTop = el.scrollHeight;
+          return true;
+        })
+        .catch(() => false);
+
+      if (!scrolledViaTestId) {
+        await this.page.evaluate(() => {
+          const item = document.querySelector('[data-testid^="project-grid-item-"]');
+          if (!item) return;
+          let el: Element | null = item.parentElement;
+          while (el && el !== document.body) {
+            const { overflow, overflowY } = getComputedStyle(el);
+            if (
+              overflow === "auto" ||
+              overflowY === "auto" ||
+              overflow === "scroll" ||
+              overflowY === "scroll"
+            ) {
+              el.scrollTop = el.scrollHeight;
+              return;
+            }
+            el = el.parentElement;
+          }
+        });
       }
-
-      previousScrollHeight = currentScrollHeight;
-
-      await wrapper.evaluate((el) => {
-        el.scrollTop = el.scrollHeight;
-      });
 
       await this.page.waitForTimeout(SCROLL_WAIT_MS);
     }
