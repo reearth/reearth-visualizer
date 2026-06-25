@@ -180,9 +180,6 @@ export class ProjectsPage {
    * Scrolls the projects list until the target project's grid card is in the
    * DOM, or no further content loads. Required because the projects list uses
    * infinite-scroll (load-more) and only shows 16 items per page.
-   *
-   * Uses `data-testid="projects-wrapper"` which already exists in the
-   * frontend; falls back to DOM traversal for resilience.
    */
   async scrollToFindProject(projectName: string): Promise<void> {
     let previousItemCount = -1;
@@ -190,41 +187,25 @@ export class ProjectsPage {
     for (let attempt = 0; attempt < MAX_SCROLL_ATTEMPTS; attempt++) {
       if ((await this.gridProjectItem(projectName).count()) > 0) return;
 
-      const currentItemCount = await this.page
-        .locator('[data-testid^="project-grid-item-"]')
-        .count();
+      const allCards = this.page.locator('[data-testid^="project-grid-item-"]');
+      const currentItemCount = await allCards.count();
 
       if (currentItemCount > 0 && currentItemCount === previousItemCount) return;
-
       previousItemCount = currentItemCount;
 
-      const scrolledViaTestId = await this.page
-        .getByTestId("projects-wrapper")
-        .evaluate((el) => {
-          el.scrollTop = el.scrollHeight;
-          return true;
-        })
-        .catch(() => false);
+      if (currentItemCount === 0) {
+        await this.page.waitForTimeout(SCROLL_WAIT_MS);
+        continue;
+      }
 
-      if (!scrolledViaTestId) {
-        await this.page.evaluate(() => {
-          const item = document.querySelector('[data-testid^="project-grid-item-"]');
-          if (!item) return;
-          let el: Element | null = item.parentElement;
-          while (el && el !== document.body) {
-            const { overflow, overflowY } = getComputedStyle(el);
-            if (
-              overflow === "auto" ||
-              overflowY === "auto" ||
-              overflow === "scroll" ||
-              overflowY === "scroll"
-            ) {
-              el.scrollTop = el.scrollHeight;
-              return;
-            }
-            el = el.parentElement;
-          }
-        });
+      const firstCard = allCards.first();
+      const box = await firstCard.boundingBox();
+      if (box) {
+        await this.page.mouse.move(
+          box.x + box.width / 2,
+          box.y + box.height / 2
+        );
+        await this.page.mouse.wheel(0, 10000);
       }
 
       await this.page.waitForTimeout(SCROLL_WAIT_MS);
@@ -234,6 +215,8 @@ export class ProjectsPage {
   async deleteProject(projectName: string) {
     await this.scrollToFindProject(projectName);
     const projectMenuButton = this.gridProjectMenuButton(projectName).first();
+    await projectMenuButton.waitFor({ state: "attached", timeout: 10000 });
+    await projectMenuButton.scrollIntoViewIfNeeded();
     await projectMenuButton.click();
     await this.moveToRecycleBinButton.click();
     await expect(this.popUpRemoveButton).toBeVisible();
@@ -290,6 +273,8 @@ export class ProjectsPage {
     const projectRow = this.page.getByTestId(
       `project-grid-item-${projectName}`
     );
+    await projectRow.first().waitFor({ state: "attached", timeout: 10000 });
+    await projectRow.first().scrollIntoViewIfNeeded();
     let attempts = 0;
     while (attempts < 3) {
       await projectRow.first().dblclick();

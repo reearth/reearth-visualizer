@@ -49,11 +49,8 @@ export class RecycleBinPage {
    * the DOM, or no further content loads. Required because the recycle bin uses
    * infinite-scroll (load-more) and only shows 16 items per page.
    *
-   * Scroll strategy (in priority order):
-   *   1. `data-testid="recycle-bin-wrapper"` — available once the frontend
-   *      change is deployed.
-   *   2. DOM traversal upward from the first visible item — works on any
-   *      deploy, looks for the nearest ancestor with overflow auto/scroll.
+   * Uses page.mouse.wheel() — the only approach that reliably fires scroll
+   * events in headless WebKit regardless of which frontend version is deployed.
    */
   async scrollToFindProject(projectName: string): Promise<void> {
     let previousItemCount = -1;
@@ -61,45 +58,32 @@ export class RecycleBinPage {
     for (let attempt = 0; attempt < MAX_SCROLL_ATTEMPTS; attempt++) {
       if ((await this.recycleBinMenuButton(projectName).count()) > 0) return;
 
-      const currentItemCount = await this.page
-        .locator('[data-testid^="recycle-bin-item-menu-btn-"]')
-        .count();
+      const allMenuButtons = this.page.locator(
+        '[data-testid^="recycle-bin-item-menu-btn-"]'
+      );
+      const currentItemCount = await allMenuButtons.count();
 
       // Item count stopped growing — no more pages to load.
       if (currentItemCount > 0 && currentItemCount === previousItemCount) return;
-
       previousItemCount = currentItemCount;
 
-      // Try the testid shortcut first; fall back to DOM traversal.
-      const scrolledViaTestId = await this.page
-        .getByTestId("recycle-bin-wrapper")
-        .evaluate((el) => {
-          el.scrollTop = el.scrollHeight;
-          return true;
-        })
-        .catch(() => false);
+      if (currentItemCount === 0) {
+        // First page still loading — just wait.
+        await this.page.waitForTimeout(SCROLL_WAIT_MS);
+        continue;
+      }
 
-      if (!scrolledViaTestId) {
-        await this.page.evaluate(() => {
-          const item = document.querySelector(
-            '[data-testid^="recycle-bin-item-menu-btn-"]'
-          );
-          if (!item) return;
-          let el: Element | null = item.parentElement;
-          while (el && el !== document.body) {
-            const { overflow, overflowY } = getComputedStyle(el);
-            if (
-              overflow === "auto" ||
-              overflowY === "auto" ||
-              overflow === "scroll" ||
-              overflowY === "scroll"
-            ) {
-              el.scrollTop = el.scrollHeight;
-              return;
-            }
-            el = el.parentElement;
-          }
-        });
+      // Move the mouse over a visible item then wheel-scroll down.
+      // mouse.wheel fires a real WheelEvent on the element under the cursor,
+      // which triggers the scroll listener in useLoadMore.
+      const firstItem = allMenuButtons.first();
+      const box = await firstItem.boundingBox();
+      if (box) {
+        await this.page.mouse.move(
+          box.x + box.width / 2,
+          box.y + box.height / 2
+        );
+        await this.page.mouse.wheel(0, 10000);
       }
 
       await this.page.waitForTimeout(SCROLL_WAIT_MS);
@@ -125,7 +109,8 @@ export class RecycleBinPage {
   async recoverProject(projectName: string) {
     await this.scrollToFindProject(projectName);
     const menuButton = this.recycleBinMenuButton(projectName);
-    await menuButton.waitFor({ state: "visible", timeout: 10000 });
+    await menuButton.waitFor({ state: "attached", timeout: 10000 });
+    await menuButton.scrollIntoViewIfNeeded();
     await menuButton.click();
     await this.recoverButton.waitFor({ state: "visible" });
     await this.recoverButton.click();
@@ -134,7 +119,8 @@ export class RecycleBinPage {
   async deleteProject(projectName: string) {
     await this.scrollToFindProject(projectName);
     const menuButton = this.recycleBinMenuButton(projectName);
-    await menuButton.waitFor({ state: "visible", timeout: 10000 });
+    await menuButton.waitFor({ state: "attached", timeout: 10000 });
+    await menuButton.scrollIntoViewIfNeeded();
     await menuButton.click();
     await this.deleteButton.waitFor({ state: "visible" });
     await this.deleteButton.click();
