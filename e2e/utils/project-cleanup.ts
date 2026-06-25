@@ -210,6 +210,16 @@ export async function cleanupRecycleBin(
     let total = 0;
     let deleted = 0;
 
+    const FETCH_DELETED = `
+      query($workspaceId: ID!, $pagination: Pagination) {
+        deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
+          totalCount
+          pageInfo { hasNextPage endCursor }
+          nodes { id name }
+        }
+      }
+    `;
+
     do {
       const { data } = await client.query<{
         deletedProjects: {
@@ -217,7 +227,7 @@ export async function cleanupRecycleBin(
           pageInfo: { hasNextPage: boolean; endCursor: string | null };
           nodes: { id: string; name: string }[];
         };
-      }>(GET_DELETED_PROJECTS, {
+      }>(FETCH_DELETED, {
         workspaceId,
         pagination: { first: 50, ...(cursor ? { after: cursor } : {}) }
       });
