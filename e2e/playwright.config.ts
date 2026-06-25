@@ -47,7 +47,7 @@ export default defineConfig({
     {
       name: "webkit",
       testDir: "./tests",
-      testMatch: /(dashboard(Features)?|projectSettings)\.spec\.ts/,
+      testMatch: /.*\.spec\.ts/,
       use: {
         ...devices["Desktop Safari"],
         screenshot: "only-on-failure",
