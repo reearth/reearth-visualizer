@@ -1,4 +1,3 @@
-import fs from "fs";
 import path from "path";
 
 import { FullConfig, webkit, request as playwrightRequest } from "@playwright/test";
@@ -73,10 +72,6 @@ async function globalSetup(_config: FullConfig) {
 
     // Log and clean recycle bin
     const recycleBinCount = await getRecycleBinCount(apiContext);
-    fs.writeFileSync(
-      path.join(__dirname, ".auth/recycle-bin-info.json"),
-      JSON.stringify({ count: recycleBinCount })
-    );
     console.log(`🗑️  Recycle bin count before cleanup: ${recycleBinCount}`);
     if (recycleBinCount > 0) {
       await cleanupRecycleBin(apiContext);

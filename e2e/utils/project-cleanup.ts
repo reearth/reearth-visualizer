@@ -5,7 +5,11 @@ import { APIRequestContext } from "@playwright/test";
 
 import { GraphQLClient, GQLResult } from "../api/graphql/client";
 import { DELETE_PROJECT, UPDATE_PROJECT } from "../api/graphql/mutations";
-import { GET_ME, GET_DELETED_PROJECTS, GET_PROJECTS } from "../api/graphql/queries";
+import {
+  GET_ME,
+  GET_DELETED_PROJECTS,
+  GET_PROJECTS
+} from "../api/graphql/queries";
 
 const apiTokenPath = path.join(__dirname, "../.auth/api-token.json");
 const storagePath = path.join(__dirname, "../.auth/user.json");
@@ -15,7 +19,10 @@ const storagePath = path.join(__dirname, "../.auth/user.json");
  * browser storage state (Auth0 access_token). This ensures cleanup works
  * regardless of which Playwright project (webkit / api-tests) ran first.
  */
-function getAuthToken(): { token: string; extraHeaders: Record<string, string> } {
+function getAuthToken(): {
+  token: string;
+  extraHeaders: Record<string, string>;
+} {
   // 1. Try api-token.json (written by api global setup)
   if (fs.existsSync(apiTokenPath)) {
     try {
@@ -169,7 +176,9 @@ export async function getRecycleBinCount(
   try {
     const { token, extraHeaders } = getAuthToken();
     const client = new GraphQLClient(request, token, extraHeaders);
-    console.log(`[recycle-bin-count] Querying endpoint: ${process.env.REEARTH_E2E_API_URL ?? "(derived from base URL)"}/graphql`);
+    console.log(
+      `[recycle-bin-count] Querying endpoint: ${process.env.REEARTH_E2E_API_URL ?? "(derived from base URL)"}/graphql`
+    );
 
     const { data: meData } = await client.query<{
       me: { myWorkspaceId: string };
@@ -223,27 +232,40 @@ export async function cleanupRecycleBin(
     // Fetch one project at a time and delete it until we're below the threshold
     while (true) {
       const { data } = await client.query<{
-        deletedProjects: { totalCount: number; nodes: { id: string; name: string }[] };
+        deletedProjects: {
+          totalCount: number;
+          nodes: { id: string; name: string }[];
+        };
       }>(FETCH_ONE, { workspaceId, pagination: { first: 1 } });
 
       total = data.deletedProjects.totalCount;
 
-      if (total < SAFE_THRESHOLD || data.deletedProjects.nodes.length === 0) break;
+      if (total < SAFE_THRESHOLD || data.deletedProjects.nodes.length === 0)
+        break;
 
       const project = data.deletedProjects.nodes[0];
       await client
         .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
-        .then(() => { deleted++; })
+        .then(() => {
+          deleted++;
+        })
         .catch((err) => {
-          console.warn(`[recycle-bin-cleanup] Failed to delete "${project.name}":`, err);
+          console.warn(
+            `[recycle-bin-cleanup] Failed to delete "${project.name}":`,
+            err
+          );
         });
 
       if (deleted % 50 === 0) {
-        console.log(`[recycle-bin-cleanup] Progress: ${deleted} deleted, ${total} remaining...`);
+        console.log(
+          `[recycle-bin-cleanup] Progress: ${deleted} deleted, ${total} remaining...`
+        );
       }
     }
 
-    console.log(`[recycle-bin-cleanup] Permanently deleted ${deleted} project(s).`);
+    console.log(
+      `[recycle-bin-cleanup] Permanently deleted ${deleted} project(s).`
+    );
   } catch (err) {
     console.warn("[recycle-bin-cleanup] Cleanup failed (non-fatal):", err);
   }
@@ -270,8 +292,14 @@ export async function cleanupStaleE2eProjects(
     // Collect active e2e projects
     const { data: activeData } = await client.query<{
       projects: { nodes: { id: string; name: string }[] };
-    }>(GET_PROJECTS, { workspaceId, pagination: { first: 500 }, keyword: E2E_PREFIX });
-    const activeProjects = activeData.projects.nodes.filter(p => p.name.startsWith(E2E_PREFIX));
+    }>(GET_PROJECTS, {
+      workspaceId,
+      pagination: { first: 500 },
+      keyword: E2E_PREFIX
+    });
+    const activeProjects = activeData.projects.nodes.filter((p) =>
+      p.name.startsWith(E2E_PREFIX)
+    );
 
     // Collect soft-deleted e2e projects from recycle bin
     const FETCH_DELETED_E2E = `
@@ -286,10 +314,29 @@ export async function cleanupStaleE2eProjects(
     let cursor: string | null = null;
     let hasMore = true;
     while (hasMore) {
-      const { data } = await client.query<{
-        deletedProjects: { totalCount: number; nodes: { id: string; name: string }[]; pageInfo: { hasNextPage: boolean; endCursor: string | null } };
-      }>(FETCH_DELETED_E2E, { workspaceId, pagination: { first: 1, ...(cursor ? { after: cursor } : {}) } }).catch(() => ({ data: { deletedProjects: { totalCount: 0, nodes: [], pageInfo: { hasNextPage: false, endCursor: null } } } }));
-      const matched = data.deletedProjects.nodes.filter(p => p.name.startsWith(E2E_PREFIX));
+      const { data } = await client
+        .query<{
+          deletedProjects: {
+            totalCount: number;
+            nodes: { id: string; name: string }[];
+            pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          };
+        }>(FETCH_DELETED_E2E, {
+          workspaceId,
+          pagination: { first: 1, ...(cursor ? { after: cursor } : {}) }
+        })
+        .catch(() => ({
+          data: {
+            deletedProjects: {
+              totalCount: 0,
+              nodes: [],
+              pageInfo: { hasNextPage: false, endCursor: null }
+            }
+          }
+        }));
+      const matched = data.deletedProjects.nodes.filter((p) =>
+        p.name.startsWith(E2E_PREFIX)
+      );
       deletedE2eProjects.push(...matched);
       hasMore = data.deletedProjects.pageInfo?.hasNextPage ?? false;
       cursor = data.deletedProjects.pageInfo?.endCursor ?? null;
@@ -297,19 +344,32 @@ export async function cleanupStaleE2eProjects(
     }
 
     const all = [...activeProjects, ...deletedE2eProjects];
-    console.log(`[e2e-cleanup] Found ${activeProjects.length} active and ${deletedE2eProjects.length} deleted stale e2e project(s).`);
+    console.log(
+      `[e2e-cleanup] Found ${activeProjects.length} active and ${deletedE2eProjects.length} deleted stale e2e project(s).`
+    );
 
     if (all.length === 0) return;
 
     let deleted = 0;
     for (const project of all) {
-      await client.mutate(UPDATE_PROJECT, { input: { projectId: project.id, deleted: true } }).catch(() => {});
-      await client.mutate(DELETE_PROJECT, { input: { projectId: project.id } })
-        .then(() => { deleted++; })
-        .catch(err => console.warn(`[e2e-cleanup] Failed to delete "${project.name}":`, err));
+      await client
+        .mutate(UPDATE_PROJECT, {
+          input: { projectId: project.id, deleted: true }
+        })
+        .catch(() => {});
+      await client
+        .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+        .then(() => {
+          deleted++;
+        })
+        .catch((err) =>
+          console.warn(`[e2e-cleanup] Failed to delete "${project.name}":`, err)
+        );
     }
 
-    console.log(`[e2e-cleanup] Deleted ${deleted}/${all.length} stale e2e project(s).`);
+    console.log(
+      `[e2e-cleanup] Deleted ${deleted}/${all.length} stale e2e project(s).`
+    );
   } catch (err) {
     console.warn("[e2e-cleanup] Cleanup failed (non-fatal):", err);
   }
