@@ -172,10 +172,9 @@ export async function getRecycleBinCount(
     console.log(`[recycle-bin-count] Querying endpoint: ${process.env.REEARTH_E2E_API_URL ?? "(derived from base URL)"}/graphql`);
 
     const { data: meData } = await client.query<{
-      me: { myWorkspaceId: string; email: string };
+      me: { myWorkspaceId: string };
     }>(GET_ME);
     const workspaceId = meData.me.myWorkspaceId;
-    console.log(`[recycle-bin-count] Authenticated as: ${meData.me.email}`);
 
     const { data } = await client.query<{
       deletedProjects: { totalCount: number };
