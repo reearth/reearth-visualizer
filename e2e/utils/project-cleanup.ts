@@ -176,9 +176,6 @@ export async function getRecycleBinCount(
   try {
     const { token, extraHeaders } = getAuthToken();
     const client = new GraphQLClient(request, token, extraHeaders);
-    console.log(
-      `[recycle-bin-count] Querying endpoint: ${process.env.REEARTH_E2E_API_URL ?? "(derived from base URL)"}/graphql`
-    );
 
     const { data: meData } = await client.query<{
       me: { myWorkspaceId: string };
