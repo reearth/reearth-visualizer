@@ -171,6 +171,7 @@ test.describe("Adding Layers from External Resources", () => {
   });
 
   test("Add a 3D Tiles layer from URL", async () => {
+    test.skip(!!process.env.CI, "Depends on external tile server unreliable in CI");
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
