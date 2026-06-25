@@ -21,7 +21,7 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
-  workers: 3,
+  workers: 2,
   reporter: [
     [
       "allure-playwright",
@@ -53,7 +53,7 @@ export default defineConfig({
         screenshot: "only-on-failure",
         headless: true,
         launchOptions: {
-          slowMo: 200
+          slowMo: 50
         },
         viewport: { width: 1920, height: 1080 }
       }
