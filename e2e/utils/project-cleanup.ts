@@ -206,46 +206,42 @@ export async function cleanupRecycleBin(
     }>(GET_ME);
     const workspaceId = meData.me.myWorkspaceId;
 
-    let cursor: string | null = null;
     let total = 0;
     let deleted = 0;
 
-    const FETCH_DELETED = `
+    const FETCH_ONE = `
       query($workspaceId: ID!, $pagination: Pagination) {
         deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
           totalCount
-          pageInfo { hasNextPage endCursor }
           nodes { id name }
         }
       }
     `;
 
-    do {
+    const SAFE_THRESHOLD = 16;
+
+    // Fetch one project at a time and delete it until we're below the threshold
+    while (true) {
       const { data } = await client.query<{
-        deletedProjects: {
-          totalCount: number;
-          pageInfo: { hasNextPage: boolean; endCursor: string | null };
-          nodes: { id: string; name: string }[];
-        };
-      }>(FETCH_DELETED, {
-        workspaceId,
-        pagination: { first: 50, ...(cursor ? { after: cursor } : {}) }
-      });
+        deletedProjects: { totalCount: number; nodes: { id: string; name: string }[] };
+      }>(FETCH_ONE, { workspaceId, pagination: { first: 1 } });
 
-      const page = data.deletedProjects;
-      total = page.totalCount;
+      total = data.deletedProjects.totalCount;
 
-      for (const project of page.nodes) {
-        await client
-          .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
-          .then(() => { deleted++; })
-          .catch((err) => {
-            console.warn(`[recycle-bin-cleanup] Failed to delete "${project.name}":`, err);
-          });
+      if (total < SAFE_THRESHOLD || data.deletedProjects.nodes.length === 0) break;
+
+      const project = data.deletedProjects.nodes[0];
+      await client
+        .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+        .then(() => { deleted++; })
+        .catch((err) => {
+          console.warn(`[recycle-bin-cleanup] Failed to delete "${project.name}":`, err);
+        });
+
+      if (deleted % 50 === 0) {
+        console.log(`[recycle-bin-cleanup] Progress: ${deleted} deleted, ${total} remaining...`);
       }
-
-      cursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null;
-    } while (cursor);
+    }
 
     console.log(`[recycle-bin-cleanup] Permanently deleted ${deleted}/${total} projects.`);
   } catch (err) {
