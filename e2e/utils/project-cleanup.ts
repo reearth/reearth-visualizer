@@ -172,7 +172,7 @@ export async function deleteProjectsByName(
  */
 export async function getRecycleBinCount(
   request: APIRequestContext
-): Promise<number> {
+): Promise<number | undefined> {
   try {
     const { token, extraHeaders } = getAuthToken();
     const client = new GraphQLClient(request, token, extraHeaders);
@@ -192,7 +192,7 @@ export async function getRecycleBinCount(
     return data.deletedProjects.totalCount;
   } catch (err) {
     console.warn("[recycle-bin-count] Failed to get count:", err);
-    return -1;
+    return;
   }
 }
 

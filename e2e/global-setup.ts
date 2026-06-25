@@ -1,10 +1,18 @@
 import path from "path";
 
-import { FullConfig, webkit, request as playwrightRequest } from "@playwright/test";
+import {
+  FullConfig,
+  webkit,
+  request as playwrightRequest
+} from "@playwright/test";
 
 import { LoginPage } from "./pages/loginPage";
 import { createIAPContext } from "./utils/iap-auth";
-import { getRecycleBinCount, cleanupRecycleBin, cleanupStaleE2eProjects } from "./utils/project-cleanup";
+import {
+  getRecycleBinCount,
+  cleanupRecycleBin,
+  cleanupStaleE2eProjects
+} from "./utils/project-cleanup";
 
 export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
 
@@ -73,7 +81,7 @@ async function globalSetup(_config: FullConfig) {
     // Log and clean recycle bin
     const recycleBinCount = await getRecycleBinCount(apiContext);
     console.log(`🗑️  Recycle bin count before cleanup: ${recycleBinCount}`);
-    if (recycleBinCount > 0) {
+    if (recycleBinCount) {
       await cleanupRecycleBin(apiContext);
     }
 
