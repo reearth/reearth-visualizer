@@ -180,6 +180,10 @@ export class ProjectsPage {
    * Scrolls the projects list until the target project's grid card is in the
    * DOM, or no further content loads. Required because the projects list uses
    * infinite-scroll (load-more) and only shows 16 items per page.
+   *
+   * Uses evaluate + scrollTop + explicit dispatchEvent rather than mouse.wheel
+   * because headless WebKit on Linux does not reliably fire scroll events from
+   * synthetic WheelEvents on inner overflow containers.
    */
   async scrollToFindProject(projectName: string): Promise<void> {
     let previousItemCount = -1;
@@ -198,15 +202,38 @@ export class ProjectsPage {
         continue;
       }
 
-      const firstCard = allCards.first();
-      const box = await firstCard.boundingBox();
-      if (box) {
-        await this.page.mouse.move(
-          box.x + box.width / 2,
-          box.y + box.height / 2
-        );
-        await this.page.mouse.wheel(0, 10000);
-      }
+      // Scroll the overflow container and explicitly fire the scroll event so
+      // useLoadMore's listener is triggered in both headed and headless modes.
+      await this.page.evaluate(() => {
+        const wrapper: HTMLElement | null =
+          (document.querySelector(
+            '[data-testid="projects-wrapper"]'
+          ) as HTMLElement | null) ??
+          (() => {
+            const item = document.querySelector(
+              '[data-testid^="project-grid-item-"]'
+            );
+            if (!item) return null;
+            let el: HTMLElement | null =
+              item.parentElement as HTMLElement | null;
+            while (el && el !== document.body) {
+              const { overflow, overflowY } = window.getComputedStyle(el);
+              if (
+                overflow === "auto" ||
+                overflow === "scroll" ||
+                overflowY === "auto" ||
+                overflowY === "scroll"
+              )
+                return el;
+              el = el.parentElement as HTMLElement | null;
+            }
+            return null;
+          })();
+
+        if (!wrapper) return;
+        wrapper.scrollTop = wrapper.scrollHeight;
+        wrapper.dispatchEvent(new Event("scroll", { bubbles: false }));
+      });
 
       await this.page.waitForTimeout(SCROLL_WAIT_MS);
     }
