@@ -5,7 +5,7 @@ import { FullConfig, webkit, request as playwrightRequest } from "@playwright/te
 
 import { LoginPage } from "./pages/loginPage";
 import { createIAPContext } from "./utils/iap-auth";
-import { getRecycleBinCount, cleanupRecycleBin } from "./utils/project-cleanup";
+import { getRecycleBinCount, cleanupRecycleBin, cleanupStaleE2eProjects } from "./utils/project-cleanup";
 
 export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
 
@@ -69,27 +69,23 @@ async function globalSetup(_config: FullConfig) {
     // Save signed-in state
     await page.context().storageState({ path: STORAGE_STATE });
 
-    // Check recycle bin count and warn if it may cause test failures
     const apiContext = await playwrightRequest.newContext();
-    const recycleBinCount = await getRecycleBinCount(apiContext);
-    await apiContext.dispose();
 
-    const recycleBinInfo = { count: recycleBinCount };
+    // Log and clean recycle bin
+    const recycleBinCount = await getRecycleBinCount(apiContext);
     fs.writeFileSync(
       path.join(__dirname, ".auth/recycle-bin-info.json"),
-      JSON.stringify(recycleBinInfo)
+      JSON.stringify({ count: recycleBinCount })
     );
-
+    console.log(`🗑️  Recycle bin count before cleanup: ${recycleBinCount}`);
     if (recycleBinCount > 0) {
-      console.warn(
-        `⚠️  Recycle bin has ${recycleBinCount} deleted project(s) — cleaning up before tests run...`
-      );
-      const apiContext2 = await playwrightRequest.newContext();
-      await cleanupRecycleBin(apiContext2);
-      await apiContext2.dispose();
-    } else {
-      console.log(`🗑️  Recycle bin count: ${recycleBinCount}`);
+      await cleanupRecycleBin(apiContext);
     }
+
+    // Clean up stale e2e- projects from previous runs
+    await cleanupStaleE2eProjects(apiContext);
+
+    await apiContext.dispose();
 
     console.log(
       "✅ Global setup completed - authentication state saved to:",
