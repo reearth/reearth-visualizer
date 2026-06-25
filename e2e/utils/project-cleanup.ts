@@ -157,3 +157,35 @@ export async function deleteProjectsByName(
     await deleteProjectByName(request, name);
   }
 }
+
+/**
+ * Returns the total number of projects currently in the recycle bin.
+ * Used in global setup to warn when stale deleted projects may cause
+ * recycle bin tests to fail (first page is 16 items).
+ */
+export async function getRecycleBinCount(
+  request: APIRequestContext
+): Promise<number> {
+  try {
+    const { token, extraHeaders } = getAuthToken();
+    const client = new GraphQLClient(request, token, extraHeaders);
+    console.log(`[recycle-bin-count] Querying endpoint: ${process.env.REEARTH_E2E_API_URL ?? "(derived from base URL)"}/graphql`);
+
+    const { data: meData } = await client.query<{
+      me: { myWorkspaceId: string };
+    }>(GET_ME);
+    const workspaceId = meData.me.myWorkspaceId;
+
+    const { data } = await client.query<{
+      deletedProjects: { totalCount: number };
+    }>(GET_DELETED_PROJECTS, {
+      workspaceId,
+      pagination: { first: 1 }
+    });
+
+    return data.deletedProjects.totalCount;
+  } catch (err) {
+    console.warn("[recycle-bin-count] Failed to get count:", err);
+    return -1;
+  }
+}

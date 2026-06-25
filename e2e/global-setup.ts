@@ -1,9 +1,11 @@
+import fs from "fs";
 import path from "path";
 
-import { FullConfig, webkit } from "@playwright/test";
+import { FullConfig, webkit, request as playwrightRequest } from "@playwright/test";
 
 import { LoginPage } from "./pages/loginPage";
 import { createIAPContext } from "./utils/iap-auth";
+import { getRecycleBinCount } from "./utils/project-cleanup";
 
 export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
 
@@ -66,6 +68,27 @@ async function globalSetup(_config: FullConfig) {
 
     // Save signed-in state
     await page.context().storageState({ path: STORAGE_STATE });
+
+    // Check recycle bin count and warn if it may cause test failures
+    const apiContext = await playwrightRequest.newContext();
+    const recycleBinCount = await getRecycleBinCount(apiContext);
+    await apiContext.dispose();
+
+    const recycleBinInfo = { count: recycleBinCount };
+    fs.writeFileSync(
+      path.join(__dirname, ".auth/recycle-bin-info.json"),
+      JSON.stringify(recycleBinInfo)
+    );
+
+    if (recycleBinCount >= 16) {
+      console.warn(
+        `⚠️  Recycle bin has ${recycleBinCount} deleted project(s). ` +
+        `Tests that rely on the recycle bin will be skipped (first page shows 16 items). ` +
+        `Clean up the recycle bin for the test account to re-enable these tests.`
+      );
+    } else {
+      console.log(`🗑️  Recycle bin count: ${recycleBinCount}`);
+    }
 
     console.log(
       "✅ Global setup completed - authentication state saved to:",
