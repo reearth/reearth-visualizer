@@ -13,6 +13,10 @@ export const GRAPHQL_ENDPOINT =
   process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "").concat("/graphql") ??
   deriveApiEndpoint(BASE_URL);
 
+console.log("[env] REEARTH_E2E_API_URL:", process.env.REEARTH_E2E_API_URL ?? "(not set)");
+console.log("[env] BASE_URL:", BASE_URL);
+console.log("[env] GRAPHQL_ENDPOINT:", GRAPHQL_ENDPOINT);
+
 function deriveApiEndpoint(url: string): string {
   try {
     const parsed = new URL(url);
@@ -35,6 +39,8 @@ export const SECOND_USER_EMAIL = process.env.REEARTH_E2E_SECOND_USER_EMAIL ?? ""
 export const API_BASE_URL =
   process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "") ??
   deriveApiBase(BASE_URL);
+
+console.log("[env] API_BASE_URL:", API_BASE_URL);
 
 function deriveApiBase(url: string): string {
   try {

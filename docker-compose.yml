@@ -65,7 +65,7 @@ services:
       - reearth
 
   reearth-cerbos:
-    image: cerbos/cerbos:0.40.0
+    image: cerbos/cerbos:0.53.0
     profiles:
       - accounts
     command: server --config=/policies/.cerbos.yaml
@@ -89,7 +89,7 @@ services:
       - reearth
 
   reearth-gcs:
-    image: fsouza/fake-gcs-server:1.52.1
+    image: fsouza/fake-gcs-server:1.54.0
     ports:
       - 4443:4443
     volumes:
