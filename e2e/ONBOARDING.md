@@ -50,6 +50,19 @@ cd e2e
 npm install
 npx playwright install webkit
 op signin
+```
+
+Create a local `.env.op` file (not tracked in git) with `op://` references for each variable in `env.example`:
+
+```dotenv
+REEARTH_E2E_EMAIL="op://YourVault/YourItem/REEARTH_E2E_EMAIL"
+REEARTH_E2E_PASSWORD="op://YourVault/YourItem/REEARTH_E2E_PASSWORD"
+# ... one line per variable
+```
+
+Then run:
+
+```bash
 npm run test:ui:op   # UI tests
 npm run test:api:op  # API tests
 ```

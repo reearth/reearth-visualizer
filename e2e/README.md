@@ -54,6 +54,8 @@ This project is a Playwright framework setup that follows the Page Object Design
    ```bash
    # One-time setup — requires access to the Visualizer vault
    op signin
+   # Create .env.op with op:// references for each variable in env.example
+   # (see ONBOARDING.md for the exact format)
    # Then run tests directly with:
    npm run test:ui:op
    npm run test:api:op
