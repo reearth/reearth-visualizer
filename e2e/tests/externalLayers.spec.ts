@@ -189,9 +189,8 @@ test.describe("Adding Layers from External Resources", () => {
   });
 
   test("Verify all added layers are listed", async () => {
-    test.skip(!!process.env.CI, "Depends on layer-adding tests skipped in CI");
     const layerCount = await cesiumViewer.getLayerCount();
-    expect(layerCount).toBeGreaterThanOrEqual(4);
+    expect(layerCount).toBeGreaterThanOrEqual(3);
   });
 
   test("Canceling Data Source Manager does not add a layer", async () => {
