@@ -115,6 +115,7 @@ test.describe("Adding Layers from External Resources", () => {
   test("Add a GeoJSON layer from web URL", async () => {
     // NOTE: relies on https://raw.githubusercontent.com/johan/world.geo.json — external resource
     // outside company control; if unavailable this test may fail
+    test.skip(!!process.env.CI, "External resource outside company control, unreliable in CI");
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
