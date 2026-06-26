@@ -13,6 +13,9 @@ export const GRAPHQL_ENDPOINT =
   process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "").concat("/graphql") ??
   deriveApiEndpoint(BASE_URL);
 
+console.log("[env] REEARTH_E2E_API_URL:", process.env.REEARTH_E2E_API_URL ?? "(not set)");
+console.log("[env] GRAPHQL_ENDPOINT:", GRAPHQL_ENDPOINT);
+
 function deriveApiEndpoint(url: string): string {
   try {
     const parsed = new URL(url);
