@@ -22,6 +22,7 @@ They are both run via `npx playwright test`, just with different `--project` fla
 - **Node.js 24** (matches the CI image; see `.github/workflows/playwright_*.yml`).
 - **npm** (lockfile is committed).
 - **Google Cloud SDK / `gcloud` CLI** — only needed when the target environment is behind Google IAP and you authenticate with Application Default Credentials. Run `gcloud auth application-default login` once.
+- **1Password CLI** (optional) — install from <https://developer.1password.com/docs/cli/get-started/>. Required only if using `test:ui:op` / `test:api:op` instead of a `.env` file.
 - The Playwright WebKit browser binary. Install via `npx playwright install webkit` after `npm install` (the CI image ships browsers preinstalled at `mcr.microsoft.com/playwright:v1.58.2-noble`).
 
 ⚠ Note: `package.json` does not include a `postinstall` step, so `npm install` does **not** automatically download browser binaries — you must run `npx playwright install webkit` yourself on a fresh checkout.
@@ -30,12 +31,27 @@ They are both run via `npx playwright test`, just with different `--project` fla
 
 ## 3. Setup
 
+**Option 1: Traditional `.env` file**
+
 ```bash
 cd e2e
 npm install
 npx playwright install webkit
 cp env.example .env
 # then edit .env
+```
+
+**Option 2: 1Password CLI (skips `.env` entirely)**
+
+Requires access to the `Visualizer` vault in the team 1Password account.
+
+```bash
+cd e2e
+npm install
+npx playwright install webkit
+op signin
+npm run test:ui:op   # UI tests
+npm run test:api:op  # API tests
 ```
 
 ### 3.1 Minimum `.env` values
@@ -230,8 +246,10 @@ All npm scripts (`package.json`):
 | Script | What it does |
 |---|---|
 | `npm run test:ui` | Removes `./out` and runs the `webkit` UI project (this is what CI runs). |
+| `npm run test:ui:op` | Same as `test:ui` but injects secrets from 1Password (no `.env` needed). |
 | `npm run test:local` | Same as above with `REEARTH_WEB_E2E_BASEURL=http://localhost:3000`. |
 | `npm run test:api` | Runs `api-setup` + `api-tests` with `SKIP_STORAGE_STATE=true` (skips browser global setup). |
+| `npm run test:api:op` | Same as `test:api` but injects secrets from 1Password (no `.env` needed). |
 | `npm run test:api:local` | Same as `test:api` but forces `REEARTH_E2E_AUTH_MODE=mock` and `BASEURL=http://localhost:3000` — for running API tests against a local server with debug user header. |
 | `npm run allure:generate` | Generates a static Allure HTML report from `./out/allure-results`. |
 | `npm run allure:serve` | Serves the report on port 8080. |

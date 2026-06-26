@@ -40,15 +40,26 @@ This project is a Playwright framework setup that follows the Page Object Design
    npm install
    ```
 
-3. **Set up the `.env` file:**
+3. **Set up environment variables:**
 
-   Create a `.env` file in the root of the `e2e` folder and add the following variables:
+   **Option 1: Traditional `.env` file**
 
+   ```bash
+   cp env.example .env
+   # Fill in values — consult the team for credentials
    ```
-   REEARTH_WEB_E2E_BASEURL=http://localhost:3000 OR DEV URL
-   REEARTH_WEB_E2E_ACCOUNT=your_visualizer_account
-   REEARTH_WEB_E2E_ACCOUNT_PASSWORD=your_visualizer_password
+
+   **Option 2: 1Password CLI (Recommended)**
+
+   ```bash
+   # One-time setup — requires access to the Visualizer vault
+   op signin
+   # Then run tests directly with:
+   npm run test:ui:op
+   npm run test:api:op
    ```
+
+   See [ONBOARDING.md](ONBOARDING.md) for full setup details.
 
 4. **Run tests:**
 
