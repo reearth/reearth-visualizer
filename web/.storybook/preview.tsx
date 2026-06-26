@@ -1,26 +1,15 @@
-import {
-  ApolloProvider,
-  ApolloClient,
-  InMemoryCache,
-  ApolloLink,
-  Observable
-} from "@apollo/client";
 import { ThemeProvider } from "@emotion/react";
 import type { Preview } from "@storybook/react";
+import { I18nextProvider } from "react-i18next";
 
-import { Provider as I18nProvider } from "../src/services/i18n";
+import i18n from "../src/services/i18n/i18n";
 import { GlobalStyles, darkTheme, lightTheme } from "../src/services/theme";
 
-// apollo client that does nothing
-const mockClient = new ApolloClient({
-  link: new ApolloLink(
-    () =>
-      new Observable((observer) => {
-        observer.complete();
-      })
-  ),
-  cache: new InMemoryCache()
-});
+// Mock I18nProvider for Storybook
+// The real I18nProvider uses Apollo Client hooks (useMe) which aren't needed for component stories
+const MockI18nProvider = ({ children }: { children: React.ReactNode }) => {
+  return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
+};
 
 const preview: Preview = {
   parameters: {
@@ -31,7 +20,7 @@ const preview: Preview = {
       ]
     },
     layout: "fullscreen",
-    controls: { expanded: true },
+    controls: { expanded: true }
   },
   decorators: [
     (Story, context) => {
@@ -41,11 +30,9 @@ const preview: Preview = {
       return (
         <ThemeProvider theme={currentTheme}>
           <GlobalStyles />
-          <ApolloProvider client={mockClient}>
-            <I18nProvider>
-              <Story />
-            </I18nProvider>
-          </ApolloProvider>
+          <MockI18nProvider>
+            <Story />
+          </MockI18nProvider>
         </ThemeProvider>
       );
     }

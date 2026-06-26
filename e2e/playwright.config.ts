@@ -12,6 +12,7 @@ export default defineConfig({
   globalSetup: process.env.SKIP_STORAGE_STATE
     ? undefined
     : require.resolve("./global-setup"),
+  globalTeardown: require.resolve("./global-teardown"),
   expect: {
     timeout: 35000
   },
@@ -19,8 +20,8 @@ export default defineConfig({
   testDir: "./",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  workers: 5,
+  retries: process.env.CI ? 2 : 1,
+  workers: 1,
   reporter: [
     [
       "allure-playwright",
@@ -30,10 +31,10 @@ export default defineConfig({
         outputFolder: "./out/allure-results",
         suiteTitle: false,
         environmentInfo: {
-          node_version: process.version,
-        },
-      },
-    ],
+          node_version: process.version
+        }
+      }
+    ]
   ],
   use: {
     trace: "on-first-retry",
@@ -52,7 +53,7 @@ export default defineConfig({
         screenshot: "only-on-failure",
         headless: true,
         launchOptions: {
-          slowMo: 200
+          slowMo: 50
         },
         viewport: { width: 1920, height: 1080 }
       }

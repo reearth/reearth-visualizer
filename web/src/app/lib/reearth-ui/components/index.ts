@@ -34,3 +34,4 @@ export * from "./ClickAway";
 export * from "./RangeSlider";
 export * from "./Tooltip";
 export * from "./Tree";
+export * from "./Banner";

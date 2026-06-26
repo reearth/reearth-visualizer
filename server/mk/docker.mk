@@ -112,6 +112,16 @@ d-run:
 	fi
 	${DOCKER_COMPOSE} --profile accounts up reearth-visualizer-dev
 
+inject-env-op:
+	@command -v op >/dev/null 2>&1 || { echo "Error: 1Password CLI not installed. See https://developer.1password.com/docs/cli/get-started/"; exit 1; }
+	op inject -f -i app.env -o .env.docker
+	op inject -f -i app.accounts.env -o .env.accounts.docker
+
+d-run-auth0: inject-env-op
+	sed -i.bak 's/REEARTH_MOCKAUTH=.*/REEARTH_MOCKAUTH=false/' .env.docker && rm -f .env.docker.bak
+	sed -i.bak 's/REEARTH_MOCK_AUTH=.*/REEARTH_MOCK_AUTH=false/' .env.accounts.docker && rm -f .env.accounts.docker.bak
+	${DOCKER_COMPOSE} --profile accounts up reearth-visualizer-dev
+
 d-run-accounts:
 	@if [ ! -f .env.accounts.docker ]; then \
 		echo "Creating .env.accounts.docker from .env.accounts.docker.example..."; \
@@ -197,4 +207,4 @@ d-test:
 d-up-gcs:
 	${DOCKER_COMPOSE} up -d reearth-gcs
 
-.PHONY: d-destroy d-down d-down-gcs d-down-internal d-lint d-logs-accounts d-migrate d-migrate-with-key d-reset-data d-run d-run-accounts run-db d-run-db d-run-internal d-run-reset d-run-standalone d-set-mongo-fcv-8 d-test d-up-gcs
+.PHONY: d-destroy d-down d-down-gcs d-down-internal d-lint d-logs-accounts d-migrate d-migrate-with-key d-reset-data d-run d-run-auth0 d-run-accounts inject-env-op run-db d-run-db d-run-internal d-run-reset d-run-standalone d-set-mongo-fcv-8 d-test d-up-gcs

@@ -237,6 +237,7 @@ const Visualizer: FC<VisualizerProps> = ({
   } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
     viewerProperty,
+    widgets: widgets?.alignSystem,
     onCoreLayerSelect,
     currentCamera,
     handleCoreAPIReady,
@@ -245,7 +246,8 @@ const Visualizer: FC<VisualizerProps> = ({
 
   // Override engineMeta cesiumIonAccessToken with global token from viewer property if set
   const overriddenEngineMeta = useMemo(() => {
-    const globalIonToken = overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
+    const globalIonToken =
+      overriddenViewerProperty?.assets?.cesium?.global?.ionAccessToken;
 
     if (globalIonToken && typeof globalIonToken === "string") {
       return {

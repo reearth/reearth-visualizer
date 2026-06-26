@@ -1,9 +1,18 @@
 import path from "path";
 
-import { FullConfig, webkit } from "@playwright/test";
+import {
+  FullConfig,
+  webkit,
+  request as playwrightRequest
+} from "@playwright/test";
 
 import { LoginPage } from "./pages/loginPage";
 import { createIAPContext } from "./utils/iap-auth";
+import {
+  getRecycleBinCount,
+  cleanupRecycleBin,
+  cleanupStaleE2eProjects
+} from "./utils/project-cleanup";
 
 export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
 
@@ -66,6 +75,20 @@ async function globalSetup(_config: FullConfig) {
 
     // Save signed-in state
     await page.context().storageState({ path: STORAGE_STATE });
+
+    const apiContext = await playwrightRequest.newContext();
+
+    // Log and clean recycle bin
+    const recycleBinCount = await getRecycleBinCount(apiContext);
+    console.log(`[setup] Recycle bin count before cleanup: ${recycleBinCount}`);
+    if (recycleBinCount) {
+      await cleanupRecycleBin(apiContext);
+    }
+
+    // Clean up stale e2e- projects from previous runs
+    await cleanupStaleE2eProjects(apiContext);
+
+    await apiContext.dispose();
 
     console.log(
       "✅ Global setup completed - authentication state saved to:",

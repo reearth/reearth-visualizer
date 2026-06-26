@@ -6,14 +6,13 @@ import { DashBoardPage } from "../pages/dashBoardPage";
 import { ProjectSettingsPage } from "../pages/projectSettingsPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { createIAPContext } from "../utils/iap-auth";
-import { deleteProjectByName } from "../utils/project-cleanup";
 
 const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 if (!REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing REEARTH_WEB_E2E_BASEURL");
 }
 
-const projectName = faker.lorem.words(2);
+const projectName = "e2e-" + faker.lorem.words(2);
 const projectAlias = faker.string.alphanumeric(15);
 
 test.describe.configure({ mode: "serial" });
@@ -55,7 +54,6 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test.afterAll(async () => {
-    await deleteProjectByName(page.request, projectName);
     await context.close();
   });
 

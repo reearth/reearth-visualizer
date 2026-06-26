@@ -24,6 +24,9 @@ export type RangeFieldProps = CommonFieldProps &
 const RangeField: FC<RangeFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   values,
   placeholders,
   content,
@@ -76,6 +79,9 @@ const RangeField: FC<RangeFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="rangefield-commonfield"
     >
       <Wrapper data-testid="rangefield-wrapper">
