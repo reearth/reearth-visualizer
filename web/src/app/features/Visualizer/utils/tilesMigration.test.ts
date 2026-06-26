@@ -2,7 +2,14 @@ import { describe, expect, it } from "vitest";
 
 import { migrateViewerPropertyTiles, __testing__ } from "./tilesMigration";
 
-const { TILE_TYPE_MIGRATION_MAP, CESIUM_ION_ASSET_ID_FALLBACK_MAP, needsTileMigration, migrateTile, migrateTerrain } = __testing__;
+const {
+  TILE_TYPE_MIGRATION_MAP,
+  CESIUM_ION_ASSET_ID_FALLBACK_MAP,
+  needsTileMigration,
+  migrateTile,
+  migrateTerrain,
+  extractStreetViewTiles
+} = __testing__;
 
 describe("tilesMigration", () => {
   describe("migrateViewerPropertyTiles", () => {
@@ -25,9 +32,7 @@ describe("tilesMigration", () => {
 
     it("should return original viewerProperty when no migration needed", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1", type: "open_street_map" }
-        ]
+        tiles: [{ id: "1", type: "open_street_map" }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -38,10 +43,7 @@ describe("tilesMigration", () => {
 
     it("should apply defaultTileType to tiles without type when defaultTileType is provided", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1" },
-          { id: "2", type: undefined }
-        ]
+        tiles: [{ id: "1" }, { id: "2", type: undefined }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -56,10 +58,7 @@ describe("tilesMigration", () => {
 
     it("should NOT apply type to tiles without type when defaultTileType is not provided", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1" },
-          { id: "2", type: undefined }
-        ]
+        tiles: [{ id: "1" }, { id: "2", type: undefined }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -82,11 +81,17 @@ describe("tilesMigration", () => {
         hasAccessToken: false
       });
       // Without token: deprecated → cesium_ion → fallback to google_satellite/etc
+      // Opacity is set to 1 for all tiles because Google tiles are present
       expect(result?.tiles).toEqual([
-        { id: "1", type: "google_satellite", cesiumIonAssetId: 2 },
-        { id: "2", type: "google_satellite", cesiumIonAssetId: 3 },
-        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4 },
-        { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812 }
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
+        { id: "2", type: "google_satellite", cesiumIonAssetId: 3, opacity: 1 },
+        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4, opacity: 1 },
+        {
+          id: "4",
+          type: "nasa_black_marble",
+          cesiumIonAssetId: 3812,
+          opacity: 1
+        }
       ]);
     });
 
@@ -125,19 +130,23 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
+      // Opacity is set to 1 for all tiles because Google tiles are present
       expect(result?.tiles).toEqual([
-        { id: "1", type: "google_satellite", cesiumIonAssetId: 2 },
-        { id: "2", type: "google_satellite", cesiumIonAssetId: 3 },
-        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4 },
-        { id: "4", type: "nasa_black_marble", cesiumIonAssetId: 3812 }
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
+        { id: "2", type: "google_satellite", cesiumIonAssetId: 3, opacity: 1 },
+        { id: "3", type: "google_roadmap", cesiumIonAssetId: 4, opacity: 1 },
+        {
+          id: "4",
+          type: "nasa_black_marble",
+          cesiumIonAssetId: 3812,
+          opacity: 1
+        }
       ]);
     });
 
     it("should NOT apply Cesium Ion fallback when token is available", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1", type: "cesium_ion", cesiumIonAssetId: 2 }
-        ]
+        tiles: [{ id: "1", type: "cesium_ion", cesiumIonAssetId: 2 }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: true,
@@ -175,20 +184,19 @@ describe("tilesMigration", () => {
         defaultTileType: "open_street_map",
         hasAccessToken: false
       });
+      // Opacity is set to 1 for all tiles because Google tiles are present
       expect(result?.tiles).toEqual([
-        { id: "1", type: "open_street_map" },
-        { id: "2", type: "open_street_map" }, // Default applied
-        { id: "3", type: "google_satellite", cesiumIonAssetId: 2 }, // Migrated + fallback
-        { id: "4", type: "google_satellite", cesiumIonAssetId: 2 }, // Fallback
-        { id: "5", type: "google_satellite" }
+        { id: "1", type: "open_street_map", opacity: 1 },
+        { id: "2", type: "open_street_map", opacity: 1 }, // Default applied
+        { id: "3", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }, // Migrated + fallback
+        { id: "4", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }, // Fallback
+        { id: "5", type: "google_satellite", opacity: 1 }
       ]);
     });
 
     it("should NOT migrate Cesium Ion tiles with unknown asset IDs", () => {
       const viewerProperty = {
-        tiles: [
-          { id: "1", type: "cesium_ion", cesiumIonAssetId: 999999 }
-        ]
+        tiles: [{ id: "1", type: "cesium_ion", cesiumIonAssetId: 999999 }]
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: true,
@@ -207,7 +215,8 @@ describe("tilesMigration", () => {
       });
       expect(result?.terrain).toEqual({
         type: "reearth_terrain",
-        enabled: true
+        enabled: true,
+        normal: true
       });
     });
 
@@ -245,13 +254,15 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
+      // Opacity is set to 1 for all tiles because Google tiles are present
       expect(result?.tiles).toEqual([
-        { id: "1", type: "google_satellite", cesiumIonAssetId: 2 }, // Migrated + fallback
-        { id: "2", type: "google_satellite", cesiumIonAssetId: 2 } // Fallback
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }, // Migrated + fallback
+        { id: "2", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 } // Fallback
       ]);
       expect(result?.terrain).toEqual({
         type: "reearth_terrain",
-        enabled: true
+        enabled: true,
+        normal: true
       });
     });
 
@@ -264,8 +275,15 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2 }]); // Migrated + fallback
-      expect(result?.terrain).toEqual({ type: "reearth_terrain", enabled: true });
+      // Opacity is set to 1 because Google tiles are present
+      expect(result?.tiles).toEqual([
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }
+      ]); // Migrated + fallback
+      expect(result?.terrain).toEqual({
+        type: "reearth_terrain",
+        enabled: true,
+        normal: true
+      });
     });
 
     it("should only migrate terrain when tiles don't need migration", () => {
@@ -280,7 +298,8 @@ describe("tilesMigration", () => {
       expect(result?.tiles).toBe(viewerProperty.tiles); // Unchanged
       expect(result?.terrain).toEqual({
         type: "reearth_terrain",
-        enabled: true
+        enabled: true,
+        normal: true
       });
     });
 
@@ -288,7 +307,7 @@ describe("tilesMigration", () => {
       const viewerProperty = {
         tiles: [{ id: "1", type: "open_street_map" as const }],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        terrain: { type: "reearth_terrain" as any, enabled: true }
+        terrain: { type: "reearth_terrain" as any, enabled: true, normal: true }
       };
       const result = migrateViewerPropertyTiles(viewerProperty, {
         isEE: false,
@@ -308,7 +327,8 @@ describe("tilesMigration", () => {
       });
       expect(result?.terrain).toEqual({
         enabled: true,
-        type: "reearth_terrain"
+        type: "reearth_terrain",
+        normal: true
       });
     });
 
@@ -323,6 +343,69 @@ describe("tilesMigration", () => {
       expect(result).toBe(viewerProperty); // No migration
     });
 
+    it("should set normal=true for reearth_terrain when enabled", () => {
+      const viewerProperty = {
+        terrain: { type: "reearth_terrain" as const, enabled: true }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(result?.terrain).toEqual({
+        type: "reearth_terrain",
+        enabled: true,
+        normal: true
+      });
+    });
+
+    it("should NOT set normal=true for reearth_terrain when disabled", () => {
+      const viewerProperty = {
+        terrain: { type: "reearth_terrain" as const, enabled: false }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(result).toBe(viewerProperty); // No change for disabled terrain
+    });
+
+    it("should NOT override normal if already set to true", () => {
+      const viewerProperty = {
+        terrain: { type: "reearth_terrain" as const, enabled: true, normal: true }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(result).toBe(viewerProperty); // No change needed
+    });
+
+    it("should set normal=true even if it was explicitly false", () => {
+      const viewerProperty = {
+        terrain: { type: "reearth_terrain" as const, enabled: true, normal: false }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: false
+      });
+      expect(result?.terrain).toEqual({
+        type: "reearth_terrain",
+        enabled: true,
+        normal: true
+      });
+    });
+
+    it("should NOT set normal for non-reearth_terrain types", () => {
+      const viewerProperty = {
+        terrain: { type: "cesium" as const, enabled: true }
+      };
+      const result = migrateViewerPropertyTiles(viewerProperty, {
+        isEE: false,
+        hasAccessToken: true // Token available, no fallback
+      });
+      expect(result).toBe(viewerProperty); // No change for other terrain types
+    });
+
     it("should migrate tiles and apply defaultTerrainType when both need processing", () => {
       const viewerProperty = {
         tiles: [{ id: "1", type: "default" as const }],
@@ -333,10 +416,14 @@ describe("tilesMigration", () => {
         defaultTerrainType: "reearth_terrain",
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2 }]); // Migrated + fallback
+      // Opacity is set to 1 because Google tiles are present
+      expect(result?.tiles).toEqual([
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }
+      ]); // Migrated + fallback
       expect(result?.terrain).toEqual({
         enabled: true,
-        type: "reearth_terrain"
+        type: "reearth_terrain",
+        normal: true
       });
     });
 
@@ -349,7 +436,10 @@ describe("tilesMigration", () => {
         isEE: true,
         hasAccessToken: false
       });
-      expect(result?.tiles).toEqual([{ id: "1", type: "google_satellite", cesiumIonAssetId: 2 }]); // Migrated + fallback
+      // Opacity is set to 1 because Google tiles are present
+      expect(result?.tiles).toEqual([
+        { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 }
+      ]); // Migrated + fallback
       expect(result?.terrain).toBe(viewerProperty.terrain); // Unchanged
     });
   });
@@ -358,7 +448,11 @@ describe("tilesMigration", () => {
     it("should return true for tiles without type when defaultTileType is provided", () => {
       const result = needsTileMigration(
         { type: undefined },
-        { isEE: false, defaultTileType: "open_street_map", hasAccessToken: false }
+        {
+          isEE: false,
+          defaultTileType: "open_street_map",
+          hasAccessToken: false
+        }
       );
       expect(result).toBe(true);
     });
@@ -513,7 +607,11 @@ describe("tilesMigration", () => {
     });
 
     it("should handle asset ID as number", () => {
-      const tile = { id: "1", type: "cesium_ion" as const, cesiumIonAssetId: 3 };
+      const tile = {
+        id: "1",
+        type: "cesium_ion" as const,
+        cesiumIonAssetId: 3
+      };
       const result = migrateTile(tile, {
         isEE: true,
         hasAccessToken: false
@@ -586,10 +684,14 @@ describe("tilesMigration", () => {
 
     it("should NOT fallback cesiumion terrain regardless of token (user's explicit choice)", () => {
       const terrainNoToken = { type: "cesiumion", enabled: true };
-      expect(migrateTerrain(terrainNoToken, { isEE: false, hasAccessToken: false })).toBe(terrainNoToken);
+      expect(
+        migrateTerrain(terrainNoToken, { isEE: false, hasAccessToken: false })
+      ).toBe(terrainNoToken);
 
       const terrainWithToken = { type: "cesiumion", enabled: true };
-      expect(migrateTerrain(terrainWithToken, { isEE: false, hasAccessToken: true })).toBe(terrainWithToken);
+      expect(
+        migrateTerrain(terrainWithToken, { isEE: false, hasAccessToken: true })
+      ).toBe(terrainWithToken);
     });
 
     it("should NOT modify terrain with other types", () => {
@@ -725,6 +827,748 @@ describe("tilesMigration", () => {
         "3": "google_satellite",
         "4": "google_roadmap",
         "3812": "nasa_black_marble"
+      });
+    });
+  });
+
+  describe("Google Maps opacity override", () => {
+    describe("migrateViewerPropertyTiles", () => {
+      it("should set opacity to 1 for all Google Maps tiles", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "google_satellite", opacity: 0.5 },
+            { id: "2", type: "google_roadmap", opacity: 0.7 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", opacity: 1 },
+          { id: "2", type: "google_roadmap", opacity: 1 }
+        ]);
+      });
+
+      it("should set opacity to 1 for all tiles when Google tiles are present", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "google_satellite", opacity: 0.5 },
+            { id: "2", type: "open_street_map", opacity: 0.7 },
+            { id: "3", type: "cesium_ion", opacity: 0.8, cesiumIonAssetId: 999 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", opacity: 1 },
+          { id: "2", type: "open_street_map", opacity: 1 },
+          { id: "3", type: "cesium_ion", opacity: 1, cesiumIonAssetId: 999 }
+        ]);
+      });
+
+      it("should NOT modify opacity when no Google tiles are present", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "open_street_map", opacity: 0.5 },
+            { id: "2", type: "cesium_ion", opacity: 0.7, cesiumIonAssetId: 999 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          hasAccessToken: false
+        });
+        expect(result).toBe(viewerProperty); // No migration needed
+      });
+
+      it("should set opacity to 1 when Google tile results from fallback", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "cesium_ion", cesiumIonAssetId: 2, opacity: 0.5 }, // Falls back to google_satellite
+            { id: "2", type: "open_street_map", opacity: 0.7 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          {
+            id: "1",
+            type: "google_satellite",
+            cesiumIonAssetId: 2,
+            opacity: 1
+          },
+          { id: "2", type: "open_street_map", opacity: 1 }
+        ]);
+      });
+
+      it("should detect Google tiles from defaultTileType", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1" }, // Will get google_satellite from default
+            { id: "2", type: "open_street_map", opacity: 0.7 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          defaultTileType: "google_satellite",
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", opacity: 1 },
+          { id: "2", type: "open_street_map", opacity: 1 }
+        ]);
+      });
+
+      it("should combine fallback and opacity override", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "default", opacity: 0.5 }, // Migrates to cesium_ion, then falls back to google_satellite
+            { id: "2", type: "open_street_map", opacity: 0.7 }
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false
+        });
+        expect(result?.tiles).toEqual([
+          {
+            id: "1",
+            type: "google_satellite",
+            cesiumIonAssetId: 2,
+            opacity: 1
+          },
+          { id: "2", type: "open_street_map", opacity: 1 }
+        ]);
+      });
+
+      it("should not skip opacity override when Google tile already compliant (regression test)", () => {
+        // Regression test for bug: when Google tile has opacity=1 (already compliant),
+        // needsTileMigration returns false, causing early return that skips opacity
+        // override for non-Google tiles
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "google_satellite", opacity: 1 }, // Already compliant
+            { id: "2", type: "open_street_map", opacity: 0.5 } // Needs override!
+          ]
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: false,
+          hasAccessToken: false
+        });
+
+        // Both tiles should have opacity: 1
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", opacity: 1 },
+          { id: "2", type: "open_street_map", opacity: 1 } // ✅ Should be overridden!
+        ]);
+      });
+    });
+
+    describe("needsTileMigration", () => {
+      it("should return true for Google tiles with opacity !== 1", () => {
+        expect(
+          needsTileMigration(
+            { type: "google_satellite", opacity: 0.5 },
+            { isEE: false, hasAccessToken: false }
+          )
+        ).toBe(true);
+
+        expect(
+          needsTileMigration(
+            { type: "google_roadmap", opacity: 0.7 },
+            { isEE: false, hasAccessToken: false }
+          )
+        ).toBe(true);
+      });
+
+      it("should return false for Google tiles with opacity === 1", () => {
+        expect(
+          needsTileMigration(
+            { type: "google_satellite", opacity: 1 },
+            { isEE: false, hasAccessToken: false }
+          )
+        ).toBe(false);
+      });
+
+      it("should return true for non-Google tiles when Google tiles exist", () => {
+        expect(
+          needsTileMigration(
+            { type: "open_street_map", opacity: 0.5 },
+            { isEE: false, hasAccessToken: false },
+            true // hasGoogleTiles = true
+          )
+        ).toBe(true);
+      });
+
+      it("should return false for non-Google tiles when no Google tiles exist", () => {
+        expect(
+          needsTileMigration(
+            { type: "open_street_map", opacity: 0.5 },
+            { isEE: false, hasAccessToken: false },
+            false // hasGoogleTiles = false
+          )
+        ).toBe(false);
+      });
+
+      it("should return true for Google tiles with undefined opacity", () => {
+        expect(
+          needsTileMigration(
+            { type: "google_satellite" },
+            { isEE: false, hasAccessToken: false }
+          )
+        ).toBe(true);
+      });
+    });
+  });
+
+  describe("Street View widget tile extraction and appending", () => {
+    describe("extractStreetViewTiles", () => {
+      it("should return empty array when widgets is undefined", () => {
+        const result = extractStreetViewTiles(undefined);
+        expect(result).toEqual([]);
+      });
+
+      it("should return empty array when Street View widget not found", () => {
+        const widgets = {
+          outer: {
+            left: { top: { widgets: [] } }
+          }
+        };
+        const result = extractStreetViewTiles(widgets as any);
+        expect(result).toEqual([]);
+      });
+
+      it("should return empty array when Street View widget has no property", () => {
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [{ id: "widget-1", extensionId: "streetView" }]
+              }
+            }
+          }
+        };
+        const result = extractStreetViewTiles(widgets as any);
+        expect(result).toEqual([]);
+      });
+
+      it("should extract tile type from Editor Mode (GQL items array format)", () => {
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "widget-1",
+                    extensionId: "streetView",
+                    property: {
+                      items: [
+                        {
+                          id: "item-1",
+                          schemaGroupId: "tiles",
+                          fields: [{ fieldId: "tile_type", value: "google_roadmap" }]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = extractStreetViewTiles(widgets as any);
+        expect(result).toEqual([{ id: "reearth-streetview-tile", type: "google_roadmap" }]);
+      });
+
+      it("should fallback to google_satellite in Editor Mode when no items", () => {
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "widget-1",
+                    extensionId: "streetView",
+                    property: {
+                      items: []
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = extractStreetViewTiles(widgets as any);
+        expect(result).toEqual([
+          { id: "reearth-streetview-tile", type: "google_satellite" }
+        ]);
+      });
+
+      it("should extract tile type from Published Mode (object format)", () => {
+        const widgets = {
+          inner: {
+            right: {
+              top: {
+                widgets: [
+                  {
+                    id: "widget-1",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: {
+                        tile_type: "google_satellite"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = extractStreetViewTiles(widgets as any);
+        expect(result).toEqual([
+          { id: "reearth-streetview-tile", type: "google_satellite" }
+        ]);
+      });
+
+      it("should extract tile type from Published Mode (collection array format)", () => {
+        const widgets = {
+          inner: {
+            right: {
+              top: {
+                widgets: [
+                  {
+                    id: "widget-1",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: [
+                        {
+                          tile_type: "google_roadmap"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = extractStreetViewTiles(widgets as any);
+        expect(result).toEqual([{ id: "reearth-streetview-tile", type: "google_roadmap" }]);
+      });
+
+      it("should fallback to google_satellite in Published Mode when tile_type missing", () => {
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "widget-1",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: {}
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = extractStreetViewTiles(widgets as any);
+        expect(result).toEqual([
+          { id: "reearth-streetview-tile", type: "google_satellite" }
+        ]);
+      });
+
+      it("should find Street View widget in different zones and areas", () => {
+        const widgets = {
+          outer: {
+            center: {
+              middle: {
+                widgets: [
+                  {
+                    id: "other-widget",
+                    extensionId: "timeline"
+                  }
+                ]
+              }
+            }
+          },
+          inner: {
+            right: {
+              bottom: {
+                widgets: [
+                  {
+                    id: "widget-sv",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: { tile_type: "google_satellite" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = extractStreetViewTiles(widgets as any);
+        expect(result).toEqual([
+          { id: "reearth-streetview-tile", type: "google_satellite" }
+        ]);
+      });
+
+      it("should ignore non-string tile_type values in Editor Mode", () => {
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "widget-1",
+                    extensionId: "streetView",
+                    property: {
+                      items: [
+                        {
+                          id: "item-1",
+                          schemaGroupId: "tiles",
+                          fields: [{ fieldId: "tile_type", value: 123 }] // Invalid: number
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = extractStreetViewTiles(widgets as any);
+        // Should fallback to default
+        expect(result).toEqual([
+          { id: "reearth-streetview-tile", type: "google_satellite" }
+        ]);
+      });
+    });
+
+    describe("migrateViewerPropertyTiles with Street View widget", () => {
+      it("should append Street View tile when widget exists", () => {
+        const viewerProperty = {
+          tiles: [{ id: "1", type: "open_street_map" }]
+        };
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "sv-widget",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: { tile_type: "google_satellite" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false,
+          widgets: widgets as any
+        });
+
+        // Street View tile appended, all tiles get opacity: 1 due to Google Maps
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "open_street_map", opacity: 1 },
+          { id: "reearth-streetview-tile", type: "google_satellite", opacity: 1 }
+        ]);
+      });
+
+      it("should append Street View tile even when tiles array is empty", () => {
+        const viewerProperty = {
+          tiles: []
+        };
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "sv-widget",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: { tile_type: "google_roadmap" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false,
+          widgets: widgets as any
+        });
+
+        expect(result?.tiles).toEqual([
+          { id: "reearth-streetview-tile", type: "google_roadmap", opacity: 1 }
+        ]);
+      });
+
+      it("should NOT append duplicate Street View tile if ID already exists", () => {
+        const viewerProperty = {
+          tiles: [{ id: "reearth-streetview-tile", type: "google_satellite" }]
+        };
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "sv-widget",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: { tile_type: "google_roadmap" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false,
+          widgets: widgets as any
+        });
+
+        // Should not add duplicate, keeps original
+        expect(result?.tiles).toEqual([
+          { id: "reearth-streetview-tile", type: "google_satellite", opacity: 1 }
+        ]);
+      });
+
+      it("should trigger Google opacity compliance when Street View tile is appended", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "open_street_map", opacity: 0.5 },
+            { id: "2", type: "cesium_ion", cesiumIonAssetId: 999, opacity: 0.7 }
+          ]
+        };
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "sv-widget",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: { tile_type: "google_satellite" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false,
+          widgets: widgets as any
+        });
+
+        // All tiles should have opacity: 1 because Google tile was added
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "open_street_map", opacity: 1 },
+          { id: "2", type: "cesium_ion", cesiumIonAssetId: 999, opacity: 1 },
+          { id: "reearth-streetview-tile", type: "google_satellite", opacity: 1 }
+        ]);
+      });
+
+      it("should NOT skip Street View tile appending due to early-return optimization", () => {
+        // Regression test: When no other migration is needed, early-return
+        // should NOT prevent Street View tile from being appended
+        const viewerProperty = {
+          tiles: [{ id: "1", type: "open_street_map", opacity: 1 }] // No migration needed
+        };
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "sv-widget",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: { tile_type: "google_satellite" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false,
+          widgets: widgets as any
+        });
+
+        // Should NOT return original early - Street View tile must be appended
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "open_street_map", opacity: 1 },
+          { id: "reearth-streetview-tile", type: "google_satellite", opacity: 1 }
+        ]);
+      });
+
+      it("should work when viewerProperty has no tiles initially", () => {
+        const viewerProperty = {};
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "sv-widget",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: { tile_type: "google_satellite" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false,
+          widgets: widgets as any
+        });
+
+        expect(result?.tiles).toEqual([
+          { id: "reearth-streetview-tile", type: "google_satellite", opacity: 1 }
+        ]);
+      });
+
+      it("should handle Editor Mode (GQL) widget property format", () => {
+        const viewerProperty = {
+          tiles: []
+        };
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "sv-widget",
+                    extensionId: "streetView",
+                    property: {
+                      items: [
+                        {
+                          id: "item-1",
+                          schemaGroupId: "tiles",
+                          fields: [{ fieldId: "tile_type", value: "google_roadmap" }]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false,
+          widgets: widgets as any
+        });
+
+        expect(result?.tiles).toEqual([
+          { id: "reearth-streetview-tile", type: "google_roadmap", opacity: 1 }
+        ]);
+      });
+
+      it("should use google_satellite default when Street View widget has no tile selection", () => {
+        const viewerProperty = {
+          tiles: []
+        };
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "sv-widget",
+                    extensionId: "streetView",
+                    property: {
+                      items: [] // No tile selection
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false,
+          widgets: widgets as any
+        });
+
+        // Should default to google_satellite with opacity: 1
+        expect(result?.tiles).toEqual([
+          { id: "reearth-streetview-tile", type: "google_satellite", opacity: 1 }
+        ]);
+      });
+
+      it("should combine Street View tile appending with other migrations", () => {
+        const viewerProperty = {
+          tiles: [
+            { id: "1", type: "default" as const }, // Will migrate to cesium_ion → fallback to google_satellite
+            { id: "2", type: "open_street_map", opacity: 0.5 }
+          ],
+          terrain: { type: "cesium" as const, enabled: true } // Will fallback to reearth_terrain
+        };
+        const widgets = {
+          outer: {
+            left: {
+              top: {
+                widgets: [
+                  {
+                    id: "sv-widget",
+                    extensionId: "streetView",
+                    property: {
+                      tiles: { tile_type: "google_roadmap" }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        };
+        const result = migrateViewerPropertyTiles(viewerProperty, {
+          isEE: true,
+          hasAccessToken: false,
+          widgets: widgets as any
+        });
+
+        // All migrations should work together
+        expect(result?.tiles).toEqual([
+          { id: "1", type: "google_satellite", cesiumIonAssetId: 2, opacity: 1 },
+          { id: "2", type: "open_street_map", opacity: 1 },
+          { id: "reearth-streetview-tile", type: "google_roadmap", opacity: 1 }
+        ]);
+        expect(result?.terrain).toEqual({
+          type: "reearth_terrain",
+          enabled: true,
+          normal: true
+        });
       });
     });
   });

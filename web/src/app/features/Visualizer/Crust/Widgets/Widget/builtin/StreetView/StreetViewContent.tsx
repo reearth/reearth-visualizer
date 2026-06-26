@@ -38,8 +38,8 @@ const StreetViewContent = forwardRef<HTMLDivElement, StreetViewContentProps>(
 
         <CardContent className="p-0">
           {isTracking ? (
-            <div className="px-2 py-1 text-xs">
-              {t("Select a location on the map to view Street View")}
+            <div className="px-2 py-1 text-xs flex flex-col gap-1">
+              <span>{t("Select a location on the map to view Street View")}</span>
             </div>
           ) : apiKey ? (
             <div ref={ref} className="w-full h-[250px] overflow-hidden" />

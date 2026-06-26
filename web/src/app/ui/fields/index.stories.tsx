@@ -6,7 +6,6 @@ import {
   TwinInputField,
   TripletInputField,
   QuartetInputField,
-  AssetField,
   SelectField,
   TextareaField,
   SwitchField,
@@ -109,12 +108,7 @@ export const Components: Story = {
         title="ColorField"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
       />
-      <AssetField
-        inputMethod="asset"
-        placeholder="Asset"
-        title="AssetField"
-        description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla."
-      />
+      {/* AssetField removed - requires Apollo Client which causes Storybook bundling issues */}
       <CameraField
         onSave={() => {}}
         title="CameraField"

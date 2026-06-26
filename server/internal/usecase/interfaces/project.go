@@ -91,8 +91,8 @@ type ProjectListParam struct {
 type Project interface {
 	Fetch(context.Context, []id.ProjectID, *usecase.Operator) ([]*project.Project, error)
 	FindByWorkspace(context.Context, accountsID.WorkspaceID, *string, *project.SortType, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
-	FindStarredByWorkspace(context.Context, accountsID.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
-	FindDeletedByWorkspace(context.Context, accountsID.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
+	FindStarredByWorkspace(context.Context, accountsID.WorkspaceID, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
+	FindDeletedByWorkspace(context.Context, accountsID.WorkspaceID, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
 
 	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
 	FindActiveByAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
@@ -112,6 +112,7 @@ type Project interface {
 	CheckProjectAlias(context.Context, string, accountsID.WorkspaceID, *id.ProjectID) (bool, error)
 	CheckSceneAlias(context.Context, string, *id.ProjectID) (bool, error)
 
+	CheckProjectExportAccess(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
 	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *map[string]any, *usecase.Operator) (*project.ProjectMetadata, error)

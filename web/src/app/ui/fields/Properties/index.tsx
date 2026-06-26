@@ -14,15 +14,32 @@ import { FC, useMemo, useState } from "react";
 import ListField, { ListItemProps } from "../ListField";
 
 import useHooks from "./hooks";
-import PropertyField from "./PropertyField";
+import PropertyField, { PropertyFieldDecorations } from "./PropertyField";
+
+export type FieldContext = {
+  id: string;
+  value: unknown;
+};
 
 type Props = {
   propertyId: string;
   item?: Item;
   onFlyTo?: FlyTo;
+  computeDecorations?: (
+    schemaId: string,
+    schemaGroup: string,
+    value: unknown,
+    allFields: FieldContext[],
+    allListItemsFields?: FieldContext[][]
+  ) => PropertyFieldDecorations;
 };
 
-const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
+const PropertyItem: FC<Props> = ({
+  propertyId,
+  item,
+  onFlyTo,
+  computeDecorations
+}) => {
   const t = useT();
   const [selected, select] = useState<string>();
   const {
@@ -130,12 +147,75 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
         />
       )}
       {!!item &&
-        schemaFields?.map((f) => {
-          if (
-            (layerMode && f.schemaField.id === item.representativeField) ||
-            f.hidden
-          )
-            return null;
+        (() => {
+          // Build context of all list items for decoration computation
+          // Only build if computeDecorations is provided to avoid unnecessary work
+          const allListItemsFields: FieldContext[][] | undefined = isList && computeDecorations
+            ? groups.map((group) =>
+                item.schemaFields
+                  .map((sf) => {
+                    const field = group.fields.find((f) => f.id === sf.id);
+
+                    // Use same value resolution as PropertyField to ensure consistency
+                    let resolvedValue: unknown;
+                    if (sf.id === "tile_type" && item.schemaGroup === "tiles") {
+                      // Apply default tile type override for tile_type field in tiles group
+                      const overriddenDefault = appFeature()?.defaultTileType;
+                      resolvedValue = field?.mergedValue ?? field?.value ?? overriddenDefault ?? sf.defaultValue;
+                    } else {
+                      resolvedValue = field?.mergedValue ?? field?.value ?? sf.defaultValue;
+                    }
+
+                    return {
+                      id: sf.id,
+                      value: resolvedValue
+                    };
+                  })
+              )
+            : undefined;
+
+          // Build context of all fields for decoration computation
+          // Only build once (not inside the map loop) to avoid redundant work
+          const allFields: FieldContext[] = computeDecorations && schemaFields
+            ? schemaFields
+                .filter((sf) => !sf.hidden)
+                .map((sf) => {
+                  // Use same value resolution as PropertyField to ensure consistency
+                  let resolvedValue: unknown;
+                  if (sf.schemaField.id === "tile_type" && item.schemaGroup === "tiles") {
+                    // Apply default tile type override for tile_type field in tiles group
+                    const overriddenDefault = appFeature()?.defaultTileType;
+                    resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? overriddenDefault ?? sf.schemaField.defaultValue;
+                  } else {
+                    resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? sf.schemaField.defaultValue;
+                  }
+
+                  return {
+                    id: sf.schemaField.id,
+                    value: resolvedValue
+                  };
+                })
+            : [];
+
+          return schemaFields?.map((f) => {
+            if (
+              (layerMode && f.schemaField.id === item.representativeField) ||
+              f.hidden
+            )
+              return null;
+
+            // Compute decorations for this field (business logic from parent)
+            const resolvedValueForDecorations =
+              allFields.find((af) => af.id === f.schemaField.id)?.value ??
+              f.field?.value;
+            const decorations = computeDecorations?.(
+              f.schemaField.id,
+              item.schemaGroup,
+              resolvedValueForDecorations,
+              allFields,
+              allListItemsFields
+            );
+
           return (
             <PropertyField
               key={f.schemaField.id}
@@ -145,9 +225,11 @@ const PropertyItem: FC<Props> = ({ propertyId, item, onFlyTo }) => {
               itemId={selected}
               schema={f.schemaField}
               onFlyTo={onFlyTo}
+              decorations={decorations}
             />
           );
-        })}
+        });
+        })()}
     </FieldsWrapper>
   );
 };

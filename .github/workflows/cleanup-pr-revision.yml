@@ -31,7 +31,7 @@ jobs:
         with:
           egress-policy: audit
       - name: Remove Cloud Run Tag
-        uses: reearth/actions/remove-cloud-run-tag@ff086d73d8dfc552101f9a84c9601c5b2b4a6299 # main
+        uses: reearth/actions/remove-cloud-run-tag@0e91ef444d1423712c501f211823cecaa237f18c # main
         with:
           region: ${{ secrets.GC_REGION }}
           service: reearth-visualizer-api
@@ -48,7 +48,7 @@ jobs:
         with:
           egress-policy: audit
       - name: Remove Cloud Run Tag
-        uses: reearth/actions/remove-cloud-run-tag@ff086d73d8dfc552101f9a84c9601c5b2b4a6299 # main
+        uses: reearth/actions/remove-cloud-run-tag@0e91ef444d1423712c501f211823cecaa237f18c # main
         with:
           region: ${{ secrets.GC_REGION }}
           service: reearth-visualizer-web

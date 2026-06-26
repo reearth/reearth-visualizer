@@ -38,6 +38,9 @@ export type CameraFieldProps = CommonFieldProps &
 
 const CameraField: FC<CameraFieldProps> = ({
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   value,
   disabled,
   withFOV,
@@ -97,6 +100,9 @@ const CameraField: FC<CameraFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="camerafield-commonfield"
     >
       <InputWrapper data-testid="camerafield-inputwrapper">

@@ -3,9 +3,13 @@ import path from "path";
 
 import { APIRequestContext } from "@playwright/test";
 
-import { GraphQLClient } from "../api/graphql/client";
+import { GraphQLClient, GQLResult } from "../api/graphql/client";
 import { DELETE_PROJECT, UPDATE_PROJECT } from "../api/graphql/mutations";
-import { GET_ME, GET_DELETED_PROJECTS, GET_PROJECTS } from "../api/graphql/queries";
+import {
+  GET_ME,
+  GET_DELETED_PROJECTS,
+  GET_PROJECTS
+} from "../api/graphql/queries";
 
 const apiTokenPath = path.join(__dirname, "../.auth/api-token.json");
 const storagePath = path.join(__dirname, "../.auth/user.json");
@@ -15,7 +19,10 @@ const storagePath = path.join(__dirname, "../.auth/user.json");
  * browser storage state (Auth0 access_token). This ensures cleanup works
  * regardless of which Playwright project (webkit / api-tests) ran first.
  */
-function getAuthToken(): { token: string; extraHeaders: Record<string, string> } {
+function getAuthToken(): {
+  token: string;
+  extraHeaders: Record<string, string>;
+} {
   // 1. Try api-token.json (written by api global setup)
   if (fs.existsSync(apiTokenPath)) {
     try {
@@ -80,18 +87,33 @@ export async function deleteProjectByName(
       (p) => p.name === projectName
     );
 
-    // Also find soft-deleted projects (in recycle bin)
-    const { data: deletedData } = await client
-      .query<{
-        deletedProjects: { nodes: { id: string; name: string }[] };
-      }>(GET_DELETED_PROJECTS, { workspaceId })
-      .catch(() => ({
-        data: { deletedProjects: { nodes: [] } }
-      }));
-
-    const deletedProjects = deletedData.deletedProjects.nodes.filter(
-      (p) => p.name === projectName
-    );
+    // Also find soft-deleted projects (in recycle bin), paginating through all pages
+    const deletedProjects: { id: string; name: string }[] = [];
+    let cursor: string | null = null;
+    let hasNextPage = true;
+    while (hasNextPage) {
+      let res: GQLResult<{
+        deletedProjects: {
+          pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          nodes: { id: string; name: string }[];
+        };
+      }>;
+      try {
+        res = await client.query(GET_DELETED_PROJECTS, {
+          workspaceId,
+          pagination: { first: 100, ...(cursor ? { after: cursor } : {}) }
+        });
+      } catch {
+        break;
+      }
+      const matched = res.data.deletedProjects.nodes.filter(
+        (p) => p.name === projectName
+      );
+      deletedProjects.push(...matched);
+      hasNextPage = res.data.deletedProjects.pageInfo.hasNextPage;
+      cursor = res.data.deletedProjects.pageInfo.endCursor;
+      if (!cursor) break;
+    }
 
     const allProjects = [...activeProjects, ...deletedProjects];
 
@@ -140,5 +162,228 @@ export async function deleteProjectsByName(
 ): Promise<void> {
   for (const name of projectNames) {
     await deleteProjectByName(request, name);
+  }
+}
+
+/**
+ * Returns the total number of projects currently in the recycle bin.
+ * Used in global setup to warn when stale deleted projects may cause
+ * recycle bin tests to fail (first page is 16 items).
+ */
+export async function getRecycleBinCount(
+  request: APIRequestContext
+): Promise<number | undefined> {
+  try {
+    const { token, extraHeaders } = getAuthToken();
+    const client = new GraphQLClient(request, token, extraHeaders);
+
+    const { data: meData } = await client.query<{
+      me: { myWorkspaceId: string };
+    }>(GET_ME);
+    const workspaceId = meData.me.myWorkspaceId;
+
+    const { data } = await client.query<{
+      deletedProjects: { totalCount: number };
+    }>(GET_DELETED_PROJECTS, {
+      workspaceId,
+      pagination: { first: 1 }
+    });
+
+    return data.deletedProjects.totalCount;
+  } catch (err) {
+    console.warn("[recycle-bin-count] Failed to get count:", err);
+    return;
+  }
+}
+
+/**
+ * Permanently deletes all projects in the recycle bin.
+ * Called from global setup when count >= 16 to prevent recycle bin tests from failing.
+ */
+export async function cleanupRecycleBin(
+  request: APIRequestContext
+): Promise<void> {
+  try {
+    const { token, extraHeaders } = getAuthToken();
+    const client = new GraphQLClient(request, token, extraHeaders);
+
+    const { data: meData } = await client.query<{
+      me: { myWorkspaceId: string };
+    }>(GET_ME);
+    const workspaceId = meData.me.myWorkspaceId;
+
+    const FETCH_ONE = `
+      query($workspaceId: ID!, $pagination: Pagination) {
+        deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
+          totalCount
+          pageInfo { hasNextPage endCursor }
+          nodes { id name }
+        }
+      }
+    `;
+
+    type DeletedPage = {
+      deletedProjects: {
+        totalCount: number;
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+        nodes: { id: string; name: string }[];
+      };
+    };
+
+    // Phase 1: collect all IDs via cursor-based pagination
+    const ids: string[] = [];
+    let cursor: string | null = null;
+    let total = 0;
+    let page: DeletedPage;
+
+    do {
+      ({ data: page } = await client.query<DeletedPage>(FETCH_ONE, {
+        workspaceId,
+        pagination: { first: 1, ...(cursor ? { after: cursor } : {}) }
+      }));
+
+      total = page.deletedProjects.totalCount;
+      ids.push(...page.deletedProjects.nodes.map((p) => p.id));
+      cursor = page.deletedProjects.pageInfo.hasNextPage
+        ? page.deletedProjects.pageInfo.endCursor
+        : null;
+    } while (cursor);
+
+    if (ids.length === 0) return;
+
+    // Phase 2: delete in parallel chunks of 10
+    const CHUNK = 10;
+    let deleted = 0;
+    for (let i = 0; i < ids.length; i += CHUNK) {
+      const chunk = ids.slice(i, i + CHUNK);
+      const results = await Promise.all(
+        chunk.map((id) =>
+          client
+            .mutate(DELETE_PROJECT, { input: { projectId: id } })
+            .then(() => true)
+            .catch((err) => {
+              console.warn(
+                `[recycle-bin-cleanup] Failed to delete ${id}:`,
+                err
+              );
+              return false;
+            })
+        )
+      );
+      deleted += results.filter(Boolean).length;
+    }
+
+    console.log(
+      `[recycle-bin-cleanup] Permanently deleted ${deleted}/${total} project(s).`
+    );
+  } catch (err) {
+    console.warn("[recycle-bin-cleanup] Cleanup failed (non-fatal):", err);
+  }
+}
+
+/**
+ * Cleans up stale e2e- projects (both active and in recycle bin) left over
+ * from previous test runs. Called from global setup so dangling data is
+ * removed even if the previous run's teardown failed.
+ */
+export async function cleanupStaleE2eProjects(
+  request: APIRequestContext
+): Promise<void> {
+  const E2E_PREFIX = "e2e-";
+  try {
+    const { token, extraHeaders } = getAuthToken();
+    const client = new GraphQLClient(request, token, extraHeaders);
+
+    const { data: meData } = await client.query<{
+      me: { myWorkspaceId: string };
+    }>(GET_ME);
+    const workspaceId = meData.me.myWorkspaceId;
+
+    // Collect active e2e projects
+    const { data: activeData } = await client.query<{
+      projects: { nodes: { id: string; name: string }[] };
+    }>(GET_PROJECTS, {
+      workspaceId,
+      pagination: { first: 500 },
+      keyword: E2E_PREFIX
+    });
+    const activeProjects = activeData.projects.nodes.filter((p) =>
+      p.name.startsWith(E2E_PREFIX)
+    );
+
+    // Collect soft-deleted e2e projects from recycle bin
+    const FETCH_DELETED_E2E = `
+      query($workspaceId: ID!, $pagination: Pagination) {
+        deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
+          totalCount
+          pageInfo { hasNextPage endCursor }
+          nodes { id name }
+        }
+      }
+    `;
+    type E2EDeletedPage = {
+      deletedProjects: {
+        totalCount: number;
+        nodes: { id: string; name: string }[];
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+      };
+    };
+    const emptyE2EPage: E2EDeletedPage = {
+      deletedProjects: {
+        totalCount: 0,
+        nodes: [],
+        pageInfo: { hasNextPage: false, endCursor: null }
+      }
+    };
+
+    const deletedE2eProjects: { id: string; name: string }[] = [];
+    let cursor: string | null = null;
+    let hasMore = true;
+    while (hasMore) {
+      const result = await client
+        .query<E2EDeletedPage>(FETCH_DELETED_E2E, {
+          workspaceId,
+          pagination: { first: 1, ...(cursor ? { after: cursor } : {}) }
+        })
+        .catch(() => ({ data: emptyE2EPage }));
+      const data: E2EDeletedPage = result.data;
+      const matched = data.deletedProjects.nodes.filter((p) =>
+        p.name.startsWith(E2E_PREFIX)
+      );
+      deletedE2eProjects.push(...matched);
+      hasMore = data.deletedProjects.pageInfo?.hasNextPage ?? false;
+      cursor = data.deletedProjects.pageInfo?.endCursor ?? null;
+      if (!hasMore || !cursor) break;
+    }
+
+    const all = [...activeProjects, ...deletedE2eProjects];
+    console.log(
+      `[e2e-cleanup] Found ${activeProjects.length} active and ${deletedE2eProjects.length} deleted stale e2e project(s).`
+    );
+
+    if (all.length === 0) return;
+
+    let deleted = 0;
+    for (const project of all) {
+      await client
+        .mutate(UPDATE_PROJECT, {
+          input: { projectId: project.id, deleted: true }
+        })
+        .catch(() => {});
+      await client
+        .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+        .then(() => {
+          deleted++;
+        })
+        .catch((err) =>
+          console.warn(`[e2e-cleanup] Failed to delete "${project.name}":`, err)
+        );
+    }
+
+    console.log(
+      `[e2e-cleanup] Deleted ${deleted}/${all.length} stale e2e project(s).`
+    );
+  } catch (err) {
+    console.warn("[e2e-cleanup] Cleanup failed (non-fatal):", err);
   }
 }

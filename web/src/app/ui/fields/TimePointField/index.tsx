@@ -24,6 +24,9 @@ export type TimePointFieldRef = {
 const TimePointField: FC<TimePointFieldProps> = ({
   title,
   description,
+  titleAdornment,
+  beforeInput,
+  afterInput,
   value,
   onChange
 }) => {
@@ -58,6 +61,9 @@ const TimePointField: FC<TimePointFieldProps> = ({
     <CommonField
       title={title}
       description={description}
+      titleAdornment={titleAdornment}
+      beforeInput={beforeInput}
+      afterInput={afterInput}
       data-testid="time-point-field"
     >
       <Wrapper data-testid="time-point-wrapper">
