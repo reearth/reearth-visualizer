@@ -1,6 +1,6 @@
 import { Locator, Page, expect } from "@playwright/test";
 
-import { MAX_SCROLL_ATTEMPTS, SCROLL_WAIT_MS } from "../utils";
+import { MAX_SCROLL_ATTEMPTS } from "../utils";
 
 export class ProjectsPage {
   newProjectButton: Locator;
@@ -198,7 +198,14 @@ export class ProjectsPage {
       previousItemCount = currentItemCount;
 
       if (currentItemCount === 0) {
-        await this.page.waitForTimeout(SCROLL_WAIT_MS);
+        await this.page
+          .waitForFunction(
+            () =>
+              document.querySelectorAll('[data-testid^="project-grid-item-"]')
+                .length > 0,
+            { timeout: 5000 }
+          )
+          .catch(() => {});
         continue;
       }
 
@@ -235,7 +242,16 @@ export class ProjectsPage {
         wrapper.dispatchEvent(new Event("scroll", { bubbles: false }));
       });
 
-      await this.page.waitForTimeout(SCROLL_WAIT_MS);
+      const countSnapshot = currentItemCount;
+      await this.page
+        .waitForFunction(
+          (prev) =>
+            document.querySelectorAll('[data-testid^="project-grid-item-"]')
+              .length > prev,
+          countSnapshot,
+          { timeout: 5000 }
+        )
+        .catch(() => {});
     }
   }
 

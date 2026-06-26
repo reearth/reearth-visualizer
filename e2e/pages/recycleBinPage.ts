@@ -1,6 +1,6 @@
 import { Locator, Page } from "@playwright/test";
 
-import { MAX_SCROLL_ATTEMPTS, SCROLL_WAIT_MS } from "../utils";
+import { MAX_SCROLL_ATTEMPTS } from "../utils";
 
 export class RecycleBinPage {
   projectTitles: Locator;
@@ -69,8 +69,16 @@ export class RecycleBinPage {
       previousItemCount = currentItemCount;
 
       if (currentItemCount === 0) {
-        // First page still loading — just wait.
-        await this.page.waitForTimeout(SCROLL_WAIT_MS);
+        // First page still loading — wait for any items to appear.
+        await this.page
+          .waitForFunction(
+            () =>
+              document.querySelectorAll(
+                '[data-testid^="recycle-bin-item-menu-btn-"]'
+              ).length > 0,
+            { timeout: 5000 }
+          )
+          .catch(() => {});
         continue;
       }
 
@@ -107,7 +115,21 @@ export class RecycleBinPage {
         wrapper.dispatchEvent(new Event("scroll", { bubbles: false }));
       });
 
-      await this.page.waitForTimeout(SCROLL_WAIT_MS);
+      // Wait for new items to actually appear in DOM rather than a fixed
+      // timeout — this is self-calibrating to CI network latency.
+      // If nothing loads within 5s, the next iteration exits via the
+      // currentItemCount === previousItemCount guard.
+      const countSnapshot = currentItemCount;
+      await this.page
+        .waitForFunction(
+          (prev) =>
+            document.querySelectorAll(
+              '[data-testid^="recycle-bin-item-menu-btn-"]'
+            ).length > prev,
+          countSnapshot,
+          { timeout: 5000 }
+        )
+        .catch(() => {});
     }
   }
 
