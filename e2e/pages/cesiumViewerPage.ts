@@ -40,14 +40,8 @@ export class CesiumViewerPage {
   }
 
   async waitForGlobeReady() {
-    console.log(`[globe] current URL: ${this.page.url()}`);
-    console.log(`[globe] waiting for canvas to attach...`);
-    const canvasCount = await this.resiumContainer.locator("canvas").count();
-    console.log(`[globe] canvas elements found before wait: ${canvasCount}`);
     await this.canvas.waitFor({ state: "attached", timeout: 30_000 });
-    console.log(`[globe] canvas attached`);
     await this.page.waitForTimeout(3000);
-    console.log(`[globe] globe ready`);
   }
 
   async stampViewerMarker(): Promise<string> {

@@ -8,6 +8,7 @@ on:
       - "server/go.mod"
       - "server/go.sum"
       - "e2e/api/**"
+      - "e2e/playwright.config.ts"
       - "e2e/package.json"
       - "e2e/package-lock.json"
       - ".github/workflows/playwright_api_tests.yml"
