@@ -80,7 +80,7 @@ async function globalSetup(_config: FullConfig) {
 
     // Log and clean recycle bin
     const recycleBinCount = await getRecycleBinCount(apiContext);
-    console.log(`🗑️  Recycle bin count before cleanup: ${recycleBinCount}`);
+    console.log(`[setup] Recycle bin count before cleanup: ${recycleBinCount}`);
     if (recycleBinCount) {
       await cleanupRecycleBin(apiContext);
     }

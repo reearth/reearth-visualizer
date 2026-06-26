@@ -113,9 +113,9 @@ test.describe("Adding Layers from External Resources", () => {
   });
 
   test("Add a GeoJSON layer from web URL", async () => {
-    // NOTE: relies on https://raw.githubusercontent.com/johan/world.geo.json — external resource
-    // outside company control; if unavailable this test may fail
-    test.skip(!!process.env.CI, "External resource outside company control, unreliable in CI");
+    // Skipped in CI: loads from raw.githubusercontent.com — external resource outside company
+    // control, unreliable from CI runners. Run locally to verify.
+    test.skip(!!process.env.CI, "External resource (raw.githubusercontent.com) unreliable in CI");
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
@@ -131,6 +131,8 @@ test.describe("Adding Layers from External Resources", () => {
   });
 
   test("Add a GeoJSON layer from inline value", async () => {
+    // Skipped in CI: Cesium layer count check fails in headless webkit on a 2-CPU runner —
+    // waitForLoaderToDisappear() silently times out and the layer is not added. Run locally to verify.
     test.skip(!!process.env.CI, "Cesium layer rendering unreliable in CI headless webkit");
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
@@ -175,7 +177,9 @@ test.describe("Adding Layers from External Resources", () => {
   });
 
   test("Add a 3D Tiles layer from URL", async () => {
-    test.skip(!!process.env.CI, "Depends on external tile server unreliable in CI");
+    // Skipped in CI: loads from assets.cms.plateau.reearth.io — company-hosted but may fail to
+    // fetch from CI runner IPs or be slow to respond. TODO: investigate why and re-enable.
+    test.skip(!!process.env.CI, "Tile server (assets.cms.plateau.reearth.io) may be unreachable from CI runners");
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
@@ -191,6 +195,8 @@ test.describe("Adding Layers from External Resources", () => {
   });
 
   test("Verify all added layers are listed", async () => {
+    // Skipped in CI: depends on GeoJSON from inline value and 3D Tiles URL tests which are
+    // skipped in CI, so the expected layer count (≥4) would not be reached.
     test.skip(!!process.env.CI, "Depends on layer-adding tests skipped in CI");
     const layerCount = await cesiumViewer.getLayerCount();
     expect(layerCount).toBeGreaterThanOrEqual(4);
