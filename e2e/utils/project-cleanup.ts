@@ -316,6 +316,7 @@ export async function cleanupStaleE2eProjects(
       query($workspaceId: ID!, $pagination: Pagination) {
         deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
           totalCount
+          pageInfo { hasNextPage endCursor }
           nodes { id name }
         }
       }
