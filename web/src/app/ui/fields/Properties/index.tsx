@@ -34,6 +34,13 @@ type Props = {
   ) => PropertyFieldDecorations;
 };
 
+// Fields listed here are persisted in the data model but never rendered in the UI.
+// Use this to define "internal" fields that are managed programmatically (e.g. via mutation)
+// and should remain invisible to the user.
+const HIDDEN_SCHEMA_FIELDS: Record<string, string[]> = {
+  tiles: ["tile_category"]
+};
+
 const PropertyItem: FC<Props> = ({
   propertyId,
   item,
@@ -121,14 +128,19 @@ const PropertyItem: FC<Props> = ({
               condf?.mergedValue ??
               condsf?.defaultValue ??
               (condsf?.type ? zeroValues[condsf.type] : undefined);
+            const isConstantHidden =
+              HIDDEN_SCHEMA_FIELDS[item?.schemaGroup ?? ""]?.includes(f.id) ??
+              false;
             return {
               schemaField: f,
               field,
-              hidden: f.only && (!condv || condv !== f.only.value)
+              hidden:
+                isConstantHidden ||
+                (f.only && (!condv || condv !== f.only.value))
             };
           })
         : [],
-    [item?.schemaFields, selectedItem]
+    [item?.schemaFields, item?.schemaGroup, selectedItem]
   );
 
   return (
