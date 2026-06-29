@@ -12,6 +12,12 @@ import (
 	"github.com/reearth/reearthx/log"
 )
 
+// readSeekerAt is satisfied by *os.File and afero.File — both call sites already pass one of these.
+type readSeekerAt interface {
+	io.ReadSeeker
+	io.ReaderAt
+}
+
 const EXPORT_DATA_VERSION = "1"
 
 type ZipReader struct {
@@ -109,16 +115,18 @@ func FileSizeCheck(sizeMB int, file io.ReadSeeker) error {
 	return nil
 }
 
-func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[string]*zip.File, map[string]*zip.File, *string, error) {
-	// 500MB
+func UncompressExportZip(currentHost string, file readSeekerAt) (*[]byte, map[string]*zip.File, map[string]*zip.File, *string, error) {
 	if err := FileSizeCheck(500, file); err != nil {
 		return nil, nil, nil, nil, err
 	}
-	fileBytes, err := io.ReadAll(file)
+	size, err := file.Seek(0, io.SeekEnd)
 	if err != nil {
-		return nil, nil, nil, nil, err
+		return nil, nil, nil, nil, fmt.Errorf("failed to get file size: %w", err)
 	}
-	reader, err := zip.NewReader(bytes.NewReader(fileBytes), int64(len(fileBytes)))
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return nil, nil, nil, nil, fmt.Errorf("failed to reset file position: %w", err)
+	}
+	reader, err := zip.NewReader(file, size)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
