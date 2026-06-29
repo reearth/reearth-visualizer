@@ -1,4 +1,5 @@
 // import GlobalModal from "@reearth/app/features/GlobalModal";
+// test: trigger playwright-tests-pr
 import NotificationBanner from "@reearth/app/features/Notification";
 import { Loading } from "@reearth/app/lib/reearth-ui";
 import { Provider as I18nProvider } from "@reearth/services/i18n";
