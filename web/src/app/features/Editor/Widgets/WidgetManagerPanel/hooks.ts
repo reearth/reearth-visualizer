@@ -1,5 +1,7 @@
 import { toWidgetAlignSystemType } from "@reearth/app/utils/value";
 import {
+  GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID,
+  STREET_VIEW_WIDGET_ID,
   useInstallableWidgets,
   useInstalledWidgets,
   useWidgetMutations
@@ -9,10 +11,24 @@ import { useCallback } from "react";
 import { useWidgetsViewDevice } from "../../atoms";
 import { SelectedWidget } from "../../hooks/useWidgets";
 
+import { useSystemTile } from "./useSystemTile";
+
 type Props = {
   sceneId?: string;
   selectWidget: (value: SelectedWidget | undefined) => void;
 };
+
+const GS_SV_WIDGET_IDS = [
+  GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID,
+  STREET_VIEW_WIDGET_ID
+];
+
+const getWidgetExtensionId = (widget?: {
+  pluginId?: string;
+  extensionId?: string;
+}) => (widget ? `${widget.pluginId}/${widget.extensionId}` : undefined);
+
+const isGSSVWidgetId = (id?: string) => !!id && GS_SV_WIDGET_IDS.includes(id);
 
 export default ({ sceneId, selectWidget }: Props) => {
   const { addWidget, removeWidget } = useWidgetMutations();
@@ -27,32 +43,89 @@ export default ({ sceneId, selectWidget }: Props) => {
     type: widgetsViewDevice
   });
 
+  const { getSystemTileItemId, addSystemTile, removeSystemTile } =
+    useSystemTile(sceneId);
+
+  const hasInstalledGSSVWidget = useCallback(
+    (excludeWidgetId?: string) =>
+      installedWidgets?.some((widget) => {
+        if (widget.id === excludeWidgetId) return false;
+        return isGSSVWidgetId(getWidgetExtensionId(widget));
+      }) ?? false,
+    [installedWidgets]
+  );
+
   const handleWidgetAdd = useCallback(
     async (id?: string) => {
-      const type = toWidgetAlignSystemType(widgetsViewDevice);
-      await addWidget(sceneId, id, type);
+      if (!sceneId || !id) return;
+
+      const shouldEnsureSystemTile =
+        isGSSVWidgetId(id) && !hasInstalledGSSVWidget();
+
+      await addWidget(sceneId, id, toWidgetAlignSystemType(widgetsViewDevice));
+
+      if (shouldEnsureSystemTile && !getSystemTileItemId()) {
+        await addSystemTile();
+      }
     },
-    [sceneId, addWidget, widgetsViewDevice]
+    [
+      sceneId,
+      addWidget,
+      widgetsViewDevice,
+      hasInstalledGSSVWidget,
+      getSystemTileItemId,
+      addSystemTile
+    ]
   );
 
   const handleWidgetRemove = useCallback(
     async (id?: string) => {
-      const type = toWidgetAlignSystemType(widgetsViewDevice);
-      await removeWidget(sceneId, id, type);
+      if (!sceneId || !id) return;
+
+      const widgetToRemove = installedWidgets?.find(
+        (widget) => widget.id === id
+      );
+      const isRemovingGSSVWidget = isGSSVWidgetId(
+        getWidgetExtensionId(widgetToRemove)
+      );
+
+      const shouldRemoveSystemTile =
+        isRemovingGSSVWidget && !hasInstalledGSSVWidget(id);
+
+      await removeWidget(
+        sceneId,
+        id,
+        toWidgetAlignSystemType(widgetsViewDevice)
+      );
+
+      if (shouldRemoveSystemTile) {
+        await removeSystemTile();
+      }
     },
-    [sceneId, removeWidget, widgetsViewDevice]
+    [
+      sceneId,
+      removeWidget,
+      widgetsViewDevice,
+      installedWidgets,
+      hasInstalledGSSVWidget,
+      removeSystemTile
+    ]
   );
 
-  const handleWidgetSelection = (id: string) => {
-    const w = installedWidgets?.find((w) => w.id === id);
-    if (!w) return;
-    selectWidget({
-      id: w.id,
-      pluginId: w.pluginId,
-      extensionId: w.extensionId,
-      propertyId: w.property.id
-    });
-  };
+  const handleWidgetSelection = useCallback(
+    (id: string) => {
+      const widget = installedWidgets?.find((widget) => widget.id === id);
+      if (!widget) return;
+
+      selectWidget({
+        id: widget.id,
+        pluginId: widget.pluginId,
+        extensionId: widget.extensionId,
+        propertyId: widget.property.id
+      });
+    },
+    [installedWidgets, selectWidget]
+  );
 
   return {
     installableWidgets,

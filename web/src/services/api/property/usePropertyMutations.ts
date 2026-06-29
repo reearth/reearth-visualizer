@@ -79,7 +79,7 @@ export const usePropertyMutations = () => {
       propertyId: string,
       schemaGroupId: string
     ): Promise<
-      MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
+      MutationReturn<{ propertyId: string; newItemId: string | undefined }>
     > => {
       const { data, error } = await addPropertyItemMutation({
         variables: {
@@ -99,8 +99,15 @@ export const usePropertyMutations = () => {
         return { data: undefined, status: "error" };
       }
 
+      const property = data.addPropertyItem.property;
+      const groupList = property.items.find(
+        (item) => item.__typename === "PropertyGroupList" && item.schemaGroupId === schemaGroupId
+      );
+      const groups = groupList?.__typename === "PropertyGroupList" ? groupList.groups : [];
+      const newItemId = groups[groups.length - 1]?.id;
+
       return {
-        data: data.addPropertyItem.property.id,
+        data: { propertyId: property.id, newItemId },
         status: "success"
       };
     },

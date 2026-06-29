@@ -1,6 +1,13 @@
-export type Mapping = Record<string, string | [string, Record<string, string>]>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyObject = Record<string, any>;
+
+type ArrayMapping = [
+  targetKey: string,
+  fieldMapping: Record<string, string>,
+  preSortFn?: (a: AnyObject, b: AnyObject) => number
+];
+
+export type Mapping = Record<string, string | ArrayMapping>;
 
 // Helper function to get nested property value
 function getNestedProperty(obj: AnyObject, keys: string[]): unknown {
@@ -37,11 +44,12 @@ export function convertData(source: AnyObject, mapping: Mapping): AnyObject {
 
     if (value !== undefined) {
       if (Array.isArray(value) && typeof targetKey === "object") {
-        const convertedArray = value.map((item) =>
-          isObject(item) ? convertData(item, targetKey[1]) : item
+        const [targetPath, fieldMapping, preSortFn] = targetKey;
+        const sorted = preSortFn ? [...value].sort(preSortFn) : value;
+        const convertedArray = sorted.map((item) =>
+          isObject(item) ? convertData(item, fieldMapping) : item
         );
-        const targetKeys = targetKey[0].split(".");
-        setNestedProperty(target, targetKeys, convertedArray);
+        setNestedProperty(target, targetPath.split("."), convertedArray);
       } else if (typeof targetKey === "string") {
         const targetKeys = targetKey.split(".");
         setNestedProperty(target, targetKeys, value);
@@ -67,7 +75,13 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
       tile_zoomLevelForURL: "zoomLevelForURL",
       tile_opacity: "opacity",
       cesium_ion_asset_id: "cesiumIonAssetId",
-      heatmap: "heatmap"
+      heatmap: "heatmap",
+      tile_category: "category"
+    },
+    (a, b) => {
+      const aIsSystem = a["tile_category"] === "system";
+      const bIsSystem = b["tile_category"] === "system";
+      return aIsSystem === bIsSystem ? 0 : aIsSystem ? 1 : -1;
     }
   ],
   "terrain.terrain": "terrain.enabled",

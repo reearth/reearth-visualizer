@@ -31,7 +31,8 @@ export const usePropertyDecorations = () => {
       schemaGroup: string,
       value: unknown,
       allFields: FieldContext[],
-      allListItemsFields?: FieldContext[][]
+      allListItemsFields?: FieldContext[][],
+      internalFields?: FieldContext[]
     ): PropertyDecorations => {
       const decorations: PropertyDecorations = {};
 
@@ -132,6 +133,27 @@ export const usePropertyDecorations = () => {
               icon="informationCircle"
               text={t(
                 "Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies."
+              )}
+            />
+          );
+        }
+      }
+
+      // Business Rule: System tile zoom level disabled
+      // Disable zoom level fields when tile_category is system (managed programmatically)
+      if (
+        (schemaId === "tile_zoomLevel" || schemaId === "tile_zoomLevelForURL") &&
+        schemaGroup === "tiles"
+      ) {
+        const tileCategoryField = internalFields?.find((f) => f.id === "tile_category");
+        if (tileCategoryField?.value === "system") {
+          decorations.disabled = true;
+          decorations.titleAdornment = (
+            <Tooltip
+              type="custom"
+              icon="informationCircle"
+              text={t(
+                "Disabled: Zoom level configuration is not available for system tiles."
               )}
             />
           );

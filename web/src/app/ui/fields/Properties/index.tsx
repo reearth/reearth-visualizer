@@ -30,7 +30,8 @@ type Props = {
     schemaGroup: string,
     value: unknown,
     allFields: FieldContext[],
-    allListItemsFields?: FieldContext[][]
+    allListItemsFields?: FieldContext[][],
+    internalFields?: FieldContext[]
   ) => PropertyFieldDecorations;
 };
 
@@ -62,10 +63,16 @@ const PropertyItem: FC<Props> = ({
     return sf?.type === "ref" && sf.ui === "layer";
   }, [isList, item?.representativeField, item?.schemaFields]);
 
-  const groups = useMemo<(GroupListItem | Group)[]>(
-    () => (item && "items" in item ? item.items : item ? [item] : []),
-    [item]
-  );
+  const groups = useMemo<(GroupListItem | Group)[]>(() => {
+    const items = item && "items" in item ? item.items : item ? [item] : [];
+    if (item?.schemaGroup !== "tiles") return items;
+    return [...items].sort((a, b) => {
+      const aIsSystem = a.fields.some((f) => f.id === "tile_category" && f.value === "system");
+      const bIsSystem = b.fields.some((f) => f.id === "tile_category" && f.value === "system");
+      if (aIsSystem === bIsSystem) return 0;
+      return aIsSystem ? 1 : -1;
+    });
+  }, [item]);
 
   const selectedItem = isList
     ? groups.find((g) => g.id === selected)
@@ -143,6 +150,8 @@ const PropertyItem: FC<Props> = ({
     [item?.schemaFields, item?.schemaGroup, selectedItem]
   );
 
+  console.log("PropertyItem selectedItem:", selectedItem);
+
   return (
     <FieldsWrapper>
       {isList && !!item && (
@@ -209,6 +218,18 @@ const PropertyItem: FC<Props> = ({
                 })
             : [];
 
+          // Internal fields: hidden schema fields passed separately so business logic
+          // can access programmatically-managed values (e.g. tile_category) without
+          // polluting the visible allFields array
+          const internalFields: FieldContext[] = computeDecorations && schemaFields
+            ? schemaFields
+                .filter((sf) => sf.hidden)
+                .map((sf) => ({
+                  id: sf.schemaField.id,
+                  value: sf.field?.mergedValue ?? sf.field?.value ?? sf.schemaField.defaultValue
+                }))
+            : [];
+
           return schemaFields?.map((f) => {
             if (
               (layerMode && f.schemaField.id === item.representativeField) ||
@@ -225,7 +246,8 @@ const PropertyItem: FC<Props> = ({
               item.schemaGroup,
               resolvedValueForDecorations,
               allFields,
-              allListItemsFields
+              allListItemsFields,
+              internalFields
             );
 
           return (
