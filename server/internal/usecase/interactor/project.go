@@ -1173,7 +1173,7 @@ func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Write
 		return err
 	}
 	// 500MB
-	if err := file.FileSizeCheck(500, zipFile); err != nil {
+	if _, err := file.FileSizeCheck(500, zipFile); err != nil {
 		return err
 	}
 
