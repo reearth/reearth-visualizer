@@ -12,8 +12,8 @@ import (
 	"github.com/reearth/reearthx/log"
 )
 
-// readSeekerAt is satisfied by *os.File and afero.File — both call sites already pass one of these.
-type readSeekerAt interface {
+// ReadSeekerAt is satisfied by *os.File and afero.File — both call sites already pass one of these.
+type ReadSeekerAt interface {
 	io.ReadSeeker
 	io.ReaderAt
 }
@@ -115,7 +115,7 @@ func FileSizeCheck(sizeMB int, file io.ReadSeeker) (int64, error) {
 	return fileSize, nil
 }
 
-func UncompressExportZip(currentHost string, file readSeekerAt) (*[]byte, map[string]*zip.File, map[string]*zip.File, *string, error) {
+func UncompressExportZip(currentHost string, file ReadSeekerAt) (*[]byte, map[string]*zip.File, map[string]*zip.File, *string, error) {
 	size, err := FileSizeCheck(500, file)
 	if err != nil {
 		return nil, nil, nil, nil, err
