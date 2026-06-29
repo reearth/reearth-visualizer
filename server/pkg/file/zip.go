@@ -99,33 +99,28 @@ func ZipBasePath(zr *zip.Reader) (b string) {
 	return
 }
 
-func FileSizeCheck(sizeMB int, file io.ReadSeeker) error {
+func FileSizeCheck(sizeMB int, file io.ReadSeeker) (int64, error) {
 	const MB = 1024 * 1024
 	maxFileSize := int64(sizeMB) * MB
 	fileSize, err := file.Seek(0, io.SeekEnd)
 	if err != nil {
-		return fmt.Errorf("failed to get file size: %w", err)
+		return 0, fmt.Errorf("failed to get file size: %w", err)
 	}
 	if fileSize > maxFileSize {
-		return fmt.Errorf("file size (%.2fMB) exceeds %dMB limit", float64(fileSize)/float64(MB), sizeMB)
+		return 0, fmt.Errorf("file size (%.2fMB) exceeds %dMB limit", float64(fileSize)/float64(MB), sizeMB)
 	}
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
-		return fmt.Errorf("failed to reset file position: %w", err)
+		return 0, fmt.Errorf("failed to reset file position: %w", err)
 	}
-	return nil
+	return fileSize, nil
 }
 
 func UncompressExportZip(currentHost string, file readSeekerAt) (*[]byte, map[string]*zip.File, map[string]*zip.File, *string, error) {
-	if err := FileSizeCheck(500, file); err != nil {
+	size, err := FileSizeCheck(500, file)
+	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	size, err := file.Seek(0, io.SeekEnd)
-	if err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("failed to get file size: %w", err)
-	}
-	if _, err := file.Seek(0, io.SeekStart); err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("failed to reset file position: %w", err)
-	}
+
 	reader, err := zip.NewReader(file, size)
 	if err != nil {
 		return nil, nil, nil, nil, err
