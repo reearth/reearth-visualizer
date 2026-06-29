@@ -22,7 +22,6 @@ They are both run via `npx playwright test`, just with different `--project` fla
 - **Node.js 24** (matches the CI image; see `.github/workflows/playwright_*.yml`).
 - **npm** (lockfile is committed).
 - **Google Cloud SDK / `gcloud` CLI** — only needed when the target environment is behind Google IAP and you authenticate with Application Default Credentials. Run `gcloud auth application-default login` once.
-- **1Password CLI** (optional) — install from <https://developer.1password.com/docs/cli/get-started/>. Required only if using `test:ui:op` / `test:api:op` instead of a `.env` file.
 - The Playwright WebKit browser binary. Install via `npx playwright install webkit` after `npm install` (the CI image ships browsers preinstalled at `mcr.microsoft.com/playwright:v1.58.2-noble`).
 
 ⚠ Note: `package.json` does not include a `postinstall` step, so `npm install` does **not** automatically download browser binaries — you must run `npx playwright install webkit` yourself on a fresh checkout.
@@ -30,8 +29,6 @@ They are both run via `npx playwright test`, just with different `--project` fla
 ---
 
 ## 3. Setup
-
-**Option 1: Traditional `.env` file**
 
 ```bash
 cd e2e
@@ -41,41 +38,15 @@ cp env.example .env
 # then edit .env
 ```
 
-**Option 2: 1Password CLI (skips `.env` entirely)**
-
-Requires access to the `Visualizer` vault in the team 1Password account.
-
-```bash
-cd e2e
-npm install
-npx playwright install webkit
-op signin
-```
-
-Create a local `.env.op` file (not tracked in git) with `op://` references for each variable in `env.example`:
-
-```dotenv
-REEARTH_E2E_EMAIL="op://YourVault/YourItem/REEARTH_E2E_EMAIL"
-REEARTH_E2E_PASSWORD="op://YourVault/YourItem/REEARTH_E2E_PASSWORD"
-# ... one line per variable
-```
-
-Then run:
-
-```bash
-npm run test:ui:op   # UI tests
-npm run test:api:op  # API tests
-```
-
 ### 3.1 Minimum `.env` values
 
 From `env.example` and the code that reads it (`global-setup.ts`, `api/config/env.ts`, `api/tests/auth-utils.ts`, `utils/iap-auth.ts`):
 
 ```dotenv
-# Required for everything
-REEARTH_WEB_E2E_BASEURL=https://visualizer.dev.reearth.io/
-REEARTH_E2E_EMAIL=your_test_account
-REEARTH_E2E_PASSWORD=your_test_password
+# Required. Credentials are stored in 1Password
+REEARTH_WEB_E2E_BASEURL=
+REEARTH_E2E_EMAIL=
+REEARTH_E2E_PASSWORD=
 ```
 
 ### 3.2 IAP (Google Identity-Aware Proxy)
@@ -101,12 +72,13 @@ Auto-detection rules (`utils/iap-auth.ts` → `createIAPContext`):
 ### 3.3 Extra `.env` values for the API stack
 
 ```dotenv
+# Required. Credentials are stored in 1Password
 REEARTH_E2E_AUTH_MODE=auth0      # auth0 | mock
 
 # auth0 mode (this is what CI uses)
-REEARTH_E2E_AUTH0_DOMAIN=reearth-dev.auth0.com
-REEARTH_E2E_AUTH0_AUDIENCE=https://api.dev.reearth.io
-REEARTH_E2E_AUTH0_CLIENT_ID=<auth0-spa-client-id>
+REEARTH_E2E_AUTH0_DOMAIN=
+REEARTH_E2E_AUTH0_AUDIENCE=
+REEARTH_E2E_AUTH0_CLIENT_ID=
 
 # mock mode (used by `npm run test:api:local`)
 REEARTH_E2E_MOCK_USER_ID=<server-side debug user id>
@@ -115,7 +87,7 @@ REEARTH_E2E_MOCK_USER_ID=<server-side debug user id>
 REEARTH_E2E_SECOND_USER_EMAIL=...
 
 # Optional override of GraphQL endpoint; otherwise derived from BASEURL
-REEARTH_E2E_API_URL=https://api.dev.reearth.io
+REEARTH_E2E_API_URL=
 ```
 
 ⚠ Note: `auth0` mode uses Resource Owner Password Credentials (`grant_type=password`) — your Auth0 tenant and client must permit this grant, and the test user must not require MFA.
@@ -259,10 +231,8 @@ All npm scripts (`package.json`):
 | Script | What it does |
 |---|---|
 | `npm run test:ui` | Removes `./out` and runs the `webkit` UI project (this is what CI runs). |
-| `npm run test:ui:op` | Same as `test:ui` but injects secrets from 1Password (no `.env` needed). |
 | `npm run test:local` | Same as above with `REEARTH_WEB_E2E_BASEURL=http://localhost:3000`. |
 | `npm run test:api` | Runs `api-setup` + `api-tests` with `SKIP_STORAGE_STATE=true` (skips browser global setup). |
-| `npm run test:api:op` | Same as `test:api` but injects secrets from 1Password (no `.env` needed). |
 | `npm run test:api:local` | Same as `test:api` but forces `REEARTH_E2E_AUTH_MODE=mock` and `BASEURL=http://localhost:3000` — for running API tests against a local server with debug user header. |
 | `npm run allure:generate` | Generates a static Allure HTML report from `./out/allure-results`. |
 | `npm run allure:serve` | Serves the report on port 8080. |
