@@ -387,3 +387,96 @@ export async function cleanupStaleE2eProjects(
     console.warn("[e2e-cleanup] Cleanup failed (non-fatal):", err);
   }
 }
+
+/**
+ * Extracts the browser's Auth0 token from storage state and derives the
+ * GraphQL endpoint from the JWT audience. Used to clean the recycle bin in
+ * environments that differ from the dev API (e.g. OSS Cloud Run PR previews).
+ */
+function getBrowserEnvToken(
+  storagePath: string
+): { token: string; graphqlEndpoint: string } | null {
+  try {
+    const state = JSON.parse(fs.readFileSync(storagePath, "utf-8"));
+    for (const origin of state.origins ?? []) {
+      for (const item of origin.localStorage ?? []) {
+        if (!item.name.startsWith("@@auth0spajs@@") || !item.value) continue;
+        const parsed = JSON.parse(item.value);
+        const token = parsed?.body?.access_token;
+        if (!token) continue;
+
+        const payload = JSON.parse(
+          Buffer.from(token.split(".")[1], "base64").toString("utf-8")
+        );
+        const aud: string | string[] = payload.aud;
+        const audiences = Array.isArray(aud) ? aud : [aud];
+        const apiUrl = audiences.find(
+          (a) => !a.includes("auth0.com") && a.startsWith("https://")
+        );
+        if (!apiUrl) continue;
+
+        return { token, graphqlEndpoint: `${apiUrl}/api/graphql` };
+      }
+    }
+  } catch {
+    // malformed, fall through
+  }
+  return null;
+}
+
+/**
+ * Cleans up the recycle bin in the browser's auth environment.
+ * This handles cases where the browser logged into a different environment
+ * than the dev API (e.g. OSS Cloud Run PR previews use api.test.reearth.dev).
+ */
+export async function cleanupBrowserEnvRecycleBin(
+  request: APIRequestContext,
+  userStoragePath: string,
+  devGraphqlEndpoint: string
+): Promise<void> {
+  const browserEnv = getBrowserEnvToken(userStoragePath);
+  if (!browserEnv) return;
+  if (browserEnv.graphqlEndpoint === devGraphqlEndpoint) return;
+
+  try {
+    const { token, graphqlEndpoint } = browserEnv;
+    console.log(`[oss-cleanup] Cleaning recycle bin at ${graphqlEndpoint}`);
+    const client = new GraphQLClient(request, token, {}, graphqlEndpoint);
+
+    const { data: meData } = await client.query<{
+      me: { myWorkspaceId: string };
+    }>(GET_ME);
+    const workspaceId = meData.me.myWorkspaceId;
+
+    let cursor: string | null = null;
+    let hasMore = true;
+    let deleted = 0;
+
+    while (hasMore) {
+      const { data } = await client.query<{
+        deletedProjects: {
+          nodes: { id: string; name: string }[];
+          pageInfo: { hasNextPage: boolean; endCursor: string };
+        };
+      }>(GET_DELETED_PROJECTS, {
+        workspaceId,
+        pagination: { first: 50, ...(cursor ? { after: cursor } : {}) }
+      });
+
+      for (const project of data.deletedProjects.nodes) {
+        await client
+          .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+          .then(() => deleted++)
+          .catch(() => {});
+      }
+
+      hasMore = data.deletedProjects.pageInfo?.hasNextPage ?? false;
+      cursor = data.deletedProjects.pageInfo?.endCursor ?? null;
+      if (!hasMore || !cursor) break;
+    }
+
+    console.log(`[oss-cleanup] Deleted ${deleted} project(s) from recycle bin.`);
+  } catch (err) {
+    console.warn("[oss-cleanup] Cleanup failed (non-fatal):", err);
+  }
+}
