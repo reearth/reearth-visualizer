@@ -237,7 +237,6 @@ const Visualizer: FC<VisualizerProps> = ({
   } = useHooks({
     ownBuiltinWidgets: widgets?.ownBuiltinWidgets,
     viewerProperty,
-    widgets: widgets?.alignSystem,
     onCoreLayerSelect,
     currentCamera,
     handleCoreAPIReady,

@@ -7,7 +7,6 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { useVisualizerCamera } from "./atoms";
 import { BuiltinWidgets } from "./Crust";
-import type { WidgetAlignSystem } from "./Crust/Widgets";
 import { getBuiltinWidgetOptions } from "./Crust/Widgets/Widget";
 import { useOverriddenProperty } from "./utils";
 import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
@@ -15,7 +14,6 @@ import { migrateViewerPropertyTiles } from "./utils/tilesMigration";
 export default function useHooks({
   ownBuiltinWidgets,
   viewerProperty,
-  widgets,
   onCoreLayerSelect,
   currentCamera,
   handleCoreAPIReady,
@@ -23,7 +21,6 @@ export default function useHooks({
 }: {
   ownBuiltinWidgets?: (keyof BuiltinWidgets)[];
   viewerProperty?: ViewerProperty;
-  widgets?: WidgetAlignSystem;
   onCoreLayerSelect?: (
     layerId: string | undefined,
     layer: ComputedLayer | undefined,
@@ -70,10 +67,9 @@ export default function useHooks({
       defaultTileType,
       defaultTerrainType: "reearth_terrain",
       hasAccessToken,
-      widgets
     });
     return migrated;
-  }, [overriddenViewerProperty, engineMeta, widgets]);
+  }, [overriddenViewerProperty, engineMeta]);
 
   const storyWrapperRef = useRef<HTMLDivElement>(null);
 
