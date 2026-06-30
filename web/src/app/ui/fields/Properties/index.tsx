@@ -9,7 +9,7 @@ import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import ListField, { ListItemProps } from "../ListField";
 
@@ -63,16 +63,22 @@ const PropertyItem: FC<Props> = ({
     return sf?.type === "ref" && sf.ui === "layer";
   }, [isList, item?.representativeField, item?.schemaFields]);
 
+  const isSystemTile = useCallback(
+    (group: GroupListItem | Group) =>
+      group.fields.some((f) => f.id === "tile_category" && f.value === "system"),
+    []
+  );
+
   const groups = useMemo<(GroupListItem | Group)[]>(() => {
     const items = item && "items" in item ? item.items : item ? [item] : [];
     if (item?.schemaGroup !== "tiles") return items;
     return [...items].sort((a, b) => {
-      const aIsSystem = a.fields.some((f) => f.id === "tile_category" && f.value === "system");
-      const bIsSystem = b.fields.some((f) => f.id === "tile_category" && f.value === "system");
+      const aIsSystem = isSystemTile(a);
+      const bIsSystem = isSystemTile(b);
       if (aIsSystem === bIsSystem) return 0;
       return aIsSystem ? 1 : -1;
     });
-  }, [item]);
+  }, [item, isSystemTile]);
 
   const selectedItem = isList
     ? groups.find((g) => g.id === selected)
@@ -114,11 +120,12 @@ const PropertyItem: FC<Props> = ({
           return {
             id: i.id,
             title: (!layerMode ? title : undefined) ?? t("Settings"),
-            layerId: layerMode ? title : undefined
+            layerId: layerMode ? title : undefined,
+            readOnly: isSystemTile(i)
           };
         })
         .filter((g): g is ListItemProps => !!g),
-    [groups, layerMode, item, t]
+    [groups, layerMode, item, t, isSystemTile]
   );
   const schemaFields = useMemo(
     () =>
@@ -149,8 +156,9 @@ const PropertyItem: FC<Props> = ({
         : [],
     [item?.schemaFields, item?.schemaGroup, selectedItem]
   );
-
-  console.log("PropertyItem selectedItem:", selectedItem);
+  
+ const hasSystemTiles =
+   groups.length > 0 && isSystemTile(groups[groups.length - 1]);
 
   return (
     <FieldsWrapper>
@@ -159,6 +167,7 @@ const PropertyItem: FC<Props> = ({
           title={item.title || (item.id === "default" ? "defaultItemName" : "")}
           items={propertyListItems}
           selected={selected}
+          dragDisabled={hasSystemTiles}
           onItemSelect={select}
           onItemAdd={handlePropertyItemAdd}
           onItemDelete={handlePropertyItemDelete}
@@ -171,10 +180,10 @@ const PropertyItem: FC<Props> = ({
         (() => {
           // Build context of all list items for decoration computation
           // Only build if computeDecorations is provided to avoid unnecessary work
-          const allListItemsFields: FieldContext[][] | undefined = isList && computeDecorations
-            ? groups.map((group) =>
-                item.schemaFields
-                  .map((sf) => {
+          const allListItemsFields: FieldContext[][] | undefined =
+            isList && computeDecorations
+              ? groups.map((group) =>
+                  item.schemaFields.map((sf) => {
                     const field = group.fields.find((f) => f.id === sf.id);
 
                     // Use same value resolution as PropertyField to ensure consistency
@@ -182,9 +191,14 @@ const PropertyItem: FC<Props> = ({
                     if (sf.id === "tile_type" && item.schemaGroup === "tiles") {
                       // Apply default tile type override for tile_type field in tiles group
                       const overriddenDefault = appFeature()?.defaultTileType;
-                      resolvedValue = field?.mergedValue ?? field?.value ?? overriddenDefault ?? sf.defaultValue;
+                      resolvedValue =
+                        field?.mergedValue ??
+                        field?.value ??
+                        overriddenDefault ??
+                        sf.defaultValue;
                     } else {
-                      resolvedValue = field?.mergedValue ?? field?.value ?? sf.defaultValue;
+                      resolvedValue =
+                        field?.mergedValue ?? field?.value ?? sf.defaultValue;
                     }
 
                     return {
@@ -192,43 +206,58 @@ const PropertyItem: FC<Props> = ({
                       value: resolvedValue
                     };
                   })
-              )
-            : undefined;
+                )
+              : undefined;
 
           // Build context of all fields for decoration computation
           // Only build once (not inside the map loop) to avoid redundant work
-          const allFields: FieldContext[] = computeDecorations && schemaFields
-            ? schemaFields
-                .filter((sf) => !sf.hidden)
-                .map((sf) => {
-                  // Use same value resolution as PropertyField to ensure consistency
-                  let resolvedValue: unknown;
-                  if (sf.schemaField.id === "tile_type" && item.schemaGroup === "tiles") {
-                    // Apply default tile type override for tile_type field in tiles group
-                    const overriddenDefault = appFeature()?.defaultTileType;
-                    resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? overriddenDefault ?? sf.schemaField.defaultValue;
-                  } else {
-                    resolvedValue = sf.field?.mergedValue ?? sf.field?.value ?? sf.schemaField.defaultValue;
-                  }
+          const allFields: FieldContext[] =
+            computeDecorations && schemaFields
+              ? schemaFields
+                  .filter((sf) => !sf.hidden)
+                  .map((sf) => {
+                    // Use same value resolution as PropertyField to ensure consistency
+                    let resolvedValue: unknown;
+                    if (
+                      sf.schemaField.id === "tile_type" &&
+                      item.schemaGroup === "tiles"
+                    ) {
+                      // Apply default tile type override for tile_type field in tiles group
+                      const overriddenDefault = appFeature()?.defaultTileType;
+                      resolvedValue =
+                        sf.field?.mergedValue ??
+                        sf.field?.value ??
+                        overriddenDefault ??
+                        sf.schemaField.defaultValue;
+                    } else {
+                      resolvedValue =
+                        sf.field?.mergedValue ??
+                        sf.field?.value ??
+                        sf.schemaField.defaultValue;
+                    }
 
-                  return {
-                    id: sf.schemaField.id,
-                    value: resolvedValue
-                  };
-                })
-            : [];
+                    return {
+                      id: sf.schemaField.id,
+                      value: resolvedValue
+                    };
+                  })
+              : [];
 
           // Internal fields: hidden schema fields passed separately so business logic
           // can access programmatically-managed values (e.g. tile_category) without
           // polluting the visible allFields array
-          const internalFields: FieldContext[] = computeDecorations && schemaFields
-            ? schemaFields
-                .filter((sf) => sf.hidden)
-                .map((sf) => ({
-                  id: sf.schemaField.id,
-                  value: sf.field?.mergedValue ?? sf.field?.value ?? sf.schemaField.defaultValue
-                }))
-            : [];
+          const internalFields: FieldContext[] =
+            computeDecorations && schemaFields
+              ? schemaFields
+                  .filter((sf) => sf.hidden)
+                  .map((sf) => ({
+                    id: sf.schemaField.id,
+                    value:
+                      sf.field?.mergedValue ??
+                      sf.field?.value ??
+                      sf.schemaField.defaultValue
+                  }))
+              : [];
 
           return schemaFields?.map((f) => {
             if (
@@ -250,19 +279,19 @@ const PropertyItem: FC<Props> = ({
               internalFields
             );
 
-          return (
-            <PropertyField
-              key={f.schemaField.id}
-              propertyId={propertyId}
-              schemaGroup={item.schemaGroup}
-              field={f.field}
-              itemId={selected}
-              schema={f.schemaField}
-              onFlyTo={onFlyTo}
-              decorations={decorations}
-            />
-          );
-        });
+            return (
+              <PropertyField
+                key={f.schemaField.id}
+                propertyId={propertyId}
+                schemaGroup={item.schemaGroup}
+                field={f.field}
+                itemId={selected}
+                schema={f.schemaField}
+                onFlyTo={onFlyTo}
+                decorations={decorations}
+              />
+            );
+          });
         })()}
     </FieldsWrapper>
   );

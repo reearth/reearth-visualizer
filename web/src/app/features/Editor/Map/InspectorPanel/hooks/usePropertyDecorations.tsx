@@ -1,5 +1,5 @@
 import { useCesiumIonAccessToken } from "@reearth/app/features/Editor/atoms";
-import { CesiumIonAssetFallbackWarning } from "@reearth/app/features/Editor/common";
+import { CesiumIonAssetFallbackWarning, SystemTileTypeInfo } from "@reearth/app/features/Editor/common";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { FieldContext } from "@reearth/app/ui/fields/Properties";
 import { config } from "@reearth/services/config";
@@ -12,6 +12,7 @@ export type PropertyDecorations = {
   afterInput?: ReactNode;
   disabled?: boolean;
   overrideValue?: unknown;
+  allowedChoiceKeys?: string[];
 };
 
 /**
@@ -136,6 +137,16 @@ export const usePropertyDecorations = () => {
               )}
             />
           );
+        }
+      }
+
+      // Business Rule: System tile type options restricted
+      // Only allow google_satellite and google_roadmap for system tiles
+      if (schemaId === "tile_type" && schemaGroup === "tiles") {
+        const tileCategoryField = internalFields?.find((f) => f.id === "tile_category");
+        if (tileCategoryField?.value === "system") {
+          decorations.allowedChoiceKeys = ["google_satellite", "google_roadmap"];
+          decorations.afterInput = <SystemTileTypeInfo />;
         }
       }
 
