@@ -184,7 +184,7 @@ jobs:
 
   playwright-tests-e2e-only:
     needs: prepare
-    if: needs.prepare.outputs.e2e == 'true' && github.event_name == 'pull_request'
+    if: needs.prepare.outputs.e2e == 'true' && needs.prepare.outputs.web != 'true' && github.event_name == 'pull_request'
     permissions:
       contents: read
       id-token: write
