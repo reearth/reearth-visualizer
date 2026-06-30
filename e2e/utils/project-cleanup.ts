@@ -432,7 +432,7 @@ export async function cleanupBrowserEnvRecycleBin(
   try {
     const configRes = await request.get(`${baseUrl}/reearth_config.json`);
     const config = await configRes.json();
-    const apiUrl = config?.api_url?.replace(/\/$/, "");
+    const apiUrl = (config?.api ?? config?.api_url)?.replace(/\/$/, "");
     if (!apiUrl) {
       console.warn("[oss-cleanup] Could not read api_url from reearth_config.json");
       return;
