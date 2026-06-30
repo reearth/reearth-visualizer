@@ -43,7 +43,7 @@ export function convertData(source: AnyObject, mapping: Mapping): AnyObject {
     const value = getNestedProperty(source, sourceKeys);
 
     if (value !== undefined) {
-      if (Array.isArray(value) && typeof targetKey === "object") {
+      if (Array.isArray(value) && Array.isArray(targetKey)) {
         const [targetPath, fieldMapping, preSortFn] = targetKey;
         const sorted = preSortFn ? [...value].sort(preSortFn) : value;
         const convertedArray = sorted.map((item) =>

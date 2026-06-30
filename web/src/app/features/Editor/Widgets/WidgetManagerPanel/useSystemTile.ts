@@ -22,18 +22,51 @@ export const useSystemTile = (sceneId?: string) => {
     )?.id;
   }, [scene?.property]);
 
-  const addSystemTile = useCallback(async () => {
-    const propertyId = scene?.property?.id;
-    if (!propertyId) return;
+const addSystemTile = useCallback(async () => {
+  const propertyId = scene?.property?.id;
+  if (!propertyId) return;
 
-    const result = await addPropertyItem(propertyId, TILES_GROUP);
-    if (result.status !== "success" || !result.data?.newItemId) return;
+  const result = await addPropertyItem(propertyId, TILES_GROUP);
+  if (result.status !== "success" || !result.data?.newItemId) return;
 
-    const { newItemId } = result.data;
-    await updatePropertyValue(propertyId, TILES_GROUP, newItemId, "tile_type", lang, "google_satellite", "string");
-    await updatePropertyValue(propertyId, TILES_GROUP, newItemId, "tile_category", lang, SYSTEM_TILE_CATEGORY, "string");
-  }, [scene?.property?.id, addPropertyItem, updatePropertyValue, lang]);
+  const { newItemId } = result.data;
 
+  const tileTypeResult = await updatePropertyValue(
+    propertyId,
+    TILES_GROUP,
+    newItemId,
+    "tile_type",
+    lang,
+    "google_satellite",
+    "string"
+  );
+
+  if (tileTypeResult?.status !== "success") {
+    await removePropertyItem(propertyId, TILES_GROUP, newItemId);
+    return;
+  }
+
+  const tileCategoryResult = await updatePropertyValue(
+    propertyId,
+    TILES_GROUP,
+    newItemId,
+    "tile_category",
+    lang,
+    SYSTEM_TILE_CATEGORY,
+    "string"
+  );
+
+  if (tileCategoryResult?.status !== "success") {
+    await removePropertyItem(propertyId, TILES_GROUP, newItemId);
+    return;
+  }
+}, [
+  scene?.property?.id,
+  addPropertyItem,
+  updatePropertyValue,
+  removePropertyItem,
+  lang
+]);
   const removeSystemTile = useCallback(async () => {
     const propertyId = scene?.property?.id;
     const systemItemId = getSystemTileItemId();

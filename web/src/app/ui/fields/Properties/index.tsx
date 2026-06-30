@@ -156,8 +156,8 @@ const PropertyItem: FC<Props> = ({
         : [],
     [item?.schemaFields, item?.schemaGroup, selectedItem]
   );
-  
- const hasSystemTiles =
+
+ const isDragDisabled =
    groups.length > 0 && isSystemTile(groups[groups.length - 1]);
 
   return (
@@ -167,7 +167,7 @@ const PropertyItem: FC<Props> = ({
           title={item.title || (item.id === "default" ? "defaultItemName" : "")}
           items={propertyListItems}
           selected={selected}
-          dragDisabled={hasSystemTiles}
+          dragDisabled={isDragDisabled}
           onItemSelect={select}
           onItemAdd={handlePropertyItemAdd}
           onItemDelete={handlePropertyItemDelete}
@@ -206,8 +206,8 @@ const PropertyItem: FC<Props> = ({
                       value: resolvedValue
                     };
                   })
-                )
-              : undefined;
+              )
+            : undefined;
 
           // Build context of all fields for decoration computation
           // Only build once (not inside the map loop) to avoid redundant work
@@ -279,19 +279,19 @@ const PropertyItem: FC<Props> = ({
               internalFields
             );
 
-            return (
-              <PropertyField
-                key={f.schemaField.id}
-                propertyId={propertyId}
-                schemaGroup={item.schemaGroup}
-                field={f.field}
-                itemId={selected}
-                schema={f.schemaField}
-                onFlyTo={onFlyTo}
-                decorations={decorations}
-              />
-            );
-          });
+          return (
+            <PropertyField
+              key={f.schemaField.id}
+              propertyId={propertyId}
+              schemaGroup={item.schemaGroup}
+              field={f.field}
+              itemId={selected}
+              schema={f.schemaField}
+              onFlyTo={onFlyTo}
+              decorations={decorations}
+            />
+          );
+        });
         })()}
     </FieldsWrapper>
   );

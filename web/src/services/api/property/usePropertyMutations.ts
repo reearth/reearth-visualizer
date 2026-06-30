@@ -100,11 +100,9 @@ export const usePropertyMutations = () => {
       }
 
       const property = data.addPropertyItem.property;
-      const groupList = property.items.find(
-        (item) => item.__typename === "PropertyGroupList" && item.schemaGroupId === schemaGroupId
-      );
-      const groups = groupList?.__typename === "PropertyGroupList" ? groupList.groups : [];
-      const newItemId = groups[groups.length - 1]?.id;
+      const propertyItem = data.addPropertyItem.propertyItem;
+      const newItemId =
+        propertyItem?.__typename === "PropertyGroup" ? propertyItem.id : undefined;
 
       return {
         data: { propertyId: property.id, newItemId },

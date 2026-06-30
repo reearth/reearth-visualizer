@@ -12,7 +12,7 @@ export const SystemTileTypeInfo: FC = () => {
   const t = useT();
 
   return (
-    <Typography size="footnote" color="weak" >
+    <Typography size="footnote" color="weak">
       {t(
         "Street View and Google Map Search require a Google Maps tile type to comply with Google Maps policies. Please select Google Satellite or Google Road Map."
       )}
