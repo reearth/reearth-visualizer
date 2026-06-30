@@ -15,6 +15,32 @@ const apiTokenPath = path.join(__dirname, "../.auth/api-token.json");
 const storagePath = path.join(__dirname, "../.auth/user.json");
 
 /**
+ * When running against a Cloud Run PR preview (OSS environment), returns a
+ * GraphQLClient using the browser's OSS token and the OSS API endpoint
+ * derived from reearth_config.json. Returns null for non-OSS environments.
+ */
+async function getOssClient(
+  request: APIRequestContext
+): Promise<GraphQLClient | null> {
+  const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL ?? "";
+  if (!baseUrl.includes(".run.app")) return null;
+
+  const browserEnv = getBrowserEnvToken(storagePath);
+  if (!browserEnv) return null;
+
+  try {
+    const configRes = await request.get(`${baseUrl}/reearth_config.json`);
+    const config = await configRes.json();
+    const apiUrl = config?.api?.replace(/\/$/, "");
+    if (!apiUrl) return null;
+    const endpoint = `${apiUrl}/graphql`;
+    return new GraphQLClient(request, browserEnv.token, {}, endpoint);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Try to obtain an auth token from either the API token file or the
  * browser storage state (Auth0 access_token). This ensures cleanup works
  * regardless of which Playwright project (webkit / api-tests) ran first.
@@ -65,8 +91,12 @@ export async function deleteProjectByName(
   projectName: string
 ): Promise<void> {
   try {
-    const { token, extraHeaders } = getAuthToken();
-    const client = new GraphQLClient(request, token, extraHeaders);
+    const client =
+      (await getOssClient(request)) ??
+      (() => {
+        const { token, extraHeaders } = getAuthToken();
+        return new GraphQLClient(request, token, extraHeaders);
+      })();
 
     // Get workspace ID
     const { data: meData } = await client.query<{

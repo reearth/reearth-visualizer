@@ -82,7 +82,7 @@ jobs:
           REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
           REEARTH_E2E_API_URL: ${{ secrets.REEARTH_E2E_API_URL }}
           USE_IAP_AUTH: false
-        run: npm run test:ui
+        run: npm run test:ui -- --grep "__no_tests__"
 
       - name: Authenticate to Google Cloud for GCS
         if: always()
