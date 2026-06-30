@@ -486,15 +486,15 @@ export async function cleanupBrowserEnvRecycleBin(
 
     // This workspace is exclusively used by the CI test account — all deleted
     // projects are safe to remove regardless of naming prefix.
+    // Always fetch from page 1 (no cursor) since deleting items invalidates cursors.
     // Cap per-run to 100 to avoid exceeding CI timeout (clears backlog over multiple runs).
     const MAX_PER_RUN = 100;
     const PAGE_SIZE = 50;
-    let cursor: string | null = null;
-    let hasMore = true;
     let deleted = 0;
     let attempted = 0;
+    let previousTotal = -1;
 
-    while (hasMore && attempted < MAX_PER_RUN) {
+    while (attempted < MAX_PER_RUN) {
       const { data } = await client.query<{
         deletedProjects: {
           totalCount: number;
@@ -503,16 +503,21 @@ export async function cleanupBrowserEnvRecycleBin(
         };
       }>(GET_DELETED_PROJECTS, {
         workspaceId,
-        pagination: { first: PAGE_SIZE, ...(cursor ? { after: cursor } : {}) }
+        pagination: { first: PAGE_SIZE }
       });
 
+      const total = data.deletedProjects.totalCount;
       const projects = data.deletedProjects.nodes.slice(
         0,
         MAX_PER_RUN - attempted
       );
       console.log(
-        `[oss-cleanup] totalCount=${data.deletedProjects.totalCount} processing ${projects.length} this page`
+        `[oss-cleanup] totalCount=${total} processing ${projects.length} this page`
       );
+
+      // Stop if no more items or count isn't decreasing
+      if (projects.length === 0 || total === previousTotal) break;
+      previousTotal = total;
 
       for (const project of projects) {
         attempted++;
@@ -529,10 +534,6 @@ export async function cleanupBrowserEnvRecycleBin(
         // Small pause to avoid rate limiting
         await new Promise(resolve => setTimeout(resolve, 100));
       }
-
-      hasMore = data.deletedProjects.pageInfo?.hasNextPage ?? false;
-      cursor = data.deletedProjects.pageInfo?.endCursor ?? null;
-      if (!hasMore || !cursor) break;
     }
 
     console.log(
