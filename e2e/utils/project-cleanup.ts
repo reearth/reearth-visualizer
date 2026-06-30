@@ -393,9 +393,7 @@ export async function cleanupStaleE2eProjects(
  * GraphQL endpoint from the JWT audience. Used to clean the recycle bin in
  * environments that differ from the dev API (e.g. OSS Cloud Run PR previews).
  */
-function getBrowserEnvToken(
-  storagePath: string
-): { token: string } | null {
+function getBrowserEnvToken(storagePath: string): { token: string } | null {
   try {
     const state = JSON.parse(fs.readFileSync(storagePath, "utf-8"));
     for (const origin of state.origins ?? []) {
@@ -434,7 +432,9 @@ export async function cleanupBrowserEnvRecycleBin(
     const config = await configRes.json();
     const apiUrl = (config?.api ?? config?.api_url)?.replace(/\/$/, "");
     if (!apiUrl) {
-      console.warn("[oss-cleanup] Could not read api_url from reearth_config.json");
+      console.warn(
+        "[oss-cleanup] Could not read api_url from reearth_config.json"
+      );
       return;
     }
     graphqlEndpoint = `${apiUrl}/graphql`;
@@ -454,14 +454,17 @@ export async function cleanupBrowserEnvRecycleBin(
     const { id: userId, myWorkspaceId: workspaceId } = meData.me;
     console.log(`[oss-cleanup] userId=${userId} workspaceId=${workspaceId}`);
 
-    const BATCH_SIZE = 10;
+    // This workspace is exclusively used by the CI test account — all deleted
+    // projects are safe to remove regardless of naming prefix.
+    // Cap per-run to 100 to avoid exceeding CI timeout (clears backlog over multiple runs).
+    const MAX_PER_RUN = 100;
+    const PAGE_SIZE = 50;
     let cursor: string | null = null;
     let hasMore = true;
     let deleted = 0;
-    const toDelete: { id: string; name: string }[] = [];
+    let attempted = 0;
 
-    // Collect up to BATCH_SIZE e2e projects — stop early to avoid deep pagination
-    while (hasMore && toDelete.length < BATCH_SIZE) {
+    while (hasMore && attempted < MAX_PER_RUN) {
       const { data } = await client.query<{
         deletedProjects: {
           totalCount: number;
@@ -470,33 +473,41 @@ export async function cleanupBrowserEnvRecycleBin(
         };
       }>(GET_DELETED_PROJECTS, {
         workspaceId,
-        pagination: { first: 50, ...(cursor ? { after: cursor } : {}) }
+        pagination: { first: PAGE_SIZE, ...(cursor ? { after: cursor } : {}) }
       });
 
-      const e2eProjects = data.deletedProjects.nodes.filter(p =>
-        p.name.startsWith("e2e-")
+      const projects = data.deletedProjects.nodes.slice(
+        0,
+        MAX_PER_RUN - attempted
       );
-      console.log(`[oss-cleanup] totalCount=${data.deletedProjects.totalCount} e2e=${e2eProjects.length} this page`);
-      toDelete.push(...e2eProjects.slice(0, BATCH_SIZE - toDelete.length));
+      console.log(
+        `[oss-cleanup] totalCount=${data.deletedProjects.totalCount} processing ${projects.length} this page`
+      );
+
+      for (const project of projects) {
+        attempted++;
+        // Recover first (set deleted: false), then permanently delete
+        await client
+          .mutate(UPDATE_PROJECT, {
+            input: { projectId: project.id, deleted: false }
+          })
+          .catch(() => {});
+        await client
+          .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+          .then(() => deleted++)
+          .catch(() => {});
+        // Small pause to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
 
       hasMore = data.deletedProjects.pageInfo?.hasNextPage ?? false;
       cursor = data.deletedProjects.pageInfo?.endCursor ?? null;
       if (!hasMore || !cursor) break;
     }
 
-    console.log(`[oss-cleanup] Attempting to delete ${toDelete.length} e2e project(s)`);
-    for (const project of toDelete) {
-      // Recover first (set deleted: false), then permanently delete
-      await client
-        .mutate(UPDATE_PROJECT, { input: { projectId: project.id, deleted: false } })
-        .catch(() => {});
-      await client
-        .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
-        .then(() => deleted++)
-        .catch(() => {});
-    }
-
-    console.log(`[oss-cleanup] Deleted ${deleted}/${toDelete.length} e2e project(s) from recycle bin.`);
+    console.log(
+      `[oss-cleanup] Deleted ${deleted}/${attempted} project(s) from recycle bin (${MAX_PER_RUN} max per run).`
+    );
   } catch (err) {
     console.warn("[oss-cleanup] Cleanup failed (non-fatal):", err);
   }
