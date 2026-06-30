@@ -460,6 +460,7 @@ export async function cleanupBrowserEnvRecycleBin(
     while (hasMore) {
       const { data } = await client.query<{
         deletedProjects: {
+          totalCount: number;
           nodes: { id: string; name: string }[];
           pageInfo: { hasNextPage: boolean; endCursor: string };
         };
@@ -467,6 +468,8 @@ export async function cleanupBrowserEnvRecycleBin(
         workspaceId,
         pagination: { first: 50, ...(cursor ? { after: cursor } : {}) }
       });
+
+      console.log(`[oss-cleanup] Found ${data.deletedProjects.totalCount} total project(s) in OSS recycle bin, processing ${data.deletedProjects.nodes.length} this page`);
 
       for (const project of data.deletedProjects.nodes) {
         await client
