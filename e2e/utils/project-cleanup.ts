@@ -449,9 +449,10 @@ export async function cleanupBrowserEnvRecycleBin(
     const client = new GraphQLClient(request, token, {}, graphqlEndpoint);
 
     const { data: meData } = await client.query<{
-      me: { myWorkspaceId: string };
+      me: { id: string; myWorkspaceId: string };
     }>(GET_ME);
-    const workspaceId = meData.me.myWorkspaceId;
+    const { id: userId, myWorkspaceId: workspaceId } = meData.me;
+    console.log(`[oss-cleanup] userId=${userId} workspaceId=${workspaceId}`);
 
     let cursor: string | null = null;
     let hasMore = true;
@@ -469,9 +470,12 @@ export async function cleanupBrowserEnvRecycleBin(
         pagination: { first: 50, ...(cursor ? { after: cursor } : {}) }
       });
 
-      console.log(`[oss-cleanup] Found ${data.deletedProjects.totalCount} total project(s) in OSS recycle bin, processing ${data.deletedProjects.nodes.length} this page`);
+      const e2eProjects = data.deletedProjects.nodes.filter(p =>
+        p.name.startsWith("e2e-")
+      );
+      console.log(`[oss-cleanup] Found ${data.deletedProjects.totalCount} total project(s) in OSS recycle bin, ${e2eProjects.length} e2e project(s) this page`);
 
-      for (const project of data.deletedProjects.nodes) {
+      for (const project of e2eProjects) {
         await client
           .mutate(UPDATE_PROJECT, {
             input: { projectId: project.id, deleted: true }
