@@ -14,7 +14,6 @@ import {
   cleanupStaleE2eProjects,
   cleanupBrowserEnvRecycleBin
 } from "./utils/project-cleanup";
-import { GRAPHQL_ENDPOINT } from "./api/config/env";
 
 export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
 
@@ -92,7 +91,7 @@ async function globalSetup(_config: FullConfig) {
 
     // Clean recycle bin in the browser's auth environment if it differs from dev
     // (e.g. OSS Cloud Run PR previews use api.test.reearth.dev)
-    await cleanupBrowserEnvRecycleBin(apiContext, STORAGE_STATE, GRAPHQL_ENDPOINT);
+    await cleanupBrowserEnvRecycleBin(apiContext, STORAGE_STATE);
 
     await apiContext.dispose();
 

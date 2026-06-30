@@ -431,12 +431,13 @@ function getBrowserEnvToken(
  */
 export async function cleanupBrowserEnvRecycleBin(
   request: APIRequestContext,
-  userStoragePath: string,
-  devGraphqlEndpoint: string
+  userStoragePath: string
 ): Promise<void> {
+  const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL ?? "";
+  if (!baseUrl.includes(".run.app")) return;
+
   const browserEnv = getBrowserEnvToken(userStoragePath);
   if (!browserEnv) return;
-  if (browserEnv.graphqlEndpoint === devGraphqlEndpoint) return;
 
   try {
     const { token, graphqlEndpoint } = browserEnv;
