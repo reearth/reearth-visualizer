@@ -1,6 +1,6 @@
 import { Locator, Page } from "@playwright/test";
 
-import { MAX_SCROLL_ATTEMPTS } from "../utils";
+import { MAX_SCROLL_ATTEMPTS } from "../utils/constants";
 
 export class RecycleBinPage {
   projectTitles: Locator;
@@ -55,6 +55,7 @@ export class RecycleBinPage {
    */
   async scrollToFindProject(projectName: string): Promise<void> {
     let previousItemCount = -1;
+    let stagnantAttempts = 0;
 
     for (let attempt = 0; attempt < MAX_SCROLL_ATTEMPTS; attempt++) {
       if ((await this.recycleBinMenuButton(projectName).count()) > 0) return;
@@ -64,8 +65,14 @@ export class RecycleBinPage {
       );
       const currentItemCount = await allMenuButtons.count();
 
-      // Item count stopped growing — no more pages to load.
-      if (currentItemCount > 0 && currentItemCount === previousItemCount) return;
+      // Item count stopped growing — likely no more pages to load, but allow a
+      // couple of retries in case the next page takes >5s to render in CI.
+      if (currentItemCount > 0 && currentItemCount === previousItemCount) {
+        stagnantAttempts++;
+        if (stagnantAttempts >= 2) return;
+      } else {
+        stagnantAttempts = 0;
+      }
       previousItemCount = currentItemCount;
 
       if (currentItemCount === 0) {

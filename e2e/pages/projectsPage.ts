@@ -1,6 +1,6 @@
 import { Locator, Page, expect } from "@playwright/test";
 
-import { MAX_SCROLL_ATTEMPTS } from "../utils";
+import { MAX_SCROLL_ATTEMPTS } from "../utils/constants";
 
 export class ProjectsPage {
   newProjectButton: Locator;
@@ -187,6 +187,7 @@ export class ProjectsPage {
    */
   async scrollToFindProject(projectName: string): Promise<void> {
     let previousItemCount = -1;
+    let stagnantAttempts = 0;
 
     for (let attempt = 0; attempt < MAX_SCROLL_ATTEMPTS; attempt++) {
       if ((await this.gridProjectItem(projectName).count()) > 0) return;
@@ -194,7 +195,14 @@ export class ProjectsPage {
       const allCards = this.page.locator('[data-testid^="project-grid-item-"]');
       const currentItemCount = await allCards.count();
 
-      if (currentItemCount > 0 && currentItemCount === previousItemCount) return;
+      // Item count stopped growing — likely no more pages to load, but allow a
+      // couple of retries in case the next page takes >5s to render in CI.
+      if (currentItemCount > 0 && currentItemCount === previousItemCount) {
+        stagnantAttempts++;
+        if (stagnantAttempts >= 2) return;
+      } else {
+        stagnantAttempts = 0;
+      }
       previousItemCount = currentItemCount;
 
       if (currentItemCount === 0) {
