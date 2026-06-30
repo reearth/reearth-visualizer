@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   test:
-    timeout-minutes: 15
+    timeout-minutes: 20
     permissions:
       contents: read
       id-token: write
