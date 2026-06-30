@@ -395,7 +395,7 @@ export async function cleanupStaleE2eProjects(
  */
 function getBrowserEnvToken(
   storagePath: string
-): { token: string; graphqlEndpoint: string } | null {
+): { token: string } | null {
   try {
     const state = JSON.parse(fs.readFileSync(storagePath, "utf-8"));
     for (const origin of state.origins ?? []) {
@@ -403,19 +403,7 @@ function getBrowserEnvToken(
         if (!item.name.startsWith("@@auth0spajs@@") || !item.value) continue;
         const parsed = JSON.parse(item.value);
         const token = parsed?.body?.access_token;
-        if (!token) continue;
-
-        const payload = JSON.parse(
-          Buffer.from(token.split(".")[1], "base64").toString("utf-8")
-        );
-        const aud: string | string[] = payload.aud;
-        const audiences = Array.isArray(aud) ? aud : [aud];
-        const apiUrl = audiences.find(
-          (a) => !a.includes("auth0.com") && a.startsWith("https://")
-        );
-        if (!apiUrl) continue;
-
-        return { token, graphqlEndpoint: `${apiUrl}/api/graphql` };
+        if (token) return { token };
       }
     }
   } catch {
@@ -439,8 +427,24 @@ export async function cleanupBrowserEnvRecycleBin(
   const browserEnv = getBrowserEnvToken(userStoragePath);
   if (!browserEnv) return;
 
+  // Fetch the actual API URL from the frontend's runtime config
+  let graphqlEndpoint: string;
   try {
-    const { token, graphqlEndpoint } = browserEnv;
+    const configRes = await request.get(`${baseUrl}/reearth_config.json`);
+    const config = await configRes.json();
+    const apiUrl = config?.api_url?.replace(/\/$/, "");
+    if (!apiUrl) {
+      console.warn("[oss-cleanup] Could not read api_url from reearth_config.json");
+      return;
+    }
+    graphqlEndpoint = `${apiUrl}/graphql`;
+  } catch (err) {
+    console.warn("[oss-cleanup] Failed to fetch reearth_config.json:", err);
+    return;
+  }
+
+  try {
+    const { token } = browserEnv;
     console.log(`[oss-cleanup] Cleaning recycle bin at ${graphqlEndpoint}`);
     const client = new GraphQLClient(request, token, {}, graphqlEndpoint);
 

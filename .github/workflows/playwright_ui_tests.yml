@@ -66,6 +66,7 @@ jobs:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
           REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
           REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
+          REEARTH_E2E_API_URL: ${{ secrets.REEARTH_E2E_API_URL }}
           REEARTH_E2E_AUTH_MODE: auth0
           REEARTH_E2E_AUTH0_DOMAIN: ${{ secrets.REEARTH_E2E_AUTH0_DOMAIN }}
           REEARTH_E2E_AUTH0_AUDIENCE: ${{ secrets.REEARTH_E2E_AUTH0_AUDIENCE }}
