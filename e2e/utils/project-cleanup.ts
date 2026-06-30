@@ -454,11 +454,14 @@ export async function cleanupBrowserEnvRecycleBin(
     const { id: userId, myWorkspaceId: workspaceId } = meData.me;
     console.log(`[oss-cleanup] userId=${userId} workspaceId=${workspaceId}`);
 
+    const BATCH_SIZE = 10;
     let cursor: string | null = null;
     let hasMore = true;
     let deleted = 0;
+    const toDelete: { id: string; name: string }[] = [];
 
-    while (hasMore) {
+    // Collect up to BATCH_SIZE e2e projects — stop early to avoid deep pagination
+    while (hasMore && toDelete.length < BATCH_SIZE) {
       const { data } = await client.query<{
         deletedProjects: {
           totalCount: number;
@@ -473,26 +476,27 @@ export async function cleanupBrowserEnvRecycleBin(
       const e2eProjects = data.deletedProjects.nodes.filter(p =>
         p.name.startsWith("e2e-")
       );
-      console.log(`[oss-cleanup] Found ${data.deletedProjects.totalCount} total project(s) in OSS recycle bin, ${e2eProjects.length} e2e project(s) this page`);
-
-      for (const project of e2eProjects) {
-        await client
-          .mutate(UPDATE_PROJECT, {
-            input: { projectId: project.id, deleted: true }
-          })
-          .catch(() => {});
-        await client
-          .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
-          .then(() => deleted++)
-          .catch(() => {});
-      }
+      console.log(`[oss-cleanup] totalCount=${data.deletedProjects.totalCount} e2e=${e2eProjects.length} this page`);
+      toDelete.push(...e2eProjects.slice(0, BATCH_SIZE - toDelete.length));
 
       hasMore = data.deletedProjects.pageInfo?.hasNextPage ?? false;
       cursor = data.deletedProjects.pageInfo?.endCursor ?? null;
       if (!hasMore || !cursor) break;
     }
 
-    console.log(`[oss-cleanup] Deleted ${deleted} project(s) from recycle bin.`);
+    console.log(`[oss-cleanup] Attempting to delete ${toDelete.length} e2e project(s)`);
+    for (const project of toDelete) {
+      // Recover first (set deleted: false), then permanently delete
+      await client
+        .mutate(UPDATE_PROJECT, { input: { projectId: project.id, deleted: false } })
+        .catch(() => {});
+      await client
+        .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+        .then(() => deleted++)
+        .catch(() => {});
+    }
+
+    console.log(`[oss-cleanup] Deleted ${deleted}/${toDelete.length} e2e project(s) from recycle bin.`);
   } catch (err) {
     console.warn("[oss-cleanup] Cleanup failed (non-fatal):", err);
   }
