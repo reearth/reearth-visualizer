@@ -41,18 +41,7 @@ function getAuthToken(): {
           if (!item.name.startsWith("@@auth0spajs@@") || !item.value) continue;
           const parsed = JSON.parse(item.value);
           if (parsed?.body?.access_token) {
-            const token = parsed.body.access_token;
-            try {
-              const payload = JSON.parse(
-                Buffer.from(token.split(".")[1], "base64").toString("utf-8")
-              );
-              console.log(
-                `[auth] token found — aud: ${JSON.stringify(payload.aud)}, iss: ${payload.iss}, exp: ${new Date(payload.exp * 1000).toISOString()}`
-              );
-            } catch {
-              console.log("[auth] token found but could not decode payload");
-            }
-            return { token, extraHeaders: {} };
+            return { token: parsed.body.access_token, extraHeaders: {} };
           }
         }
       }
