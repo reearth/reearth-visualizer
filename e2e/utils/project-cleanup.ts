@@ -470,6 +470,11 @@ export async function cleanupBrowserEnvRecycleBin(
 
       for (const project of data.deletedProjects.nodes) {
         await client
+          .mutate(UPDATE_PROJECT, {
+            input: { projectId: project.id, deleted: true }
+          })
+          .catch(() => {});
+        await client
           .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
           .then(() => deleted++)
           .catch(() => {});
