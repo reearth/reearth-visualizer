@@ -65,8 +65,14 @@ export async function deleteProjectByName(
   projectName: string
 ): Promise<void> {
   try {
-    const { token, extraHeaders } = getAuthToken();
-    const client = new GraphQLClient(request, token, extraHeaders);
+    const ossClient = await getOSSClient(request);
+    let client: GraphQLClient;
+    if (ossClient) {
+      client = ossClient;
+    } else {
+      const { token, extraHeaders } = getAuthToken();
+      client = new GraphQLClient(request, token, extraHeaders);
+    }
 
     // Get workspace ID
     const { data: meData } = await client.query<{
@@ -200,7 +206,7 @@ export async function getRecycleBinCount(
  * Permanently deletes all projects in the recycle bin.
  * Called from global setup when count >= 16 to prevent recycle bin tests from failing.
  */
-export async function cleanupRecycleBin(
+export async function cleanupDevRecycleBin(
   request: APIRequestContext
 ): Promise<void> {
   try {
@@ -286,7 +292,7 @@ export async function cleanupRecycleBin(
  * from previous test runs. Called from global setup so dangling data is
  * removed even if the previous run's teardown failed.
  */
-export async function cleanupStaleE2eProjects(
+export async function cleanupDevStaleE2eProjects(
   request: APIRequestContext
 ): Promise<void> {
   const E2E_PREFIX = "e2e-";
@@ -385,5 +391,129 @@ export async function cleanupStaleE2eProjects(
     );
   } catch (err) {
     console.warn("[e2e-cleanup] Cleanup failed (non-fatal):", err);
+  }
+}
+
+// ─── OSS cleanup ──────────────────────────────────────────────────────────────
+
+function getBrowserEnvToken(sp: string): { token: string } | null {
+  try {
+    const state = JSON.parse(fs.readFileSync(sp, "utf-8"));
+    for (const origin of state.origins ?? []) {
+      for (const item of origin.localStorage ?? []) {
+        if (!item.name.startsWith("@@auth0spajs@@") || !item.value) continue;
+        const parsed = JSON.parse(item.value);
+        const token = parsed?.body?.access_token;
+        if (token) return { token };
+      }
+    }
+  } catch {
+    // malformed, fall through
+  }
+  return null;
+}
+
+/**
+ * Returns a GraphQLClient pointing to the OSS API when running against a
+ * Cloud Run PR preview URL, otherwise returns null (caller uses dev client).
+ */
+async function getOSSClient(
+  request: APIRequestContext
+): Promise<GraphQLClient | null> {
+  const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL ?? "";
+  if (!baseUrl.includes(".run.app")) return null;
+
+  const browserEnv = getBrowserEnvToken(storagePath);
+  if (!browserEnv) return null;
+
+  try {
+    const configRes = await request.get(`${baseUrl}/reearth_config.json`);
+    const config = await configRes.json();
+    const apiUrl = config?.api?.replace(/\/$/, "");
+    if (!apiUrl) return null;
+    return new GraphQLClient(
+      request,
+      browserEnv.token,
+      {},
+      `${apiUrl}/graphql`
+    );
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Cleans up the OSS recycle bin before tests run.
+ * Only active when REEARTH_WEB_E2E_BASEURL is a Cloud Run PR preview URL.
+ * The OSS test workspace is exclusively used by CI so all deleted projects
+ * are safe to remove. Processes up to 100 per run (no cursor — deletions
+ * invalidate the pagination cursor).
+ */
+export async function cleanupOSSRecycleBin(
+  request: APIRequestContext
+): Promise<void> {
+  const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL ?? "";
+  if (!baseUrl.includes(".run.app")) return;
+
+  const client = await getOSSClient(request);
+  if (!client) return;
+
+  try {
+    const { data: meData } = await client.query<{
+      me: { id: string; myWorkspaceId: string };
+    }>(GET_ME);
+    const { id: userId, myWorkspaceId: workspaceId } = meData.me;
+    console.log(`[oss-cleanup] userId=${userId} workspaceId=${workspaceId}`);
+
+    const PAGE_SIZE = 50;
+    let deleted = 0;
+    let attempted = 0;
+    let previousTotal = -1;
+    let hasMoreToDelete = true;
+
+    while (hasMoreToDelete) {
+      const { data } = await client.query<{
+        deletedProjects: {
+          totalCount: number;
+          nodes: { id: string; name: string }[];
+          pageInfo: { hasNextPage: boolean; endCursor: string };
+        };
+      }>(GET_DELETED_PROJECTS, {
+        workspaceId,
+        pagination: { first: PAGE_SIZE }
+      });
+
+      const total = data.deletedProjects.totalCount;
+      const projects = data.deletedProjects.nodes;
+      console.log(
+        `[oss-cleanup] totalCount=${total} processing ${projects.length} this page`
+      );
+
+      if (projects.length === 0 || total === previousTotal) {
+        hasMoreToDelete = false;
+        break;
+      }
+      previousTotal = total;
+
+      for (const project of projects) {
+        attempted++;
+        await client
+          .mutate(UPDATE_PROJECT, {
+            input: { projectId: project.id, deleted: false }
+          })
+          .catch(() => {});
+        await client
+          .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
+          .then(() => deleted++)
+          .catch(() => {});
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+
+    console.log(
+      `[oss-cleanup] Deleted ${deleted}/${attempted} project(s) from OSS recycle bin.`
+    );
+  } catch (err) {
+    console.warn("[oss-cleanup] Cleanup failed (non-fatal):", err);
   }
 }

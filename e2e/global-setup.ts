@@ -10,8 +10,9 @@ import { LoginPage } from "./pages/loginPage";
 import { createIAPContext } from "./utils/iap-auth";
 import {
   getRecycleBinCount,
-  cleanupRecycleBin,
-  cleanupStaleE2eProjects
+  cleanupDevRecycleBin,
+  cleanupDevStaleE2eProjects,
+  cleanupOSSRecycleBin
 } from "./utils/project-cleanup";
 
 export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
@@ -78,15 +79,16 @@ async function globalSetup(_config: FullConfig) {
 
     const apiContext = await playwrightRequest.newContext();
 
-    // Log and clean recycle bin
+    // Dev cleanup
     const recycleBinCount = await getRecycleBinCount(apiContext);
     console.log(`[setup] Recycle bin count before cleanup: ${recycleBinCount}`);
     if (recycleBinCount) {
-      await cleanupRecycleBin(apiContext);
+      await cleanupDevRecycleBin(apiContext);
     }
+    await cleanupDevStaleE2eProjects(apiContext);
 
-    // Clean up stale e2e- projects from previous runs
-    await cleanupStaleE2eProjects(apiContext);
+    // OSS cleanup — only runs when testing against a Cloud Run PR preview
+    await cleanupOSSRecycleBin(apiContext);
 
     await apiContext.dispose();
 
