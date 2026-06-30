@@ -14,22 +14,17 @@ export type GQLResult<T = Record<string, unknown>> = {
 };
 
 export class GraphQLClient {
-  private endpoint: string;
-
   constructor(
     private request: APIRequestContext,
     private authToken: string,
-    private extraHeaders: Record<string, string> = {},
-    endpoint?: string
-  ) {
-    this.endpoint = endpoint ?? GRAPHQL_ENDPOINT;
-  }
+    private extraHeaders: Record<string, string> = {}
+  ) {}
 
   async execute<T = Record<string, unknown>>(
     query: string,
     variables?: Record<string, unknown>
   ): Promise<{ status: number; body: GQLResponse<T> }> {
-    const res = await this.request.post(this.endpoint, {
+    const res = await this.request.post(GRAPHQL_ENDPOINT, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.authToken}`,
@@ -96,7 +91,7 @@ export class GraphQLClient {
 
     const body = Buffer.concat(parts);
 
-    const res = await this.request.post(this.endpoint, {
+    const res = await this.request.post(GRAPHQL_ENDPOINT, {
       headers: {
         "Content-Type": `multipart/form-data; boundary=${boundary}`,
         Authorization: `Bearer ${this.authToken}`,

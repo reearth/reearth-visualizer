@@ -15,32 +15,6 @@ const apiTokenPath = path.join(__dirname, "../.auth/api-token.json");
 const storagePath = path.join(__dirname, "../.auth/user.json");
 
 /**
- * When running against a Cloud Run PR preview (OSS environment), returns a
- * GraphQLClient using the browser's OSS token and the OSS API endpoint
- * derived from reearth_config.json. Returns null for non-OSS environments.
- */
-async function getOssClient(
-  request: APIRequestContext
-): Promise<GraphQLClient | null> {
-  const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL ?? "";
-  if (!baseUrl.includes(".run.app")) return null;
-
-  const browserEnv = getBrowserEnvToken(storagePath);
-  if (!browserEnv) return null;
-
-  try {
-    const configRes = await request.get(`${baseUrl}/reearth_config.json`);
-    const config = await configRes.json();
-    const apiUrl = config?.api?.replace(/\/$/, "");
-    if (!apiUrl) return null;
-    const endpoint = `${apiUrl}/graphql`;
-    return new GraphQLClient(request, browserEnv.token, {}, endpoint);
-  } catch {
-    return null;
-  }
-}
-
-/**
  * Try to obtain an auth token from either the API token file or the
  * browser storage state (Auth0 access_token). This ensures cleanup works
  * regardless of which Playwright project (webkit / api-tests) ran first.
@@ -91,12 +65,8 @@ export async function deleteProjectByName(
   projectName: string
 ): Promise<void> {
   try {
-    const client =
-      (await getOssClient(request)) ??
-      (() => {
-        const { token, extraHeaders } = getAuthToken();
-        return new GraphQLClient(request, token, extraHeaders);
-      })();
+    const { token, extraHeaders } = getAuthToken();
+    const client = new GraphQLClient(request, token, extraHeaders);
 
     // Get workspace ID
     const { data: meData } = await client.query<{
@@ -415,131 +385,5 @@ export async function cleanupStaleE2eProjects(
     );
   } catch (err) {
     console.warn("[e2e-cleanup] Cleanup failed (non-fatal):", err);
-  }
-}
-
-/**
- * Extracts the browser's Auth0 token from storage state and derives the
- * GraphQL endpoint from the JWT audience. Used to clean the recycle bin in
- * environments that differ from the dev API (e.g. OSS Cloud Run PR previews).
- */
-function getBrowserEnvToken(storagePath: string): { token: string } | null {
-  try {
-    const state = JSON.parse(fs.readFileSync(storagePath, "utf-8"));
-    for (const origin of state.origins ?? []) {
-      for (const item of origin.localStorage ?? []) {
-        if (!item.name.startsWith("@@auth0spajs@@") || !item.value) continue;
-        const parsed = JSON.parse(item.value);
-        const token = parsed?.body?.access_token;
-        if (token) return { token };
-      }
-    }
-  } catch {
-    // malformed, fall through
-  }
-  return null;
-}
-
-/**
- * Cleans up the recycle bin in the browser's auth environment.
- * This handles cases where the browser logged into a different environment
- * than the dev API (e.g. OSS Cloud Run PR previews use api.test.reearth.dev).
- */
-export async function cleanupBrowserEnvRecycleBin(
-  request: APIRequestContext,
-  userStoragePath: string
-): Promise<void> {
-  const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL ?? "";
-  if (!baseUrl.includes(".run.app")) return;
-
-  const browserEnv = getBrowserEnvToken(userStoragePath);
-  if (!browserEnv) return;
-
-  // Fetch the actual API URL from the frontend's runtime config
-  let graphqlEndpoint: string;
-  try {
-    const configRes = await request.get(`${baseUrl}/reearth_config.json`);
-    const config = await configRes.json();
-    const apiUrl = (config?.api ?? config?.api_url)?.replace(/\/$/, "");
-    if (!apiUrl) {
-      console.warn(
-        "[oss-cleanup] Could not read api_url from reearth_config.json"
-      );
-      return;
-    }
-    graphqlEndpoint = `${apiUrl}/graphql`;
-  } catch (err) {
-    console.warn("[oss-cleanup] Failed to fetch reearth_config.json:", err);
-    return;
-  }
-
-  try {
-    const { token } = browserEnv;
-    console.log(`[oss-cleanup] Cleaning recycle bin at ${graphqlEndpoint}`);
-    const client = new GraphQLClient(request, token, {}, graphqlEndpoint);
-
-    const { data: meData } = await client.query<{
-      me: { id: string; myWorkspaceId: string };
-    }>(GET_ME);
-    const { id: userId, myWorkspaceId: workspaceId } = meData.me;
-    console.log(`[oss-cleanup] userId=${userId} workspaceId=${workspaceId}`);
-
-    // This workspace is exclusively used by the CI test account — all deleted
-    // projects are safe to remove regardless of naming prefix.
-    // Always fetch from page 1 (no cursor) since deleting items invalidates cursors.
-    // Cap per-run to 100 to avoid exceeding CI timeout (clears backlog over multiple runs).
-    const MAX_PER_RUN = 100;
-    const PAGE_SIZE = 50;
-    let deleted = 0;
-    let attempted = 0;
-    let previousTotal = -1;
-
-    while (attempted < MAX_PER_RUN) {
-      const { data } = await client.query<{
-        deletedProjects: {
-          totalCount: number;
-          nodes: { id: string; name: string }[];
-          pageInfo: { hasNextPage: boolean; endCursor: string };
-        };
-      }>(GET_DELETED_PROJECTS, {
-        workspaceId,
-        pagination: { first: PAGE_SIZE }
-      });
-
-      const total = data.deletedProjects.totalCount;
-      const projects = data.deletedProjects.nodes.slice(
-        0,
-        MAX_PER_RUN - attempted
-      );
-      console.log(
-        `[oss-cleanup] totalCount=${total} processing ${projects.length} this page`
-      );
-
-      // Stop if no more items or count isn't decreasing
-      if (projects.length === 0 || total === previousTotal) break;
-      previousTotal = total;
-
-      for (const project of projects) {
-        attempted++;
-        // Recover first (set deleted: false), then permanently delete
-        await client
-          .mutate(UPDATE_PROJECT, {
-            input: { projectId: project.id, deleted: false }
-          })
-          .catch(() => {});
-        await client
-          .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
-          .then(() => deleted++)
-          .catch(() => {});
-        // Small pause to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-    }
-
-    console.log(
-      `[oss-cleanup] Deleted ${deleted}/${attempted} project(s) from recycle bin (${MAX_PER_RUN} max per run).`
-    );
-  } catch (err) {
-    console.warn("[oss-cleanup] Cleanup failed (non-fatal):", err);
   }
 }

@@ -11,8 +11,7 @@ import { createIAPContext } from "./utils/iap-auth";
 import {
   getRecycleBinCount,
   cleanupRecycleBin,
-  cleanupStaleE2eProjects,
-  cleanupBrowserEnvRecycleBin
+  cleanupStaleE2eProjects
 } from "./utils/project-cleanup";
 
 export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
@@ -88,10 +87,6 @@ async function globalSetup(_config: FullConfig) {
 
     // Clean up stale e2e- projects from previous runs
     await cleanupStaleE2eProjects(apiContext);
-
-    // Clean recycle bin in the browser's auth environment if it differs from dev
-    // (e.g. OSS Cloud Run PR previews use api.test.reearth.dev)
-    await cleanupBrowserEnvRecycleBin(apiContext, STORAGE_STATE);
 
     await apiContext.dispose();
 

@@ -31,7 +31,7 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       {filteredDeletedProjects?.length ? (
         <ManagerContent>
           <ContentWrapper>
-            <ProjectsWrapper ref={wrapperRef} data-testid="recycle-bin-wrapper">
+            <ProjectsWrapper ref={wrapperRef}>
               <ProjectsContainer ref={contentRef}>
                 <ProjectsGroup>
                   {filteredDeletedProjects?.map((project) => (
