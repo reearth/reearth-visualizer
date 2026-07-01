@@ -10,7 +10,7 @@ if (!baseUrl) throw new Error("Missing REEARTH_WEB_E2E_BASEURL");
 export const BASE_URL = baseUrl.replace(/\/$/, "");
 
 export const GRAPHQL_ENDPOINT =
-  process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "").concat("/graphql") ??
+  process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "").concat("/api/graphql") ??
   deriveApiEndpoint(BASE_URL);
 
 function deriveApiEndpoint(url: string): string {
