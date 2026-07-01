@@ -15,6 +15,7 @@ const LIST_FIELD_DRAG_HANDLE_CLASS_NAME =
 export type ListItemProps = {
   id: string;
   title: string;
+  readOnly?: boolean;
 };
 
 export type ListFieldProps = CommonFieldProps & {
@@ -23,6 +24,7 @@ export type ListFieldProps = CommonFieldProps & {
   selected?: string;
   atLeastOneItem?: boolean;
   isEditable?: boolean;
+  dragDisabled?: boolean;
   onItemAdd?: () => void;
   onItemSelect?: (id: string) => void;
   onItemDelete?: (id: string) => void;
@@ -38,6 +40,7 @@ const ListField: FC<ListFieldProps> = ({
   selected,
   atLeastOneItem,
   isEditable = true,
+  dragDisabled,
   onItemAdd,
   onItemSelect,
   onItemDelete,
@@ -132,6 +135,7 @@ const ListField: FC<ListFieldProps> = ({
         <FieldWrapper data-testid="listfield-listwrapper">
           <DragAndDropList
             items={DraggableListItems}
+            dragDisabled={dragDisabled}
             handleClassName={LIST_FIELD_DRAG_HANDLE_CLASS_NAME}
             onMoveStart={handleMoveStart}
             onMoveEnd={handleMoveEnd}

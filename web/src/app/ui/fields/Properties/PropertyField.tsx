@@ -35,6 +35,7 @@ export type PropertyFieldDecorations = {
   highlight?: boolean;
   disabled?: boolean;
   overrideValue?: unknown;
+  allowedChoiceKeys?: string[];
 };
 
 type Props = {
@@ -101,17 +102,18 @@ const PropertyField: FC<Props> = ({
 
     // Apply filter only for tile_type field in tiles group
     if (schema.id === "tile_type" && schemaGroup === "tiles") {
-      // Hard-coded allowed tile types
       const disabledTileTypes = appFeature()?.disabledTileTypes || [];
+      const allowedKeys = externalDecorations?.allowedChoiceKeys;
 
       return schema.choices
         .filter((choice) => !disabledTileTypes.includes(choice.key))
+        .filter((choice) => !allowedKeys || allowedKeys.includes(choice.key))
         .map(({ key, label }) => ({ value: key, label }));
     }
 
     // For all other fields, return all choices
     return schema.choices.map(({ key, label }) => ({ value: key, label }));
-  }, [schema.choices, schema.id, schemaGroup]);
+  }, [schema.choices, schema.id, schemaGroup, externalDecorations?.allowedChoiceKeys]);
 
   // Check if this field should be highlighted
   const [highlightFieldId] = useHighlightFieldTarget();
@@ -133,7 +135,7 @@ const PropertyField: FC<Props> = ({
   // Otherwise use empty decorations (generic UI component has no business rules)
   // Add highlight if this field is targeted
   // Note: overrideValue is extracted and NOT spread to child components
-  const { overrideValue: _overrideValue, ...restDecorations } = externalDecorations ?? {};
+  const { overrideValue: _overrideValue, allowedChoiceKeys: _allowedChoiceKeys, ...restDecorations } = externalDecorations ?? {};
   const decorations = {
     ...restDecorations,
     ...(shouldHighlight && { highlight: true })
