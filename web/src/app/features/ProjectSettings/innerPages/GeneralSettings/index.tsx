@@ -9,7 +9,7 @@ import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { useCallback, useState, FC } from "react";
+import { useCallback, useState, FC, useMemo, useEffect } from "react";
 
 import {
   InnerPage,
@@ -22,6 +22,7 @@ import {
   Thumbnail,
   TitleWrapper
 } from "../common";
+import { debounce } from "lodash-es";
 
 export type GeneralSettingsType = {
   name?: string;
@@ -97,12 +98,24 @@ const GeneralSettings: FC<Props> = ({
     [project, validateProjectAlias, workspaceId, onUpdateProject]
   );
 
+  const debouncedHandleProjectAliasUpdate = useMemo(
+    () =>
+      debounce((alias: string) => {
+        handleProjectAliasUpdate(alias);
+      }, 500),
+    [handleProjectAliasUpdate]
+  );
+
+  useEffect(() => {
+    return () => debouncedHandleProjectAliasUpdate.cancel();
+  }, [debouncedHandleProjectAliasUpdate]);
+  
   const handleProjectAliasChange = useCallback(
     (alias: string) => {
-      handleProjectAliasUpdate(alias);
+      debouncedHandleProjectAliasUpdate(alias);
       setWarning("");
     },
-    [handleProjectAliasUpdate]
+    [debouncedHandleProjectAliasUpdate]
   );
 
   const handleDescriptionUpdate = useCallback(

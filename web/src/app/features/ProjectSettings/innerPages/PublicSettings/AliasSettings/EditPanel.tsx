@@ -47,30 +47,32 @@ const EditPanel: FC<Prop> = ({
   const [warning, setWaring] = useState("");
   const [isAliasValid, setIsAliasValid] = useState(true);
 
-  const handleAliasValidation = useCallback(async () => {
-    const alias = localAlias as string;
-    const result = isStory
-      ? await validateStoryAlias(alias, itemId)
-      : await validateSceneAlias?.(alias, itemId);
+  const handleAliasValidation = useCallback(
+    async (value: string) => {
+      const result = isStory
+        ? await validateStoryAlias(value, itemId)
+        : await validateSceneAlias?.(value, itemId);
 
-    if (!result?.available) {
-      const description = result?.errors?.find(
-        (e) => e?.extensions?.description
-      )?.extensions?.description;
+      if (!result?.available) {
+        const description = result?.errors?.find(
+          (e) => e?.extensions?.description
+        )?.extensions?.description;
 
-      setWaring(description as string);
-      setIsAliasValid(false);
-    } else {
-      setWaring("");
-      setIsAliasValid(true);
-    }
-  }, [validateSceneAlias, validateStoryAlias, isStory, itemId, localAlias]);
+        setWaring(description as string);
+        setIsAliasValid(false);
+      } else {
+        setWaring("");
+        setIsAliasValid(true);
+      }
+    },
+    [validateSceneAlias, validateStoryAlias, isStory, itemId]
+  );
   const handleChange = useCallback(
     (value: string) => {
       setLocalAlias(value);
       setWaring("");
       setIsAliasValid(false);
-      handleAliasValidation();
+      handleAliasValidation(value);
     },
     [handleAliasValidation]
   );
