@@ -1,3 +1,4 @@
+import { SYSTEM_TILE_CATEGORY } from "@reearth/app/utils/convert-object";
 import { ValueType, ValueTypes, zeroValues } from "@reearth/app/utils/value";
 import { FlyTo } from "@reearth/core";
 import type {
@@ -65,7 +66,7 @@ const PropertyItem: FC<Props> = ({
 
   const isSystemTile = useCallback(
     (group: GroupListItem | Group) =>
-      group.fields.some((f) => f.id === "tile_category" && f.value === "system"),
+      group.fields.some((f) => f.id === "tile_category" && f.value === SYSTEM_TILE_CATEGORY),
     []
   );
 

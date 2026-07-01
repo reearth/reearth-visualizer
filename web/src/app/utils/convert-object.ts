@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyObject = Record<string, any>;
 
+export const SYSTEM_TILE_CATEGORY = "system";
+
 type ArrayMapping = [
   targetKey: string,
   fieldMapping: Record<string, string>,
@@ -79,8 +81,8 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
       tile_category: "category"
     },
     (a, b) => {
-      const aIsSystem = a["tile_category"] === "system";
-      const bIsSystem = b["tile_category"] === "system";
+      const aIsSystem = a["tile_category"] === SYSTEM_TILE_CATEGORY;
+      const bIsSystem = b["tile_category"] === SYSTEM_TILE_CATEGORY;
       return aIsSystem === bIsSystem ? 0 : aIsSystem ? 1 : -1;
     }
   ],

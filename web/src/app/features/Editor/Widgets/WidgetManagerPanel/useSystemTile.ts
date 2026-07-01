@@ -1,13 +1,13 @@
+import { SYSTEM_TILE_CATEGORY } from "@reearth/app/utils/convert-object";
 import { usePropertyMutations } from "@reearth/services/api/property";
 import { useScene } from "@reearth/services/api/scene";
 import { useLang } from "@reearth/services/i18n/hooks";
 import { useCallback } from "react";
 
 const TILES_GROUP = "tiles";
-const SYSTEM_TILE_CATEGORY = "system";
 
 export const useSystemTile = (sceneId?: string) => {
-  const { scene } = useScene({ sceneId });
+  const { scene, refetch } = useScene({ sceneId });
   const { addPropertyItem, updatePropertyValue, removePropertyItem } = usePropertyMutations();
   const lang = useLang();
 
@@ -22,51 +22,70 @@ export const useSystemTile = (sceneId?: string) => {
     )?.id;
   }, [scene?.property]);
 
-const addSystemTile = useCallback(async () => {
-  const propertyId = scene?.property?.id;
-  if (!propertyId) return;
+  const addSystemTile = useCallback(async () => {
+    const propertyId = scene?.property?.id;
+    if (!propertyId) return;
 
-  const result = await addPropertyItem(propertyId, TILES_GROUP);
-  if (result.status !== "success" || !result.data?.newItemId) return;
+    // Fetch fresh scene data so concurrent calls don't both pass the
+    // stale-cache check and create duplicate system tiles.
+    const freshResult = await refetch();
+    const freshNode = freshResult.data?.node;
+    if (freshNode?.__typename === "Scene") {
+      const freshTilesGroup = freshNode.property?.items.find(
+        (item) => item.__typename === "PropertyGroupList" && item.schemaGroupId === TILES_GROUP
+      );
+      const alreadyExists =
+        freshTilesGroup?.__typename === "PropertyGroupList" &&
+        freshTilesGroup.groups.some((group) =>
+          group.fields.some(
+            (f) => f.fieldId === "tile_category" && f.value === SYSTEM_TILE_CATEGORY
+          )
+        );
+      if (alreadyExists) return;
+    }
 
-  const { newItemId } = result.data;
+    const result = await addPropertyItem(propertyId, TILES_GROUP);
+    if (result.status !== "success" || !result.data?.newItemId) return;
 
-  const tileTypeResult = await updatePropertyValue(
-    propertyId,
-    TILES_GROUP,
-    newItemId,
-    "tile_type",
-    lang,
-    "google_satellite",
-    "string"
-  );
+    const { newItemId } = result.data;
 
-  if (tileTypeResult?.status !== "success") {
-    await removePropertyItem(propertyId, TILES_GROUP, newItemId);
-    return;
-  }
+    const tileTypeResult = await updatePropertyValue(
+      propertyId,
+      TILES_GROUP,
+      newItemId,
+      "tile_type",
+      lang,
+      "google_satellite",
+      "string"
+    );
 
-  const tileCategoryResult = await updatePropertyValue(
-    propertyId,
-    TILES_GROUP,
-    newItemId,
-    "tile_category",
-    lang,
-    SYSTEM_TILE_CATEGORY,
-    "string"
-  );
+    if (tileTypeResult?.status !== "success") {
+      await removePropertyItem(propertyId, TILES_GROUP, newItemId);
+      return;
+    }
 
-  if (tileCategoryResult?.status !== "success") {
-    await removePropertyItem(propertyId, TILES_GROUP, newItemId);
-    return;
-  }
-}, [
-  scene?.property?.id,
-  addPropertyItem,
-  updatePropertyValue,
-  removePropertyItem,
-  lang
-]);
+    const tileCategoryResult = await updatePropertyValue(
+      propertyId,
+      TILES_GROUP,
+      newItemId,
+      "tile_category",
+      lang,
+      SYSTEM_TILE_CATEGORY,
+      "string"
+    );
+
+    if (tileCategoryResult?.status !== "success") {
+      await removePropertyItem(propertyId, TILES_GROUP, newItemId);
+      return;
+    }
+  }, [
+    scene?.property?.id,
+    refetch,
+    addPropertyItem,
+    updatePropertyValue,
+    removePropertyItem,
+    lang
+  ]);
   const removeSystemTile = useCallback(async () => {
     const propertyId = scene?.property?.id;
     const systemItemId = getSystemTileItemId();

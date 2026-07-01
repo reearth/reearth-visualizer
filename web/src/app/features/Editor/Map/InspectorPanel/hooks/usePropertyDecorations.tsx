@@ -2,6 +2,7 @@ import { useCesiumIonAccessToken } from "@reearth/app/features/Editor/atoms";
 import { CesiumIonAssetFallbackWarning, SystemTileTypeInfo } from "@reearth/app/features/Editor/common";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { FieldContext } from "@reearth/app/ui/fields/Properties";
+import { SYSTEM_TILE_CATEGORY } from "@reearth/app/utils/convert-object";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n/hooks";
 import { ReactNode, useCallback, useMemo } from "react";
@@ -144,7 +145,7 @@ export const usePropertyDecorations = () => {
       // Only allow google_satellite and google_roadmap for system tiles
       if (schemaId === "tile_type" && schemaGroup === "tiles") {
         const tileCategoryField = internalFields?.find((f) => f.id === "tile_category");
-        if (tileCategoryField?.value === "system") {
+        if (tileCategoryField?.value === SYSTEM_TILE_CATEGORY) {
           decorations.allowedChoiceKeys = ["google_satellite", "google_roadmap"];
           decorations.afterInput = <SystemTileTypeInfo />;
         }
@@ -157,7 +158,7 @@ export const usePropertyDecorations = () => {
         schemaGroup === "tiles"
       ) {
         const tileCategoryField = internalFields?.find((f) => f.id === "tile_category");
-        if (tileCategoryField?.value === "system") {
+        if (tileCategoryField?.value === SYSTEM_TILE_CATEGORY) {
           decorations.disabled = true;
           decorations.titleAdornment = (
             <Tooltip
