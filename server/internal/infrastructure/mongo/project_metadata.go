@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"reflect"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
@@ -113,18 +114,50 @@ func (r *ProjectMetadata) writeFilter(filter interface{}) interface{} {
 	return applyWorkspaceFilter(filter, r.f.Writable)
 }
 
+// saveImport upserts pm's import status/log into projectimport, but only
+// when they actually changed since the last write. Save() is called on
+// every ProjectMetadata mutation (readme, topics, star count, ...), not
+// just on real import status transitions, so writing unconditionally here
+// would bump updatedat - and therefore the TTL clock - on every unrelated
+// edit to a project that has ever been imported.
 func (r *ProjectMetadata) saveImport(ctx context.Context, pm *project.ProjectMetadata) error {
 	if pm.ImportStatus() == nil && pm.ImportResultLog() == nil {
 		return nil
 	}
+
+	filter := bson.M{"project": pm.Project().String()}
+
+	var existing mongodoc.ProjectImportDocument
+	err := r.importClient.Client().FindOne(ctx, filter).Decode(&existing)
+	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+		return err
+	}
+	existingStatus, existingResultLog := existing.Model()
+	if importStatusEqual(existingStatus, pm.ImportStatus()) && importResultLogEqual(existingResultLog, pm.ImportResultLog()) {
+		return nil
+	}
+
 	now := time.Now().UTC()
 	doc := mongodoc.NewProjectImport(pm.Project(), pm.ImportStatus(), pm.ImportResultLog(), &now)
-	filter := bson.M{"project": pm.Project().String()}
 	upsert := true
-	_, err := r.importClient.Client().UpdateOne(ctx, filter, bson.M{"$set": doc}, &options.UpdateOptions{
+	_, err = r.importClient.Client().UpdateOne(ctx, filter, bson.M{"$set": doc}, &options.UpdateOptions{
 		Upsert: &upsert,
 	})
 	return err
+}
+
+func importStatusEqual(a, b *project.ProjectImportStatus) bool {
+	if a == nil || b == nil {
+		return a == b
+	}
+	return *a == *b
+}
+
+func importResultLogEqual(a, b *map[string]any) bool {
+	if a == nil || b == nil {
+		return a == b
+	}
+	return reflect.DeepEqual(*a, *b)
 }
 
 func (r *ProjectMetadata) mergeImport(ctx context.Context, m *project.ProjectMetadata) (*project.ProjectMetadata, error) {

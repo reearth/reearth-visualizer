@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"testing"
+	"time"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -163,6 +164,44 @@ func TestProjectMetadata_NoImportActivity_NoProjectImportDoc(t *testing.T) {
 	require.NoError(t, err)
 	assert.Nil(t, got.ImportStatus())
 	assert.Nil(t, got.ImportResultLog())
+}
+
+// TestProjectMetadata_Save_UnrelatedUpdateDoesNotRefreshImportTTL verifies
+// that saving a project for an unrelated reason (e.g. a readme edit) does
+// not rewrite the projectimport doc's updatedat when the import status/log
+// hasn't actually changed - otherwise every unrelated edit would reset the
+// TTL clock and the doc would never expire.
+func TestProjectMetadata_Save_UnrelatedUpdateDoesNotRefreshImportTTL(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(c)
+	r := NewProjectMetadata(client)
+	importCol := client.WithCollection("projectimport").Client()
+
+	wid := accountsID.NewWorkspaceID()
+	pid := id.NewProjectID()
+	status := project.ProjectImportStatusSuccess
+	m := newTestProjectMetadata(t, wid, pid, &status, nil)
+
+	ctx := context.Background()
+	require.NoError(t, r.Save(ctx, m))
+
+	var before struct {
+		UpdatedAt time.Time `bson:"updatedat"`
+	}
+	require.NoError(t, importCol.FindOne(ctx, map[string]any{"project": pid.String()}).Decode(&before))
+
+	// Simulate an unrelated metadata edit (readme) some time later, with the
+	// domain object still carrying the same (unchanged) import status.
+	readme := "updated readme"
+	m.SetReadme(&readme)
+	require.NoError(t, r.Save(ctx, m))
+
+	var after struct {
+		UpdatedAt time.Time `bson:"updatedat"`
+	}
+	require.NoError(t, importCol.FindOne(ctx, map[string]any{"project": pid.String()}).Decode(&after))
+
+	assert.True(t, before.UpdatedAt.Equal(after.UpdatedAt), "unrelated save must not refresh projectimport.updatedat when import status/log is unchanged")
 }
 
 // TestProjectMetadata_Remove_CleansUpImportDoc verifies that removing a
