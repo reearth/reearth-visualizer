@@ -47,30 +47,35 @@ const EditPanel: FC<Prop> = ({
   const [warning, setWaring] = useState("");
   const [isAliasValid, setIsAliasValid] = useState(true);
 
-  const handleChange = useCallback((value: string) => {
-    setLocalAlias(value);
-    setWaring("");
-    setIsAliasValid(false);
-  }, []);
+  const handleAliasValidation = useCallback(
+    async (value: string) => {
+      const result = isStory
+        ? await validateStoryAlias(value, itemId)
+        : await validateSceneAlias?.(value, itemId);
 
-  const handleBlur = useCallback(async () => {
-    const alias = localAlias as string;
-    const result = isStory
-      ? await validateStoryAlias(alias, itemId)
-      : await validateSceneAlias?.(alias, itemId);
+      if (!result?.available) {
+        const description = result?.errors?.find(
+          (e) => e?.extensions?.description
+        )?.extensions?.description;
 
-    if (!result?.available) {
-      const description = result?.errors?.find(
-        (e) => e?.extensions?.description
-      )?.extensions?.description;
-
-      setWaring(description as string);
-      setIsAliasValid(false);
-    } else {
+        setWaring(description as string);
+        setIsAliasValid(false);
+      } else {
+        setWaring("");
+        setIsAliasValid(true);
+      }
+    },
+    [validateSceneAlias, validateStoryAlias, isStory, itemId]
+  );
+  const handleChange = useCallback(
+    (value: string) => {
+      setLocalAlias(value);
       setWaring("");
-      setIsAliasValid(true);
-    }
-  }, [validateSceneAlias, validateStoryAlias, isStory, itemId, localAlias]);
+      setIsAliasValid(false);
+      handleAliasValidation(value);
+    },
+    [handleAliasValidation]
+  );
 
   const isDisabled = useMemo(
     () => !!warning || localAlias === alias || !isAliasValid,
@@ -122,7 +127,6 @@ const EditPanel: FC<Prop> = ({
               )}
               <TextInput
                 value={localAlias}
-                onBlur={handleBlur}
                 onChange={handleChange}
               />
               {suffix && (

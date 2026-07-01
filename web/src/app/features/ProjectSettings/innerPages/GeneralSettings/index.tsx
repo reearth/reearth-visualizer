@@ -9,7 +9,7 @@ import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { useCallback, useState, FC } from "react";
+import { useCallback, useState, FC, useMemo, useEffect } from "react";
 
 import {
   InnerPage,
@@ -22,6 +22,7 @@ import {
   Thumbnail,
   TitleWrapper
 } from "../common";
+import { debounce } from "lodash-es";
 
 export type GeneralSettingsType = {
   name?: string;
@@ -71,10 +72,6 @@ const GeneralSettings: FC<Props> = ({
     [project, onUpdateProject]
   );
 
-  const handleProjectAliasChange = useCallback(() => {
-    setWarning("");
-  }, []);
-
   const handleProjectAliasUpdate = useCallback(
     async (projectAlias: string) => {
       const trimmedAlias = projectAlias.trim();
@@ -99,6 +96,26 @@ const GeneralSettings: FC<Props> = ({
       }
     },
     [project, validateProjectAlias, workspaceId, onUpdateProject]
+  );
+
+  const debouncedHandleProjectAliasUpdate = useMemo(
+    () =>
+      debounce((alias: string) => {
+        handleProjectAliasUpdate(alias);
+      }, 500),
+    [handleProjectAliasUpdate]
+  );
+
+  useEffect(() => {
+    return () => debouncedHandleProjectAliasUpdate.cancel();
+  }, [debouncedHandleProjectAliasUpdate]);
+  
+  const handleProjectAliasChange = useCallback(
+    (alias: string) => {
+      debouncedHandleProjectAliasUpdate(alias);
+      setWarning("");
+    },
+    [debouncedHandleProjectAliasUpdate]
   );
 
   const handleDescriptionUpdate = useCallback(
@@ -169,7 +186,6 @@ const GeneralSettings: FC<Props> = ({
               title={t("Project Alias *")}
               value={project.projectAlias}
               onChange={handleProjectAliasChange}
-              onChangeComplete={handleProjectAliasUpdate}
               data-testid="project-alias-input"
               description={
                 warning ? (
