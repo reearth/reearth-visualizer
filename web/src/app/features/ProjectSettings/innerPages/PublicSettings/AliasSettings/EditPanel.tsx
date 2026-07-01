@@ -47,13 +47,7 @@ const EditPanel: FC<Prop> = ({
   const [warning, setWaring] = useState("");
   const [isAliasValid, setIsAliasValid] = useState(true);
 
-  const handleChange = useCallback((value: string) => {
-    setLocalAlias(value);
-    setWaring("");
-    setIsAliasValid(false);
-  }, []);
-
-  const handleBlur = useCallback(async () => {
+  const handleAliasValidation = useCallback(async () => {
     const alias = localAlias as string;
     const result = isStory
       ? await validateStoryAlias(alias, itemId)
@@ -71,6 +65,15 @@ const EditPanel: FC<Prop> = ({
       setIsAliasValid(true);
     }
   }, [validateSceneAlias, validateStoryAlias, isStory, itemId, localAlias]);
+  const handleChange = useCallback(
+    (value: string) => {
+      setLocalAlias(value);
+      setWaring("");
+      setIsAliasValid(false);
+      handleAliasValidation();
+    },
+    [handleAliasValidation]
+  );
 
   const isDisabled = useMemo(
     () => !!warning || localAlias === alias || !isAliasValid,
@@ -122,7 +125,6 @@ const EditPanel: FC<Prop> = ({
               )}
               <TextInput
                 value={localAlias}
-                onBlur={handleBlur}
                 onChange={handleChange}
               />
               {suffix && (

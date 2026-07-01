@@ -71,10 +71,6 @@ const GeneralSettings: FC<Props> = ({
     [project, onUpdateProject]
   );
 
-  const handleProjectAliasChange = useCallback(() => {
-    setWarning("");
-  }, []);
-
   const handleProjectAliasUpdate = useCallback(
     async (projectAlias: string) => {
       const trimmedAlias = projectAlias.trim();
@@ -99,6 +95,14 @@ const GeneralSettings: FC<Props> = ({
       }
     },
     [project, validateProjectAlias, workspaceId, onUpdateProject]
+  );
+
+  const handleProjectAliasChange = useCallback(
+    (alias: string) => {
+      handleProjectAliasUpdate(alias);
+      setWarning("");
+    },
+    [handleProjectAliasUpdate]
   );
 
   const handleDescriptionUpdate = useCallback(
@@ -169,7 +173,6 @@ const GeneralSettings: FC<Props> = ({
               title={t("Project Alias *")}
               value={project.projectAlias}
               onChange={handleProjectAliasChange}
-              onChangeComplete={handleProjectAliasUpdate}
               data-testid="project-alias-input"
               description={
                 warning ? (
