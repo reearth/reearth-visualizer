@@ -1,5 +1,6 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
 import { DeviceType } from "@reearth/app/utils/device";
+import { config } from "@reearth/services/config";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 
 import {
@@ -72,10 +73,13 @@ export const getInstallableWidgets = (
     .filter(Boolean);
 
   const { builtinTimelineWidget } = appFeature();
+  const isEE = config()?.featureCollection === "ee";
 
-  const avaliableWidgetIds = builtinTimelineWidget
-    ? AVAILABLE_WIDGET_IDS
-    : AVAILABLE_WIDGET_IDS.filter((id) => id !== TIMELINE_BUILTIN_WIDGET_ID);
+  const availableWidgetIds = AVAILABLE_WIDGET_IDS.filter((id) => {
+    if (id === TIMELINE_BUILTIN_WIDGET_ID && !builtinTimelineWidget) return false;
+    if (id === STREET_VIEW_WIDGET_ID && !isEE) return false;
+    return true;
+  });
 
   return scene?.plugins
     ?.map((p) => {
@@ -84,7 +88,7 @@ export const getInstallableWidgets = (
         .filter(
           (e) =>
             e.type === PluginExtensionType.Widget &&
-            (avaliableWidgetIds.includes(`reearth/${e.extensionId}`) ||
+            (availableWidgetIds.includes(`reearth/${e.extensionId}`) ||
               plugin.id !== "reearth")
         )
         .map((e): InstallableWidget => {
@@ -145,9 +149,13 @@ export const getInstalledWidgets = (
   );
 
   const installableWidgets = getInstallableWidgets(rawScene, type);
+  const isEE = config()?.featureCollection === "ee";
 
   return scene?.widgets
     .filter((w) => installedWidgetIds.includes(w.id))
+    .filter(
+      (w) => isEE || `${w.pluginId}/${w.extensionId}` !== STREET_VIEW_WIDGET_ID
+    )
     .map((w) => {
       const e = installableWidgets?.find(
         (e) => e.extensionId === w.extensionId

@@ -12,6 +12,12 @@ import (
 	"github.com/reearth/reearthx/log"
 )
 
+// ReadSeekerAt is satisfied by *os.File and afero.File — both call sites already pass one of these.
+type ReadSeekerAt interface {
+	io.ReadSeeker
+	io.ReaderAt
+}
+
 const EXPORT_DATA_VERSION = "1"
 
 type ZipReader struct {
@@ -93,32 +99,29 @@ func ZipBasePath(zr *zip.Reader) (b string) {
 	return
 }
 
-func FileSizeCheck(sizeMB int, file io.ReadSeeker) error {
+func FileSizeCheck(sizeMB int, file io.ReadSeeker) (int64, error) {
 	const MB = 1024 * 1024
 	maxFileSize := int64(sizeMB) * MB
 	fileSize, err := file.Seek(0, io.SeekEnd)
 	if err != nil {
-		return fmt.Errorf("failed to get file size: %w", err)
+		return 0, fmt.Errorf("failed to get file size: %w", err)
 	}
 	if fileSize > maxFileSize {
-		return fmt.Errorf("file size (%.2fMB) exceeds %dMB limit", float64(fileSize)/float64(MB), sizeMB)
+		return 0, fmt.Errorf("file size (%.2fMB) exceeds %dMB limit", float64(fileSize)/float64(MB), sizeMB)
 	}
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
-		return fmt.Errorf("failed to reset file position: %w", err)
+		return 0, fmt.Errorf("failed to reset file position: %w", err)
 	}
-	return nil
+	return fileSize, nil
 }
 
-func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[string]*zip.File, map[string]*zip.File, *string, error) {
-	// 500MB
-	if err := FileSizeCheck(500, file); err != nil {
-		return nil, nil, nil, nil, err
-	}
-	fileBytes, err := io.ReadAll(file)
+func UncompressExportZip(currentHost string, file ReadSeekerAt) (*[]byte, map[string]*zip.File, map[string]*zip.File, *string, error) {
+	size, err := FileSizeCheck(500, file)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
-	reader, err := zip.NewReader(bytes.NewReader(fileBytes), int64(len(fileBytes)))
+
+	reader, err := zip.NewReader(file, size)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

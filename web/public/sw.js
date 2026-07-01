@@ -1,7 +1,7 @@
-const I = (t, e) => e.some((n) => t instanceof n);
-let x, M;
-function F() {
-  return x || (x = [
+const C = (t, e) => e.some((n) => t instanceof n);
+let v, B;
+function q() {
+  return v || (v = [
     IDBDatabase,
     IDBObjectStore,
     IDBIndex,
@@ -9,51 +9,51 @@ function F() {
     IDBTransaction
   ]);
 }
-function j() {
-  return M || (M = [
+function G() {
+  return B || (B = [
     IDBCursor.prototype.advance,
     IDBCursor.prototype.continue,
     IDBCursor.prototype.continuePrimaryKey
   ]);
 }
-const E = /* @__PURE__ */ new WeakMap(), T = /* @__PURE__ */ new WeakMap(), w = /* @__PURE__ */ new WeakMap();
-function _(t) {
+const S = /* @__PURE__ */ new WeakMap(), R = /* @__PURE__ */ new WeakMap(), I = /* @__PURE__ */ new WeakMap();
+function V(t) {
   const e = new Promise((n, r) => {
-    const o = () => {
-      t.removeEventListener("success", s), t.removeEventListener("error", a);
-    }, s = () => {
-      n(f(t.result)), o();
-    }, a = () => {
-      r(t.error), o();
+    const s = () => {
+      t.removeEventListener("success", o), t.removeEventListener("error", c);
+    }, o = () => {
+      n(g(t.result)), s();
+    }, c = () => {
+      r(t.error), s();
     };
-    t.addEventListener("success", s), t.addEventListener("error", a);
+    t.addEventListener("success", o), t.addEventListener("error", c);
   });
-  return w.set(e, t), e;
+  return I.set(e, t), e;
 }
-function $(t) {
-  if (E.has(t))
+function z(t) {
+  if (S.has(t))
     return;
   const e = new Promise((n, r) => {
-    const o = () => {
-      t.removeEventListener("complete", s), t.removeEventListener("error", a), t.removeEventListener("abort", a);
-    }, s = () => {
-      n(), o();
-    }, a = () => {
-      r(t.error || new DOMException("AbortError", "AbortError")), o();
+    const s = () => {
+      t.removeEventListener("complete", o), t.removeEventListener("error", c), t.removeEventListener("abort", c);
+    }, o = () => {
+      n(), s();
+    }, c = () => {
+      r(t.error || new DOMException("AbortError", "AbortError")), s();
     };
-    t.addEventListener("complete", s), t.addEventListener("error", a), t.addEventListener("abort", a);
+    t.addEventListener("complete", o), t.addEventListener("error", c), t.addEventListener("abort", c);
   });
-  E.set(t, e);
+  S.set(t, e);
 }
-let b = {
+let A = {
   get(t, e, n) {
     if (t instanceof IDBTransaction) {
       if (e === "done")
-        return E.get(t);
+        return S.get(t);
       if (e === "store")
         return n.objectStoreNames[1] ? void 0 : n.objectStore(n.objectStoreNames[0]);
     }
-    return f(t[e]);
+    return g(t[e]);
   },
   set(t, e, n) {
     return t[e] = n, !0;
@@ -62,102 +62,102 @@ let b = {
     return t instanceof IDBTransaction && (e === "done" || e === "store") ? !0 : e in t;
   }
 };
-function B(t) {
-  b = t(b);
+function O(t) {
+  A = t(A);
 }
-function K(t) {
-  return j().includes(t) ? function(...e) {
-    return t.apply(D(this), e), f(this.request);
+function H(t) {
+  return G().includes(t) ? function(...e) {
+    return t.apply(x(this), e), g(this.request);
   } : function(...e) {
-    return f(t.apply(D(this), e));
+    return g(t.apply(x(this), e));
   };
 }
-function q(t) {
-  return typeof t == "function" ? K(t) : (t instanceof IDBTransaction && $(t), I(t, F()) ? new Proxy(t, b) : t);
+function Q(t) {
+  return typeof t == "function" ? H(t) : (t instanceof IDBTransaction && z(t), C(t, q()) ? new Proxy(t, A) : t);
 }
-function f(t) {
+function g(t) {
   if (t instanceof IDBRequest)
-    return _(t);
-  if (T.has(t))
-    return T.get(t);
-  const e = q(t);
-  return e !== t && (T.set(t, e), w.set(e, t)), e;
+    return V(t);
+  if (R.has(t))
+    return R.get(t);
+  const e = Q(t);
+  return e !== t && (R.set(t, e), I.set(e, t)), e;
 }
-const D = (t) => w.get(t);
-function G(t, e, { blocked: n, upgrade: r, blocking: o, terminated: s } = {}) {
-  const a = indexedDB.open(t, e), i = f(a);
-  return r && a.addEventListener("upgradeneeded", (l) => {
-    r(f(a.result), l.oldVersion, l.newVersion, f(a.transaction), l);
-  }), n && a.addEventListener("blocked", (l) => n(
+const x = (t) => I.get(t);
+function J(t, e, { blocked: n, upgrade: r, blocking: s, terminated: o } = {}) {
+  const c = indexedDB.open(t, e), u = g(c);
+  return r && c.addEventListener("upgradeneeded", (h) => {
+    r(g(c.result), h.oldVersion, h.newVersion, g(c.transaction), h);
+  }), n && c.addEventListener("blocked", (h) => n(
     // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
-    l.oldVersion,
-    l.newVersion,
-    l
-  )), i.then((l) => {
-    s && l.addEventListener("close", () => s()), o && l.addEventListener("versionchange", (u) => o(u.oldVersion, u.newVersion, u));
+    h.oldVersion,
+    h.newVersion,
+    h
+  )), u.then((h) => {
+    o && h.addEventListener("close", () => o()), s && h.addEventListener("versionchange", (l) => s(l.oldVersion, l.newVersion, l));
   }).catch(() => {
-  }), i;
+  }), u;
 }
-const V = ["get", "getKey", "getAll", "getAllKeys", "count"], z = ["put", "add", "delete", "clear"], R = /* @__PURE__ */ new Map();
-function P(t, e) {
+const X = ["get", "getKey", "getAll", "getAllKeys", "count"], Y = ["put", "add", "delete", "clear"], D = /* @__PURE__ */ new Map();
+function L(t, e) {
   if (!(t instanceof IDBDatabase && !(e in t) && typeof e == "string"))
     return;
-  if (R.get(e))
-    return R.get(e);
-  const n = e.replace(/FromIndex$/, ""), r = e !== n, o = z.includes(n);
+  if (D.get(e))
+    return D.get(e);
+  const n = e.replace(/FromIndex$/, ""), r = e !== n, s = Y.includes(n);
   if (
     // Bail if the target doesn't exist on the target. Eg, getAll isn't in Edge.
-    !(n in (r ? IDBIndex : IDBObjectStore).prototype) || !(o || V.includes(n))
+    !(n in (r ? IDBIndex : IDBObjectStore).prototype) || !(s || X.includes(n))
   )
     return;
-  const s = async function(a, ...i) {
-    const l = this.transaction(a, o ? "readwrite" : "readonly");
-    let u = l.store;
-    return r && (u = u.index(i.shift())), (await Promise.all([
-      u[n](...i),
-      o && l.done
+  const o = async function(c, ...u) {
+    const h = this.transaction(c, s ? "readwrite" : "readonly");
+    let l = h.store;
+    return r && (l = l.index(u.shift())), (await Promise.all([
+      l[n](...u),
+      s && h.done
     ]))[0];
   };
-  return R.set(e, s), s;
+  return D.set(e, o), o;
 }
-B((t) => ({
+O((t) => ({
   ...t,
-  get: (e, n, r) => P(e, n) || t.get(e, n, r),
-  has: (e, n) => !!P(e, n) || t.has(e, n)
+  get: (e, n, r) => L(e, n) || t.get(e, n, r),
+  has: (e, n) => !!L(e, n) || t.has(e, n)
 }));
-const H = ["continue", "continuePrimaryKey", "advance"], N = {}, S = /* @__PURE__ */ new WeakMap(), L = /* @__PURE__ */ new WeakMap(), Q = {
+const Z = ["continue", "continuePrimaryKey", "advance"], W = {}, M = /* @__PURE__ */ new WeakMap(), F = /* @__PURE__ */ new WeakMap(), ee = {
   get(t, e) {
-    if (!H.includes(e))
+    if (!Z.includes(e))
       return t[e];
-    let n = N[e];
-    return n || (n = N[e] = function(...r) {
-      S.set(this, L.get(this)[e](...r));
+    let n = W[e];
+    return n || (n = W[e] = function(...r) {
+      M.set(this, F.get(this)[e](...r));
     }), n;
   }
 };
-async function* J(...t) {
+async function* te(...t) {
   let e = this;
   if (e instanceof IDBCursor || (e = await e.openCursor(...t)), !e)
     return;
   e = e;
-  const n = new Proxy(e, Q);
-  for (L.set(n, e), w.set(n, D(e)); e; )
-    yield n, e = await (S.get(n) || e.continue()), S.delete(n);
+  const n = new Proxy(e, ee);
+  for (F.set(n, e), I.set(n, x(e)); e; )
+    yield n, e = await (M.get(n) || e.continue()), M.delete(n);
 }
-function v(t, e) {
-  return e === Symbol.asyncIterator && I(t, [IDBIndex, IDBObjectStore, IDBCursor]) || e === "iterate" && I(t, [IDBIndex, IDBObjectStore]);
+function U(t, e) {
+  return e === Symbol.asyncIterator && C(t, [IDBIndex, IDBObjectStore, IDBCursor]) || e === "iterate" && C(t, [IDBIndex, IDBObjectStore]);
 }
-B((t) => ({
+O((t) => ({
   ...t,
   get(e, n, r) {
-    return v(e, n) ? J : t.get(e, n, r);
+    return U(e, n) ? te : t.get(e, n, r);
   },
   has(e, n) {
-    return v(e, n) || t.has(e, n);
+    return U(e, n) || t.has(e, n);
   }
 }));
-let p = "asset-security";
-const h = {
+let m = "asset-security";
+const f = {
   // Domains that require authentication - MUST be configured by the application
   protectedDomains: [],
   // Asset patterns that need protection - MUST be configured by the application
@@ -196,83 +196,100 @@ const h = {
       tiles: "network-first",
       documents: "network-only"
     }
-  }
+  },
+  // Debug logging is disabled by default for production consumers
+  debug: !1
 };
-let c = { ...h };
-function C(t) {
+let i = { ...f };
+function P(t) {
   var e;
-  t.namespace && (p = t.namespace), c = {
-    ...h,
+  t.namespace && (m = t.namespace), i = {
+    ...f,
     ...t,
     token: {
-      ...h.token,
+      ...f.token,
       ...t.token,
-      indexedDBName: `${p}-auth`
+      indexedDBName: `${m}-auth`
     },
     cache: {
-      ...h.cache,
+      ...f.cache,
       ...t.cache,
-      name: `${p}-v1`,
+      name: `${m}-v1`,
       strategies: {
-        ...h.cache.strategies,
+        ...f.cache.strategies,
         ...(e = t.cache) == null ? void 0 : e.strategies
       }
     },
-    protectedDomains: t.protectedDomains || h.protectedDomains,
+    protectedDomains: t.protectedDomains || f.protectedDomains,
     assetPatterns: {
-      ...h.assetPatterns,
+      ...f.assetPatterns,
       ...t.assetPatterns
     },
     extractAssetId: t.extractAssetId
-  }, c.protectedDomains.length === 0 && console.warn("[ServiceWorker] Warning: No protected domains configured. Authentication will not be applied."), c.api.proxyEndpoint || console.warn("[ServiceWorker] Warning: No proxy endpoint configured. Signed URL functionality will not work."), console.log(`[ServiceWorker] Configuration updated with namespace: ${p}`, c);
+  }, i.protectedDomains.length === 0 && b("[ServiceWorker] Warning: No protected domains configured. Authentication will not be applied."), i.api.proxyEndpoint || b("[ServiceWorker] Warning: No proxy endpoint configured. Signed URL functionality will not work."), a(`[ServiceWorker] Configuration updated with namespace: ${m}`, i);
 }
-function g() {
-  return c.cache.name || `${p}-v1`;
+function y() {
+  return !!i.debug;
 }
-function W() {
-  return c.token.indexedDBName || `${p}-auth`;
+function a(...t) {
+  y() && console.log(...t);
 }
-C({});
-function U(t) {
+function j(...t) {
+  y() && console.debug(...t);
+}
+function b(...t) {
+  y() && console.warn(...t);
+}
+function d(...t) {
+  y() && console.error(...t);
+}
+function k() {
+  return i.cache.name || `${m}-v1`;
+}
+function _() {
+  return i.token.indexedDBName || `${m}-auth`;
+}
+P({});
+function $(t) {
   const e = typeof t == "string" ? new URL(t) : t;
-  return c.protectedDomains.some((n) => n.includes(":") ? e.host === n : e.hostname === n || e.hostname.includes(n));
+  return i.protectedDomains.some((n) => n.includes(":") ? e.host === n : e.hostname === n || e.hostname.includes(n));
 }
-function y(t) {
+function E(t) {
   var r;
   const n = (typeof t == "string" ? new URL(t) : t).pathname;
-  if (c.assetPatterns.mvtTiles.test(n) || c.assetPatterns.rasterTiles.test(n))
+  if (i.assetPatterns.mvtTiles.test(n) || i.assetPatterns.rasterTiles.test(n))
     return "tile";
-  if (c.assetPatterns.customAssets.test(n))
+  if (i.assetPatterns.customAssets.test(n))
     return "asset";
-  if (c.assetPatterns.generalAssets.test(n)) {
-    const o = (r = n.split(".").pop()) == null ? void 0 : r.toLowerCase();
-    return o && ["jpg", "jpeg", "png", "gif", "svg"].includes(o) ? "image" : "document";
+  if (i.assetPatterns.generalAssets.test(n)) {
+    const s = (r = n.split(".").pop()) == null ? void 0 : r.toLowerCase();
+    return s && ["jpg", "jpeg", "png", "gif", "svg"].includes(s) ? "image" : "document";
   }
   return "unknown";
 }
-function A(t) {
+function N(t) {
   const e = typeof t == "string" ? new URL(t) : t;
-  if (c.extractAssetId)
-    return c.extractAssetId(e);
+  if (i.extractAssetId)
+    return i.extractAssetId(e);
   const n = e.pathname, r = n.match(/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/);
   if (r)
     return r[1];
-  const o = n.match(/\/([0-9a-fA-F-]{20,})\//);
-  return o ? o[1] : null;
+  const s = n.match(/\/([0-9a-fA-F-]{20,})\//);
+  return s ? s[1] : null;
 }
-function O(t) {
+function K(t) {
   switch (t) {
     case "image":
-      return c.cache.strategies.images;
+      return i.cache.strategies.images;
     case "tile":
-      return c.cache.strategies.tiles;
+      return i.cache.strategies.tiles;
     case "document":
-      return c.cache.strategies.documents;
+      return i.cache.strategies.documents;
     default:
       return "network-first";
   }
 }
-function k(t) {
+function w(t) {
   const e = new URL(t.url), n = e.origin + e.pathname;
   return new Request(n, {
     method: t.method,
@@ -282,21 +299,26 @@ function k(t) {
     }
   });
 }
-const X = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const ne = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   get CONFIG() {
-    return c;
+    return i;
   },
-  extractAssetUUID: A,
-  getAssetType: y,
-  getCacheKey: k,
-  getCacheName: g,
-  getCacheStrategy: O,
-  getIndexedDBName: W,
-  isProtectedDomain: U,
-  updateConfig: C
+  debugDebug: j,
+  debugError: d,
+  debugLog: a,
+  debugWarn: b,
+  extractAssetUUID: N,
+  getAssetType: E,
+  getCacheKey: w,
+  getCacheName: k,
+  getCacheStrategy: K,
+  getIndexedDBName: _,
+  isDebugEnabled: y,
+  isProtectedDomain: $,
+  updateConfig: P
 }, Symbol.toStringTag, { value: "Module" }));
-class Y {
+class re {
   constructor() {
     this.memoryCache = null, this.db = null, this.dbPromise = null;
   }
@@ -304,7 +326,7 @@ class Y {
    * Initialize IndexedDB connection
    */
   async initDB() {
-    this.dbPromise || (this.dbPromise = G(W(), 1, {
+    this.dbPromise || (this.dbPromise = J(_(), 1, {
       upgrade(e) {
         e.objectStoreNames.contains("tokens") || e.createObjectStore("tokens");
       }
@@ -314,19 +336,19 @@ class Y {
    * Get token following the hierarchy: Memory -> IndexedDB -> Fresh request
    */
   async getToken() {
-    if (console.log("[TokenManager] Getting token..."), this.memoryCache && !this.isTokenExpired(this.memoryCache))
-      return console.log("[TokenManager] Token found in memory cache"), this.memoryCache.token;
+    if (a("[TokenManager] Getting token..."), this.memoryCache && !this.isTokenExpired(this.memoryCache))
+      return a("[TokenManager] Token found in memory cache"), this.memoryCache.token;
     try {
       await this.initDB();
       const e = await this.db.get("tokens", "current");
       if (e && !this.isTokenExpired(e))
-        return console.log("[TokenManager] Token found in IndexedDB"), this.memoryCache = e, e.token;
+        return a("[TokenManager] Token found in IndexedDB"), this.memoryCache = e, e.token;
       if (e && this.shouldRefresh(e))
-        return console.log("[TokenManager] Token needs refresh"), await this.refreshToken();
+        return a("[TokenManager] Token needs refresh"), await this.refreshToken();
     } catch (e) {
-      console.error("[TokenManager] Error accessing IndexedDB:", e);
+      d("[TokenManager] Error accessing IndexedDB:", e);
     }
-    return console.log("[TokenManager] Requesting fresh token from main thread"), await this.requestFreshToken();
+    return a("[TokenManager] Requesting fresh token from main thread"), await this.requestFreshToken();
   }
   /**
    * Store token in both memory and IndexedDB
@@ -339,9 +361,9 @@ class Y {
     };
     this.memoryCache = n;
     try {
-      await this.initDB(), await this.db.put("tokens", n, "current"), console.log("[TokenManager] Token stored successfully");
+      await this.initDB(), await this.db.put("tokens", n, "current"), a("[TokenManager] Token stored successfully");
     } catch (r) {
-      console.error("[TokenManager] Error storing token:", r);
+      d("[TokenManager] Error storing token:", r);
     }
   }
   /**
@@ -349,26 +371,26 @@ class Y {
    */
   async refreshToken() {
     var e;
-    console.log("[TokenManager] Refreshing token...");
+    a("[TokenManager] Refreshing token...");
     try {
       const n = this.memoryCache || await ((e = this.db) == null ? void 0 : e.get("tokens", "current"));
       if (!(n != null && n.refreshToken))
-        return console.log("[TokenManager] No refresh token available"), await this.requestFreshToken();
+        return a("[TokenManager] No refresh token available"), await this.requestFreshToken();
       const r = await self.clients.matchAll();
-      return r.length === 0 ? (console.log("[TokenManager] No clients available for token refresh"), null) : new Promise((o) => {
-        const s = new MessageChannel();
-        s.port1.onmessage = async (a) => {
-          a.data.type === "TOKEN_REFRESHED" && a.data.token ? (await this.setToken(a.data.token), o(a.data.token.access_token)) : o(null);
+      return r.length === 0 ? (a("[TokenManager] No clients available for token refresh"), null) : new Promise((s) => {
+        const o = new MessageChannel();
+        o.port1.onmessage = async (c) => {
+          c.data.type === "TOKEN_REFRESHED" && c.data.token ? (await this.setToken(c.data.token), s(c.data.token.access_token)) : s(null);
         }, r[0].postMessage(
           {
             type: "REFRESH_TOKEN",
             refreshToken: n.refreshToken
           },
-          [s.port2]
-        ), setTimeout(() => o(null), 5e3);
+          [o.port2]
+        ), setTimeout(() => s(null), 5e3);
       });
     } catch (n) {
-      return console.error("[TokenManager] Error refreshing token:", n), null;
+      return d("[TokenManager] Error refreshing token:", n), null;
     }
   }
   /**
@@ -377,9 +399,9 @@ class Y {
   async clearToken() {
     this.memoryCache = null;
     try {
-      await this.initDB(), await this.db.delete("tokens", "current"), console.log("[TokenManager] Tokens cleared");
+      await this.initDB(), await this.db.delete("tokens", "current"), a("[TokenManager] Tokens cleared");
     } catch (e) {
-      console.error("[TokenManager] Error clearing tokens:", e);
+      d("[TokenManager] Error clearing tokens:", e);
     }
   }
   /**
@@ -393,7 +415,7 @@ class Y {
    */
   shouldRefresh(e) {
     const n = Date.now();
-    return e.expiry - n <= c.token.refreshThreshold;
+    return e.expiry - n <= i.token.refreshThreshold;
   }
   /**
    * Request fresh token from main thread
@@ -401,37 +423,37 @@ class Y {
   async requestFreshToken() {
     try {
       const e = await self.clients.matchAll();
-      return e.length === 0 ? (console.log("[TokenManager] No clients available"), null) : new Promise((n) => {
+      return e.length === 0 ? (a("[TokenManager] No clients available"), null) : new Promise((n) => {
         const r = new MessageChannel();
-        r.port1.onmessage = async (o) => {
-          o.data.type === "TOKEN_PROVIDED" && o.data.token ? (await this.setToken(o.data.token), n(o.data.token.access_token)) : n(null);
+        r.port1.onmessage = async (s) => {
+          s.data.type === "TOKEN_PROVIDED" && s.data.token ? (await this.setToken(s.data.token), n(s.data.token.access_token)) : n(null);
         }, e[0].postMessage(
           { type: "REQUEST_TOKEN" },
           [r.port2]
         ), setTimeout(() => {
-          console.log("[TokenManager] Token request timeout"), n(null);
+          a("[TokenManager] Token request timeout"), n(null);
         }, 5e3);
       });
     } catch (e) {
-      return console.error("[TokenManager] Error requesting fresh token:", e), null;
+      return d("[TokenManager] Error requesting fresh token:", e), null;
     }
   }
 }
-const d = new Y();
-class Z {
+const p = new re();
+class se {
   /**
    * Determine if a request should be intercepted
    */
   shouldIntercept(e) {
     const n = new URL(e.url);
-    return !U(n) || e.method !== "GET" ? !1 : y(n) !== "unknown";
+    return !$(n) || e.method !== "GET" ? !1 : E(n) !== "unknown";
   }
   /**
    * Add authentication header to request
    */
   addAuthentication(e, n) {
     const r = new Headers(e.headers);
-    return r.set("Authorization", `Bearer ${n}`), console.log("[RequestInterceptor] Adding Authorization header:", `Bearer ${n.substring(0, 20)}...`), new Request(e.url, {
+    return r.set("Authorization", `Bearer ${n}`), a("[RequestInterceptor] Adding Authorization header:", `Bearer ${n.substring(0, 20)}...`), new Request(e.url, {
       method: e.method,
       headers: r,
       body: e.body,
@@ -450,26 +472,26 @@ class Z {
    * Handle authentication errors (401/403)
    */
   async handleAuthError(e) {
-    console.log("[RequestInterceptor] Handling auth error, attempting token refresh...");
-    const n = await d.refreshToken();
+    a("[RequestInterceptor] Handling auth error, attempting token refresh...");
+    const n = await p.refreshToken();
     if (!n)
-      return console.log("[RequestInterceptor] Token refresh failed"), new Response("Authentication failed", {
+      return a("[RequestInterceptor] Token refresh failed"), new Response("Authentication failed", {
         status: 401,
         statusText: "Unauthorized",
         headers: {
           "Content-Type": "text/plain"
         }
       });
-    console.log("[RequestInterceptor] Retrying request with refreshed token");
+    a("[RequestInterceptor] Retrying request with refreshed token");
     const r = this.addAuthentication(e, n);
     try {
-      const o = await fetch(r);
-      return o.status === 401 || o.status === 403 ? (await d.clearToken(), new Response("Authentication failed after refresh", {
+      const s = await fetch(r);
+      return s.status === 401 || s.status === 403 ? (await p.clearToken(), new Response("Authentication failed after refresh", {
         status: 401,
         statusText: "Unauthorized"
-      })) : o;
-    } catch (o) {
-      return console.error("[RequestInterceptor] Error retrying request:", o), new Response("Network error", {
+      })) : s;
+    } catch (s) {
+      return d("[RequestInterceptor] Error retrying request:", s), new Response("Network error", {
         status: 503,
         statusText: "Service Unavailable"
       });
@@ -479,51 +501,51 @@ class Z {
    * Process intercepted request
    */
   async processRequest(e) {
-    const n = new URL(e.url), r = y(n), o = A(n);
-    console.log(`[RequestInterceptor] Processing ${r} request:`, {
+    const n = new URL(e.url), r = E(n), s = N(n);
+    a(`[RequestInterceptor] Processing ${r} request:`, {
       url: n.pathname,
-      assetId: o,
+      assetId: s,
       assetType: r
     });
-    const s = await d.getToken();
-    if (!s)
-      return console.log("[RequestInterceptor] No token available"), fetch(e);
-    const a = this.addAuthentication(e, s);
+    const o = await p.getToken();
+    if (!o)
+      return a("[RequestInterceptor] No token available"), fetch(e);
+    const c = this.addAuthentication(e, o);
     try {
-      const i = await fetch(a);
-      return i.status === 401 || i.status === 403 ? await this.handleAuthError(e) : (i.ok, i);
-    } catch (i) {
-      console.error("[RequestInterceptor] Network error:", i);
-      const u = await (await caches.open(g())).match(e);
-      if (u)
-        return console.log("[RequestInterceptor] Returning cached response"), u;
-      throw i;
+      const u = await fetch(c);
+      return u.status === 401 || u.status === 403 ? await this.handleAuthError(e) : (u.ok, u);
+    } catch (u) {
+      d("[RequestInterceptor] Network error:", u);
+      const l = await (await caches.open(k())).match(e);
+      if (l)
+        return a("[RequestInterceptor] Returning cached response"), l;
+      throw u;
     }
   }
   /**
    * Handle tile requests with special prefix-based authentication
    */
   async processTileRequest(e) {
-    const n = new URL(e.url), r = A(n);
+    const n = new URL(e.url), r = N(n);
     if (!r)
       return fetch(e);
-    console.log("[RequestInterceptor] Processing tile request:", {
+    a("[RequestInterceptor] Processing tile request:", {
       url: n.pathname,
       assetId: r
     });
-    const o = await d.getToken();
-    if (!o)
-      return console.log("[RequestInterceptor] No token for tile request"), fetch(e);
-    const s = await this.getSignedUrl(r, o);
-    if (s != null && s.url) {
-      const a = new Request(s.url, {
+    const s = await p.getToken();
+    if (!s)
+      return a("[RequestInterceptor] No token for tile request"), fetch(e);
+    const o = await this.getSignedUrl(r, s);
+    if (o != null && o.url) {
+      const c = new Request(o.url, {
         method: e.method,
         headers: e.headers,
         mode: "cors",
         credentials: "omit"
         // Don't send credentials with signed URL
       });
-      return fetch(a);
+      return fetch(c);
     }
     return this.processRequest(e);
   }
@@ -533,10 +555,10 @@ class Z {
    */
   async getSignedUrl(e, n) {
     try {
-      const { CONFIG: r } = await Promise.resolve().then(() => X), o = r.api.proxyEndpoint;
-      if (!o)
-        return console.error("[RequestInterceptor] Proxy endpoint not configured"), null;
-      const s = await fetch(`${o}/api/signed-url`, {
+      const { CONFIG: r } = await Promise.resolve().then(() => ne), s = r.api.proxyEndpoint;
+      if (!s)
+        return d("[RequestInterceptor] Proxy endpoint not configured"), null;
+      const o = await fetch(`${s}/api/signed-url`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -550,23 +572,23 @@ class Z {
           // 15 minutes
         })
       });
-      return s.ok ? await s.json() : (console.error("[RequestInterceptor] Failed to get signed URL"), null);
+      return o.ok ? await o.json() : (d("[RequestInterceptor] Failed to get signed URL"), null);
     } catch (r) {
-      return console.error("[RequestInterceptor] Error getting signed URL:", r), null;
+      return d("[RequestInterceptor] Error getting signed URL:", r), null;
     }
   }
 }
-const m = new Z();
+const T = new se();
 self.addEventListener("install", (t) => {
-  console.log("[ServiceWorker] Installing..."), self.skipWaiting();
+  a("[ServiceWorker] Installing..."), self.skipWaiting();
 });
 self.addEventListener("activate", (t) => {
-  console.log("[ServiceWorker] Activating..."), t.waitUntil(
+  a("[ServiceWorker] Activating..."), t.waitUntil(
     (async () => {
-      const e = g(), n = await caches.keys();
+      const e = k(), n = await caches.keys();
       await Promise.all(
         n.filter((r) => r !== e).map((r) => caches.delete(r))
-      ), await self.clients.claim(), console.log("[ServiceWorker] Active and controlling all clients");
+      ), await self.clients.claim(), a("[ServiceWorker] Active and controlling all clients");
     })()
   );
 });
@@ -576,130 +598,129 @@ self.addEventListener("fetch", (t) => {
     t.respondWith(fetch(e));
     return;
   }
-  if (!m.shouldIntercept(e)) {
+  if (!T.shouldIntercept(e)) {
     t.respondWith(fetch(e));
     return;
   }
-  t.respondWith(ee(e));
+  t.respondWith(ae(e));
 });
-async function ee(t) {
-  const e = new URL(t.url), n = y(e), r = O(n);
-  switch (console.log(`[ServiceWorker] Handling ${n} with ${r} strategy:`, e.pathname), r) {
+async function ae(t) {
+  const e = new URL(t.url), n = E(e), r = K(n);
+  switch (a(`[ServiceWorker] Handling ${n} with ${r} strategy:`, e.pathname), r) {
     case "cache-first":
-      return te(t);
+      return oe(t);
     case "network-first":
-      return ne(t);
+      return ce(t);
     case "cache-only":
-      return re(t);
+      return ie(t);
     case "network-only":
     default:
-      return oe(t);
+      return ue(t);
   }
 }
-async function te(t) {
-  const e = await caches.open(g()), n = k(t), r = await e.match(n);
+async function oe(t) {
+  const e = await caches.open(k()), n = w(t), r = await e.match(n);
   if (r)
-    return console.log("[ServiceWorker] Cache hit:", t.url), se(t, e), r;
-  console.log("[ServiceWorker] Cache miss, fetching:", t.url);
+    return a("[ServiceWorker] Cache hit:", t.url), he(t, e), r;
+  a("[ServiceWorker] Cache miss, fetching:", t.url);
   try {
-    const o = await m.processRequest(t);
-    if (o.ok) {
-      const s = o.clone();
-      e.put(n, s);
+    const s = await T.processRequest(t);
+    if (s.ok) {
+      const o = s.clone();
+      e.put(n, o);
     }
-    return o;
-  } catch (o) {
-    return console.error("[ServiceWorker] Network error:", o), new Response("Network error", {
+    return s;
+  } catch (s) {
+    return d("[ServiceWorker] Network error:", s), new Response("Network error", {
       status: 503,
       statusText: "Service Unavailable"
     });
   }
 }
-async function ne(t) {
-  const e = await caches.open(g()), n = k(t);
+async function ce(t) {
+  const e = await caches.open(k()), n = w(t);
   try {
-    const r = await m.processRequest(t);
+    const r = await T.processRequest(t);
     if (r.ok) {
-      const o = r.clone();
-      e.put(n, o);
+      const s = r.clone();
+      e.put(n, s);
     }
     return r;
   } catch (r) {
-    console.error("[ServiceWorker] Network error, trying cache:", r);
-    const o = await e.match(n);
-    return o ? (console.log("[ServiceWorker] Returning cached response"), o) : new Response("Network error", {
+    d("[ServiceWorker] Network error, trying cache:", r);
+    const s = await e.match(n);
+    return s ? (a("[ServiceWorker] Returning cached response"), s) : new Response("Network error", {
       status: 503,
       statusText: "Service Unavailable"
     });
   }
 }
-async function re(t) {
-  const e = await caches.open(g()), n = k(t), r = await e.match(n);
+async function ie(t) {
+  const e = await caches.open(k()), n = w(t), r = await e.match(n);
   return r || new Response("Not in cache", {
     status: 404,
     statusText: "Not Found"
   });
 }
-async function oe(t) {
+async function ue(t) {
   try {
-    return await m.processRequest(t);
+    return await T.processRequest(t);
   } catch (e) {
-    return console.error("[ServiceWorker] Network error:", e), new Response("Network error", {
+    return d("[ServiceWorker] Network error:", e), new Response("Network error", {
       status: 503,
       statusText: "Service Unavailable"
     });
   }
 }
-async function se(t, e) {
+async function he(t, e) {
   try {
-    const n = await m.processRequest(t);
+    const n = await T.processRequest(t);
     if (n.ok) {
-      const r = k(t);
-      await e.put(r, n), console.log("[ServiceWorker] Cache refreshed:", t.url);
+      const r = w(t);
+      await e.put(r, n), a("[ServiceWorker] Cache refreshed:", t.url);
     }
   } catch (n) {
-    console.debug("[ServiceWorker] Background refresh failed:", n);
+    j("[ServiceWorker] Background refresh failed:", n);
   }
 }
 self.addEventListener("message", async (t) => {
-  var n, r, o, s, a;
+  var n, r, s, o, c, u;
   const e = t.data;
-  switch (console.log("[ServiceWorker] Received message:", e.type), e.type) {
+  switch (a("[ServiceWorker] Received message:", e.type), e.type) {
     case "CONFIG":
-      e.payload && (C(e.payload), (n = t.ports[0]) == null || n.postMessage({ success: !0 }));
+      e.payload && (P(e.payload), (n = t.ports[0]) == null || n.postMessage({ success: !0 }));
       break;
     case "UPDATE_TOKEN":
-      (r = e.payload) != null && r.token && (await d.setToken(e.payload.token), (o = t.ports[0]) == null || o.postMessage({ success: !0 }));
+      (r = e.payload) != null && r.token && (await p.setToken(e.payload.token), (s = t.ports[0]) == null || s.postMessage({ success: !0 }));
       break;
     case "REQUEST_TOKEN":
       break;
     case "CLEAR_CACHE":
-      await ae(), (s = t.ports[0]) == null || s.postMessage({ success: !0 });
+      await de(), (o = t.ports[0]) == null || o.postMessage({ success: !0 });
       break;
     case "GET_STATUS":
-      const i = await ce();
-      (a = t.ports[0]) == null || a.postMessage(i);
+      const h = await le();
+      (c = t.ports[0]) == null || c.postMessage(h);
       break;
     case "CLAIM_CLIENTS":
-      await self.clients.claim();
-      console.log("[ServiceWorker] Claimed clients via explicit CLAIM_CLIENTS message");
+      await self.clients.claim(), (u = t.ports[0]) == null || u.postMessage({ success: !0 }), console.log("[ServiceWorker] Claimed clients via explicit message");
       break;
     default:
-      console.warn("[ServiceWorker] Unknown message type:", e.type);
+      b("[ServiceWorker] Unknown message type:", e.type);
   }
 });
-async function ae() {
+async function de() {
   const t = await caches.keys();
-  await Promise.all(t.map((e) => caches.delete(e))), await d.clearToken(), console.log("[ServiceWorker] All caches cleared");
+  await Promise.all(t.map((e) => caches.delete(e))), await p.clearToken(), a("[ServiceWorker] All caches cleared");
 }
-async function ce() {
-  const t = await caches.keys(), n = await (await caches.open(g())).keys();
+async function le() {
+  const t = await caches.keys(), n = await (await caches.open(k())).keys();
   return {
     version: "1.0.0",
     caches: t,
     cachedRequests: n.length,
-    hasToken: !!await d.getToken()
+    hasToken: !!await p.getToken()
   };
 }
-console.log("[ServiceWorker] Script loaded, waiting for events...");
+a("[ServiceWorker] Script loaded, waiting for events...");
 //# sourceMappingURL=sw.js.map

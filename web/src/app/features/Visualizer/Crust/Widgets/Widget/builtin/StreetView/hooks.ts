@@ -89,7 +89,6 @@ export default ({ widget, layer, setShowPano }: Props) => {
     navTimeout: null as number | null
   });
 
-
   useEffect(() => {
     if (
       !panoDivRef.current ||
@@ -227,7 +226,14 @@ export default ({ widget, layer, setShowPano }: Props) => {
       },
       frustum: { zoom: panoState.zoom }
     });
-  }, [layers, layer.layerId, panoState.location, panoState.headingPitch.heading, panoState.headingPitch.pitch, panoState.zoom]);
+  }, [
+    layers,
+    layer.layerId,
+    panoState.location,
+    panoState.headingPitch.heading,
+    panoState.headingPitch.pitch,
+    panoState.zoom
+  ]);
 
   const handleClosePano = useCallback(() => {
     setShowPano?.(false);

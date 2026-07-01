@@ -406,6 +406,14 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 
 	story.UpdatePublishmentStatus(inp.Status)
 
+	switch inp.Status {
+	case storytelling.PublishmentStatusLimited:
+		story.SetPublicNoIndex(true)
+	case storytelling.PublishmentStatusPublic:
+		story.SetPublicNoIndex(false)
+	case storytelling.PublishmentStatusPrivate:
+	}
+
 	// Phase 2: GCS upload outside the transaction. Previously this ran inside
 	// the transaction and held document locks for the entire upload duration,
 	// causing MongoDB WriteConflict when concurrent publish calls overlapped.
