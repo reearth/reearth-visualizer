@@ -121,16 +121,16 @@ export class ProjectsPage {
     this.projectAssetsLink = this.page.getByRole("link", {
       name: "Project Assets"
     });
-    this.exportButton = this.page.getByText("Export");
-    this.moveToRecycleBinButton = this.page.getByText("Move to Recycle Bin");
+    this.exportButton = this.page.getByRole("menuitem", { name: "Export" });
+    this.moveToRecycleBinButton = this.page.getByRole("menuitem", { name: "Move to Recycle Bin" });
     this.popUpCancelButton = this.page.getByRole("button", {
       name: "Cancel"
     });
     this.popUpRemoveButton = this.page.getByRole("button", {
       name: "Remove"
     });
-    this.renameMenuItem = this.page.getByText("Rename");
-    this.exportMenuItem = this.page.getByText("Export");
+    this.renameMenuItem = this.page.getByRole("menuitem", { name: "Rename" });
+    this.exportMenuItem = this.page.getByRole("menuitem", { name: "Export" });
     this.projectSettingMenuItem = this.page.getByRole("link", {
       name: "Project Setting"
     });

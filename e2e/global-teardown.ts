@@ -5,14 +5,21 @@ import { FullConfig, request } from "@playwright/test";
 
 import { GraphQLClient } from "./api/graphql/client";
 import { DELETE_PROJECT, UPDATE_PROJECT } from "./api/graphql/mutations";
-import { GET_ME, GET_PROJECTS, GET_DELETED_PROJECTS } from "./api/graphql/queries";
+import {
+  GET_ME,
+  GET_PROJECTS,
+  GET_DELETED_PROJECTS
+} from "./api/graphql/queries";
 
 const E2E_PROJECT_PREFIX = "e2e-";
 
 const apiTokenPath = path.join(__dirname, ".auth/api-token.json");
 const storagePath = path.join(__dirname, ".auth/user.json");
 
-function loadAuthToken(): { token: string; extraHeaders: Record<string, string> } | null {
+function loadAuthToken(): {
+  token: string;
+  extraHeaders: Record<string, string>;
+} | null {
   if (fs.existsSync(apiTokenPath)) {
     try {
       return JSON.parse(fs.readFileSync(apiTokenPath, "utf-8"));
@@ -44,19 +51,26 @@ function loadAuthToken(): { token: string; extraHeaders: Record<string, string> 
 async function globalTeardown(_config: FullConfig) {
   const auth = loadAuthToken();
   if (!auth) {
-    console.log("[teardown] No auth token found — skipping e2e project cleanup.");
+    console.log(
+      "[teardown] No auth token found — skipping e2e project cleanup."
+    );
     return;
   }
 
   const ctx = await request.newContext().catch((err) => {
-    console.warn("[teardown] Could not create request context (non-fatal):", err);
+    console.warn(
+      "[teardown] Could not create request context (non-fatal):",
+      err
+    );
     return null;
   });
   if (!ctx) return;
   try {
     const client = new GraphQLClient(ctx, auth.token, auth.extraHeaders);
 
-    const { data: meData } = await client.query<{ me: { myWorkspaceId: string } }>(GET_ME);
+    const { data: meData } = await client.query<{
+      me: { myWorkspaceId: string };
+    }>(GET_ME);
     const workspaceId = meData.me.myWorkspaceId;
 
     // Collect active e2e projects
@@ -74,10 +88,9 @@ async function globalTeardown(_config: FullConfig) {
 
     // Collect soft-deleted e2e projects (recycle bin)
     const { data: deletedData } = await client
-      .query<{ deletedProjects: { nodes: { id: string; name: string }[] } }>(
-        GET_DELETED_PROJECTS,
-        { workspaceId }
-      )
+      .query<{
+        deletedProjects: { nodes: { id: string; name: string }[] };
+      }>(GET_DELETED_PROJECTS, { workspaceId })
       .catch(() => ({ data: { deletedProjects: { nodes: [] } } }));
 
     const deletedProjects = deletedData.deletedProjects.nodes.filter((p) =>
@@ -95,12 +108,17 @@ async function globalTeardown(_config: FullConfig) {
 
     for (const project of all) {
       await client
-        .mutate(UPDATE_PROJECT, { input: { projectId: project.id, deleted: true } })
+        .mutate(UPDATE_PROJECT, {
+          input: { projectId: project.id, deleted: true }
+        })
         .catch(() => {});
       await client
         .mutate(DELETE_PROJECT, { input: { projectId: project.id } })
         .catch((err) => {
-          console.warn(`[teardown] Could not delete "${project.name}" (${project.id}):`, err);
+          console.warn(
+            `[teardown] Could not delete "${project.name}" (${project.id}):`,
+            err
+          );
         });
     }
 

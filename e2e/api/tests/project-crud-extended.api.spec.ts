@@ -275,7 +275,7 @@ test.describe("Project export and metadata via API", () => {
       input: {
         workspaceId,
         visualizer: "CESIUM",
-        name: `Export Test ${faker.string.alphanumeric(6)}`,
+        name: `e2e-Export Test ${faker.string.alphanumeric(6)}`,
         coreSupport: true
       }
     });

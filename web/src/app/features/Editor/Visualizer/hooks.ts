@@ -93,17 +93,6 @@ export default ({
   );
   const isInitialized = useRef(false);
 
-  // Workaround: Temporarily disable terrain when terrain is enabled
-  // We don't know the root cause yet, but it seems that terrain is not loaded properly when terrain is enabled on Editor
-  const [tempDisableTerrain, setTempDisableTerrain] = useState(true);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setTempDisableTerrain(false);
-    }, 0);
-
-    return () => clearTimeout(timeoutId);
-  }, []);
 
   const prevFOV = useRef<number | undefined>(undefined);
   const fovTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -147,20 +136,11 @@ export default ({
         ) as ViewerProperty)
       : undefined;
 
-    if (
-      viewerProperty &&
-      tempDisableTerrain &&
-      viewerProperty.terrain &&
-      viewerProperty.terrain.enabled
-    ) {
-      viewerProperty.terrain.enabled = false;
-    }
-
     return {
       viewerProperty,
       cesiumIonAccessToken
     };
-  }, [scene?.property, tempDisableTerrain, setCurrentCamera]);
+  }, [scene?.property, setCurrentCamera]);
 
   // Cleanup fovTimeoutRef on unmount
   useEffect(() => {
