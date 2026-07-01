@@ -78,14 +78,11 @@ async function globalSetup(_config: FullConfig) {
 
     const apiContext = await playwrightRequest.newContext();
 
-    // Log and clean recycle bin
     const recycleBinCount = await getRecycleBinCount(apiContext);
     console.log(`[setup] Recycle bin count before cleanup: ${recycleBinCount}`);
     if (recycleBinCount) {
       await cleanupRecycleBin(apiContext);
     }
-
-    // Clean up stale e2e- projects from previous runs
     await cleanupStaleE2eProjects(apiContext);
 
     await apiContext.dispose();
