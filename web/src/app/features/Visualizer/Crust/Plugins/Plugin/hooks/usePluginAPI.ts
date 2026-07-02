@@ -28,10 +28,39 @@ import type {
   ViewerEventType
 } from "../../pluginAPI/types";
 import { defaultIsMarshalable } from "../../PluginFrame";
-import type { API as IFrameAPI } from "../../PluginFrame";
 import { EventEmitter, events, Events, mergeEvents } from "../../utils/events";
 import { PluginModalInfo } from "../ModalContainer";
 import { PluginPopupInfo } from "../PopupContainer";
+
+// Legacy API type from old QuickJS implementation
+// Still used for backwards compatibility but not actively used by Zushi
+type LegacySurfaceAPI = {
+  render: (
+    html: string,
+    options?: {
+      visible?: boolean;
+      width?: number | string;
+      height?: number | string;
+      onAutoResized?: () => void;
+    }
+  ) => void;
+  resize: (
+    width: string | number | undefined,
+    height: string | number | undefined
+  ) => void;
+  postMessage: (message: unknown) => void;
+};
+
+type IFrameAPI = {
+  main: LegacySurfaceAPI;
+  modal: LegacySurfaceAPI;
+  popup: LegacySurfaceAPI;
+  messages: {
+    on: (cb: (message: unknown) => void) => void;
+    off: (cb: (message: unknown) => void) => void;
+    once: (cb: (message: unknown) => void) => void;
+  };
+};
 
 export function usePluginAPI({
   pluginId = "",
@@ -193,6 +222,15 @@ export function usePluginAPI({
     pluginMessageSender
   ]);
 
+  // Refs to track modal/popup visibility without causing onDispose to change
+  const modalVisibleRef = useRef(modalVisible);
+  const popupVisibleRef = useRef(popupVisible);
+
+  useEffect(() => {
+    modalVisibleRef.current = modalVisible;
+    popupVisibleRef.current = popupVisible;
+  }, [modalVisible, popupVisible]);
+
   const onDispose = useCallback(() => {
     // Close UI events first
     try {
@@ -232,10 +270,11 @@ export function usePluginAPI({
       }
     }
 
-    if (modalVisible) {
+    // Use refs to get current visibility without making this callback depend on them
+    if (modalVisibleRef.current) {
       onPluginModalShow?.();
     }
-    if (popupVisible) {
+    if (popupVisibleRef.current) {
       onPluginPopupShow?.();
     }
     const instanceId = widget?.id ?? block?.id;
@@ -245,8 +284,6 @@ export function usePluginAPI({
   }, [
     onPluginModalShow,
     onPluginPopupShow,
-    modalVisible,
-    popupVisible,
     widget?.id,
     block?.id,
     ctx?.pluginInstances,
@@ -272,7 +309,7 @@ export function usePluginAPI({
   const staticExposed = useMemo(():
     | ((api: IFrameAPI) => GlobalThis)
     | undefined => {
-    return ({ main, modal, popup, messages, startEventLoop }: IFrameAPI) => {
+    return ({ main, modal, popup, messages }: IFrameAPI) => {
       return exposedReearth({
         commonReearth: ctx.reearth,
         plugin: {
@@ -434,7 +471,6 @@ export function usePluginAPI({
           extensionEvents.current?.[0]?.off(type, e);
         },
         //
-        startEventLoop,
         overrideViewerProperty: ctx.overrideViewerProperty,
         pluginPostMessage: ctx.pluginInstances.postMessage,
         clientStorage: ctx.clientStorage,

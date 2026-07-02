@@ -9,6 +9,8 @@ import type { RefObject } from "react";
 import type { InfoboxBlock as Block } from "../../../Infobox/types";
 import type { MapRef } from "../../../types";
 import type { Widget } from "../../../Widgets";
+import { usePluginContext } from "../../context";
+import type { ReearthPluginContext } from "../../pluginAPI/zushiAdapter";
 import type { PluginModalInfo } from "../ModalContainer";
 import type { PluginPopupInfo } from "../PopupContainer";
 
@@ -64,6 +66,7 @@ export default function ({
   ) => void;
 }) {
   const externalRef = useRef<HTMLIFrameElement>(null);
+  const uiContainerRef = useRef<HTMLElement>(null);
 
   const [uiVisible, setUIVisibility] = useState<boolean>(!!visible);
   const [modalVisible, setModalVisibility] = useState<boolean>(false);
@@ -172,16 +175,110 @@ export default function ({
     [devPluginExtensionRenderKey, devPluginExtensionSrc]
   );
 
+  // Get the plugin context for Zushi
+  const context = usePluginContext();
+
+  // Stable callbacks for modal/popup to avoid plugin reloads
+  const handleModalShow = useCallback(
+    (options?: { background?: string; clickBgToClose?: boolean }) => {
+      const instanceId = widget?.id ?? block?.id;
+      onPluginModalShow?.({
+        id: instanceId,
+        background: options?.background,
+        clickBgToClose: options?.clickBgToClose
+      });
+    },
+    [widget?.id, block?.id, onPluginModalShow]
+  );
+
+  const handlePopupShow = useCallback(
+    (options?: PluginPopupInfo) => {
+      // Forward the full popup info to the parent
+      onPluginPopupShow?.(options);
+    },
+    [onPluginPopupShow]
+  );
+
+  const handleModalClose = useCallback(() => {
+    onPluginModalShow?.();
+  }, [onPluginModalShow]);
+
+  const handlePopupClose = useCallback(() => {
+    onPluginPopupShow?.();
+  }, [onPluginPopupShow]);
+
+  // Plugin message sender registration ref
+  const pluginMessageSenderRef = useRef<((msg: { data: unknown; sender: string }) => void) | undefined>(undefined);
+
+  // Register/unregister callbacks
+  const handleRegisterPluginMessageSender = useCallback(
+    (sender: (msg: { data: unknown; sender: string }) => void) => {
+      const instanceId = widget?.id ?? block?.id;
+      if (instanceId) {
+        pluginMessageSenderRef.current = sender;
+        context?.pluginInstances.addPluginMessageSender(instanceId, sender);
+      }
+    },
+    [widget?.id, block?.id, context?.pluginInstances]
+  );
+
+  const handleUnregisterPluginMessageSender = useCallback(() => {
+    const instanceId = widget?.id ?? block?.id;
+    if (instanceId) {
+      context?.pluginInstances.removePluginMessageSender(instanceId);
+      pluginMessageSenderRef.current = undefined;
+    }
+  }, [widget?.id, block?.id, context?.pluginInstances]);
+
+  // Unregister on unmount
+  useEffect(() => {
+    return () => {
+      if (pluginMessageSenderRef.current) {
+        handleUnregisterPluginMessageSender();
+      }
+    };
+  }, [handleUnregisterPluginMessageSender]);
+
+  // Create ReearthPluginContext for Zushi adapter
+  const pluginContext = useMemo((): ReearthPluginContext | undefined => {
+    if (!pluginId || !extensionId) return undefined;
+
+    return {
+      plugin: {
+        id: pluginId,
+        extensionId,
+        extensionType: extensionType ?? "",
+        property: pluginProperty
+      },
+      context,
+      getWidget: widget ? () => widget : undefined,
+      getBlock: block ? () => block : undefined,
+      getLayer: layer ? () => layer : undefined,
+      getUIContainerRef: () => uiContainerRef,
+      onRender: (_type: string) => {
+        // Handle onRender callback if needed
+      },
+      onModalShow: handleModalShow,
+      onPopupShow: handlePopupShow,
+      onModalClose: handleModalClose,
+      onPopupClose: handlePopupClose,
+      registerPluginMessageSender: handleRegisterPluginMessageSender,
+      unregisterPluginMessageSender: handleUnregisterPluginMessageSender
+    };
+  }, [pluginId, extensionId, extensionType, pluginProperty, context, widget, block, layer, handleModalShow, handlePopupShow, handleModalClose, handlePopupClose, handleRegisterPluginMessageSender, handleUnregisterPluginMessageSender]);
+
   return {
-    skip: !staticExposed,
+    skip: !staticExposed || !pluginContext,
     src,
     isMarshalable,
     uiVisible,
     modalVisible,
     popupVisible,
     externalRef,
+    uiContainerRef,
     renderKey,
     exposed: staticExposed,
+    pluginContext, // Added for Zushi
     onError,
     onPreInit,
     onDispose

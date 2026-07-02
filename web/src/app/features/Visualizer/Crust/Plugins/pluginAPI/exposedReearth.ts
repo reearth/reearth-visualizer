@@ -46,7 +46,6 @@ export function exposedReearth({
   getWidget,
   getBlock,
   getLayer,
-  startEventLoop,
   pluginPostMessage,
   // data
   clientStorage
@@ -90,7 +89,6 @@ export function exposedReearth({
   getWidget?: () => Widget | undefined;
   getBlock?: () => Reearth["extension"]["block"] | undefined;
   getLayer?: () => Layer | undefined;
-  startEventLoop?: () => void;
   pluginPostMessage: (
     extentionId: string,
     msg: unknown,
@@ -119,13 +117,10 @@ export function exposedReearth({
         tools: merge(commonReearth.viewer.tools, {
           get getTerrainHeightAsync() {
             return async (lng: number, lat: number) => {
-              const result =
-                await commonReearth?.viewer?.tools?.getTerrainHeightAsync?.(
-                  lng,
-                  lat
-                );
-              startEventLoop?.();
-              return result;
+              return await commonReearth?.viewer?.tools?.getTerrainHeightAsync?.(
+                lng,
+                lat
+              );
             };
           },
           get getCurrentLocationAsync() {
@@ -134,12 +129,9 @@ export function exposedReearth({
               timeout?: number;
               maximumAge?: number;
             }) => {
-              const result =
-                await commonReearth?.viewer?.tools?.getCurrentLocationAsync?.(
-                  options
-                );
-              startEventLoop?.();
-              return result;
+              return await commonReearth?.viewer?.tools?.getCurrentLocationAsync?.(
+                options
+              );
             };
           }
         }),
@@ -312,7 +304,7 @@ export function exposedReearth({
         clientStorage: {
           get getAsync() {
             return (key: string) => {
-              const promise = clientStorage.getAsync(
+              return clientStorage.getAsync(
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
@@ -320,10 +312,6 @@ export function exposedReearth({
                     : "") ?? "",
                 key
               );
-              promise.finally(() => {
-                startEventLoop?.();
-              });
-              return promise;
             };
           },
           get setAsync() {
@@ -332,7 +320,7 @@ export function exposedReearth({
                 typeof value === "object"
                   ? JSON.parse(JSON.stringify(value))
                   : value;
-              const promise = clientStorage.setAsync(
+              return clientStorage.setAsync(
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
@@ -341,15 +329,11 @@ export function exposedReearth({
                 key,
                 localValue
               );
-              promise.finally(() => {
-                startEventLoop?.();
-              });
-              return promise;
             };
           },
           get deleteAsync() {
             return (key: string) => {
-              const promise = clientStorage.deleteAsync(
+              return clientStorage.deleteAsync(
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
@@ -357,40 +341,28 @@ export function exposedReearth({
                     : "") ?? "",
                 key
               );
-              promise.finally(() => {
-                startEventLoop?.();
-              });
-              return promise;
             };
           },
           get keysAsync() {
             return () => {
-              const promise = clientStorage.keysAsync(
+              return clientStorage.keysAsync(
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
                     ? getBlock?.()?.id
                     : "") ?? ""
               );
-              promise.finally(() => {
-                startEventLoop?.();
-              });
-              return promise;
             };
           },
           get dropStoreAsync() {
             return () => {
-              const promise = clientStorage.dropStore(
+              return clientStorage.dropStore(
                 (plugin?.extensionType === "widget"
                   ? getWidget?.()?.id
                   : plugin?.extensionType === "block"
                     ? getBlock?.()?.id
                     : "") ?? ""
               );
-              promise.finally(() => {
-                startEventLoop?.();
-              });
-              return promise;
             };
           }
         }
