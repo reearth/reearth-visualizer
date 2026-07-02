@@ -65,8 +65,14 @@ export async function deleteProjectByName(
   projectName: string
 ): Promise<void> {
   try {
-    const { token, extraHeaders } = getAuthToken();
-    const client = new GraphQLClient(request, token, extraHeaders);
+    const ossClient = await getOSSClient(request);
+    let client: GraphQLClient;
+    if (ossClient) {
+      client = ossClient;
+    } else {
+      const { token, extraHeaders } = getAuthToken();
+      client = new GraphQLClient(request, token, extraHeaders);
+    }
 
     // Get workspace ID
     const { data: meData } = await client.query<{
@@ -174,8 +180,14 @@ export async function getRecycleBinCount(
   request: APIRequestContext
 ): Promise<number | undefined> {
   try {
-    const { token, extraHeaders } = getAuthToken();
-    const client = new GraphQLClient(request, token, extraHeaders);
+    const ossClient = await getOSSClient(request);
+    let client: GraphQLClient;
+    if (ossClient) {
+      client = ossClient;
+    } else {
+      const { token, extraHeaders } = getAuthToken();
+      client = new GraphQLClient(request, token, extraHeaders);
+    }
 
     const { data: meData } = await client.query<{
       me: { myWorkspaceId: string };
@@ -196,86 +208,100 @@ export async function getRecycleBinCount(
   }
 }
 
+async function performRecycleBinCleanup(client: GraphQLClient): Promise<void> {
+  const { data: meData } = await client.query<{
+    me: { myWorkspaceId: string };
+  }>(GET_ME);
+  const workspaceId = meData.me.myWorkspaceId;
+
+  const FETCH_ONE = `
+    query($workspaceId: ID!, $pagination: Pagination) {
+      deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
+        totalCount
+        pageInfo { hasNextPage endCursor }
+        nodes { id name }
+      }
+    }
+  `;
+
+  type DeletedPage = {
+    deletedProjects: {
+      totalCount: number;
+      pageInfo: { hasNextPage: boolean; endCursor: string | null };
+      nodes: { id: string; name: string }[];
+    };
+  };
+
+  // Phase 1: collect all IDs via cursor-based pagination
+  const ids: string[] = [];
+  let cursor: string | null = null;
+  let total = 0;
+  let page: DeletedPage;
+
+  do {
+    ({ data: page } = await client.query<DeletedPage>(FETCH_ONE, {
+      workspaceId,
+      pagination: { first: 50, ...(cursor ? { after: cursor } : {}) }
+    }));
+
+    total = page.deletedProjects.totalCount;
+    ids.push(...page.deletedProjects.nodes.map((p) => p.id));
+    cursor = page.deletedProjects.pageInfo.hasNextPage
+      ? page.deletedProjects.pageInfo.endCursor
+      : null;
+  } while (cursor);
+
+  if (ids.length === 0) return;
+
+  // Phase 2: recover then delete in parallel chunks of 10
+  const CHUNK = 10;
+  let deleted = 0;
+  for (let i = 0; i < ids.length; i += CHUNK) {
+    const chunk = ids.slice(i, i + CHUNK);
+    await Promise.all(
+      chunk.map((id) =>
+        client
+          .mutate(UPDATE_PROJECT, { input: { projectId: id, deleted: false } })
+          .catch(() => {})
+      )
+    );
+    const results = await Promise.all(
+      chunk.map((id) =>
+        client
+          .mutate(DELETE_PROJECT, { input: { projectId: id } })
+          .then(() => true)
+          .catch((err) => {
+            console.warn(`[recycle-bin-cleanup] Failed to delete ${id}:`, err);
+            return false;
+          })
+      )
+    );
+    deleted += results.filter(Boolean).length;
+  }
+
+  console.log(
+    `[recycle-bin-cleanup] Permanently deleted ${deleted}/${total} project(s).`
+  );
+}
+
 /**
- * Permanently deletes all projects in the recycle bin.
- * Called from global setup when count >= 16 to prevent recycle bin tests from failing.
+ * Cleans up the recycle bin for the current environment (dev or OSS).
+ * Automatically detects whether to use the dev API or OSS API based on
+ * REEARTH_WEB_E2E_BASEURL.
  */
 export async function cleanupRecycleBin(
   request: APIRequestContext
 ): Promise<void> {
   try {
-    const { token, extraHeaders } = getAuthToken();
-    const client = new GraphQLClient(request, token, extraHeaders);
-
-    const { data: meData } = await client.query<{
-      me: { myWorkspaceId: string };
-    }>(GET_ME);
-    const workspaceId = meData.me.myWorkspaceId;
-
-    const FETCH_ONE = `
-      query($workspaceId: ID!, $pagination: Pagination) {
-        deletedProjects(workspaceId: $workspaceId, pagination: $pagination) {
-          totalCount
-          pageInfo { hasNextPage endCursor }
-          nodes { id name }
-        }
-      }
-    `;
-
-    type DeletedPage = {
-      deletedProjects: {
-        totalCount: number;
-        pageInfo: { hasNextPage: boolean; endCursor: string | null };
-        nodes: { id: string; name: string }[];
-      };
-    };
-
-    // Phase 1: collect all IDs via cursor-based pagination
-    const ids: string[] = [];
-    let cursor: string | null = null;
-    let total = 0;
-    let page: DeletedPage;
-
-    do {
-      ({ data: page } = await client.query<DeletedPage>(FETCH_ONE, {
-        workspaceId,
-        pagination: { first: 1, ...(cursor ? { after: cursor } : {}) }
-      }));
-
-      total = page.deletedProjects.totalCount;
-      ids.push(...page.deletedProjects.nodes.map((p) => p.id));
-      cursor = page.deletedProjects.pageInfo.hasNextPage
-        ? page.deletedProjects.pageInfo.endCursor
-        : null;
-    } while (cursor);
-
-    if (ids.length === 0) return;
-
-    // Phase 2: delete in parallel chunks of 10
-    const CHUNK = 10;
-    let deleted = 0;
-    for (let i = 0; i < ids.length; i += CHUNK) {
-      const chunk = ids.slice(i, i + CHUNK);
-      const results = await Promise.all(
-        chunk.map((id) =>
-          client
-            .mutate(DELETE_PROJECT, { input: { projectId: id } })
-            .then(() => true)
-            .catch((err) => {
-              console.warn(
-                `[recycle-bin-cleanup] Failed to delete ${id}:`,
-                err
-              );
-              return false;
-            })
-        )
+    const ossClient = await getOSSClient(request);
+    if (ossClient) {
+      await performRecycleBinCleanup(ossClient);
+    } else {
+      const { token, extraHeaders } = getAuthToken();
+      await performRecycleBinCleanup(
+        new GraphQLClient(request, token, extraHeaders)
       );
-      deleted += results.filter(Boolean).length;
     }
-
-    console.log(
-      `[recycle-bin-cleanup] Permanently deleted ${deleted}/${total} project(s).`
-    );
   } catch (err) {
     console.warn("[recycle-bin-cleanup] Cleanup failed (non-fatal):", err);
   }
@@ -291,8 +317,14 @@ export async function cleanupStaleE2eProjects(
 ): Promise<void> {
   const E2E_PREFIX = "e2e-";
   try {
-    const { token, extraHeaders } = getAuthToken();
-    const client = new GraphQLClient(request, token, extraHeaders);
+    const ossClient = await getOSSClient(request);
+    let client: GraphQLClient;
+    if (ossClient) {
+      client = ossClient;
+    } else {
+      const { token, extraHeaders } = getAuthToken();
+      client = new GraphQLClient(request, token, extraHeaders);
+    }
 
     const { data: meData } = await client.query<{
       me: { myWorkspaceId: string };
@@ -387,3 +419,52 @@ export async function cleanupStaleE2eProjects(
     console.warn("[e2e-cleanup] Cleanup failed (non-fatal):", err);
   }
 }
+
+// ─── OSS cleanup ──────────────────────────────────────────────────────────────
+
+function getBrowserEnvToken(sp: string): { token: string } | null {
+  try {
+    const state = JSON.parse(fs.readFileSync(sp, "utf-8"));
+    for (const origin of state.origins ?? []) {
+      for (const item of origin.localStorage ?? []) {
+        if (!item.name.startsWith("@@auth0spajs@@") || !item.value) continue;
+        const parsed = JSON.parse(item.value);
+        const token = parsed?.body?.access_token;
+        if (token) return { token };
+      }
+    }
+  } catch (err) {
+    console.warn("[oss-cleanup] Failed to read browser token from storage state:", err);
+  }
+  return null;
+}
+
+/**
+ * Returns a GraphQLClient pointing to the OSS API when running against a
+ * Cloud Run PR preview URL, otherwise returns null (caller uses dev client).
+ */
+async function getOSSClient(
+  request: APIRequestContext
+): Promise<GraphQLClient | null> {
+  const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL ?? "";
+  if (!baseUrl.includes(".run.app")) return null;
+
+  const browserEnv = getBrowserEnvToken(storagePath);
+  if (!browserEnv) return null;
+
+  try {
+    const configRes = await request.get(`${baseUrl}/reearth_config.json`);
+    const config = await configRes.json();
+    const apiUrl = config?.api?.replace(/\/$/, "");
+    if (!apiUrl) return null;
+    return new GraphQLClient(
+      request,
+      browserEnv.token,
+      {},
+      `${apiUrl}/graphql`
+    );
+  } catch {
+    return null;
+  }
+}
+

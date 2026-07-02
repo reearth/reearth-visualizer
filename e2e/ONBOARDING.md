@@ -43,10 +43,10 @@ cp env.example .env
 From `env.example` and the code that reads it (`global-setup.ts`, `api/config/env.ts`, `api/tests/auth-utils.ts`, `utils/iap-auth.ts`):
 
 ```dotenv
-# Required for everything
-REEARTH_WEB_E2E_BASEURL=https://visualizer.dev.reearth.io/
-REEARTH_E2E_EMAIL=your_test_account
-REEARTH_E2E_PASSWORD=your_test_password
+# Required. Credentials are stored in 1Password
+REEARTH_WEB_E2E_BASEURL=
+REEARTH_E2E_EMAIL=
+REEARTH_E2E_PASSWORD=
 ```
 
 ### 3.2 IAP (Google Identity-Aware Proxy)
@@ -72,12 +72,13 @@ Auto-detection rules (`utils/iap-auth.ts` → `createIAPContext`):
 ### 3.3 Extra `.env` values for the API stack
 
 ```dotenv
+# Required. Credentials are stored in 1Password
 REEARTH_E2E_AUTH_MODE=auth0      # auth0 | mock
 
 # auth0 mode (this is what CI uses)
-REEARTH_E2E_AUTH0_DOMAIN=reearth-dev.auth0.com
-REEARTH_E2E_AUTH0_AUDIENCE=https://api.dev.reearth.io
-REEARTH_E2E_AUTH0_CLIENT_ID=<auth0-spa-client-id>
+REEARTH_E2E_AUTH0_DOMAIN=
+REEARTH_E2E_AUTH0_AUDIENCE=
+REEARTH_E2E_AUTH0_CLIENT_ID=
 
 # mock mode (used by `npm run test:api:local`)
 REEARTH_E2E_MOCK_USER_ID=<server-side debug user id>
@@ -86,7 +87,7 @@ REEARTH_E2E_MOCK_USER_ID=<server-side debug user id>
 REEARTH_E2E_SECOND_USER_EMAIL=...
 
 # Optional override of GraphQL endpoint; otherwise derived from BASEURL
-REEARTH_E2E_API_URL=https://api.dev.reearth.io
+REEARTH_E2E_API_URL=
 ```
 
 ⚠ Note: `auth0` mode uses Resource Owner Password Credentials (`grant_type=password`) — your Auth0 tenant and client must permit this grant, and the test user must not require MFA.
