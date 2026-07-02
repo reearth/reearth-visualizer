@@ -42,14 +42,14 @@ func createProjectImportIndexes(ctx context.Context, c DBClient) error {
 		Keys:    bson.D{{Key: "project", Value: 1}},
 		Options: options.Index().SetName("projectimport_project").SetUnique(unique),
 	}); err != nil {
-		return fmt.Errorf("migration: %s: failed to create unique index on project: %w", moveImportStatusToOwnCollectionName, err)
+		return fmt.Errorf("migration: %s: failed to create unique index on projectimport.project: %w", moveImportStatusToOwnCollectionName, err)
 	}
 
 	if _, err := col.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys:    bson.D{{Key: "updatedat", Value: 1}},
 		Options: options.Index().SetName("projectimport_updatedat_ttl").SetExpireAfterSeconds(projectImportTTLSeconds),
 	}); err != nil {
-		return fmt.Errorf("migration: %s: failed to create TTL index on updatedat: %w", moveImportStatusToOwnCollectionName, err)
+		return fmt.Errorf("migration: %s: failed to create TTL index on projectimport.updatedat: %w", moveImportStatusToOwnCollectionName, err)
 	}
 
 	return nil
