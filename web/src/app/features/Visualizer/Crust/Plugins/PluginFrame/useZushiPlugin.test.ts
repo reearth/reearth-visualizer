@@ -9,7 +9,7 @@ import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
 
 import type { ReearthPluginContext } from "../pluginAPI/zushiAdapter";
 
-import useZushiPlugin, { defaultIsMarshalable } from "./useZushiPlugin";
+import useZushiPlugin, { defaultIsMarshalable, type Ref } from "./useZushiPlugin";
 
 // Mock Zushi Plugin
 vi.mock("@reearth/zushi", () => {
@@ -343,7 +343,7 @@ describe("useZushiPlugin", () => {
 
   describe("ref imperativeHandle", () => {
     test("exposes getPlugin method via ref", () => {
-      const ref = { current: null } as React.MutableRefObject<{ getPlugin: () => unknown } | null>;
+      const ref = { current: null } as React.MutableRefObject<Ref | null>;
 
       renderHook(() =>
         useZushiPlugin({
