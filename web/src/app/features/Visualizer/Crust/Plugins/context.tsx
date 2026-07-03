@@ -1,19 +1,37 @@
-import { createContext, FC, PropsWithChildren, useContext } from "react";
+import { createContext, FC, PropsWithChildren, useContext, useRef, useEffect, useMemo } from "react";
 
 import type { Context } from "./types";
 
-const PluginContext = createContext<Context | undefined>(undefined);
+type ContextRef = { current: Context };
 
+const PluginContext = createContext<ContextRef | undefined>(undefined);
+
+// Use a ref-based context to prevent rerenders when context value changes
+// The context value (the ref) stays the same, only ref.current is updated
 export const PluginProvider: FC<PropsWithChildren<{ value: Context }>> = ({
   children,
   value
-}) => <PluginContext.Provider value={value}>{children}</PluginContext.Provider>;
+}) => {
+  const contextRef = useRef<Context>(value);
+
+  // Update ref on every render without changing the ref object itself
+  useEffect(() => {
+    contextRef.current = value;
+  });
+
+  // Create stable context value (the ref object itself never changes)
+  const stableValue = useMemo(() => contextRef, []);
+
+  return <PluginContext.Provider value={stableValue}>{children}</PluginContext.Provider>;
+};
+
+PluginProvider.displayName = "PluginProvider";
 
 export const usePluginContext = (): Context => {
-  const ctx = useContext(PluginContext);
-  if (!ctx) {
+  const ctxRef = useContext(PluginContext);
+  if (!ctxRef) {
     throw new Error("Could not find PluginProvider");
   }
 
-  return ctx;
+  return ctxRef.current;
 };

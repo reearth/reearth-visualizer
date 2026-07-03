@@ -176,59 +176,83 @@ export default function ({
   );
 
   // Get the plugin context for Zushi
+  // Note: usePluginContext now returns from a stable ref, so it doesn't cause rerenders
   const context = usePluginContext();
 
-  // Stable callbacks for modal/popup to avoid plugin reloads
+  // Store context in ref for stable access in callbacks
+  const contextRef = useRef(context);
+  useEffect(() => {
+    contextRef.current = context;
+  });
+
+  // Use refs for callbacks to avoid recreating pluginContext
+  const callbacksRef = useRef({
+    onPluginModalShow,
+    onPluginPopupShow,
+    widget,
+    block
+  });
+
+  // Update refs on every render
+  useEffect(() => {
+    callbacksRef.current = {
+      onPluginModalShow,
+      onPluginPopupShow,
+      widget,
+      block
+    };
+  });
+
+  // Stable callbacks that use refs internally
   const handleModalShow = useCallback(
     (options?: { background?: string; clickBgToClose?: boolean }) => {
-      const instanceId = widget?.id ?? block?.id;
-      onPluginModalShow?.({
+      const instanceId = callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
+      callbacksRef.current.onPluginModalShow?.({
         id: instanceId,
         background: options?.background,
         clickBgToClose: options?.clickBgToClose
       });
     },
-    [widget?.id, block?.id, onPluginModalShow]
+    []
   );
 
   const handlePopupShow = useCallback(
     (options?: PluginPopupInfo) => {
-      // Forward the full popup info to the parent
-      onPluginPopupShow?.(options);
+      callbacksRef.current.onPluginPopupShow?.(options);
     },
-    [onPluginPopupShow]
+    []
   );
 
   const handleModalClose = useCallback(() => {
-    onPluginModalShow?.();
-  }, [onPluginModalShow]);
+    callbacksRef.current.onPluginModalShow?.();
+  }, []);
 
   const handlePopupClose = useCallback(() => {
-    onPluginPopupShow?.();
-  }, [onPluginPopupShow]);
+    callbacksRef.current.onPluginPopupShow?.();
+  }, []);
 
   // Plugin message sender registration ref
   const pluginMessageSenderRef = useRef<((msg: { data: unknown; sender: string }) => void) | undefined>(undefined);
 
-  // Register/unregister callbacks
+  // Register/unregister callbacks using refs
   const handleRegisterPluginMessageSender = useCallback(
     (sender: (msg: { data: unknown; sender: string }) => void) => {
-      const instanceId = widget?.id ?? block?.id;
+      const instanceId = callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
       if (instanceId) {
         pluginMessageSenderRef.current = sender;
-        context?.pluginInstances.addPluginMessageSender(instanceId, sender);
+        contextRef.current?.pluginInstances.addPluginMessageSender(instanceId, sender);
       }
     },
-    [widget?.id, block?.id, context?.pluginInstances]
+    []
   );
 
   const handleUnregisterPluginMessageSender = useCallback(() => {
-    const instanceId = widget?.id ?? block?.id;
+    const instanceId = callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
     if (instanceId) {
-      context?.pluginInstances.removePluginMessageSender(instanceId);
+      contextRef.current?.pluginInstances.removePluginMessageSender(instanceId);
       pluginMessageSenderRef.current = undefined;
     }
-  }, [widget?.id, block?.id, context?.pluginInstances]);
+  }, []);
 
   // Unregister on unmount
   useEffect(() => {
@@ -240,6 +264,8 @@ export default function ({
   }, [handleUnregisterPluginMessageSender]);
 
   // Create ReearthPluginContext for Zushi adapter
+  // Only recreate when core identifiers change
+  // Use getter for context to avoid recreating pluginContext when context data updates
   const pluginContext = useMemo((): ReearthPluginContext | undefined => {
     if (!pluginId || !extensionId) return undefined;
 
@@ -250,7 +276,10 @@ export default function ({
         extensionType: extensionType ?? "",
         property: pluginProperty
       },
-      context,
+      // Use getter to access latest context without recreating pluginContext
+      get context() {
+        return contextRef.current;
+      },
       getWidget: widget ? () => widget : undefined,
       getBlock: block ? () => block : undefined,
       getLayer: layer ? () => layer : undefined,
@@ -265,7 +294,23 @@ export default function ({
       registerPluginMessageSender: handleRegisterPluginMessageSender,
       unregisterPluginMessageSender: handleUnregisterPluginMessageSender
     };
-  }, [pluginId, extensionId, extensionType, pluginProperty, context, widget, block, layer, handleModalShow, handlePopupShow, handleModalClose, handlePopupClose, handleRegisterPluginMessageSender, handleUnregisterPluginMessageSender]);
+    // Removed context from dependencies - use getter to access latest value
+    // Callbacks are stable, only recreate when plugin identity changes
+  }, [
+    pluginId,
+    extensionId,
+    extensionType,
+    pluginProperty,
+    widget,
+    block,
+    layer,
+    handleModalShow,
+    handlePopupShow,
+    handleModalClose,
+    handlePopupClose,
+    handleRegisterPluginMessageSender,
+    handleUnregisterPluginMessageSender
+  ]);
 
   return {
     skip: !staticExposed || !pluginContext,
