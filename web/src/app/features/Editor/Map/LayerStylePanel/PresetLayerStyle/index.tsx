@@ -86,7 +86,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
       if (config.type === "empty") {
         return {
           id: "empty",
-          title: "Empty",
+          title: lang === "ja" ? "空" : "Empty",
           onClick: () => handleLayerStyleAddition({}),
           dataTestid: "preset-style-empty"
         };
@@ -111,7 +111,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
       const category = config.preset;
       return {
         id: category.id,
-        title: category.title,
+        title: lang === "ja" && category.titleJa ? category.titleJa : category.title,
         icon: "folderSimple",
         dataTestid: category.testId,
         subItem: category.subs.map((sub) => ({
