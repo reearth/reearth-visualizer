@@ -11,9 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"sort"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -43,11 +41,32 @@ type SplitUploadManager struct {
 type SplitUploadSession struct {
 	FileID      string
 	Project     *project.Project
-	Chunks      []string
+	Chunks      map[int]struct{}
 	TotalChunks int
 	Received    int
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+}
+
+// hasAllChunks reports whether every chunk index in [0, TotalChunks) has
+// been received. A bare len(Chunks) == TotalChunks count is not sufficient:
+// it would treat e.g. indices {1,2,3} as complete for TotalChunks==3,
+// silently accepting an upload missing chunk 0 (which is the chunk that
+// creates the session's Project).
+func (s *SplitUploadSession) hasAllChunks() bool {
+	if s.TotalChunks <= 0 {
+		return false
+	}
+	for i := 0; i < s.TotalChunks; i++ {
+		if _, ok := s.Chunks[i]; !ok {
+			return false
+		}
+	}
+	return true
+}
+
+func chunkPartPath(tempDir, fileID string, idx int) string {
+	return filepath.Join(tempDir, fmt.Sprintf("%s_part_%d", fileID, idx))
 }
 
 func servSplitUploadFiles(
@@ -231,7 +250,7 @@ func (m *SplitUploadManager) SaveChunk(fileID string, chunkNum int, src io.Reade
 	if readErr != nil {
 		return "", fmt.Errorf("failed to read chunk data: %w", readErr)
 	}
-	chunkPath := filepath.Join(m.tempDir, fmt.Sprintf("%s_part_%d", fileID, chunkNum))
+	chunkPath := chunkPartPath(m.tempDir, fileID, chunkNum)
 	for i := 0; i < m.maxRetries; i++ {
 		writeErr := os.WriteFile(chunkPath, data, 0644)
 		if writeErr == nil {
@@ -252,6 +271,7 @@ func (m *SplitUploadManager) UpdateSession(fileID string, chunkNum, totalChunks 
 	if !exists {
 		session = &SplitUploadSession{
 			FileID:      fileID,
+			Chunks:      make(map[int]struct{}),
 			TotalChunks: totalChunks,
 			CreatedAt:   time.Now(),
 		}
@@ -264,15 +284,13 @@ func (m *SplitUploadManager) UpdateSession(fileID string, chunkNum, totalChunks 
 	session.UpdatedAt = time.Now()
 	session.Received++
 
-	for _, chunk := range session.Chunks {
-		if chunk == fmt.Sprintf("%s_part_%d", fileID, chunkNum) {
-			return session, false, nil
-		}
+	if _, ok := session.Chunks[chunkNum]; ok {
+		return session, false, nil
 	}
 
-	session.Chunks = append(session.Chunks, fmt.Sprintf("%s_part_%d", fileID, chunkNum))
+	session.Chunks[chunkNum] = struct{}{}
 
-	completed := session.TotalChunks > 0 && len(session.Chunks) >= session.TotalChunks
+	completed := session.hasAllChunks() && session.Project != nil
 	return session, completed, nil
 }
 
@@ -283,28 +301,10 @@ func (m *SplitUploadManager) AssembleChunks(session *SplitUploadSession, outputP
 	}
 	defer closeWithError(outFile, &err)
 
-	sort.Slice(session.Chunks, func(i, j int) bool {
-		getChunkNumber := func(s string) int {
-			parts := strings.Split(s, "_part_")
-			if len(parts) != 2 {
-				log.Printf("warning: unexpected chunk name format: %s", s)
-				return 0
-			}
-			n, err := strconv.Atoi(parts[1])
-			if err != nil {
-				log.Printf("warning: failed to parse chunk number from %s: %v", s, err)
-				return 0
-			}
-			return n
-		}
-
-		return getChunkNumber(session.Chunks[i]) < getChunkNumber(session.Chunks[j])
-	})
-
-	for _, chunk := range session.Chunks {
-		chunkPath := filepath.Join(m.tempDir, chunk)
+	for i := 0; i < session.TotalChunks; i++ {
+		chunkPath := chunkPartPath(m.tempDir, session.FileID, i)
 		if err := appendToFile(outFile, chunkPath); err != nil {
-			return fmt.Errorf("failed to append chunk %s: %w", chunk, err)
+			return fmt.Errorf("failed to append chunk %d: %w", i, err)
 		}
 	}
 	return nil
@@ -315,8 +315,8 @@ func (m *SplitUploadManager) CleanupSession(fileID string) {
 	defer m.mu.Unlock()
 
 	if session, exists := m.activeUploads[fileID]; exists {
-		for _, chunk := range session.Chunks {
-			if err := os.Remove(filepath.Join(m.tempDir, chunk)); err != nil {
+		for idx := range session.Chunks {
+			if err := os.Remove(chunkPartPath(m.tempDir, fileID, idx)); err != nil {
 				log.Printf("Warning: failed to remove chunk: %v", err)
 			}
 		}
@@ -340,8 +340,8 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 	cutoff := time.Now().Add(-24 * time.Hour)
 	for fileID, session := range m.activeUploads {
 		if session.UpdatedAt.Before(cutoff) {
-			for _, chunk := range session.Chunks {
-				if err := os.Remove(filepath.Join(m.tempDir, chunk)); err != nil {
+			for idx := range session.Chunks {
+				if err := os.Remove(chunkPartPath(m.tempDir, fileID, idx)); err != nil {
 					log.Printf("Warning: failed to remove chunk: %v", err)
 				}
 			}

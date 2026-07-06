@@ -83,6 +83,31 @@ func TestSplitUploadManager_UpdateSession(t *testing.T) {
 	}
 }
 
+// TestSplitUploadManager_UpdateSession_MissingChunkZero verifies the REL-01
+// fix: a session must never be reported completed while chunk 0 (which
+// creates the session's Project) was never received, even once every other
+// chunk index has arrived and the total count matches. Before the fix,
+// complete-by-count alone let this trigger a nil-pointer panic in the
+// detached import goroutine that assembles the upload.
+func TestSplitUploadManager_UpdateSession_MissingChunkZero(t *testing.T) {
+	m := &SplitUploadManager{
+		activeUploads: make(map[string]*SplitUploadSession),
+	}
+
+	// A malformed/1-indexed client sends chunk_num=1 with total_chunks=1 and
+	// never sends chunk 0, so prj is nil for every call.
+	session, completed, err := m.UpdateSession("f2", 1, 1, nil)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if completed {
+		t.Error("session must not be completed when chunk 0 was never received")
+	}
+	if session.Project != nil {
+		t.Error("project should still be nil without chunk 0")
+	}
+}
+
 // TestSplitUploadManager_CleanupSession verifies that CleanupSession removes
 // the session from the map under the lock.
 func TestSplitUploadManager_CleanupSession(t *testing.T) {
