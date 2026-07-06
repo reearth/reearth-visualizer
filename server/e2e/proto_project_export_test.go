@@ -17,8 +17,8 @@ import (
 // go test -v -run TestInternalAPI_export ./e2e/...
 
 func TestInternalAPI_export(t *testing.T) {
-	e := Server(t, fullSeeder)
-	GRPCServer(t, fullSeeder)
+	e, repos, _ := ServerAndRepos(t, fullSeeder)
+	StartGQLServerWithRepos(t, internalApiConfig, repos)
 
 	testWorkspace := wID.String()
 
@@ -130,6 +130,8 @@ func TestInternalAPI_export(t *testing.T) {
 
 		// Try download
 		resp := e.GET(exp.ProjectDataPath).
+			WithHeader("Authorization", "Bearer test").
+			WithHeader("X-Reearth-Debug-User", uID3.String()).
 			Expect().
 			Status(200)
 

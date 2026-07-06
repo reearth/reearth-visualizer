@@ -3,11 +3,15 @@ package app
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/verror"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/stretchr/testify/assert"
 	"github.com/vektah/gqlparser/v2/ast"
 	"golang.org/x/text/language"
@@ -85,4 +89,22 @@ func TestCustomErrorPresenter(t *testing.T) {
 		assert.Equal(t, "wrapped error", graphqlErr.Extensions["system_error"])
 	})
 
+}
+
+func TestIsHandledError(t *testing.T) {
+	t.Run("returns true for handled sentinel errors", func(t *testing.T) {
+		assert.True(t, isHandledError(rerror.ErrNotFound))
+		assert.True(t, isHandledError(interfaces.ErrOperationDenied))
+		assert.True(t, isHandledError(repo.ErrOperationDenied))
+	})
+
+	t.Run("returns true for wrapped handled errors", func(t *testing.T) {
+		assert.True(t, isHandledError(fmt.Errorf("wrapped: %w", rerror.ErrNotFound)))
+		assert.True(t, isHandledError(fmt.Errorf("wrapped: %w", interfaces.ErrOperationDenied)))
+	})
+
+	t.Run("returns false for unrelated errors", func(t *testing.T) {
+		assert.False(t, isHandledError(errors.New("some unexpected error")))
+		assert.False(t, isHandledError(rerror.ErrNotImplemented))
+	})
 }

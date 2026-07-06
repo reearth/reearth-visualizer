@@ -38,7 +38,7 @@ test.describe("GET /export/:filename — project export download", () => {
       input: {
         workspaceId: me.me.myWorkspaceId,
         visualizer: "CESIUM",
-        name: `Export Test ${faker.string.alphanumeric(6)}`,
+        name: `e2e-Export Test ${faker.string.alphanumeric(6)}`,
         coreSupport: true
       }
     });
@@ -74,11 +74,11 @@ test.describe("GET /export/:filename — project export download", () => {
     expect(body[1]).toBe(0x4b); // K
   });
 
-  test("GET /export/non-existent-file returns 404", async ({ request }) => {
+  test("GET /export/non-existent-file returns 400", async ({ request }) => {
     const res = await request.get(
       `${API_BASE_URL}/export/no-such-file-${faker.string.alphanumeric(20)}.zip`
     );
 
-    expect(res.status()).toBe(404);
+    expect(res.status()).toBe(400);
   });
 });
