@@ -68,6 +68,364 @@ type MessageHandlers = {
 };
 
 /**
+ * Close event handler manager
+ * Provides on/off/once semantics for close events
+ */
+type CloseEventManager = {
+  handlers: Set<() => void>;
+  onceHandlers: Set<() => void>;
+  trigger: () => void;
+  on: (callback: () => void, once?: boolean) => void;
+  off: (callback: () => void) => void;
+};
+
+/**
+ * Creates a close event manager for a surface
+ */
+function createCloseEventManager(surfaceName: string): CloseEventManager {
+  const handlers = new Set<() => void>();
+  const onceHandlers = new Set<() => void>();
+
+  return {
+    handlers,
+    onceHandlers,
+    trigger() {
+      // Execute regular handlers
+      handlers.forEach((handler) => {
+        try {
+          handler();
+        } catch (err) {
+          console.error(`[Zushi Adapter] Error in ${surfaceName} close handler:`, err);
+        }
+      });
+      // Execute once handlers and clear them
+      onceHandlers.forEach((handler) => {
+        try {
+          handler();
+        } catch (err) {
+          console.error(`[Zushi Adapter] Error in ${surfaceName} close once handler:`, err);
+        }
+      });
+      onceHandlers.clear();
+    },
+    on(callback: () => void, once = false) {
+      if (once) {
+        onceHandlers.add(callback);
+      } else {
+        handlers.add(callback);
+      }
+    },
+    off(callback: () => void) {
+      handlers.delete(callback);
+      onceHandlers.delete(callback);
+    }
+  };
+}
+
+/**
+ * Creates UI surface adapter
+ */
+function createUIAdapter(
+  surface: SurfaceAPI,
+  onRender?: (type: string) => void
+): {
+  show: Reearth["ui"]["show"];
+  close: Reearth["ui"]["close"];
+  postMessage: Reearth["ui"]["postMessage"];
+  resize: Reearth["ui"]["resize"];
+  on: Reearth["ui"]["on"];
+  off: Reearth["ui"]["off"];
+} {
+  const closeEvents = createCloseEventManager("UI");
+
+  return {
+    show: (html, options) => {
+      surface.setVisible(true);
+      surface.show(html, {
+        width: options?.width,
+        height: options?.height,
+        visible: options?.visible ?? true
+      });
+      onRender?.("ui");
+    },
+    close: () => {
+      surface.setVisible(false);
+      closeEvents.trigger();
+    },
+    postMessage: (msg) => {
+      surface.postMessage(msg);
+    },
+    resize: (width, height, _extended) => {
+      surface.update({
+        width,
+        height
+        // Note: extended is not directly supported by Zushi
+      });
+    },
+    on: (type, callback, options) => {
+      if (type === "close") {
+        closeEvents.on(callback as () => void, options?.once);
+      }
+    },
+    off: (type, callback) => {
+      if (type === "close") {
+        closeEvents.off(callback as () => void);
+      }
+    }
+  };
+}
+
+/**
+ * Creates Modal surface adapter
+ */
+function createModalAdapter(
+  surface: SurfaceAPI,
+  onRender?: (type: string) => void,
+  onModalShow?: (options?: { background?: string; clickBgToClose?: boolean }) => void,
+  onModalClose?: () => void
+): {
+  show: Reearth["modal"]["show"];
+  close: Reearth["modal"]["close"];
+  update: Reearth["modal"]["update"];
+  postMessage: Reearth["modal"]["postMessage"];
+  on: Reearth["modal"]["on"];
+  off: Reearth["modal"]["off"];
+} {
+  const closeEvents = createCloseEventManager("Modal");
+
+  return {
+    show: (html, options) => {
+      surface.setVisible(true);
+      surface.show(html, {
+        width: options?.width,
+        height: options?.height,
+        visible: true
+      });
+      onRender?.("modal");
+      onModalShow?.({
+        background: options?.background,
+        clickBgToClose: options?.clickBgToClose
+      });
+    },
+    close: () => {
+      surface.setVisible(false);
+      closeEvents.trigger();
+      onModalClose?.();
+    },
+    update: (options) => {
+      surface.update({
+        width: options?.width,
+        height: options?.height
+      });
+    },
+    postMessage: (msg) => {
+      surface.postMessage(msg);
+    },
+    on: (type, callback, options) => {
+      if (type === "close") {
+        closeEvents.on(callback as () => void, options?.once);
+      }
+    },
+    off: (type, callback) => {
+      if (type === "close") {
+        closeEvents.off(callback as () => void);
+      }
+    }
+  };
+}
+
+/**
+ * Creates Popup surface adapter
+ */
+function createPopupAdapter(
+  surface: SurfaceAPI,
+  onRender?: (type: string) => void,
+  onPopupShow?: (options?: PluginPopupInfo) => void,
+  onPopupClose?: () => void,
+  getWidget?: () => Widget | undefined,
+  getBlock?: () => Reearth["extension"]["block"] | undefined,
+  getUIContainerRef?: () => { current: HTMLElement | null } | undefined
+): {
+  show: Reearth["popup"]["show"];
+  close: Reearth["popup"]["close"];
+  update: Reearth["popup"]["update"];
+  postMessage: Reearth["popup"]["postMessage"];
+  on: Reearth["popup"]["on"];
+  off: Reearth["popup"]["off"];
+} {
+  const closeEvents = createCloseEventManager("Popup");
+
+  return {
+    show: (html, options) => {
+      surface.setVisible(true);
+      surface.show(html, {
+        width: options?.width,
+        height: options?.height,
+        visible: true
+      });
+      onRender?.("popup");
+
+      const widget = getWidget?.();
+      const block = getBlock?.();
+      const uiContainerRef = getUIContainerRef?.();
+
+      onPopupShow?.({
+        id: widget?.id ?? block?.id,
+        position: options?.position ?? "bottom",
+        offset: options?.offset,
+        ref: uiContainerRef as any
+      });
+    },
+    close: () => {
+      surface.setVisible(false);
+      closeEvents.trigger();
+      onPopupClose?.();
+    },
+    update: (options) => {
+      surface.update({
+        width: options?.width,
+        height: options?.height
+      });
+
+      const widget = getWidget?.();
+      const block = getBlock?.();
+      const uiContainerRef = getUIContainerRef?.();
+
+      onPopupShow?.({
+        id: widget?.id ?? block?.id,
+        position: options?.position ?? "bottom",
+        offset: options?.offset,
+        ref: uiContainerRef as any
+      });
+    },
+    postMessage: (msg) => {
+      surface.postMessage(msg);
+    },
+    on: (type, callback, options) => {
+      if (type === "close") {
+        closeEvents.on(callback as () => void, options?.once);
+      }
+    },
+    off: (type, callback) => {
+      if (type === "close") {
+        closeEvents.off(callback as () => void);
+      }
+    }
+  };
+}
+
+/**
+ * Creates extension message handler
+ */
+function createExtensionMessageHandler(
+  context: Context,
+  messageHandlers: MessageHandlers,
+  startEventLoop: () => void,
+  registerPluginMessageSender?: (
+    sender: (msg: { data: unknown; sender: string }) => void
+  ) => void
+) {
+  const extensionMessageHandlers = new Set<(msg: unknown) => void>();
+  const extensionMessageOnceHandlers = new Set<(msg: unknown) => void>();
+
+  // Plugin message sender - called when this plugin receives a message from another plugin
+  const pluginMessageSender = (msg: { data: unknown; sender: string }) => {
+    try {
+      // Emit to normal handlers
+      extensionMessageHandlers.forEach((handler) => {
+        try {
+          handler(msg);
+        } catch (err) {
+          console.error("[Zushi Adapter] Error in extensionMessage handler:", err);
+        }
+      });
+      // Emit to once handlers and clear them
+      extensionMessageOnceHandlers.forEach((handler) => {
+        try {
+          handler(msg);
+        } catch (err) {
+          console.error("[Zushi Adapter] Error in extensionMessage once handler:", err);
+        }
+      });
+      extensionMessageOnceHandlers.clear();
+
+      startEventLoop();
+    } catch (err) {
+      console.error("[Zushi Adapter] Error handling extensionMessage:", err);
+    }
+  };
+
+  // Register the plugin message sender with the context
+  registerPluginMessageSender?.(pluginMessageSender);
+
+  return {
+    postMessage: (extensionId: string, msg: unknown, sender: string) => {
+      context.pluginInstances.postMessage(extensionId, msg, sender);
+    },
+    on: (type: string, callback: (...args: any[]) => void, options?: { once?: boolean }) => {
+      if (type === "message") {
+        if (options?.once) {
+          messageHandlers.onceMessage(callback as (msg: unknown) => void);
+        } else {
+          messageHandlers.onMessage(callback as (msg: unknown) => void);
+        }
+      } else if (type === "extensionMessage") {
+        if (options?.once) {
+          extensionMessageOnceHandlers.add(callback as (msg: unknown) => void);
+        } else {
+          extensionMessageHandlers.add(callback as (msg: unknown) => void);
+        }
+      }
+    },
+    off: (type: string, callback: (...args: any[]) => void) => {
+      if (type === "message") {
+        messageHandlers.offMessage(callback as (msg: unknown) => void);
+      } else if (type === "extensionMessage") {
+        extensionMessageHandlers.delete(callback as (msg: unknown) => void);
+        extensionMessageOnceHandlers.delete(callback as (msg: unknown) => void);
+      }
+    }
+  };
+}
+
+/**
+ * Wraps client storage methods with event loop trigger
+ */
+function wrapClientStorage(
+  clientStorage: Context["clientStorage"],
+  startEventLoop: () => void
+): Context["clientStorage"] {
+  return {
+    ...clientStorage,
+    getAsync: (extensionInstanceId: string, key: string) => {
+      const promise = clientStorage.getAsync(extensionInstanceId, key);
+      promise.then(() => startEventLoop()).catch(() => startEventLoop());
+      return promise;
+    },
+    setAsync: (extensionInstanceId: string, key: string, value: unknown) => {
+      const promise = clientStorage.setAsync(extensionInstanceId, key, value);
+      promise.then(() => startEventLoop()).catch(() => startEventLoop());
+      return promise;
+    },
+    deleteAsync: (extensionInstanceId: string, key: string) => {
+      const promise = clientStorage.deleteAsync(extensionInstanceId, key);
+      promise.then(() => startEventLoop()).catch(() => startEventLoop());
+      return promise;
+    },
+    keysAsync: (extensionInstanceId: string) => {
+      const promise = clientStorage.keysAsync(extensionInstanceId);
+      promise.then(() => startEventLoop()).catch(() => startEventLoop());
+      return promise;
+    },
+    dropStore: (extensionInstanceId: string) => {
+      const promise = clientStorage.dropStore(extensionInstanceId);
+      promise.then(() => startEventLoop()).catch(() => startEventLoop());
+      return promise;
+    }
+  };
+}
+
+/**
  * Creates the exposed API factory function for Zushi
  *
  * This function returns a factory that Zushi will call with its PluginContext.
@@ -95,313 +453,41 @@ export function createZushiExposedAPI(
       onModalClose,
       onPopupClose,
       registerPluginMessageSender
-      //unregisterPluginMessageSender
     } = reearthContext;
-    const { onMessage, offMessage, onceMessage } = messageHandlers;
 
-    // Get the startEventLoop function from Zushi context
     const startEventLoop = zushiCtx.startEventLoop;
 
-    // Event handlers for UI/Modal/Popup
-    const uiCloseHandlers = new Set<() => void>();
-    const uiCloseOnceHandlers = new Set<() => void>();
-    const modalCloseHandlers = new Set<() => void>();
-    const modalCloseOnceHandlers = new Set<() => void>();
-    const popupCloseHandlers = new Set<() => void>();
-    const popupCloseOnceHandlers = new Set<() => void>();
+    // Create surface adapters
+    const ui = createUIAdapter(zushiCtx.surfaces.ui, onRender);
+    const modal = createModalAdapter(
+      zushiCtx.surfaces.modal,
+      onRender,
+      onModalShow,
+      onModalClose
+    );
+    const popup = createPopupAdapter(
+      zushiCtx.surfaces.popup,
+      onRender,
+      onPopupShow,
+      onPopupClose,
+      getWidget,
+      getBlock,
+      getUIContainerRef
+    );
 
-    // Event handlers for extensionMessage
-    const extensionMessageHandlers = new Set<(msg: unknown) => void>();
-    const extensionMessageOnceHandlers = new Set<(msg: unknown) => void>();
+    // Create extension message handler
+    const extension = createExtensionMessageHandler(
+      context,
+      messageHandlers,
+      startEventLoop,
+      registerPluginMessageSender
+    );
 
-    // Extract surfaces from Zushi's context
-    const surfaces = {
-      ui: zushiCtx.surfaces.ui,
-      modal: zushiCtx.surfaces.modal,
-      popup: zushiCtx.surfaces.popup
-    };
+    // Wrap client storage with event loop trigger
+    const clientStorage = wrapClientStorage(context.clientStorage, startEventLoop);
 
-    // Map UI surface to render/postMessage/resize/close
-    const render: Reearth["ui"]["show"] = (html, options) => {
-      // Ensure surface is visible
-      surfaces.ui.setVisible(true);
-
-      surfaces.ui.show(html, {
-        width: options?.width,
-        height: options?.height,
-        visible: options?.visible ?? true
-      });
-      onRender?.("ui");
-    };
-
-    const postMessage: Reearth["ui"]["postMessage"] = (msg) => {
-      surfaces.ui.postMessage(msg);
-    };
-
-    const resize: Reearth["ui"]["resize"] = (width, height, _extended) => {
-      surfaces.ui.update({
-        width,
-        height
-        // Note: extended is not directly supported by Zushi
-        // May need to handle this separately if needed
-      });
-    };
-
-    const closeUI: Reearth["ui"]["close"] = () => {
-      surfaces.ui.setVisible(false);
-
-      // Trigger close event handlers
-      uiCloseHandlers.forEach((handler) => {
-        try {
-          handler();
-        } catch (err) {
-          console.error("[Zushi Adapter] Error in UI close handler:", err);
-        }
-      });
-      uiCloseOnceHandlers.forEach((handler) => {
-        try {
-          handler();
-        } catch (err) {
-          console.error("[Zushi Adapter] Error in UI close once handler:", err);
-        }
-      });
-      uiCloseOnceHandlers.clear();
-    };
-
-    // UI event handlers
-    const uiEventsOn: Reearth["ui"]["on"] = (type, callback, options) => {
-      if (type === "close") {
-        if (options?.once) {
-          uiCloseOnceHandlers.add(callback as () => void);
-        } else {
-          uiCloseHandlers.add(callback as () => void);
-        }
-      }
-      // Other event types can be added here
-    };
-
-    const uiEventsOff: Reearth["ui"]["off"] = (type, callback) => {
-      if (type === "close") {
-        uiCloseHandlers.delete(callback as () => void);
-        uiCloseOnceHandlers.delete(callback as () => void);
-      }
-    };
-
-    // Map Modal surface
-    const renderModal: Reearth["modal"]["show"] = (html, options) => {
-      // First ensure surface is visible (in case it was hidden before)
-      surfaces.modal.setVisible(true);
-
-      // Then render the content
-      surfaces.modal.show(html, {
-        width: options?.width,
-        height: options?.height,
-        visible: true
-      });
-      onRender?.("modal");
-      // Notify parent component to show modal
-      onModalShow?.({
-        background: options?.background,
-        clickBgToClose: options?.clickBgToClose
-      });
-    };
-
-    const closeModal: Reearth["modal"]["close"] = () => {
-      surfaces.modal.setVisible(false);
-
-      // Trigger close event handlers
-      modalCloseHandlers.forEach((handler) => {
-        try {
-          handler();
-        } catch (err) {
-          console.error("[Zushi Adapter] Error in modal close handler:", err);
-        }
-      });
-      modalCloseOnceHandlers.forEach((handler) => {
-        try {
-          handler();
-        } catch (err) {
-          console.error(
-            "[Zushi Adapter] Error in modal close once handler:",
-            err
-          );
-        }
-      });
-      modalCloseOnceHandlers.clear();
-
-      // Notify parent component to hide modal
-      onModalClose?.();
-    };
-
-    const updateModal: Reearth["modal"]["update"] = (options) => {
-      surfaces.modal.update({
-        width: options?.width,
-        height: options?.height
-      });
-    };
-
-    const postMessageModal: Reearth["modal"]["postMessage"] = (msg) => {
-      surfaces.modal.postMessage(msg);
-    };
-
-    const modalEventsOn: Reearth["modal"]["on"] = (type, callback, options) => {
-      if (type === "close") {
-        if (options?.once) {
-          modalCloseOnceHandlers.add(callback as () => void);
-        } else {
-          modalCloseHandlers.add(callback as () => void);
-        }
-      }
-      // Other event types can be added here
-    };
-
-    const modalEventsOff: Reearth["modal"]["off"] = (type, callback) => {
-      if (type === "close") {
-        modalCloseHandlers.delete(callback as () => void);
-        modalCloseOnceHandlers.delete(callback as () => void);
-      }
-    };
-
-    // Map Popup surface
-    const renderPopup: Reearth["popup"]["show"] = (html, options) => {
-      // First ensure surface is visible (in case it was hidden before)
-      surfaces.popup.setVisible(true);
-
-      surfaces.popup.show(html, {
-        width: options?.width,
-        height: options?.height,
-        visible: true
-      });
-      onRender?.("popup");
-
-      // Notify parent component to show popup with proper info
-      const widget = getWidget?.();
-      const block = getBlock?.();
-      const uiContainerRef = getUIContainerRef?.();
-
-      onPopupShow?.({
-        id: widget?.id ?? block?.id,
-        position: options?.position ?? "bottom",
-        offset: options?.offset,
-        ref: uiContainerRef as any // Cast to match RefObject<HTMLIFrameElement> type
-      });
-    };
-
-    const closePopup: Reearth["popup"]["close"] = () => {
-      surfaces.popup.setVisible(false);
-
-      // Trigger close event handlers
-      popupCloseHandlers.forEach((handler) => {
-        try {
-          handler();
-        } catch (err) {
-          console.error("[Zushi Adapter] Error in popup close handler:", err);
-        }
-      });
-      popupCloseOnceHandlers.forEach((handler) => {
-        try {
-          handler();
-        } catch (err) {
-          console.error(
-            "[Zushi Adapter] Error in popup close once handler:",
-            err
-          );
-        }
-      });
-      popupCloseOnceHandlers.clear();
-
-      // Notify parent component to hide popup
-      onPopupClose?.();
-    };
-
-    const updatePopup: Reearth["popup"]["update"] = (options) => {
-      surfaces.popup.update({
-        width: options?.width,
-        height: options?.height
-      });
-
-      // Notify parent component about popup update
-      const widget = getWidget?.();
-      const block = getBlock?.();
-      const uiContainerRef = getUIContainerRef?.();
-      onPopupShow?.({
-        id: widget?.id ?? block?.id,
-        position: options?.position ?? "bottom",
-        offset: options?.offset,
-        ref: uiContainerRef as any // Cast to match RefObject<HTMLIFrameElement> type
-      });
-    };
-
-    const postMessagePopup: Reearth["popup"]["postMessage"] = (msg) => {
-      surfaces.popup.postMessage(msg);
-    };
-
-    const popupEventsOn: Reearth["popup"]["on"] = (type, callback, options) => {
-      if (type === "close") {
-        if (options?.once) {
-          popupCloseOnceHandlers.add(callback as () => void);
-        } else {
-          popupCloseHandlers.add(callback as () => void);
-        }
-      }
-      // Other event types can be added here
-    };
-
-    const popupEventsOff: Reearth["popup"]["off"] = (type, callback) => {
-      if (type === "close") {
-        popupCloseHandlers.delete(callback as () => void);
-        popupCloseOnceHandlers.delete(callback as () => void);
-      }
-    };
-
-    // Extension message handling
-    const pluginPostMessage = (
-      extensionId: string,
-      msg: unknown,
-      sender: string
-    ) => {
-      context.pluginInstances.postMessage(extensionId, msg, sender);
-    };
-
-    // Plugin message sender - called when this plugin receives a message from another plugin
-    const pluginMessageSender = (msg: { data: unknown; sender: string }) => {
-      try {
-        // Emit to normal handlers
-        extensionMessageHandlers.forEach((handler) => {
-          try {
-            handler(msg);
-          } catch (err) {
-            console.error(
-              "[Zushi Adapter] Error in extensionMessage handler:",
-              err
-            );
-          }
-        });
-        // Emit to once handlers and clear them
-        extensionMessageOnceHandlers.forEach((handler) => {
-          try {
-            handler(msg);
-          } catch (err) {
-            console.error(
-              "[Zushi Adapter] Error in extensionMessage once handler:",
-              err
-            );
-          }
-        });
-        extensionMessageOnceHandlers.clear();
-
-        // Trigger event loop after message handling
-        startEventLoop();
-      } catch (err) {
-        console.error("[Zushi Adapter] Error handling extensionMessage:", err);
-      }
-    };
-
-    // Register the plugin message sender with the context
-    registerPluginMessageSender?.(pluginMessageSender);
-
-    // Now call the existing exposedReearth with mapped APIs
-    const exposedAPI = exposedReearth({
+    // Build and return the exposed API
+    return exposedReearth({
       commonReearth: context.reearth,
       plugin,
       // Viewer events
@@ -409,108 +495,39 @@ export function createZushiExposedAPI(
       viewerEventsOff: context.viewerEvents.off,
       // Timeline
       timelineManagerRef: context.timelineManagerRef,
-      // UI
-      render,
-      closeUI,
-      postMessage,
-      resize,
-      uiEventsOn,
-      uiEventsOff,
-      // Modal
-      renderModal,
-      closeModal,
-      updateModal,
-      postMessageModal,
-      modalEventsOn,
-      modalEventsOff,
-      // Popup
-      renderPopup,
-      closePopup,
-      updatePopup,
-      postMessagePopup,
-      popupEventsOn,
-      popupEventsOff,
+      // UI surface
+      render: ui.show,
+      closeUI: ui.close,
+      postMessage: ui.postMessage,
+      resize: ui.resize,
+      uiEventsOn: ui.on,
+      uiEventsOff: ui.off,
+      // Modal surface
+      renderModal: modal.show,
+      closeModal: modal.close,
+      updateModal: modal.update,
+      postMessageModal: modal.postMessage,
+      modalEventsOn: modal.on,
+      modalEventsOff: modal.off,
+      // Popup surface
+      renderPopup: popup.show,
+      closePopup: popup.close,
+      updatePopup: popup.update,
+      postMessagePopup: popup.postMessage,
+      popupEventsOn: popup.on,
+      popupEventsOff: popup.off,
       // Extension
-      extensionEventsOn: (type, callback, options) => {
-        // Map to message system
-        if (type === "message") {
-          if (options?.once) {
-            onceMessage(callback as (msg: unknown) => void);
-          } else {
-            onMessage(callback as (msg: unknown) => void);
-          }
-        } else if (type === "extensionMessage") {
-          if (options?.once) {
-            extensionMessageOnceHandlers.add(
-              callback as (msg: unknown) => void
-            );
-          } else {
-            extensionMessageHandlers.add(callback as (msg: unknown) => void);
-          }
-        }
-      },
-      extensionEventsOff: (type, callback) => {
-        if (type === "message") {
-          offMessage(callback as (msg: unknown) => void);
-        } else if (type === "extensionMessage") {
-          extensionMessageHandlers.delete(callback as (msg: unknown) => void);
-          extensionMessageOnceHandlers.delete(
-            callback as (msg: unknown) => void
-          );
-        }
-      },
+      extensionEventsOn: extension.on,
+      extensionEventsOff: extension.off,
       // Viewer
       overrideViewerProperty: context.overrideViewerProperty,
       // Extension specifics
       getWidget,
       getBlock,
       getLayer,
-      pluginPostMessage,
+      pluginPostMessage: extension.postMessage,
       // Data
-      clientStorage: {
-        ...context.clientStorage,
-        getAsync: (extensionInstanceId: string, key: string) => {
-          const promise = context.clientStorage.getAsync(
-            extensionInstanceId,
-            key
-          );
-          promise.then(() => startEventLoop()).catch(() => startEventLoop());
-          return promise;
-        },
-        setAsync: (
-          extensionInstanceId: string,
-          key: string,
-          value: unknown
-        ) => {
-          const promise = context.clientStorage.setAsync(
-            extensionInstanceId,
-            key,
-            value
-          );
-          promise.then(() => startEventLoop()).catch(() => startEventLoop());
-          return promise;
-        },
-        deleteAsync: (extensionInstanceId: string, key: string) => {
-          const promise = context.clientStorage.deleteAsync(
-            extensionInstanceId,
-            key
-          );
-          promise.then(() => startEventLoop()).catch(() => startEventLoop());
-          return promise;
-        },
-        keysAsync: (extensionInstanceId: string) => {
-          const promise = context.clientStorage.keysAsync(extensionInstanceId);
-          promise.then(() => startEventLoop()).catch(() => startEventLoop());
-          return promise;
-        },
-        dropStore: (extensionInstanceId: string) => {
-          const promise = context.clientStorage.dropStore(extensionInstanceId);
-          promise.then(() => startEventLoop()).catch(() => startEventLoop());
-          return promise;
-        }
-      }
+      clientStorage
     });
-
-    return exposedAPI;
   };
 }
