@@ -1,5 +1,7 @@
 export * from "./useOverriddenProperty";
 
+export { computeHasCesiumIonAsset } from "./cesiumIonDetection";
+
 export {
   migrateViewerPropertyTiles,
   type TilesMigrationConfig

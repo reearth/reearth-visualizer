@@ -41,7 +41,7 @@ import {
 import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
 import useViewport from "./hooks/useViewport";
-import { migrateLayers } from "./utils";
+import { computeHasCesiumIonAsset, migrateLayers } from "./utils";
 
 type VisualizerProps = {
   engine?: EngineType;
@@ -270,6 +270,11 @@ const Visualizer: FC<VisualizerProps> = ({
     return migrateLayers(layers, { isEE, hasAccessToken });
   }, [layers, overriddenEngineMeta]);
 
+  const hasCesiumIonAsset = useMemo(
+    () => computeHasCesiumIonAsset(overriddenViewerProperty, migratedLayers),
+    [overriddenViewerProperty, migratedLayers],
+  );
+
   const coreWrapperRef = useRef<HTMLDivElement>(null);
   const { viewport } = useViewport({
     wrapperRef: coreWrapperRef,
@@ -301,6 +306,7 @@ const Visualizer: FC<VisualizerProps> = ({
           interactionMode={interactionMode}
           shouldRender={shouldRender}
           displayCredits={false}
+          hasCesiumIonAsset={hasCesiumIonAsset}
           onCameraChange={onCameraChange}
           onLayerSelect={handleCoreLayerSelect}
           onLayerDrop={handleLayerDrop}
