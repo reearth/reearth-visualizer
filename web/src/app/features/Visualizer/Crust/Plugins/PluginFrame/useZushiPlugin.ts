@@ -27,6 +27,7 @@ export type Options = {
   src?: string;
   sourceCode?: string;
   skip?: boolean;
+  autoResize?: "both" | "width-only" | "height-only";
   isMarshalable?: boolean | "json" | ((obj: unknown) => boolean | "json");
   ref?: ForwardedRef<Ref>;
   pluginContext: ReearthPluginContext;
@@ -97,6 +98,7 @@ export default function useZushiPlugin({
   src,
   sourceCode,
   skip,
+  autoResize,
   isMarshalable = defaultIsMarshalable,
   ref,
   pluginContext,
@@ -141,18 +143,12 @@ export default function useZushiPlugin({
   const modalContainerElement = useMemo(() => {
     const div = document.createElement("div");
     div.className = "zushi-modal-surface-container";
-    div.style.minWidth = "300px";
-    div.style.minHeight = "200px";
-    div.style.maxWidth = "90vw";
-    div.style.maxHeight = "90vh";
     return div;
   }, []);
 
   const popupContainerElement = useMemo(() => {
     const div = document.createElement("div");
     div.className = "zushi-popup-surface-container";
-    div.style.width = "100%";
-    div.style.height = "100%";
     return div;
   }, []);
 
@@ -249,15 +245,15 @@ export default function useZushiPlugin({
           surfaces: {
             ui: {
               container: uiContainer.current as HTMLElement,
-              autoResize: "both"
+              autoResize: autoResize ?? "both" // Use prop value, default to "both"
             },
             modal: {
               container: modalContainer.current as HTMLElement,
-              autoResize: "both"
+              autoResize: "both" // Modal always uses "both"
             },
             popup: {
               container: popupContainer.current as HTMLElement,
-              autoResize: "both"
+              autoResize: "both" // Popup always uses "both"
             }
           },
           // Use ref to access latest context without causing remounts
@@ -378,6 +374,7 @@ export default function useZushiPlugin({
   }, [
     code,
     skip,
+    autoResize,
     isMarshalable,
     onPreInit,
     onDispose,
