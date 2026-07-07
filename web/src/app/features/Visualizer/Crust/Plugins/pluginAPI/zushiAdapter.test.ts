@@ -420,5 +420,122 @@ describe("zushiAdapter", () => {
       expect(globalThis.console.log).toBe(console.log);
       expect(globalThis.console.error).toBe(console.error);
     });
+
+    test("wraps async viewer.tools methods to trigger event loop", async () => {
+      const startEventLoop = vi.fn();
+      const getCurrentLocationAsync = vi.fn().mockResolvedValue({
+        lat: 35.6762,
+        lng: 139.6503,
+        height: 0
+      });
+      const getTerrainHeightAsync = vi.fn().mockResolvedValue(100);
+      const getGeoidHeight = vi.fn().mockResolvedValue(50);
+
+      const reearthContext = {
+        ...createMockReearthContext(),
+        context: {
+          ...createMockReearthContext().context,
+          reearth: {
+            ...createMockReearthContext().context.reearth,
+            viewer: {
+              ...createMockReearthContext().context.reearth.viewer,
+              tools: {
+                ...createMockReearthContext().context.reearth.viewer.tools,
+                getCurrentLocationAsync,
+                getTerrainHeightAsync,
+                getGeoidHeight
+              }
+            }
+          }
+        }
+      };
+
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(reearthContext, messageHandlers);
+
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: createMockSurface(),
+          popup: createMockSurface()
+        },
+        startEventLoop
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Test getCurrentLocationAsync triggers event loop
+      await globalThis.reearth.viewer.tools.getCurrentLocationAsync();
+      expect(getCurrentLocationAsync).toHaveBeenCalled();
+      expect(startEventLoop).toHaveBeenCalled();
+
+      // Reset and test getTerrainHeightAsync
+      startEventLoop.mockClear();
+      await globalThis.reearth.viewer.tools.getTerrainHeightAsync(139.6503, 35.6762);
+      expect(getTerrainHeightAsync).toHaveBeenCalledWith(139.6503, 35.6762);
+      expect(startEventLoop).toHaveBeenCalled();
+
+      // Reset and test getGeoidHeight
+      startEventLoop.mockClear();
+      await globalThis.reearth.viewer.tools.getGeoidHeight(139.6503, 35.6762);
+      expect(getGeoidHeight).toHaveBeenCalledWith(139.6503, 35.6762);
+      expect(startEventLoop).toHaveBeenCalled();
+    });
+
+    test("wraps async viewer.tools methods to trigger event loop on error", async () => {
+      const startEventLoop = vi.fn();
+      const getCurrentLocationAsync = vi.fn().mockRejectedValue(new Error("Location unavailable"));
+
+      const reearthContext = {
+        ...createMockReearthContext(),
+        context: {
+          ...createMockReearthContext().context,
+          reearth: {
+            ...createMockReearthContext().context.reearth,
+            viewer: {
+              ...createMockReearthContext().context.reearth.viewer,
+              tools: {
+                ...createMockReearthContext().context.reearth.viewer.tools,
+                getCurrentLocationAsync
+              }
+            }
+          }
+        }
+      };
+
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(reearthContext, messageHandlers);
+
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: createMockSurface(),
+          popup: createMockSurface()
+        },
+        startEventLoop
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Test that event loop is triggered even on error
+      try {
+        await globalThis.reearth.viewer.tools.getCurrentLocationAsync();
+      } catch (e) {
+        // Expected error
+      }
+
+      expect(getCurrentLocationAsync).toHaveBeenCalled();
+      expect(startEventLoop).toHaveBeenCalled();
+    });
   });
 });

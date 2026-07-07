@@ -997,6 +997,130 @@ Each plugin instance (widget, story block, infobox block) is properly isolated:
 - Limit number of simultaneously active plugins
 - Consider virtualizing plugin lists
 
+## Development Guidelines
+
+### Adding New Async Methods to Plugin API
+
+**CRITICAL REQUIREMENT**: All async methods exposed to plugins MUST trigger Zushi's event loop after their promises resolve. Without this, plugin execution freezes.
+
+#### Why This Is Required
+
+Zushi runs plugin code in a QuickJS WebAssembly VM. When an async operation (Promise) resolves outside the VM, the VM doesn't automatically resume execution. You must call `startEventLoop()` to pump the event queue.
+
+**Symptom of Missing Wrapper**: The async method works on the second call but not the first (because another event happens to trigger the loop).
+
+#### How to Add New Async Methods
+
+**Step 1: Identify if the method returns a Promise**
+
+```typescript
+// Example: A new async method in viewer.tools
+const myNewAsyncMethod = useCallback(
+  async (param: string) => {
+    return await someAsyncOperation(param);
+  },
+  []
+);
+```
+
+**Step 2: Wrap it using `wrapAsync()` utility**
+
+Location: `src/app/features/Visualizer/Crust/Plugins/pluginAPI/zushiAdapter.ts`
+
+The `wrapAsync()` utility automatically triggers `startEventLoop()` after promise resolution:
+
+```typescript
+/**
+ * Generic utility to wrap async functions with event loop trigger
+ */
+function wrapAsync<T extends (...args: any[]) => Promise<any>>(
+  fn: T,
+  startEventLoop: () => void
+): T {
+  return ((...args: Parameters<T>) => {
+    const promise = fn(...args);
+    promise.then(() => startEventLoop()).catch(() => startEventLoop());
+    return promise;
+  }) as T;
+}
+```
+
+**Step 3: Add to appropriate wrapper function**
+
+For viewer.tools methods, add to `wrapCommonReearth()`:
+
+```typescript
+function wrapCommonReearth(
+  commonReearth: CommonReearth,
+  startEventLoop: () => void
+): CommonReearth {
+  return {
+    ...commonReearth,
+    viewer: {
+      ...commonReearth.viewer,
+      tools: {
+        ...commonReearth.viewer.tools,
+        // Existing async methods
+        getCurrentLocationAsync: wrapAsync(
+          commonReearth.viewer.tools.getCurrentLocationAsync,
+          startEventLoop
+        ),
+        // NEW: Your async method
+        myNewAsyncMethod: wrapAsync(
+          commonReearth.viewer.tools.myNewAsyncMethod,
+          startEventLoop
+        )
+      }
+    }
+  };
+}
+```
+
+For other async methods (camera, layers, etc.), follow the same pattern.
+
+#### Currently Wrapped Async Methods
+
+**clientStorage** (wrapped in `wrapClientStorage`):
+- `getAsync`
+- `setAsync`
+- `deleteAsync`
+- `keysAsync`
+- `dropStore`
+
+**viewer.tools** (wrapped in `wrapCommonReearth`):
+- `getCurrentLocationAsync` - Browser geolocation API
+- `getTerrainHeightAsync` - Terrain height sampling
+- `getGeoidHeight` - Geoid height calculation
+
+#### Testing Async Methods
+
+Always test that:
+1. The method works on first call (not just second)
+2. Event loop is triggered on success
+3. Event loop is triggered on error
+
+Example test:
+
+```typescript
+test("new async method triggers event loop", async () => {
+  const startEventLoop = vi.fn();
+  const myAsyncMethod = vi.fn().mockResolvedValue("result");
+
+  // ... setup context with myAsyncMethod
+
+  const globalThis = factory(mockZushiContext);
+
+  await globalThis.reearth.viewer.tools.myAsyncMethod("param");
+
+  expect(myAsyncMethod).toHaveBeenCalledWith("param");
+  expect(startEventLoop).toHaveBeenCalled(); // CRITICAL
+});
+```
+
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/pluginAPI/zushiAdapter.ts:415-526`
+
+**Test Reference**: `src/app/features/Visualizer/Crust/Plugins/pluginAPI/zushiAdapter.test.ts:397-490`
+
 ## Security Considerations
 
 ### Sandboxing
@@ -1097,14 +1221,21 @@ reearth.ui.close();
 - **Fixed**: Modal/popup close button not working due to iframe contentWindow timing issue
   - Added load event listener for iframe window registration
   - Applied fix to both initial collection and MutationObserver
+  - Fixed nested iframe detection in MutationObserver to use same load event pattern
 - **Fixed**: Removed block ID key-based memoization that coupled all plugin re-renders
   - Each plugin instance now properly isolated
   - Editing one block no longer affects other plugins
+- **Fixed**: Async viewer.tools methods (getCurrentLocationAsync, getTerrainHeightAsync, getGeoidHeight) not working on first call
+  - Added wrapAsync utility to trigger Zushi event loop after promise resolution
+  - Applied to all async methods in clientStorage and viewer.tools
+  - Created comprehensive development guidelines for adding new async methods
+- **Fixed**: modal.update not applying background and clickBgToClose options
 - **Improved**: Added comprehensive documentation of optimization patterns
   - Documented ref-based context pattern
   - Documented pluginContextRef pattern
   - Documented stable callbacks pattern
 - **Improved**: Added detailed comments explaining non-obvious patterns in code
+- **Improved**: Created "Development Guidelines" section with async method requirements and examples
 
 ### 2026-07-02 - Zushi Migration Complete
 

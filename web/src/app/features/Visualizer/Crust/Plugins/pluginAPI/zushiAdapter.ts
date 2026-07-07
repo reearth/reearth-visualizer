@@ -4,6 +4,55 @@
  * This module provides the bridge between Zushi's surface API and the current
  * Re:Earth plugin API structure. It maps Zushi surfaces (ui, modal, popup) to
  * the existing iframe-based API interface.
+ *
+ * CRITICAL: ASYNC METHODS REQUIREMENT
+ *
+ * All async methods exposed to plugins MUST trigger Zushi's event loop after
+ * their promises resolve. Without this, the plugin execution freezes waiting
+ * for the result.
+ *
+ * WHY: Zushi runs plugin code in a QuickJS WebAssembly VM. When an async
+ * operation (Promise) resolves outside the VM, the VM doesn't automatically
+ * resume execution. You must call startEventLoop() to pump the event queue.
+ *
+ * HOW TO ADD NEW ASYNC METHODS:
+ *
+ * 1. Identify if the method returns a Promise
+ * 2. Use the wrapAsync() utility function (see below) to wrap it
+ * 3. Add it to the appropriate wrapper (wrapCommonReearth, wrapClientStorage, etc.)
+ *
+ * Example:
+ * ```typescript
+ * // Adding a new async method to viewer.tools
+ * function wrapCommonReearth(commonReearth, startEventLoop) {
+ *   return {
+ *     ...commonReearth,
+ *     viewer: {
+ *       ...commonReearth.viewer,
+ *       tools: {
+ *         ...commonReearth.viewer.tools,
+ *         // Existing async methods
+ *         getCurrentLocationAsync: wrapAsync(
+ *           commonReearth.viewer.tools.getCurrentLocationAsync,
+ *           startEventLoop
+ *         ),
+ *         // NEW: Your async method
+ *         yourNewAsyncMethod: wrapAsync(
+ *           commonReearth.viewer.tools.yourNewAsyncMethod,
+ *           startEventLoop
+ *         )
+ *       }
+ *     }
+ *   };
+ * }
+ * ```
+ *
+ * CURRENTLY WRAPPED ASYNC METHODS:
+ * - clientStorage: getAsync, setAsync, deleteAsync, keysAsync, dropStore
+ * - viewer.tools: getCurrentLocationAsync, getTerrainHeightAsync, getGeoidHeight
+ *
+ * If you add a new async method to the plugin API and forget to wrap it,
+ * the symptom will be: the method works on the second call but not the first.
  */
 
 import type { Layer } from "@reearth/core";
@@ -16,6 +65,7 @@ import type { Widget } from "../../Widgets";
 import type { PluginPopupInfo } from "../Plugin/PopupContainer";
 import type { Context } from "../types";
 
+import type { CommonReearth } from "./commonReearth";
 import { exposedReearth } from "./exposedReearth";
 import type { GlobalThis, Reearth } from "./types";
 
@@ -416,7 +466,44 @@ function createExtensionMessageHandler(
 }
 
 /**
+ * Generic utility to wrap async functions with event loop trigger
+ *
+ * HOW TO USE FOR FUTURE ASYNC APIs:
+ *
+ * 1. Identify if a method returns a Promise
+ * 2. Wrap it with wrapAsync before exposing to plugin
+ * 3. The wrapper triggers startEventLoop() after resolution (success or error)
+ *
+ * Example:
+ * ```typescript
+ * const myAsyncMethod = wrapAsync(
+ *   originalMethod,
+ *   startEventLoop
+ * );
+ * ```
+ *
+ * @param fn - The async function to wrap
+ * @param startEventLoop - Callback to trigger Zushi event loop
+ * @returns Wrapped function that triggers event loop after resolution
+ */
+function wrapAsync<T extends (...args: any[]) => Promise<any>>(
+  fn: T,
+  startEventLoop: () => void
+): T {
+  return ((...args: Parameters<T>) => {
+    const promise = fn(...args);
+    promise.then(() => startEventLoop()).catch(() => startEventLoop());
+    return promise;
+  }) as T;
+}
+
+/**
  * Wraps client storage methods with event loop trigger
+ *
+ * IMPORTANT: All async methods in the plugin API must trigger startEventLoop()
+ * after their promises resolve, otherwise the plugin execution freezes.
+ *
+ * See wrapAsync() utility for how to wrap new async methods.
  */
 function wrapClientStorage(
   clientStorage: Context["clientStorage"],
@@ -424,30 +511,58 @@ function wrapClientStorage(
 ): Context["clientStorage"] {
   return {
     ...clientStorage,
-    getAsync: (extensionInstanceId: string, key: string) => {
-      const promise = clientStorage.getAsync(extensionInstanceId, key);
-      promise.then(() => startEventLoop()).catch(() => startEventLoop());
-      return promise;
-    },
-    setAsync: (extensionInstanceId: string, key: string, value: unknown) => {
-      const promise = clientStorage.setAsync(extensionInstanceId, key, value);
-      promise.then(() => startEventLoop()).catch(() => startEventLoop());
-      return promise;
-    },
-    deleteAsync: (extensionInstanceId: string, key: string) => {
-      const promise = clientStorage.deleteAsync(extensionInstanceId, key);
-      promise.then(() => startEventLoop()).catch(() => startEventLoop());
-      return promise;
-    },
-    keysAsync: (extensionInstanceId: string) => {
-      const promise = clientStorage.keysAsync(extensionInstanceId);
-      promise.then(() => startEventLoop()).catch(() => startEventLoop());
-      return promise;
-    },
-    dropStore: (extensionInstanceId: string) => {
-      const promise = clientStorage.dropStore(extensionInstanceId);
-      promise.then(() => startEventLoop()).catch(() => startEventLoop());
-      return promise;
+    getAsync: wrapAsync(clientStorage.getAsync.bind(clientStorage), startEventLoop),
+    setAsync: wrapAsync(clientStorage.setAsync.bind(clientStorage), startEventLoop),
+    deleteAsync: wrapAsync(clientStorage.deleteAsync.bind(clientStorage), startEventLoop),
+    keysAsync: wrapAsync(clientStorage.keysAsync.bind(clientStorage), startEventLoop),
+    dropStore: wrapAsync(clientStorage.dropStore.bind(clientStorage), startEventLoop)
+  };
+}
+
+/**
+ * Wraps async viewer.tools methods with event loop trigger
+ *
+ * WHY: Async methods in viewer.tools return Promises that resolve outside the
+ * plugin's execution context. Without triggering startEventLoop(), the plugin
+ * code freezes waiting for the promise result.
+ *
+ * CURRENT ASYNC METHODS IN viewer.tools:
+ * - getTerrainHeightAsync: terrain height sampling
+ * - getGeoidHeight: geoid height calculation
+ * - getCurrentLocationAsync: browser geolocation API
+ *
+ * ADDING NEW ASYNC METHODS TO viewer.tools:
+ * When adding new async methods to viewer.tools in the future:
+ * 1. Add the method to this wrapper using wrapAsync()
+ * 2. Use wrapAsync(commonReearth.viewer.tools.yourMethod, startEventLoop)
+ * 3. See wrapAsync() documentation for examples
+ *
+ * SOLUTION: Use wrapAsync() utility to wrap each async method, ensuring the
+ * plugin continues execution regardless of success or failure.
+ */
+function wrapCommonReearth(
+  commonReearth: CommonReearth,
+  startEventLoop: () => void
+): CommonReearth {
+  return {
+    ...commonReearth,
+    viewer: {
+      ...commonReearth.viewer,
+      tools: {
+        ...commonReearth.viewer.tools,
+        getTerrainHeightAsync: wrapAsync(
+          commonReearth.viewer.tools.getTerrainHeightAsync,
+          startEventLoop
+        ),
+        getGeoidHeight: wrapAsync(
+          commonReearth.viewer.tools.getGeoidHeight,
+          startEventLoop
+        ),
+        getCurrentLocationAsync: wrapAsync(
+          commonReearth.viewer.tools.getCurrentLocationAsync,
+          startEventLoop
+        )
+      }
     }
   };
 }
@@ -513,9 +628,12 @@ export function createZushiExposedAPI(
     // Wrap client storage with event loop trigger
     const clientStorage = wrapClientStorage(context.clientStorage, startEventLoop);
 
+    // Wrap commonReearth async methods with event loop trigger
+    const wrappedCommonReearth = wrapCommonReearth(context.reearth, startEventLoop);
+
     // Build and return the exposed API
     return exposedReearth({
-      commonReearth: context.reearth,
+      commonReearth: wrappedCommonReearth,
       plugin,
       // Viewer events
       viewerEventsOn: context.viewerEvents.on,
