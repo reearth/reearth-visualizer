@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"sync"
 	"time"
@@ -39,6 +40,35 @@ const importWorkerCount = 3
 // request goroutine in practice.
 const importJobQueueSize = 32
 
+// maxChunkCount bounds total_chunks well above any legitimate upload (the
+// import pipeline already rejects anything over 500MB, which is ~32
+// chunks at the client's 16MB chunk size) while still capping how large a
+// backing file a single request can make the server allocate.
+const maxChunkCount = 128
+
+// safeFileIDPattern restricts file_id to a conservative, path-safe charset.
+// fileID flows directly into filepath.Join(tempDir, fileID); without this,
+// a client could send a path-traversal value (e.g. "../../etc/cron.d/x")
+// to write outside the intended temp directory.
+var safeFileIDPattern = regexp.MustCompile(`^[A-Za-z0-9_-]{1,128}$`)
+
+// validateChunkRequest rejects a chunk request before fileID or chunkNum
+// ever reach the filesystem: an unrestricted fileID can path-traverse out
+// of tempDir via filepath.Join, and an unbounded/negative chunkNum can
+// force writes at arbitrary offsets in the backing file.
+func validateChunkRequest(fileID string, chunkNum, totalChunks int) error {
+	if !safeFileIDPattern.MatchString(fileID) {
+		return errors.New("invalid file id")
+	}
+	if totalChunks <= 0 || totalChunks > maxChunkCount {
+		return errors.New("invalid total chunks")
+	}
+	if chunkNum < 0 || chunkNum >= totalChunks {
+		return errors.New("invalid chunk number")
+	}
+	return nil
+}
+
 // uploadSession tracks one in-progress chunked upload. All fields are
 // unexported and every access goes through a locking method below — no
 // code outside this type may read or write a field directly. This is what
@@ -53,6 +83,7 @@ type uploadSession struct {
 	totalChunks int
 	received    map[int]struct{}
 	project     *project.Project
+	dispatched  bool
 	updatedAt   time.Time
 }
 
@@ -71,7 +102,13 @@ type sessionInfo struct {
 
 func newUploadSession(tempDir, fileID string, totalChunks int, chunkSize int64) (*uploadSession, error) {
 	filePath := filepath.Join(tempDir, fileID)
-	f, err := os.OpenFile(filePath, os.O_CREATE|os.O_RDWR, 0644)
+	// O_TRUNC guards against a stale file left behind at the same path
+	// (e.g. from a crashed previous session with a reused fileID): without
+	// it, trailing bytes from the old file would survive past the new
+	// upload's shorter content and silently corrupt the assembled zip.
+	// 0600 keeps uploaded content unreadable to other OS-level users/
+	// processes sharing the temp directory.
+	f, err := os.OpenFile(filePath, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0600)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create upload file: %w", err)
 	}
@@ -88,13 +125,25 @@ func newUploadSession(tempDir, fileID string, totalChunks int, chunkSize int64) 
 
 // writeChunk streams r directly to this chunk's byte offset in the
 // session's single backing file (no per-chunk files, no later concatenation
-// step). It reports whether the upload is now complete: every chunk index
-// in [0, totalChunks) has been written AND the project (created from chunk
-// 0) has been set. Both conditions are required — a malformed client that
-// never sends chunk 0 can never be reported complete.
+// step). It reports whether this call is the one that completes the
+// upload: every chunk index in [0, totalChunks) has been written AND the
+// project (created from chunk 0) has been set. Both conditions are
+// required — a malformed client that never sends chunk 0 can never be
+// reported complete.
+//
+// completed is reported at most once per session (edge-triggered, not
+// level-triggered): once an import has been dispatched, later calls —
+// e.g. a client retry of the last chunk, or a duplicate concurrent
+// request — return false without touching the file again. Without this,
+// every retry after completion would re-dispatch a duplicate import job
+// racing the first job's cleanup of this same session/file.
 func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
+	if s.dispatched {
+		return false, nil
+	}
 
 	offset := int64(idx) * s.chunkSize
 	if _, err := io.Copy(io.NewOffsetWriter(s.file, offset), r); err != nil {
@@ -103,7 +152,11 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 	s.received[idx] = struct{}{}
 	s.updatedAt = time.Now()
 
-	return s.hasAllChunksLocked() && s.project != nil, nil
+	if !s.hasAllChunksLocked() || s.project == nil {
+		return false, nil
+	}
+	s.dispatched = true
+	return true, nil
 }
 
 func (s *uploadSession) hasAllChunksLocked() bool {
@@ -232,6 +285,10 @@ func servSplitUploadFiles(
 			totalChunks, err := strconv.Atoi(c.FormValue("total_chunks"))
 			if err != nil {
 				return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid total chunks")
+			}
+
+			if err := validateChunkRequest(fileID, chunkNum, totalChunks); err != nil {
+				return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 			}
 
 			f, _, err := c.Request().FormFile("file")

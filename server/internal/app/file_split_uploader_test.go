@@ -13,6 +13,15 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 )
 
+// setUpdatedAtForTest mutates updatedAt under the session's own lock, so
+// tests exercising staleness don't have to reach past uploadSession's
+// locking methods and break the invariant the type exists to enforce.
+func (s *uploadSession) setUpdatedAtForTest(t time.Time) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.updatedAt = t
+}
+
 func newTestManager(t *testing.T) *SplitUploadManager {
 	t.Helper()
 	return &SplitUploadManager{
@@ -109,6 +118,44 @@ func TestUploadSession_WriteChunk_CompletionDetection(t *testing.T) {
 	}
 }
 
+// TestUploadSession_WriteChunk_CompletesOnlyOnce is a regression test:
+// once a session has been reported complete, a retried/duplicate write of
+// an already-received chunk (e.g. a client retrying the final chunk after
+// a flaky response) must not report completed a second time. Otherwise
+// the caller would dispatch a second import job for the same fileID,
+// racing the first job's cleanup of the session and its backing file.
+func TestUploadSession_WriteChunk_CompletesOnlyOnce(t *testing.T) {
+	m := newTestManager(t)
+
+	prj, err := project.New().NewID().Build()
+	if err != nil {
+		t.Fatalf("failed to build project: %v", err)
+	}
+
+	session, err := m.getOrCreateSession("f5", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	session.setProject(prj)
+
+	completed, err := session.writeChunk(0, strings.NewReader("data"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !completed {
+		t.Fatal("should be completed after the only chunk is received")
+	}
+
+	// Retry of the same chunk after completion.
+	completed, err = session.writeChunk(0, strings.NewReader("data"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if completed {
+		t.Error("must not report completed a second time for the same session")
+	}
+}
+
 // TestUploadSession_WriteChunk_MissingChunkZero is the REL-01 regression
 // test: a session must never be reported completed while chunk 0 (which
 // creates the session's Project) was never received, even once every other
@@ -170,7 +217,7 @@ func TestSplitUploadManager_CleanupStaleSessions(t *testing.T) {
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
-	session.updatedAt = time.Now().Add(-25 * time.Hour)
+	session.setUpdatedAtForTest(time.Now().Add(-25 * time.Hour))
 
 	m.cleanupStaleSessions()
 
@@ -225,5 +272,43 @@ func TestUploadSession_FilePathIsUnderTempDir(t *testing.T) {
 	}
 	if !bytes.Contains([]byte(session.snapshot().FilePath), []byte("f4")) {
 		t.Errorf("file path %q should contain fileID", session.snapshot().FilePath)
+	}
+}
+
+// TestValidateChunkRequest covers the request-level validation that keeps
+// fileID and chunkNum from ever reaching the filesystem unchecked: fileID
+// flows into filepath.Join(tempDir, fileID), so an unrestricted value is a
+// path-traversal vector, and an unbounded/negative chunkNum could force
+// writes at arbitrary offsets in the backing file.
+func TestValidateChunkRequest(t *testing.T) {
+	tests := []struct {
+		name        string
+		fileID      string
+		chunkNum    int
+		totalChunks int
+		wantErr     bool
+	}{
+		{"valid uuid-like id", "550e8400-e29b-41d4-a716-446655440000", 0, 3, false},
+		{"valid alphanumeric id", "upload_123", 2, 3, false},
+		{"path traversal via dotdot", "../../etc/cron.d/evil", 0, 1, true},
+		{"path traversal via slash", "sub/dir/file", 0, 1, true},
+		{"empty file id", "", 0, 1, true},
+		{"negative chunk num", "valid-id", -1, 3, true},
+		{"chunk num equal to total", "valid-id", 3, 3, true},
+		{"chunk num beyond total", "valid-id", 10, 3, true},
+		{"zero total chunks", "valid-id", 0, 0, true},
+		{"negative total chunks", "valid-id", 0, -5, true},
+		{"total chunks over the cap", "valid-id", 0, maxChunkCount + 1, true},
+		{"total chunks at the cap", "valid-id", 0, maxChunkCount, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateChunkRequest(tt.fileID, tt.chunkNum, tt.totalChunks)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("validateChunkRequest(%q, %d, %d) error = %v, wantErr %v",
+					tt.fileID, tt.chunkNum, tt.totalChunks, err, tt.wantErr)
+			}
+		})
 	}
 }
