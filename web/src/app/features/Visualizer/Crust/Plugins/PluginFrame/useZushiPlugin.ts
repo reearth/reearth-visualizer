@@ -370,13 +370,9 @@ export default function useZushiPlugin({
                     }, { once: true });
                   }
                 }
-                // Check if it contains iframes
-                const iframes = element.querySelectorAll('iframe');
-                iframes.forEach(iframe => {
-                  if (iframe.contentWindow) {
-                    surfaceWindowsRef.current.add(iframe.contentWindow);
-                  }
-                });
+                // Check if the added element contains nested iframes
+                // Use collectIframeWindows to handle load event timing
+                collectIframeWindows(element);
               }
             });
           });
