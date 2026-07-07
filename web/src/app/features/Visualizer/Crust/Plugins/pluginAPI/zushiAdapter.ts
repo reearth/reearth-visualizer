@@ -239,6 +239,11 @@ function createModalAdapter(
         width: options?.width,
         height: options?.height
       });
+      // Update modal wrapper background and click behavior
+      onModalShow?.({
+        background: options?.background,
+        clickBgToClose: options?.clickBgToClose
+      });
     },
     postMessage: (msg) => {
       surface.postMessage(msg);

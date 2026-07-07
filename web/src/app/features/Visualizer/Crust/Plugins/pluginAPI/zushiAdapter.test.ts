@@ -251,6 +251,53 @@ describe("zushiAdapter", () => {
       expect(modalSurface.postMessage).toHaveBeenCalledWith({ action: "update" });
     });
 
+    test("modal.update updates dimensions and triggers onModalShow callback", () => {
+      const onModalShow = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onModalShow
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(reearthContext, messageHandlers);
+
+      const modalSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: modalSurface,
+          popup: createMockSurface()
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Test modal.update with background and clickBgToClose
+      globalThis.reearth.modal.update({
+        width: 600,
+        height: 400,
+        background: "#ff0000",
+        clickBgToClose: true
+      });
+
+      // Verify surface.update was called with dimensions
+      expect(modalSurface.update).toHaveBeenCalledWith({
+        width: 600,
+        height: 400
+      });
+
+      // Verify onModalShow was called with background options
+      expect(onModalShow).toHaveBeenCalledWith({
+        background: "#ff0000",
+        clickBgToClose: true
+      });
+    });
+
     test("maps Popup surface to reearth.popup API", () => {
       const reearthContext = createMockReearthContext();
       const messageHandlers = {
