@@ -95,6 +95,12 @@ jobs:
         if: always()
         uses: google-github-actions/setup-gcloud@v3
 
+      - name: Upload dashboard landing page to GCS
+        if: always()
+        run: |
+          gsutil -h "Content-Type:text/html" -h "Cache-Control:no-cache" \
+            cp ./dashboard/index.html "gs://$BUCKET/index.html"
+
       - name: Check Allure Results
         if: always()
         id: check-results
