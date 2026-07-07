@@ -136,13 +136,11 @@ type Props = {
   modalVisible?: boolean;
   popupVisible?: boolean;
   externalRef?: RefObject<HTMLIFrameElement | null>;
-  uiContainerRef?: RefObject<HTMLElement | null>;
+  uiContainerRef?: MutableRefObject<HTMLElement | null>;
   isMarshalable?: boolean | "json" | ((target: unknown) => boolean | "json");
   pluginContext: ReearthPluginContext;
   onMessage?: (message: unknown) => void;
-  onPreInit?: () => void;
   onError?: (err: unknown) => void;
-  onDispose?: () => void;
   onClick?: () => void;
   onRender?: (type: string) => void;
 };
@@ -178,8 +176,6 @@ type Options = {
   ref?: ForwardedRef<Ref>;
   pluginContext: ReearthPluginContext;
   onError?: (err: unknown) => void;
-  onPreInit?: () => void;
-  onDispose?: () => void;
   onMessage?: (msg: unknown) => void;
 };
 ```
@@ -204,7 +200,7 @@ type UseZushiPluginReturn = {
 
 **Parameters**:
 
-- `reearthContext: ReearthPluginContext` - Re:Earth context with viewer, camera, layers, etc.
+- `getContext: () => ReearthPluginContext` - Getter function that returns the latest Re:Earth context with viewer, camera, layers, etc. Using a getter instead of direct context prevents plugin remounts when context data changes.
 - `messageHandlers: MessageHandlers` - Message event handlers (on/off/once)
 
 **Returns**: `(zushiContext: ZushiContext) => GlobalThis` - Factory function that creates the exposed API
@@ -212,11 +208,19 @@ type UseZushiPluginReturn = {
 **Example**:
 
 ```typescript
-const exposedAPI = createZushiExposedAPI(pluginContext, {
-  onMessage: (handler) => messageEvents.add(handler),
-  offMessage: (handler) => messageEvents.delete(handler),
-  onceMessage: (handler) => messageOnceEvents.add(handler)
+const pluginContextRef = useRef(pluginContext);
+useEffect(() => {
+  pluginContextRef.current = pluginContext;
 });
+
+const exposedAPI = createZushiExposedAPI(
+  () => pluginContextRef.current,
+  {
+    onMessage: (handler) => messageEvents.add(handler),
+    offMessage: (handler) => messageEvents.delete(handler),
+    onceMessage: (handler) => messageOnceEvents.add(handler)
+  }
+);
 
 const plugin = new Plugin({
   code: pluginCode,
@@ -508,8 +512,6 @@ pluginContext.context.pluginInstances.postMessage(
 ### 1. Initialization
 
 ```typescript
-onPreInit?.(); // User callback
-
 // Load plugin code
 const code = sourceCode ?? (await fetch(src).text());
 
@@ -522,7 +524,7 @@ const plugin = new Plugin({
     modal: { container: modalContainer.current, autoResize: "both" },
     popup: { container: popupContainer.current, autoResize: "both" }
   },
-  exposed: createZushiExposedAPI(pluginContext, messageHandlers)
+  exposed: createZushiExposedAPI(() => pluginContextRef.current, messageHandlers)
 });
 
 // Start plugin execution
@@ -547,9 +549,6 @@ await plugin.start();
 ### 4. Cleanup/Disposal
 
 ```typescript
-// User callback
-onDispose?.();
-
 // Clear message events
 messageEvents.clear();
 messageOnceEvents.clear();
@@ -929,7 +928,7 @@ export const PluginProvider: FC<PropsWithChildren<{ value: Context }>> = ({
 
 **Code Reference**: `src/app/features/Visualizer/Crust/Plugins/context.tsx`
 
-#### 2. pluginContextRef Pattern
+#### 2. Context Getter Pattern in createZushiExposedAPI
 
 ```typescript
 // useZushiPlugin.ts
@@ -938,20 +937,27 @@ useEffect(() => {
   pluginContextRef.current = pluginContext;
 });
 
-// Use ref in exposed API, omit from useEffect deps
+// Pass getter function, not direct value
 const plugin = new Plugin({
-  exposed: createZushiExposedAPI(pluginContextRef.current, messageHandlers)
+  exposed: createZushiExposedAPI(() => pluginContextRef.current, messageHandlers)
 });
 ```
 
-**Why**: Zushi's exposed API is created once and cannot be updated. If `pluginContext` were in useEffect deps, the plugin would remount on every context change. The ref allows accessing latest context data without triggering remounts.
+**Why**: Zushi's exposed API is created once and cannot be updated. The exposed API needs access to the latest context data (blocks, widgets, layers) without recreating the plugin. By passing a getter function `() => pluginContextRef.current`, the API can dynamically access fresh data on every call.
 
-**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/PluginFrame/useZushiPlugin.ts:114-118`
+**Critical**: If we passed `pluginContextRef.current` directly, the API would capture a snapshot of the context at creation time. If we passed `pluginContext` and included it in useEffect deps, the plugin would remount on every context change (expensive).
+
+**Impact**: This pattern allows:
+- Adding/removing story blocks without remounting other plugins
+- Updating widget properties without plugin remounts
+- Layer changes propagating to plugins without reinitialization
+
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/PluginFrame/useZushiPlugin.ts:114-118`, `src/app/features/Visualizer/Crust/Plugins/pluginAPI/zushiAdapter.ts:587-590`
 
 #### 3. Stable Callbacks with Refs
 
 ```typescript
-// Plugin/hooks/index.ts
+// Plugin/hooks/usePluginInstance.ts
 const callbacksRef = useRef({ onPluginModalShow, widget, block });
 useEffect(() => {
   callbacksRef.current = { onPluginModalShow, widget, block };
@@ -959,15 +965,28 @@ useEffect(() => {
 
 const handleModalShow = useCallback(
   (options) => {
-    callbacksRef.current.onPluginModalShow?.(options);
+    const instanceId = callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
+    callbacksRef.current.onPluginModalShow?.({
+      id: instanceId,
+      ...options
+    });
   },
-  [] // Empty deps = stable callback
+  [] // Empty deps = stable callback identity
 );
 ```
 
-**Why**: Callbacks are passed to Zushi via `pluginContext`. If callbacks change, `pluginContext` must be recreated, causing plugin remount. Stable callbacks with refs prevent this while still accessing latest values.
+**Why**: Callbacks are passed to Zushi via `pluginContext`. If callbacks change, `pluginContext` must be recreated, causing plugin remount. Stable callbacks with empty dependencies maintain constant identity, while reading latest values from refs inside the callback body.
 
-**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/Plugin/hooks/index.ts:189-217`
+**Pattern**:
+- ❌ Bad: `useCallback(() => { doSomething(prop) }, [prop])` - Creates new callback when prop changes
+- ✅ Good: `useCallback(() => { doSomething(ref.current.prop) }, [])` - Stable callback, reads from ref
+
+**Impact**: Prevents plugin remounts when:
+- Parent passes new callback functions
+- Widget/block data updates
+- Modal/popup visibility state changes
+
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/Plugin/hooks/usePluginInstance.ts:95-227`
 
 #### 4. Plugin Instance Isolation
 
@@ -1206,7 +1225,9 @@ reearth.ui.close();
 - `src/app/features/Visualizer/Crust/Plugins/PluginFrame/index.tsx` - Main component
 - `src/app/features/Visualizer/Crust/Plugins/PluginFrame/useZushiPlugin.ts` - Core hook
 - `src/app/features/Visualizer/Crust/Plugins/pluginAPI/zushiAdapter.ts` - API bridge
-- `src/app/features/Visualizer/Crust/Plugins/Plugin/index.tsx` - Plugin management
+- `src/app/features/Visualizer/Crust/Plugins/pluginAPI/exposedReearth.ts` - Exposed API builder
+- `src/app/features/Visualizer/Crust/Plugins/Plugin/index.tsx` - Plugin wrapper component
+- `src/app/features/Visualizer/Crust/Plugins/Plugin/hooks/usePluginInstance.ts` - Plugin instance management hook
 
 ## External Resources
 
@@ -1215,6 +1236,33 @@ reearth.ui.close();
 - [Floating UI](https://floating-ui.com/) - Popup positioning library
 
 ## Changelog
+
+### 2026-07-07 - Plugin System Refactoring and Cleanup
+
+**Breaking Changes:**
+- **Removed**: `onPreInit` and `onDispose` callbacks from PluginFrame and useZushiPlugin
+  - These callbacks are no longer needed with Zushi's managed lifecycle
+  - Plugin initialization and cleanup are handled automatically by the framework
+- **Changed**: `createZushiExposedAPI` now requires a getter function instead of direct context
+  - **Before**: `createZushiExposedAPI(reearthContext, messageHandlers)`
+  - **After**: `createZushiExposedAPI(() => pluginContextRef.current, messageHandlers)`
+  - This prevents plugin remounts when context data changes
+
+**Code Quality:**
+- **Removed**: Dead code from legacy iframe-based plugin system (`usePluginAPI.ts`)
+- **Renamed**: `Plugin/hooks/index.ts` → `Plugin/hooks/usePluginInstance.ts` for clarity
+  - Better indicates the hook manages plugin instance state and lifecycle
+- **Simplified**: `exposedReearth.ts` to only support getter-based pattern
+  - Removed backward compatibility layer for old iframe system
+  - All plugin data access now uses consistent getter pattern
+- **Fixed**: Context snapshotting issue in `createZushiExposedAPI`
+  - Plugins now always access latest context data without remounting
+  - Maintains performance optimizations while ensuring data freshness
+
+**Documentation:**
+- Updated API signatures and examples throughout this document
+- Added detailed explanation of getter-based context pattern
+- Updated code references to reflect new file names
 
 ### 2026-07-07 - Performance Optimization and Bug Fixes
 

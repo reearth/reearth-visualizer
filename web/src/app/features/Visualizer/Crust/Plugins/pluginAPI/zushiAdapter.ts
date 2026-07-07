@@ -319,8 +319,9 @@ function createPopupAdapter(
   onRender?: (type: string) => void,
   onPopupShow?: (options?: PluginPopupInfo) => void,
   onPopupClose?: () => void,
-  getWidget?: () => Widget | undefined,
-  getBlock?: () => Reearth["extension"]["block"] | undefined,
+  // Getters return getter functions to access latest widget/block
+  getWidget?: () => (() => Widget | undefined) | undefined,
+  getBlock?: () => (() => Reearth["extension"]["block"] | undefined) | undefined,
   getUIContainerRef?: () => { current: HTMLElement | null } | undefined
 ): {
   show: Reearth["popup"]["show"];
@@ -342,8 +343,9 @@ function createPopupAdapter(
       });
       onRender?.("popup");
 
-      const widget = getWidget?.();
-      const block = getBlock?.();
+      // Get latest widget/block via double getter pattern
+      const widget = getWidget?.()?.();
+      const block = getBlock?.()?.();
       const uiContainerRef = getUIContainerRef?.();
 
       onPopupShow?.({
@@ -364,8 +366,9 @@ function createPopupAdapter(
         height: options?.height
       });
 
-      const widget = getWidget?.();
-      const block = getBlock?.();
+      // Get latest widget/block via double getter pattern
+      const widget = getWidget?.()?.();
+      const block = getBlock?.()?.();
       const uiContainerRef = getUIContainerRef?.();
 
       onPopupShow?.({
@@ -436,8 +439,8 @@ function createExtensionMessageHandler(
   registerPluginMessageSender?.(pluginMessageSender);
 
   return {
-    postMessage: (extensionId: string, msg: unknown, sender: string) => {
-      context.pluginInstances.postMessage(extensionId, msg, sender);
+    postMessage: (id: string, msg: unknown, sender: string) => {
+      context.pluginInstances.postMessage(id, msg, sender);
     },
     on: (type: string, callback: (...args: any[]) => void, options?: { once?: boolean }) => {
       if (type === "message") {
@@ -573,27 +576,28 @@ function wrapCommonReearth(
  * This function returns a factory that Zushi will call with its PluginContext.
  * It maps the surface APIs to the current Re:Earth plugin API structure.
  *
- * @param reearthContext - The Re:Earth plugin and context information
+ * CRITICAL: Accepts a getter function instead of direct context to ensure the
+ * exposed API always accesses the latest plugin context values. This prevents
+ * stale data when plugin properties, widget, or block data changes.
+ *
+ * @param getContext - Getter function that returns the latest ReearthPluginContext
  * @param messageHandlers - Message event handlers
  * @returns Factory function for Zushi's exposed parameter
  */
 export function createZushiExposedAPI(
-  reearthContext: ReearthPluginContext,
+  getContext: () => ReearthPluginContext,
   messageHandlers: MessageHandlers
 ) {
   return (zushiCtx: ZushiPluginContext): GlobalThis => {
+    // Get initial context for callbacks that don't need freshness
+    const reearthContext = getContext();
     const {
-      plugin,
-      context,
-      getWidget,
-      getBlock,
-      getLayer,
-      getUIContainerRef,
       onRender,
       onModalShow,
       onPopupShow,
       onModalClose,
       onPopupClose,
+      getUIContainerRef,
       registerPluginMessageSender
     } = reearthContext;
 
@@ -612,34 +616,45 @@ export function createZushiExposedAPI(
       onRender,
       onPopupShow,
       onPopupClose,
-      getWidget,
-      getBlock,
+      // Widget/block getters are accessed dynamically to get latest values
+      () => getContext().getWidget,
+      () => getContext().getBlock,
       getUIContainerRef
     );
 
     // Create extension message handler
+    // context uses getter pattern in Plugin/hooks, so it's already fresh
     const extension = createExtensionMessageHandler(
-      context,
+      reearthContext.context,
       messageHandlers,
       startEventLoop,
       registerPluginMessageSender
     );
 
     // Wrap client storage with event loop trigger
-    const clientStorage = wrapClientStorage(context.clientStorage, startEventLoop);
+    // context.clientStorage is accessed via context getter, so it's fresh
+    const clientStorage = wrapClientStorage(
+      reearthContext.context.clientStorage,
+      startEventLoop
+    );
 
     // Wrap commonReearth async methods with event loop trigger
-    const wrappedCommonReearth = wrapCommonReearth(context.reearth, startEventLoop);
+    // context.reearth is accessed via context getter, so it's fresh
+    const wrappedCommonReearth = wrapCommonReearth(
+      reearthContext.context.reearth,
+      startEventLoop
+    );
 
     // Build and return the exposed API
     return exposedReearth({
       commonReearth: wrappedCommonReearth,
-      plugin,
-      // Viewer events
-      viewerEventsOn: context.viewerEvents.on,
-      viewerEventsOff: context.viewerEvents.off,
-      // Timeline
-      timelineManagerRef: context.timelineManagerRef,
+      // Access plugin dynamically to get latest property values
+      plugin: () => getContext().plugin,
+      // Viewer events (accessed via context getter, already fresh)
+      viewerEventsOn: reearthContext.context.viewerEvents.on,
+      viewerEventsOff: reearthContext.context.viewerEvents.off,
+      // Timeline (accessed via context getter, already fresh)
+      timelineManagerRef: reearthContext.context.timelineManagerRef,
       // UI surface
       render: ui.show,
       closeUI: ui.close,
@@ -664,12 +679,12 @@ export function createZushiExposedAPI(
       // Extension
       extensionEventsOn: extension.on,
       extensionEventsOff: extension.off,
-      // Viewer
-      overrideViewerProperty: context.overrideViewerProperty,
-      // Extension specifics
-      getWidget,
-      getBlock,
-      getLayer,
+      // Viewer (accessed via context getter, already fresh)
+      overrideViewerProperty: reearthContext.context.overrideViewerProperty,
+      // Extension specifics - access dynamically to get latest values
+      getWidget: () => getContext().getWidget,
+      getBlock: () => getContext().getBlock,
+      getLayer: () => getContext().getLayer,
       pluginPostMessage: extension.postMessage,
       // Data
       clientStorage

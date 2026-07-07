@@ -266,9 +266,11 @@ describe("useZushiPlugin", () => {
     });
 
     test("loads code from src URL", async () => {
-      global.fetch = vi.fn().mockResolvedValue({
-        text: () => Promise.resolve("console.log('fetched');")
-      });
+      const fetchSpy = vi
+        .spyOn(globalThis, "fetch")
+        .mockResolvedValue({
+          text: () => Promise.resolve("console.log('fetched');")
+        } as Response);
 
       renderHook(() =>
         useZushiPlugin({
@@ -279,12 +281,14 @@ describe("useZushiPlugin", () => {
       );
 
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith("https://example.com/plugin.js");
+        expect(fetchSpy).toHaveBeenCalledWith("https://example.com/plugin.js");
       });
+
+      fetchSpy.mockRestore();
     });
 
     test("prefers sourceCode over src", () => {
-      global.fetch = vi.fn();
+      const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(vi.fn());
 
       renderHook(() =>
         useZushiPlugin({
@@ -295,7 +299,8 @@ describe("useZushiPlugin", () => {
         })
       );
 
-      expect(global.fetch).not.toHaveBeenCalled();
+      expect(fetchSpy).not.toHaveBeenCalled();
+      fetchSpy.mockRestore();
     });
 
     test("supports custom isMarshalable function", () => {

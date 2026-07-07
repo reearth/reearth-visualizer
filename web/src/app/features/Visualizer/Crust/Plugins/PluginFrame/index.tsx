@@ -12,7 +12,7 @@ import {
   ReactNode,
   useEffect
 } from "react";
-import type { RefObject } from "react";
+import type { MutableRefObject, RefObject } from "react";
 
 import type { ReearthPluginContext } from "../pluginAPI/zushiAdapter";
 
@@ -35,7 +35,7 @@ export type Props = {
   modalVisible?: boolean;
   popupVisible?: boolean;
   externalRef?: RefObject<HTMLIFrameElement | null>;
-  uiContainerRef?: RefObject<HTMLElement | null>;
+  uiContainerRef?: MutableRefObject<HTMLElement | null>;
   isMarshalable?: boolean | "json" | ((target: unknown) => boolean | "json");
   pluginContext: ReearthPluginContext;
   onMessage?: (message: unknown) => void;
@@ -90,8 +90,7 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
   // Sync whenever the UI container or loaded state changes
   useEffect(() => {
     if (uiContainerRef && surfaceRefs.uiContainer.current) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (uiContainerRef as any).current = surfaceRefs.uiContainer.current;
+      uiContainerRef.current = surfaceRefs.uiContainer.current;
     }
   }, [uiContainerRef, surfaceRefs.uiContainer, loaded]);
 

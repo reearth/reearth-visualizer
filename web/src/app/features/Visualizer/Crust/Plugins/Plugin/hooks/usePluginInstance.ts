@@ -10,11 +10,10 @@ import type { InfoboxBlock as Block } from "../../../Infobox/types";
 import type { MapRef } from "../../../types";
 import type { Widget } from "../../../Widgets";
 import { usePluginContext } from "../../context";
+import { defaultIsMarshalable } from "../../PluginFrame/useZushiPlugin";
 import type { ReearthPluginContext } from "../../pluginAPI/zushiAdapter";
 import type { PluginModalInfo } from "../ModalContainer";
 import type { PluginPopupInfo } from "../PopupContainer";
-
-import { usePluginAPI } from "./usePluginAPI";
 
 export default function ({
   mapRef,
@@ -32,8 +31,8 @@ export default function ({
   onPluginModalShow,
   shownPluginPopupInfo,
   onPluginPopupShow,
-  onRender,
-  onResize
+  onRender: _onRender,
+  onResize: _onResize
 }: {
   mapRef?: RefObject<MapRef | null>;
   pluginId?: string;
@@ -72,7 +71,7 @@ export default function ({
   const [modalVisible, setModalVisibility] = useState<boolean>(false);
   const [popupVisible, setPopupVisibility] = useState<boolean>(false);
 
-  const handleSetVisibility = useCallback(
+  const _handleSetVisibility = useCallback(
     (v: boolean) => {
       setUIVisibility(v);
       const instanceId = widget?.id ?? block?.id;
@@ -83,39 +82,52 @@ export default function ({
     [onVisibilityChange, widget?.id, block?.id]
   );
 
-  const {
-    staticExposed,
-    isMarshalable,
-    onPreInit,
-    onDispose,
-    onModalClose,
-    onPopupClose
-  } =
-    usePluginAPI({
-      extensionId,
-      extensionType,
-      pluginId,
-      block,
-      layer,
-      widget,
-      pluginProperty,
-      modalVisible,
-      popupVisible,
-      externalRef,
+  // isMarshalable function for Zushi - determines what objects can be passed to plugin
+  const isMarshalable = useCallback(
+    (target: unknown) => {
+      return (
+        defaultIsMarshalable(target) ||
+        !!mapRef?.current?.layers?.isLayer(target) ||
+        !!mapRef?.current?.layers?.isComputedLayer(target)
+      );
+    },
+    [mapRef]
+  );
+
+  // Ref to store latest callback props (Stable Callbacks with Refs Pattern)
+  const callbacksRef = useRef({
+    onPluginModalShow,
+    onPluginPopupShow,
+    widget,
+    block
+  });
+
+  useEffect(() => {
+    callbacksRef.current = {
       onPluginModalShow,
       onPluginPopupShow,
-      setUIVisibility: handleSetVisibility,
-      onRender,
-      onResize,
-      mapRef
-    }) ?? [];
+      widget,
+      block
+    };
+  });
 
+  // Stable callbacks that use refs internally to access latest values
+  const handleModalClose = useCallback(() => {
+    callbacksRef.current.onPluginModalShow?.();
+  }, []);
+
+  const handlePopupClose = useCallback(() => {
+    callbacksRef.current.onPluginPopupShow?.();
+  }, []);
+
+  // Update modal visibility based on external state
   useEffect(() => {
     const visible = shownPluginModalInfo?.id === (widget?.id ?? block?.id);
     if (modalVisible !== visible) {
       setModalVisibility(visible);
       if (!visible) {
-        onModalClose();
+        // Modal was closed externally
+        handleModalClose();
       }
     }
   }, [
@@ -125,15 +137,17 @@ export default function ({
     extensionId,
     widget?.id,
     block?.id,
-    onModalClose
+    handleModalClose
   ]);
 
+  // Update popup visibility based on external state
   useEffect(() => {
     const visible = shownPluginPopupInfo?.id === (widget?.id ?? block?.id);
     if (popupVisible !== visible) {
       setPopupVisibility(visible);
       if (!visible) {
-        onPopupClose();
+        // Popup was closed externally
+        handlePopupClose();
       }
     }
   }, [
@@ -143,7 +157,7 @@ export default function ({
     extensionId,
     widget?.id,
     block?.id,
-    onPopupClose
+    handlePopupClose
   ]);
 
   const onError = useCallback(
@@ -206,23 +220,6 @@ export default function ({
     contextRef.current = context;
   });
 
-  const callbacksRef = useRef({
-    onPluginModalShow,
-    onPluginPopupShow,
-    widget,
-    block
-  });
-
-  useEffect(() => {
-    callbacksRef.current = {
-      onPluginModalShow,
-      onPluginPopupShow,
-      widget,
-      block
-    };
-  });
-
-  // Stable callbacks that use refs internally to access latest values
   const handleModalShow = useCallback(
     (options?: { background?: string; clickBgToClose?: boolean }) => {
       const instanceId = callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
@@ -241,14 +238,6 @@ export default function ({
     },
     []
   );
-
-  const handleModalClose = useCallback(() => {
-    callbacksRef.current.onPluginModalShow?.();
-  }, []);
-
-  const handlePopupClose = useCallback(() => {
-    callbacksRef.current.onPluginPopupShow?.();
-  }, []);
 
   // Plugin message sender registration ref
   const pluginMessageSenderRef = useRef<((msg: { data: unknown; sender: string }) => void) | undefined>(undefined);
@@ -351,7 +340,7 @@ export default function ({
   ]);
 
   return {
-    skip: !staticExposed || !pluginContext,
+    skip: !pluginContext,
     src,
     isMarshalable,
     uiVisible,
@@ -360,10 +349,7 @@ export default function ({
     externalRef,
     uiContainerRef,
     renderKey,
-    exposed: staticExposed,
-    pluginContext, // Added for Zushi
-    onError,
-    onPreInit,
-    onDispose
+    pluginContext,
+    onError
   };
 }

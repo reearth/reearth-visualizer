@@ -139,15 +139,6 @@ export default function useZushiPlugin({
     pluginContextRef.current = pluginContext;
   });
 
-  // Generate a unique ID for this plugin instance to filter window messages
-  // Only compute once on initial render to prevent remounts
-  const pluginInstanceId = useMemo(() => {
-    return pluginContext.plugin?.id && pluginContext.plugin?.extensionId
-      ? `${pluginContext.plugin.id}/${pluginContext.plugin.extensionId}/${pluginContext.getWidget?.()?.id ?? pluginContext.getBlock?.()?.id}`
-      : Math.random().toString(36).substring(7);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Message event handlers
   const messageEvents = useMemo(() => new Set<(msg: unknown) => void>(), []);
   const messageOnceEvents = useMemo(() => new Set<(msg: unknown) => void>(), []);
@@ -278,8 +269,8 @@ export default function useZushiPlugin({
               autoResize: "both" // Popup always uses "both"
             }
           },
-          // Use ref to access latest context without causing remounts
-          exposed: createZushiExposedAPI(pluginContextRef.current, messageHandlers)
+          // Pass getter function to access latest context dynamically
+          exposed: createZushiExposedAPI(() => pluginContextRef.current, messageHandlers)
         });
 
         // Start the plugin
@@ -471,7 +462,7 @@ export default function useZushiPlugin({
     return () => {
       window.removeEventListener("message", handleWindowMessage);
     };
-  }, [loaded, handleMessage, pluginInstanceId]);
+  }, [loaded, handleMessage]);
 
   // Expose plugin instance via ref
   useImperativeHandle(

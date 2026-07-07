@@ -6,7 +6,7 @@ import type { MapRef } from "../../types";
 import type { Widget } from "../../Widgets";
 import PluginFrame, { type Props as PluginFrameProps } from "../PluginFrame";
 
-import useHooks from "./hooks";
+import usePluginInstance from "./hooks/usePluginInstance";
 import type { PluginModalInfo } from "./ModalContainer";
 import type { PluginPopupInfo } from "./PopupContainer";
 
@@ -104,10 +104,8 @@ export default function Plugin({
     uiContainerRef,
     renderKey,
     pluginContext,
-    onPreInit,
-    onDispose,
     onError
-  } = useHooks({
+  } = usePluginInstance({
     mapRef,
     pluginId,
     extensionId,
@@ -145,8 +143,6 @@ export default function Plugin({
       isMarshalable={isMarshalable}
       pluginContext={pluginContext}
       onError={onError}
-      onPreInit={onPreInit}
-      onDispose={onDispose}
       onClick={onClick}
     />
   ) : null;
