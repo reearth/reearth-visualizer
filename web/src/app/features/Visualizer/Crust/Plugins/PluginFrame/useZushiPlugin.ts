@@ -268,8 +268,20 @@ export default function useZushiPlugin({
         const collectIframeWindows = (container: HTMLElement) => {
           const iframes = container.querySelectorAll('iframe');
           iframes.forEach(iframe => {
-            if (iframe.contentWindow) {
-              surfaceWindowsRef.current.add(iframe.contentWindow);
+            const registerWindow = () => {
+              if (iframe.contentWindow) {
+                surfaceWindowsRef.current.add(iframe.contentWindow);
+                return true;
+              }
+              return false;
+            };
+
+            // Try to register immediately
+            if (!registerWindow()) {
+              // If contentWindow is not available yet, wait for load event
+              iframe.addEventListener('load', () => {
+                registerWindow();
+              }, { once: true });
             }
           });
         };
