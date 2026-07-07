@@ -581,6 +581,14 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		"deleted":    false,
 	}
 
+	// This leading-wildcard regex can't use an index for the match itself
+	// (SCA-01, eukarya-inc/compliance#50): the (visibility, deleted) index
+	// below only narrows to the public-gallery candidate set, which is
+	// exactly what's growing, so this scales with gallery size. Checked
+	// prod logs as of 2026-07 — no evidence of real impact yet, and a real
+	// fix (text index / anchored prefix / n-gram field / external search)
+	// all trade off search semantics or add infra, so deferred until there's
+	// actual signal this is costing something.
 	if pFilter.Keyword != nil {
 		filter["name"] = bson.M{
 			"$regex": primitive.Regex{
