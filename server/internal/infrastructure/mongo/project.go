@@ -585,7 +585,9 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	// (SCA-01, eukarya-inc/compliance#50). The existing (visibility, deleted)
 	// index (see migration 260518143901) only narrows to the public gallery
 	// candidate set, which is exactly what is growing, so this scales with
-	// gallery size. Checked prod logs as of July 2026: no evidence of real
+	// gallery size. Checked prod traces as of July 2026 for GetAllProjects,
+	// the entry point that reaches this code: about 6 calls a day, and the
+	// query itself (project.aggregate/find) runs in 5 to 8ms. No real
 	// impact yet. A real fix (text index, anchored prefix regex, a
 	// precomputed indexed field, or an external search engine) all trade
 	// off search semantics or add infrastructure, so this is deferred until
