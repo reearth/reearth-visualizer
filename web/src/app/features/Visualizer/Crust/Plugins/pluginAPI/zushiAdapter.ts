@@ -80,7 +80,29 @@ type CloseEventManager = {
 };
 
 /**
- * Creates a close event manager for a surface
+ * Manual Event Handler Management for Surface Close Events
+ *
+ * WHY: The Re:Earth plugin API supports event listeners with on/off/once semantics
+ * for surface close events (e.g., reearth.ui.on("close", callback)).
+ *
+ * PROBLEM: Zushi's surface API doesn't provide built-in event management. We need
+ * to implement our own event system to support the on/off/once pattern.
+ *
+ * SOLUTION: Manually manage two Sets of handlers:
+ * - handlers: Regular listeners (persist until explicitly removed)
+ * - onceHandlers: One-time listeners (automatically removed after firing)
+ *
+ * HOW:
+ * 1. Store handlers in Sets (efficient add/remove)
+ * 2. trigger() executes all handlers when surface closes
+ * 3. on() adds handlers (to appropriate Set based on once flag)
+ * 4. off() removes handlers from both Sets
+ * 5. onceHandlers are cleared after trigger()
+ *
+ * This pattern is used for:
+ * - UI surface close events (reearth.ui.on("close", ...))
+ * - Modal surface close events (reearth.modal.on("close", ...))
+ * - Popup surface close events (reearth.popup.on("close", ...))
  */
 function createCloseEventManager(surfaceName: string): CloseEventManager {
   const handlers = new Set<() => void>();

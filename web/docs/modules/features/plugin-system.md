@@ -2,8 +2,8 @@
 title: "Plugin System"
 module: "app/features/Visualizer/Crust/Plugins"
 category: "module"
-tags: ["plugins", "zushi", "extensibility", "quickjs", "iframe"]
-last_updated: "2026-07-02"
+tags: ["plugins", "zushi", "extensibility", "quickjs", "iframe", "performance"]
+last_updated: "2026-07-07"
 related:
   - ../../concepts/plugin-architecture.md
   - ../../guides/plugin-development.md
@@ -232,21 +232,35 @@ const plugin = new Plugin({
 
 ```typescript
 export type ReearthPluginContext = {
-  plugin: {
-    id?: string;
-    extensionId?: string;
-    extensionType?: string;
-    property?: any;
+  plugin?: {
+    id: string;
+    extensionType: string;
+    extensionId: string;
+    property: unknown;
   };
   context: Context;
-  getWidget?: () => { id?: string } | undefined;
-  getBlock?: () => { id?: string } | undefined;
+  getWidget?: () => Widget | undefined;
+  getBlock?: () => Reearth["extension"]["block"] | undefined;
+  getLayer?: () => Layer | undefined;
+  getUIContainerRef?: () => { current: HTMLElement | null } | undefined;
+  onRender?: (type: string) => void;
+  onModalShow?: (options?: {
+    background?: string;
+    clickBgToClose?: boolean;
+  }) => void;
+  onPopupShow?: (options?: PluginPopupInfo) => void;
+  onModalClose?: () => void;
+  onPopupClose?: () => void;
+  registerPluginMessageSender?: (
+    sender: (msg: { data: unknown; sender: string }) => void
+  ) => void;
+  unregisterPluginMessageSender?: () => void;
 };
 ```
 
-**Purpose**: Provides plugin context including plugin metadata and Re:Earth viewer API.
+**Purpose**: Provides plugin context including plugin metadata, Re:Earth viewer API, and lifecycle callbacks.
 
-**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/pluginAPI/zushiAdapter.ts:14`
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/pluginAPI/zushiAdapter.ts:26`
 
 ## Plugin API (Exposed to Plugin Code)
 
@@ -803,37 +817,47 @@ test("shows UI surface when uiVisible=true", () => {
 
 ## Common Issues
 
-### Issue: "Popup messages showing isFromOurPlugin: false"
+### Issue: "Modal/Popup close button doesn't work"
 
-**Symptoms**: Popup position/offset updates don't work, messages show `isFromOurPlugin: false` in logs.
+**Symptoms**: Clicking close button in modal or popup has no effect. Messages from modal/popup iframes show `isFromOurPlugin: false` in logs.
 
-**Cause**: Popup iframe contentWindow is `null` when MutationObserver detects iframe creation, so the window isn't registered for message filtering.
+**Cause**: When Zushi creates an iframe for modal/popup surface, the iframe element exists in the DOM immediately, but `iframe.contentWindow` is `null` until the iframe loads. The system was trying to register contentWindow during initial collection, getting null, and never registering the window for message filtering.
 
-**Solution**: The system now waits for iframe load event:
+**Root Cause**: Two collection points, both had the same issue:
+1. Initial collection after `plugin.start()` - iframe exists but not loaded
+2. MutationObserver for dynamically added iframes - detects iframe before it loads
+
+**Solution**: The system now waits for iframe load event at both collection points:
 
 ```typescript
-if (element.tagName === 'IFRAME') {
-  const iframe = element as HTMLIFrameElement;
+const collectIframeWindows = (container: HTMLElement) => {
+  const iframes = container.querySelectorAll('iframe');
+  iframes.forEach(iframe => {
+    const registerWindow = () => {
+      if (iframe.contentWindow) {
+        surfaceWindowsRef.current.add(iframe.contentWindow);
+        return true;
+      }
+      return false;
+    };
 
-  const registerWindow = () => {
-    if (iframe.contentWindow) {
-      surfaceWindowsRef.current.add(iframe.contentWindow);
-      return true;
+    // Try to register immediately
+    if (!registerWindow()) {
+      // If contentWindow is not available yet, wait for load event
+      iframe.addEventListener('load', () => {
+        registerWindow();
+      }, { once: true });
     }
-    return false;
-  };
-
-  // Try immediately
-  if (!registerWindow()) {
-    // Wait for load event
-    iframe.addEventListener('load', () => {
-      registerWindow();
-    }, { once: true });
-  }
-}
+  });
+};
 ```
 
-**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/PluginFrame/useZushiPlugin.ts:284-304`
+**Impact**: This pattern is applied to:
+- Initial iframe collection after plugin.start()
+- MutationObserver detection of dynamically added iframes
+- All three surfaces: UI, Modal, and Popup
+
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/PluginFrame/useZushiPlugin.ts:290-310`
 
 ### Issue: "Plugin not loading"
 
@@ -870,6 +894,89 @@ if (!isFromOurPlugin) return; // Ignore
 Ensure MutationObserver is properly set up to track all iframes.
 
 ## Performance Considerations
+
+### Plugin Initialization Cost
+
+Plugin initialization is expensive due to:
+- QuickJS WebAssembly runtime startup
+- Plugin code loading and parsing
+- Surface iframe creation
+- Exposed API setup
+
+**Critical Optimization**: The system uses several patterns to prevent unnecessary plugin remounts:
+
+#### 1. Ref-Based Context Pattern
+
+```typescript
+// context.tsx
+const PluginContext = createContext<ContextRef | undefined>(undefined);
+
+export const PluginProvider: FC<PropsWithChildren<{ value: Context }>> = ({
+  children,
+  value
+}) => {
+  const contextRef = useRef<Context>(value);
+  useEffect(() => {
+    contextRef.current = value;
+  });
+
+  const stableValue = useMemo(() => contextRef, []);
+  return <PluginContext.Provider value={stableValue}>{children}</PluginContext.Provider>;
+};
+```
+
+**Why**: React Context has "all-or-nothing" notifications. Without this pattern, adding one story block would cause ALL plugins to re-render. By passing a stable ref as the context value, React never notifies consumers, preventing cascading re-renders.
+
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/context.tsx`
+
+#### 2. pluginContextRef Pattern
+
+```typescript
+// useZushiPlugin.ts
+const pluginContextRef = useRef(pluginContext);
+useEffect(() => {
+  pluginContextRef.current = pluginContext;
+});
+
+// Use ref in exposed API, omit from useEffect deps
+const plugin = new Plugin({
+  exposed: createZushiExposedAPI(pluginContextRef.current, messageHandlers)
+});
+```
+
+**Why**: Zushi's exposed API is created once and cannot be updated. If `pluginContext` were in useEffect deps, the plugin would remount on every context change. The ref allows accessing latest context data without triggering remounts.
+
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/PluginFrame/useZushiPlugin.ts:114-118`
+
+#### 3. Stable Callbacks with Refs
+
+```typescript
+// Plugin/hooks/index.ts
+const callbacksRef = useRef({ onPluginModalShow, widget, block });
+useEffect(() => {
+  callbacksRef.current = { onPluginModalShow, widget, block };
+});
+
+const handleModalShow = useCallback(
+  (options) => {
+    callbacksRef.current.onPluginModalShow?.(options);
+  },
+  [] // Empty deps = stable callback
+);
+```
+
+**Why**: Callbacks are passed to Zushi via `pluginContext`. If callbacks change, `pluginContext` must be recreated, causing plugin remount. Stable callbacks with refs prevent this while still accessing latest values.
+
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/Plugin/hooks/index.ts:189-217`
+
+#### 4. Plugin Instance Isolation
+
+Each plugin instance (widget, story block, infobox block) is properly isolated:
+- Editing block A only causes Plugin A to re-render
+- Plugins B and C are unaffected (their block references unchanged)
+- Adding/removing blocks only affects the added/removed plugins
+
+**Anti-Pattern**: Creating a key string from all block IDs (e.g., `"id1,id2,id3"`) would couple all plugins together, causing all to re-render when any single block changes.
 
 ### Bundle Size
 
@@ -985,6 +1092,20 @@ reearth.ui.close();
 
 ## Changelog
 
+### 2026-07-07 - Performance Optimization and Bug Fixes
+
+- **Fixed**: Modal/popup close button not working due to iframe contentWindow timing issue
+  - Added load event listener for iframe window registration
+  - Applied fix to both initial collection and MutationObserver
+- **Fixed**: Removed block ID key-based memoization that coupled all plugin re-renders
+  - Each plugin instance now properly isolated
+  - Editing one block no longer affects other plugins
+- **Improved**: Added comprehensive documentation of optimization patterns
+  - Documented ref-based context pattern
+  - Documented pluginContextRef pattern
+  - Documented stable callbacks pattern
+- **Improved**: Added detailed comments explaining non-obvious patterns in code
+
 ### 2026-07-02 - Zushi Migration Complete
 
 - Migrated from custom QuickJS to Zushi framework
@@ -996,5 +1117,5 @@ reearth.ui.close();
 
 ---
 
-**Last Updated**: 2026-07-02
+**Last Updated**: 2026-07-07
 **Maintained By**: Platform Team

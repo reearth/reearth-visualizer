@@ -111,7 +111,29 @@ export default function useZushiPlugin({
   const [code, setCode] = useState("");
   const pluginRef = useRef<Plugin | undefined>(undefined);
 
-  // Store pluginContext in ref to prevent plugin remounts when context changes
+  /**
+   * pluginContextRef Pattern
+   *
+   * WHY: The Zushi exposed API is created once during plugin.start() and cannot be
+   * updated. However, we need to access the latest context data (e.g., updated block
+   * properties) from within the exposed API functions.
+   *
+   * PROBLEM: If we put `pluginContext` in the useEffect dependencies, the effect would
+   * run whenever pluginContext changes, causing the plugin to be disposed and
+   * reinitialized. This is expensive (QuickJS runtime + code loading).
+   *
+   * SOLUTION: Store pluginContext in a ref and pass the ref to the exposed API factory.
+   * The exposed API functions read from pluginContextRef.current to get the latest data.
+   *
+   * HOW:
+   * 1. Store pluginContext in ref (updated every render)
+   * 2. Pass pluginContextRef to createZushiExposedAPI
+   * 3. Omit pluginContext from useEffect dependencies
+   * 4. Exposed API functions access latest context via pluginContextRef.current
+   *
+   * CRITICAL: This prevents plugin remounts while still providing access to latest
+   * context data within the plugin's exposed API.
+   */
   const pluginContextRef = useRef(pluginContext);
   useEffect(() => {
     pluginContextRef.current = pluginContext;
@@ -263,7 +285,36 @@ export default function useZushiPlugin({
         // Start the plugin
         await plugin.start();
 
-        // Collect iframe windows from surfaces for message filtering
+        /**
+         * Iframe Window Registration with Load Event Handling
+         *
+         * WHY: We need to track which iframe windows belong to this plugin instance
+         * to filter postMessage events. Only messages from our plugin's iframes should
+         * be processed; messages from other plugins must be ignored.
+         *
+         * PROBLEM: When an iframe is created, its contentWindow may not be immediately
+         * available:
+         * - Zushi calls surface.show() which creates an iframe
+         * - The iframe element exists in the DOM
+         * - But iframe.contentWindow is null until the iframe loads
+         * - If we try to register it immediately, we get null
+         *
+         * This caused the modal close button bug: the modal iframe existed but its
+         * contentWindow was never registered, so messages from it were filtered out.
+         *
+         * SOLUTION: Try to register immediately, but if contentWindow is null, attach
+         * a load event listener to register it later when the iframe loads.
+         *
+         * HOW:
+         * 1. Query for all iframes in the container
+         * 2. Try to register iframe.contentWindow immediately
+         * 3. If null, attach a 'load' event listener (once: true)
+         * 4. When iframe loads, register its contentWindow
+         *
+         * This pattern is applied to:
+         * - Initial collection after plugin.start()
+         * - MutationObserver detection of dynamically added iframes
+         */
         surfaceWindowsRef.current.clear();
         const collectIframeWindows = (container: HTMLElement) => {
           const iframes = container.querySelectorAll('iframe');
