@@ -581,6 +581,8 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		"deleted":    false,
 	}
 
+	// TODO: will need to revisit this once we migrate to new database.
+	// currently using MongoDB and plan to use PostgreSQLs
 	// This leading wildcard regex cannot use an index for the match itself
 	// (SCA-01, eukarya-inc/compliance#50). The existing (visibility, deleted)
 	// index (see migration 260518143901) only narrows to the public gallery
