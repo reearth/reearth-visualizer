@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.12 - 2026-07-08
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.16.12 ([#2295](https://github.com/reearth/reearth-visualizer/pull/2295)) [`5d7ccc`](https://github.com/reearth/reearth-visualizer/commit/5d7ccc)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Rewrite split-upload session handling [REL-01, REL-02, SCA-02] ([#2291](https://github.com/reearth/reearth-visualizer/pull/2291)) [`bbf68c`](https://github.com/reearth/reearth-visualizer/commit/bbf68c)
+- Stream zip from disk in UncompressExportZip to prevent OOM [VIZ-DEV-91] ([#2281](https://github.com/reearth/reearth-visualizer/pull/2281)) [`9a87b5`](https://github.com/reearth/reearth-visualizer/commit/9a87b5)
+
+#### Miscellaneous Tasks
+
+- Explain why SCA-01 search fix is delayed [VIZ-DEV-100]  ([#2292](https://github.com/reearth/reearth-visualizer/pull/2292)) [`ec6307`](https://github.com/reearth/reearth-visualizer/commit/ec6307)
+
+### Misc
+
+#### 🧪 Testing
+
+- Improve e2e test for scroll page list to triger load more ([#2279](https://github.com/reearth/reearth-visualizer/pull/2279)) [`84abe5`](https://github.com/reearth/reearth-visualizer/commit/84abe5)
+
+#### Miscellaneous Tasks
+
+- Bump Node.js to 24.18.0 and nginx to 1.30-alpine ([#2028](https://github.com/reearth/reearth-visualizer/pull/2028)) [`cac907`](https://github.com/reearth/reearth-visualizer/commit/cac907)
+- Add env for playwright tests ([#2284](https://github.com/reearth/reearth-visualizer/pull/2284)) [`d83b61`](https://github.com/reearth/reearth-visualizer/commit/d83b61)
+
+### ci
+
+#### Miscellaneous Tasks
+
+- Change server codeowners ([#2282](https://github.com/reearth/reearth-visualizer/pull/2282)) [`119b90`](https://github.com/reearth/reearth-visualizer/commit/119b90)
+
+### e2e
+
+#### 🔧 Bug Fixes
+
+- Add allure dashboard landing page to fix 404 at report root ([#2294](https://github.com/reearth/reearth-visualizer/pull/2294)) [`ad693d`](https://github.com/reearth/reearth-visualizer/commit/ad693d)
+- Fix playwright-tests-pr auth, API endpoint and environment cleanup ([#2283](https://github.com/reearth/reearth-visualizer/pull/2283)) [`fce47b`](https://github.com/reearth/reearth-visualizer/commit/fce47b)
+- Fix flaky recycle bin tests and stabilise CI test suite ([#2278](https://github.com/reearth/reearth-visualizer/pull/2278)) [`be75b2`](https://github.com/reearth/reearth-visualizer/commit/be75b2)
+
+#### Miscellaneous Tasks
+
+- Add 1Password CLI setup for web&#x2F;e2e commands ([#2280](https://github.com/reearth/reearth-visualizer/pull/2280)) [`af874b`](https://github.com/reearth/reearth-visualizer/commit/af874b)
+
+### 
+
+#### 🧪 Testing
+
+- Improve e2e test for scroll page list to triger load more ([#2279](https://github.com/reearth/reearth-visualizer/pull/2279)) [`84abe5`](https://github.com/reearth/reearth-visualizer/commit/84abe5)
+
+#### Miscellaneous Tasks
+
+- Bump Node.js to 24.18.0 and nginx to 1.30-alpine ([#2028](https://github.com/reearth/reearth-visualizer/pull/2028)) [`cac907`](https://github.com/reearth/reearth-visualizer/commit/cac907)
+- Add env for playwright tests ([#2284](https://github.com/reearth/reearth-visualizer/pull/2284)) [`d83b61`](https://github.com/reearth/reearth-visualizer/commit/d83b61)
+
 ## 1.0.0-beta.16.11 - 2026-06-24
 
 ### Web
