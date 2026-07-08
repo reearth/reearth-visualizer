@@ -182,6 +182,48 @@ func TestUploadSession_WriteChunk_MissingChunkZero(t *testing.T) {
 	}
 }
 
+// TestUploadSession_WriteChunk_RejectsShortNonFinalChunk verifies that a
+// non-final chunk shorter than chunkSize is rejected and not marked
+// received, rather than leaving a zero-filled gap in the assembled file
+// that would silently corrupt it.
+func TestUploadSession_WriteChunk_RejectsShortNonFinalChunk(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+
+	session, err := m.getOrCreateSession("f6", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	// Chunk 0 of 2 is non-final and must be exactly chunkSize (4) bytes.
+	_, err = session.writeChunk(0, strings.NewReader("ab"))
+	if err == nil {
+		t.Fatal("expected an error for a short non-final chunk")
+	}
+	if _, ok := session.received[0]; ok {
+		t.Error("short chunk must not be marked received")
+	}
+}
+
+// TestUploadSession_WriteChunk_RejectsOversizedChunk verifies that a chunk
+// larger than chunkSize is rejected rather than silently overwriting the
+// next chunk's offset in the backing file.
+func TestUploadSession_WriteChunk_RejectsOversizedChunk(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+
+	session, err := m.getOrCreateSession("f7", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	_, err = session.writeChunk(0, strings.NewReader("abcde")) // 5 bytes > chunkSize
+	if err == nil {
+		t.Fatal("expected an error for an oversized chunk")
+	}
+	if _, ok := session.received[0]; ok {
+		t.Error("oversized chunk must not be marked received")
+	}
+}
+
 // TestSplitUploadManager_CleanupSession verifies that cleanupSession removes
 // the session from the map and deletes its backing file on disk.
 func TestSplitUploadManager_CleanupSession(t *testing.T) {

@@ -145,10 +145,27 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 		return false, nil
 	}
 
+	// Cap the write at chunkSize bytes so an oversized chunk can never
+	// spill into the next chunk's offset. Any chunk but the last must be
+	// exactly chunkSize; a short or oversized chunk is rejected (and not
+	// marked received) rather than silently corrupting the assembled file.
 	offset := int64(idx) * s.chunkSize
-	if _, err := io.Copy(io.NewOffsetWriter(s.file, offset), r); err != nil {
+	n, err := io.Copy(io.NewOffsetWriter(s.file, offset), io.LimitReader(r, s.chunkSize))
+	if err != nil {
 		return false, fmt.Errorf("failed to write chunk %d: %w", idx, err)
 	}
+	isFinal := idx == s.totalChunks-1
+	if n == 0 {
+		return false, fmt.Errorf("chunk %d is empty", idx)
+	}
+	if !isFinal && n != s.chunkSize {
+		return false, fmt.Errorf("chunk %d is %d bytes, want exactly %d", idx, n, s.chunkSize)
+	}
+	var probe [1]byte
+	if extra, _ := r.Read(probe[:]); extra > 0 {
+		return false, fmt.Errorf("chunk %d exceeds max chunk size (%d bytes)", idx, s.chunkSize)
+	}
+
 	s.received[idx] = struct{}{}
 	s.updatedAt = time.Now()
 
