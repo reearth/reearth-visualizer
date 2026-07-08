@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
   test:
+    timeout-minutes: 20
     permissions:
       contents: read
       id-token: write
@@ -36,7 +37,7 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
         with:
           egress-policy: audit
       - name: Checkout code
@@ -45,7 +46,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.18.0"
 
       - name: Cache node modules
         uses: actions/cache@v5
@@ -60,11 +61,26 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Run API setup (writes .auth/api-token.json with dev token)
+        env:
+          REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
+          REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
+          REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
+          REEARTH_E2E_API_URL: ${{ secrets.REEARTH_E2E_API_URL }}
+          REEARTH_E2E_AUTH_MODE: auth0
+          REEARTH_E2E_AUTH0_DOMAIN: ${{ secrets.REEARTH_E2E_AUTH0_DOMAIN }}
+          REEARTH_E2E_AUTH0_AUDIENCE: ${{ secrets.REEARTH_E2E_AUTH0_AUDIENCE }}
+          REEARTH_E2E_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_E2E_AUTH0_CLIENT_ID }}
+          SKIP_STORAGE_STATE: true
+          USE_IAP_AUTH: false
+        run: npx playwright test --config=playwright.config.ts --project=api-setup
+
       - name: Run Playwright tests
         env:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
           REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
           REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
+          REEARTH_E2E_API_URL: ${{ secrets.REEARTH_E2E_API_URL }}
           USE_IAP_AUTH: false
         run: npm run test:ui
 
@@ -78,6 +94,12 @@ jobs:
       - name: Setup Google Cloud SDK
         if: always()
         uses: google-github-actions/setup-gcloud@v3
+
+      - name: Upload dashboard landing page to GCS
+        if: always()
+        run: |
+          gsutil -h "Content-Type:text/html" -h "Cache-Control:no-cache" \
+            cp ./dashboard/index.html "gs://$BUCKET/index.html"
 
       - name: Check Allure Results
         if: always()

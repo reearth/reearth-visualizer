@@ -53,7 +53,7 @@ export default defineConfig({
         screenshot: "only-on-failure",
         headless: true,
         launchOptions: {
-          slowMo: 200
+          slowMo: 50
         },
         viewport: { width: 1920, height: 1080 }
       }

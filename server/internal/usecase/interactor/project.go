@@ -158,7 +158,7 @@ func (i *Project) addMetadatas(ctx context.Context, projects []*project.Project,
 			excludedProjects = append(excludedProjects, p)
 			continue
 		}
-		if *metadata.ImportStatus() == project.ProjectImportStatusFailed {
+		if metadata.ImportStatus() != nil && *metadata.ImportStatus() == project.ProjectImportStatusFailed {
 			if err := i.Delete(ctx, p.ID(), op); err != nil {
 				return nil, err
 			}
@@ -1173,7 +1173,7 @@ func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Write
 		return err
 	}
 	// 500MB
-	if err := file.FileSizeCheck(500, zipFile); err != nil {
+	if _, err := file.FileSizeCheck(500, zipFile); err != nil {
 		return err
 	}
 
