@@ -17,6 +17,7 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/reearth/reearthx/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -178,6 +179,7 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 	t.Run("FindStarredByWorkspace orders by last updated time descending", func(t *testing.T) {
 		got, _, err := r.FindStarredByWorkspace(ctx, wid, nil)
 		assert.NoError(t, err)
+		require.Len(t, got, 2)
 		assert.Equal(t, []id.ProjectID{pid2, pid1}, []id.ProjectID{got[0].ID(), got[1].ID()})
 	})
 
@@ -248,6 +250,7 @@ func TestProject_FindDeletedByWorkspace(t *testing.T) {
 	t.Run("FindDeletedByWorkspace orders by last updated time descending", func(t *testing.T) {
 		got, _, err := r.FindDeletedByWorkspace(ctx, wid, nil)
 		assert.NoError(t, err)
+		require.Len(t, got, 2)
 		assert.Equal(t, []id.ProjectID{pid5, pid2}, []id.ProjectID{got[0].ID(), got[1].ID()})
 	})
 
