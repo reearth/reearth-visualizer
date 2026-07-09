@@ -33,6 +33,12 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
   const layerStyleAddedRef = useRef<string | undefined>(undefined);
   const t = useT();
   const lang = useLang();
+  
+  const localize = useCallback(
+    (title: string, titleJa?: string) => (lang === "ja" && titleJa ? titleJa : title),
+    [lang]
+  );
+
   const handleLayerStyleAddition = useCallback(
     (value?: Record<string, unknown>, styleName?: string) => {
       const name = getLayerStyleName(
@@ -84,25 +90,22 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
         | { type: "category"; preset: PresetStyleCategory }
     ): PopupMenuItem => {
       if (config.type === "empty") {
+        const title = localize("Empty", "空");
         return {
           id: "empty",
-          title: lang === "ja" ? "空" : "Empty",
-          onClick: () => handleLayerStyleAddition({}),
+          title,
+          onClick: () => handleLayerStyleAddition({}, title),
           dataTestid: "preset-style-empty"
         };
       }
 
       if (config.type === "simple") {
         const preset = config.preset;
+        const title = localize(preset.title, preset.titleJa);
         return {
           id: preset.id,
-          title:
-            lang === "ja" && preset.titleJa ? preset.titleJa : preset.title,
-          onClick: () =>
-            handleLayerStyleAddition(
-              preset.style,
-              lang === "ja" && preset.titleJa ? preset.titleJa : preset.title
-            ),
+          title,
+          onClick: () => handleLayerStyleAddition(preset.style, title),
           dataTestid: preset.testId
         };
       }
@@ -111,22 +114,21 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
       const category = config.preset;
       return {
         id: category.id,
-        title: lang === "ja" && category.titleJa ? category.titleJa : category.title,
+        title: localize(category.title, category.titleJa),
         icon: "folderSimple",
         dataTestid: category.testId,
-        subItem: category.subs.map((sub) => ({
-          id: sub.id,
-          title: lang === "ja" && sub.titleJa ? sub.titleJa : sub.title,
-          onClick: () =>
-            handleLayerStyleAddition(
-              sub.style,
-              lang === "ja" && sub.titleJa ? sub.titleJa : sub.title
-            ),
-          dataTestid: sub.testId
-        }))
+        subItem: category.subs.map((sub) => {
+          const subTitle = localize(sub.title, sub.titleJa);
+          return {
+            id: sub.id,
+            title: subTitle,
+            onClick: () => handleLayerStyleAddition(sub.style, subTitle),
+            dataTestid: sub.testId
+          };
+        })
       };
     },
-    [handleLayerStyleAddition, lang]
+    [handleLayerStyleAddition, localize]
   );
 
   const menuItems: PopupMenuItem[] = useMemo(
