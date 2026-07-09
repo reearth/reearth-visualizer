@@ -72,50 +72,37 @@ const GeneralSettings: FC<Props> = ({
     [project, onUpdateProject]
   );
 
-  const handleProjectAliasUpdate = useCallback(
+  const handleProjectAliasValidation = useCallback(
     async (projectAlias: string) => {
+      if (!project) return;
       const trimmedAlias = projectAlias.trim();
-      if (!project || project.projectAlias === trimmedAlias) return;
-      const result = await validateProjectAlias?.(
-        trimmedAlias,
-        workspaceId,
-        project?.id
-      );
+      if (project.projectAlias === trimmedAlias) return void setWarning("");
 
-      if (!result?.available) {
-        const description = result?.errors?.find(
-          (e) => e?.extensions?.description
-        )?.extensions?.description;
-
-        setWarning(description as string);
-      } else {
-        setWarning("");
-        onUpdateProject({
-          projectAlias: trimmedAlias
-        });
-      }
+      const result = await validateProjectAlias?.(trimmedAlias, workspaceId, project.id);
+      const errorDescription = result?.errors?.find(
+        (e) => e?.extensions?.description
+      )?.extensions?.description;
+      setWarning(result?.available ? "" : (errorDescription as string));
     },
-    [project, validateProjectAlias, workspaceId, onUpdateProject]
+    [project, validateProjectAlias, workspaceId]
   );
 
-  const debouncedHandleProjectAliasUpdate = useMemo(
-    () =>
-      debounce((alias: string) => {
-        handleProjectAliasUpdate(alias);
-      }, 500),
-    [handleProjectAliasUpdate]
+  const debouncedHandleProjectAliasValidation = useMemo(
+    () => debounce((alias: string) => handleProjectAliasValidation(alias), 500),
+    [handleProjectAliasValidation]
   );
 
   useEffect(() => {
-    return () => debouncedHandleProjectAliasUpdate.cancel();
-  }, [debouncedHandleProjectAliasUpdate]);
-  
-  const handleProjectAliasChange = useCallback(
-    (alias: string) => {
-      debouncedHandleProjectAliasUpdate(alias);
-      setWarning("");
+    return () => debouncedHandleProjectAliasValidation.cancel();
+  }, [debouncedHandleProjectAliasValidation]);
+
+  const handleProjectAliasUpdate = useCallback(
+    (projectAlias: string) => {
+      const trimmedAlias = projectAlias.trim();
+      if (!project || project.projectAlias === trimmedAlias || warning) return;
+      onUpdateProject({ projectAlias: trimmedAlias });
     },
-    [debouncedHandleProjectAliasUpdate]
+    [project, warning, onUpdateProject]
   );
 
   const handleDescriptionUpdate = useCallback(
@@ -185,7 +172,8 @@ const GeneralSettings: FC<Props> = ({
             <InputField
               title={t("Project Alias *")}
               value={project.projectAlias}
-              onChange={handleProjectAliasChange}
+              onChange={debouncedHandleProjectAliasValidation}
+              onChangeComplete={handleProjectAliasUpdate}
               data-testid="project-alias-input"
               description={
                 warning ? (
