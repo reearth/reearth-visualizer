@@ -155,12 +155,13 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 	pid4 := id.NewProjectID()
 	pid5 := id.NewProjectID()
 
+	now := time.Now()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": pid1.String(), "workspace": wid.String(), "name": "Project 1", "starred": true, "coresupport": true},
-		bson.M{"id": pid2.String(), "workspace": wid.String(), "name": "Project 2", "starred": true, "coresupport": true},
-		bson.M{"id": pid3.String(), "workspace": wid.String(), "name": "Project 3", "starred": false, "coresupport": true},
-		bson.M{"id": pid4.String(), "workspace": wid2.String(), "name": "Project 4", "starred": true, "coresupport": true},
-		bson.M{"id": pid5.String(), "workspace": wid2.String(), "name": "Project 5", "starred": true, "coresupport": false},
+		bson.M{"id": pid1.String(), "workspace": wid.String(), "name": "Project 1", "starred": true, "coresupport": true, "updatedat": now.Add(-2 * time.Hour)},
+		bson.M{"id": pid2.String(), "workspace": wid.String(), "name": "Project 2", "starred": true, "coresupport": true, "updatedat": now},
+		bson.M{"id": pid3.String(), "workspace": wid.String(), "name": "Project 3", "starred": false, "coresupport": true, "updatedat": now.Add(-1 * time.Hour)},
+		bson.M{"id": pid4.String(), "workspace": wid2.String(), "name": "Project 4", "starred": true, "coresupport": true, "updatedat": now},
+		bson.M{"id": pid5.String(), "workspace": wid2.String(), "name": "Project 5", "starred": true, "coresupport": false, "updatedat": now},
 	})
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
@@ -172,6 +173,12 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 		assert.Equal(t, int64(2), pi.TotalCount)
 		assert.Equal(t, 2, len(got))
 		assert.ElementsMatch(t, []id.ProjectID{pid1, pid2}, []id.ProjectID{got[0].ID(), got[1].ID()})
+	})
+
+	t.Run("FindStarredByWorkspace orders by last updated time descending", func(t *testing.T) {
+		got, _, err := r.FindStarredByWorkspace(ctx, wid, nil)
+		assert.NoError(t, err)
+		assert.Equal(t, []id.ProjectID{pid2, pid1}, []id.ProjectID{got[0].ID(), got[1].ID()})
 	})
 
 	t.Run("FindStarredByWorkspace with pagination limits results", func(t *testing.T) {
@@ -219,12 +226,15 @@ func TestProject_FindDeletedByWorkspace(t *testing.T) {
 	pid2 := id.NewProjectID()
 	pid3 := id.NewProjectID()
 	pid4 := id.NewProjectID()
+	pid5 := id.NewProjectID()
 
+	now := time.Now()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": pid1.String(), "workspace": wid.String(), "name": "Project 1", "deleted": false, "coresupport": true},
-		bson.M{"id": pid2.String(), "workspace": wid.String(), "name": "Project 2", "deleted": true, "coresupport": true},
-		bson.M{"id": pid3.String(), "workspace": wid2.String(), "name": "Project 3", "deleted": false, "coresupport": true},
-		bson.M{"id": pid4.String(), "workspace": wid2.String(), "name": "Project 4", "deleted": true, "coresupport": true},
+		bson.M{"id": pid1.String(), "workspace": wid.String(), "name": "Project 1", "deleted": false, "coresupport": true, "updatedat": now},
+		bson.M{"id": pid2.String(), "workspace": wid.String(), "name": "Project 2", "deleted": true, "coresupport": true, "updatedat": now.Add(-1 * time.Hour)},
+		bson.M{"id": pid3.String(), "workspace": wid2.String(), "name": "Project 3", "deleted": false, "coresupport": true, "updatedat": now},
+		bson.M{"id": pid4.String(), "workspace": wid2.String(), "name": "Project 4", "deleted": true, "coresupport": true, "updatedat": now},
+		bson.M{"id": pid5.String(), "workspace": wid.String(), "name": "Project 5", "deleted": true, "coresupport": true, "updatedat": now},
 	})
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
@@ -232,7 +242,13 @@ func TestProject_FindDeletedByWorkspace(t *testing.T) {
 	t.Run("FindDeletedByWorkspace", func(t *testing.T) {
 		got, _, err := r.FindDeletedByWorkspace(ctx, wid, nil)
 		assert.NoError(t, err)
-		assert.Equal(t, 1, len(got))
+		assert.Equal(t, 2, len(got))
+	})
+
+	t.Run("FindDeletedByWorkspace orders by last updated time descending", func(t *testing.T) {
+		got, _, err := r.FindDeletedByWorkspace(ctx, wid, nil)
+		assert.NoError(t, err)
+		assert.Equal(t, []id.ProjectID{pid5, pid2}, []id.ProjectID{got[0].ID(), got[1].ID()})
 	})
 
 }
