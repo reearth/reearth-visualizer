@@ -24,6 +24,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
@@ -322,6 +323,61 @@ func TestProject_FindActiveById(t *testing.T) {
 		assert.Nil(t, result)
 		assert.Equal(t, "project is private", err.Error())
 	})
+}
+
+// TestProject_FindByWorkspace_NilImportStatus is a regression test: a
+// ProjectMetadata record with no ImportStatus set (e.g. one created before
+// the ImportStatus field existed, or any non-imported project) must not
+// panic when listed. addMetadatas used to dereference ImportStatus()
+// unconditionally, which crashed on exactly this case.
+func TestProject_FindByWorkspace_NilImportStatus(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	us := factory.NewUser()
+	_ = uc.userRepo.Save(ctx, us)
+
+	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
+		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
+			accountsID.NewUserID(): {
+				Role:      accountsRole.RoleOwner,
+				Disabled:  false,
+				InvitedBy: accountsWorkspace.UserID(us.ID()),
+				Host:      "",
+			},
+		})
+	})
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	pj := factory.NewProject(func(p *project.Builder) {
+		p.Workspace(ws.ID()).
+			Visibility(project.VisibilityPublic).
+			CoreSupport(true)
+	})
+	_ = uc.projectRepo.Save(ctx, pj)
+
+	// No ImportStatus option set — mirrors a metadata record that predates
+	// the ImportStatus field, or any project that was never imported.
+	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
+		m.Project(pj.ID())
+		m.Workspace(ws.ID())
+	})
+	_ = uc.projectMetadataRepo.Save(ctx, meta)
+	assert.Nil(t, meta.ImportStatus())
+
+	pagination := usecasex.OffsetPagination{Offset: 0, Limit: 10}.Wrap()
+	result, pInfo, err := uc.FindByWorkspace(ctx, ws.ID(), nil, nil, pagination, &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
+			ReadableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
+		},
+	})
+	assert.NoError(t, err)
+	assert.NotNil(t, pInfo)
+	assert.Len(t, result, 1)
+	assert.Equal(t, pj.ID(), result[0].ID())
 }
 
 func TestProject_FindVisibilityByUser_OffsetPagination(t *testing.T) {

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Re:Earth Visualizer — E2E Test Reports</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --text: #1a1f2b;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --link: #2563eb;
+    --pass: #16803c;
+    --pass-bg: #e7f6ec;
+    --fail: #b91c1c;
+    --fail-bg: #fdecec;
+    --skip: #92700c;
+    --skip-bg: #fdf6e3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12141a;
+      --card: #1b1e27;
+      --text: #e6e8ee;
+      --muted: #9aa1b0;
+      --border: #2a2e3a;
+      --link: #7aa2f7;
+      --pass: #4ade80;
+      --pass-bg: #123422;
+      --fail: #f87171;
+      --fail-bg: #3a1717;
+      --skip: #fbbf24;
+      --skip-bg: #3a2f10;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  h1 { font-size: 1.4rem; margin: 0 0 0.25rem; }
+  .subtitle { color: var(--muted); margin: 0 0 1.5rem; }
+  .runs { display: flex; flex-direction: column; gap: 0.6rem; }
+  .run {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem 1.1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s;
+  }
+  .run:hover { border-color: var(--link); }
+  .run-main { flex: 1 1 220px; min-width: 0; }
+  .run-label { font-weight: 600; }
+  .run-meta { color: var(--muted); font-size: 0.85rem; overflow-wrap: anywhere; }
+  .run-meta code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85em; }
+  .run-time { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+  .badges { display: flex; gap: 0.4rem; min-height: 1.5rem; }
+  .badge {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .badge.pass { color: var(--pass); background: var(--pass-bg); }
+  .badge.fail { color: var(--fail); background: var(--fail-bg); }
+  .badge.skip { color: var(--skip); background: var(--skip-bg); }
+  .empty, .error {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    color: var(--muted);
+  }
+  .error { color: var(--fail); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Re:Earth Visualizer — E2E Test Reports</h1>
+  <p class="subtitle">Latest Playwright / Allure runs. Click a run to open its report.</p>
+  <div id="content"><div class="empty">Loading…</div></div>
+</main>
+<script>
+  const content = document.getElementById("content");
+
+  function relativeTime(iso) {
+    const then = new Date(iso).getTime();
+    if (Number.isNaN(then)) return "";
+    const s = Math.floor((Date.now() - then) / 1000);
+    if (s < 60) return "just now";
+    const m = Math.floor(s / 60);
+    if (m < 60) return m + "m ago";
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + "h ago";
+    const d = Math.floor(h / 24);
+    return d + "d ago";
+  }
+
+  function badge(cls, text) {
+    const el = document.createElement("span");
+    el.className = "badge " + cls;
+    el.textContent = text;
+    return el;
+  }
+
+  async function loadSummary(run, badges) {
+    try {
+      const res = await fetch("runs/" + encodeURIComponent(run.id) + "/summary.json", { cache: "no-store" });
+      if (!res.ok) return;
+      const stat = (await res.json()).statistic || {};
+      const failed = (stat.failed || 0) + (stat.broken || 0);
+      if (stat.passed) badges.appendChild(badge("pass", stat.passed + " passed"));
+      if (failed) badges.appendChild(badge("fail", failed + " failed"));
+      if (stat.skipped) badges.appendChild(badge("skip", stat.skipped + " skipped"));
+    } catch {
+      /* summary is optional */
+    }
+  }
+
+  function render(runs) {
+    if (!Array.isArray(runs) || runs.length === 0) {
+      content.innerHTML = '<div class="empty">No test runs published yet.</div>';
+      return;
+    }
+    const list = document.createElement("div");
+    list.className = "runs";
+    for (const run of runs) {
+      const a = document.createElement("a");
+      a.className = "run";
+      a.href = run.path || "runs/" + encodeURIComponent(run.id) + "/index.html";
+
+      const main = document.createElement("div");
+      main.className = "run-main";
+      const label = document.createElement("div");
+      label.className = "run-label";
+      label.textContent = run.label || run.id;
+      const meta = document.createElement("div");
+      meta.className = "run-meta";
+      const commit = (run.commit || "").slice(0, 7);
+      meta.innerHTML = "";
+      meta.append(run.branch || "");
+      if (commit) {
+        meta.append(" · ");
+        const code = document.createElement("code");
+        code.textContent = commit;
+        meta.append(code);
+      }
+      main.append(label, meta);
+
+      const badges = document.createElement("div");
+      badges.className = "badges";
+
+      const time = document.createElement("div");
+      time.className = "run-time";
+      time.textContent = relativeTime(run.createdAt);
+      time.title = run.createdAt || "";
+
+      a.append(main, badges, time);
+      list.appendChild(a);
+      loadSummary(run, badges);
+    }
+    content.replaceChildren(list);
+  }
+
+  fetch("index.json", { cache: "no-store" })
+    .then((res) => {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    })
+    .then(render)
+    .catch((err) => {
+      content.innerHTML = "";
+      const el = document.createElement("div");
+      el.className = "error";
+      el.textContent = "Failed to load index.json: " + err.message;
+      content.appendChild(el);
+    });
+</script>
+</body>
+</html>

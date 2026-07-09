@@ -11,9 +11,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"sort"
+	"regexp"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -21,7 +20,6 @@ import (
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
-	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	file_ "github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -31,36 +29,251 @@ import (
 	"github.com/spf13/afero"
 )
 
-type SplitUploadManager struct {
-	mu            sync.RWMutex
-	activeUploads map[string]*SplitUploadSession
-	tempDir       string
-	chunkSize     int64
-	maxRetries    int
-	fileGateway   gateway.File
+// importWorkerCount bounds how many uploads can be assembled/imported
+// concurrently. Import is I/O and CPU heavy (unzip + several sequential DB
+// writes), so this is intentionally small and separate from chunk-upload
+// concurrency, which is handled per-request by Echo.
+const importWorkerCount = 3
+
+// importJobQueueSize is a generous buffer: completed uploads are rare
+// relative to chunk requests, so this should never actually block a
+// request goroutine in practice.
+const importJobQueueSize = 32
+
+// maxChunkCount bounds total_chunks well above any legitimate upload (the
+// import pipeline already rejects anything over 500MB, which is ~32
+// chunks at the client's 16MB chunk size) while still capping how large a
+// backing file a single request can make the server allocate.
+const maxChunkCount = 128
+
+// safeFileIDPattern restricts file_id to a conservative, path-safe charset.
+// fileID flows directly into filepath.Join(tempDir, fileID); without this,
+// a client could send a path-traversal value (e.g. "../../etc/cron.d/x")
+// to write outside the intended temp directory.
+var safeFileIDPattern = regexp.MustCompile(`^[A-Za-z0-9_-]{1,128}$`)
+
+// validateChunkRequest rejects a chunk request before fileID or chunkNum
+// ever reach the filesystem: an unrestricted fileID can path-traverse out
+// of tempDir via filepath.Join, and an unbounded/negative chunkNum can
+// force writes at arbitrary offsets in the backing file.
+func validateChunkRequest(fileID string, chunkNum, totalChunks int) error {
+	if !safeFileIDPattern.MatchString(fileID) {
+		return errors.New("invalid file id")
+	}
+	if totalChunks <= 0 || totalChunks > maxChunkCount {
+		return errors.New("invalid total chunks")
+	}
+	if chunkNum < 0 || chunkNum >= totalChunks {
+		return errors.New("invalid chunk number")
+	}
+	return nil
 }
 
-type SplitUploadSession struct {
+// uploadSession tracks one in-progress chunked upload. All fields are
+// unexported and every access goes through a locking method below — no
+// code outside this type may read or write a field directly. This is what
+// prevents the class of bug that produced REL-02: a goroutine or handler
+// touching session state without holding its lock.
+type uploadSession struct {
+	mu          sync.Mutex
+	fileID      string
+	filePath    string
+	file        *os.File
+	chunkSize   int64
+	totalChunks int
+	received    map[int]struct{}
+	project     *project.Project
+	dispatched  bool
+	updatedAt   time.Time
+}
+
+// sessionInfo is an immutable snapshot of the fields callers need after
+// interacting with a session. It is the only thing that may leave a
+// session's lock scope — the HTTP response and the background import job
+// both consume this value type, never the live *uploadSession.
+type sessionInfo struct {
 	FileID      string
-	Project     *project.Project
-	Chunks      []string
+	FilePath    string
+	ProjectID   *id.ProjectID
 	TotalChunks int
 	Received    int
-	CreatedAt   time.Time
 	UpdatedAt   time.Time
+}
+
+func newUploadSession(tempDir, fileID string, totalChunks int, chunkSize int64) (*uploadSession, error) {
+	filePath := filepath.Join(tempDir, fileID)
+	// O_TRUNC guards against a stale file left behind at the same path
+	// (e.g. from a crashed previous session with a reused fileID): without
+	// it, trailing bytes from the old file would survive past the new
+	// upload's shorter content and silently corrupt the assembled zip.
+	// 0600 keeps uploaded content unreadable to other OS-level users/
+	// processes sharing the temp directory.
+	f, err := os.OpenFile(filePath, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0600)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create upload file: %w", err)
+	}
+	return &uploadSession{
+		fileID:      fileID,
+		filePath:    filePath,
+		file:        f,
+		chunkSize:   chunkSize,
+		totalChunks: totalChunks,
+		received:    make(map[int]struct{}),
+		updatedAt:   time.Now(),
+	}, nil
+}
+
+// writeChunk streams r directly to this chunk's byte offset in the
+// session's single backing file (no per-chunk files, no later concatenation
+// step). It reports whether this call is the one that completes the
+// upload: every chunk index in [0, totalChunks) has been written AND the
+// project (created from chunk 0) has been set. Both conditions are
+// required — a malformed client that never sends chunk 0 can never be
+// reported complete.
+//
+// completed is reported at most once per session (edge-triggered, not
+// level-triggered): once an import has been dispatched, later calls —
+// e.g. a client retry of the last chunk, or a duplicate concurrent
+// request — return false without touching the file again. Without this,
+// every retry after completion would re-dispatch a duplicate import job
+// racing the first job's cleanup of this same session/file.
+func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.dispatched {
+		return false, nil
+	}
+
+	// Cap the write at chunkSize bytes so an oversized chunk can never
+	// spill into the next chunk's offset. Any chunk but the last must be
+	// exactly chunkSize; a short or oversized chunk is rejected (and not
+	// marked received) rather than silently corrupting the assembled file.
+	offset := int64(idx) * s.chunkSize
+	n, err := io.Copy(io.NewOffsetWriter(s.file, offset), io.LimitReader(r, s.chunkSize))
+	if err != nil {
+		return false, fmt.Errorf("failed to write chunk %d: %w", idx, err)
+	}
+	isFinal := idx == s.totalChunks-1
+	if n == 0 {
+		return false, fmt.Errorf("chunk %d is empty", idx)
+	}
+	if !isFinal && n != s.chunkSize {
+		return false, fmt.Errorf("chunk %d is %d bytes, want exactly %d", idx, n, s.chunkSize)
+	}
+	var probe [1]byte
+	if extra, _ := r.Read(probe[:]); extra > 0 {
+		return false, fmt.Errorf("chunk %d exceeds max chunk size (%d bytes)", idx, s.chunkSize)
+	}
+
+	s.received[idx] = struct{}{}
+	s.updatedAt = time.Now()
+
+	if !s.hasAllChunksLocked() || s.project == nil {
+		return false, nil
+	}
+	s.dispatched = true
+	return true, nil
+}
+
+func (s *uploadSession) hasAllChunksLocked() bool {
+	if s.totalChunks <= 0 {
+		return false
+	}
+	for i := range s.totalChunks {
+		if _, ok := s.received[i]; !ok {
+			return false
+		}
+	}
+	return true
+}
+
+func (s *uploadSession) setProject(p *project.Project) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.project = p
+}
+
+func (s *uploadSession) snapshot() sessionInfo {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	info := sessionInfo{
+		FileID:      s.fileID,
+		FilePath:    s.filePath,
+		TotalChunks: s.totalChunks,
+		Received:    len(s.received),
+		UpdatedAt:   s.updatedAt,
+	}
+	if s.project != nil {
+		pid := s.project.ID()
+		info.ProjectID = &pid
+	}
+	return info
+}
+
+func (s *uploadSession) isStale(cutoff time.Time) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.updatedAt.Before(cutoff)
+}
+
+func (s *uploadSession) close() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if err := s.file.Close(); err != nil {
+		log.Printf("Warning: failed to close upload file: %v", err)
+	}
+	if err := os.Remove(s.filePath); err != nil && !os.IsNotExist(err) {
+		log.Printf("Warning: failed to remove upload file: %v", err)
+	}
+}
+
+// importJob is the handoff between a completed upload and the background
+// import pipeline. It carries only plain values and pointers that are safe
+// to use unsynchronized (the project/usecases/operator are not mutated by
+// this package), never a live *uploadSession.
+type importJob struct {
+	usecases    *interfaces.Container
+	op          *usecase.Operator
+	wsId        accountsID.WorkspaceID
+	fileID      string
+	filePath    string
+	projectID   id.ProjectID
+	currentHost string
+}
+
+// SplitUploadManager owns in-progress upload sessions and a small worker
+// pool that assembles+imports completed ones. mgrMu guards ONLY the
+// sessions map itself; it is never used to guard a session's fields, so
+// there is no seam left for code to accidentally read/write session state
+// without going through uploadSession's own lock.
+type SplitUploadManager struct {
+	mgrMu     sync.Mutex
+	sessions  map[string]*uploadSession
+	tempDir   string
+	chunkSize int64
+	jobs      chan importJob
+}
+
+func newSplitUploadManager(tempDir string, chunkSize int64) *SplitUploadManager {
+	m := &SplitUploadManager{
+		sessions:  make(map[string]*uploadSession),
+		tempDir:   tempDir,
+		chunkSize: chunkSize,
+		jobs:      make(chan importJob, importJobQueueSize),
+	}
+	for range importWorkerCount {
+		go m.runWorker()
+	}
+	return m
 }
 
 func servSplitUploadFiles(
 	apiPrivate *echo.Group,
 	cfg *ServerConfig,
 ) {
-	splitUploadManager := &SplitUploadManager{
-		activeUploads: make(map[string]*SplitUploadSession),
-		tempDir:       os.TempDir(),
-		chunkSize:     16 * 1024 * 1024, // 16MB
-		maxRetries:    3,
-		fileGateway:   cfg.Gateways.File,
-	}
+	splitUploadManager := newSplitUploadManager(os.TempDir(), 16*1024*1024) // 16MB
 
 	splitUploadManager.StartCleanupRoutine(1 * time.Hour)
 
@@ -91,6 +304,10 @@ func servSplitUploadFiles(
 				return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid total chunks")
 			}
 
+			if err := validateChunkRequest(fileID, chunkNum, totalChunks); err != nil {
+				return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			}
+
 			f, _, err := c.Request().FormFile("file")
 			if err != nil {
 				return nil, echo.NewHTTPError(http.StatusBadRequest, "Failed to get file chunk")
@@ -107,220 +324,156 @@ func servSplitUploadFiles(
 
 }
 
-func (m *SplitUploadManager) readSessionProjectID(fileID string) *id.ProjectID {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-	session := m.activeUploads[fileID]
-	if session != nil && session.Project != nil {
-		return session.Project.ID().Ref()
+func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) (*uploadSession, error) {
+	m.mgrMu.Lock()
+	defer m.mgrMu.Unlock()
+
+	if s, ok := m.sessions[fileID]; ok {
+		return s, nil
 	}
-	return nil
+	s, err := newUploadSession(m.tempDir, fileID, totalChunks, m.chunkSize)
+	if err != nil {
+		return nil, err
+	}
+	m.sessions[fileID] = s
+	return s, nil
+}
+
+// dispatchImport hands a completed upload off to the worker pool. This is
+// the one seam meant to change when the import pipeline moves to a
+// durable, MongoDB-backed job queue (see REL-04): only this method needs
+// to be swapped to enqueue a persisted job instead of an in-process
+// channel send — nothing in the session/chunking code above needs to move.
+func (m *SplitUploadManager) dispatchImport(job importJob) {
+	m.jobs <- job
+}
+
+func (m *SplitUploadManager) runWorker() {
+	for job := range m.jobs {
+		m.runImportJob(job)
+	}
+}
+
+// runImportJob assembles (already done — the session's file is written
+// in place, chunk by chunk) and imports one completed upload. It recovers
+// from any panic in the pipeline so a single bad upload can only fail that
+// one import, never take down the process — this is the general fix for
+// the class of bug behind REL-01, not just its specific trigger.
+func (m *SplitUploadManager) runImportJob(job importJob) {
+	bgctx := context.Background()
+	result := map[string]any{}
+
+	defer func() {
+		if r := recover(); r != nil {
+			errMsg := fmt.Sprintf("panic during import: %v", r)
+			log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
+			UpdateImportStatus(bgctx, job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, result)
+		}
+	}()
+	defer m.cleanupSession(job.fileID)
+
+	fs := afero.NewOsFs()
+	f, err := fs.Open(job.filePath)
+	if err != nil {
+		errMsg := fmt.Sprintf("failed to open assembled file: %v", err)
+		UpdateImportStatus(bgctx, job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, result)
+		return
+	}
+	defer closeWithError(f, &err)
+
+	importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(job.currentHost, f)
+	if err != nil {
+		errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
+		UpdateImportStatus(bgctx, job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, result)
+		return
+	}
+	log.Infof("[Import] uncompress zip file")
+
+	ImportProject(
+		bgctx,
+		job.usecases,
+		job.op,
+		job.wsId,
+		job.projectID,
+		importData,
+		assetsZip,
+		pluginsZip,
+		result,
+		version,
+	)
 }
 
 func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId accountsID.WorkspaceID, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
 
-	var pid *id.ProjectID
-	result := map[string]any{}
+	session, err := m.getOrCreateSession(fileID, totalChunks)
+	if err != nil {
+		return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to start upload session: %v", err))
+	}
 
-	pid = m.readSessionProjectID(fileID)
-	if pid != nil {
-		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d Project: %s", fileID, chunkNum+1, totalChunks, pid.String())
+	if pre := session.snapshot(); pre.ProjectID != nil {
+		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d Project: %s", fileID, chunkNum+1, totalChunks, pre.ProjectID.String())
 	} else {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d ", fileID, chunkNum+1, totalChunks)
 	}
 
-	_, err := m.SaveChunk(fileID, chunkNum, file)
-	if err != nil {
-		errMsg := fmt.Sprintf("Failed to SaveChunk: %v", err)
-		if pid != nil {
-			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
-		}
-		return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
-	}
-
-	var prj *project.Project
 	if chunkNum == 0 {
-		prj, err = CreateTemporaryProject(ctx, usecases, op, wsId)
+		prj, err := CreateTemporaryProject(ctx, usecases, op, wsId)
 		if err != nil {
-			errMsg := fmt.Sprintf("Failed to CreateTemporaryProject: %v", err)
-			if pid != nil {
-				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
-			}
 			return nil, err
 		}
+		session.setProject(prj)
 	}
 
-	session, completed, err := m.UpdateSession(fileID, chunkNum, totalChunks, prj)
+	completed, err := session.writeChunk(chunkNum, file)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to UpdateSession: %v", err)
-		if pid != nil {
-			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+		errMsg := fmt.Sprintf("Failed to write chunk: %v", err)
+		if pid := session.snapshot().ProjectID; pid != nil {
+			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 		}
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 	}
 
-	currentHost := adapter.CurrentHost(ctx)
+	snap := session.snapshot()
 
 	if completed {
-
-		// Import process, this process will take some time
-		go func(session *SplitUploadSession) {
-
-			pid := session.Project.ID()
-			bgctx := context.Background()
-
-			defer m.CleanupSession(session.FileID)
-
-			assembledPath := filepath.Join(m.tempDir, session.FileID)
-			defer safeRemove(assembledPath)
-
-			if err := m.AssembleChunks(session, assembledPath); err != nil {
-				errMsg := fmt.Sprintf("failed to assemble chunks: %v", err)
-				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
-				return
-			}
-			log.Infof("[Import] assemble chunks")
-
-			fs := afero.NewOsFs()
-			f, err := fs.Open(assembledPath)
-			if err != nil {
-				errMsg := fmt.Sprintf("failed to open assembled file: %v", err)
-				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
-				return
-			}
-			defer closeWithError(f, &err)
-
-			importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(currentHost, f)
-			if err != nil {
-				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
-				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
-				return
-			}
-			log.Infof("[Import] uncompress zip file")
-
-			ImportProject(
-				bgctx,
-				usecases,
-				op,
-				wsId,
-				pid,
-				importData,
-				assetsZip,
-				pluginsZip,
-				result,
-				version,
-			)
-
-		}(session)
+		// snap.ProjectID is guaranteed non-nil here: writeChunk only
+		// reports completed once a project has been set (chunk 0 arrived).
+		m.dispatchImport(importJob{
+			usecases:    usecases,
+			op:          op,
+			wsId:        wsId,
+			fileID:      snap.FileID,
+			filePath:    snap.FilePath,
+			projectID:   *snap.ProjectID,
+			currentHost: adapter.CurrentHost(ctx),
+		})
 	}
 
-	return map[string]interface{}{
+	resp := map[string]interface{}{
 		"status":     "chunk_received",
-		"project_id": session.Project.ID(),
 		"file_id":    fileID,
 		"chunk_num":  chunkNum,
-		"received":   session.Received,
-		"total":      session.TotalChunks,
+		"received":   snap.Received,
+		"total":      snap.TotalChunks,
 		"completed":  completed,
-		"updated_at": session.UpdatedAt,
-	}, nil
+		"updated_at": snap.UpdatedAt,
+	}
+	if snap.ProjectID != nil {
+		resp["project_id"] = snap.ProjectID.String()
+	}
+	return resp, nil
 }
 
-func (m *SplitUploadManager) SaveChunk(fileID string, chunkNum int, src io.Reader) (string, error) {
-	data, readErr := io.ReadAll(src)
-	if readErr != nil {
-		return "", fmt.Errorf("failed to read chunk data: %w", readErr)
+func (m *SplitUploadManager) cleanupSession(fileID string) {
+	m.mgrMu.Lock()
+	s, ok := m.sessions[fileID]
+	if ok {
+		delete(m.sessions, fileID)
 	}
-	chunkPath := filepath.Join(m.tempDir, fmt.Sprintf("%s_part_%d", fileID, chunkNum))
-	for i := 0; i < m.maxRetries; i++ {
-		writeErr := os.WriteFile(chunkPath, data, 0644)
-		if writeErr == nil {
-			return chunkPath, nil
-		} else if i == m.maxRetries-1 {
-			return "", fmt.Errorf("failed after %d retries: %w", m.maxRetries, writeErr)
-		}
-		time.Sleep(time.Second * time.Duration(i+1))
-	}
-	return "", fmt.Errorf("failed to save chunk")
-}
+	m.mgrMu.Unlock()
 
-func (m *SplitUploadManager) UpdateSession(fileID string, chunkNum, totalChunks int, prj *project.Project) (*SplitUploadSession, bool, error) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	session, exists := m.activeUploads[fileID]
-	if !exists {
-		session = &SplitUploadSession{
-			FileID:      fileID,
-			TotalChunks: totalChunks,
-			CreatedAt:   time.Now(),
-		}
-		m.activeUploads[fileID] = session
-	}
-	if prj != nil {
-		m.activeUploads[fileID].Project = prj
-	}
-
-	session.UpdatedAt = time.Now()
-	session.Received++
-
-	for _, chunk := range session.Chunks {
-		if chunk == fmt.Sprintf("%s_part_%d", fileID, chunkNum) {
-			return session, false, nil
-		}
-	}
-
-	session.Chunks = append(session.Chunks, fmt.Sprintf("%s_part_%d", fileID, chunkNum))
-
-	completed := session.TotalChunks > 0 && len(session.Chunks) >= session.TotalChunks
-	return session, completed, nil
-}
-
-func (m *SplitUploadManager) AssembleChunks(session *SplitUploadSession, outputPath string) error {
-	outFile, err := os.Create(outputPath)
-	if err != nil {
-		return fmt.Errorf("failed to create output file: %w", err)
-	}
-	defer closeWithError(outFile, &err)
-
-	sort.Slice(session.Chunks, func(i, j int) bool {
-		getChunkNumber := func(s string) int {
-			parts := strings.Split(s, "_part_")
-			if len(parts) != 2 {
-				log.Printf("warning: unexpected chunk name format: %s", s)
-				return 0
-			}
-			n, err := strconv.Atoi(parts[1])
-			if err != nil {
-				log.Printf("warning: failed to parse chunk number from %s: %v", s, err)
-				return 0
-			}
-			return n
-		}
-
-		return getChunkNumber(session.Chunks[i]) < getChunkNumber(session.Chunks[j])
-	})
-
-	for _, chunk := range session.Chunks {
-		chunkPath := filepath.Join(m.tempDir, chunk)
-		if err := appendToFile(outFile, chunkPath); err != nil {
-			return fmt.Errorf("failed to append chunk %s: %w", chunk, err)
-		}
-	}
-	return nil
-}
-
-func (m *SplitUploadManager) CleanupSession(fileID string) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	if session, exists := m.activeUploads[fileID]; exists {
-		for _, chunk := range session.Chunks {
-			if err := os.Remove(filepath.Join(m.tempDir, chunk)); err != nil {
-				log.Printf("Warning: failed to remove chunk: %v", err)
-			}
-		}
-		delete(m.activeUploads, fileID)
+	if ok {
+		s.close()
 	}
 }
 
@@ -334,42 +487,26 @@ func (m *SplitUploadManager) StartCleanupRoutine(interval time.Duration) {
 }
 
 func (m *SplitUploadManager) cleanupStaleSessions() {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
 	cutoff := time.Now().Add(-24 * time.Hour)
-	for fileID, session := range m.activeUploads {
-		if session.UpdatedAt.Before(cutoff) {
-			for _, chunk := range session.Chunks {
-				if err := os.Remove(filepath.Join(m.tempDir, chunk)); err != nil {
-					log.Printf("Warning: failed to remove chunk: %v", err)
-				}
-			}
-			delete(m.activeUploads, fileID)
+
+	m.mgrMu.Lock()
+	var stale []*uploadSession
+	for fileID, s := range m.sessions {
+		if s.isStale(cutoff) {
+			stale = append(stale, s)
+			delete(m.sessions, fileID)
 		}
 	}
-}
+	m.mgrMu.Unlock()
 
-func appendToFile(dst *os.File, srcPath string) error {
-	src, err := os.Open(srcPath)
-	if err != nil {
-		return err
+	for _, s := range stale {
+		s.close()
 	}
-	defer closeWithError(src, &err)
-
-	_, err = io.Copy(dst, src)
-	return err
 }
 
 func closeWithError(f io.Closer, err *error) {
 	if closeErr := f.Close(); closeErr != nil && *err == nil {
 		*err = closeErr
-	}
-}
-
-func safeRemove(path string) {
-	if err := os.Remove(path); err != nil {
-		log.Printf("Warning: failed to remove file %s: %v", path, err)
 	}
 }
 
