@@ -1,12 +1,12 @@
 import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
-import { STORAGE_STATE } from "../../global-setup";
-import { DashBoardPage } from "../../pages/dashBoardPage";
-import { ProjectScreenPage } from "../../pages/projectScreenPage";
-import { ProjectsPage } from "../../pages/projectsPage";
-import { createIAPContext } from "../../utils/iap-auth";
-import { deleteProjectByName } from "../../utils/project-cleanup";
+import { STORAGE_STATE } from "@/global-setup";
+import { DashBoardPage } from "@pages/dashBoardPage";
+import { ProjectScreenPage } from "@pages/projectScreenPage";
+import { ProjectsPage } from "@pages/projectsPage";
+import { createIAPContext } from "@utils/iap-auth";
+import { deleteProjectByName } from "@utils/project-cleanup";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
