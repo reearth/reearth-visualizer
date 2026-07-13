@@ -56,6 +56,7 @@ jobs:
           REEARTH_E2E_AUTH0_DOMAIN: ${{ secrets.REEARTH_E2E_AUTH0_DOMAIN }}
           REEARTH_E2E_AUTH0_AUDIENCE: ${{ secrets.REEARTH_E2E_AUTH0_AUDIENCE }}
           REEARTH_E2E_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_E2E_AUTH0_CLIENT_ID }}
+          REEARTH_E2E_AUTH0_CLIENT_SECRET: ${{ secrets.REEARTH_E2E_AUTH0_CLIENT_SECRET }}
           USE_IAP_AUTH: "false"
           SKIP_STORAGE_STATE: "true"
         run: npm run test:api
