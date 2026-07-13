@@ -1,14 +1,15 @@
 import { IMAGE_TYPES } from "@reearth/app/features/AssetsManager/constants";
 import ProjectRemoveModal from "@reearth/app/features/Dashboard/ContentsContainer/Projects/ProjectRemoveModal";
 import ProjectVisibilityModal from "@reearth/app/features/ProjectSettings/innerPages/GeneralSettings/ProjectVisibilityModal";
-import { Button, Typography } from "@reearth/app/lib/reearth-ui";
+import { Button, Icon, Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { InputField, AssetField, TextareaField } from "@reearth/app/ui/fields";
 import { useValidateProjectAlias } from "@reearth/services/api/project";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme, keyframes } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
+import { debounce } from "lodash-es";
 import { useCallback, useState, FC, useMemo, useEffect } from "react";
 
 import {
@@ -22,7 +23,6 @@ import {
   Thumbnail,
   TitleWrapper
 } from "../common";
-import { debounce } from "lodash-es";
 
 export type GeneralSettingsType = {
   name?: string;
@@ -48,6 +48,8 @@ type Props = {
   onProjectRemove: () => void;
 };
 
+type AliasStatus = "idle" | "loading" | "success" | "error";
+
 const GeneralSettings: FC<Props> = ({
   project,
   disabled,
@@ -61,6 +63,16 @@ const GeneralSettings: FC<Props> = ({
   const { projectVisibility } = appFeature();
   const { validateProjectAlias } = useValidateProjectAlias();
   const [warning, setWarning] = useState<string>("");
+  const [localAlias, setLocalAlias] = useState(project?.projectAlias ?? "");
+  const [aliasValidating, setAliasValidating] = useState(false);
+  const [aliasValid, setAliasValid] = useState(false);
+
+  useEffect(() => {
+    setLocalAlias(project?.projectAlias ?? "");
+    setAliasValidating(false);
+    setAliasValid(false);
+    setWarning("");
+  }, [project?.projectAlias]);
 
   const handleNameUpdate = useCallback(
     (name: string) => {
@@ -76,13 +88,31 @@ const GeneralSettings: FC<Props> = ({
     async (projectAlias: string) => {
       if (!project) return;
       const trimmedAlias = projectAlias.trim();
-      if (project.projectAlias === trimmedAlias) return void setWarning("");
+      if (project.projectAlias === trimmedAlias) {
+        setWarning("");
+        setAliasValidating(false);
+        setAliasValid(false);
+        return;
+      }
 
-      const result = await validateProjectAlias?.(trimmedAlias, workspaceId, project.id);
+      const result = await validateProjectAlias?.(
+        trimmedAlias,
+        workspaceId,
+        project.id
+      );
       const errorDescription = result?.errors?.find(
         (e) => e?.extensions?.description
       )?.extensions?.description;
-      setWarning(result?.available ? "" : (errorDescription as string));
+
+      setAliasValidating(false);
+
+      if (result?.available) {
+        setAliasValid(true);
+        setWarning("");
+      } else {
+        setAliasValid(false);
+        setWarning(errorDescription as string ?? "");
+      }
     },
     [project, validateProjectAlias, workspaceId]
   );
@@ -95,6 +125,23 @@ const GeneralSettings: FC<Props> = ({
   useEffect(() => {
     return () => debouncedHandleProjectAliasValidation.cancel();
   }, [debouncedHandleProjectAliasValidation]);
+
+  const handleAliasChange = useCallback(
+    (value: string) => {
+      setLocalAlias(value);
+      if (value.trim() && value.trim() !== project?.projectAlias) {
+        setAliasValidating(true);
+        setAliasValid(false);
+        setWarning("");
+      } else {
+        setAliasValidating(false);
+        setAliasValid(false);
+        setWarning("");
+      }
+      debouncedHandleProjectAliasValidation(value);
+    },
+    [project?.projectAlias, debouncedHandleProjectAliasValidation]
+  );
 
   const handleProjectAliasUpdate = useCallback(
     (projectAlias: string) => {
@@ -149,6 +196,24 @@ const GeneralSettings: FC<Props> = ({
     [handleProjectVisibilityModal, onUpdateProject, project]
   );
 
+  const aliasStatus: AliasStatus = useMemo(() => {
+    if (!localAlias?.trim() || localAlias === project?.projectAlias)
+      return "idle";
+    if (aliasValidating) return "loading";
+    if (aliasValid) return "success";
+    if (warning) return "error";
+    return "idle";
+  }, [localAlias, project?.projectAlias, aliasValidating, aliasValid, warning]);
+
+  const aliasStatusIcon = useMemo(() => {
+    if (aliasStatus === "loading") return <Spinner />;
+    if (aliasStatus === "success")
+      return <Icon icon="check" size={14} color={theme.success.main} />;
+    if (aliasStatus === "error")
+      return <Icon icon="close" size={14} color={theme.dangerous.main} />;
+    return null;
+  }, [aliasStatus, theme]);
+
   return project ? (
     <InnerPage wide>
       <SettingsWrapper>
@@ -169,24 +234,25 @@ const GeneralSettings: FC<Props> = ({
               onChangeComplete={handleNameUpdate}
               data-testid="project-name-input"
             />
-            <InputField
-              title={t("Project Alias *")}
-              value={project.projectAlias}
-              onChange={debouncedHandleProjectAliasValidation}
-              onChangeComplete={handleProjectAliasUpdate}
-              data-testid="project-alias-input"
-              description={
-                warning ? (
-                  <Typography size="footnote" color={theme.dangerous.main}>
-                    {warning}
-                  </Typography>
-                ) : (
-                  t(
-                    "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+            <AliasInputWrapper $status={aliasStatus}>
+              <InputField
+                title={t("Project Alias *")}
+                value={project.projectAlias}
+                onChange={handleAliasChange}
+                onChangeComplete={handleProjectAliasUpdate}
+                data-testid="project-alias-input"
+                actions={aliasStatusIcon ? [aliasStatusIcon] : undefined}
+                description={
+                  warning ? (
+                    <Typography size="footnote" color={theme.dangerous.main}>
+                      {warning}
+                    </Typography>
+                  ) : (
+                    `${t("Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/")}${localAlias || "project-alias"}`
                   )
-                )
-              }
-            />
+                }
+              />
+            </AliasInputWrapper>
             <TextareaField
               title={t("Description")}
               value={project.description}
@@ -314,6 +380,31 @@ const GeneralSettings: FC<Props> = ({
 };
 
 export default GeneralSettings;
+
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
+
+const Spinner = styled("div")(({ theme }) => ({
+  width: 14,
+  height: 14,
+  borderRadius: "50%",
+  border: `2px solid ${theme.outline.weak}`,
+  borderTopColor: theme.content.main,
+  animation: `${spin} 0.7s linear infinite`,
+  flexShrink: 0
+}));
+
+const AliasInputWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "$status"
+})<{ $status: AliasStatus }>(({ theme, $status }) => ({
+  "[data-commonfield-input-slot] > div": {
+    ...($status === "error" && {
+      border: `1px solid ${theme.dangerous.main}`
+    })
+  }
+}));
 
 const DangerItem = styled("div")(({ theme }) => ({
   display: css.display.flex,

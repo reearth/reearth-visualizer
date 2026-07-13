@@ -10,7 +10,7 @@ export type InputFieldProps = {
 } & CommonFieldProps &
   Pick<
     TextInputProps,
-    "value" | "placeholder" | "onChange" | "disabled" | "appearance"
+    "value" | "placeholder" | "onChange" | "disabled" | "appearance" | "actions"
   >;
 
 const InputField: FC<InputFieldProps> = ({
