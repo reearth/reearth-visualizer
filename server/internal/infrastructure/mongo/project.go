@@ -481,7 +481,8 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.Work
 		"coresupport": true,
 	}
 
-	return r.paginate(ctx, filter, nil, defaultPagination(p))
+	sort := &project.SortType{Key: project.SortTypeUpdatedAt.Key, Desc: true}
+	return r.paginate(ctx, filter, sort, defaultPagination(p))
 }
 
 func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, p *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
@@ -495,7 +496,8 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.Work
 		"coresupport": true,
 	}
 
-	return r.paginate(ctx, filter, nil, defaultPagination(p))
+	sort := &project.SortType{Key: project.SortTypeUpdatedAt.Key, Desc: true}
+	return r.paginate(ctx, filter, sort, defaultPagination(p))
 }
 
 func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
