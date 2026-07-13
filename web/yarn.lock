@@ -5575,7 +5575,7 @@ __metadata:
     "@radix-ui/react-slot": "npm:1.2.4"
     "@reearth/core": "npm:0.0.7-alpha.71"
     "@reearth/sentinel": "npm:0.1.2"
-    "@reearth/zushi": "npm:0.2.1"
+    "@reearth/zushi": "npm:0.3.0"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
@@ -5689,20 +5689,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@reearth/zushi@npm:0.2.1":
-  version: 0.2.1
-  resolution: "@reearth/zushi@npm:0.2.1"
+"@reearth/zushi@npm:0.3.0":
+  version: 0.3.0
+  resolution: "@reearth/zushi@npm:0.3.0"
   dependencies:
     "@ungap/event-target": "npm:0.2.4"
     localforage: "npm:1.10.0"
     quickjs-emscripten: "npm:0.32.0"
-    quickjs-emscripten-sync: "npm:1.10.0"
+    quickjs-emscripten-sync: "npm:1.11.0"
   peerDependencies:
     react: ">=18"
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: 10c0/2c1c24b438f0de24825a737ac468e5a94e5f57be23a48f8566f16377429bf4edf18862fb58ef293daa9584dbc84bc514321c3bebe34443c88be912a55597b5b1
+  checksum: 10c0/e7d38bfc2b2b8e14ac2fe619fbb3d78dc13a76eb3cf4121426ea7cc597af9645580240938cc9bf64fda1a056d8c5d5858c15947cccaed81575c261e171fde42a
   languageName: node
   linkType: hard
 
@@ -19717,12 +19717,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quickjs-emscripten-sync@npm:1.10.0":
-  version: 1.10.0
-  resolution: "quickjs-emscripten-sync@npm:1.10.0"
+"quickjs-emscripten-sync@npm:1.11.0":
+  version: 1.11.0
+  resolution: "quickjs-emscripten-sync@npm:1.11.0"
   peerDependencies:
     quickjs-emscripten: "*"
-  checksum: 10c0/88f1d54f9814b2657277e2f7f8d43e7dea0833ddc0ec7e123d99a3e9192ab314d971a0bcb5b8a5b27ac00cff9efe3ca5ac2ba5f95fb4e973cd2de4d39b0e69aa
+  checksum: 10c0/f036e41c7b7330d1c5657fb0530201a0aab6aef195bfc72d58967b8312505090838b7ca8e5c551e0f8b4c7ce035b7c88eb92df5c516d451463dbad1974e7bcee
   languageName: node
   linkType: hard
 
