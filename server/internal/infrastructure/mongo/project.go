@@ -481,7 +481,8 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.Work
 		"coresupport": true,
 	}
 
-	return r.paginate(ctx, filter, nil, defaultPagination(p))
+	sort := &project.SortType{Key: project.SortTypeUpdatedAt.Key, Desc: true}
+	return r.paginate(ctx, filter, sort, defaultPagination(p))
 }
 
 func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, p *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
@@ -495,7 +496,8 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.Work
 		"coresupport": true,
 	}
 
-	return r.paginate(ctx, filter, nil, defaultPagination(p))
+	sort := &project.SortType{Key: project.SortTypeUpdatedAt.Key, Desc: true}
+	return r.paginate(ctx, filter, sort, defaultPagination(p))
 }
 
 func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
@@ -581,6 +583,19 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		"deleted":    false,
 	}
 
+	// TODO: will need to revisit this once we migrate to new database.
+	// currently using MongoDB and plan to use PostgreSQL
+	// This leading wildcard regex cannot use an index for the match itself
+	// (SCA-01, eukarya-inc/compliance#50). The existing (visibility, deleted)
+	// index (see migration 260518143901) only narrows to the public gallery
+	// candidate set, which is exactly what is growing, so this scales with
+	// gallery size. Checked prod traces as of July 2026 for GetAllProjects,
+	// the entry point that reaches this code: about 6 calls a day, and the
+	// query itself (project.aggregate/find) runs in 5 to 8ms. No real
+	// impact yet. A real fix (text index, anchored prefix regex, a
+	// precomputed indexed field, or an external search engine) all trade
+	// off search semantics or add infrastructure, so this is deferred until
+	// there is actual signal it is costing something.
 	if pFilter.Keyword != nil {
 		filter["name"] = bson.M{
 			"$regex": primitive.Regex{

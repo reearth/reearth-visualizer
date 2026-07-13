@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
         with:
           egress-policy: audit
       - name: Checkout code
@@ -43,7 +43,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.18.0"
 
       - name: Install dependencies
         run: npm ci
@@ -56,6 +56,7 @@ jobs:
           REEARTH_E2E_AUTH0_DOMAIN: ${{ secrets.REEARTH_E2E_AUTH0_DOMAIN }}
           REEARTH_E2E_AUTH0_AUDIENCE: ${{ secrets.REEARTH_E2E_AUTH0_AUDIENCE }}
           REEARTH_E2E_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_E2E_AUTH0_CLIENT_ID }}
+          REEARTH_E2E_AUTH0_CLIENT_SECRET: ${{ secrets.REEARTH_E2E_AUTH0_CLIENT_SECRET }}
           USE_IAP_AUTH: "false"
           SKIP_STORAGE_STATE: "true"
         run: npm run test:api
@@ -77,6 +78,12 @@ jobs:
       - name: Setup Google Cloud SDK
         if: always()
         uses: google-github-actions/setup-gcloud@v3
+
+      - name: Upload dashboard landing page to GCS
+        if: always()
+        run: |
+          gsutil -h "Content-Type:text/html" -h "Cache-Control:no-cache" \
+            cp ./dashboard/index.html "gs://$BUCKET/index.html"
 
       - name: Check Allure Results
         if: always()
