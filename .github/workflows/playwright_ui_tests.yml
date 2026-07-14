@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
         with:
           egress-policy: audit
       - name: Checkout code
@@ -46,7 +46,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24.18.0"
 
       - name: Cache node modules
         uses: actions/cache@v5
@@ -186,6 +186,25 @@ jobs:
           if [ -f "./out/allure-report/widgets/summary.json" ]; then
             gsutil cp ./out/allure-report/widgets/summary.json "gs://$BUCKET/runs/$RUN_ID/summary.json"
           fi
+
+      - name: Point bucket root at latest report
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        env:
+          RUN_ID: ${{ steps.run-id.outputs.run_id }}
+        run: |
+          if ! gsutil -q stat "gs://$BUCKET/runs/${RUN_ID}/index.html"; then
+            echo "Report not found in GCS, keeping existing root index.html"
+            exit 0
+          fi
+          cat > /tmp/root-index.html <<EOF
+          <!doctype html>
+          <meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=runs/${RUN_ID}/">
+          <title>Re:Earth Visualizer E2E</title>
+          <a href="runs/${RUN_ID}/">Latest report</a>
+          EOF
+          gsutil -h "Content-Type:text/html" -h "Cache-Control:no-cache" \
+            cp /tmp/root-index.html "gs://$BUCKET/index.html"
 
       - name: Update dashboard index.json
         if: always() && steps.check-results.outputs.has_results == 'true'
