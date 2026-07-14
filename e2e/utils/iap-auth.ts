@@ -49,7 +49,10 @@ export async function createIAPContext(
 
   // Skip IAP authentication if not needed
   if (!useIAPAuth) {
-    return browser.newContext(options);
+    return browser.newContext({
+      ...options,
+      recordVideo: { dir: 'videos/', size: { width: 1280, height: 720 } },
+    });
   }
 
   if (IAP_AUTH_METHOD === 'service-account') {
