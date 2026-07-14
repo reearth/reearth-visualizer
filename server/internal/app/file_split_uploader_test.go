@@ -2,6 +2,7 @@ package app
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -268,6 +269,55 @@ func TestSplitUploadManager_CleanupStaleSessions(t *testing.T) {
 	m.mgrMu.Unlock()
 	if exists {
 		t.Error("stale session should have been cleaned up")
+	}
+}
+
+// TestSplitUploadManager_GetSession_DoesNotCreate is the SCA-03 regression
+// test for the read-only lookup used by non-zero chunks: it must report
+// "not found" for an unseen fileID rather than creating a session (and the
+// fd/tmpfs file that comes with it).
+func TestSplitUploadManager_GetSession_DoesNotCreate(t *testing.T) {
+	m := newTestManager(t)
+
+	if _, ok := m.getSession("never-started"); ok {
+		t.Fatal("getSession should not find a session that was never created")
+	}
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions["never-started"]
+	m.mgrMu.Unlock()
+	if exists {
+		t.Error("getSession must not create a session as a side effect")
+	}
+
+	if _, err := os.Stat(filepath.Join(m.tempDir, "never-started")); !os.IsNotExist(err) {
+		t.Errorf("getSession must not create a backing file, stat err = %v", err)
+	}
+}
+
+// TestSplitUploadManager_GetOrCreateSession_CapEnforced is the SCA-03
+// regression test for the concurrent-session ceiling: once
+// maxConcurrentSessions sessions are open, a new fileID must be rejected
+// (bounding worst-case fd/tmpfs exposure) while re-requesting an existing
+// fileID still succeeds (a legitimate client's chunk 0 retry must not be
+// punished by other sessions filling the cap).
+func TestSplitUploadManager_GetOrCreateSession_CapEnforced(t *testing.T) {
+	m := newTestManager(t)
+
+	for i := range maxConcurrentSessions {
+		fileID := fmt.Sprintf("session-%d", i)
+		if _, err := m.getOrCreateSession(fileID, 1); err != nil {
+			t.Fatalf("getOrCreateSession(%d): unexpected error before cap: %v", i, err)
+		}
+	}
+
+	if _, err := m.getOrCreateSession("one-too-many", 1); err == nil {
+		t.Fatal("expected an error once maxConcurrentSessions is reached")
+	}
+
+	// An already-open session must still be reachable at the cap.
+	if _, err := m.getOrCreateSession("session-0", 1); err != nil {
+		t.Errorf("getOrCreateSession for an existing fileID should succeed at the cap: %v", err)
 	}
 }
 

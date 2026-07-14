@@ -159,3 +159,26 @@ func TestProjectImportSplit(t *testing.T) {
 	require.True(t, ok, "Status field not found in response")
 	require.NotEmpty(t, status, "Status should not be empty")
 }
+
+// TestProjectImportSplit_RejectsChunkWithoutSessionStart is the SCA-03
+// regression test: a chunk request for a file_id that never had chunk 0
+// must be rejected instead of silently creating an upload session (and the
+// fd/tmpfs file that comes with it) for a workspace whose permission was
+// never checked.
+func TestProjectImportSplit_RejectsChunkWithoutSessionStart(t *testing.T) {
+	e := Server(t, fullSeeder)
+	workspaceId := wID.String()
+	fileId := uuid.New().String()
+	chunkData := []byte("x")
+
+	e.POST("http://localhost:8080/api/split-import").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithMultipart().
+		WithFile("file", "chunk1", bytes.NewReader(chunkData)).
+		WithFormField("file_id", fileId).
+		WithFormField("workspace_id", workspaceId).
+		WithFormField("chunk_num", "1").
+		WithFormField("total_chunks", "2").
+		Expect().
+		Status(http.StatusBadRequest)
+}

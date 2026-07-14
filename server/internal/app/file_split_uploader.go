@@ -46,6 +46,14 @@ const importJobQueueSize = 32
 // backing file a single request can make the server allocate.
 const maxChunkCount = 128
 
+// maxConcurrentSessions bounds how many upload sessions — each holding one
+// open fd plus a tmpfs-backed file until completion or the 24h stale
+// cleanup — may exist at once (SCA-03). This is a hard ceiling on top of
+// the CanWriteWorkspace gate below: it keeps worst-case fd/tmpfs exposure
+// bounded even for a fully-authorized caller that opens many uploads and
+// abandons them.
+const maxConcurrentSessions = 256
+
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
 // fileID flows directly into filepath.Join(tempDir, fileID); without this,
 // a client could send a path-traversal value (e.g. "../../etc/cron.d/x")
@@ -324,6 +332,11 @@ func servSplitUploadFiles(
 
 }
 
+// getOrCreateSession is only ever called for chunk 0 (see handleChunkedUpload):
+// creating a session opens an fd and a tmpfs-backed file, so it must never
+// happen before the caller's CanWriteWorkspace check, and it must be capped
+// so an authorized-but-abusive or buggy client can't exhaust fds/tmpfs by
+// starting many uploads it never finishes (SCA-03).
 func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) (*uploadSession, error) {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
@@ -331,12 +344,27 @@ func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) 
 	if s, ok := m.sessions[fileID]; ok {
 		return s, nil
 	}
+	if len(m.sessions) >= maxConcurrentSessions {
+		return nil, errors.New("too many upload sessions in progress, try again later")
+	}
 	s, err := newUploadSession(m.tempDir, fileID, totalChunks, m.chunkSize)
 	if err != nil {
 		return nil, err
 	}
 	m.sessions[fileID] = s
 	return s, nil
+}
+
+// getSession looks up an existing session without creating one. Only chunk
+// 0 may create a session (after CanWriteWorkspace passes); every other
+// chunk must reference a session chunk 0 already started, so a client can
+// never pin an fd/tmpfs file by sending non-zero chunks for file_ids that
+// were never authorized (SCA-03).
+func (m *SplitUploadManager) getSession(fileID string) (*uploadSession, bool) {
+	m.mgrMu.Lock()
+	defer m.mgrMu.Unlock()
+	s, ok := m.sessions[fileID]
+	return s, ok
 }
 
 // dispatchImport hands a completed upload off to the worker pool. This is
@@ -405,23 +433,38 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 
 func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId accountsID.WorkspaceID, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
 
-	session, err := m.getOrCreateSession(fileID, totalChunks)
-	if err != nil {
-		return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to start upload session: %v", err))
+	var session *uploadSession
+
+	if chunkNum == 0 {
+		// CreateTemporaryProject enforces CanWriteWorkspace before anything
+		// else happens, so no fd/tmpfs file is created (getOrCreateSession
+		// below) for a workspace the caller doesn't have access to (SCA-03).
+		prj, err := CreateTemporaryProject(ctx, usecases, op, wsId)
+		if err != nil {
+			return nil, err
+		}
+		s, err := m.getOrCreateSession(fileID, totalChunks)
+		if err != nil {
+			return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to start upload session: %v", err))
+		}
+		s.setProject(prj)
+		session = s
+	} else {
+		// Non-zero chunks may never create a session: only chunk 0, gated
+		// by CanWriteWorkspace above, can. A client sending chunk_num > 0
+		// for a file_id that never had a chunk 0 gets rejected instead of
+		// silently pinning an fd/tmpfs file (SCA-03).
+		s, ok := m.getSession(fileID)
+		if !ok {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, "unknown or expired upload session; restart the upload from chunk 0")
+		}
+		session = s
 	}
 
 	if pre := session.snapshot(); pre.ProjectID != nil {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d Project: %s", fileID, chunkNum+1, totalChunks, pre.ProjectID.String())
 	} else {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d ", fileID, chunkNum+1, totalChunks)
-	}
-
-	if chunkNum == 0 {
-		prj, err := CreateTemporaryProject(ctx, usecases, op, wsId)
-		if err != nil {
-			return nil, err
-		}
-		session.setProject(prj)
 	}
 
 	completed, err := session.writeChunk(chunkNum, file)
