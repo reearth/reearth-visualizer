@@ -197,6 +197,7 @@ export const GET_STARRED_PROJECTS = gql(`
 					id
 					name
 					starred
+          updatedAt
           scene {
             id
           }
@@ -230,6 +231,7 @@ export const GET_DELETED_PROJECTS = gql(`
         imageUrl
         visibility
         starred
+        updatedAt
 			}
       pageInfo {
         endCursor

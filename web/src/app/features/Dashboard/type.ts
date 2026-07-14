@@ -44,6 +44,7 @@ export type DeletedProject = {
   isDeleted?: boolean;
   visibility?: string;
   starred?: boolean;
+  updatedAt?: Date;
 };
 
 export type TabItems = {
