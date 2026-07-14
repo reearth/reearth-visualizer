@@ -304,11 +304,23 @@ func TestSplitUploadManager_GetSession_DoesNotCreate(t *testing.T) {
 func TestSplitUploadManager_GetOrCreateSession_CapEnforced(t *testing.T) {
 	m := newTestManager(t)
 
+	// Each session opens a real fd; close them all once the test is done
+	// rather than leaking hundreds of open files onto the test process
+	// (caught in review).
+	var sessions []*uploadSession
+	t.Cleanup(func() {
+		for _, s := range sessions {
+			s.close()
+		}
+	})
+
 	for i := range maxConcurrentSessions {
 		fileID := fmt.Sprintf("session-%d", i)
-		if _, err := m.getOrCreateSession(fileID, 1); err != nil {
+		s, err := m.getOrCreateSession(fileID, 1)
+		if err != nil {
 			t.Fatalf("getOrCreateSession(%d): unexpected error before cap: %v", i, err)
 		}
+		sessions = append(sessions, s)
 	}
 
 	if _, err := m.getOrCreateSession("one-too-many", 1); err == nil {
