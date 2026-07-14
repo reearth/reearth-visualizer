@@ -27,7 +27,7 @@ test.describe("Project Management", () => {
   let projectsPage: ProjectsPage;
   let projectScreen: ProjectScreenPage;
 
-  test.beforeAll(async ({ browser }) => {
+  test.beforeEach(async ({ browser }) => {
     context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL || "", {
       storageState: STORAGE_STATE
     });
@@ -60,7 +60,10 @@ test.describe("Project Management", () => {
   });
   // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {
+    // Close first: video isn't finalized until the context closes, so
+    // attaching before close would grab an empty file.
     const videoPath = await page.video()?.path();
+    await context.close();
     if (videoPath) {
       await testInfo.attach("video", {
         path: videoPath,
@@ -69,9 +72,8 @@ test.describe("Project Management", () => {
     }
   });
 
-  test.afterAll(async () => {
-    await deleteProjectByName(page.request, projectName);
-    await context.close();
+  test.afterAll(async ({ request }) => {
+    await deleteProjectByName(request, projectName);
   });
 
   test("Verify dashboard is loaded", async () => {
@@ -94,6 +96,10 @@ test.describe("Project Management", () => {
   });
 
   test("Create a new project and verify after its creation", async () => {
+    await dashBoardPage.projects.click();
+    await projectsPage.newProjectButton.waitFor({ state: "visible" });
+    await page.waitForTimeout(500);
+    await projectsPage.newProjectButton.click();
     await projectsPage.createNewProject(
       projectName,
       projectAlias,
@@ -111,6 +117,7 @@ test.describe("Project Management", () => {
 
   test("Should add new layer and add points on the map", async () => {
     test.setTimeout(60000);
+    await projectsPage.goToProjectPage(projectName);
     await projectScreen.createNewLayer(layerName);
     await projectScreen.verifyLayerAdded(layerName);
     await projectScreen.clickLayer(layerName);
@@ -280,6 +287,7 @@ test.describe("Project Management", () => {
 
   test("Should create layer with custom text property", async () => {
     test.setTimeout(60000);
+    await projectsPage.goToProjectPage(projectName);
     const customLayerName = faker.string.alpha(5);
 
     await projectScreen.createLayerWithCustomProperty(
@@ -292,6 +300,7 @@ test.describe("Project Management", () => {
 
   test("Should create layer with custom number property", async () => {
     test.setTimeout(60000);
+    await projectsPage.goToProjectPage(projectName);
     const customLayerName = faker.string.alpha(5);
 
     await projectScreen.createLayerWithCustomProperty(
