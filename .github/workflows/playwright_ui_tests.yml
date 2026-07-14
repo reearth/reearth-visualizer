@@ -192,12 +192,16 @@ jobs:
         env:
           RUN_ID: ${{ steps.run-id.outputs.run_id }}
         run: |
+          if ! gsutil -q stat "gs://$BUCKET/runs/${RUN_ID}/index.html"; then
+            echo "Report not found in GCS, keeping existing root index.html"
+            exit 0
+          fi
           cat > /tmp/root-index.html <<EOF
           <!doctype html>
           <meta charset="utf-8">
-          <meta http-equiv="refresh" content="0; url=runs/${RUN_ID}/index.html">
+          <meta http-equiv="refresh" content="0; url=runs/${RUN_ID}/">
           <title>Re:Earth Visualizer E2E</title>
-          <a href="runs/${RUN_ID}/index.html">Latest report</a>
+          <a href="runs/${RUN_ID}/">Latest report</a>
           EOF
           gsutil -h "Content-Type:text/html" -h "Cache-Control:no-cache" \
             cp /tmp/root-index.html "gs://$BUCKET/index.html"
