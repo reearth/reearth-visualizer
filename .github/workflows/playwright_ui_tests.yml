@@ -62,7 +62,6 @@ jobs:
         run: npm ci
 
       - name: Run API setup (writes .auth/api-token.json with dev token)
-        continue-on-error: true
         env:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
           REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
