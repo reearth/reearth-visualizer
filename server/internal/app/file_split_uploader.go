@@ -46,12 +46,9 @@ const importJobQueueSize = 32
 // backing file a single request can make the server allocate.
 const maxChunkCount = 128
 
-// maxConcurrentSessions bounds how many upload sessions — each holding one
-// open fd plus a tmpfs-backed file until completion or the 24h stale
-// cleanup — may exist at once (SCA-03). This is a hard ceiling on top of
-// the CanWriteWorkspace gate below: it keeps worst-case fd/tmpfs exposure
-// bounded even for a fully-authorized caller that opens many uploads and
-// abandons them.
+// maxConcurrentSessions caps how many upload sessions (each holding an
+// open fd + tmpfs file until done or reaped) can exist at once, bounding
+// worst-case exposure even for an authorized caller that abandons uploads.
 const maxConcurrentSessions = 256
 
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
@@ -332,11 +329,8 @@ func servSplitUploadFiles(
 
 }
 
-// getOrCreateSession is only ever called for chunk 0 (see handleChunkedUpload):
-// creating a session opens an fd and a tmpfs-backed file, so it must never
-// happen before the caller's CanWriteWorkspace check, and it must be capped
-// so an authorized-but-abusive or buggy client can't exhaust fds/tmpfs by
-// starting many uploads it never finishes (SCA-03).
+// getOrCreateSession is only called for chunk 0, after CanWriteWorkspace
+// has already passed, since creating a session opens an fd/tmpfs file.
 func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) (*uploadSession, error) {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
@@ -355,22 +349,17 @@ func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) 
 	return s, nil
 }
 
-// atCapacity is a cheap pre-check so a request that's already doomed to
-// hit the cap can be rejected before CreateTemporaryProject runs, instead
-// of after (which would leave an orphaned temporary project behind).
-// getOrCreateSession's own check remains authoritative for the narrow
-// race where concurrent chunk-0 requests both pass this pre-check.
+// atCapacity is a cheap pre-check to skip CreateTemporaryProject entirely
+// once the cap is full; getOrCreateSession's own check stays authoritative
+// for the narrow race between concurrent chunk-0 requests.
 func (m *SplitUploadManager) atCapacity() bool {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
 	return len(m.sessions) >= maxConcurrentSessions
 }
 
-// getSession looks up an existing session without creating one. Only chunk
-// 0 may create a session (after CanWriteWorkspace passes); every other
-// chunk must reference a session chunk 0 already started, so a client can
-// never pin an fd/tmpfs file by sending non-zero chunks for file_ids that
-// were never authorized (SCA-03).
+// getSession looks up a session without creating one, so a non-zero chunk
+// can never allocate an fd/tmpfs file for a file_id chunk 0 never started.
 func (m *SplitUploadManager) getSession(fileID string) (*uploadSession, bool) {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
@@ -447,25 +436,15 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 	var session *uploadSession
 
 	if chunkNum == 0 {
+		// A session already existing means this is a retry: reuse it
+		// instead of creating another temporary project.
 		if s, ok := m.getSession(fileID); ok {
-			// A retry of chunk 0 for a session that already exists must
-			// reuse it rather than calling CreateTemporaryProject again,
-			// which would create an orphaned duplicate temporary project
-			// per retry (caught in review).
 			session = s
 		} else {
-			// Reject before creating a project if we're already at the
-			// session cap, so a doomed request doesn't still leave behind
-			// a temporary project with no session to ever complete it
-			// (caught in review). getOrCreateSession below remains the
-			// authoritative check for the narrow concurrent-at-the-cap race.
 			if m.atCapacity() {
 				return nil, echo.NewHTTPError(http.StatusTooManyRequests, "too many upload sessions in progress, try again later")
 			}
-			// CreateTemporaryProject enforces CanWriteWorkspace before
-			// anything else happens, so no fd/tmpfs file is created
-			// (getOrCreateSession below) for a workspace the caller
-			// doesn't have access to (SCA-03).
+			// Permission is checked before any fd/tmpfs file is created.
 			prj, err := CreateTemporaryProject(ctx, usecases, op, wsId)
 			if err != nil {
 				return nil, err
@@ -478,18 +457,15 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			session = s
 		}
 	} else {
-		// Non-zero chunks may never create a session: only chunk 0, gated
-		// by CanWriteWorkspace above, can. A client sending chunk_num > 0
-		// for a file_id that never had a chunk 0 gets rejected instead of
-		// silently pinning an fd/tmpfs file (SCA-03).
+		// Only chunk 0 may start a session; a chunk for a file_id that
+		// never started one is rejected instead of silently allocating one.
 		s, ok := m.getSession(fileID)
 		if !ok {
 			return nil, echo.NewHTTPError(http.StatusBadRequest, "unknown or expired upload session; restart the upload from chunk 0")
 		}
-		// total_chunks must match the value the session was created with:
-		// otherwise a client could pass an inflated total_chunks to clear
-		// validateChunkRequest's bound check, then write a chunk_num far
-		// beyond the session's real chunk count (caught in review).
+		// total_chunks must agree with the session's original value, or a
+		// client could inflate it to bypass validateChunkRequest's bound
+		// check and write a chunk_num far beyond the real chunk count.
 		if totalChunks != s.snapshot().TotalChunks {
 			return nil, echo.NewHTTPError(http.StatusBadRequest, "total_chunks does not match this upload session's original value")
 		}
