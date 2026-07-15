@@ -46,9 +46,10 @@ const importJobQueueSize = 32
 // backing file a single request can make the server allocate.
 const maxChunkCount = 128
 
-// maxConcurrentSessions caps how many upload sessions (each holding an
-// open fd + tmpfs file until done or reaped) can exist at once, bounding
-// worst-case exposure even for an authorized caller that abandons uploads.
+// maxConcurrentSessions caps how many upload sessions can exist at once.
+// Each session keeps an open file handle and a temporary file on disk
+// until it finishes or gets reaped, so this bounds the worst case even
+// for an authorized caller that abandons a lot of uploads.
 const maxConcurrentSessions = 256
 
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
@@ -330,7 +331,8 @@ func servSplitUploadFiles(
 }
 
 // getOrCreateSession is only called for chunk 0, after CanWriteWorkspace
-// has already passed, since creating a session opens an fd/tmpfs file.
+// has already passed, since creating a session opens a file handle and a
+// temporary file on disk.
 func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) (*uploadSession, error) {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
@@ -359,7 +361,8 @@ func (m *SplitUploadManager) atCapacity() bool {
 }
 
 // getSession looks up a session without creating one, so a non-zero chunk
-// can never allocate an fd/tmpfs file for a file_id chunk 0 never started.
+// can never allocate a file handle and temporary file for a file_id that
+// chunk 0 never started.
 func (m *SplitUploadManager) getSession(fileID string) (*uploadSession, bool) {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
@@ -444,7 +447,8 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			if m.atCapacity() {
 				return nil, echo.NewHTTPError(http.StatusTooManyRequests, "too many upload sessions in progress, try again later")
 			}
-			// Permission is checked before any fd/tmpfs file is created.
+			// Permission is checked before any file handle or temporary
+			// file is created.
 			prj, err := CreateTemporaryProject(ctx, usecases, op, wsId)
 			if err != nil {
 				return nil, err
