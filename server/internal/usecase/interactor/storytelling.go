@@ -961,7 +961,7 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
-		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to find story", err)
+		return nil, nil, nil, -1, visualizer.WarnErrorWithCallerLogging(ctx, "failed to find story", err)
 	}
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to check scene", err)

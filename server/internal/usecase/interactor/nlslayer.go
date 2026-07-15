@@ -119,7 +119,7 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	}()
 
 	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", interfaces.ErrOperationDenied), interfaces.ErrOperationDenied)
+		return nil, visualizer.WarnErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", interfaces.ErrOperationDenied), interfaces.ErrOperationDenied)
 	}
 
 	builder := nlslayer.NewNLSLayerSimple().

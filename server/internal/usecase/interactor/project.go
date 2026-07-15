@@ -491,7 +491,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	prj, err := i.projectRepo.FindByID(ctx, p.ID)
 	if err != nil {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to find project", err)
+		return nil, visualizer.WarnErrorWithCallerLogging(ctx, "failed to find project", err)
 	}
 
 	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
