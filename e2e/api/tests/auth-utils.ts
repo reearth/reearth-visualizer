@@ -4,7 +4,6 @@ import {
   AUTH_MODE,
   AUTH0_AUDIENCE,
   AUTH0_CLIENT_ID,
-  AUTH0_CLIENT_SECRET,
   AUTH0_DOMAIN,
   MOCK_USER_ID
 } from "../config/env";
@@ -15,34 +14,21 @@ type AuthResult = {
 };
 
 async function getAuth0Token(request: APIRequestContext) {
+  const email = process.env.REEARTH_E2E_EMAIL;
+  const password = process.env.REEARTH_E2E_PASSWORD;
+  if (!email || !password) throw new Error("Missing REEARTH_E2E_EMAIL or REEARTH_E2E_PASSWORD");
   if (!AUTH0_DOMAIN || !AUTH0_CLIENT_ID) throw new Error("Missing Auth0 config");
-
-  const data = AUTH0_CLIENT_SECRET
-    ? {
-        grant_type: "client_credentials",
-        audience: AUTH0_AUDIENCE,
-        client_id: AUTH0_CLIENT_ID,
-        client_secret: AUTH0_CLIENT_SECRET
-      }
-    : (() => {
-        const email = process.env.REEARTH_E2E_EMAIL;
-        const password = process.env.REEARTH_E2E_PASSWORD;
-        if (!email || !password) {
-          throw new Error("Missing REEARTH_E2E_EMAIL or REEARTH_E2E_PASSWORD");
-        }
-        return {
-          grant_type: "password",
-          username: email,
-          password,
-          audience: AUTH0_AUDIENCE,
-          client_id: AUTH0_CLIENT_ID,
-          scope: "openid profile email"
-        };
-      })();
 
   const res = await request.post(`https://${AUTH0_DOMAIN}/oauth/token`, {
     headers: { "Content-Type": "application/json" },
-    data
+    data: {
+      grant_type: "password",
+      username: email,
+      password,
+      audience: AUTH0_AUDIENCE,
+      client_id: AUTH0_CLIENT_ID,
+      scope: "openid profile email"
+    }
   });
 
   if (!res.ok()) {
