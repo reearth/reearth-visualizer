@@ -303,7 +303,17 @@ func SetTileCategory(ctx context.Context, c DBClient) error {
 				removed := false
 				for _, item := range doc.Items {
 					if item.SchemaGroup == "tiles" && item.Type == "grouplist" {
-						fmt.Printf("[migration] SetTileCategory: removing legacy tiles group from widget property %q\n", doc.ID)
+						var val string
+						for _, group := range item.Groups {
+							for _, field := range group.Fields {
+								if field.Field == "tile_type" {
+									if v, ok := field.Value.(string); ok && v != "" {
+										val = v
+									}
+								}
+							}
+						}
+						fmt.Printf("[migration] SetTileCategory: widget property %q had tile_type=%q before removal\n", doc.ID, val)
 						removed = true
 						continue
 					}
