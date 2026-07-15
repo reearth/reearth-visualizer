@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.13 - 2026-07-15
+
+### Web
+
+#### ✨ Refactor
+
+- Pass browser locale to auth0 during login [VIZ-DEV-93] ([#2288](https://github.com/reearth/reearth-visualizer/pull/2288)) [`d1825d`](https://github.com/reearth/reearth-visualizer/commit/d1825d)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.16.13 ([#2305](https://github.com/reearth/reearth-visualizer/pull/2305)) [`eb71a4`](https://github.com/reearth/reearth-visualizer/commit/eb71a4)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Move project import status&#x2F;log into own projectimport collection [VIZ-DEV-65] ([#2286](https://github.com/reearth/reearth-visualizer/pull/2286)) [`8b6b2b`](https://github.com/reearth/reearth-visualizer/commit/8b6b2b)
+- Order recycle-bin and starred projects by last updated time [VIZ-DEV-88] ([#2297](https://github.com/reearth/reearth-visualizer/pull/2297)) [`d3fb2f`](https://github.com/reearth/reearth-visualizer/commit/d3fb2f)
+- Restore scene permission checks on Style and NLSLayer mutations [VIZ-DEV-98][VIZ-DEV-99] ([#2296](https://github.com/reearth/reearth-visualizer/pull/2296)) [`ab5c12`](https://github.com/reearth/reearth-visualizer/commit/ab5c12)
+
+### e2e
+
+#### Miscellaneous Tasks
+
+- Point allure report root at latest run instead of dashboard page ([#2302](https://github.com/reearth/reearth-visualizer/pull/2302)) [`5aca50`](https://github.com/reearth/reearth-visualizer/commit/5aca50)
+
 ## 1.0.0-beta.16.12 - 2026-07-08
 
 ### Web
