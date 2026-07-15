@@ -486,3 +486,86 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	assert.NotNil(t, featureCollection)
 	assert.Equal(t, 0, len(featureCollection.Features()))
 }
+
+// TestNLSLayer_GeoJSONFeature_CrossTenantIDOR is a regression test for
+// SEC-02 (eukarya-inc/compliance#50): AddGeoJSONFeature/
+// UpdateGeoJSONFeature/DeleteGeoJSONFeature/RemoveCustomProperty must
+// reject an operator with no write access to the layer's scene. Before
+// the fix these methods never called CanWriteScene at all, so any
+// authenticated operator could mutate sketch geometry/properties on a
+// layer belonging to a workspace they had no role in.
+func TestNLSLayer_GeoJSONFeature_CrossTenantIDOR(t *testing.T) {
+	ctx := context.Background()
+	db := memory.New()
+
+	prj, _ := project.New().NewID().Build()
+	_ = db.Project.Save(ctx, prj)
+	victimScene, _ := scene.New().NewID().Workspace(accountsID.NewWorkspaceID()).Project(prj.ID()).Build()
+	_ = db.Scene.Save(ctx, victimScene)
+
+	il := NewNLSLayer(db, &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	})
+
+	victimLayer, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(victimScene.ID()).Build()
+	_ = db.NLSLayer.Save(ctx, victimLayer)
+
+	attacker := &usecase.Operator{
+		WritableScenes: []id.SceneID{id.NewSceneID()}, // some other scene, not victimScene
+	}
+	owner := &usecase.Operator{
+		WritableScenes: []id.SceneID{victimScene.ID()},
+	}
+
+	t.Run("AddGeoJSONFeature denies an operator with no write access to the layer's scene", func(t *testing.T) {
+		f, err := il.AddGeoJSONFeature(ctx, interfaces.AddNLSLayerGeoJSONFeatureParams{
+			LayerID:  victimLayer.ID(),
+			Type:     "Feature",
+			Geometry: map[string]any{"type": "Point", "coordinates": []any{0.0, 0.0}},
+		}, attacker)
+		assert.ErrorIs(t, err, interfaces.ErrOperationDenied)
+		assert.Equal(t, nlslayer.Feature{}, f)
+	})
+
+	// Seed a legitimate feature in the victim's layer for the remaining cases.
+	feature, err := il.AddGeoJSONFeature(ctx, interfaces.AddNLSLayerGeoJSONFeatureParams{
+		LayerID:  victimLayer.ID(),
+		Type:     "Feature",
+		Geometry: map[string]any{"type": "Point", "coordinates": []any{0.0, 0.0}},
+	}, owner)
+	assert.NoError(t, err)
+
+	t.Run("UpdateGeoJSONFeature denies an operator with no write access to the layer's scene", func(t *testing.T) {
+		props := map[string]any{"owner": "attacker"}
+		_, err := il.UpdateGeoJSONFeature(ctx, interfaces.UpdateNLSLayerGeoJSONFeatureParams{
+			LayerID:    victimLayer.ID(),
+			FeatureID:  feature.ID(),
+			Properties: &props,
+		}, attacker)
+		assert.ErrorIs(t, err, interfaces.ErrOperationDenied)
+	})
+
+	t.Run("RemoveCustomProperty denies an operator with no write access to the layer's scene", func(t *testing.T) {
+		_, err := il.RemoveCustomProperty(ctx, interfaces.AddOrUpdateCustomPropertiesInput{
+			LayerID: victimLayer.ID(),
+			Schema:  map[string]any{},
+		}, "some-title", attacker)
+		assert.ErrorIs(t, err, interfaces.ErrOperationDenied)
+	})
+
+	t.Run("DeleteGeoJSONFeature denies an operator with no write access to the layer's scene", func(t *testing.T) {
+		_, err := il.DeleteGeoJSONFeature(ctx, interfaces.DeleteNLSLayerGeoJSONFeatureParams{
+			LayerID:   victimLayer.ID(),
+			FeatureID: feature.ID(),
+		}, attacker)
+		assert.ErrorIs(t, err, interfaces.ErrOperationDenied)
+	})
+
+	t.Run("the legitimate owner can still write", func(t *testing.T) {
+		_, err := il.DeleteGeoJSONFeature(ctx, interfaces.DeleteNLSLayerGeoJSONFeatureParams{
+			LayerID:   victimLayer.ID(),
+			FeatureID: feature.ID(),
+		}, owner)
+		assert.NoError(t, err)
+	})
+}
