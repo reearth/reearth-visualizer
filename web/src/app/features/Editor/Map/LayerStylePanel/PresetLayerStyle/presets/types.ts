@@ -11,6 +11,7 @@ export type PresetStyle = {
 export type PresetStyleCategory = {
   id: string;
   title: string;
+  titleJa?: string;
   testId: string;
   subs: PresetStyle[];
 };
