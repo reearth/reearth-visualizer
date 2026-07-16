@@ -1,6 +1,7 @@
 import { Browser, BrowserContext } from '@playwright/test';
 
 import { createADCIAPContext, getADCIAPToken, makeADCIAPRequest } from './iap-auth-adc';
+import { RECORD_VIDEO_OPTIONS } from './iap-auth-common';
 import { createIdTokenIAPContext } from './iap-auth-id-token';
 import { createServiceAccountIAPContext, getServiceAccountIAPToken, makeServiceAccountIAPRequest } from './iap-auth-service-account';
 
@@ -51,7 +52,7 @@ export async function createIAPContext(
   if (!useIAPAuth) {
     return browser.newContext({
       ...options,
-      recordVideo: { dir: 'videos/', size: { width: 1280, height: 720 } },
+      recordVideo: RECORD_VIDEO_OPTIONS,
     });
   }
 
