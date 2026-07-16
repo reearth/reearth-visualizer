@@ -51,6 +51,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Safari"],
         screenshot: "only-on-failure",
+        video: "on",
         headless: true,
         launchOptions: {
           slowMo: 50

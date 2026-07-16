@@ -4,6 +4,11 @@ import { Browser, BrowserContext } from '@playwright/test';
 
 export const DEFAULT_USER_AGENT = 'Playwright-E2E-Tests';
 
+export const RECORD_VIDEO_OPTIONS = {
+  dir: 'videos/',
+  size: { width: 1280, height: 720 },
+} as const;
+
 const AUTH_WHITELIST_HOSTS = ['auth0.com', 'googleapis.com', 'accounts.google.com'];
 
 export type IAPTokenProvider = {
@@ -61,7 +66,7 @@ export async function createIAPBrowserContext(
       'Proxy-Authorization': `Bearer ${initialToken}`,
       'User-Agent': DEFAULT_USER_AGENT,
     },
-    recordVideo: { dir: 'videos/', size: { width: 1280, height: 720 } },
+    recordVideo: RECORD_VIDEO_OPTIONS,
     ignoreHTTPSErrors: true,
     bypassCSP: true,
     permissions: ['geolocation'],
