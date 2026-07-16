@@ -1,6 +1,16 @@
 import { faker } from "@faker-js/faker";
+import { test, expect, BrowserContext, Page } from "@playwright/test";
 
-import { test, expect } from "../fixtures/ui-test-fixtures";
+import { STORAGE_STATE } from "../global-setup";
+import { DashBoardPage } from "../pages/dashBoardPage";
+import { ProjectsPage } from "../pages/projectsPage";
+import { RecycleBinPage } from "../pages/recycleBinPage";
+import { createIAPContext } from "../utils/iap-auth";
+
+const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
+if (!REEARTH_WEB_E2E_BASEURL) {
+  throw new Error("Missing REEARTH_WEB_E2E_BASEURL");
+}
 
 const projectName = "e2e-" + faker.lorem.words(2);
 const projectAlias = faker.string.alphanumeric(15);
@@ -9,17 +19,47 @@ const renamedProjectName = "e2e-" + faker.lorem.words(2);
 test.describe.configure({ mode: "serial" });
 
 test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => {
-  test.beforeEach(async ({ dashBoardPage, page }) => {
-    // Every test in this file needs the Projects list visible; with a
-    // per-test context there's no leftover navigation from a prior test.
-    await dashBoardPage.projects.click();
-    await page.waitForTimeout(500);
+  let context: BrowserContext;
+  let page: Page;
+  let dashBoardPage: DashBoardPage;
+  let projectsPage: ProjectsPage;
+  let recycleBinPage: RecycleBinPage;
+
+  test.beforeAll(async ({ browser }) => {
+    context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL || "", {
+      storageState: STORAGE_STATE
+    });
+    page = await context.newPage();
+    dashBoardPage = new DashBoardPage(page);
+    projectsPage = new ProjectsPage(page);
+    recycleBinPage = new RecycleBinPage(page);
+    await page.goto(REEARTH_WEB_E2E_BASEURL || "", {
+      waitUntil: "domcontentloaded"
+    });
+
+    await page.waitForSelector('[data-testid="sidebar-tab-projects-link"]', {
+      timeout: 15000,
+      state: "visible"
+    });
   });
 
-  test("Create a project for feature tests", async ({
-    page,
-    projectsPage
-  }) => {
+  // eslint-disable-next-line no-empty-pattern
+  test.afterEach(async ({}, testInfo) => {
+    const videoPath = await page.video()?.path();
+    if (videoPath) {
+      await testInfo.attach("video", {
+        path: videoPath,
+        contentType: "video/webm"
+      });
+    }
+  });
+
+  test.afterAll(async () => {
+    await context.close();
+  });
+
+  test("Create a project for feature tests", async () => {
+    await dashBoardPage.projects.click();
     await projectsPage.newProjectButton.waitFor({ state: "visible" });
     await page.waitForTimeout(500);
     await projectsPage.newProjectButton.click();
@@ -32,7 +72,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     await expect(page.getByText(projectName)).toBeVisible();
   });
 
-  test("Filter projects by name", async ({ page, projectsPage }) => {
+  test("Filter projects by name", async () => {
     await projectsPage.searchProject(projectName);
     await page.waitForTimeout(2000);
     await expect(
@@ -40,10 +80,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     ).toBeVisible();
   });
 
-  test("Show no results for non-existing project", async ({
-    page,
-    projectsPage
-  }) => {
+  test("Show no results for non-existing project", async () => {
     const randomSearch = faker.string.alpha(20);
     await projectsPage.searchProject(randomSearch);
     await page.waitForTimeout(2000);
@@ -52,14 +89,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     ).not.toBeVisible();
   });
 
-  test("Restore all projects when search is cleared", async ({
-    page,
-    projectsPage
-  }) => {
-    // No prior test in this context left a search applied, so establish
-    // the filtered precondition ourselves before clearing it.
-    await projectsPage.searchProject(faker.string.alpha(20));
-    await page.waitForTimeout(1000);
+  test("Restore all projects when search is cleared", async () => {
     await projectsPage.clearSearch();
     await page.waitForTimeout(2000);
     await expect(
@@ -67,12 +97,12 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     ).toBeVisible();
   });
 
-  test("Display sort dropdown with options", async ({ projectsPage }) => {
+  test("Display sort dropdown with options", async () => {
     await expect(projectsPage.sortLabel).toBeVisible();
     await expect(projectsPage.sortDropdown).toBeVisible();
   });
 
-  test("Sort projects by Last Created", async ({ page, projectsPage }) => {
+  test("Sort projects by Last Created", async () => {
     await projectsPage.selectSortOption("Last Created");
     await page
       .getByTestId("projects-container")
@@ -83,7 +113,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     ).toBeVisible();
   });
 
-  test("Sort projects by A To Z", async ({ page, projectsPage }) => {
+  test("Sort projects by A To Z", async () => {
     await projectsPage.selectSortOption("A To Z");
     await page
       .getByTestId("projects-container")
@@ -95,7 +125,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     ).toBeVisible();
   });
 
-  test("Sort projects by Last Updated", async ({ page, projectsPage }) => {
+  test("Sort projects by Last Updated", async () => {
     await projectsPage.selectSortOption("Last Updated");
     await page
       .getByTestId("projects-container")
@@ -107,7 +137,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     ).toBeVisible();
   });
 
-  test("Switch to list view", async ({ page, projectsPage }) => {
+  test("Switch to list view", async () => {
     await projectsPage.switchToListView();
     await page.waitForTimeout(1000);
     await expect(
@@ -118,11 +148,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     await expect(projectsPage.columnHeaderCreatedAt).toBeVisible();
   });
 
-  test("List view shows project dates", async ({ page, projectsPage }) => {
-    // No prior test in this context left list view active, so switch to
-    // it ourselves before asserting on list-only columns.
-    await projectsPage.switchToListView();
-    await page.waitForTimeout(1000);
+  test("List view shows project dates", async () => {
     await expect(
       projectsPage.listProjectUpdated(projectName).first()
     ).toBeVisible();
@@ -131,9 +157,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     ).toBeVisible();
   });
 
-  test("Switch back to grid view", async ({ page, projectsPage }) => {
-    await projectsPage.switchToListView();
-    await page.waitForTimeout(1000);
+  test("Switch back to grid view", async () => {
     await projectsPage.switchToGridView();
     await page.waitForTimeout(1000);
     await expect(
@@ -141,10 +165,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     ).toBeVisible();
   });
 
-  test("Open context menu with rename option", async ({
-    page,
-    projectsPage
-  }) => {
+  test("Open context menu with rename option", async () => {
     const menuBtn = projectsPage.gridProjectMenuButton(projectName).first();
     await menuBtn.click();
     await expect(projectsPage.renameMenuItem).toBeVisible();
@@ -154,13 +175,13 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     await page.waitForTimeout(500);
   });
 
-  test("Rename project via context menu", async ({ page, projectsPage }) => {
+  test("Rename project via context menu", async () => {
     await projectsPage.renameProject(projectName, renamedProjectName);
     await page.waitForTimeout(2000);
     await expect(page.getByText(renamedProjectName).first()).toBeVisible();
   });
 
-  test("Export project from context menu", async ({ page, projectsPage }) => {
+  test("Export project from context menu", async () => {
     const downloadPromise = page.waitForEvent("download", { timeout: 30000 });
 
     await projectsPage.exportProject(renamedProjectName);
@@ -176,12 +197,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     await page.waitForTimeout(2000);
   });
 
-  test("Delete the test project", async ({
-    page,
-    dashBoardPage,
-    projectsPage,
-    recycleBinPage
-  }) => {
+  test("Delete the test project", async () => {
     await dashBoardPage.projects.click();
     await page.waitForTimeout(2000);
 
@@ -189,17 +205,13 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
     await page.waitForTimeout(500);
 
     await projectsPage.deleteProject(renamedProjectName);
-    await expect(
-      projectsPage.gridProjectItem(renamedProjectName)
-    ).not.toBeVisible();
+    await expect(projectsPage.gridProjectItem(renamedProjectName)).not.toBeVisible();
 
     await dashBoardPage.recycleBin.click();
     await page.waitForTimeout(1000);
     await recycleBinPage.deleteProject(renamedProjectName);
     await recycleBinPage.confirmDeletion(renamedProjectName);
     await recycleBinPage.confirmDeleteButton.click();
-    await expect(
-      recycleBinPage.recycleBinItem(renamedProjectName)
-    ).not.toBeVisible();
+    await expect(recycleBinPage.recycleBinItem(renamedProjectName)).not.toBeVisible();
   });
 });
