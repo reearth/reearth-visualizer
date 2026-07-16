@@ -106,7 +106,7 @@ test.describe("Multiple Style Assignment and Switching", () => {
 
   test("Add an Empty style", async () => {
     await stylePanel.addPresetStyle("Empty");
-    await expect(stylePanel.getStyleByName("Style.01")).toBeVisible({
+    await expect(stylePanel.getStyleByName("Empty.01")).toBeVisible({
       timeout: 10_000
     });
   });
@@ -126,7 +126,7 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Switch between styles by clicking style entries", async () => {
-    await stylePanel.selectStyle("Style.01");
+    await stylePanel.selectStyle("Empty.01");
     await expect(stylePanel.interfaceTab).toBeVisible();
 
     await stylePanel.selectStyle("Default.01");
@@ -146,14 +146,12 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Rename a style via context menu", async () => {
-    await stylePanel.renameStyle("Style.01", "Custom Style");
+    await stylePanel.renameStyle("Empty.01", "Custom Style");
     await expect(stylePanel.getStyleByName("Custom Style")).toBeVisible();
   });
 
   test("Delete a style via context menu", async () => {
-    await expect(
-      stylePanel.getStyleByName("Professional.01")
-    ).toBeVisible();
+    await expect(stylePanel.getStyleByName("Professional.01")).toBeVisible();
 
     await stylePanel.deleteStyle("Professional.01");
 
