@@ -3,13 +3,13 @@ import path from "path";
 import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
-import { STORAGE_STATE } from "../global-setup";
-import { DashBoardPage } from "../pages/dashBoardPage";
-import { PhotoOverlayPage } from "../pages/photoOverlayPage";
-import { ProjectScreenPage } from "../pages/projectScreenPage";
-import { ProjectsPage } from "../pages/projectsPage";
-import { createIAPContext } from "../utils/iap-auth";
-import { deleteProjectByName } from "../utils/project-cleanup";
+import { STORAGE_STATE } from "../../global-setup";
+import { DashBoardPage } from "../../pages/dashBoardPage";
+import { PhotoOverlayPage } from "../../pages/photoOverlayPage";
+import { ProjectScreenPage } from "../../pages/projectScreenPage";
+import { ProjectsPage } from "../../pages/projectsPage";
+import { createIAPContext } from "../../utils/iap-auth";
+import { deleteProjectByName } from "../../utils/project-cleanup";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -169,7 +169,7 @@ test.describe("Photo Overlay Feature", () => {
 
   test("Upload an image and submit the Photo Overlay", async () => {
     test.setTimeout(90000);
-    const testImagePath = path.resolve(__dirname, "../test-data/testimage.jpg");
+    const testImagePath = path.resolve(__dirname, "../../test-data/testimage.jpg");
     await photoOverlay.uploadAsset(testImagePath);
     await expect(photoOverlay.editorPanel).toBeVisible();
     await photoOverlay.verifyNoCrash();
@@ -250,7 +250,7 @@ test.describe("Photo Overlay Feature", () => {
     await expect(photoOverlay.editorPanel).toBeVisible();
 
     // Upload an image and add description
-    const testImagePath = path.resolve(__dirname, "../test-data/testimage.jpg");
+    const testImagePath = path.resolve(__dirname, "../../test-data/testimage.jpg");
     await photoOverlay.uploadAsset(testImagePath);
     await photoOverlay.photoDescriptionTextarea.fill("Should not be saved");
     await page.waitForTimeout(500);

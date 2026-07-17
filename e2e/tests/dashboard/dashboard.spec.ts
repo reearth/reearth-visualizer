@@ -3,12 +3,12 @@ import path from "path";
 import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
-import { STORAGE_STATE } from "../global-setup";
-import { DashBoardPage } from "../pages/dashBoardPage";
-import { ProjectScreenPage } from "../pages/projectScreenPage";
-import { ProjectsPage } from "../pages/projectsPage";
-import { RecycleBinPage } from "../pages/recycleBinPage";
-import { createIAPContext } from "../utils/iap-auth";
+import { STORAGE_STATE } from "../../global-setup";
+import { DashBoardPage } from "../../pages/dashBoardPage";
+import { ProjectScreenPage } from "../../pages/projectScreenPage";
+import { ProjectsPage } from "../../pages/projectsPage";
+import { RecycleBinPage } from "../../pages/recycleBinPage";
+import { createIAPContext } from "../../utils/iap-auth";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -22,7 +22,7 @@ const specialProjectName = "e2e-" + faker.lorem.words(2) + "!@#$%^&*()_+";
 const projectAlias = faker.string.alphanumeric(15);
 
 const fileName = "Test_Asset_migration.zip";
-const docPath = path.resolve(__dirname, "../test-data", fileName);
+const docPath = path.resolve(__dirname, "../../test-data", fileName);
 test.describe.configure({ mode: "serial" });
 
 test.describe("DASHBOARD - Test cases", () => {
