@@ -46,6 +46,12 @@ const importJobQueueSize = 32
 // backing file a single request can make the server allocate.
 const maxChunkCount = 128
 
+// maxConcurrentSessions caps how many upload sessions can exist at once.
+// Each session keeps an open file handle and a temporary file on disk
+// until it finishes or gets reaped, so this bounds the worst case even
+// for an authorized caller that abandons a lot of uploads.
+const maxConcurrentSessions = 256
+
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
 // fileID flows directly into filepath.Join(tempDir, fileID); without this,
 // a client could send a path-traversal value (e.g. "../../etc/cron.d/x")
@@ -324,6 +330,9 @@ func servSplitUploadFiles(
 
 }
 
+// getOrCreateSession is only called for chunk 0, after CanWriteWorkspace
+// has already passed, since creating a session opens a file handle and a
+// temporary file on disk.
 func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) (*uploadSession, error) {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
@@ -331,12 +340,34 @@ func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) 
 	if s, ok := m.sessions[fileID]; ok {
 		return s, nil
 	}
+	if len(m.sessions) >= maxConcurrentSessions {
+		return nil, errors.New("too many upload sessions in progress, try again later")
+	}
 	s, err := newUploadSession(m.tempDir, fileID, totalChunks, m.chunkSize)
 	if err != nil {
 		return nil, err
 	}
 	m.sessions[fileID] = s
 	return s, nil
+}
+
+// atCapacity is a cheap pre-check to skip CreateTemporaryProject entirely
+// once the cap is full; getOrCreateSession's own check stays authoritative
+// for the narrow race between concurrent chunk-0 requests.
+func (m *SplitUploadManager) atCapacity() bool {
+	m.mgrMu.Lock()
+	defer m.mgrMu.Unlock()
+	return len(m.sessions) >= maxConcurrentSessions
+}
+
+// getSession looks up a session without creating one, so a non-zero chunk
+// can never allocate a file handle and temporary file for a file_id that
+// chunk 0 never started.
+func (m *SplitUploadManager) getSession(fileID string) (*uploadSession, bool) {
+	m.mgrMu.Lock()
+	defer m.mgrMu.Unlock()
+	s, ok := m.sessions[fileID]
+	return s, ok
 }
 
 // dispatchImport hands a completed upload off to the worker pool. This is
@@ -405,23 +436,50 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 
 func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId accountsID.WorkspaceID, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
 
-	session, err := m.getOrCreateSession(fileID, totalChunks)
-	if err != nil {
-		return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to start upload session: %v", err))
+	var session *uploadSession
+
+	if chunkNum == 0 {
+		// A session already existing means this is a retry: reuse it
+		// instead of creating another temporary project.
+		if s, ok := m.getSession(fileID); ok {
+			session = s
+		} else {
+			if m.atCapacity() {
+				return nil, echo.NewHTTPError(http.StatusTooManyRequests, "too many upload sessions in progress, try again later")
+			}
+			// Permission is checked before any file handle or temporary
+			// file is created.
+			prj, err := CreateTemporaryProject(ctx, usecases, op, wsId)
+			if err != nil {
+				return nil, err
+			}
+			s, err := m.getOrCreateSession(fileID, totalChunks)
+			if err != nil {
+				return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to start upload session: %v", err))
+			}
+			s.setProject(prj)
+			session = s
+		}
+	} else {
+		// Only chunk 0 may start a session; a chunk for a file_id that
+		// never started one is rejected instead of silently allocating one.
+		s, ok := m.getSession(fileID)
+		if !ok {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, "unknown or expired upload session; restart the upload from chunk 0")
+		}
+		// total_chunks must agree with the session's original value, or a
+		// client could inflate it to bypass validateChunkRequest's bound
+		// check and write a chunk_num far beyond the real chunk count.
+		if totalChunks != s.snapshot().TotalChunks {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, "total_chunks does not match this upload session's original value")
+		}
+		session = s
 	}
 
 	if pre := session.snapshot(); pre.ProjectID != nil {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d Project: %s", fileID, chunkNum+1, totalChunks, pre.ProjectID.String())
 	} else {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d ", fileID, chunkNum+1, totalChunks)
-	}
-
-	if chunkNum == 0 {
-		prj, err := CreateTemporaryProject(ctx, usecases, op, wsId)
-		if err != nil {
-			return nil, err
-		}
-		session.setProject(prj)
 	}
 
 	completed, err := session.writeChunk(chunkNum, file)
