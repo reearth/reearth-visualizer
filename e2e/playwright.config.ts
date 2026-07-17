@@ -21,7 +21,7 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
-  workers: 1,
+  workers: 2,
   reporter: [
     [
       "allure-playwright",
@@ -37,7 +37,7 @@ export default defineConfig({
     ]
   ],
   use: {
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
     actionTimeout: 35000,
     navigationTimeout: 35000,
     storageState: process.env.SKIP_STORAGE_STATE ? undefined : STORAGE_STATE
@@ -51,6 +51,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Safari"],
         screenshot: "only-on-failure",
+        video: "on",
         headless: true,
         launchOptions: {
           slowMo: 50

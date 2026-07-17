@@ -4,6 +4,7 @@ import {
 } from "@reearth/app/lib/license";
 import {
   Button,
+  Icon,
   Modal,
   ModalPanel,
   Typography
@@ -19,7 +20,7 @@ import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useWorkspace } from "@reearth/services/state";
-import { styled, useTheme } from "@reearth/services/theme";
+import { keyframes, styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -44,6 +45,8 @@ type FormState = {
   visibility?: string;
   license?: string;
 };
+
+type AliasStatus = "idle" | "loading" | "success" | "error";
 
 const getLicenseContent = (value?: string): string | undefined => {
   return licenseContent[value as keyof typeof licenseContent];
@@ -93,7 +96,21 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
 
   const [aliasValid, setAliasValid] = useState<boolean>(false);
   const [aliasWarning, setAliasWarning] = useState<string>("");
+  const [aliasValidating, setAliasValidating] = useState<boolean>(false);
   const [debouncedAlias, setDebouncedAlias] = useState<string>("");
+
+  // Show loader immediately when user types
+  useEffect(() => {
+    if (formState.projectAlias.trim()) {
+      setAliasValidating(true);
+      setAliasValid(false);
+      setAliasWarning("");
+    } else {
+      setAliasValidating(false);
+      setAliasValid(false);
+      setAliasWarning("");
+    }
+  }, [formState.projectAlias]);
 
   // Debounce project alias changes
   useEffect(() => {
@@ -110,16 +127,17 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
       if (!currentWorkspace || !debouncedAlias.trim()) {
         setAliasValid(false);
         setAliasWarning("");
+        setAliasValidating(false);
         return;
       }
-
-      setAliasValid(false);
 
       const result = await validateProjectAlias?.(
         debouncedAlias.trim(),
         currentWorkspace?.id,
         undefined
       );
+
+      setAliasValidating(false);
 
       if (result?.available) {
         setAliasValid(true);
@@ -134,6 +152,23 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
 
     validateAlias();
   }, [debouncedAlias, currentWorkspace, validateProjectAlias]);
+
+  const aliasStatus: AliasStatus = useMemo(() => {
+    if (!formState.projectAlias.trim()) return "idle";
+    if (aliasValidating) return "loading";
+    if (aliasValid) return "success";
+    if (aliasWarning) return "error";
+    return "idle";
+  }, [formState.projectAlias, aliasValidating, aliasValid, aliasWarning]);
+
+  const aliasStatusIcon = useMemo(() => {
+    if (aliasStatus === "loading") return <Spinner />;
+    if (aliasStatus === "success")
+      return <Icon icon="check" size={14} color={theme.success.main} />;
+    if (aliasStatus === "error")
+      return <Icon icon="close" size={14} color={theme.dangerous.main} />;
+    return null;
+  }, [aliasStatus, theme]);
 
   const onSubmit = useCallback(() => {
     const license = getLicenseContent(formState?.license);
@@ -185,24 +220,25 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               />
             </FormInputWrapper>
             <FormInputWrapper>
-              <InputField
-                title={t("Project Alias *")}
-                value={formState.projectAlias}
-                placeholder={t("Text")}
-                onChange={(value) => handleFieldChange("projectAlias", value)}
-                data-testid="project-alias-input"
-                description={
-                  aliasWarning ? (
-                    <Typography size="footnote" color={theme.dangerous.main}>
-                      {aliasWarning}
-                    </Typography>
-                  ) : (
-                    t(
-                      "Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+              <AliasInputWrapper $status={aliasStatus}>
+                <InputField
+                  title={t("Project Alias *")}
+                  value={formState.projectAlias}
+                  placeholder={t("Text")}
+                  onChange={(value) => handleFieldChange("projectAlias", value)}
+                  data-testid="project-alias-input"
+                  actions={aliasStatusIcon ? [aliasStatusIcon] : undefined}
+                  description={
+                    aliasWarning ? (
+                      <Typography size="footnote" color={theme.dangerous.main}>
+                        {aliasWarning}
+                      </Typography>
+                    ) : (
+                      `${t("Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/")}${formState.projectAlias || "project-alias"}`
                     )
-                  )
-                }
-              />
+                  }
+                />
+              </AliasInputWrapper>
             </FormInputWrapper>
             {projectVisibility && (
               <FormInputWrapper data-testid="project-creator-project-visibility-wrapper">
@@ -258,6 +294,21 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
 
 export default ProjectCreatorModal;
 
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
+
+const Spinner = styled("div")(({ theme }) => ({
+  width: 14,
+  height: 14,
+  borderRadius: "50%",
+  border: `2px solid ${theme.outline.weak}`,
+  borderTopColor: theme.content.main,
+  animation: `${spin} 0.7s linear infinite`,
+  flexShrink: 0
+}));
+
 const Form = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
@@ -276,4 +327,14 @@ const FormInputWrapper = styled("div")(({ theme }) => ({
   flexDirection: css.flexDirection.column,
   gap: theme.spacing.smallest,
   width: "100%"
+}));
+
+const AliasInputWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "$status"
+})<{ $status: AliasStatus }>(({ theme, $status }) => ({
+  "[data-commonfield-input-slot] > div": {
+    ...($status === "error" && {
+      border: `1px solid ${theme.dangerous.main}`
+    })
+  }
 }));

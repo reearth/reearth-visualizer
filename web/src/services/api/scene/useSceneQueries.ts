@@ -3,11 +3,13 @@ import {
   CHECK_SCENE_ALIAS,
   GET_SCENE
 } from "@reearth/services/gql/queries/scene";
-import { useLang, useT } from "@reearth/services/i18n/hooks";
+import { useLang } from "@reearth/services/i18n/hooks";
 import { useCallback, useMemo } from "react";
 
-import { HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION } from "../../gql";
-import { useNotification } from "../../state";
+import {
+  HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION,
+  HEADER_KEY_SKIP_GLOBAL_LOADING
+} from "../../gql";
 
 import { Scene, SceneQueryProps } from "./types";
 
@@ -40,8 +42,6 @@ export const useScene = ({ sceneId }: SceneQueryProps) => {
 };
 
 export const useValidateSceneAlias = () => {
-  const t = useT();
-  const [, setNotification] = useNotification();
 
   const [fetchCheckSceneAlias] = useLazyQuery(CHECK_SCENE_ALIAS, {
     fetchPolicy: "network-only", // Disable caching for this query
@@ -56,7 +56,8 @@ export const useValidateSceneAlias = () => {
         variables: { alias, projectId },
         context: {
           headers: {
-            [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
+            [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true",
+            [HEADER_KEY_SKIP_GLOBAL_LOADING]: "true"
           }
         }
       });
@@ -70,17 +71,13 @@ export const useValidateSceneAlias = () => {
         return { status: "error", errors };
       }
 
-      setNotification({
-        type: "success",
-        text: t("Successfully checked alias!")
-      });
       return {
         available: data?.checkSceneAlias.available,
         alias: data?.checkSceneAlias.alias,
         status: "success"
       };
     },
-    [fetchCheckSceneAlias, setNotification, t]
+    [fetchCheckSceneAlias]
   );
 
   return {
