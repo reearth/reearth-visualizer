@@ -159,3 +159,64 @@ func TestProjectImportSplit(t *testing.T) {
 	require.True(t, ok, "Status field not found in response")
 	require.NotEmpty(t, status, "Status should not be empty")
 }
+
+// TestProjectImportSplit_RejectsChunkWithoutSessionStart is the SCA-03
+// regression test: a chunk request for a file_id that never had chunk 0
+// must be rejected instead of silently creating an upload session (and the
+// fd/tmpfs file that comes with it) for a workspace whose permission was
+// never checked.
+func TestProjectImportSplit_RejectsChunkWithoutSessionStart(t *testing.T) {
+	e := Server(t, fullSeeder)
+	workspaceId := wID.String()
+	fileId := uuid.New().String()
+	chunkData := []byte("x")
+
+	e.POST("http://localhost:8080/api/split-import").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithMultipart().
+		WithFile("file", "chunk1", bytes.NewReader(chunkData)).
+		WithFormField("file_id", fileId).
+		WithFormField("workspace_id", workspaceId).
+		WithFormField("chunk_num", "1").
+		WithFormField("total_chunks", "2").
+		Expect().
+		Status(http.StatusBadRequest)
+}
+
+// TestProjectImportSplit_RejectsTotalChunksMismatch is a regression test
+// for a review finding on the SCA-03 fix: once a session exists, a later
+// chunk request must be rejected if it supplies a different total_chunks
+// than the session was created with. Otherwise a client could pass an
+// inflated total_chunks to clear the request-level bound check and then
+// write a chunk_num far beyond the session's real chunk count.
+func TestProjectImportSplit_RejectsTotalChunksMismatch(t *testing.T) {
+	e := Server(t, fullSeeder)
+	workspaceId := wID.String()
+	fileId := uuid.New().String()
+
+	// total_chunks=2 makes chunk 0 non-final, so it must be exactly the
+	// server's fixed 16MB chunk size.
+	chunk0 := make([]byte, 16*1024*1024)
+
+	e.POST("http://localhost:8080/api/split-import").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithMultipart().
+		WithFile("file", "chunk0", bytes.NewReader(chunk0)).
+		WithFormField("file_id", fileId).
+		WithFormField("workspace_id", workspaceId).
+		WithFormField("chunk_num", "0").
+		WithFormField("total_chunks", "2").
+		Expect().
+		Status(http.StatusOK)
+
+	e.POST("http://localhost:8080/api/split-import").
+		WithHeader("X-Reearth-Debug-User", uID.String()).
+		WithMultipart().
+		WithFile("file", "chunk1", bytes.NewReader([]byte("y"))).
+		WithFormField("file_id", fileId).
+		WithFormField("workspace_id", workspaceId).
+		WithFormField("chunk_num", "1").
+		WithFormField("total_chunks", "50").
+		Expect().
+		Status(http.StatusBadRequest)
+}

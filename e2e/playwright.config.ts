@@ -37,7 +37,7 @@ export default defineConfig({
     ]
   ],
   use: {
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
     actionTimeout: 35000,
     navigationTimeout: 35000,
     storageState: process.env.SKIP_STORAGE_STATE ? undefined : STORAGE_STATE
