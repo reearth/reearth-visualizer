@@ -86,7 +86,7 @@ REEARTH_E2E_MOCK_USER_ID=<server-side debug user id>
 # Optional second account for workspace/member tests
 REEARTH_E2E_SECOND_USER_EMAIL=...
 
-# Optional override of GraphQL endpoint; otherwise derived from BASEURL
+# Required: base URL for the GraphQL/REST API (e.g. http://localhost:8080). No fallback — env.ts throws if unset.
 REEARTH_E2E_API_URL=
 ```
 
@@ -103,7 +103,7 @@ e2e/
 │   └── api-token.json       # { token, extraHeaders } for the GraphQL/REST API stack
 ├── .claude/settings.local.json
 ├── api/
-│   ├── config/env.ts        # Reads .env, derives BASE_URL, GRAPHQL_ENDPOINT, AUTH_MODE
+│   ├── config/env.ts        # Reads .env; requires REEARTH_E2E_API_URL, derives GRAPHQL_ENDPOINT, AUTH_MODE
 │   ├── fixtures/api-test-fixtures.ts   # Playwright `test` extended with a `gqlClient` fixture
 │   ├── global.setup.ts      # api-setup project — produces .auth/api-token.json
 │   ├── graphql/
@@ -311,8 +311,9 @@ Both `api/fixtures/api-test-fixtures.ts` and the REST helper `test-helpers.ts �
 
 `api/config/env.ts`:
 
-- `GRAPHQL_ENDPOINT` = `REEARTH_E2E_API_URL + "/graphql"`, or, if missing, derived from `BASE_URL` by replacing the hostname with `api.<host>` and appending `/api/graphql`.
-- `API_BASE_URL` follows the same fallback for REST tests.
+- `REEARTH_E2E_API_URL` is **required** — `env.ts` throws `Missing REEARTH_E2E_API_URL` at load time if it's unset. There is no fallback derived from `REEARTH_WEB_E2E_BASEURL`.
+- `API_BASE_URL` = `REEARTH_E2E_API_URL` with any trailing slash stripped.
+- `GRAPHQL_ENDPOINT` = `${API_BASE_URL}/api/graphql`. REST tests use `API_BASE_URL` directly.
 
 ---
 
