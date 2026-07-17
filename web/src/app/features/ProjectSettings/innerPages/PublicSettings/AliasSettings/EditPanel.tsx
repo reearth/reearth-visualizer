@@ -10,9 +10,10 @@ import { CommonField } from "@reearth/app/ui/fields";
 import { useValidateSceneAlias } from "@reearth/services/api/scene";
 import { useValidateStoryAlias } from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n/hooks";
-import { styled, useTheme } from "@reearth/services/theme";
+import { keyframes, styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useCallback, useMemo, useState } from "react";
+import { debounce } from "lodash-es";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { extractPrefixSuffix } from "../../../hooks";
 
@@ -24,6 +25,8 @@ type Prop = {
   onClose?: () => void;
   onSubmit?: (alias?: string) => void;
 };
+
+type AliasStatus = "idle" | "loading" | "success" | "error";
 
 const EditPanel: FC<Prop> = ({
   alias,
@@ -46,36 +49,76 @@ const EditPanel: FC<Prop> = ({
   const [localAlias, setLocalAlias] = useState(alias);
   const [warning, setWaring] = useState("");
   const [isAliasValid, setIsAliasValid] = useState(true);
+  const [aliasValidating, setAliasValidating] = useState(false);
 
-  const handleChange = useCallback((value: string) => {
-    setLocalAlias(value);
-    setWaring("");
-    setIsAliasValid(false);
-  }, []);
+  const handleAliasValidation = useCallback(
+    async (value: string) => {
+      const result = isStory
+        ? await validateStoryAlias(value, itemId)
+        : await validateSceneAlias?.(value, itemId);
 
-  const handleBlur = useCallback(async () => {
-    const alias = localAlias as string;
-    const result = isStory
-      ? await validateStoryAlias(alias, itemId)
-      : await validateSceneAlias?.(alias, itemId);
+      setAliasValidating(false);
 
-    if (!result?.available) {
-      const description = result?.errors?.find(
-        (e) => e?.extensions?.description
-      )?.extensions?.description;
+      if (!result?.available) {
+        const description = result?.errors?.find(
+          (e) => e?.extensions?.description
+        )?.extensions?.description;
 
-      setWaring(description as string);
-      setIsAliasValid(false);
-    } else {
+        setWaring(description as string);
+        setIsAliasValid(false);
+      } else {
+        setWaring("");
+        setIsAliasValid(true);
+      }
+    },
+    [validateSceneAlias, validateStoryAlias, isStory, itemId]
+  );
+
+  const debouncedHandleAliasValidation = useMemo(
+    () => debounce((value: string) => handleAliasValidation(value), 500),
+    [handleAliasValidation]
+  );
+
+  useEffect(() => {
+    return () => debouncedHandleAliasValidation.cancel();
+  }, [debouncedHandleAliasValidation]);
+
+  const handleChange = useCallback(
+    (value: string) => {
+      setLocalAlias(value);
       setWaring("");
-      setIsAliasValid(true);
-    }
-  }, [validateSceneAlias, validateStoryAlias, isStory, itemId, localAlias]);
+      setIsAliasValid(false);
+      if (value.trim() && value.trim() !== alias) {
+        setAliasValidating(true);
+      } else {
+        setAliasValidating(false);
+      }
+      debouncedHandleAliasValidation(value);
+    },
+    [alias, debouncedHandleAliasValidation]
+  );
 
   const isDisabled = useMemo(
-    () => !!warning || localAlias === alias || !isAliasValid,
-    [alias, localAlias, warning, isAliasValid]
+    () => !!warning || localAlias === alias || !isAliasValid || aliasValidating,
+    [alias, localAlias, warning, isAliasValid, aliasValidating]
   );
+
+  const aliasStatus: AliasStatus = useMemo(() => {
+    if (!localAlias?.trim() || localAlias === alias) return "idle";
+    if (aliasValidating) return "loading";
+    if (isAliasValid) return "success";
+    if (warning) return "error";
+    return "idle";
+  }, [localAlias, alias, aliasValidating, isAliasValid, warning]);
+
+  const aliasStatusIcon = useMemo(() => {
+    if (aliasStatus === "loading") return <Spinner />;
+    if (aliasStatus === "success")
+      return <Icon icon="check" size={14} color={theme.success.main} />;
+    if (aliasStatus === "error")
+      return <Icon icon="close" size={14} color={theme.dangerous.main} />;
+    return null;
+  }, [aliasStatus, theme]);
 
   const handleSubmit = useCallback(() => {
     onSubmit?.(localAlias);
@@ -113,18 +156,29 @@ const EditPanel: FC<Prop> = ({
                   "You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows."
                 )}
           </Typography>
-          <CommonField title={"Alias"}>
+          <CommonField
+            title={"Alias"}
+            description={
+              !warning ? (
+                <Typography size="footnote" color={theme.content.weak}>
+                  {`${t("Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/")}${localAlias || "project-alias"}`}
+                </Typography>
+              ) : undefined
+            }
+          >
             <InputWrapper hasSuffix={!!suffix}>
               {prefix && (
                 <Typography size="body" color={theme.content.weak}>
                   {prefix}
                 </Typography>
               )}
-              <TextInput
-                value={localAlias}
-                onBlur={handleBlur}
-                onChange={handleChange}
-              />
+              <TextInputStatusWrapper $status={aliasStatus}>
+                <TextInput
+                  value={localAlias}
+                  onChange={handleChange}
+                  actions={aliasStatusIcon ? [aliasStatusIcon] : undefined}
+                />
+              </TextInputStatusWrapper>
               {suffix && (
                 <Typography size="body" color={theme.content.weak}>
                   {suffix}
@@ -153,6 +207,21 @@ const EditPanel: FC<Prop> = ({
 
 export default EditPanel;
 
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
+
+const Spinner = styled("div")(({ theme }) => ({
+  width: 14,
+  height: 14,
+  borderRadius: "50%",
+  border: `2px solid ${theme.outline.weak}`,
+  borderTopColor: theme.content.main,
+  animation: `${spin} 0.7s linear infinite`,
+  flexShrink: 0
+}));
+
 const Wrapper = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
@@ -168,6 +237,17 @@ const InputWrapper = styled("div")<{ hasSuffix?: boolean }>(
     gap: theme.spacing.micro
   })
 );
+
+const TextInputStatusWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "$status"
+})<{ $status: AliasStatus }>(({ theme, $status }) => ({
+  flex: 1,
+  "& > div": {
+    ...($status === "error" && {
+      border: `1px solid ${theme.dangerous.main}`
+    })
+  }
+}));
 
 const WarningMessage = styled("div")(({ theme }) => ({
   color: theme.dangerous.main,
