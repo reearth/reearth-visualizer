@@ -25,7 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.58.2-noble
-    environment: dev
     env:
       BUCKET: reearth-oss-visualizer-allure-reports
     defaults:
