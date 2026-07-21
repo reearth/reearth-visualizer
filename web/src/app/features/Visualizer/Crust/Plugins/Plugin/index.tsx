@@ -4,9 +4,9 @@ import { type RefObject, type JSX } from "react";
 import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
 import type { Widget } from "../../Widgets";
-import P, { type Props as PluginProps } from "../PluginFrame";
+import PluginFrame, { type Props as PluginFrameProps } from "../PluginFrame";
 
-import useHooks from "./hooks";
+import usePluginInstance from "./hooks/usePluginInstance";
 import type { PluginModalInfo } from "./ModalContainer";
 import type { PluginPopupInfo } from "./PopupContainer";
 
@@ -48,7 +48,7 @@ export type Props = {
   layer?: Layer;
   widget?: Widget;
   block?: Block;
-  iFrameProps?: PluginProps["iFrameProps"];
+  iFrameProps?: PluginFrameProps["iFrameProps"];
   onVisibilityChange?: (widgetId: string, v: boolean) => void;
   onClick?: () => void;
   onRender?: (
@@ -101,12 +101,11 @@ export default function Plugin({
     modalVisible,
     popupVisible,
     externalRef,
+    uiContainerRef,
     renderKey,
-    onPreInit,
-    onDispose,
-    exposed,
+    pluginContext,
     onError
-  } = useHooks({
+  } = usePluginInstance({
     mapRef,
     pluginId,
     extensionId,
@@ -126,8 +125,8 @@ export default function Plugin({
     onResize
   });
 
-  return !skip && (src || sourceCode) ? (
-    <P
+  return !skip && (src || sourceCode) && pluginContext ? (
+    <PluginFrame
       className={className}
       src={src}
       key={renderKey}
@@ -140,11 +139,10 @@ export default function Plugin({
       modalContainer={pluginModalContainer}
       popupContainer={pluginPopupContainer}
       externalRef={externalRef}
+      uiContainerRef={uiContainerRef}
       isMarshalable={isMarshalable}
-      exposed={exposed}
+      pluginContext={pluginContext}
       onError={onError}
-      onPreInit={onPreInit}
-      onDispose={onDispose}
       onClick={onClick}
     />
   ) : null;

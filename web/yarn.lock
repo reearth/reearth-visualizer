@@ -3899,12 +3899,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jitl/quickjs-ffi-types@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@jitl/quickjs-ffi-types@npm:0.32.0"
+  checksum: 10c0/80a35558d1d466115366999cebde2aa5aa3f78297d69db1d3c662f021e39ec3b2d89b6b8b85d4defa41a4ea24b94a6fd528ddc227cd2e67fb16edb3b43a9e84f
+  languageName: node
+  linkType: hard
+
 "@jitl/quickjs-wasmfile-debug-asyncify@npm:0.31.0":
   version: 0.31.0
   resolution: "@jitl/quickjs-wasmfile-debug-asyncify@npm:0.31.0"
   dependencies:
     "@jitl/quickjs-ffi-types": "npm:0.31.0"
   checksum: 10c0/b67657419f396df6e3292f66775060389ec11537ee8c5805128e879160c6790fe5d0e4d35568ff240bc163528063c36a0b18a56346bdec504ec1a92398e41efc
+  languageName: node
+  linkType: hard
+
+"@jitl/quickjs-wasmfile-debug-asyncify@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@jitl/quickjs-wasmfile-debug-asyncify@npm:0.32.0"
+  dependencies:
+    "@jitl/quickjs-ffi-types": "npm:0.32.0"
+  checksum: 10c0/f7bad41e050e9fcf0f8ba1cf368fc2242e645126d260966264a72cf5d769f009e0edfab9aed542a6519b7a7bfb6499b9362ea077eb5a3355fc3599b0382b8057
   languageName: node
   linkType: hard
 
@@ -3917,6 +3933,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jitl/quickjs-wasmfile-debug-sync@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@jitl/quickjs-wasmfile-debug-sync@npm:0.32.0"
+  dependencies:
+    "@jitl/quickjs-ffi-types": "npm:0.32.0"
+  checksum: 10c0/415b2b7864aceaf451f80db76d3cb94f52071630c7b5256edfa8b21bf89a47a16a35947c2927a1cedfbd5e53846abeeeca4ac886156d0048c0c19079102e0113
+  languageName: node
+  linkType: hard
+
 "@jitl/quickjs-wasmfile-release-asyncify@npm:0.31.0":
   version: 0.31.0
   resolution: "@jitl/quickjs-wasmfile-release-asyncify@npm:0.31.0"
@@ -3926,12 +3951,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jitl/quickjs-wasmfile-release-asyncify@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@jitl/quickjs-wasmfile-release-asyncify@npm:0.32.0"
+  dependencies:
+    "@jitl/quickjs-ffi-types": "npm:0.32.0"
+  checksum: 10c0/b8bdf21fe2f1599602a16fcc1a71eb103a0bc41830a6138728d804b4b77546029c78470f32befc3b872beb971e6bc4c3c604ccbf6256c70551f68913aa938f5b
+  languageName: node
+  linkType: hard
+
 "@jitl/quickjs-wasmfile-release-sync@npm:0.31.0":
   version: 0.31.0
   resolution: "@jitl/quickjs-wasmfile-release-sync@npm:0.31.0"
   dependencies:
     "@jitl/quickjs-ffi-types": "npm:0.31.0"
   checksum: 10c0/751a8a0b3f2b66fa499de13f21eff264faa9a2b256104dbe1384b0acda64efeabd756d12d5480ae18d002e8200a4176621c5a0f0e13f2920b202515fcc4b6751
+  languageName: node
+  linkType: hard
+
+"@jitl/quickjs-wasmfile-release-sync@npm:0.32.0":
+  version: 0.32.0
+  resolution: "@jitl/quickjs-wasmfile-release-sync@npm:0.32.0"
+  dependencies:
+    "@jitl/quickjs-ffi-types": "npm:0.32.0"
+  checksum: 10c0/c095815a3b9bc765d7e15c5f648e6ec5b2390a733869ac2df2aa3579f66e36706b25b104f45d8f80b2257a2ced267fb6b8b71d8b167d224269a48eb0a8d0c946
   languageName: node
   linkType: hard
 
@@ -6040,6 +6083,7 @@ __metadata:
     "@radix-ui/react-slot": "npm:1.2.4"
     "@reearth/core": "npm:0.0.7-alpha.75"
     "@reearth/sentinel": "npm:0.1.2"
+    "@reearth/zushi": "npm:0.3.0"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
@@ -6152,6 +6196,23 @@ __metadata:
     web-streams-polyfill: "npm:4.2.0"
   languageName: unknown
   linkType: soft
+
+"@reearth/zushi@npm:0.3.0":
+  version: 0.3.0
+  resolution: "@reearth/zushi@npm:0.3.0"
+  dependencies:
+    "@ungap/event-target": "npm:0.2.4"
+    localforage: "npm:1.10.0"
+    quickjs-emscripten: "npm:0.32.0"
+    quickjs-emscripten-sync: "npm:1.11.0"
+  peerDependencies:
+    react: ">=18"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 10c0/e7d38bfc2b2b8e14ac2fe619fbb3d78dc13a76eb3cf4121426ea7cc597af9645580240938cc9bf64fda1a056d8c5d5858c15947cccaed81575c261e171fde42a
+  languageName: node
+  linkType: hard
 
 "@repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.0.6":
   version: 3.0.6
@@ -20169,6 +20230,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"quickjs-emscripten-core@npm:0.32.0":
+  version: 0.32.0
+  resolution: "quickjs-emscripten-core@npm:0.32.0"
+  dependencies:
+    "@jitl/quickjs-ffi-types": "npm:0.32.0"
+  checksum: 10c0/3d38df2cc6408b4bd343a955b5f435f0b26b5ed2692f0f878d5dbe1fa5bcc7e9ae0e914ea2cea04e4abd3a03691d3e4ee0e6244b9ce761374c73bf132b2c3958
+  languageName: node
+  linkType: hard
+
+"quickjs-emscripten-sync@npm:1.11.0":
+  version: 1.11.0
+  resolution: "quickjs-emscripten-sync@npm:1.11.0"
+  peerDependencies:
+    quickjs-emscripten: "*"
+  checksum: 10c0/f036e41c7b7330d1c5657fb0530201a0aab6aef195bfc72d58967b8312505090838b7ca8e5c551e0f8b4c7ce035b7c88eb92df5c516d451463dbad1974e7bcee
+  languageName: node
+  linkType: hard
+
 "quickjs-emscripten-sync@npm:1.5.2":
   version: 1.5.2
   resolution: "quickjs-emscripten-sync@npm:1.5.2"
@@ -20188,6 +20267,19 @@ __metadata:
     "@jitl/quickjs-wasmfile-release-sync": "npm:0.31.0"
     quickjs-emscripten-core: "npm:0.31.0"
   checksum: 10c0/18cfda9477cb68e0bd5812ea4642b7b67d14bfd16e414ff611b495a8af27b1f9fc879c062cb79e5e428fc961ad4591e3798f1ead16cc5b3bf2b0ae02415e5648
+  languageName: node
+  linkType: hard
+
+"quickjs-emscripten@npm:0.32.0":
+  version: 0.32.0
+  resolution: "quickjs-emscripten@npm:0.32.0"
+  dependencies:
+    "@jitl/quickjs-wasmfile-debug-asyncify": "npm:0.32.0"
+    "@jitl/quickjs-wasmfile-debug-sync": "npm:0.32.0"
+    "@jitl/quickjs-wasmfile-release-asyncify": "npm:0.32.0"
+    "@jitl/quickjs-wasmfile-release-sync": "npm:0.32.0"
+    quickjs-emscripten-core: "npm:0.32.0"
+  checksum: 10c0/378a95e625c88b867489cb5972e02501d43fd128c94aac537fd8298a123ddb26e25ab0fac409ebb1b1abff9f5226d4c528abfed13821f72a452729e4239dfe0f
   languageName: node
   linkType: hard
 
