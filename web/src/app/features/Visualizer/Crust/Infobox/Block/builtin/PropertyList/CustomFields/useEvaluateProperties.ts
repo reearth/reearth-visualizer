@@ -43,19 +43,21 @@ export default ({ properties, selectedFeature }: Props) => {
         metaData: selectedFeature.metaData,
         range: selectedFeature.range
       };
-      const es = currentValue?.map((v) => {
-        const ev = evalExpression(
-          {
-            expression: v.value
-          },
-          undefined,
-          simpleFeature
-        );
+      const es = currentValue?.map(
+        (v): EvaluatedPropertyListItem | undefined => {
+          const ev = evalExpression(
+            {
+              expression: v.value
+            },
+            undefined,
+            simpleFeature
+          );
 
-        return ev !== undefined && ev !== null
-          ? { ...v, value: ev }
-          : undefined;
-      });
+          return ev !== undefined && ev !== null
+            ? { ...v, value: ev }
+            : undefined;
+        }
+      );
       const filtered = es?.filter(
         (e): e is EvaluatedPropertyListItem => e !== undefined
       );
