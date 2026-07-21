@@ -7,6 +7,19 @@ import ListItem from "../ListItem";
 
 import useEvaluateProperties from "./useEvaluateProperties";
 
+function toDisplayString(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  if (Array.isArray(value)) return value.join(", ");
+  if (typeof value === "object") {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return "[object]";
+    }
+  }
+  return String(value);
+}
+
 type Props = {
   extensionId?: string;
   selectedFeature?: ComputedFeature;
@@ -26,8 +39,13 @@ const CustomFields: FC<Props> = ({
   return (
     <>
       {evaluatedProperties && evaluatedProperties.length > 0 ? (
-        evaluatedProperties.map((ep) => (
-          <ListItem key={ep.id} keyValue={ep.key} value={ep.value} />
+        evaluatedProperties.map((ep, idx) => (
+          <ListItem
+            key={ep.id}
+            index={idx}
+            keyValue={ep.key}
+            value={toDisplayString(ep.value)}
+          />
         ))
       ) : (
         <Template icon={extensionId} height={120} />

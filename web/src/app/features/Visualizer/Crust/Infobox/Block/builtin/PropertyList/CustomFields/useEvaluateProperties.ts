@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 
 import { PropertyListItem } from "../ListEditor";
 
+export type EvaluatedPropertyListItem = Omit<PropertyListItem, "value"> & {
+  value: unknown;
+};
+
 type Props = {
   selectedFeature?: ComputedFeature;
   properties?: PropertyListItem[];
@@ -15,7 +19,7 @@ export default ({ properties, selectedFeature }: Props) => {
   >(properties);
 
   const [evaluatedProperties, setEvaluatedResult] = useState<
-    PropertyListItem[] | undefined
+    EvaluatedPropertyListItem[] | undefined
   >(undefined);
 
   // We want the useEffect to be called on each render to make sure evaluatedProperties is up to date
@@ -48,18 +52,18 @@ export default ({ properties, selectedFeature }: Props) => {
           simpleFeature
         );
 
-        return ev
-          ? {
-              ...v,
-              value: ev
-            }
+        return ev !== undefined && ev !== null
+          ? ({ ...v, value: ev } as EvaluatedPropertyListItem)
           : undefined;
       });
-      if (!isEqual(es, evaluatedProperties)) {
-        setEvaluatedResult(es as PropertyListItem[]);
+      const filtered = es?.filter(
+        (e): e is EvaluatedPropertyListItem => e !== undefined
+      );
+      if (!isEqual(filtered, evaluatedProperties)) {
+        setEvaluatedResult(filtered);
       }
     }
   }, [isReady, currentValue, properties, evaluatedProperties, selectedFeature]);
 
-  return evaluatedProperties?.filter((ep) => ep !== undefined);
+  return evaluatedProperties;
 };
