@@ -53,7 +53,7 @@ export default ({ properties, selectedFeature }: Props) => {
         );
 
         return ev !== undefined && ev !== null
-          ? ({ ...v, value: ev } as EvaluatedPropertyListItem)
+          ? { ...v, value: ev }
           : undefined;
       });
       const filtered = es?.filter(

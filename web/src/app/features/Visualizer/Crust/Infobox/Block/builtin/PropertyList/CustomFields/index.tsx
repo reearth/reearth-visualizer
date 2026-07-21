@@ -9,7 +9,7 @@ import useEvaluateProperties from "./useEvaluateProperties";
 
 function toDisplayString(value: unknown): string {
   if (value === null || value === undefined) return "";
-  if (Array.isArray(value)) return value.join(", ");
+  if (Array.isArray(value)) return value.map(toDisplayString).join(", ");
   if (typeof value === "object") {
     try {
       return JSON.stringify(value);
