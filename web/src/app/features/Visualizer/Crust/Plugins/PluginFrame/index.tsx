@@ -1,18 +1,25 @@
+/**
+ * PluginFrame Component - Zushi Version
+ *
+ * This is the updated version using Zushi instead of custom QuickJS.
+ * It replaces the manual iframe management with Zushi's surface system.
+ */
+
 import {
   forwardRef,
   ForwardRefRenderFunction,
   IframeHTMLAttributes,
-  ReactNode
+  ReactNode,
+  useEffect
 } from "react";
-import type { RefObject } from "react";
+import type { MutableRefObject, RefObject } from "react";
 
-import useHook, { defaultIsMarshalable, IFrameType, API, Ref } from "./hooks";
-import PluginIFrame, { AutoResize } from "./PluginIFrame";
+import type { ReearthPluginContext } from "../pluginAPI/zushiAdapter";
+
+import useZushiPlugin, { defaultIsMarshalable, Ref } from "./useZushiPlugin";
 
 export { defaultIsMarshalable };
-
-export type { AutoResize } from "./PluginIFrame";
-export type { API, IFrameType, Ref } from "./hooks";
+export type { Ref } from "./useZushiPlugin";
 
 export type Props = {
   className?: string;
@@ -21,109 +28,126 @@ export type Props = {
   src?: string;
   sourceCode?: string;
   renderPlaceholder?: ReactNode;
-  autoResize?: AutoResize;
+  autoResize?: "both" | "width-only" | "height-only";
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   modalContainer?: HTMLElement | DocumentFragment | null;
   popupContainer?: HTMLElement | DocumentFragment | null;
   modalVisible?: boolean;
   popupVisible?: boolean;
   externalRef?: RefObject<HTMLIFrameElement | null>;
+  uiContainerRef?: MutableRefObject<HTMLElement | null>;
   isMarshalable?: boolean | "json" | ((target: unknown) => boolean | "json");
-  exposed?: ((api: API) => Record<string, unknown>) | Record<string, unknown>;
+  pluginContext: ReearthPluginContext;
   onMessage?: (message: unknown) => void;
   onPreInit?: () => void;
   onError?: (err: unknown) => void;
   onDispose?: () => void;
   onClick?: () => void;
-  onRender?: (type: IFrameType) => void;
+  onRender?: (type: string) => void;
 };
 
-const Plugin: ForwardRefRenderFunction<Ref, Props> = (
+const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
   {
     className,
     uiVisible,
-    modalVisible,
-    popupVisible,
+    modalVisible: _modalVisible,
+    popupVisible: _popupVisible,
+    modalContainer,
+    popupContainer,
     skip,
     src,
     sourceCode,
     renderPlaceholder,
     autoResize,
     iFrameProps,
+    uiContainerRef,
     isMarshalable,
-    modalContainer,
-    popupContainer,
-    externalRef,
-    exposed,
+    pluginContext,
     onPreInit,
     onError,
     onDispose,
     onClick,
     onMessage,
-    onRender
+    onRender: _onRender
   },
   ref
 ) => {
-  const {
-    mainIFrameRef,
-    modalIFrameRef,
-    popupIFrameRef,
-    loaded,
-    handleMessage
-  } = useHook({
+  const { loaded, surfaceRefs, modalElement, popupElement } = useZushiPlugin({
     src,
     sourceCode,
     skip,
+    autoResize,
     isMarshalable,
     ref,
-    exposed,
+    pluginContext,
     onError,
     onPreInit,
     onDispose,
     onMessage
   });
 
+  // Populate UI container ref for popup positioning
+  // Sync whenever the UI container or loaded state changes
+  useEffect(() => {
+    if (uiContainerRef && surfaceRefs.uiContainer.current) {
+      uiContainerRef.current = surfaceRefs.uiContainer.current;
+    }
+  }, [uiContainerRef, surfaceRefs.uiContainer, loaded]);
+
+  // Manually append modal element to portal container
+  useEffect(() => {
+    if (!modalContainer) return;
+    modalContainer.appendChild(modalElement);
+    return () => {
+      if (modalContainer.contains(modalElement)) {
+        modalContainer.removeChild(modalElement);
+      }
+    };
+  }, [modalContainer, modalElement]);
+
+  // Manually append popup element to portal container
+  useEffect(() => {
+    if (!popupContainer) return;
+    popupContainer.appendChild(popupElement);
+    return () => {
+      if (popupContainer.contains(popupElement)) {
+        popupContainer.removeChild(popupElement);
+      }
+    };
+  }, [popupContainer, popupElement]);
+
   return (
     <>
-      <PluginIFrame
-        type="main"
-        ref={mainIFrameRef}
-        ready={loaded}
-        visible={uiVisible}
-        enabled
-        className={className}
-        iFrameProps={iFrameProps}
-        autoResize={autoResize}
-        renderPlaceholder={renderPlaceholder}
-        externalRef={externalRef}
+      <style>{`
+        /* Ensure Zushi iframes fill their containers */
+        .zushi-ui-surface-container iframe,
+        .zushi-modal-surface-container iframe,
+        .zushi-popup-surface-container iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+        }
+      `}</style>
+
+      {/* Main UI Surface Container */}
+      <div
+        ref={surfaceRefs.uiContainer}
+        className={`zushi-ui-surface-container ${className || ""}`}
+        style={{
+          display: uiVisible ? "block" : "none",
+          width: "100%",
+          height: "100%",
+          ...iFrameProps?.style
+        }}
         onClick={onClick}
-        onRender={onRender as (type: string) => void}
-        onMessage={handleMessage}
       />
-      <PluginIFrame
-        type="modal"
-        ref={modalIFrameRef}
-        container={modalContainer}
-        visible
-        enabled={modalVisible}
-        ready={loaded}
-        autoResize="both"
-        onRender={onRender as (type: string) => void}
-        onMessage={handleMessage}
-      />
-      <PluginIFrame
-        type="popup"
-        ref={popupIFrameRef}
-        container={popupContainer}
-        visible
-        enabled={popupVisible}
-        ready={loaded}
-        autoResize="both"
-        onRender={onRender as (type: string) => void}
-        onMessage={handleMessage}
-      />
+
+      {/* Modal and popup containers are now managed manually via useEffect above */}
+
+      {/* Render placeholder if not loaded */}
+      {!loaded && renderPlaceholder}
     </>
   );
 };
 
-export default forwardRef(Plugin);
+export default forwardRef(PluginFrameZushi);

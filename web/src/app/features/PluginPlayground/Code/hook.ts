@@ -210,6 +210,12 @@ export default ({
           extensionId: cur.id,
           pluginId: ymlJson.id,
           extensionType: "infoboxBlock",
+          property: generateProperty(
+            cur.schema,
+            fieldValues,
+            ymlJson.id,
+            cur.id
+          ),
           propertyForPluginAPI: generateProperty(
             cur.schema,
             fieldValues,
@@ -241,6 +247,12 @@ export default ({
         extensionId: cur.id,
         pluginId: ymlJson.id,
         extensionType: "storyBlock",
+        property: generateProperty(
+          cur.schema,
+          fieldValues,
+          ymlJson.id,
+          cur.id
+        ),
         propertyForPluginAPI: generateProperty(
           cur.schema,
           fieldValues,
