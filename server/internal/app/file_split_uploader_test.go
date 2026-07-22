@@ -1,7 +1,10 @@
 package app
 
 import (
+	"archive/zip"
 	"bytes"
+	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -11,8 +14,55 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 )
+
+// fakeProjectUsecase implements only the two interfaces.Project methods the
+// import pipeline's timeout paths exercise (REL-03); every other method
+// panics via the nil-embedded interface if a test accidentally reaches it.
+type fakeProjectUsecase struct {
+	interfaces.Project
+	importProjectData func(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error)
+	updateImportStatus func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error)
+}
+
+func (f *fakeProjectUsecase) ImportProjectData(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
+	return f.importProjectData(ctx, wsID, sceneID, data, op)
+}
+
+func (f *fakeProjectUsecase) UpdateImportStatus(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error) {
+	return f.updateImportStatus(ctx, pid, status, msg, op)
+}
+
+// writeTestExportZip builds the minimal zip UncompressExportZip accepts —
+// just a project.json containing valid JSON — so runImportJob tests can
+// reach ImportProject without needing a real exported project.
+func writeTestExportZip(t *testing.T) string {
+	t.Helper()
+	path := filepath.Join(t.TempDir(), "export.zip")
+	f, err := os.Create(path)
+	if err != nil {
+		t.Fatalf("failed to create zip: %v", err)
+	}
+	zw := zip.NewWriter(f)
+	w, err := zw.Create("project.json")
+	if err != nil {
+		t.Fatalf("failed to create zip entry: %v", err)
+	}
+	if _, err := w.Write([]byte(`{}`)); err != nil {
+		t.Fatalf("failed to write zip entry: %v", err)
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatalf("failed to close zip writer: %v", err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatalf("failed to close zip file: %v", err)
+	}
+	return path
+}
 
 // setUpdatedAtForTest mutates updatedAt under the session's own lock, so
 // tests exercising staleness don't have to reach past uploadSession's
@@ -26,10 +76,12 @@ func (s *uploadSession) setUpdatedAtForTest(t time.Time) {
 func newTestManager(t *testing.T) *SplitUploadManager {
 	t.Helper()
 	return &SplitUploadManager{
-		sessions:  make(map[string]*uploadSession),
-		tempDir:   t.TempDir(),
-		chunkSize: 4, // small chunk size keeps test data tiny
-		jobs:      make(chan importJob, 1),
+		sessions:            make(map[string]*uploadSession),
+		tempDir:             t.TempDir(),
+		chunkSize:           4, // small chunk size keeps test data tiny
+		jobs:                make(chan importJob, 1),
+		importJobTimeout:    importJobTimeout,
+		dispatchWaitTimeout: dispatchWaitTimeout,
 	}
 }
 
@@ -384,6 +436,207 @@ func TestUploadSession_FilePathIsUnderTempDir(t *testing.T) {
 // flows into filepath.Join(tempDir, fileID), so an unrestricted value is a
 // path-traversal vector, and an unbounded/negative chunkNum could force
 // writes at arbitrary offsets in the backing file.
+// TestSplitUploadManager_DispatchImport_TimesOutWhenPoolWedged is the
+// REL-03 regression test: if every worker is stuck (modeled here by an
+// unbuffered jobs channel with no worker draining it), dispatchImport must
+// give up after dispatchWaitTimeout instead of blocking the caller
+// forever, and must mark the import failed and clean up the session
+// rather than silently dropping it.
+func TestSplitUploadManager_DispatchImport_TimesOutWhenPoolWedged(t *testing.T) {
+	m := newTestManager(t)
+	m.jobs = make(chan importJob) // unbuffered, nothing ever reads it
+	m.dispatchWaitTimeout = 20 * time.Millisecond
+
+	prj, err := project.New().NewID().Build()
+	if err != nil {
+		t.Fatalf("failed to build project: %v", err)
+	}
+	session, err := m.getOrCreateSession("wedged", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	session.setProject(prj)
+
+	done := make(chan struct{})
+	var gotStatus project.ProjectImportStatus
+	var gotMessage string
+	fake := &fakeProjectUsecase{
+		updateImportStatus: func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error) {
+			gotStatus = status
+			gotMessage = (*msg)["message"].(string)
+			close(done)
+			return nil, nil
+		},
+	}
+
+	job := importJob{
+		usecases:  &interfaces.Container{Project: fake},
+		fileID:    "wedged",
+		projectID: prj.ID(),
+	}
+
+	start := time.Now()
+	m.dispatchImport(job) // must return immediately — the wait happens in its own goroutine
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for dispatchImport's timeout branch to run")
+	}
+	if elapsed := time.Since(start); elapsed > time.Second {
+		t.Errorf("dispatch timeout took %v, want close to dispatchWaitTimeout (%v)", elapsed, m.dispatchWaitTimeout)
+	}
+
+	if gotStatus != project.ProjectImportStatusFailed {
+		t.Errorf("status = %v, want %v", gotStatus, project.ProjectImportStatusFailed)
+	}
+	if !strings.Contains(gotMessage, "did not accept job in time") {
+		t.Errorf("message = %q, want it to mention the pool not accepting the job", gotMessage)
+	}
+
+	if _, ok := m.getSession("wedged"); ok {
+		t.Error("session should have been cleaned up after a dispatch timeout")
+	}
+}
+
+// TestSplitUploadManager_DispatchImport_SucceedsWithinTimeout is the
+// complement to the above: when a worker slot is available, the job must
+// be handed off normally and the timeout/failure path must never fire.
+func TestSplitUploadManager_DispatchImport_SucceedsWithinTimeout(t *testing.T) {
+	m := newTestManager(t)
+	m.jobs = make(chan importJob, 1) // room for one job, so the send succeeds immediately
+	m.dispatchWaitTimeout = 2 * time.Second
+
+	fake := &fakeProjectUsecase{
+		updateImportStatus: func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error) {
+			t.Error("UpdateImportStatus must not be called when the job is dispatched successfully")
+			return nil, nil
+		},
+	}
+
+	job := importJob{
+		usecases: &interfaces.Container{Project: fake},
+		fileID:   "healthy",
+	}
+	m.dispatchImport(job)
+
+	select {
+	case got := <-m.jobs:
+		if got.fileID != "healthy" {
+			t.Errorf("dispatched job fileID = %q, want %q", got.fileID, "healthy")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("job was never delivered to the worker channel")
+	}
+}
+
+// TestSplitUploadManager_RunImportJob_ContextTimesOut is the REL-03
+// regression test for worker execution: a downstream call that hangs (here,
+// ImportProjectData blocking until its context is done) must not wedge the
+// worker forever — importJobTimeout bounds it, the job is marked failed,
+// and the worker is free to return to runWorker's loop for the next job.
+func TestSplitUploadManager_RunImportJob_ContextTimesOut(t *testing.T) {
+	m := newTestManager(t)
+	m.importJobTimeout = 20 * time.Millisecond
+
+	prj, err := project.New().NewID().Build()
+	if err != nil {
+		t.Fatalf("failed to build project: %v", err)
+	}
+	if _, err := m.getOrCreateSession("stuck-import", 1); err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	var sawDeadline bool
+	fake := &fakeProjectUsecase{
+		importProjectData: func(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
+			<-ctx.Done() // simulate a hung downstream (e.g. MongoDB) call
+			sawDeadline = errors.Is(ctx.Err(), context.DeadlineExceeded)
+			return nil, ctx.Err()
+		},
+		updateImportStatus: func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error) {
+			return nil, nil
+		},
+	}
+
+	job := importJob{
+		usecases:  &interfaces.Container{Project: fake},
+		fileID:    "stuck-import",
+		filePath:  writeTestExportZip(t),
+		projectID: prj.ID(),
+	}
+
+	done := make(chan struct{})
+	go func() {
+		m.runImportJob(job) // must return once the bounded context expires
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("runImportJob did not return after its context should have timed out")
+	}
+
+	if !sawDeadline {
+		t.Error("downstream call's context should have expired with context.DeadlineExceeded")
+	}
+	if _, ok := m.getSession("stuck-import"); ok {
+		t.Error("session should have been cleaned up after the job finished (even on timeout)")
+	}
+}
+
+// TestSplitUploadManager_RunImportJob_FastFailureIsNotTreatedAsTimeout
+// checks the timeout wiring doesn't misfire on a normal, fast failure —
+// the bounded context must still allow quick downstream errors through
+// with their own message, not a spurious deadline error.
+func TestSplitUploadManager_RunImportJob_FastFailureIsNotTreatedAsTimeout(t *testing.T) {
+	m := newTestManager(t)
+	m.importJobTimeout = 2 * time.Second // generous; the fake returns instantly
+
+	prj, err := project.New().NewID().Build()
+	if err != nil {
+		t.Fatalf("failed to build project: %v", err)
+	}
+	if _, err := m.getOrCreateSession("fast-fail", 1); err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	var gotMessage string
+	done := make(chan struct{})
+	fake := &fakeProjectUsecase{
+		importProjectData: func(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
+			return nil, errors.New("boom")
+		},
+		updateImportStatus: func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error) {
+			gotMessage = (*msg)["message"].(string)
+			close(done)
+			return nil, nil
+		},
+	}
+
+	job := importJob{
+		usecases:  &interfaces.Container{Project: fake},
+		fileID:    "fast-fail",
+		filePath:  writeTestExportZip(t),
+		projectID: prj.ID(),
+	}
+
+	m.runImportJob(job)
+
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("UpdateImportStatus was never called")
+	}
+	if strings.Contains(gotMessage, "deadline exceeded") {
+		t.Errorf("message = %q, should be the fast failure, not a timeout", gotMessage)
+	}
+	if !strings.Contains(gotMessage, "boom") {
+		t.Errorf("message = %q, want it to contain the underlying error", gotMessage)
+	}
+}
+
 func TestValidateChunkRequest(t *testing.T) {
 	tests := []struct {
 		name        string

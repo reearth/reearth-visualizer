@@ -40,6 +40,20 @@ const importWorkerCount = 3
 // request goroutine in practice.
 const importJobQueueSize = 32
 
+// importJobTimeout bounds a single import's execution. Without it, a
+// stalled downstream call (e.g. a MongoDB partial outage) can hang a
+// worker on context.Background() forever; once enough workers are stuck
+// like this, every future import stalls behind them too (REL-03). Real
+// imports observed in production complete in well under a minute, so 5
+// minutes is generous headroom, not a tight bound.
+const importJobTimeout = 5 * time.Minute
+
+// dispatchWaitTimeout is a last-resort safety valve for handing a
+// completed upload to the worker pool (see dispatchImport). It only
+// matters if the pool is already wedged past importJobTimeout, which
+// should be self-healing; this just guarantees the wait can't run forever.
+const dispatchWaitTimeout = 5 * time.Minute
+
 // maxChunkCount bounds total_chunks well above any legitimate upload (the
 // import pipeline already rejects anything over 500MB, which is ~32
 // chunks at the client's 16MB chunk size) while still capping how large a
@@ -260,14 +274,23 @@ type SplitUploadManager struct {
 	tempDir   string
 	chunkSize int64
 	jobs      chan importJob
+
+	// importJobTimeout and dispatchWaitTimeout default to the package
+	// constants in production (see newSplitUploadManager) and are only
+	// fields so tests can inject short durations instead of waiting out
+	// the real 5-minute bounds.
+	importJobTimeout    time.Duration
+	dispatchWaitTimeout time.Duration
 }
 
 func newSplitUploadManager(tempDir string, chunkSize int64) *SplitUploadManager {
 	m := &SplitUploadManager{
-		sessions:  make(map[string]*uploadSession),
-		tempDir:   tempDir,
-		chunkSize: chunkSize,
-		jobs:      make(chan importJob, importJobQueueSize),
+		sessions:            make(map[string]*uploadSession),
+		tempDir:             tempDir,
+		chunkSize:           chunkSize,
+		jobs:                make(chan importJob, importJobQueueSize),
+		importJobTimeout:    importJobTimeout,
+		dispatchWaitTimeout: dispatchWaitTimeout,
 	}
 	for range importWorkerCount {
 		go m.runWorker()
@@ -375,8 +398,24 @@ func (m *SplitUploadManager) getSession(fileID string) (*uploadSession, bool) {
 // durable, MongoDB-backed job queue (see REL-04): only this method needs
 // to be swapped to enqueue a persisted job instead of an in-process
 // channel send — nothing in the session/chunking code above needs to move.
+//
+// The hand-off runs in its own goroutine, detached from the request, so
+// the request goroutine never waits on it — the upload is already fully
+// written to disk by this point, and the import itself always runs async
+// in a worker regardless. Detaching this way also means a client
+// disconnecting right after the last chunk can never abort an upload that
+// already finished successfully (see REL-03).
 func (m *SplitUploadManager) dispatchImport(job importJob) {
-	m.jobs <- job
+	go func() {
+		select {
+		case m.jobs <- job:
+		case <-time.After(m.dispatchWaitTimeout):
+			errMsg := "import worker pool did not accept job in time"
+			log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
+			UpdateImportStatus(context.Background(), job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, map[string]any{})
+			m.cleanupSession(job.fileID)
+		}
+	}()
 }
 
 func (m *SplitUploadManager) runWorker() {
@@ -389,9 +428,13 @@ func (m *SplitUploadManager) runWorker() {
 // in place, chunk by chunk) and imports one completed upload. It recovers
 // from any panic in the pipeline so a single bad upload can only fail that
 // one import, never take down the process — this is the general fix for
-// the class of bug behind REL-01, not just its specific trigger.
+// the class of bug behind REL-01, not just its specific trigger. The
+// bounded context is the general fix for REL-03: a stalled downstream call
+// times out instead of hanging this worker (and its slot in the pool)
+// forever.
 func (m *SplitUploadManager) runImportJob(job importJob) {
-	bgctx := context.Background()
+	bgctx, cancel := context.WithTimeout(context.Background(), m.importJobTimeout)
+	defer cancel()
 	result := map[string]any{}
 
 	defer func() {
