@@ -494,8 +494,19 @@ func TestSplitUploadManager_DispatchImport_TimesOutWhenPoolWedged(t *testing.T) 
 		t.Errorf("message = %q, want it to mention the pool not accepting the job", gotMessage)
 	}
 
-	if _, ok := m.getSession("wedged"); ok {
-		t.Error("session should have been cleaned up after a dispatch timeout")
+	// cleanupSession is deferred until after UpdateImportStatus returns, so
+	// it can still be running for a moment after the fake above closes
+	// done — poll instead of asserting immediately to avoid a flaky race.
+	deadline := time.Now().Add(time.Second)
+	for {
+		if _, ok := m.getSession("wedged"); !ok {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Error("session should have been cleaned up after a dispatch timeout")
+			break
+		}
+		time.Sleep(5 * time.Millisecond)
 	}
 }
 

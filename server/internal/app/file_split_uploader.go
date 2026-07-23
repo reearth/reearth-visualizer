@@ -416,13 +416,23 @@ func (m *SplitUploadManager) dispatchImport(job importJob) {
 				log.Errorf("[Import] panic while dispatching import: %v (file %s)", r, job.fileID)
 			}
 		}()
+		// time.NewTimer (not time.After) so the successful-send case can
+		// stop it instead of leaving it to fire 5 minutes later: under
+		// steady upload traffic, every successful dispatch would otherwise
+		// leave a stray timer alive for the full dispatchWaitTimeout.
+		timer := time.NewTimer(m.dispatchWaitTimeout)
+		defer timer.Stop()
+
 		select {
 		case m.jobs <- job:
-		case <-time.After(m.dispatchWaitTimeout):
+		case <-timer.C:
+			// cleanupSession is deferred here, not called after
+			// UpdateImportStatus, so the session/tempfile is still freed
+			// even if the status write panics or otherwise never returns.
+			defer m.cleanupSession(job.fileID)
 			errMsg := "import worker pool did not accept job in time"
 			log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
 			UpdateImportStatus(context.Background(), job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, map[string]any{})
-			m.cleanupSession(job.fileID)
 		}
 	}()
 }
