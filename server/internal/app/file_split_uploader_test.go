@@ -25,7 +25,7 @@ import (
 // panics via the nil-embedded interface if a test accidentally reaches it.
 type fakeProjectUsecase struct {
 	interfaces.Project
-	importProjectData func(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error)
+	importProjectData  func(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error)
 	updateImportStatus func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error)
 }
 
