@@ -12,17 +12,21 @@ import (
 	"strconv"
 	"sync"
 	"testing"
+	"time"
 
+	"github.com/gavv/httpexpect/v2"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
 
 // go test -v -run TestProjectImportSplit ./e2e/...
 
-func TestProjectImportSplit(t *testing.T) {
-	e := Server(t, fullSeeder)
-	projectZipFilePath := GenProjectZipFile(t, e)
-	workspaceId := wID.String()
+// uploadProjectSplit uploads projectZipFilePath to /api/split-import in
+// chunks and returns every chunk response in upload order, so callers can
+// inspect the final ("completed": true) response — e.g. to read back the
+// project_id and poll its resulting import status.
+func uploadProjectSplit(t *testing.T, e *httpexpect.Expect, projectZipFilePath, workspaceId string) []map[string]interface{} {
+	t.Helper()
 
 	const CHUNK_SIZE = 1024 * 1024
 	const CHUNK_CONCURRENCY = 4
@@ -151,13 +155,89 @@ func TestProjectImportSplit(t *testing.T) {
 	}
 
 	require.NotEmpty(t, results, "No responses received")
-	lastResponse := results[len(results)-1]
+	return results
+}
 
-	t.Logf("Final response: %+v", lastResponse)
+// completedResponse returns the one chunk response with "completed": true —
+// chunks after the first are uploaded concurrently, so the last element of
+// results is not reliably the completing one.
+func completedResponse(t *testing.T, results []map[string]interface{}) map[string]interface{} {
+	t.Helper()
+	for _, r := range results {
+		if completed, _ := r["completed"].(bool); completed {
+			return r
+		}
+	}
+	t.Fatal("no chunk response reported completed: true")
+	return nil
+}
+
+func TestProjectImportSplit(t *testing.T) {
+	e := Server(t, fullSeeder)
+	projectZipFilePath := GenProjectZipFile(t, e)
+	workspaceId := wID.String()
+
+	results := uploadProjectSplit(t, e, projectZipFilePath, workspaceId)
+	lastResponse := completedResponse(t, results)
+
+	t.Logf("Completed response: %+v", lastResponse)
 
 	status, ok := lastResponse["status"].(string)
 	require.True(t, ok, "Status field not found in response")
 	require.NotEmpty(t, status, "Status should not be empty")
+}
+
+// TestProjectImportSplit_CompletesAsyncImport is the REL-03 regression
+// test for dispatchImport's async hand-off: since dispatching a completed
+// upload to the worker pool no longer blocks the request (it now runs in
+// its own goroutine racing dispatchWaitTimeout — see file_split_uploader.go),
+// the chunk response alone no longer proves the import actually ran. This
+// polls the resulting project's real import status through to a terminal
+// state, so a regression that silently dropped the dispatched job (e.g.
+// always taking the timeout branch) would show up as a stuck PROCESSING
+// status here instead of passing unnoticed.
+func TestProjectImportSplit_CompletesAsyncImport(t *testing.T) {
+	e := Server(t, fullSeeder)
+	projectZipFilePath := GenProjectZipFile(t, e)
+	workspaceId := wID.String()
+
+	results := uploadProjectSplit(t, e, projectZipFilePath, workspaceId)
+	lastResponse := completedResponse(t, results)
+
+	projectId, ok := lastResponse["project_id"].(string)
+	require.True(t, ok, "project_id field not found in the completed chunk response")
+	require.NotEmpty(t, projectId)
+
+	query := `query GetProjectImportStatus($projectId: ID!) {
+		node(id: $projectId, type: PROJECT) {
+			... on Project {
+				metadata {
+					importStatus
+				}
+			}
+		}
+	}`
+
+	const pollInterval = 200 * time.Millisecond
+	const pollTimeout = 30 * time.Second
+
+	deadline := time.Now().Add(pollTimeout)
+	var lastStatus string
+	for time.Now().Before(deadline) {
+		res := Request(e, uID.String(), GraphQLRequest{
+			OperationName: "GetProjectImportStatus",
+			Query:         query,
+			Variables:     map[string]any{"projectId": projectId},
+		})
+		lastStatus = res.Object().Value("data").Object().Value("node").Object().Value("metadata").Object().Value("importStatus").String().Raw()
+
+		if lastStatus == "SUCCESS" || lastStatus == "FAILED" {
+			break
+		}
+		time.Sleep(pollInterval)
+	}
+
+	require.Equal(t, "SUCCESS", lastStatus, "import did not reach SUCCESS within %s (last observed status: %s)", pollTimeout, lastStatus)
 }
 
 // TestProjectImportSplit_RejectsChunkWithoutSessionStart is the SCA-03
