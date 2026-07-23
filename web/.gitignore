@@ -6,6 +6,7 @@ node_modules
 /dist
 /vendor
 /storybook-static
+/Users
 __screenshots__
 /playwright-report
 /test-results

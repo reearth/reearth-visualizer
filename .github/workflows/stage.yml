@@ -33,3 +33,11 @@ jobs:
         run: git merge -X theirs main
       - name: Git push
         run: git push origin release
+
+  promote-to-rc:
+    needs: stage
+    uses: ./.github/workflows/promote_images.yml
+    with:
+      from_tag: nightly
+      to_tag: rc
+    secrets: inherit
