@@ -69,14 +69,14 @@ jobs:
 
       - name: Authenticate to Google Cloud for GCS
         if: always()
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093  # v3
         with:
           service_account: ${{ secrets.GC_SA_EMAIL }}
           workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
 
       - name: Setup Google Cloud SDK
         if: always()
-        uses: google-github-actions/setup-gcloud@v3
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db  # v3
 
       - name: Check Allure Results
         if: always()
