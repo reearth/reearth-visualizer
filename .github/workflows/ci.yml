@@ -54,14 +54,14 @@ jobs:
 
   ci-web:
     needs: prepare
-    if: needs.prepare.outputs.web == 'true'
+    if: needs.prepare.outputs.web == 'true' && (github.event_name == 'pull_request' || github.ref_name == 'main')
     uses: ./.github/workflows/ci_web.yml
 
   ci-server:
     needs: prepare
     # server depends on web, so this should be triggered if web is modified
     # TODO: Simplify "if" when we discontinue embedding front-end in the server
-    if: needs.prepare.outputs.server == 'true' || needs.prepare.outputs.web == 'true'
+    if: (needs.prepare.outputs.server == 'true' || needs.prepare.outputs.web == 'true') && (github.event_name == 'pull_request' || github.ref_name == 'main')
     uses: ./.github/workflows/ci_server.yml
 
   ci:
