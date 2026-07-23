@@ -407,6 +407,15 @@ func (m *SplitUploadManager) getSession(fileID string) (*uploadSession, bool) {
 // already finished successfully (see REL-03).
 func (m *SplitUploadManager) dispatchImport(job importJob) {
 	go func() {
+		// This goroutine is detached like runImportJob's worker goroutine,
+		// so it needs the same panic recovery: Echo's middleware.Recover()
+		// only covers the request goroutine, and an unhandled panic here
+		// would take down the whole process (the REL-01 failure class).
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("[Import] panic while dispatching import: %v (file %s)", r, job.fileID)
+			}
+		}()
 		select {
 		case m.jobs <- job:
 		case <-time.After(m.dispatchWaitTimeout):

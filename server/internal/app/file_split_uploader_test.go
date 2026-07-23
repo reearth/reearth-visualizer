@@ -530,6 +530,39 @@ func TestSplitUploadManager_DispatchImport_SucceedsWithinTimeout(t *testing.T) {
 	}
 }
 
+// TestSplitUploadManager_DispatchImport_RecoversFromPanic guards against
+// reintroducing the REL-01 failure class in the new dispatch goroutine:
+// dispatchImport's timeout branch is itself a detached goroutine, so a
+// panic inside it (e.g. a nil usecases dependency) must be recovered
+// rather than crashing the whole process, the same way runImportJob
+// already protects its own worker goroutine.
+func TestSplitUploadManager_DispatchImport_RecoversFromPanic(t *testing.T) {
+	m := newTestManager(t)
+	m.jobs = make(chan importJob) // unbuffered, nothing reads it, forcing the timeout branch
+	m.dispatchWaitTimeout = 20 * time.Millisecond
+
+	// job.usecases is nil on purpose: UpdateImportStatus dereferences it,
+	// which panics — exercising the recover path instead of crashing.
+	job := importJob{fileID: "panicky"}
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		m.dispatchImport(job)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("dispatchImport should have returned immediately regardless of the goroutine it spawns")
+	}
+
+	// Give the spawned goroutine time to hit the timeout branch and panic;
+	// if the panic isn't recovered, it crashes the whole test binary, so
+	// reaching this line at all is the real assertion.
+	time.Sleep(100 * time.Millisecond)
+}
+
 // TestSplitUploadManager_RunImportJob_ContextTimesOut is the REL-03
 // regression test for worker execution: a downstream call that hangs (here,
 // ImportProjectData blocking until its context is done) must not wedge the
