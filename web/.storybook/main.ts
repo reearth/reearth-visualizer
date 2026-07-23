@@ -55,6 +55,10 @@ const config: StorybookConfig = {
             )
           },
           {
+            find: "@reearth/zushi",
+            replacement: resolve(__dirname, "..", "node_modules/@reearth/zushi")
+          },
+          {
             find: "@reearth",
             replacement: resolve(__dirname, "..", "src")
           }
