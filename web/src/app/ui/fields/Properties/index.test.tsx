@@ -626,7 +626,8 @@ describe("PropertyItem", () => {
           { id: "tile_type", value: "google_satellite" },
           { id: "tile_opacity", value: 0.5 }
         ]),
-        undefined // Not a list item
+        undefined, // Not a list item
+        [] // internalFields - empty since no hidden schema fields in this test
       );
     });
 

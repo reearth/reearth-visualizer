@@ -59,6 +59,16 @@ extensions:
                   label: Cesium Ion
                 - key: url
                   label: URL
+            - id: tile_category
+              type: string
+              title: Tile category
+              description: Specify the category of the tile map.
+              defaultValue: custom
+              choices:
+                - key: custom
+                  label: Custom
+                - key: system
+                  label: System
             - id: tile_url
               type: string
               title: Tile map URL
@@ -2480,22 +2490,6 @@ extensions:
               type: string
               title: API Key
               description: Google Street View API Key
-        - id: tiles
-          collection: tiles
-          title: Tiles
-          representativeField: tile_type
-          fields:
-            - id: tile_type
-              type: string
-              title: Tile type
-              defaultValue: google_satellite
-              placeholder: Please select a tile type
-              description: Street View requires a Google Maps tile to display imagery. Please select Google Satellite or Google Road Map.
-              choices:
-                - key: google_satellite
-                  label: Google Satellite
-                - key: google_roadmap
-                  label: Google Road Map
         - id: appearance
           title: Appearance
           fields:

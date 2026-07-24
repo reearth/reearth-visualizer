@@ -1,5 +1,4 @@
 import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
-import type { WidgetAlignSystem } from "@reearth/app/features/Visualizer/Crust/Widgets";
 
 /**
  * Configuration for viewer property migration and fallback (tiles and terrain)
@@ -22,11 +21,6 @@ export type TilesMigrationConfig = {
    * Used for tiles and terrain fallback when token is required but missing
    */
   hasAccessToken: boolean;
-  /**
-   * Widget alignment system containing all widgets
-   * Used to extract Street View widget tile configuration
-   */
-  widgets?: WidgetAlignSystem;
 };
 
 /**
@@ -183,107 +177,7 @@ function migrateTerrain<T extends { type?: string; enabled?: boolean }>(
   return terrain;
 }
 
-/**
- * Constants for Street View widget extraction
- */
-const STREET_VIEW_EXTENSION_ID = "streetView";
-const TILES_SCHEMA_GROUP_ID = "tiles";
-const TILE_TYPE_FIELD_ID = "tile_type";
-const DEFAULT_STREET_VIEW_TILE_TYPE = "google_satellite";
-const STREET_VIEW_TILE_ID = "reearth-streetview-tile";
 
-/**
- * Extracts Street View widget tile configuration from widget alignment system.
- * Handles both editor mode (GQL with items array) and published mode (processed properties).
- *
- * If Street View widget exists, always returns a tile configuration.
- * Uses explicit user selection if available, otherwise defaults to google_satellite.
- *
- * @param widgets - Widget alignment system containing all widgets
- * @returns Array of tile configurations for Street View widget, or empty array if widget not found
- */
-function extractStreetViewTiles(
-  widgets?: WidgetAlignSystem
-): { id: string; type: string }[] {
-  if (!widgets) return [];
-
-  // Search for Street View widget across all zones, sections, and areas
-  const zones = [widgets.outer, widgets.inner];
-  const sections = ["left", "center", "right"] as const;
-  const areas = ["top", "middle", "bottom"] as const;
-
-  type WidgetWithProperty = {
-    id: string;
-    extensionId?: string;
-    property?: Record<string, unknown>;
-  };
-
-  let streetViewWidget: WidgetWithProperty | undefined;
-
-  // Use labeled break to exit nested loops when widget is found
-  outer: for (const zone of zones) {
-    if (!zone) continue;
-    for (const section of sections) {
-      const sec = zone[section];
-      if (!sec) continue;
-      for (const area of areas) {
-        const found = sec[area]?.widgets?.find(
-          (w) => w.extensionId === STREET_VIEW_EXTENSION_ID
-        );
-        if (found) {
-          streetViewWidget = found;
-          break outer;
-        }
-      }
-    }
-  }
-
-  if (!streetViewWidget?.property) return [];
-
-  const property = streetViewWidget.property;
-  let tileType: string | undefined;
-
-  // Extract tile type based on property format
-  if (Array.isArray(property.items)) {
-    // Editor Mode: property contains raw items array (GQL format)
-    const items = property.items as {
-      id: string;
-      schemaGroupId?: string;
-      fields?: { fieldId: string; value?: unknown }[];
-    }[];
-
-    // Find tile type in items array
-    for (const item of items) {
-      if (item.schemaGroupId === TILES_SCHEMA_GROUP_ID && item.fields) {
-        const field = item.fields.find((f) => f.fieldId === TILE_TYPE_FIELD_ID);
-        if (field?.value && typeof field.value === "string") {
-          tileType = field.value;
-          break;
-        }
-      }
-    }
-  } else {
-    // Published Mode: property may be processed as collection array or single object
-    const tiles = property.tiles as
-      | { tile_type?: string }[]
-      | { tile_type?: string }
-      | undefined;
-
-    if (Array.isArray(tiles) && tiles.length > 0) {
-      // Collection format: array of tile objects
-      tileType = tiles[0].tile_type;
-    } else if (tiles && typeof tiles === "object" && "tile_type" in tiles) {
-      // Single object format
-      tileType = tiles.tile_type;
-    }
-  }
-
-  // Use extracted type or default to google_satellite
-  return [{
-    id: STREET_VIEW_TILE_ID,
-    type: tileType || DEFAULT_STREET_VIEW_TILE_TYPE
-  }];
-}
 
 /**
  * Applies migration (backward compatibility) and fallback logic to viewer property
@@ -303,13 +197,11 @@ function extractStreetViewTiles(
  * Google Maps Compliance:
  * 6. Set opacity to 1 for all tiles when Google Maps tiles are present
  *
- * Street View Widget Integration:
- * 7. Extract tile configuration from Street View widget (if present) and append to tiles array
  *
  * Note: Tiles/terrain without type and without default config will use schema defaults
  *
  * @param viewerProperty - The viewer property containing tiles and terrain
- * @param config - Migration and fallback configuration (includes defaultTileType, defaultTerrainType, and widgets)
+ * @param config - Migration and fallback configuration (includes defaultTileType, defaultTerrainType)
  * @returns Processed viewer property or original if no processing needed
  */
 export function migrateViewerPropertyTiles(
@@ -344,12 +236,9 @@ export function migrateViewerPropertyTiles(
     terrain.type === "reearth_terrain" &&
     terrain.normal !== true;
 
-  // Check if Street View widget exists and needs tile appending (EE only)
-  const streetViewTiles = config.isEE ? extractStreetViewTiles(config.widgets) : [];
-  const needsStreetViewTile = streetViewTiles.length > 0;
 
   // Return original if nothing needs processing
-  if (!tilesNeedProcessing && !terrainNeedsProcessing && !terrainNeedsNormalMap && !needsStreetViewTile) {
+  if (!tilesNeedProcessing && !terrainNeedsProcessing && !terrainNeedsNormalMap) {
     return viewerProperty;
   }
 
@@ -403,39 +292,6 @@ export function migrateViewerPropertyTiles(
     };
   }
 
-  // Final step: Append Street View widget tiles (if widget exists and has tile configuration)
-  if (needsStreetViewTile) {
-    const currentTiles = result.tiles || tiles || [];
-    const existingTileIds = new Set(currentTiles.map((t) => t.id));
-
-    // Only append tiles that don't already exist (avoid duplicates)
-    const newStreetViewTiles = streetViewTiles
-      .filter((t) => !existingTileIds.has(t.id))
-      .map((t) => ({
-        id: t.id,
-        type: t.type
-      }));
-
-    if (newStreetViewTiles.length > 0) {
-      result.tiles = [...currentTiles, ...newStreetViewTiles];
-
-      // Apply Google Maps opacity compliance to the newly appended tiles
-      // Check if Google tiles are present (including the newly appended ones)
-      const hasGoogleTilesAfterAppend = result.tiles?.some(
-        (tile) => tile.type === "google_satellite" || tile.type === "google_roadmap"
-      );
-
-      if (hasGoogleTilesAfterAppend) {
-        result.tiles = result.tiles.map((tile) => {
-          if (tile.opacity !== 1) {
-            return { ...tile, opacity: 1 };
-          }
-          return tile;
-        });
-      }
-    }
-  }
-
   return result;
 }
 
@@ -448,5 +304,5 @@ export const __testing__ = {
   needsTileMigration,
   migrateTile,
   migrateTerrain,
-  extractStreetViewTiles
+
 };

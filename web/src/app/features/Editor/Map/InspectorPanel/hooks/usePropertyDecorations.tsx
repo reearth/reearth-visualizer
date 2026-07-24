@@ -1,7 +1,8 @@
 import { useCesiumIonAccessToken } from "@reearth/app/features/Editor/atoms";
-import { CesiumIonAssetFallbackWarning } from "@reearth/app/features/Editor/common";
+import { CesiumIonAssetFallbackWarning, SystemTileTypeInfo } from "@reearth/app/features/Editor/common";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { FieldContext } from "@reearth/app/ui/fields/Properties";
+import { SYSTEM_TILE_CATEGORY } from "@reearth/app/utils/convert-object";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n/hooks";
 import { ReactNode, useCallback, useMemo } from "react";
@@ -12,6 +13,7 @@ export type PropertyDecorations = {
   afterInput?: ReactNode;
   disabled?: boolean;
   overrideValue?: unknown;
+  allowedChoiceKeys?: string[];
 };
 
 /**
@@ -31,7 +33,8 @@ export const usePropertyDecorations = () => {
       schemaGroup: string,
       value: unknown,
       allFields: FieldContext[],
-      allListItemsFields?: FieldContext[][]
+      allListItemsFields?: FieldContext[][],
+      internalFields?: FieldContext[]
     ): PropertyDecorations => {
       const decorations: PropertyDecorations = {};
 
@@ -132,6 +135,37 @@ export const usePropertyDecorations = () => {
               icon="informationCircle"
               text={t(
                 "Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies."
+              )}
+            />
+          );
+        }
+      }
+
+      // Business Rule: System tile type options restricted
+      // Only allow google_satellite and google_roadmap for system tiles
+      if (schemaId === "tile_type" && schemaGroup === "tiles") {
+        const tileCategoryField = internalFields?.find((f) => f.id === "tile_category");
+        if (tileCategoryField?.value === SYSTEM_TILE_CATEGORY) {
+          decorations.allowedChoiceKeys = ["google_satellite", "google_roadmap"];
+          decorations.afterInput = <SystemTileTypeInfo />;
+        }
+      }
+
+      // Business Rule: System tile zoom level disabled
+      // Disable zoom level fields when tile_category is system (managed programmatically)
+      if (
+        (schemaId === "tile_zoomLevel" || schemaId === "tile_zoomLevelForURL") &&
+        schemaGroup === "tiles"
+      ) {
+        const tileCategoryField = internalFields?.find((f) => f.id === "tile_category");
+        if (tileCategoryField?.value === SYSTEM_TILE_CATEGORY) {
+          decorations.disabled = true;
+          decorations.titleAdornment = (
+            <Tooltip
+              type="custom"
+              icon="informationCircle"
+              text={t(
+                "Disabled: Zoom level configuration is not available for system tiles."
               )}
             />
           );
