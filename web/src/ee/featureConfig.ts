@@ -9,6 +9,7 @@ export const getFeatureConfig = (): AppFeatureConfig => {
 
   return {
     membersManagementOnDashboard: false,
+    externalMembersManagementUrl: `${c?.platformUrl}/[WORKSPACE_ALIAS]/members`,
     workspaceCreation: false,
     workspaceManagement: false,
     externalWorkspaceManagementUrl: `${c?.platformUrl}/[WORKSPACE_ALIAS]/settings`,

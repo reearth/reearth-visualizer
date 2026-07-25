@@ -19,7 +19,10 @@ export type PopupMenuItem = {
   customSubMenuLabel?: string;
   customSubMenuOrder?: number;
   icon?: IconName;
+  iconColor?: string;
+  color?: string;
   customIcon?: ReactNode;
+  iconPosition?: "left" | "right";
   id: string;
   hasCustomSubMenu?: boolean;
   hasBorderBottom?: boolean;
@@ -93,7 +96,10 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   const renderSingleItem = (item: PopupMenuItem, index: number) => {
     const {
       icon,
+      iconColor: itemIconColor,
+      color: itemColor,
       customIcon,
+      iconPosition = "left",
       id,
       hasBorderBottom,
       onClick,
@@ -105,6 +111,8 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       dataTestid,
       tileComponent
     } = item;
+
+    const resolvedIconColor = itemIconColor ?? iconColor ?? theme.content.weak;
 
     return (
       <Item
@@ -121,13 +129,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         aria-checked={selected ? "true" : undefined}
         data-testid={dataTestid ? `${dataTestid}-item-${index}` : undefined}
       >
-        {icon && (
+        {icon && iconPosition === "left" && (
           <IconWrapper>
-            <Icon
-              icon={icon}
-              size="small"
-              color={iconColor ? iconColor : theme.content.weak}
-            />
+            <Icon icon={icon} size="small" color={resolvedIconColor} />
           </IconWrapper>
         )}
         {customIcon && <IconWrapper>{customIcon}</IconWrapper>}
@@ -145,13 +149,21 @@ export const PopupMenu: FC<PopupMenuProps> = ({
             />
           ) : path ? (
             <StyledLink to={disabled ? "" : path}>
-              <TitleWrapper disabled={disabled} flex={!!tileComponent}>
+              <TitleWrapper
+                disabled={disabled}
+                flex={!!tileComponent}
+                itemColor={itemColor}
+              >
                 {title}
                 {tileComponent}
               </TitleWrapper>
             </StyledLink>
           ) : (
-            <TitleWrapper disabled={disabled} flex={!!tileComponent}>
+            <TitleWrapper
+              disabled={disabled}
+              flex={!!tileComponent}
+              itemColor={itemColor}
+            >
               {title}
               {tileComponent}
             </TitleWrapper>
@@ -159,6 +171,11 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           {selected && (
             <IconWrapper>
               <Icon icon="check" size="small" color={theme.content.main} />
+            </IconWrapper>
+          )}
+          {icon && iconPosition === "right" && (
+            <IconWrapper>
+              <Icon icon={icon} size="small" color={resolvedIconColor} />
             </IconWrapper>
           )}
         </SubItem>
@@ -351,6 +368,7 @@ const SubMenuHeader = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  0 ${theme.spacing.small}px`
 }));
 
+
 const SubItem = styled("div")(() => ({
   display: css.display.flex,
   justifyContent: css.justifyContent.spaceBetween,
@@ -396,15 +414,19 @@ const Group = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.micro}px`
 }));
 
-const TitleWrapper = styled("div")<{ disabled?: boolean; flex?: boolean }>(
-  ({ theme, disabled, flex }) => ({
+const TitleWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "itemColor"
+})<{ disabled?: boolean; flex?: boolean; itemColor?: string }>(
+  ({ theme, disabled, flex, itemColor }) => ({
     fontSize: theme.fonts.sizes.body,
-    color: disabled ? theme.content.weak : theme.content.main,
+    color: itemColor ?? (disabled ? theme.content.weak : theme.content.main),
     whiteSpace: css.whiteSpace.nowrap,
     overflow: css.overflow.hidden,
     textOverflow: css.textOverflow.ellipsis,
     gap: theme.spacing.small,
     flex: 1,
-    ...(flex ? { display: css.display.flex, alignItems: css.alignItems.center } : {})
+    ...(flex
+      ? { display: css.display.flex, alignItems: css.alignItems.center }
+      : {})
   })
 );

@@ -10,7 +10,7 @@ import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { ProjectType } from "@reearth/types";
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 
 import { Workspace } from "../type";
 
@@ -24,19 +24,15 @@ type ProfileProps = {
   currentUser?: string;
   currentProject?: Project;
   currentWorkspace?: Workspace;
-  avatarURL?: string;
   workspaces?: Workspace[];
-  onSignOut?: () => void;
   onWorkspaceChange?: (workspaceId?: string) => void;
 };
 
 const Profile: FC<ProfileProps> = ({
   currentUser,
-  avatarURL,
   workspaces,
   currentWorkspace,
-  onWorkspaceChange,
-  onSignOut
+  onWorkspaceChange
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -50,9 +46,23 @@ const Profile: FC<ProfileProps> = ({
     () => [
       {
         id: "workspace",
-        title: t("Switch workspace"),
         dataTestid: "profile-switchWorkspace",
-        icon: "arrowLeftRight",
+        hasBorderBottom: true,
+        title: currentWorkspace?.name,
+        customIcon: (
+          <WorkspaceLabel>
+            <AvatarOnMenu data-testid="profile-workspace-avatar">
+              {isValidUrl(currentWorkspace?.photoURL) &&
+              currentWorkspace?.photoURL ? (
+                <AvatarImage src={currentWorkspace.photoURL} alt="Avatar" />
+              ) : (
+                <Typography size="footnote">
+                  {currentWorkspace?.name?.charAt(0).toUpperCase()}
+                </Typography>
+              )}
+            </AvatarOnMenu>
+          </WorkspaceLabel>
+        ),
         subItem: workspaces?.map((w) => {
           return {
             customSubMenuLabel: w.personal
@@ -65,7 +75,7 @@ const Profile: FC<ProfileProps> = ({
             personal: w.personal,
             selected: currentWorkspace?.id === w.id,
             customIcon: (
-              <AvatarOnMenu data-testid="workspace-avatar">
+              <AvatarOnMenu isPersonal={w.personal} data-testid="workspace-avatar">
                 {isValidUrl(w.photoURL) && w.photoURL ? (
                   <AvatarImage src={w.photoURL} alt="Avatar" />
                 ) : (
@@ -73,7 +83,7 @@ const Profile: FC<ProfileProps> = ({
                     size="footnote"
                     data-testid="workspace-avatar-initial"
                   >
-                    {w.name?.charAt(0)}
+                    {w.name?.charAt(0).toUpperCase()}
                   </Typography>
                 )}
               </AvatarOnMenu>
@@ -82,43 +92,22 @@ const Profile: FC<ProfileProps> = ({
           };
         })
       },
-      ...workspaceManagementMenu,
-      {
-        id: "signOut",
-        dataTestid: "profile-signOut",
-        title: t("Log out"),
-        icon: "exit",
-        onClick: onSignOut
-      }
+      ...workspaceManagementMenu
     ],
     [
+      currentWorkspace?.photoURL,
+      currentWorkspace?.name,
       currentWorkspace?.id,
-      onSignOut,
-      onWorkspaceChange,
-      t,
       workspaces,
-      workspaceManagementMenu
+      workspaceManagementMenu,
+      t,
+      onWorkspaceChange
     ]
   );
-
-  const [showAvatar, setShowAvatar] = useState(!!avatarURL);
 
   return (
     <Wrapper data-testid="profile-wrapper">
       <ProfileWrapper data-testid="profile-profileWrapper">
-        <Avatar data-testid="profile-avatar">
-          {avatarURL && showAvatar ? (
-            <AvatarImage
-              src={avatarURL}
-              alt="Avatar"
-              onError={() => setShowAvatar(false)}
-            />
-          ) : (
-            <Typography size="body" data-testid="profile-avatar-initial">
-              {currentUser?.charAt(0)}
-            </Typography>
-          )}
-        </Avatar>
         <TitleWrapper data-testid="profile-titleWrapper">
           {currentUser}
         </TitleWrapper>
@@ -144,15 +133,7 @@ const Profile: FC<ProfileProps> = ({
 export default Profile;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  gap: theme.spacing.normal,
-  alignContent: css.alignContent.center,
-  paddingLeft: theme.spacing.small,
-  paddingRight: theme.spacing.normal,
-  paddingTop: theme.spacing.largest,
-  paddingBottom: theme.spacing.small,
-  justifyContent: css.justifyContent.center
+  padding: theme.spacing.normal
 }));
 
 const ProfileWrapper = styled("div")(({ theme }) => ({
@@ -161,29 +142,19 @@ const ProfileWrapper = styled("div")(({ theme }) => ({
   alignItems: css.alignItems.center
 }));
 
-const Avatar = styled("div")(({ theme }) => ({
-  width: "25px",
-  height: "25px",
-  borderRadius: "50%",
-  background: theme.bg[2],
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  justifyContent: css.justifyContent.center,
-  flexShrink: 0,
-  overflow: css.overflow.hidden
-}));
-
-const AvatarOnMenu = styled("div")(({ theme }) => ({
-  width: "18px",
-  height: "18px",
-  borderRadius: "50%",
-  background: theme.relative.light,
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  justifyContent: css.justifyContent.center,
-  flexShrink: 0,
-  overflow: css.overflow.hidden
-}));
+const AvatarOnMenu = styled("div")<{ isPersonal?: boolean }>(
+  ({ theme, isPersonal }) => ({
+    width: "24px",
+    height: "24px",
+    borderRadius: isPersonal ? "50%" : theme.spacing.smallest,
+    background: theme.relative.light,
+    display: css.display.flex,
+    alignItems: css.alignItems.center,
+    justifyContent: css.justifyContent.center,
+    flexShrink: 0,
+    overflow: css.overflow.hidden
+  })
+);
 
 const AvatarImage = styled("img")({
   position: css.position.relative,
@@ -198,7 +169,17 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontWeight: theme.fonts.weight.bold,
   overflow: css.overflow.hidden,
   textOverflow: css.textOverflow.ellipsis,
-  wordBreak: css.wordBreak.breakAll
+  wordBreak: css.wordBreak.breakAll,
+  paddingRight: theme.spacing.small
 }));
 
 const PopupWrapper = styled("div")(() => ({}));
+
+const WorkspaceLabel = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  padding: `${theme.spacing.micro}px 0`,
+  gap: theme.spacing.small,
+  flex: 1
+}));
+

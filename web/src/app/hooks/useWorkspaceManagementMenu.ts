@@ -3,7 +3,6 @@ import {
   generateExternalUrl
 } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
-import { useAddWorkspaceModal } from "@reearth/services/state";
 import { useMemo } from "react";
 import { useNavigate } from "react-router";
 
@@ -18,15 +17,13 @@ export default ({
 }) => {
   const navigate = useNavigate();
   const t = useT();
-  const [_, setAddWorkspaceModal] = useAddWorkspaceModal();
 
   const workspaceManagementMenu: PopupMenuItem[] = useMemo(() => {
     const {
-      workspaceCreation,
       workspaceManagement,
       externalWorkspaceManagementUrl,
-      accountManagement,
-      externalAccountManagementUrl
+      membersManagementOnDashboard,
+      externalMembersManagementUrl
     } = appFeature();
 
     const menu: PopupMenuItem[] = [];
@@ -36,7 +33,8 @@ export default ({
         id: "workspaceSettings",
         dataTestid: "workspace-settings",
         title: t("Workspace settings"),
-        icon: "setting",
+        icon: "arrowExternalLink",
+        iconPosition: "right",
         onClick: () =>
           externalWorkspaceManagementUrl
             ? window.open(
@@ -50,34 +48,28 @@ export default ({
       });
     }
 
-    if (workspaceCreation) {
+    if (membersManagementOnDashboard || externalMembersManagementUrl) {
       menu.push({
-        id: "addWorkspace",
-        dataTestid: "add-workspace",
-        title: t("New workspace"),
-        icon: "newWorkspace",
-        hasBorderBottom: true,
-        onClick: () => {
-          setAddWorkspaceModal(true);
-        }
-      });
-    }
-
-    if (accountManagement || externalAccountManagementUrl) {
-      menu.push({
-        id: "accountSettings",
-        dataTestid: "account-settings",
-        title: t("Account settings"),
-        icon: "user",
+        id: "membersSettings",
+        dataTestid: "members-settings",
+        title: t("Members"),
+        icon: "arrowExternalLink",
+        iconPosition: "right",
         onClick: () =>
-          externalAccountManagementUrl
-            ? window.open(externalAccountManagementUrl, "_blank")
-            : navigate(`/settings/account`)
+          externalMembersManagementUrl
+            ? window.open(
+                generateExternalUrl({
+                  url: externalMembersManagementUrl,
+                  workspaceAlias
+                }),
+                "_blank"
+              )
+            : navigate(`/settings/workspaces/${workspaceId}`)
       });
     }
 
     return menu;
-  }, [workspaceId, t, navigate, setAddWorkspaceModal, workspaceAlias]);
+  }, [workspaceId, t, navigate, workspaceAlias]);
 
   return {
     workspaceManagementMenu
