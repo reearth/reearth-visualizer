@@ -6,11 +6,16 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { isValidUrl } from "@reearth/app/utils/url";
+import {
+  appFeature,
+  generateExternalUrl
+} from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { ProjectType } from "@reearth/types";
 import { FC, useMemo } from "react";
+import { useNavigate } from "react-router";
 
 import { Workspace } from "../type";
 
@@ -36,11 +41,72 @@ const Profile: FC<ProfileProps> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const { workspaceManagementMenu } = useWorkspaceManagementMenu({
     workspaceId: currentWorkspace?.id,
     workspaceAlias: currentWorkspace?.alias
   });
+
+  const submenuItems: PopupMenuItem[] = useMemo(() => {
+    const { workspaceCreation, externalWorkspaceCreationUrl } = appFeature();
+    const items: PopupMenuItem[] =
+      workspaces?.map((w) => ({
+        customSubMenuLabel: w.personal ? t("Personal") : t("Team Workspace"),
+        customSubMenuOrder: w.personal ? 0 : 1,
+        id: w.id || "",
+        title: w.name,
+        hasCustomSubMenu: true,
+        personal: w.personal,
+        selected: currentWorkspace?.id === w.id,
+        customIcon: (
+          <AvatarOnMenu isPersonal={w.personal} data-testid="workspace-avatar">
+            {isValidUrl(w.photoURL) && w.photoURL ? (
+              <AvatarImage src={w.photoURL} alt="Avatar" />
+            ) : (
+              <Typography
+                size="footnote"
+                data-testid="workspace-avatar-initial"
+              >
+                {w.name?.charAt(0).toUpperCase()}
+              </Typography>
+            )}
+          </AvatarOnMenu>
+        ),
+        onClick: () => onWorkspaceChange?.(w.id)
+      })) ?? [];
+
+    if (workspaceCreation) {
+      items.push({
+        id: "newWorkspace",
+        dataTestid: "profile-newWorkspace",
+        title: t("New workspace"),
+        icon: "plus",
+        iconColor: theme.primary.main,
+        color: theme.primary.main,
+        onClick: () =>
+          externalWorkspaceCreationUrl
+            ? window.open(
+                generateExternalUrl({
+                  url: externalWorkspaceCreationUrl,
+                  workspaceAlias: currentWorkspace?.alias
+                }),
+                "_blank"
+              )
+            : navigate(`/settings/workspaces/${currentWorkspace?.id}`)
+      });
+    }
+
+    return items;
+  }, [
+    workspaces,
+    t,
+    currentWorkspace?.id,
+    currentWorkspace?.alias,
+    onWorkspaceChange,
+    theme.primary.main,
+    navigate
+  ]);
 
   const popupMenu: PopupMenuItem[] = useMemo(
     () => [
@@ -63,45 +129,15 @@ const Profile: FC<ProfileProps> = ({
             </AvatarOnMenu>
           </WorkspaceLabel>
         ),
-        subItem: workspaces?.map((w) => {
-          return {
-            customSubMenuLabel: w.personal
-              ? t("Personal")
-              : t("Team Workspace"),
-            customSubMenuOrder: w.personal ? 0 : 1,
-            id: w.id || "",
-            title: w.name,
-            hasCustomSubMenu: true,
-            personal: w.personal,
-            selected: currentWorkspace?.id === w.id,
-            customIcon: (
-              <AvatarOnMenu isPersonal={w.personal} data-testid="workspace-avatar">
-                {isValidUrl(w.photoURL) && w.photoURL ? (
-                  <AvatarImage src={w.photoURL} alt="Avatar" />
-                ) : (
-                  <Typography
-                    size="footnote"
-                    data-testid="workspace-avatar-initial"
-                  >
-                    {w.name?.charAt(0).toUpperCase()}
-                  </Typography>
-                )}
-              </AvatarOnMenu>
-            ),
-            onClick: () => onWorkspaceChange?.(w.id)
-          };
-        })
+        subItem: submenuItems
       },
       ...workspaceManagementMenu
     ],
     [
-      currentWorkspace?.photoURL,
       currentWorkspace?.name,
-      currentWorkspace?.id,
-      workspaces,
-      workspaceManagementMenu,
-      t,
-      onWorkspaceChange
+      currentWorkspace?.photoURL,
+      submenuItems,
+      workspaceManagementMenu
     ]
   );
 
@@ -182,4 +218,3 @@ const WorkspaceLabel = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
   flex: 1
 }));
-

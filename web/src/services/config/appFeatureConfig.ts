@@ -54,6 +54,7 @@ export type AppFeatureConfig = {
   workspaceCreation?: boolean;
   workspaceManagement?: boolean;
   externalWorkspaceManagementUrl?: string;
+  externalWorkspaceCreationUrl?: string;
   accountManagement?: boolean;
   externalAccountManagementUrl?: string;
   projectVisibility?: boolean;
@@ -69,6 +70,7 @@ const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
   workspaceCreation: true,
   workspaceManagement: true,
   externalWorkspaceManagementUrl: undefined,
+  externalWorkspaceCreationUrl: undefined,
   accountManagement: true,
   projectVisibility: false,
   externalAccountManagementUrl: undefined,

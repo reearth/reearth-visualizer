@@ -10,9 +10,10 @@ export const getFeatureConfig = (): AppFeatureConfig => {
   return {
     membersManagementOnDashboard: false,
     externalMembersManagementUrl: `${c?.platformUrl}/[WORKSPACE_ALIAS]/members`,
-    workspaceCreation: false,
+    workspaceCreation: true,
     workspaceManagement: false,
     externalWorkspaceManagementUrl: `${c?.platformUrl}/[WORKSPACE_ALIAS]/settings`,
+    externalWorkspaceCreationUrl: `${c?.platformUrl}/new-workspace`,
     accountManagement: false,
     projectVisibility: true,
     externalAccountManagementUrl: `${c?.platformUrl}/settings/profile`,
