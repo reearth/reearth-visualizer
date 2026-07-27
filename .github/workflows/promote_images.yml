@@ -28,12 +28,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Retag web image
+        env:
+          FROM_TAG: ${{ inputs.from_tag }}
+          TO_TAG: ${{ inputs.to_tag }}
         run: |
           docker buildx imagetools create \
-            -t reearth/reearth-visualizer-web:${{ inputs.to_tag }} \
-            reearth/reearth-visualizer-web:${{ inputs.from_tag }}
+            -t "reearth/reearth-visualizer-web:${TO_TAG}" \
+            "reearth/reearth-visualizer-web:${FROM_TAG}"
       - name: Retag server image
+        env:
+          FROM_TAG: ${{ inputs.from_tag }}
+          TO_TAG: ${{ inputs.to_tag }}
         run: |
           docker buildx imagetools create \
-            -t reearth/reearth-visualizer-api:${{ inputs.to_tag }} \
-            reearth/reearth-visualizer-api:${{ inputs.from_tag }}
+            -t "reearth/reearth-visualizer-api:${TO_TAG}" \
+            "reearth/reearth-visualizer-api:${FROM_TAG}"
