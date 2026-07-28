@@ -586,7 +586,8 @@ function wrapCommonReearth(
  */
 export function createZushiExposedAPI(
   getContext: () => ReearthPluginContext,
-  messageHandlers: MessageHandlers
+  messageHandlers: MessageHandlers,
+  registerCleanup: (fn: () => void) => void
 ) {
   return (zushiCtx: ZushiPluginContext): GlobalThis => {
     // Get initial context for callbacks that don't need freshness
@@ -602,6 +603,48 @@ export function createZushiExposedAPI(
     } = reearthContext;
 
     const startEventLoop = zushiCtx.startEventLoop;
+
+    /**
+     * Viewer event listener tracking
+     *
+     * WHY: `reearthContext.context.viewerEvents` is a single emitter shared by
+     * the whole Visualizer (created once in useViewer.ts), not something scoped
+     * to this plugin instance. A plugin calling `reearth.viewer.on(...)`
+     * registers directly on that shared emitter, so without explicit bookkeeping
+     * here, nothing ever removes the listener when this plugin instance is
+     * disposed - it keeps firing (into a freed QuickJS runtime) for the rest of
+     * the session. registerCleanup() lets useZushiPlugin's unmount tear these
+     * down alongside the rest of plugin disposal.
+     */
+    const viewerEvents = reearthContext.context.viewerEvents;
+    const viewerEventUnsubscribers: (() => void)[] = [];
+
+    const viewerEventsOn: Reearth["viewer"]["on"] = (type, callback, options) => {
+      viewerEventUnsubscribers.push(() => viewerEvents.off(type, callback));
+      if (options?.once) {
+        viewerEvents.once(type, callback);
+      } else {
+        viewerEvents.on(type, callback);
+      }
+    };
+
+    const viewerEventsOff: Reearth["viewer"]["off"] = (type, callback) => {
+      viewerEvents.off(type, callback);
+    };
+
+    registerCleanup(() => {
+      while (viewerEventUnsubscribers.length) {
+        const unsubscribe = viewerEventUnsubscribers.pop();
+        try {
+          unsubscribe?.();
+        } catch (err) {
+          console.error(
+            "[Zushi Adapter] Error removing viewer event listener on dispose:",
+            err
+          );
+        }
+      }
+    });
 
     // Create surface adapters
     const ui = createUIAdapter(zushiCtx.surfaces.ui, onRender);
@@ -650,9 +693,9 @@ export function createZushiExposedAPI(
       commonReearth: wrappedCommonReearth,
       // Access plugin dynamically to get latest property values
       plugin: () => getContext().plugin,
-      // Viewer events (accessed via context getter, already fresh)
-      viewerEventsOn: reearthContext.context.viewerEvents.on,
-      viewerEventsOff: reearthContext.context.viewerEvents.off,
+      // Viewer events (tracked above so they're removed on plugin dispose)
+      viewerEventsOn,
+      viewerEventsOff,
       // Timeline (accessed via context getter, already fresh)
       timelineManagerRef: reearthContext.context.timelineManagerRef,
       // UI surface
