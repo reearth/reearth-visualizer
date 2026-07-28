@@ -125,6 +125,11 @@ function createMockReearthContext(): ReearthPluginContext {
         on: vi.fn(),
         off: vi.fn(),
         once: vi.fn()
+      },
+      spatialIdEvents: {
+        on: vi.fn(),
+        off: vi.fn(),
+        once: vi.fn()
       }
     } as unknown as Context
   };

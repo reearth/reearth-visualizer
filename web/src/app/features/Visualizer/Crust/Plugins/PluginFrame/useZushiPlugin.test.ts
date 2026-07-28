@@ -123,7 +123,8 @@ describe("useZushiPlugin", () => {
         cameraEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() },
         timelineEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() },
         layersEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() },
-        sketchEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() }
+        sketchEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() },
+        spatialIdEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() }
       } as ReearthPluginContext["context"]
     };
   });
@@ -338,6 +339,54 @@ describe("useZushiPlugin", () => {
 
       expect(mockPluginContext.context.viewerEvents.off).toHaveBeenCalledWith(
         "click",
+        callback
+      );
+    });
+
+    test("removes camera event listeners registered through the exposed API on unmount", async () => {
+      let latest: UseZushiPluginReturn | undefined;
+      const { unmount } = render(
+        createElement(ZushiHarness, {
+          pluginContext: mockPluginContext,
+          onReady: (value) => {
+            latest = value;
+          }
+        })
+      );
+
+      await waitFor(() => expect(latest?.loaded).toBe(true));
+
+      const { Plugin: PluginMock } = await import("@reearth/zushi");
+      const config = (PluginMock as unknown as { mock: { calls: any[][] } })
+        .mock.calls[0][0];
+      const mockSurface = () => ({
+        show: vi.fn(),
+        update: vi.fn(),
+        setVisible: vi.fn(),
+        postMessage: vi.fn()
+      });
+      const api = config.exposed({
+        startEventLoop: vi.fn(),
+        surfaces: {
+          ui: mockSurface(),
+          modal: mockSurface(),
+          popup: mockSurface()
+        }
+      });
+
+      const callback = vi.fn();
+      api.reearth.camera.on("move", callback);
+
+      expect(mockPluginContext.context.cameraEvents.on).toHaveBeenCalledWith(
+        "move",
+        callback
+      );
+      expect(mockPluginContext.context.cameraEvents.off).not.toHaveBeenCalled();
+
+      unmount();
+
+      expect(mockPluginContext.context.cameraEvents.off).toHaveBeenCalledWith(
+        "move",
         callback
       );
     });
