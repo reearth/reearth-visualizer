@@ -125,6 +125,11 @@ function createMockReearthContext(): ReearthPluginContext {
         on: vi.fn(),
         off: vi.fn(),
         once: vi.fn()
+      },
+      spatialIdEvents: {
+        on: vi.fn(),
+        off: vi.fn(),
+        once: vi.fn()
       }
     } as unknown as Context
   };
@@ -140,7 +145,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       expect(typeof factory).toBe("function");
     });
@@ -153,7 +162,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const mockZushiContext = {
         surfaces: {
@@ -177,7 +190,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const uiSurface = createMockSurface();
       const mockZushiContext = {
@@ -218,7 +235,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const modalSurface = createMockSurface();
       const mockZushiContext = {
@@ -263,7 +284,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const modalSurface = createMockSurface();
       const mockZushiContext = {
@@ -306,7 +331,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const popupSurface = createMockSurface();
       const mockZushiContext = {
@@ -343,7 +372,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const mockZushiContext = {
         surfaces: {
@@ -375,7 +408,11 @@ describe("zushiAdapter", () => {
         onceMessage
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const mockZushiContext = {
         surfaces: {
@@ -404,7 +441,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const mockZushiContext = {
         surfaces: {
@@ -456,7 +497,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const mockZushiContext = {
         surfaces: {
@@ -514,7 +559,11 @@ describe("zushiAdapter", () => {
         onceMessage: vi.fn()
       };
 
-      const factory = createZushiExposedAPI(() => reearthContext, messageHandlers);
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
 
       const mockZushiContext = {
         surfaces: {

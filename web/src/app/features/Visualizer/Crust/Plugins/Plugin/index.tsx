@@ -104,7 +104,8 @@ export default function Plugin({
     uiContainerRef,
     renderKey,
     pluginContext,
-    onError
+    onError,
+    onDispose
   } = usePluginInstance({
     mapRef,
     pluginId,
@@ -143,6 +144,7 @@ export default function Plugin({
       isMarshalable={isMarshalable}
       pluginContext={pluginContext}
       onError={onError}
+      onDispose={onDispose}
       onClick={onClick}
     />
   ) : null;

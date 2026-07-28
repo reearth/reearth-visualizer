@@ -10,8 +10,8 @@ import type { InfoboxBlock as Block } from "../../../Infobox/types";
 import type { MapRef } from "../../../types";
 import type { Widget } from "../../../Widgets";
 import { usePluginContext } from "../../context";
-import { defaultIsMarshalable } from "../../PluginFrame/useZushiPlugin";
 import type { ReearthPluginContext } from "../../pluginAPI/zushiAdapter";
+import { defaultIsMarshalable } from "../../PluginFrame/useZushiPlugin";
 import type { PluginModalInfo } from "../ModalContainer";
 import type { PluginPopupInfo } from "../PopupContainer";
 
@@ -98,6 +98,8 @@ export default function ({
   const callbacksRef = useRef({
     onPluginModalShow,
     onPluginPopupShow,
+    shownPluginModalInfo,
+    shownPluginPopupInfo,
     widget,
     block
   });
@@ -106,6 +108,8 @@ export default function ({
     callbacksRef.current = {
       onPluginModalShow,
       onPluginPopupShow,
+      shownPluginModalInfo,
+      shownPluginPopupInfo,
       widget,
       block
     };
@@ -118,6 +122,28 @@ export default function ({
 
   const handlePopupClose = useCallback(() => {
     callbacksRef.current.onPluginPopupShow?.();
+  }, []);
+
+  /**
+   * Clears any modal/popup this instance owns when the plugin is disposed.
+   *
+   * WHY: shownPluginModalInfo/shownPluginPopupInfo are held one level up
+   * (Crust) and keyed by widget/block id, not by plugin lifetime. If this
+   * instance unmounts (deselect, page change, widget removal) while its
+   * modal or popup is open, nothing else clears that shared state - the
+   * ModalContainer/PopupContainer keep rendering a surface whose owning
+   * plugin no longer exists, leaving a click-blocking overlay behind.
+   */
+  const handleDispose = useCallback(() => {
+    const instanceId =
+      callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
+    if (!instanceId) return;
+    if (callbacksRef.current.shownPluginModalInfo?.id === instanceId) {
+      callbacksRef.current.onPluginModalShow?.();
+    }
+    if (callbacksRef.current.shownPluginPopupInfo?.id === instanceId) {
+      callbacksRef.current.onPluginPopupShow?.();
+    }
   }, []);
 
   // Update modal visibility based on external state
@@ -222,7 +248,8 @@ export default function ({
 
   const handleModalShow = useCallback(
     (options?: { background?: string; clickBgToClose?: boolean }) => {
-      const instanceId = callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
+      const instanceId =
+        callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
       callbacksRef.current.onPluginModalShow?.({
         id: instanceId,
         background: options?.background,
@@ -232,30 +259,34 @@ export default function ({
     [] // Empty deps = stable callback identity
   );
 
-  const handlePopupShow = useCallback(
-    (options?: PluginPopupInfo) => {
-      callbacksRef.current.onPluginPopupShow?.(options);
-    },
-    []
-  );
+  const handlePopupShow = useCallback((options?: PluginPopupInfo) => {
+    callbacksRef.current.onPluginPopupShow?.(options);
+  }, []);
 
   // Plugin message sender registration ref
-  const pluginMessageSenderRef = useRef<((msg: { data: unknown; sender: string }) => void) | undefined>(undefined);
+  const pluginMessageSenderRef = useRef<
+    ((msg: { data: unknown; sender: string }) => void) | undefined
+  >(undefined);
 
   // Register/unregister callbacks using refs
   const handleRegisterPluginMessageSender = useCallback(
     (sender: (msg: { data: unknown; sender: string }) => void) => {
-      const instanceId = callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
+      const instanceId =
+        callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
       if (instanceId) {
         pluginMessageSenderRef.current = sender;
-        contextRef.current?.pluginInstances.addPluginMessageSender(instanceId, sender);
+        contextRef.current?.pluginInstances.addPluginMessageSender(
+          instanceId,
+          sender
+        );
       }
     },
     []
   );
 
   const handleUnregisterPluginMessageSender = useCallback(() => {
-    const instanceId = callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
+    const instanceId =
+      callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
     if (instanceId) {
       contextRef.current?.pluginInstances.removePluginMessageSender(instanceId);
       pluginMessageSenderRef.current = undefined;
@@ -350,6 +381,7 @@ export default function ({
     uiContainerRef,
     renderKey,
     pluginContext,
-    onError
+    onError,
+    onDispose: handleDispose
   };
 }
