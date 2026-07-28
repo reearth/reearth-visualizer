@@ -419,6 +419,11 @@ export default function useZushiPlugin({
         pluginRef.current = plugin;
         setLoaded(true);
       } catch (err) {
+        // If code before this point (e.g. plugin.start()) registered any
+        // exposed-API cleanups - such as viewer event listeners - before
+        // failing, tear those down now instead of leaving them registered
+        // on the shared emitter until unmount.
+        runDisposeCallbacks();
         onError(err);
       }
     })();

@@ -67,7 +67,7 @@ import type { Context } from "../types";
 
 import type { CommonReearth } from "./commonReearth";
 import { exposedReearth } from "./exposedReearth";
-import type { GlobalThis, Reearth } from "./types";
+import type { GlobalThis, Reearth, ViewerEventType } from "./types";
 
 /**
  * Re:Earth plugin context passed to the adapter
@@ -617,10 +617,19 @@ export function createZushiExposedAPI(
      * down alongside the rest of plugin disposal.
      */
     const viewerEvents = reearthContext.context.viewerEvents;
-    const viewerEventUnsubscribers: (() => void)[] = [];
+    // Tracks only listeners the plugin hasn't already turned off itself, so
+    // a plugin that cycles on/off frequently doesn't grow this unboundedly.
+    // `on`'s type/callback pair is generic per-call (keyof ViewerEventType),
+    // so this bookkeeping type-erases them - they're only ever handed back
+    // to viewerEvents.off, never invoked directly here.
+    const viewerEventRegistrations: {
+      type: keyof ViewerEventType;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      callback: (...args: any[]) => void;
+    }[] = [];
 
     const viewerEventsOn: Reearth["viewer"]["on"] = (type, callback, options) => {
-      viewerEventUnsubscribers.push(() => viewerEvents.off(type, callback));
+      viewerEventRegistrations.push({ type, callback });
       if (options?.once) {
         viewerEvents.once(type, callback);
       } else {
@@ -630,13 +639,18 @@ export function createZushiExposedAPI(
 
     const viewerEventsOff: Reearth["viewer"]["off"] = (type, callback) => {
       viewerEvents.off(type, callback);
+      const index = viewerEventRegistrations.findIndex(
+        (r) => r.type === type && r.callback === callback
+      );
+      if (index !== -1) viewerEventRegistrations.splice(index, 1);
     };
 
     registerCleanup(() => {
-      while (viewerEventUnsubscribers.length) {
-        const unsubscribe = viewerEventUnsubscribers.pop();
+      while (viewerEventRegistrations.length) {
+        const registration = viewerEventRegistrations.pop();
+        if (!registration) continue;
         try {
-          unsubscribe?.();
+          viewerEvents.off(registration.type, registration.callback);
         } catch (err) {
           console.error(
             "[Zushi Adapter] Error removing viewer event listener on dispose:",
