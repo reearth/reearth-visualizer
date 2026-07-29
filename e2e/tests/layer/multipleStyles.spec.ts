@@ -1,14 +1,14 @@
 import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
-import { STORAGE_STATE } from "../global-setup";
-import { CesiumViewerPage } from "../pages/cesiumViewerPage";
-import { DashBoardPage } from "../pages/dashBoardPage";
-import { LayerStylePanelPage } from "../pages/layerStylePanelPage";
-import { ProjectScreenPage } from "../pages/projectScreenPage";
-import { ProjectsPage } from "../pages/projectsPage";
-import { createIAPContext } from "../utils/iap-auth";
-import { deleteProjectByName } from "../utils/project-cleanup";
+import { STORAGE_STATE } from "../../global-setup";
+import { CesiumViewerPage } from "../../pages/cesiumViewerPage";
+import { DashBoardPage } from "../../pages/dashBoardPage";
+import { LayerStylePanelPage } from "../../pages/layerStylePanelPage";
+import { ProjectScreenPage } from "../../pages/projectScreenPage";
+import { ProjectsPage } from "../../pages/projectsPage";
+import { createIAPContext } from "../../utils/iap-auth";
+import { deleteProjectByName } from "../../utils/project-cleanup";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -106,7 +106,7 @@ test.describe("Multiple Style Assignment and Switching", () => {
 
   test("Add an Empty style", async () => {
     await stylePanel.addPresetStyle("Empty");
-    await expect(stylePanel.getStyleByName("Style.01")).toBeVisible({
+    await expect(stylePanel.getStyleByName("Empty.01")).toBeVisible({
       timeout: 10_000
     });
   });
@@ -126,7 +126,7 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Switch between styles by clicking style entries", async () => {
-    await stylePanel.selectStyle("Style.01");
+    await stylePanel.selectStyle("Empty.01");
     await expect(stylePanel.interfaceTab).toBeVisible();
 
     await stylePanel.selectStyle("Default.01");
@@ -146,14 +146,12 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Rename a style via context menu", async () => {
-    await stylePanel.renameStyle("Style.01", "Custom Style");
+    await stylePanel.renameStyle("Empty.01", "Custom Style");
     await expect(stylePanel.getStyleByName("Custom Style")).toBeVisible();
   });
 
   test("Delete a style via context menu", async () => {
-    await expect(
-      stylePanel.getStyleByName("Professional.01")
-    ).toBeVisible();
+    await expect(stylePanel.getStyleByName("Professional.01")).toBeVisible();
 
     await stylePanel.deleteStyle("Professional.01");
 

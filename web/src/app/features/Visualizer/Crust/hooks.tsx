@@ -30,11 +30,19 @@ export default function useHook({
   pluginBaseUrl,
   pluginProperty
 }: { mapRef?: RefObject<MapRef | null> } & ExternalPluginProps) {
-  const [shownPluginModalInfo, onPluginModalShow] = useState<PluginModalInfo>();
+  const [shownPluginModalInfo, setShownPluginModalInfo] = useState<PluginModalInfo>();
   const pluginModalContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const [shownPluginPopupInfo, onPluginPopupShow] = useState<PluginPopupInfo>();
+  const [shownPluginPopupInfo, setShownPluginPopupInfo] = useState<PluginPopupInfo>();
   const pluginPopupContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const onPluginModalShow = useCallback((modalInfo?: PluginModalInfo) => {
+    setShownPluginModalInfo(modalInfo);
+  }, []);
+
+  const onPluginPopupShow = useCallback((popupInfo?: PluginPopupInfo) => {
+    setShownPluginPopupInfo(popupInfo);
+  }, []);
 
   const commonPluginProps = useMemo(
     () => ({

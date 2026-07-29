@@ -1,11 +1,11 @@
 import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
-import { STORAGE_STATE } from "../global-setup";
-import { DashBoardPage } from "../pages/dashBoardPage";
-import { ProjectsPage } from "../pages/projectsPage";
-import { RecycleBinPage } from "../pages/recycleBinPage";
-import { createIAPContext } from "../utils/iap-auth";
+import { STORAGE_STATE } from "../../global-setup";
+import { DashBoardPage } from "../../pages/dashBoardPage";
+import { ProjectsPage } from "../../pages/projectsPage";
+import { RecycleBinPage } from "../../pages/recycleBinPage";
+import { createIAPContext } from "../../utils/iap-auth";
 
 const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 if (!REEARTH_WEB_E2E_BASEURL) {

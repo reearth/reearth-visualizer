@@ -1,0 +1,45 @@
+# Retags an already-built image under a new tag via a registry-side manifest
+# copy (no rebuild, no pull/push of image layers). Used by stage.yml and
+# release.yml to promote nightly -> rc -> a version tag without re-running CI.
+name: promote-images
+on:
+  workflow_call:
+    inputs:
+      from_tag:
+        type: string
+        required: true
+      to_tag:
+        type: string
+        required: true
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+      - name: Login to DockerHub
+        uses: docker/login-action@371161bbe7024a29a25c5e19bfcbc0804fe9ad2c # v4.5.2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Retag web image
+        env:
+          FROM_TAG: ${{ inputs.from_tag }}
+          TO_TAG: ${{ inputs.to_tag }}
+        run: |
+          docker buildx imagetools create \
+            -t "reearth/reearth-visualizer-web:${TO_TAG}" \
+            "reearth/reearth-visualizer-web:${FROM_TAG}"
+      - name: Retag server image
+        env:
+          FROM_TAG: ${{ inputs.from_tag }}
+          TO_TAG: ${{ inputs.to_tag }}
+        run: |
+          docker buildx imagetools create \
+            -t "reearth/reearth-visualizer-api:${TO_TAG}" \
+            "reearth/reearth-visualizer-api:${FROM_TAG}"

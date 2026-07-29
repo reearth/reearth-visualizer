@@ -40,11 +40,31 @@ const importWorkerCount = 3
 // request goroutine in practice.
 const importJobQueueSize = 32
 
+// importJobTimeout bounds a single import's execution. Without it, a
+// stalled downstream call (e.g. a MongoDB partial outage) can hang a
+// worker on context.Background() forever; once enough workers are stuck
+// like this, every future import stalls behind them too (REL-03). Real
+// imports observed in production complete in well under a minute, so 5
+// minutes is generous headroom, not a tight bound.
+const importJobTimeout = 5 * time.Minute
+
+// dispatchWaitTimeout is a last-resort safety valve for handing a
+// completed upload to the worker pool (see dispatchImport). It only
+// matters if the pool is already wedged past importJobTimeout, which
+// should be self-healing; this just guarantees the wait can't run forever.
+const dispatchWaitTimeout = 5 * time.Minute
+
 // maxChunkCount bounds total_chunks well above any legitimate upload (the
 // import pipeline already rejects anything over 500MB, which is ~32
 // chunks at the client's 16MB chunk size) while still capping how large a
 // backing file a single request can make the server allocate.
 const maxChunkCount = 128
+
+// maxConcurrentSessions caps how many upload sessions can exist at once.
+// Each session keeps an open file handle and a temporary file on disk
+// until it finishes or gets reaped, so this bounds the worst case even
+// for an authorized caller that abandons a lot of uploads.
+const maxConcurrentSessions = 256
 
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
 // fileID flows directly into filepath.Join(tempDir, fileID); without this,
@@ -254,14 +274,23 @@ type SplitUploadManager struct {
 	tempDir   string
 	chunkSize int64
 	jobs      chan importJob
+
+	// importJobTimeout and dispatchWaitTimeout default to the package
+	// constants in production (see newSplitUploadManager) and are only
+	// fields so tests can inject short durations instead of waiting out
+	// the real 5-minute bounds.
+	importJobTimeout    time.Duration
+	dispatchWaitTimeout time.Duration
 }
 
 func newSplitUploadManager(tempDir string, chunkSize int64) *SplitUploadManager {
 	m := &SplitUploadManager{
-		sessions:  make(map[string]*uploadSession),
-		tempDir:   tempDir,
-		chunkSize: chunkSize,
-		jobs:      make(chan importJob, importJobQueueSize),
+		sessions:            make(map[string]*uploadSession),
+		tempDir:             tempDir,
+		chunkSize:           chunkSize,
+		jobs:                make(chan importJob, importJobQueueSize),
+		importJobTimeout:    importJobTimeout,
+		dispatchWaitTimeout: dispatchWaitTimeout,
 	}
 	for range importWorkerCount {
 		go m.runWorker()
@@ -324,12 +353,18 @@ func servSplitUploadFiles(
 
 }
 
+// getOrCreateSession is only called for chunk 0, after CanWriteWorkspace
+// has already passed, since creating a session opens a file handle and a
+// temporary file on disk.
 func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) (*uploadSession, error) {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
 
 	if s, ok := m.sessions[fileID]; ok {
 		return s, nil
+	}
+	if len(m.sessions) >= maxConcurrentSessions {
+		return nil, errors.New("too many upload sessions in progress, try again later")
 	}
 	s, err := newUploadSession(m.tempDir, fileID, totalChunks, m.chunkSize)
 	if err != nil {
@@ -339,13 +374,67 @@ func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) 
 	return s, nil
 }
 
+// atCapacity is a cheap pre-check to skip CreateTemporaryProject entirely
+// once the cap is full; getOrCreateSession's own check stays authoritative
+// for the narrow race between concurrent chunk-0 requests.
+func (m *SplitUploadManager) atCapacity() bool {
+	m.mgrMu.Lock()
+	defer m.mgrMu.Unlock()
+	return len(m.sessions) >= maxConcurrentSessions
+}
+
+// getSession looks up a session without creating one, so a non-zero chunk
+// can never allocate a file handle and temporary file for a file_id that
+// chunk 0 never started.
+func (m *SplitUploadManager) getSession(fileID string) (*uploadSession, bool) {
+	m.mgrMu.Lock()
+	defer m.mgrMu.Unlock()
+	s, ok := m.sessions[fileID]
+	return s, ok
+}
+
 // dispatchImport hands a completed upload off to the worker pool. This is
 // the one seam meant to change when the import pipeline moves to a
 // durable, MongoDB-backed job queue (see REL-04): only this method needs
 // to be swapped to enqueue a persisted job instead of an in-process
 // channel send — nothing in the session/chunking code above needs to move.
+//
+// The hand-off runs in its own goroutine, detached from the request, so
+// the request goroutine never waits on it — the upload is already fully
+// written to disk by this point, and the import itself always runs async
+// in a worker regardless. Detaching this way also means a client
+// disconnecting right after the last chunk can never abort an upload that
+// already finished successfully (see REL-03).
 func (m *SplitUploadManager) dispatchImport(job importJob) {
-	m.jobs <- job
+	go func() {
+		// This goroutine is detached like runImportJob's worker goroutine,
+		// so it needs the same panic recovery: Echo's middleware.Recover()
+		// only covers the request goroutine, and an unhandled panic here
+		// would take down the whole process (the REL-01 failure class).
+		defer func() {
+			if r := recover(); r != nil {
+				log.Errorf("[Import] panic while dispatching import: %v (file %s)", r, job.fileID)
+			}
+		}()
+		// time.NewTimer (not time.After) so the successful-send case can
+		// stop it instead of leaving it to fire 5 minutes later: under
+		// steady upload traffic, every successful dispatch would otherwise
+		// leave a stray timer alive for the full dispatchWaitTimeout.
+		timer := time.NewTimer(m.dispatchWaitTimeout)
+		defer timer.Stop()
+
+		select {
+		case m.jobs <- job:
+		case <-timer.C:
+			// cleanupSession is deferred here, not called after
+			// UpdateImportStatus, so the session/tempfile is still freed
+			// even if the status write panics or otherwise never returns.
+			defer m.cleanupSession(job.fileID)
+			errMsg := "import worker pool did not accept job in time"
+			log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
+			UpdateImportStatus(context.Background(), job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, map[string]any{})
+		}
+	}()
 }
 
 func (m *SplitUploadManager) runWorker() {
@@ -358,9 +447,13 @@ func (m *SplitUploadManager) runWorker() {
 // in place, chunk by chunk) and imports one completed upload. It recovers
 // from any panic in the pipeline so a single bad upload can only fail that
 // one import, never take down the process — this is the general fix for
-// the class of bug behind REL-01, not just its specific trigger.
+// the class of bug behind REL-01, not just its specific trigger. The
+// bounded context is the general fix for REL-03: a stalled downstream call
+// times out instead of hanging this worker (and its slot in the pool)
+// forever.
 func (m *SplitUploadManager) runImportJob(job importJob) {
-	bgctx := context.Background()
+	bgctx, cancel := context.WithTimeout(context.Background(), m.importJobTimeout)
+	defer cancel()
 	result := map[string]any{}
 
 	defer func() {
@@ -405,23 +498,50 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 
 func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId accountsID.WorkspaceID, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
 
-	session, err := m.getOrCreateSession(fileID, totalChunks)
-	if err != nil {
-		return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to start upload session: %v", err))
+	var session *uploadSession
+
+	if chunkNum == 0 {
+		// A session already existing means this is a retry: reuse it
+		// instead of creating another temporary project.
+		if s, ok := m.getSession(fileID); ok {
+			session = s
+		} else {
+			if m.atCapacity() {
+				return nil, echo.NewHTTPError(http.StatusTooManyRequests, "too many upload sessions in progress, try again later")
+			}
+			// Permission is checked before any file handle or temporary
+			// file is created.
+			prj, err := CreateTemporaryProject(ctx, usecases, op, wsId)
+			if err != nil {
+				return nil, err
+			}
+			s, err := m.getOrCreateSession(fileID, totalChunks)
+			if err != nil {
+				return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to start upload session: %v", err))
+			}
+			s.setProject(prj)
+			session = s
+		}
+	} else {
+		// Only chunk 0 may start a session; a chunk for a file_id that
+		// never started one is rejected instead of silently allocating one.
+		s, ok := m.getSession(fileID)
+		if !ok {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, "unknown or expired upload session; restart the upload from chunk 0")
+		}
+		// total_chunks must agree with the session's original value, or a
+		// client could inflate it to bypass validateChunkRequest's bound
+		// check and write a chunk_num far beyond the real chunk count.
+		if totalChunks != s.snapshot().TotalChunks {
+			return nil, echo.NewHTTPError(http.StatusBadRequest, "total_chunks does not match this upload session's original value")
+		}
+		session = s
 	}
 
 	if pre := session.snapshot(); pre.ProjectID != nil {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d Project: %s", fileID, chunkNum+1, totalChunks, pre.ProjectID.String())
 	} else {
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d ", fileID, chunkNum+1, totalChunks)
-	}
-
-	if chunkNum == 0 {
-		prj, err := CreateTemporaryProject(ctx, usecases, op, wsId)
-		if err != nil {
-			return nil, err
-		}
-		session.setProject(prj)
 	}
 
 	completed, err := session.writeChunk(chunkNum, file)
