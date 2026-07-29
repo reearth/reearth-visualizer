@@ -2,6 +2,70 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.14 - 2026-07-29
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Unsubscribe plugin viewer listeners and clear modal state on dispose ([#2327](https://github.com/reearth/reearth-visualizer/pull/2327)) [`d84092`](https://github.com/reearth/reearth-visualizer/commit/d84092)
+- Resolve @reearth&#x2F;zushi alias in Storybook build ([#2321](https://github.com/reearth/reearth-visualizer/pull/2321)) [`873315`](https://github.com/reearth/reearth-visualizer/commit/873315)
+- Support object values in PropertyList block custom fields ([#2314](https://github.com/reearth/reearth-visualizer/pull/2314)) [`baf6fb`](https://github.com/reearth/reearth-visualizer/commit/baf6fb)
+- Plugin playground: infobox block and story block cannot get block properties [VIZ-DEV-137] ([#2316](https://github.com/reearth/reearth-visualizer/pull/2316)) [`dd2780`](https://github.com/reearth/reearth-visualizer/commit/dd2780)
+
+#### ✨ Refactor
+
+- Replace osm-buildings with reearth-buildings in Plugin Playground ([#2317](https://github.com/reearth/reearth-visualizer/pull/2317)) [`42ca85`](https://github.com/reearth/reearth-visualizer/commit/42ca85)
+- Migrate to zushi for plugin system [VIZ-DEV-70] ([#2289](https://github.com/reearth/reearth-visualizer/pull/2289)) [`98539f`](https://github.com/reearth/reearth-visualizer/commit/98539f)
+- Improve alias validation in project settings[VIZ-DEV-87] ([#2287](https://github.com/reearth/reearth-visualizer/pull/2287)) [`895dce`](https://github.com/reearth/reearth-visualizer/commit/895dce)
+- Localize preset style categories and styles[VIZ-DEV-94] ([#2293](https://github.com/reearth/reearth-visualizer/pull/2293)) [`f70783`](https://github.com/reearth/reearth-visualizer/commit/f70783)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.14 ([#2330](https://github.com/reearth/reearth-visualizer/pull/2330)) [`c87d84`](https://github.com/reearth/reearth-visualizer/commit/c87d84)
+- Update @reearth&#x2F;core to 0.0.7-alpha.77 ([#2326](https://github.com/reearth/reearth-visualizer/pull/2326)) [`910e5d`](https://github.com/reearth/reearth-visualizer/commit/910e5d)
+- Fix pages build failure caused by ADR template &#x60;date&#x60; placeholder ([#2318](https://github.com/reearth/reearth-visualizer/pull/2318)) [`b2a6f7`](https://github.com/reearth/reearth-visualizer/commit/b2a6f7)
+- Bump @reearth&#x2F;core to 0.0.7-alpha.76 for scene.backgroundColor and skyBox fix ([#2315](https://github.com/reearth/reearth-visualizer/pull/2315)) [`17bf04`](https://github.com/reearth/reearth-visualizer/commit/17bf04)
+- Bump @reearth&#x2F;core to 0.0.7-alpha.75 for scene.backgroundColor and skyBox fix ([#2307](https://github.com/reearth/reearth-visualizer/pull/2307)) [`ce43f2`](https://github.com/reearth/reearth-visualizer/commit/ce43f2)
+- Bump @reearth&#x2F;core to 0.0.7-alpha.72 for conditional Cesium Ion credit ([#2290](https://github.com/reearth/reearth-visualizer/pull/2290)) [`33dae2`](https://github.com/reearth/reearth-visualizer/commit/33dae2)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Bound split-upload import worker timeouts ([#2320](https://github.com/reearth/reearth-visualizer/pull/2320)) [`27a92a`](https://github.com/reearth/reearth-visualizer/commit/27a92a)
+- Gate split-upload session creation on workspace permission [SCA-03] ([#2303](https://github.com/reearth/reearth-visualizer/pull/2303)) [`5c45da`](https://github.com/reearth/reearth-visualizer/commit/5c45da)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Pin GitHub Actions to commit SHA and bump to latest versions ([#2328](https://github.com/reearth/reearth-visualizer/pull/2328)) [`ca5b51`](https://github.com/reearth/reearth-visualizer/commit/ca5b51)
+- Replace dependency npm-run-all with npm-run-all2 9.0.2 ([#2081](https://github.com/reearth/reearth-visualizer/pull/2081)) [`422046`](https://github.com/reearth/reearth-visualizer/commit/422046)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Pass image tags through env instead of interpolating into shell ([#2325](https://github.com/reearth/reearth-visualizer/pull/2325)) [`c4ef5c`](https://github.com/reearth/reearth-visualizer/commit/c4ef5c)
+
+### e2e
+
+#### 🔧 Bug Fixes
+
+- Stop concurrency-group collision, switch trace to retain-on-failure ([#2299](https://github.com/reearth/reearth-visualizer/pull/2299)) [`205561`](https://github.com/reearth/reearth-visualizer/commit/205561)
+
+#### ✨ Refactor
+
+- Parallelize playwright suite, split tests into feature folders ([#2301](https://github.com/reearth/reearth-visualizer/pull/2301)) [`331449`](https://github.com/reearth/reearth-visualizer/commit/331449)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Pin GitHub Actions to commit SHA and bump to latest versions ([#2328](https://github.com/reearth/reearth-visualizer/pull/2328)) [`ca5b51`](https://github.com/reearth/reearth-visualizer/commit/ca5b51)
+- Replace dependency npm-run-all with npm-run-all2 9.0.2 ([#2081](https://github.com/reearth/reearth-visualizer/pull/2081)) [`422046`](https://github.com/reearth/reearth-visualizer/commit/422046)
+
 ## 1.0.0-beta.16.13 - 2026-07-15
 
 ### Web

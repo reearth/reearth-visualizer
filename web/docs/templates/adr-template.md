@@ -1,7 +1,7 @@
 ---
 adr: [number]
 title: "[Decision Title]"
-date: "YYYY-MM-DD"
+decision_date: "YYYY-MM-DD"
 status: "proposed | accepted | deprecated | superseded"
 superseded_by: "[ADR number if applicable]"
 tags: []

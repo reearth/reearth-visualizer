@@ -3,7 +3,8 @@ import {
   GetDeletedProjectsQueryVariables,
   GetProjectsQueryVariables,
   GetStarredProjectsQueryVariables,
-  HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION
+  HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION,
+  HEADER_KEY_SKIP_GLOBAL_LOADING
 } from "@reearth/services/gql";
 import {
   CHECK_PROJECT_ALIAS,
@@ -12,8 +13,6 @@ import {
   GET_PROJECTS,
   GET_STARRED_PROJECTS
 } from "@reearth/services/gql/queries/project";
-import { useT } from "@reearth/services/i18n/hooks";
-import { useNotification } from "@reearth/services/state";
 import { useCallback, useMemo } from "react";
 
 export const useProject = (projectId?: string) => {
@@ -121,9 +120,6 @@ export const useDeletedProjects = (input: GetDeletedProjectsQueryVariables) => {
 };
 
 export const useValidateProjectAlias = () => {
-  const t = useT();
-  const [, setNotification] = useNotification();
-
   const [fetchCheckProjectAlias] = useLazyQuery(CHECK_PROJECT_ALIAS, {
     fetchPolicy: "network-only", // Disable caching for this query
     errorPolicy: "all"
@@ -137,7 +133,8 @@ export const useValidateProjectAlias = () => {
         variables: { alias, workspaceId, projectId },
         context: {
           headers: {
-            [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
+            [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true",
+            [HEADER_KEY_SKIP_GLOBAL_LOADING]: "true"
           }
         }
       });
@@ -151,17 +148,13 @@ export const useValidateProjectAlias = () => {
         return { status: "error", errors };
       }
 
-      setNotification({
-        type: "success",
-        text: t("Successfully checked alias!")
-      });
       return {
         available: data?.checkProjectAlias.available,
         alias: data?.checkProjectAlias.alias,
         status: "success"
       };
     },
-    [fetchCheckProjectAlias, setNotification, t]
+    [fetchCheckProjectAlias]
   );
 
   return {

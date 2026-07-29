@@ -23,9 +23,11 @@ jobs:
     if: github.ref == 'refs/heads/release'
     permissions:
       contents: write
+    outputs:
+      version: ${{ steps.changelog.outputs.version }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
       - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -34,7 +36,7 @@ jobs:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
@@ -45,7 +47,7 @@ jobs:
           git config --global pull.rebase false
       - id: changelog
         name: Generate CHANGELOG
-        uses: reearth/changelog-action@main
+        uses: reearth/changelog-action@86cb9d7a3727f3cb6afe36a1536fad61e9775287 # main
         with:
           version: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || github.event.inputs.version }}
           repo: ${{ github.repository }}
@@ -66,3 +68,46 @@ jobs:
           git push --atomic origin release $TAG
       - name: Commit & push to main
         run: git switch main && git cherry-pick release && git push
+
+  promote-to-version:
+    needs: release
+    uses: ./.github/workflows/promote_images.yml
+    with:
+      from_tag: rc
+      to_tag: ${{ needs.release.outputs.version }}
+    secrets: inherit
+
+  publish-release:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: v${{ needs.release.outputs.version }}
+      ARTIFACT: reearth-web_v${{ needs.release.outputs.version }}.tar.gz
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - name: Fetch reearth-web release
+        uses: dsaltares/fetch-gh-release-asset@aa2ab1243d6e0d5b405b973c89fa4d06a2d0fff7 # 1.1.2
+        with:
+          version: tags/nightly
+          file: reearth-web_nightly.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Rename artifact
+        run: mv reearth-web_nightly.tar.gz "$ARTIFACT"
+      - name: Download latest changelog
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: changelog-${{ needs.release.outputs.version }}
+      - name: Create GitHub release
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
+        with:
+          allowUpdates: true
+          artifacts: ${{ env.ARTIFACT }}
+          artifactContentType: application/gzip
+          name: ${{ env.TAG }}
+          tag: ${{ env.TAG }}
+          bodyFile: CHANGELOG_latest.md

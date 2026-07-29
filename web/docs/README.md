@@ -50,6 +50,7 @@ Detailed documentation for each major module:
 - **[Editor](modules/features/editor.md)** - Map editor functionality
 - **[Dashboard](modules/features/dashboard.md)** - Dashboard and project management
 - **[Visualizer](modules/features/visualizer.md)** - 3D visualization features
+- **[Plugin System](modules/features/plugin-system.md)** - Plugin architecture and extensibility
 
 #### UI Layer
 
