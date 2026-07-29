@@ -24,7 +24,8 @@ jobs:
     permissions:
       contents: write
     outputs:
-      version: ${{ steps.changelog.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
+      sha: ${{ steps.commit.outputs.sha }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -57,15 +58,22 @@ jobs:
         with:
           name: changelog-${{ steps.changelog.outputs.version }}
           path: CHANGELOG_latest.md
-      - name: Commit & push to release
+      - id: version
+        name: Determine version
         env:
-          TAG: v${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || steps.changelog.outputs.version }}
+          RAW_VERSION: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || steps.changelog.outputs.version }}
+        run: echo "version=${RAW_VERSION#v}" >> "$GITHUB_OUTPUT"
+      - id: commit
+        name: Commit & push to release
+        env:
+          TAG: v${{ steps.version.outputs.version }}
         run: |
           rm CHANGELOG_latest.md
           git add CHANGELOG.md
           git commit -am "$TAG"
           git tag $TAG
           git push --atomic origin release $TAG
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Commit & push to main
         run: git switch main && git cherry-pick release && git push
 
@@ -108,6 +116,7 @@ jobs:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACT }}
           artifactContentType: application/gzip
+          commit: ${{ needs.release.outputs.sha }}
           name: ${{ env.TAG }}
           tag: ${{ env.TAG }}
           bodyFile: CHANGELOG_latest.md
