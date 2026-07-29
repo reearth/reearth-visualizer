@@ -36,6 +36,7 @@ const Navbar: React.FC<Props> = ({
     currentProject,
     currentWorkspace,
     workspaces,
+    userInfo,
     handleLogout,
     handleWorkspaceChange
   } = useHook({
@@ -57,6 +58,7 @@ const Navbar: React.FC<Props> = ({
           currentWorkspace={currentWorkspace}
           workspaces={workspaces}
           sceneId={sceneId}
+          userInfo={ userInfo}
           page={page}
           onWorkspaceChange={handleWorkspaceChange}
           onSignOut={handleLogout}

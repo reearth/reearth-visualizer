@@ -1,4 +1,4 @@
-import { Popup, Icon, IconName, PopupProps } from "@reearth/app/lib/reearth-ui";
+import { Popup, Icon, IconName, PopupProps, Typography } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
@@ -8,33 +8,27 @@ const MULTLEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;
 const DEFAULT_MENU_WIDTH = 190;
 
-export type CustomSubMenu = {
-  title: string;
-  menuItem: PopupMenuItem;
-};
-
-type Accumulator = Record<string, PopupMenuItem[]>;
-
 export type PopupMenuItem = {
-  customSubMenuLabel?: string;
-  customSubMenuOrder?: number;
+  id: string;
+  title?: string;
   icon?: IconName;
   iconColor?: string;
   color?: string;
   customIcon?: ReactNode;
   iconPosition?: "left" | "right";
-  id: string;
-  hasCustomSubMenu?: boolean;
   hasBorderBottom?: boolean;
   onClick?: (id: string) => void;
   path?: string;
   personal?: boolean;
   selected?: boolean;
   subItem?: PopupMenuItem[];
-  title?: string;
   disabled?: boolean;
   tileComponent?: ReactNode;
   dataTestid?: string;
+  /** When true, renders this item as a non-interactive group header label. */
+  isHeader?: boolean;
+  /** When true, pins this item to a footer section below the scrollable list. */
+  hasFooter?: boolean;
 };
 
 export type PopupMenuProps = {
@@ -93,7 +87,18 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     [onOpenChange, open]
   );
 
-  const renderSingleItem = (item: PopupMenuItem, index: number) => {
+  const renderItem = (item: PopupMenuItem, index: number) => {
+    if (item.isHeader) {
+      return (
+        <GroupHeaderWrapper key={item.id}>
+          {item.icon && (
+            <Icon icon={item.icon} size="normal" color={item.iconColor ? item.iconColor : theme.content.weak} />
+          )}
+          <Typography size="footnote" color={item.color ? item.color : theme.content.weak}>{item.title}</Typography>
+        </GroupHeaderWrapper>
+      );
+    }
+
     const {
       icon,
       iconColor: itemIconColor,
@@ -135,7 +140,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           </IconWrapper>
         )}
         {customIcon && <IconWrapper>{customIcon}</IconWrapper>}
-        <SubItem>
+        <ItemContent>
           {subItem ? (
             <PopupMenu
               label={title}
@@ -178,77 +183,39 @@ export const PopupMenu: FC<PopupMenuProps> = ({
               <Icon icon={icon} size="small" color={resolvedIconColor} />
             </IconWrapper>
           )}
-        </SubItem>
+        </ItemContent>
       </Item>
     );
   };
 
-  const renderSubMenuItems = (subMenuItems: PopupMenuItem[]) => {
-    const grouped = subMenuItems.filter((item) => item.hasCustomSubMenu);
-    const footer = subMenuItems.filter((item) => !item.hasCustomSubMenu);
+  const renderContent = () => {
+    const footerItems = menu.filter(item => item.hasFooter);
+    const mainItems = menu.filter(item => !item.hasFooter);
+    const hasFooter = footerItems.length > 0;
 
-    const groups = grouped
-      .sort((a, b) => {
-        if (
-          a.customSubMenuOrder !== undefined &&
-          b.customSubMenuOrder !== undefined
-        ) {
-          return a.customSubMenuOrder - b.customSubMenuOrder;
-        }
-        return 0;
-      })
-      .reduce((acc: Accumulator, obj: PopupMenuItem) => {
-        const key = obj["customSubMenuLabel"] as string;
-        if (!acc[key]) acc[key] = [];
-        acc[key].push(obj);
-        return acc;
-      }, {} as Accumulator);
-
-    const customSubMenu = Object.values(groups) as PopupMenuItem[][];
-
-    return (
-      <PopupMenuWrapper
-        width={width}
-        nested={nested}
-        hasFooter={footer.length > 0}
-        role="menu"
-        data-testid={dataTestid ? `${dataTestid}-submenu` : undefined}
-      >
-        <SubMenuScrollable>
-          {customSubMenu.map((item, index) => (
-            <Group key={index}>
-              <SubMenuHeader>
-                {customSubMenu[index][0].customSubMenuLabel}
-              </SubMenuHeader>
-              {item.map((subItem, subIndex) =>
-                renderSingleItem(subItem, subIndex)
-              )}
-            </Group>
-          ))}
-        </SubMenuScrollable>
-        {footer.length > 0 && (
-          <SubMenuFooter>
-            {footer.map((item, index) => renderSingleItem(item, index))}
-          </SubMenuFooter>
-        )}
-      </PopupMenuWrapper>
-    );
-  };
-
-  const renderMenuItems = (menuItems: PopupMenuItem[]) => {
     return (
       <PopupMenuWrapper
         width={width}
         nested={nested}
         extendContentWidth={extendContentWidth}
+        hasFooter={hasFooter}
         role="menu"
         aria-labelledby={ariaLabelledby}
-        data-testid={dataTestid}
         aria-orientation="vertical"
+        data-testid={dataTestid}
       >
-        {menuItems.map((item, index) => {
-          return renderSingleItem(item, index);
-        })}
+        {hasFooter ? (
+          <SubMenuScrollable>
+            {mainItems.map((item, index) => renderItem(item, index))}
+          </SubMenuScrollable>
+        ) : (
+          mainItems.map((item, index) => renderItem(item, index))
+        )}
+        {hasFooter && (
+          <SubMenuFooter>
+            {footerItems.map((item, index) => renderItem(item, index))}
+          </SubMenuFooter>
+        )}
       </PopupMenuWrapper>
     );
   };
@@ -294,9 +261,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         </TriggerWrapper>
       }
     >
-      {nested && !!menu.find((item) => item.hasCustomSubMenu)
-        ? renderSubMenuItems(menu)
-        : renderMenuItems(menu)}
+      {renderContent()}
     </Popup>
   );
 };
@@ -371,15 +336,16 @@ const IconWrapper = styled("div")(() => ({
   flexShrink: 0,
   fontSize: 0
 }));
-const SubMenuHeader = styled("div")(({ theme }) => ({
-  color: theme.content.weak,
-  fontSize: "11px",
-  fontWeight: 400,
-  lineHeight: "16px",
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px  0 ${theme.spacing.small}px`
+
+const GroupHeaderWrapper = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: `${theme.spacing.micro}px`,
+  padding: `${theme.spacing.small}px ${theme.spacing.smallest}px 0 ${theme.spacing.small}px`
 }));
 
-const SubItem = styled("div")(() => ({
+
+const ItemContent = styled("div")(() => ({
   display: css.display.flex,
   justifyContent: css.justifyContent.spaceBetween,
   justifyItems: "center",
@@ -416,12 +382,6 @@ const LabelWrapper = styled("div")<{
       color: theme.content.main
     }
   }
-}));
-
-const Group = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  gap: `${theme.spacing.micro}px`
 }));
 
 const SubMenuScrollable = styled("div")(({ theme }) => ({

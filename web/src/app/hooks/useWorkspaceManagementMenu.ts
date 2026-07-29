@@ -2,21 +2,37 @@ import {
   appFeature,
   generateExternalUrl
 } from "@reearth/services/config/appFeatureConfig";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
+import { useTheme } from "@reearth/services/theme";
 import { useMemo } from "react";
 import { useNavigate } from "react-router";
 
 import { PopupMenuItem } from "../lib/reearth-ui";
 
+import { useAvatarMenuItems } from "./useAvatarMenuItems";
+
 export default ({
   workspaceId,
-  workspaceAlias
+  workspaceAlias,
+  userName,
+  userEmail,
+  onSignOut
 }: {
   workspaceId?: string;
   workspaceAlias?: string;
+  userName?: string;
+  userEmail?: string;
+  onSignOut?: () => void;
 }) => {
   const navigate = useNavigate();
   const t = useT();
+  const lang = useLang();
+  const theme = useTheme();
+  const avatarMenuItems = useAvatarMenuItems({
+    userName,
+    userEmail,
+    onSignOut
+  });
 
   const workspaceManagementMenu: PopupMenuItem[] = useMemo(() => {
     const {
@@ -71,7 +87,43 @@ export default ({
     return menu;
   }, [workspaceId, t, navigate, workspaceAlias]);
 
+  const accountMenuItems: PopupMenuItem[] = useMemo(
+    () => [
+      {
+        id: "project-header",
+        isHeader: true,
+        title: t("Project"),
+        icon: "grid",
+        color: theme.content.main
+      },
+
+      {
+        id: "account",
+        title: t("Account"),
+        subItem: avatarMenuItems
+      },
+      {
+        id: "documents",
+        title: t("Documentation"),
+        icon: "arrowExternalLink",
+        iconPosition: "right",
+        onClick: () =>
+          window.open(
+            generateExternalUrl({
+              url:
+                lang === "ja"
+                  ? "https://eukarya.notion.site/Visualizer-1a816e0fb16580bda8b2c2699f80399c"
+                  : "https://eukarya.notion.site/Visualizer-User-manual-1a816e0fb16580e3a26ac6e35f23a166"
+            }),
+            "_blank"
+          )
+      }
+    ],
+    [t, theme.content.main, avatarMenuItems, lang]
+  );
+
   return {
-    workspaceManagementMenu
+    workspaceManagementMenu,
+    accountMenuItems
   };
 };

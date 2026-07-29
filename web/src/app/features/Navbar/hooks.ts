@@ -1,5 +1,5 @@
 import { useProject } from "@reearth/services/api/project";
-import { useMeMutations } from "@reearth/services/api/user";
+import { useMe, useMeMutations } from "@reearth/services/api/user";
 import { useWorkspaces, useWorkspace } from "@reearth/services/api/workspace";
 import { useAuth } from "@reearth/services/auth/useAuth";
 import {
@@ -19,6 +19,8 @@ export default ({
 }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+    const { me: data } = useMe();
+
   const { logoutFromAccount } = useMeMutations();
   const handleLogout = useCallback(async () => {
     await logoutFromAccount();
@@ -89,6 +91,7 @@ export default ({
     workspaces,
     currentProject,
     currentWorkspace,
+    userInfo: data,
     handleWorkspaceChange,
     handleLogout
   };

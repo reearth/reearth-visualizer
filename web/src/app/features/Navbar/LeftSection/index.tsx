@@ -1,3 +1,4 @@
+import useWorkspaceManagementMenu from "@reearth/app/hooks/useWorkspaceManagementMenu";
 import {
   Icon,
   IconButton,
@@ -13,15 +14,18 @@ import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { useCallback, useMemo } from "react";
 import { Link } from "react-router";
 
+import Profile from "../../Dashboard/LeftSidePanel/Profile";
 import { Project, Workspace } from "../types";
-
-import Profile from "./Profile";
 
 type Props = {
   currentProject?: Project;
   currentWorkspace?: Workspace;
   workspaces?: Workspace[];
   sceneId?: string;
+  userInfo?: {
+    name?: string;
+    email?: string;
+  };
   page: "editor" | "settings" | "projectSettings";
   onSignOut: () => void;
   onWorkspaceChange?: (workspaceId: string) => void;
@@ -32,6 +36,7 @@ const LeftSection: React.FC<Props> = ({
   currentWorkspace,
   workspaces,
   sceneId,
+  userInfo,
   page,
   onSignOut,
   onWorkspaceChange
@@ -39,6 +44,13 @@ const LeftSection: React.FC<Props> = ({
   const t = useT();
 
   const { exportProject } = useProjectImportExportMutations();
+  const { accountMenuItems } = useWorkspaceManagementMenu({
+    workspaceId: currentWorkspace?.id,
+    workspaceAlias: currentWorkspace?.alias,
+    userName: userInfo?.name,
+    userEmail: userInfo?.email,
+    onSignOut
+  });
 
   const handleExportProject = useCallback(async () => {
     if (!currentProject?.id) return;
@@ -86,12 +98,25 @@ const LeftSection: React.FC<Props> = ({
   return (
     <Wrapper>
       <Icon icon="logo" color={brandRed.dynamicRed} size={30} />
+      <PopupMenu
+        label={
+          <Icon
+            icon="caretDown"
+            size="small"
+            data-testid="profile-caretDownIcon"
+          />
+        }
+        icon="grid"
+        menu={accountMenuItems}
+        dataTestid="avatar-popupMenu"
+      />
+
       <StyledLink
         to={`/dashboard/${currentWorkspace?.id}`}
         disabled={!currentWorkspace?.id}
       >
         <IconButton
-          icon="grid"
+          icon="dotsNineVertical"
           appearance="simple"
           size="large"
           tooltipText={t("Dashboard")}
@@ -108,9 +133,10 @@ const LeftSection: React.FC<Props> = ({
         </StyledLink>
       )}
       <Profile
+        data-testid="sidebar-profile"
+        currentUser={currentWorkspace?.name}
         currentWorkspace={currentWorkspace}
         workspaces={workspaces}
-        onSignOut={onSignOut}
         onWorkspaceChange={onWorkspaceChange}
       />
       <Separator>/</Separator>

@@ -30,7 +30,7 @@ type ProfileProps = {
   currentProject?: Project;
   currentWorkspace?: Workspace;
   workspaces?: Workspace[];
-  onWorkspaceChange?: (workspaceId?: string) => void;
+  onWorkspaceChange?: (workspaceId: string) => void;
 };
 
 const Profile: FC<ProfileProps> = ({
@@ -50,36 +50,41 @@ const Profile: FC<ProfileProps> = ({
 
   const submenuItems: PopupMenuItem[] = useMemo(() => {
     const { workspaceCreation, externalWorkspaceCreationUrl } = appFeature();
-    const items: PopupMenuItem[] =
-      workspaces?.map((w) => ({
-        customSubMenuLabel: w.personal ? t("Personal") : t("Team Workspace"),
-        customSubMenuOrder: w.personal ? 0 : 1,
-        id: w.id || "",
-        title: w.name,
-        hasCustomSubMenu: true,
-        personal: w.personal,
-        selected: currentWorkspace?.id === w.id,
-        customIcon: (
-          <AvatarOnMenu isPersonal={w.personal} data-testid="workspace-avatar">
-            {isValidUrl(w.photoURL) && w.photoURL ? (
-              <AvatarImage src={w.photoURL} alt="Avatar" />
-            ) : (
-              <Typography
-                size="footnote"
-                data-testid="workspace-avatar-initial"
-              >
-                {w.name?.charAt(0).toUpperCase()}
-              </Typography>
-            )}
-          </AvatarOnMenu>
-        ),
-        onClick: () => onWorkspaceChange?.(w.id)
-      })) ?? [];
+
+    const toItem = (w: Workspace): PopupMenuItem => ({
+      id: w.id || "",
+      title: w.name,
+      personal: w.personal,
+      selected: currentWorkspace?.id === w.id,
+      customIcon: (
+        <AvatarOnMenu isPersonal={w.personal} data-testid="workspace-avatar">
+          {isValidUrl(w.photoURL) && w.photoURL ? (
+            <AvatarImage src={w.photoURL} alt="Avatar" />
+          ) : (
+            <Typography size="footnote" data-testid="workspace-avatar-initial">
+              {w.name?.charAt(0).toUpperCase()}
+            </Typography>
+          )}
+        </AvatarOnMenu>
+      ),
+      onClick: () => onWorkspaceChange?.(w.id)
+    });
+
+    const personalItems = workspaces?.filter(w => w.personal).map(toItem) ?? [];
+    const teamItems = workspaces?.filter(w => !w.personal).map(toItem) ?? [];
+
+    const items: PopupMenuItem[] = [
+      { id: "header-personal", isHeader: true, title: t("Personal Account") },
+      ...personalItems,
+      { id: "header-team", isHeader: true, title: t("Team Workspace") },
+      ...teamItems
+    ];
 
     if (workspaceCreation) {
       items.push({
         id: "newWorkspace",
         dataTestid: "profile-newWorkspace",
+        hasFooter: true,
         title: t("New workspace"),
         icon: "plus",
         iconColor: theme.primary.main,
@@ -110,6 +115,7 @@ const Profile: FC<ProfileProps> = ({
 
   const popupMenu: PopupMenuItem[] = useMemo(
     () => [
+      { id: "header-workspace", isHeader: true, title: t("Workspace") },
       {
         id: "workspace",
         dataTestid: "profile-switchWorkspace",
@@ -137,6 +143,7 @@ const Profile: FC<ProfileProps> = ({
       currentWorkspace?.name,
       currentWorkspace?.photoURL,
       submenuItems,
+      t,
       workspaceManagementMenu
     ]
   );
