@@ -1,3 +1,4 @@
+import Profile from "@reearth/app/features/UserProfile";
 import { IconButton } from "@reearth/app/lib/reearth-ui";
 import {
   SidebarButtonsWrapper,
@@ -16,7 +17,6 @@ import { TabItems, Workspace } from "../type";
 
 import { AvatarWrapper } from "./Avatar";
 import LogoWrapper from "./LogoWrapper";
-import Profile from "./Profile";
 
 type Props = {
   workspaces: Workspace[];

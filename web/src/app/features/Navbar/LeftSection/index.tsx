@@ -1,3 +1,4 @@
+import Profile from "@reearth/app/features/UserProfile";
 import useWorkspaceManagementMenu from "@reearth/app/hooks/useWorkspaceManagementMenu";
 import {
   Icon,
@@ -8,19 +9,19 @@ import {
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { useProjectImportExportMutations } from "@reearth/services/api/project";
 import { useT } from "@reearth/services/i18n/hooks";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { useCallback, useMemo } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
-import Profile from "../../Dashboard/LeftSidePanel/Profile";
-import { Project, Workspace } from "../types";
+import { NavbarProject, CurrentProject, Workspace } from "../types";
 
 type Props = {
-  currentProject?: Project;
+  currentProject?: CurrentProject;
   currentWorkspace?: Workspace;
   workspaces?: Workspace[];
+  projects?: NavbarProject[];
   sceneId?: string;
   userInfo?: {
     name?: string;
@@ -29,6 +30,7 @@ type Props = {
   page: "editor" | "settings" | "projectSettings";
   onSignOut: () => void;
   onWorkspaceChange?: (workspaceId: string) => void;
+  showProjectCreator: () => void;
 };
 
 const LeftSection: React.FC<Props> = ({
@@ -38,10 +40,14 @@ const LeftSection: React.FC<Props> = ({
   sceneId,
   userInfo,
   page,
+  projects,
   onSignOut,
-  onWorkspaceChange
+  onWorkspaceChange,
+  showProjectCreator
 }) => {
   const t = useT();
+  const theme = useTheme();
+  const navigate = useNavigate();
 
   const { exportProject } = useProjectImportExportMutations();
   const { accountMenuItems } = useWorkspaceManagementMenu({
@@ -58,12 +64,49 @@ const LeftSection: React.FC<Props> = ({
     await exportProject(currentProject.id);
   }, [exportProject, currentProject?.id]);
 
+  const handleProjectOpen = useCallback(
+    (sceneId?: string) => {
+      if (sceneId) {
+        navigate(`/scene/${sceneId}/map`);
+      }
+    },
+    [navigate]
+  );
+
   const menuItems: PopupMenuItem[] = useMemo(
     () => [
       {
+        id: "project-header",
+        isHeader: true,
+        title: t("Project"),
+        icon: "grid"
+      },
+      {
+        id: "project-name",
+        title: currentProject?.name || "",
+        subItem: [
+          ...(projects?.map((project) => ({
+            id: project.id,
+            selected: currentProject?.id === project.id,
+            title: project.name,
+            onClick: () => handleProjectOpen(project.scene?.id || undefined)
+          })) ?? []),
+          {
+            id: "new-project",
+            dataTestid: "profile-newProject",
+            hasFooter: true,
+            title: t("New Project"),
+            icon: "plus" as const,
+            iconColor: theme.primary.main,
+            color: theme.primary.main,
+            onClick: () => showProjectCreator()
+          }
+        ]
+      },
+      {
         icon: "setting",
         id: "setting",
-        title: t("Settings"),
+        title: t("Project Settings"),
         path: currentProject?.id
           ? `/settings/projects/${currentProject.id}`
           : ""
@@ -92,7 +135,16 @@ const LeftSection: React.FC<Props> = ({
         onClick: handleExportProject
       }
     ],
-    [currentProject?.id, t, handleExportProject]
+    [
+      t,
+      currentProject?.name,
+      currentProject?.id,
+      projects,
+      theme.primary.main,
+      handleExportProject,
+      handleProjectOpen,
+      showProjectCreator
+    ]
   );
 
   return (
@@ -106,7 +158,6 @@ const LeftSection: React.FC<Props> = ({
             data-testid="profile-caretDownIcon"
           />
         }
-        icon="grid"
         menu={accountMenuItems}
         dataTestid="avatar-popupMenu"
       />

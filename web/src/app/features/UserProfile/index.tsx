@@ -1,3 +1,4 @@
+import { Workspace } from "@reearth/app/features/Dashboard/type";
 import useWorkspaceManagementMenu from "@reearth/app/hooks/useWorkspaceManagementMenu";
 import {
   Icon,
@@ -16,8 +17,6 @@ import { css } from "@reearth/services/theme/reearthTheme/common";
 import { ProjectType } from "@reearth/types";
 import { FC, useMemo } from "react";
 import { useNavigate } from "react-router";
-
-import { Workspace } from "../type";
 
 export type Project = {
   id?: string;
@@ -70,8 +69,9 @@ const Profile: FC<ProfileProps> = ({
       onClick: () => onWorkspaceChange?.(w.id)
     });
 
-    const personalItems = workspaces?.filter(w => w.personal).map(toItem) ?? [];
-    const teamItems = workspaces?.filter(w => !w.personal).map(toItem) ?? [];
+    const personalItems =
+      workspaces?.filter((w) => w.personal).map(toItem) ?? [];
+    const teamItems = workspaces?.filter((w) => !w.personal).map(toItem) ?? [];
 
     const items: PopupMenuItem[] = [
       { id: "header-personal", isHeader: true, title: t("Personal Account") },

@@ -8,8 +8,14 @@ export type Workspace = {
   photoURL?: string | null;
 };
 
-export type Project = {
+export type CurrentProject = {
   id?: string;
   name?: string;
   projectType?: ProjectType;
+};
+
+export type NavbarProject = {
+  id: string;
+  name: string;
+  scene?: { id?: string | null } | null;
 };

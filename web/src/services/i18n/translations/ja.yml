@@ -34,6 +34,20 @@ Size: サイズ
 Path: アセットURL
 No asset has been uploaded yet: まだアセットがアップロードされていません
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
+Public: 公開
+Private: 非公開
+Create new project: 新しいプロジェクトを作成
+Apply: 適用
+Project Name *: プロジェクト名 *
+Text: テキスト
+Project Alias *: プロジェクト別名 *
+'Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/': 使用できる文字は、英字・数字・ハイフンのみです。例：https://reearth.io/team-alias/
+Project Visibility *: プロジェクトの公開範囲 *
+For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: オープンおよび公開プロジェクトでは、誰でもプロジェクトを閲覧できます。非公開プロジェクトでは、ワークスペースのメンバーのみが閲覧できます。
+About: 概要
+Write down your content: 内容を書き込む
+Provide a short summary (within 500 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な機能を500文字以内で簡単に説明してください。
+We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator.: 他の人があなたの作品をどのように使用できるかを明確にし、創作者としての権利を保護するために、ライセンスを選択することを強くお勧めします。
 Create new workspace: ワークスペースを作る
 create: 作成する
 Your workspace Name*: ワークスペース名*
@@ -78,20 +92,6 @@ Project Setting: プロジェクト設定
 Project Assets: プロジェクトアセット
 Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
-Public: 公開
-Private: 非公開
-Create new project: 新しいプロジェクトを作成
-Apply: 適用
-Project Name *: プロジェクト名 *
-Text: テキスト
-Project Alias *: プロジェクト別名 *
-'Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/': 使用できる文字は、英字・数字・ハイフンのみです。例：https://reearth.io/team-alias/
-Project Visibility *: プロジェクトの公開範囲 *
-For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: オープンおよび公開プロジェクトでは、誰でもプロジェクトを閲覧できます。非公開プロジェクトでは、ワークスペースのメンバーのみが閲覧できます。
-Description: 説明
-Write down your content: 内容を書き込む
-Provide a short summary (within 200 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な特徴を200文字以内で簡潔に説明してください。
-We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator.: 他の人があなたの作品をどのように使用できるかを明確にし、創作者としての権利を保護するために、ライセンスを選択することを強くお勧めします。
 Download Error Log: エラーログをダウンロード
 Ok: 確認
 Import Failed: インポート失敗
@@ -120,10 +120,6 @@ Plugin Playground: プラグインプレイグラウンド
 Documentation: ドキュメント
 Discord: ''
 FAQ: ''
-Switch workspace: ワークスペース切り替え
-Personal: 個人
-Team Workspace: チームワークスペース
-Log out: ログアウト
 Cesium Ion token not configured. Using fallback.: Cesium Ionトークンが設定されていません。フォールバックを使用します。
 Configure token: トークンを設定
 Desktop: デスクトップ
@@ -337,10 +333,11 @@ Background color: 背景色
 Align System: アラインシステム
 Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
+Project: プロジェクト
+Project Settings: プロジェクト設定
 Plugin: プラグイン
 Dashboard: ダッシュボード
 Editor: エディタ
-Unknown: 不明
 Map: マップ
 Widgets: ウィジェット
 Re:Earth Visualizer: Re:Earthビジュアライザー
@@ -476,6 +473,7 @@ Public Info: 公開情報
 Published page settings: 公開ページ設定
 This section's settings are mainly applied to the Open Graph Protocol settings in the header of the published page.: このセクションの設定は、主に公開ページのヘッダーにあるOpen Graph Protocolの設定に適用されます。
 The Title setting will be applied to the <title> tag and og:title.: タイトルの設定は<title>タグとog:titleに適用されます。
+Description: 説明
 Write down your text: 文章を書く
 The Description setting will be applied to og:description.: 説明の設定はog:descriptionに適用されます。
 Image url: 画像URL
@@ -503,6 +501,10 @@ Panel Position: パネル位置
 Background Color: 背景色
 Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。
 Could not verify your signup. Please start the process over.: サインアップを確認できませんでした。もう一度やり直してください。
+Personal Account: 個人アカウント
+Team Workspace: チームワークスペース
+New workspace: ワークスペース作成
+Workspace: ワークスペース
 Save: 保存
 Display title: 表示タイトル
 New Camera: 新しいカメラ
@@ -540,12 +542,11 @@ This will permanently delete the workspace and all related projects, assets and 
 Please type your workspace name to continue.: 続行するにはワークスペース名を入力してください。
 You are going to delete a workspace.: ワークスペースを削除しようとしています。
 Please make sure you don't have any projects in the workspace before continuing.: 続行する前に、ワークスペースにプロジェクトがないことを確認してください。
-Workspace: ワークスペース
 Workspace Name: ワークスペース名
 This process will delete this workspace: この操作により、このワークスペースが削除されます
+Account Settings: アカウント設定
+Log out: ログアウト
 Workspace settings: ワークスペース設定
-New workspace: ワークスペース作成
-Account settings: アカウント設定
 Write your story :): ストーリーを書く :)
 Normal: 通常
 Heading 1: 見出し1
