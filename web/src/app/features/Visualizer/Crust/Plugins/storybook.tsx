@@ -276,6 +276,11 @@ export const context: Context = {
     on: act("sketchEvents.on"),
     off: act("sketchEvents.off"),
     once: act("sketchEvents.once")
+  },
+  spatialIdEvents: {
+    on: act("spatialIdEvents.on"),
+    off: act("spatialIdEvents.off"),
+    once: act("spatialIdEvents.once")
   }
 };
 
