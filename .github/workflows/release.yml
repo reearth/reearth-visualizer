@@ -53,16 +53,16 @@ jobs:
           version: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || github.event.inputs.version }}
           repo: ${{ github.repository }}
           latest: CHANGELOG_latest.md
-      - name: Upload latest CHANGELOG
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: changelog-${{ steps.changelog.outputs.version }}
-          path: CHANGELOG_latest.md
       - id: version
         name: Determine version
         env:
           RAW_VERSION: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || steps.changelog.outputs.version }}
         run: echo "version=${RAW_VERSION#v}" >> "$GITHUB_OUTPUT"
+      - name: Upload latest CHANGELOG
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: changelog-${{ steps.version.outputs.version }}
+          path: CHANGELOG_latest.md
       - id: commit
         name: Commit & push to release
         env:
