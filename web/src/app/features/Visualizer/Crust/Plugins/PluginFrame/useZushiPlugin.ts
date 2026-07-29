@@ -152,6 +152,20 @@ export default function useZushiPlugin({
   // Store MutationObserver for cleanup
   const iframeObserverRef = useRef<MutationObserver | undefined>(undefined);
 
+  // Cleanup callbacks registered by the exposed API (e.g. viewer event unsubscription)
+  const disposeCallbacksRef = useRef<(() => void)[]>([]);
+
+  const runDisposeCallbacks = useCallback(() => {
+    while (disposeCallbacksRef.current.length) {
+      const cleanup = disposeCallbacksRef.current.pop();
+      try {
+        cleanup?.();
+      } catch (err) {
+        console.error("Plugin cleanup: error running exposed API cleanup", err);
+      }
+    }
+  }, []);
+
   // Create modal and popup containers once - these will be manually appended
   const modalContainerElement = useMemo(() => {
     const div = document.createElement("div");
@@ -232,6 +246,11 @@ export default function useZushiPlugin({
 
     onPreInit?.();
 
+    // Guards against a mount/unmount race: if this effect's cleanup runs
+    // while `plugin.start()` is still pending, we must dispose the plugin
+    // that resolves afterward instead of resurrecting it into the refs below.
+    let disposed = false;
+
     (async () => {
       try {
         // Determine marshaling strategy
@@ -270,11 +289,28 @@ export default function useZushiPlugin({
             }
           },
           // Pass getter function to access latest context dynamically
-          exposed: createZushiExposedAPI(() => pluginContextRef.current, messageHandlers)
+          exposed: createZushiExposedAPI(
+            () => pluginContextRef.current,
+            messageHandlers,
+            (fn) => disposeCallbacksRef.current.push(fn)
+          )
         });
 
         // Start the plugin
         await plugin.start();
+
+        if (disposed) {
+          // Unmounted while start() was in flight - nothing above was assigned
+          // to pluginRef/iframeObserverRef yet, so just tear down what start()
+          // already registered (e.g. viewer event listeners) and dispose.
+          runDisposeCallbacks();
+          try {
+            plugin.dispose();
+          } catch (err) {
+            console.error("Zushi plugin dispose error", err);
+          }
+          return;
+        }
 
         /**
          * Iframe Window Registration with Load Event Handling
@@ -383,17 +419,27 @@ export default function useZushiPlugin({
         pluginRef.current = plugin;
         setLoaded(true);
       } catch (err) {
+        // If code before this point (e.g. plugin.start()) registered any
+        // exposed-API cleanups - such as viewer event listeners - before
+        // failing, tear those down now instead of leaving them registered
+        // on the shared emitter until unmount.
+        runDisposeCallbacks();
         onError(err);
       }
     })();
 
     // Cleanup on unmount
     return () => {
+      disposed = true;
+
       // Disconnect MutationObserver
       if (iframeObserverRef.current) {
         iframeObserverRef.current.disconnect();
         iframeObserverRef.current = undefined;
       }
+
+      // Tear down anything the exposed API registered (e.g. viewer event listeners)
+      runDisposeCallbacks();
 
       // Call onDispose before cleanup
       try {
@@ -435,7 +481,8 @@ export default function useZushiPlugin({
     messageEvents,
     messageOnceEvents,
     modalContainer,
-    popupContainer
+    popupContainer,
+    runDisposeCallbacks
   ]);
 
   // Listen for window postMessage events from plugin UI
