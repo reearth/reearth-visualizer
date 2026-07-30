@@ -204,7 +204,21 @@ export default () => {
 
       const zip = new JSZip();
       zip.loadAsync(file).then((zip) => {
-        const files = Object.values(zip.files).filter((file) => !file.dir);
+        const files = Object.values(zip.files).filter((file) => {
+          if (file.dir) return false;
+          if (file.name.startsWith("__MACOSX/")) return false;
+
+          const parts = file.name.split("/").filter((p) => p !== "");
+          // Allow only zip-root files ("file.js") or files within a single top-level folder ("folder/file.js")
+          if (parts.length > 2) return false;
+          // Exclude macOS metadata files
+          if (
+            parts.some((part) => part.startsWith("._") || part === ".DS_Store")
+          )
+            return false;
+
+          return true;
+        });
 
         if (files.length === 0) {
           setNotification({ type: "error", text: t("Zip file is empty") });
@@ -215,11 +229,15 @@ export default () => {
 
         Promise.all(filePromises)
           .then((fileContents) => {
-            const pluginFiles = fileContents.map((content, index) => ({
-              id: uuidv4(),
-              title: files[index].name.split("/")[1],
-              sourceCode: content
-            }));
+            const pluginFiles = fileContents.map((content, index) => {
+              const pathParts = files[index].name.split("/");
+              const fileName = pathParts[pathParts.length - 1];
+              return {
+                id: uuidv4(),
+                title: fileName,
+                sourceCode: content
+              };
+            });
 
             const newPlugin = {
               id: "my-plugin", // NOTE: id of the custom plugin
