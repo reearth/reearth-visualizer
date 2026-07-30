@@ -27,11 +27,10 @@ func newTestProjectMetadata(t *testing.T, wid accountsID.WorkspaceID, pid id.Pro
 	return m
 }
 
-// TestProjectMetadata_Save_DualWritesImportFields verifies that saving a
-// ProjectMetadata with import status/log writes to both the legacy
-// projectmetadata fields (dual-write phase, kept for rollback safety) and
-// the new projectimport document.
-func TestProjectMetadata_Save_DualWritesImportFields(t *testing.T) {
+// TestProjectMetadata_Save_WritesOnlyToProjectImport verifies that saving a
+// ProjectMetadata with import status/log writes to the projectimport
+// document only - the legacy projectmetadata fields are no longer written.
+func TestProjectMetadata_Save_WritesOnlyToProjectImport(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(c)
 	r := NewProjectMetadata(client)
@@ -50,8 +49,7 @@ func TestProjectMetadata_Save_DualWritesImportFields(t *testing.T) {
 	}
 	err := client.WithCollection("projectmetadata").Client().FindOne(ctx, map[string]any{"project": pid.String()}).Decode(&doc)
 	require.NoError(t, err)
-	require.NotNil(t, doc.ImportStatus, "importstatus must still be dual-written to the legacy projectmetadata field")
-	assert.Equal(t, "FAILED", *doc.ImportStatus)
+	assert.Nil(t, doc.ImportStatus, "importstatus must no longer be written to the legacy projectmetadata field")
 
 	var importDoc struct {
 		Status string `bson:"status"`
