@@ -98,31 +98,65 @@ func (r *ProjectMetadata) Remove(ctx context.Context, id id.ProjectID) error {
 // it claims by setting status to PROCESSING, which also bumps updatedat -
 // the same timestamp saveImport already refreshes on every real status
 // transition - so it doubles as this claim's staleness clock.
+//
+// This can't be a single upsert whose filter encodes eligibility (status !=
+// SUCCESS, etc.): projectimport.project is uniquely indexed, so when the
+// filter fails to match an *ineligible* existing document, upsert=true would
+// still try to insert a new one for the same project and hit a duplicate-key
+// error instead of a clean "not claimed". Reading first and writing with a
+// filter matched to the exact state just read (optimistic concurrency)
+// avoids ever attempting an insert when a document already exists.
 func (r *ProjectMetadata) ClaimImport(ctx context.Context, pid id.ProjectID, staleAfter time.Duration) (claimed bool, err error) {
 	now := time.Now().UTC()
 	staleCutoff := now.Add(-staleAfter)
 
+	var existing mongodoc.ProjectImportDocument
+	err = r.importClient.Client().FindOne(ctx, bson.M{"project": pid.String()}).Decode(&existing)
+	if err != nil {
+		if !errors.Is(err, mongo.ErrNoDocuments) {
+			return false, err
+		}
+
+		// No record yet - claim by inserting. If a concurrent caller wins
+		// the race and inserts first, we hit the unique index and lose the
+		// claim rather than erroring.
+		_, err = r.importClient.Client().InsertOne(ctx, bson.M{
+			"project":   pid.String(),
+			"status":    string(project.ProjectImportStatusProcessing),
+			"updatedat": now,
+		})
+		if mongo.IsDuplicateKeyError(err) {
+			return false, nil
+		}
+		return err == nil, err
+	}
+
+	if existing.Status != nil && *existing.Status == string(project.ProjectImportStatusSuccess) {
+		return false, nil
+	}
+	if existing.Status != nil && *existing.Status == string(project.ProjectImportStatusProcessing) &&
+		existing.UpdatedAt != nil && existing.UpdatedAt.After(staleCutoff) {
+		return false, nil
+	}
+
+	// Conditional write keyed on the exact state just read: if nothing
+	// changed since, this matches and claims it; if a concurrent caller
+	// already changed it, MatchedCount is 0 and we correctly lose the claim.
 	filter := bson.M{
-		"project": pid.String(),
-		"status": bson.M{
-			"$ne": string(project.ProjectImportStatusSuccess),
-		},
-		"$or": []bson.M{
-			{"status": bson.M{"$ne": string(project.ProjectImportStatusProcessing)}},
-			{"updatedat": bson.M{"$lt": staleCutoff}},
-		},
+		"project":   pid.String(),
+		"status":    existing.Status,
+		"updatedat": existing.UpdatedAt,
 	}
 	update := bson.M{"$set": bson.M{
-		"project":   pid.String(),
 		"status":    string(project.ProjectImportStatusProcessing),
 		"updatedat": now,
 	}}
 
-	res, err := r.importClient.Client().UpdateOne(ctx, filter, update, options.Update().SetUpsert(true))
+	res, err := r.importClient.Client().UpdateOne(ctx, filter, update)
 	if err != nil {
 		return false, err
 	}
-	return res.MatchedCount > 0 || res.UpsertedCount > 0, nil
+	return res.MatchedCount > 0, nil
 }
 
 func (r *ProjectMetadata) find(ctx context.Context, filter interface{}) ([]*project.ProjectMetadata, error) {

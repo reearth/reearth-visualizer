@@ -222,3 +222,110 @@ func TestProjectMetadata_Remove_CleansUpImportDoc(t *testing.T) {
 	require.NoError(t, err)
 	assert.Zero(t, count, "projectimport doc must be removed alongside projectmetadata")
 }
+
+// TestProjectMetadata_ClaimImport_NoExistingRecord verifies that a project
+// with no projectimport doc yet can be claimed.
+func TestProjectMetadata_ClaimImport_NoExistingRecord(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(c)
+	r := NewProjectMetadata(client)
+
+	pid := id.NewProjectID()
+	claimed, err := r.ClaimImport(context.Background(), pid, time.Minute)
+	require.NoError(t, err)
+	assert.True(t, claimed)
+}
+
+// TestProjectMetadata_ClaimImport_RefusesAlreadySucceeded is the regression
+// test for the bug where a filter designed to exclude SUCCESS records from
+// matching, combined with upsert=true and the unique index on project,
+// caused an attempted insert that collided with the existing document and
+// surfaced a duplicate-key error instead of a clean "not claimed".
+func TestProjectMetadata_ClaimImport_RefusesAlreadySucceeded(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(c)
+	r := NewProjectMetadata(client)
+	importCol := client.WithCollection("projectimport").Client()
+
+	pid := id.NewProjectID()
+	_, err := importCol.InsertOne(context.Background(), map[string]any{
+		"project":   pid.String(),
+		"status":    "SUCCESS",
+		"updatedat": time.Now().UTC(),
+	})
+	require.NoError(t, err)
+
+	claimed, err := r.ClaimImport(context.Background(), pid, time.Minute)
+	require.NoError(t, err, "must not surface a duplicate-key error")
+	assert.False(t, claimed)
+}
+
+// TestProjectMetadata_ClaimImport_RefusesFreshProcessing verifies that a
+// PROCESSING record within the staleness window refuses the claim without
+// erroring.
+func TestProjectMetadata_ClaimImport_RefusesFreshProcessing(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(c)
+	r := NewProjectMetadata(client)
+	importCol := client.WithCollection("projectimport").Client()
+
+	pid := id.NewProjectID()
+	_, err := importCol.InsertOne(context.Background(), map[string]any{
+		"project":   pid.String(),
+		"status":    "PROCESSING",
+		"updatedat": time.Now().UTC(),
+	})
+	require.NoError(t, err)
+
+	claimed, err := r.ClaimImport(context.Background(), pid, time.Hour)
+	require.NoError(t, err)
+	assert.False(t, claimed)
+}
+
+// TestProjectMetadata_ClaimImport_ReclaimsStaleProcessing verifies that a
+// PROCESSING record past the staleness window can be reclaimed.
+func TestProjectMetadata_ClaimImport_ReclaimsStaleProcessing(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(c)
+	r := NewProjectMetadata(client)
+	importCol := client.WithCollection("projectimport").Client()
+
+	pid := id.NewProjectID()
+	_, err := importCol.InsertOne(context.Background(), map[string]any{
+		"project":   pid.String(),
+		"status":    "PROCESSING",
+		"updatedat": time.Now().UTC().Add(-time.Hour),
+	})
+	require.NoError(t, err)
+
+	claimed, err := r.ClaimImport(context.Background(), pid, time.Minute)
+	require.NoError(t, err)
+	assert.True(t, claimed)
+
+	var doc struct {
+		Status string `bson:"status"`
+	}
+	require.NoError(t, importCol.FindOne(context.Background(), map[string]any{"project": pid.String()}).Decode(&doc))
+	assert.Equal(t, "PROCESSING", doc.Status)
+}
+
+// TestProjectMetadata_ClaimImport_ClaimsFailed verifies that a FAILED record
+// can be claimed (retry after a prior failure).
+func TestProjectMetadata_ClaimImport_ClaimsFailed(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(c)
+	r := NewProjectMetadata(client)
+	importCol := client.WithCollection("projectimport").Client()
+
+	pid := id.NewProjectID()
+	_, err := importCol.InsertOne(context.Background(), map[string]any{
+		"project":   pid.String(),
+		"status":    "FAILED",
+		"updatedat": time.Now().UTC(),
+	})
+	require.NoError(t, err)
+
+	claimed, err := r.ClaimImport(context.Background(), pid, time.Minute)
+	require.NoError(t, err)
+	assert.True(t, claimed)
+}
