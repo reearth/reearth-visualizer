@@ -27,6 +27,7 @@ type fakeProjectUsecase struct {
 	interfaces.Project
 	importProjectData  func(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error)
 	updateImportStatus func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error)
+	claimImport        func(ctx context.Context, pid id.ProjectID) (bool, error)
 }
 
 func (f *fakeProjectUsecase) ImportProjectData(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
@@ -35,6 +36,16 @@ func (f *fakeProjectUsecase) ImportProjectData(ctx context.Context, wsID string,
 
 func (f *fakeProjectUsecase) UpdateImportStatus(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error) {
 	return f.updateImportStatus(ctx, pid, status, msg, op)
+}
+
+// ClaimImport defaults to always granting the claim, since most of these
+// tests exercise timeout/panic handling rather than the idempotency guard
+// itself - only tests that care override claimImport.
+func (f *fakeProjectUsecase) ClaimImport(ctx context.Context, pid id.ProjectID) (bool, error) {
+	if f.claimImport != nil {
+		return f.claimImport(ctx, pid)
+	}
+	return true, nil
 }
 
 // writeTestExportZip builds the minimal zip UncompressExportZip accepts —

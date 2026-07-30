@@ -92,6 +92,15 @@ func servSignatureUploadFiles(
 				return nil, err
 			}
 
+			claimed, err := usecases.Project.ClaimImport(ctx, *pid)
+			if err != nil {
+				return nil, err
+			}
+			if !claimed {
+				log.Infof("[Import] skipping %s: already succeeded or in progress", pid.String())
+				return map[string]string{"status": "skipped", "reason": "already processed or in progress"}, nil
+			}
+
 			defer removeGcsZip(ctx, cfg.Gateways.File, base)
 
 			result := map[string]any{}
@@ -177,6 +186,16 @@ func servSignatureUploadFiles(
 				return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid filename format: %v", err))
 			}
 
+			claimed, err := usecases.Project.ClaimImport(ctx, *pid)
+			if err != nil {
+				log.Errorf("[Import] Failed to claim import for %s: %v", pid.String(), err)
+				return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("failed to claim import: %v", err))
+			}
+			if !claimed {
+				log.Infof("[Import] skipping %s: already succeeded or in progress", pid.String())
+				return map[string]string{"status": "skipped", "reason": "already processed or in progress"}, nil
+			}
+
 			defer removeGcsZip(ctx, cfg.Gateways.File, base)
 
 			result := map[string]any{}
@@ -249,8 +268,8 @@ func servSignatureUploadFiles(
 
 			log.Errorf("[Import] Failed to import project: %s", pid.String())
 			// ImportProject marks the import as Failed in the DB before returning false, so the failure is already
-			// recorded regardless of cause. Replaying the message risks creating duplicate projects/scenes/assets
-			// from partial state, so acknowledge to stop Pub/Sub retries.
+			// recorded regardless of cause. Acknowledge to stop Pub/Sub retries - a redelivered message no longer
+			// risks duplicate processing, since ClaimImport above already guards against that.
 			return map[string]string{"status": "unrecoverable", "reason": "import failed"}, nil
 		}),
 	)

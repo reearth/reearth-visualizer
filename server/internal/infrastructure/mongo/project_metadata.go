@@ -91,6 +91,40 @@ func (r *ProjectMetadata) Remove(ctx context.Context, id id.ProjectID) error {
 	return err
 }
 
+// ClaimImport atomically claims the right to run an import for pid, guarding
+// against concurrent or redelivered import attempts (e.g. Pub/Sub retrying
+// /api/storage-event). It fails the claim if a prior attempt already
+// succeeded, or if one is currently PROCESSING and not yet stale. Otherwise
+// it claims by setting status to PROCESSING, which also bumps updatedat -
+// the same timestamp saveImport already refreshes on every real status
+// transition - so it doubles as this claim's staleness clock.
+func (r *ProjectMetadata) ClaimImport(ctx context.Context, pid id.ProjectID, staleAfter time.Duration) (claimed bool, err error) {
+	now := time.Now().UTC()
+	staleCutoff := now.Add(-staleAfter)
+
+	filter := bson.M{
+		"project": pid.String(),
+		"status": bson.M{
+			"$ne": string(project.ProjectImportStatusSuccess),
+		},
+		"$or": []bson.M{
+			{"status": bson.M{"$ne": string(project.ProjectImportStatusProcessing)}},
+			{"updatedat": bson.M{"$lt": staleCutoff}},
+		},
+	}
+	update := bson.M{"$set": bson.M{
+		"project":   pid.String(),
+		"status":    string(project.ProjectImportStatusProcessing),
+		"updatedat": now,
+	}}
+
+	res, err := r.importClient.Client().UpdateOne(ctx, filter, update, options.Update().SetUpsert(true))
+	if err != nil {
+		return false, err
+	}
+	return res.MatchedCount > 0 || res.UpsertedCount > 0, nil
+}
+
 func (r *ProjectMetadata) find(ctx context.Context, filter interface{}) ([]*project.ProjectMetadata, error) {
 	c := mongodoc.NewProjectMetadataConsumer(r.f.Readable)
 	if err := r.client.Find(ctx, filter, c); err != nil {
