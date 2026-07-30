@@ -14,6 +14,7 @@ jobs:
       web: ${{ steps.web.outputs.any_modified }}
       server: ${{ steps.server.outputs.any_modified }}
       e2e: ${{ steps.e2e.outputs.any_modified }}
+      version_bump_only: ${{ steps.non_version_bump.outputs.any_modified == 'false' }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -51,6 +52,14 @@ jobs:
           files: |
             e2e/
             .github/workflows/playwright_ui_tests.yml
+
+      - name: changed files excluding version bump files
+        id: non_version_bump
+        uses: step-security/changed-files@2e07db73e5ccdb319b9a6c7766bd46d39d304bad # v47.0.5
+        with:
+          files_ignore: |
+            web/package.json
+            CHANGELOG.md
 
   ci-web:
     needs: prepare
@@ -173,7 +182,8 @@ jobs:
     uses: ./.github/workflows/deploy_server_nightly.yml
     secrets: inherit
   playwright-tests-pr:
-    needs: deploy-web-pr
+    needs: [deploy-web-pr, prepare]
+    if: needs.prepare.outputs.version_bump_only != 'true'
     permissions:
       contents: read
       id-token: write
@@ -184,7 +194,7 @@ jobs:
 
   playwright-tests-e2e-only:
     needs: prepare
-    if: needs.prepare.outputs.e2e == 'true' && needs.prepare.outputs.web != 'true' && github.event_name == 'pull_request'
+    if: needs.prepare.outputs.e2e == 'true' && needs.prepare.outputs.web != 'true' && needs.prepare.outputs.version_bump_only != 'true' && github.event_name == 'pull_request'
     permissions:
       contents: read
       id-token: write
