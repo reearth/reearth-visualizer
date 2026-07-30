@@ -59,7 +59,6 @@ jobs:
         with:
           files_ignore: |
             web/package.json
-            CHANGELOG.md
 
   ci-web:
     needs: prepare
