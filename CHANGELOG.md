@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.15 - 2026-07-30
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Translation on preset style name  ([#2336](https://github.com/reearth/reearth-visualizer/pull/2336)) [`88158a`](https://github.com/reearth/reearth-visualizer/commit/88158a)
+- Plugin playground import: filter out macOS metadata and handle nested file properly [VIZ-DEV-153] ([#2332](https://github.com/reearth/reearth-visualizer/pull/2332)) [`664942`](https://github.com/reearth/reearth-visualizer/commit/664942)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.15 ([#2337](https://github.com/reearth/reearth-visualizer/pull/2337)) [`cbdfc0`](https://github.com/reearth/reearth-visualizer/commit/cbdfc0)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Skip Playwright tests on version-bump-only PRs ([#2333](https://github.com/reearth/reearth-visualizer/pull/2333)) [`713eb4`](https://github.com/reearth/reearth-visualizer/commit/713eb4)
+- Stop release.yml from double-prefixing version with v ([#2331](https://github.com/reearth/reearth-visualizer/pull/2331)) [`5d64a9`](https://github.com/reearth/reearth-visualizer/commit/5d64a9)
+
 ## 1.0.0-beta.16.14 - 2026-07-29
 
 ### Web
