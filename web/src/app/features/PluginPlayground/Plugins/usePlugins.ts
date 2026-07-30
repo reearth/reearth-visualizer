@@ -209,10 +209,13 @@ export default () => {
           if (file.name.startsWith("__MACOSX/")) return false;
 
           const parts = file.name.split("/").filter((p) => p !== "");
-          // Only allow root level files: "file.js" (1 part) or "folder/file.js" (2 parts)
+          // Allow only zip-root files ("file.js") or files within a single top-level folder ("folder/file.js")
           if (parts.length > 2) return false;
           // Exclude macOS metadata files
-          if (parts.some((part) => part.startsWith("._"))) return false;
+          if (
+            parts.some((part) => part.startsWith("._") || part === ".DS_Store")
+          )
+            return false;
 
           return true;
         });
