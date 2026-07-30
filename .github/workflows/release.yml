@@ -24,7 +24,8 @@ jobs:
     permissions:
       contents: write
     outputs:
-      version: ${{ steps.changelog.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
+      sha: ${{ steps.commit.outputs.sha }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -52,20 +53,27 @@ jobs:
           version: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || github.event.inputs.version }}
           repo: ${{ github.repository }}
           latest: CHANGELOG_latest.md
+      - id: version
+        name: Determine version
+        env:
+          RAW_VERSION: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || steps.changelog.outputs.version }}
+        run: echo "version=${RAW_VERSION#v}" >> "$GITHUB_OUTPUT"
       - name: Upload latest CHANGELOG
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: changelog-${{ steps.changelog.outputs.version }}
+          name: changelog-${{ steps.version.outputs.version }}
           path: CHANGELOG_latest.md
-      - name: Commit & push to release
+      - id: commit
+        name: Commit & push to release
         env:
-          TAG: v${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || steps.changelog.outputs.version }}
+          TAG: v${{ steps.version.outputs.version }}
         run: |
           rm CHANGELOG_latest.md
           git add CHANGELOG.md
           git commit -am "$TAG"
           git tag $TAG
           git push --atomic origin release $TAG
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Commit & push to main
         run: git switch main && git cherry-pick release && git push
 
@@ -108,6 +116,7 @@ jobs:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACT }}
           artifactContentType: application/gzip
+          commit: ${{ needs.release.outputs.sha }}
           name: ${{ env.TAG }}
           tag: ${{ env.TAG }}
           bodyFile: CHANGELOG_latest.md
