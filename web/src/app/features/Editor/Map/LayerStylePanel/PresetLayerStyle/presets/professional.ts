@@ -3,7 +3,7 @@ import { PresetStyle } from "./types";
 export const professionalStyle: PresetStyle = {
   id: "professional",
   title: "Professional",
-  titleJa: "プロフェッショナル",
+  titleJa: "高度なスタイル",
   testId: "preset-style-professional",
   style: {
     marker: {
