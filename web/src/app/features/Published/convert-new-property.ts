@@ -112,6 +112,7 @@ function convertInfobox(
       // name: blockNames?.[b.extensionId] ?? "Infobox Block",
       pluginId: b.pluginId,
       extensionId: b.extensionId,
+      extensionType: "infoboxBlock" as const,
       property: processNewProperty(b.property)
     }))
   };

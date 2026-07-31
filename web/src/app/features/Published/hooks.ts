@@ -239,6 +239,7 @@ export default (alias?: string) => {
                   id: b.id,
                   pluginId: b.pluginId,
                   extensionId: b.extensionId,
+                  extensionType: "storyBlock" as const,
                   property: processNewProperty(b.property)
                 };
               })
