@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.17 - 2026-07-31
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Provide both wrapped and raw block property ([#2344](https://github.com/reearth/reearth-visualizer/pull/2344)) [`c1e100`](https://github.com/reearth/reearth-visualizer/commit/c1e100)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.17 ([#2345](https://github.com/reearth/reearth-visualizer/pull/2345)) [`106405`](https://github.com/reearth/reearth-visualizer/commit/106405)
+
 ## 1.0.0-beta.16.16 - 2026-07-31
 
 ### Web
