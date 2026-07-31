@@ -179,7 +179,9 @@ export default ({
       },
       runTimesCache: runTimesCacheHandler
     };
-  }, [pluginInstancesMeta, runTimesCacheHandler]);
+    // pluginInstancesMeta is a ref (always stable), runTimesCacheHandler is stable
+    // No need to recreate this object when blocks change - just update the ref
+  }, [runTimesCacheHandler]);
 
   return pluginInstances;
 };

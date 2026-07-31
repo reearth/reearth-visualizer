@@ -57,9 +57,9 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 		}
 	}()
 
-	// if err := i.CanWriteScene(param.SceneID, operator); err != nil {
-	// 	return nil, interfaces.ErrOperationDenied
-	// }
+	if err := i.CanWriteScene(param.SceneID, operator); err != nil {
+		return nil, err
+	}
 
 	style, err := scene.NewStyle().
 		NewID().
@@ -104,6 +104,10 @@ func (i *Style) UpdateStyle(ctx context.Context, param interfaces.UpdateStyleInp
 		return nil, err
 	}
 
+	if err := i.CanWriteScene(style.Scene(), operator); err != nil {
+		return nil, err
+	}
+
 	if param.Name != nil {
 		style.Rename(*param.Name)
 	}
@@ -143,9 +147,9 @@ func (i *Style) RemoveStyle(ctx context.Context, styleID id.StyleID, operator *u
 		return styleID, err
 	}
 
-	// if err := i.CanWriteScene(s.Scene(), operator); err != nil {
-	// 	return styleID, err
-	// }
+	if err := i.CanWriteScene(s.Scene(), operator); err != nil {
+		return styleID, err
+	}
 
 	if err := i.CheckSceneLock(ctx, s.Scene()); err != nil {
 		return styleID, err
@@ -183,9 +187,9 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 		return nil, err
 	}
 
-	// if err := i.CanWriteScene(s.Scene(), operator); err != nil {
-	// 	return nil, err
-	// }
+	if err := i.CanWriteScene(style.Scene(), operator); err != nil {
+		return nil, err
+	}
 
 	duplicatedStyle := style.Duplicate()
 

@@ -27,7 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.58.2-noble
-    environment: dev
     env:
       BASE_URL: ${{ inputs.url || secrets.REEARTH_WEB_E2E_BASEURL }}
       BUCKET: reearth-oss-visualizer-allure-reports
@@ -37,19 +36,19 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24"
+          node-version: "24.18.0"
 
       - name: Cache node modules
-        uses: actions/cache@v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache-node-modules
         with:
           path: e2e/node_modules
@@ -86,14 +85,14 @@ jobs:
 
       - name: Authenticate to Google Cloud for GCS
         if: always()
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           service_account: ${{ secrets.GC_SA_EMAIL }}
           workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
 
       - name: Setup Google Cloud SDK
         if: always()
-        uses: google-github-actions/setup-gcloud@v3
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
       - name: Check Allure Results
         if: always()
@@ -186,6 +185,25 @@ jobs:
           if [ -f "./out/allure-report/widgets/summary.json" ]; then
             gsutil cp ./out/allure-report/widgets/summary.json "gs://$BUCKET/runs/$RUN_ID/summary.json"
           fi
+
+      - name: Point bucket root at latest report
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        env:
+          RUN_ID: ${{ steps.run-id.outputs.run_id }}
+        run: |
+          if ! gsutil -q stat "gs://$BUCKET/runs/${RUN_ID}/index.html"; then
+            echo "Report not found in GCS, keeping existing root index.html"
+            exit 0
+          fi
+          cat > /tmp/root-index.html <<EOF
+          <!doctype html>
+          <meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=runs/${RUN_ID}/">
+          <title>Re:Earth Visualizer E2E</title>
+          <a href="runs/${RUN_ID}/">Latest report</a>
+          EOF
+          gsutil -h "Content-Type:text/html" -h "Cache-Control:no-cache" \
+            cp /tmp/root-index.html "gs://$BUCKET/index.html"
 
       - name: Update dashboard index.json
         if: always() && steps.check-results.outputs.has_results == 'true'

@@ -1,5 +1,7 @@
 import { Locator, Page, expect } from "@playwright/test";
 
+import { MAX_SCROLL_ATTEMPTS } from "../utils/constants";
+
 export class ProjectsPage {
   newProjectButton: Locator;
   importButton: Locator;
@@ -174,8 +176,98 @@ export class ProjectsPage {
     await expect(this.applyButton).toBeEnabled();
     await this.applyButton.click();
   }
+  /**
+   * Scrolls the projects list until the target project's grid card is in the
+   * DOM, or no further content loads. Required because the projects list uses
+   * infinite-scroll (load-more) and only shows 16 items per page.
+   *
+   * Uses evaluate + scrollTop + explicit dispatchEvent rather than mouse.wheel
+   * because headless WebKit on Linux does not reliably fire scroll events from
+   * synthetic WheelEvents on inner overflow containers.
+   */
+  async scrollToFindProject(projectName: string): Promise<void> {
+    let previousItemCount = -1;
+    let stagnantAttempts = 0;
+
+    for (let attempt = 0; attempt < MAX_SCROLL_ATTEMPTS; attempt++) {
+      if ((await this.gridProjectItem(projectName).count()) > 0) return;
+
+      const allCards = this.page.locator('[data-testid^="project-grid-item-"]');
+      const currentItemCount = await allCards.count();
+
+      // Item count stopped growing — likely no more pages to load, but allow a
+      // couple of retries in case the next page takes >5s to render in CI.
+      if (currentItemCount > 0 && currentItemCount === previousItemCount) {
+        stagnantAttempts++;
+        if (stagnantAttempts >= 2) return;
+      } else {
+        stagnantAttempts = 0;
+      }
+      previousItemCount = currentItemCount;
+
+      if (currentItemCount === 0) {
+        await this.page
+          .waitForFunction(
+            () =>
+              document.querySelectorAll('[data-testid^="project-grid-item-"]')
+                .length > 0,
+            { timeout: 5000 }
+          )
+          .catch(() => {});
+        continue;
+      }
+
+      // Scroll the overflow container and explicitly fire the scroll event so
+      // useLoadMore's listener is triggered in both headed and headless modes.
+      await this.page.evaluate(() => {
+        const wrapper: HTMLElement | null =
+          (document.querySelector(
+            '[data-testid="projects-wrapper"]'
+          ) as HTMLElement | null) ??
+          (() => {
+            const item = document.querySelector(
+              '[data-testid^="project-grid-item-"]'
+            );
+            if (!item) return null;
+            let el: HTMLElement | null =
+              item.parentElement as HTMLElement | null;
+            while (el && el !== document.body) {
+              const { overflow, overflowY } = window.getComputedStyle(el);
+              if (
+                overflow === "auto" ||
+                overflow === "scroll" ||
+                overflowY === "auto" ||
+                overflowY === "scroll"
+              )
+                return el;
+              el = el.parentElement as HTMLElement | null;
+            }
+            return null;
+          })();
+
+        if (!wrapper) return;
+        wrapper.scrollTop = wrapper.scrollHeight;
+        wrapper.dispatchEvent(new Event("scroll", { bubbles: false }));
+      });
+
+      const countSnapshot = currentItemCount;
+      await this.page
+        .waitForFunction(
+          (prev) =>
+            document.querySelectorAll('[data-testid^="project-grid-item-"]')
+              .length > prev,
+          countSnapshot,
+          { timeout: 5000 }
+        )
+        .catch(() => {});
+    }
+  }
+
   async deleteProject(projectName: string) {
+    await this.scrollToFindProject(projectName);
     const projectMenuButton = this.gridProjectMenuButton(projectName).first();
+    await projectMenuButton.waitFor({ state: "attached", timeout: 10000 });
+    await projectMenuButton.scrollIntoViewIfNeeded();
     await projectMenuButton.click();
     await this.moveToRecycleBinButton.click();
     await expect(this.popUpRemoveButton).toBeVisible();
@@ -228,9 +320,12 @@ export class ProjectsPage {
   }
 
   async goToProjectPage(projectName: string) {
+    await this.scrollToFindProject(projectName);
     const projectRow = this.page.getByTestId(
       `project-grid-item-${projectName}`
     );
+    await projectRow.first().waitFor({ state: "attached", timeout: 10000 });
+    await projectRow.first().scrollIntoViewIfNeeded();
     let attempts = 0;
     while (attempts < 3) {
       await projectRow.first().dblclick();

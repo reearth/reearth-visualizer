@@ -982,6 +982,11 @@ func (i *NLSLayer) RemoveCustomProperty(ctx context.Context, inp interfaces.AddO
 	if err != nil {
 		return nil, err
 	}
+
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
+		return nil, err
+	}
+
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil {
 		return nil, ErrSketchNotFound
 	}
@@ -1040,6 +1045,10 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 
 	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
 	if err != nil {
+		return nlslayer.Feature{}, err
+	}
+
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return nlslayer.Feature{}, err
 	}
 
@@ -1110,6 +1119,10 @@ func (i *NLSLayer) UpdateGeoJSONFeature(ctx context.Context, inp interfaces.Upda
 		return nlslayer.Feature{}, err
 	}
 
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
+		return nlslayer.Feature{}, err
+	}
+
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil || layer.Sketch().FeatureCollection().Features() == nil || len(layer.Sketch().FeatureCollection().Features()) == 0 {
 		return nlslayer.Feature{}, interfaces.ErrFeatureNotFound
 	}
@@ -1164,6 +1177,10 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 
 	layer, err := i.nlslayerRepo.FindByID(ctx, inp.LayerID)
 	if err != nil {
+		return id.FeatureID{}, err
+	}
+
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return id.FeatureID{}, err
 	}
 

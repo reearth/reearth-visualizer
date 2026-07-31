@@ -6,6 +6,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 .env
+.env.op
 test-results.json
 test-results/
 .last-run.json

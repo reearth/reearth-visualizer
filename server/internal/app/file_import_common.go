@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -226,6 +227,17 @@ func CreateTemporaryProject(ctx context.Context, usecases *interfaces.Container,
 
 }
 
+// updateImportStatusWriteTimeout bounds the status write below,
+// independent of whatever deadline ctx itself carries. This write is often
+// triggered by ctx already being canceled or expired (e.g. REL-03's worker
+// timeout) -- reusing that same context would make the write fail
+// immediately, silently losing the very status it's trying to record. 10s
+// is not a measured figure: this is a single Mongo write, not the whole
+// import pipeline (which observed a 1-14s range end to end in production),
+// so this is a deliberately generous multiple of a healthy single write,
+// not a tight bound.
+const updateImportStatusWriteTimeout = 10 * time.Second
+
 func UpdateImportStatus(
 	ctx context.Context,
 	usecases *interfaces.Container,
@@ -241,7 +253,9 @@ func UpdateImportStatus(
 	if project.ProjectImportStatusFailed == status {
 		log.Errorf("[Import Error] %s", message)
 	}
-	_, err := usecases.Project.UpdateImportStatus(ctx, pid, status, &importResultLog, op)
+	writeCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), updateImportStatusWriteTimeout)
+	defer cancel()
+	_, err := usecases.Project.UpdateImportStatus(writeCtx, pid, status, &importResultLog, op)
 	if err != nil {
 		log.Printf("failed to update import status: %v", err)
 	}

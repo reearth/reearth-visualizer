@@ -3,6 +3,7 @@ import { PresetStyle, PresetStyleCategory } from "./types";
 const pointsStyle: PresetStyle = {
   id: "points",
   title: "Points",
+  titleJa: "ポイント",
   testId: "preset-style-points",
   style: {
     marker: {
@@ -20,6 +21,7 @@ const pointsStyle: PresetStyle = {
 const pointWithLabelStyle: PresetStyle = {
   id: "pointWithLabel",
   title: "Point with label",
+  titleJa: "ポイント（ラベル）",
   testId: "preset-style-point-with-label",
   style: {
     marker: {
@@ -40,6 +42,7 @@ const pointWithLabelStyle: PresetStyle = {
 const polylineStyle: PresetStyle = {
   id: "polyline",
   title: "Polyline",
+  titleJa: "ポリライン",
   testId: "preset-style-polyline",
   style: {
     polyline: {
@@ -55,6 +58,7 @@ const polylineStyle: PresetStyle = {
 const polygonStyle: PresetStyle = {
   id: "polygon",
   title: "Polygon",
+  titleJa: "ポリゴン",
   testId: "preset-style-polygon",
   style: {
     polygon: {
@@ -69,6 +73,7 @@ const polygonStyle: PresetStyle = {
 const extrudedPolygonStyle: PresetStyle = {
   id: "extrudedPolygon",
   title: "Extruded polygon",
+  titleJa: "押し出しポリゴン",
   testId: "preset-style-extruded-polygon",
   style: {
     polygon: {
@@ -86,6 +91,7 @@ const extrudedPolygonStyle: PresetStyle = {
 const threeDTilesStyle: PresetStyle = {
   id: "threeDTiles",
   title: "3D Tiles",
+  titleJa: "3Dタイル",
   testId: "preset-style-3d-tiles",
   style: {
     "3dtiles": {
@@ -99,6 +105,7 @@ const threeDTilesStyle: PresetStyle = {
 export const basicGeometryPresets: PresetStyleCategory = {
   id: "basicGeometry",
   title: "Basic Geometry",
+  titleJa: "ジオメトリ別テンプレート",
   testId: "preset-style-basic-geometry",
   subs: [
     pointsStyle,

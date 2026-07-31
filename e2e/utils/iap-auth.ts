@@ -1,6 +1,7 @@
 import { Browser, BrowserContext } from '@playwright/test';
 
 import { createADCIAPContext, getADCIAPToken, makeADCIAPRequest } from './iap-auth-adc';
+import { RECORD_VIDEO_OPTIONS } from './iap-auth-common';
 import { createIdTokenIAPContext } from './iap-auth-id-token';
 import { createServiceAccountIAPContext, getServiceAccountIAPToken, makeServiceAccountIAPRequest } from './iap-auth-service-account';
 
@@ -49,7 +50,10 @@ export async function createIAPContext(
 
   // Skip IAP authentication if not needed
   if (!useIAPAuth) {
-    return browser.newContext(options);
+    return browser.newContext({
+      ...options,
+      recordVideo: RECORD_VIDEO_OPTIONS,
+    });
   }
 
   if (IAP_AUTH_METHOD === 'service-account') {

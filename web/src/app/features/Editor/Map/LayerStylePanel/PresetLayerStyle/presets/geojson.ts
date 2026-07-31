@@ -3,6 +3,7 @@ import { PresetStyle, PresetStyleCategory } from "./types";
 const geojsonSimpleStyle: PresetStyle = {
   id: "geojsonSimple",
   title: "GeoJSON Simple",
+  titleJa: "GeoJSONテンプレート",
   testId: "preset-style-geojson-simple",
   style: {
     marker: {
@@ -51,6 +52,7 @@ const geojsonSimpleStyle: PresetStyle = {
 export const geojsonPresets: PresetStyleCategory = {
   id: "geojson",
   title: "GeoJSON",
+  titleJa: "GeoJSON",
   testId: "preset-style-geojson",
   subs: [geojsonSimpleStyle]
 };

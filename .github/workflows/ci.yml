@@ -14,17 +14,18 @@ jobs:
       web: ${{ steps.web.outputs.any_modified }}
       server: ${{ steps.server.outputs.any_modified }}
       e2e: ${{ steps.e2e.outputs.any_modified }}
+      version_bump_only: ${{ steps.non_version_bump.outputs.any_modified == 'false' }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: changed files for web
         id: web
-        uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
+        uses: step-security/changed-files@2e07db73e5ccdb319b9a6c7766bd46d39d304bad # v47.0.5
         with:
           files: |
             web/
@@ -35,7 +36,7 @@ jobs:
 
       - name: changed files for server
         id: server
-        uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
+        uses: step-security/changed-files@2e07db73e5ccdb319b9a6c7766bd46d39d304bad # v47.0.5
         with:
           files: |
             server/
@@ -46,22 +47,29 @@ jobs:
 
       - name: changed files for e2e
         id: e2e
-        uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
+        uses: step-security/changed-files@2e07db73e5ccdb319b9a6c7766bd46d39d304bad # v47.0.5
         with:
           files: |
             e2e/
             .github/workflows/playwright_ui_tests.yml
 
+      - name: changed files excluding version bump files
+        id: non_version_bump
+        uses: step-security/changed-files@2e07db73e5ccdb319b9a6c7766bd46d39d304bad # v47.0.5
+        with:
+          files_ignore: |
+            web/package.json
+
   ci-web:
     needs: prepare
-    if: needs.prepare.outputs.web == 'true'
+    if: needs.prepare.outputs.web == 'true' && (github.event_name == 'pull_request' || github.ref_name == 'main')
     uses: ./.github/workflows/ci_web.yml
 
   ci-server:
     needs: prepare
     # server depends on web, so this should be triggered if web is modified
     # TODO: Simplify "if" when we discontinue embedding front-end in the server
-    if: needs.prepare.outputs.server == 'true' || needs.prepare.outputs.web == 'true'
+    if: (needs.prepare.outputs.server == 'true' || needs.prepare.outputs.web == 'true') && (github.event_name == 'pull_request' || github.ref_name == 'main')
     uses: ./.github/workflows/ci_server.yml
 
   ci:
@@ -72,7 +80,7 @@ jobs:
     if: ${{ !failure() }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
       - run: echo OK
@@ -151,7 +159,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
       - uses: reearth/actions/deploy-cloud-run-with-tag@0e91ef444d1423712c501f211823cecaa237f18c # main
@@ -173,7 +181,8 @@ jobs:
     uses: ./.github/workflows/deploy_server_nightly.yml
     secrets: inherit
   playwright-tests-pr:
-    needs: deploy-web-pr
+    needs: [deploy-web-pr, prepare]
+    if: needs.prepare.outputs.version_bump_only != 'true'
     permissions:
       contents: read
       id-token: write
@@ -184,7 +193,7 @@ jobs:
 
   playwright-tests-e2e-only:
     needs: prepare
-    if: needs.prepare.outputs.e2e == 'true' && github.event_name == 'pull_request'
+    if: needs.prepare.outputs.e2e == 'true' && needs.prepare.outputs.web != 'true' && needs.prepare.outputs.version_bump_only != 'true' && github.event_name == 'pull_request'
     permissions:
       contents: read
       id-token: write

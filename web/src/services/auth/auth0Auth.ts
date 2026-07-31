@@ -58,7 +58,11 @@ export const useAuth0Auth = (): AuthHook => {
     getAccessToken,
     login: () => {
       logOutFromTenant();
-      return loginWithRedirect();
+      return loginWithRedirect({
+        authorizationParams: {
+          ui_locales: navigator.language
+        }
+      });
     },
     logout: () => {
       logOutFromTenant();
