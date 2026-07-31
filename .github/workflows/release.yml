@@ -24,10 +24,11 @@ jobs:
     permissions:
       contents: write
     outputs:
-      version: ${{ steps.changelog.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
+      sha: ${{ steps.commit.outputs.sha }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
       - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -36,7 +37,7 @@ jobs:
           app-id: ${{ vars.GH_APP_ID }}
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
@@ -47,25 +48,32 @@ jobs:
           git config --global pull.rebase false
       - id: changelog
         name: Generate CHANGELOG
-        uses: reearth/changelog-action@main
+        uses: reearth/changelog-action@86cb9d7a3727f3cb6afe36a1536fad61e9775287 # main
         with:
           version: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || github.event.inputs.version }}
           repo: ${{ github.repository }}
           latest: CHANGELOG_latest.md
+      - id: version
+        name: Determine version
+        env:
+          RAW_VERSION: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || steps.changelog.outputs.version }}
+        run: echo "version=${RAW_VERSION#v}" >> "$GITHUB_OUTPUT"
       - name: Upload latest CHANGELOG
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: changelog-${{ steps.changelog.outputs.version }}
+          name: changelog-${{ steps.version.outputs.version }}
           path: CHANGELOG_latest.md
-      - name: Commit & push to release
+      - id: commit
+        name: Commit & push to release
         env:
-          TAG: v${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || steps.changelog.outputs.version }}
+          TAG: v${{ steps.version.outputs.version }}
         run: |
           rm CHANGELOG_latest.md
           git add CHANGELOG.md
           git commit -am "$TAG"
           git tag $TAG
           git push --atomic origin release $TAG
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Commit & push to main
         run: git switch main && git cherry-pick release && git push
 
@@ -87,11 +95,11 @@ jobs:
       ARTIFACT: reearth-web_v${{ needs.release.outputs.version }}.tar.gz
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
       - name: Fetch reearth-web release
-        uses: dsaltares/fetch-gh-release-asset@aa2ab1243d6e0d5b405b973c89fa4d06a2d0fff7 # master
+        uses: dsaltares/fetch-gh-release-asset@aa2ab1243d6e0d5b405b973c89fa4d06a2d0fff7 # 1.1.2
         with:
           version: tags/nightly
           file: reearth-web_nightly.tar.gz
@@ -108,6 +116,7 @@ jobs:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACT }}
           artifactContentType: application/gzip
+          commit: ${{ needs.release.outputs.sha }}
           name: ${{ env.TAG }}
           tag: ${{ env.TAG }}
           bodyFile: CHANGELOG_latest.md

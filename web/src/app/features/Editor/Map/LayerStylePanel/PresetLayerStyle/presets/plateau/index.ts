@@ -18,7 +18,7 @@ import { plateauTsunamiRisk } from "./tsunamiRisk";
 export const plateauPresets: PresetStyleCategory = {
   id: "plateauPresets",
   title: "Plateau Presets",
-  titleJa: "PLATEAUプリセット",
+  titleJa: "PLATEAU標準スタイル",
   testId: "preset-style-plateau-presets",
   subs: [
     plateauBuildingColorByHeight,

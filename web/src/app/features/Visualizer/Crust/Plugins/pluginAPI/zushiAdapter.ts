@@ -64,10 +64,85 @@ import type {
 import type { Widget } from "../../Widgets";
 import type { PluginPopupInfo } from "../Plugin/PopupContainer";
 import type { Context } from "../types";
+import type { Events } from "../utils/events";
 
 import type { CommonReearth } from "./commonReearth";
 import { exposedReearth } from "./exposedReearth";
 import type { GlobalThis, Reearth } from "./types";
+
+/**
+ * Wraps an Events<E> emitter's on/off with per-plugin-instance tracking, so
+ * every listener registered through the returned pair gets removed via
+ * registerCleanup when the plugin is disposed.
+ *
+ * WHY: the emitters this wraps (viewerEvents, cameraEvents, timelineEvents,
+ * layersEvents, sketchEvents, spatialIdEvents, selectionModeEvents) are each
+ * created once per Visualizer instance, not per plugin. A plugin calling
+ * e.g. `reearth.camera.on(...)` registers directly on that shared,
+ * longer-lived emitter, so without this bookkeeping nothing removes the
+ * listener when the plugin instance is disposed - it keeps firing into a
+ * freed QuickJS runtime for the rest of the session.
+ *
+ * Tracks only listeners the plugin hasn't already turned off itself, so a
+ * plugin that cycles on/off frequently doesn't grow this unboundedly.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function trackedEventPair<E extends Record<string, any[]>>(
+  events: Events<E>,
+  registerCleanup: (fn: () => void) => void,
+  label: string
+): {
+  on: <T extends keyof E>(
+    type: T,
+    callback: (...args: E[T]) => void,
+    options?: { once?: boolean }
+  ) => void;
+  off: <T extends keyof E>(type: T, callback: (...args: E[T]) => void) => void;
+} {
+  const registrations: {
+    type: keyof E;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    callback: (...args: any[]) => void;
+  }[] = [];
+
+  const on = <T extends keyof E>(
+    type: T,
+    callback: (...args: E[T]) => void,
+    options?: { once?: boolean }
+  ) => {
+    registrations.push({ type, callback });
+    if (options?.once) {
+      events.once(type, callback);
+    } else {
+      events.on(type, callback);
+    }
+  };
+
+  const off = <T extends keyof E>(type: T, callback: (...args: E[T]) => void) => {
+    events.off(type, callback);
+    const index = registrations.findIndex(
+      (r) => r.type === type && r.callback === callback
+    );
+    if (index !== -1) registrations.splice(index, 1);
+  };
+
+  registerCleanup(() => {
+    while (registrations.length) {
+      const registration = registrations.pop();
+      if (!registration) continue;
+      try {
+        events.off(registration.type, registration.callback);
+      } catch (err) {
+        console.error(
+          `[Zushi Adapter] Error removing ${label} event listener on dispose:`,
+          err
+        );
+      }
+    }
+  });
+
+  return { on, off };
+}
 
 /**
  * Re:Earth plugin context passed to the adapter
@@ -545,8 +620,59 @@ function wrapClientStorage(
  */
 function wrapCommonReearth(
   commonReearth: CommonReearth,
-  startEventLoop: () => void
+  startEventLoop: () => void,
+  events: Pick<
+    Context,
+    | "cameraEvents"
+    | "timelineEvents"
+    | "layersEvents"
+    | "sketchEvents"
+    | "spatialIdEvents"
+    | "selectionModeEvents"
+  >,
+  registerCleanup: (fn: () => void) => void
 ): CommonReearth {
+  // camera/layers/sketch/spatialId/timeline/selectionMode listeners are
+  // otherwise passed straight through from `commonReearth` unmodified - see
+  // trackedEventPair() above for why that leaks a listener per plugin
+  // instance that ever calls one of these `.on(...)` methods.
+  const camera = trackedEventPair(events.cameraEvents, registerCleanup, "camera") as {
+    on: Reearth["camera"]["on"];
+    off: Reearth["camera"]["off"];
+  };
+  const timeline = trackedEventPair(
+    events.timelineEvents,
+    registerCleanup,
+    "timeline"
+  ) as {
+    on: Reearth["timeline"]["on"];
+    off: Reearth["timeline"]["off"];
+  };
+  const layers = trackedEventPair(events.layersEvents, registerCleanup, "layers") as {
+    on: Reearth["layers"]["on"];
+    off: Reearth["layers"]["off"];
+  };
+  const sketch = trackedEventPair(events.sketchEvents, registerCleanup, "sketch") as {
+    on: Reearth["sketch"]["on"];
+    off: Reearth["sketch"]["off"];
+  };
+  const spatialId = trackedEventPair(
+    events.spatialIdEvents,
+    registerCleanup,
+    "spatialId"
+  ) as {
+    on: Reearth["spatialId"]["on"];
+    off: Reearth["spatialId"]["off"];
+  };
+  const selectionMode = trackedEventPair(
+    events.selectionModeEvents,
+    registerCleanup,
+    "selectionMode"
+  ) as {
+    on: Reearth["viewer"]["interactionMode"]["selectionMode"]["on"];
+    off: Reearth["viewer"]["interactionMode"]["selectionMode"]["off"];
+  };
+
   return {
     ...commonReearth,
     viewer: {
@@ -565,7 +691,40 @@ function wrapCommonReearth(
           commonReearth.viewer.tools.getCurrentLocationAsync,
           startEventLoop
         )
+      },
+      interactionMode: {
+        ...commonReearth.viewer.interactionMode,
+        selectionMode: {
+          ...commonReearth.viewer.interactionMode.selectionMode,
+          on: selectionMode.on,
+          off: selectionMode.off
+        }
       }
+    },
+    camera: {
+      ...commonReearth.camera,
+      on: camera.on,
+      off: camera.off
+    },
+    timeline: {
+      ...commonReearth.timeline,
+      on: timeline.on,
+      off: timeline.off
+    },
+    layers: {
+      ...commonReearth.layers,
+      on: layers.on,
+      off: layers.off
+    },
+    sketch: {
+      ...commonReearth.sketch,
+      on: sketch.on,
+      off: sketch.off
+    },
+    spatialId: {
+      ...commonReearth.spatialId,
+      on: spatialId.on,
+      off: spatialId.off
     }
   };
 }
@@ -586,7 +745,8 @@ function wrapCommonReearth(
  */
 export function createZushiExposedAPI(
   getContext: () => ReearthPluginContext,
-  messageHandlers: MessageHandlers
+  messageHandlers: MessageHandlers,
+  registerCleanup: (fn: () => void) => void
 ) {
   return (zushiCtx: ZushiPluginContext): GlobalThis => {
     // Get initial context for callbacks that don't need freshness
@@ -602,6 +762,17 @@ export function createZushiExposedAPI(
     } = reearthContext;
 
     const startEventLoop = zushiCtx.startEventLoop;
+
+    // Tracked on/off for every shared, per-Visualizer emitter reachable from
+    // plugin code. See trackedEventPair() above for why this is necessary.
+    const { on: viewerEventsOn, off: viewerEventsOff } = trackedEventPair(
+      reearthContext.context.viewerEvents,
+      registerCleanup,
+      "viewer"
+    ) as {
+      on: Reearth["viewer"]["on"];
+      off: Reearth["viewer"]["off"];
+    };
 
     // Create surface adapters
     const ui = createUIAdapter(zushiCtx.surfaces.ui, onRender);
@@ -638,11 +809,15 @@ export function createZushiExposedAPI(
       startEventLoop
     );
 
-    // Wrap commonReearth async methods with event loop trigger
+    // Wrap commonReearth async methods with event loop trigger, and its
+    // camera/timeline/layers/sketch/spatialId/selectionMode listeners with
+    // dispose tracking (see trackedEventPair() above).
     // context.reearth is accessed via context getter, so it's fresh
     const wrappedCommonReearth = wrapCommonReearth(
       reearthContext.context.reearth,
-      startEventLoop
+      startEventLoop,
+      reearthContext.context,
+      registerCleanup
     );
 
     // Build and return the exposed API
@@ -650,9 +825,9 @@ export function createZushiExposedAPI(
       commonReearth: wrappedCommonReearth,
       // Access plugin dynamically to get latest property values
       plugin: () => getContext().plugin,
-      // Viewer events (accessed via context getter, already fresh)
-      viewerEventsOn: reearthContext.context.viewerEvents.on,
-      viewerEventsOff: reearthContext.context.viewerEvents.off,
+      // Viewer events (tracked above so they're removed on plugin dispose)
+      viewerEventsOn,
+      viewerEventsOff,
       // Timeline (accessed via context getter, already fresh)
       timelineManagerRef: reearthContext.context.timelineManagerRef,
       // UI surface

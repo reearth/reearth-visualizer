@@ -27,6 +27,7 @@ import {
   LayersEventType,
   SelectionModeEventType,
   SketchEventType,
+  SpatialIdEventType,
   TimelineEventType,
   ViewerEventType
 } from "./pluginAPI/types";
@@ -84,4 +85,5 @@ export type Context = {
   timelineEvents: Events<TimelineEventType>;
   layersEvents: Events<LayersEventType>;
   sketchEvents: Events<SketchEventType>;
+  spatialIdEvents: Events<SpatialIdEventType>;
 };

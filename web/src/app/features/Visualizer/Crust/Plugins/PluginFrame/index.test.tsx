@@ -85,7 +85,8 @@ describe("PluginFrame", () => {
         cameraEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() },
         timelineEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() },
         layersEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() },
-        sketchEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() }
+        sketchEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() },
+        spatialIdEvents: { on: vi.fn(), off: vi.fn(), once: vi.fn() }
       } as ReearthPluginContext["context"]
     };
   });
