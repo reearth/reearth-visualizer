@@ -20,7 +20,7 @@ import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
 import { processProperty, processProperty as processPropertyForPlugin } from "./convert";
-import { processLayers } from "./convert-new-property";
+import { processLayers, processNewProperty } from "./convert-new-property";
 import { convertNLSLayers } from "./convert-nls-layers";
 import { useGA } from "./googleAnalytics/useGA";
 import type {
@@ -240,7 +240,8 @@ export default (alias?: string) => {
                   pluginId: b.pluginId,
                   extensionId: b.extensionId,
                   extensionType: "storyBlock" as const,
-                  property: processPropertyForPlugin(b.property)
+                  property: processNewProperty(b.property),
+                  propertyForPluginAPI: processPropertyForPlugin(b.property)
                 };
               })
             };
