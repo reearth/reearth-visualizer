@@ -5,16 +5,16 @@
 // static snapshots if using object spread ({ ...source }).
 export function copyWithOverrides<T extends object>(
   source: T,
-  overrides: Partial<Record<string, unknown>>
+  overrides: Partial<Record<PropertyKey, unknown>>
 ): T {
-  const descriptors: Record<string, PropertyDescriptor> = {};
+  const descriptors: Record<PropertyKey, PropertyDescriptor> = {};
   const sourceDescs = Object.getOwnPropertyDescriptors(source);
-  for (const key of Object.keys(sourceDescs)) {
-    descriptors[key] = sourceDescs[key];
+  for (const key of Reflect.ownKeys(sourceDescs)) {
+    descriptors[key] = sourceDescs[key as string];
   }
-  for (const key of Object.keys(overrides)) {
+  for (const key of Reflect.ownKeys(overrides)) {
     descriptors[key] = {
-      value: (overrides as Record<string, unknown>)[key],
+      value: (overrides as Record<PropertyKey, unknown>)[key],
       writable: true,
       enumerable: true,
       configurable: true

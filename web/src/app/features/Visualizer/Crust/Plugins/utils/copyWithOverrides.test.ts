@@ -160,4 +160,52 @@ describe("copyWithOverrides", () => {
     data.push(4);
     expect(fixedResult.items).toEqual([1, 2, 3, 4]); // reflects latest
   });
+
+  test("copies symbol-keyed properties", () => {
+    const sym = Symbol("test");
+    const source = { [sym]: 42 };
+    const result = copyWithOverrides(source, {});
+
+    expect((result as Record<PropertyKey, unknown>)[sym]).toBe(42);
+  });
+
+  test("overrides symbol-keyed properties", () => {
+    const sym = Symbol("test");
+    const source = { [sym]: 42 };
+    const result = copyWithOverrides(source, { [sym]: 99 });
+
+    expect((result as Record<PropertyKey, unknown>)[sym]).toBe(99);
+  });
+
+  test("preserves symbol-keyed getters", () => {
+    let counter = 0;
+    const sym = Symbol("dynamic");
+    const source = {
+      get [sym]() {
+        return ++counter;
+      }
+    };
+    const result = copyWithOverrides(source, {});
+
+    expect((result as Record<PropertyKey, unknown>)[sym]).toBe(1);
+    expect((result as Record<PropertyKey, unknown>)[sym]).toBe(2);
+  });
+
+  test("mixes string-keyed and symbol-keyed properties", () => {
+    let counter = 0;
+    const sym = Symbol("sym");
+    const source = {
+      get value() {
+        return ++counter;
+      },
+      [sym]: "symbol-value",
+      plain: "string-value"
+    };
+    const result = copyWithOverrides(source, { plain: "overridden" });
+
+    expect(result.value).toBe(1);
+    expect(result.value).toBe(2);
+    expect(result.plain).toBe("overridden");
+    expect((result as Record<PropertyKey, unknown>)[sym]).toBe("symbol-value");
+  });
 });
