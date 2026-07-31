@@ -9,6 +9,8 @@ import {
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import { mapValues } from "lodash-es";
 
+import { processProperty as processPropertyForPlugin } from "./convert";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const processNewProperty = (p: any): any => {
   // Property processing requires dynamic typing
@@ -113,7 +115,7 @@ function convertInfobox(
       pluginId: b.pluginId,
       extensionId: b.extensionId,
       extensionType: "infoboxBlock" as const,
-      property: processNewProperty(b.property)
+      property: processPropertyForPlugin(b.property)
     }))
   };
 }
