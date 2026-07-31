@@ -231,13 +231,19 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   const renderTrigger = () => {
     return typeof label === "string" ? (
       <LabelWrapper size={size} nested={!!nested}>
-        {icon && <Icon icon={icon} size="small" aria-hidden="true" />}
-        <Label nested={!!nested}>{label}</Label>
-        <Icon
-          color={theme.content.weak}
-          icon={nested ? "caretRight" : "caretDown"}
-          size="small"
-        />
+        {icon && (
+          <LabelIconWrapper>
+            <Icon icon={icon} size="small" aria-hidden="true" />
+          </LabelIconWrapper>
+        )}
+        <Label nested={!!nested}> {label}</Label>
+        <LabelIconWrapper>
+          <Icon
+            color={theme.content.weak}
+            icon={nested ? "caretRight" : "caretDown"}
+            size="small"
+          />
+        </LabelIconWrapper>
       </LabelWrapper>
     ) : label ? (
       label
@@ -366,7 +372,16 @@ const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
   fontSize: theme.fonts.sizes.body,
   flex: 1,
   color: nested ? theme.content.main : theme.content.weak,
-  fontWeight: nested ? "normal" : "bold"
+  fontWeight: nested ? "normal" : "bold",
+  whiteSpace: css.whiteSpace.nowrap,
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis
+}));
+
+const LabelIconWrapper = styled("div")(() => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  flexShrink: 0,
 }));
 
 const LabelWrapper = styled("div")<{
@@ -381,6 +396,7 @@ const LabelWrapper = styled("div")<{
       : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: "4px",
   flex: 1,
+  overflow: css.overflow.hidden,
   alignItems: css.alignItems.center,
   "&:hover": {
     background: theme.bg[2],
@@ -405,6 +421,8 @@ const TitleWrapper = styled("div")<{ disabled?: boolean; flex?: boolean }>(
     textOverflow: css.textOverflow.ellipsis,
     gap: theme.spacing.small,
     flex: 1,
-    ...(flex ? { display: css.display.flex, alignItems: css.alignItems.center } : {})
+    ...(flex
+      ? { display: css.display.flex, alignItems: css.alignItems.center }
+      : {})
   })
 );
