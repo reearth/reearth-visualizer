@@ -115,7 +115,8 @@ function convertInfobox(
       pluginId: b.pluginId,
       extensionId: b.extensionId,
       extensionType: "infoboxBlock" as const,
-      property: processPropertyForPlugin(b.property)
+      property: processNewProperty(b.property),
+      propertyForPluginAPI: processPropertyForPlugin(b.property)
     }))
   };
 }

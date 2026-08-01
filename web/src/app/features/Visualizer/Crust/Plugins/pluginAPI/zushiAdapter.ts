@@ -64,6 +64,7 @@ import type {
 import type { Widget } from "../../Widgets";
 import type { PluginPopupInfo } from "../Plugin/PopupContainer";
 import type { Context } from "../types";
+import { copyWithOverrides } from "../utils/copyWithOverrides";
 import type { Events } from "../utils/events";
 
 import type { CommonReearth } from "./commonReearth";
@@ -118,7 +119,10 @@ function trackedEventPair<E extends Record<string, any[]>>(
     }
   };
 
-  const off = <T extends keyof E>(type: T, callback: (...args: E[T]) => void) => {
+  const off = <T extends keyof E>(
+    type: T,
+    callback: (...args: E[T]) => void
+  ) => {
     events.off(type, callback);
     const index = registrations.findIndex(
       (r) => r.type === type && r.callback === callback
@@ -242,7 +246,10 @@ function createCloseEventManager(surfaceName: string): CloseEventManager {
         try {
           handler();
         } catch (err) {
-          console.error(`[Zushi Adapter] Error in ${surfaceName} close handler:`, err);
+          console.error(
+            `[Zushi Adapter] Error in ${surfaceName} close handler:`,
+            err
+          );
         }
       });
       // Execute once handlers and clear them
@@ -250,7 +257,10 @@ function createCloseEventManager(surfaceName: string): CloseEventManager {
         try {
           handler();
         } catch (err) {
-          console.error(`[Zushi Adapter] Error in ${surfaceName} close once handler:`, err);
+          console.error(
+            `[Zushi Adapter] Error in ${surfaceName} close once handler:`,
+            err
+          );
         }
       });
       onceHandlers.clear();
@@ -328,7 +338,10 @@ function createUIAdapter(
 function createModalAdapter(
   surface: SurfaceAPI,
   onRender?: (type: string) => void,
-  onModalShow?: (options?: { background?: string; clickBgToClose?: boolean }) => void,
+  onModalShow?: (options?: {
+    background?: string;
+    clickBgToClose?: boolean;
+  }) => void,
   onModalClose?: () => void
 ): {
   show: Reearth["modal"]["show"];
@@ -396,7 +409,9 @@ function createPopupAdapter(
   onPopupClose?: () => void,
   // Getters return getter functions to access latest widget/block
   getWidget?: () => (() => Widget | undefined) | undefined,
-  getBlock?: () => (() => Reearth["extension"]["block"] | undefined) | undefined,
+  getBlock?: () =>
+    | (() => Reearth["extension"]["block"] | undefined)
+    | undefined,
   getUIContainerRef?: () => { current: HTMLElement | null } | undefined
 ): {
   show: Reearth["popup"]["show"];
@@ -491,7 +506,10 @@ function createExtensionMessageHandler(
         try {
           handler(msg);
         } catch (err) {
-          console.error("[Zushi Adapter] Error in extensionMessage handler:", err);
+          console.error(
+            "[Zushi Adapter] Error in extensionMessage handler:",
+            err
+          );
         }
       });
       // Emit to once handlers and clear them
@@ -499,7 +517,10 @@ function createExtensionMessageHandler(
         try {
           handler(msg);
         } catch (err) {
-          console.error("[Zushi Adapter] Error in extensionMessage once handler:", err);
+          console.error(
+            "[Zushi Adapter] Error in extensionMessage once handler:",
+            err
+          );
         }
       });
       extensionMessageOnceHandlers.clear();
@@ -517,7 +538,11 @@ function createExtensionMessageHandler(
     postMessage: (id: string, msg: unknown, sender: string) => {
       context.pluginInstances.postMessage(id, msg, sender);
     },
-    on: (type: string, callback: (...args: any[]) => void, options?: { once?: boolean }) => {
+    on: (
+      type: string,
+      callback: (...args: any[]) => void,
+      options?: { once?: boolean }
+    ) => {
       if (type === "message") {
         if (options?.once) {
           messageHandlers.onceMessage(callback as (msg: unknown) => void);
@@ -589,11 +614,26 @@ function wrapClientStorage(
 ): Context["clientStorage"] {
   return {
     ...clientStorage,
-    getAsync: wrapAsync(clientStorage.getAsync.bind(clientStorage), startEventLoop),
-    setAsync: wrapAsync(clientStorage.setAsync.bind(clientStorage), startEventLoop),
-    deleteAsync: wrapAsync(clientStorage.deleteAsync.bind(clientStorage), startEventLoop),
-    keysAsync: wrapAsync(clientStorage.keysAsync.bind(clientStorage), startEventLoop),
-    dropStore: wrapAsync(clientStorage.dropStore.bind(clientStorage), startEventLoop)
+    getAsync: wrapAsync(
+      clientStorage.getAsync.bind(clientStorage),
+      startEventLoop
+    ),
+    setAsync: wrapAsync(
+      clientStorage.setAsync.bind(clientStorage),
+      startEventLoop
+    ),
+    deleteAsync: wrapAsync(
+      clientStorage.deleteAsync.bind(clientStorage),
+      startEventLoop
+    ),
+    keysAsync: wrapAsync(
+      clientStorage.keysAsync.bind(clientStorage),
+      startEventLoop
+    ),
+    dropStore: wrapAsync(
+      clientStorage.dropStore.bind(clientStorage),
+      startEventLoop
+    )
   };
 }
 
@@ -618,6 +658,7 @@ function wrapClientStorage(
  * SOLUTION: Use wrapAsync() utility to wrap each async method, ensuring the
  * plugin continues execution regardless of success or failure.
  */
+
 function wrapCommonReearth(
   commonReearth: CommonReearth,
   startEventLoop: () => void,
@@ -636,7 +677,11 @@ function wrapCommonReearth(
   // otherwise passed straight through from `commonReearth` unmodified - see
   // trackedEventPair() above for why that leaks a listener per plugin
   // instance that ever calls one of these `.on(...)` methods.
-  const camera = trackedEventPair(events.cameraEvents, registerCleanup, "camera") as {
+  const camera = trackedEventPair(
+    events.cameraEvents,
+    registerCleanup,
+    "camera"
+  ) as {
     on: Reearth["camera"]["on"];
     off: Reearth["camera"]["off"];
   };
@@ -648,11 +693,19 @@ function wrapCommonReearth(
     on: Reearth["timeline"]["on"];
     off: Reearth["timeline"]["off"];
   };
-  const layers = trackedEventPair(events.layersEvents, registerCleanup, "layers") as {
+  const layers = trackedEventPair(
+    events.layersEvents,
+    registerCleanup,
+    "layers"
+  ) as {
     on: Reearth["layers"]["on"];
     off: Reearth["layers"]["off"];
   };
-  const sketch = trackedEventPair(events.sketchEvents, registerCleanup, "sketch") as {
+  const sketch = trackedEventPair(
+    events.sketchEvents,
+    registerCleanup,
+    "sketch"
+  ) as {
     on: Reearth["sketch"]["on"];
     off: Reearth["sketch"]["off"];
   };
@@ -701,31 +754,26 @@ function wrapCommonReearth(
         }
       }
     },
-    camera: {
-      ...commonReearth.camera,
+    camera: copyWithOverrides(commonReearth.camera, {
       on: camera.on,
       off: camera.off
-    },
-    timeline: {
-      ...commonReearth.timeline,
+    }),
+    timeline: copyWithOverrides(commonReearth.timeline, {
       on: timeline.on,
       off: timeline.off
-    },
-    layers: {
-      ...commonReearth.layers,
+    }),
+    layers: copyWithOverrides(commonReearth.layers, {
       on: layers.on,
       off: layers.off
-    },
-    sketch: {
-      ...commonReearth.sketch,
+    }),
+    sketch: copyWithOverrides(commonReearth.sketch, {
       on: sketch.on,
       off: sketch.off
-    },
-    spatialId: {
-      ...commonReearth.spatialId,
+    }),
+    spatialId: copyWithOverrides(commonReearth.spatialId, {
       on: spatialId.on,
       off: spatialId.off
-    }
+    })
   };
 }
 
