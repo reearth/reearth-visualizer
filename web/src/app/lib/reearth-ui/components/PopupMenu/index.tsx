@@ -236,7 +236,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
             <Icon icon={icon} size="small" aria-hidden="true" />
           </LabelIconWrapper>
         )}
-        <Label nested={!!nested}> {label}</Label>
+        <Label nested={!!nested}>{label}</Label>
         <LabelIconWrapper>
           <Icon
             color={theme.content.weak}
