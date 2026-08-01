@@ -122,7 +122,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     return (
       <Item
         hasBorderBottom={!!hasBorderBottom}
-        key={index}
+        key={id}
         size={size}
         disabled={disabled}
         onClick={() => {
@@ -389,6 +389,8 @@ const SubMenuScrollable = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   gap: `${theme.spacing.micro}px`,
+  flex: 1,
+  minHeight: 0,
   ...theme.scrollBar
 }));
 

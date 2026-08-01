@@ -12,11 +12,11 @@ import {
   generateExternalUrl
 } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
+import { useAddWorkspaceModal } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { ProjectType } from "@reearth/types";
 import { FC, useMemo } from "react";
-import { useNavigate } from "react-router";
 
 export type Project = {
   id?: string;
@@ -30,17 +30,19 @@ type ProfileProps = {
   currentWorkspace?: Workspace;
   workspaces?: Workspace[];
   onWorkspaceChange?: (workspaceId: string) => void;
+  "data-testid"?: string;
 };
 
 const Profile: FC<ProfileProps> = ({
   currentUser,
   workspaces,
   currentWorkspace,
+  "data-testid": dataTestid,
   onWorkspaceChange
 }) => {
   const t = useT();
   const theme = useTheme();
-  const navigate = useNavigate();
+  const [, setAddWorkspaceModal] = useAddWorkspaceModal();
 
   const { workspaceManagementMenu } = useWorkspaceManagementMenu({
     workspaceId: currentWorkspace?.id,
@@ -98,7 +100,7 @@ const Profile: FC<ProfileProps> = ({
                 }),
                 "_blank"
               )
-            : navigate(`/settings/workspaces/${currentWorkspace?.id}`)
+            : setAddWorkspaceModal(true)
       });
     }
 
@@ -110,7 +112,7 @@ const Profile: FC<ProfileProps> = ({
     currentWorkspace?.alias,
     onWorkspaceChange,
     theme.primary.main,
-    navigate
+    setAddWorkspaceModal
   ]);
 
   const popupMenu: PopupMenuItem[] = useMemo(
@@ -156,7 +158,7 @@ const Profile: FC<ProfileProps> = ({
         </TitleWrapper>
         <PopupWrapper data-testid="profile-popupWrapper">
           <PopupMenu
-            data-testid="profile-popupMenu"
+            dataTestid={dataTestid ?? "profile-popupMenu"}
             label={
               <Icon
                 color={theme.content.weak}

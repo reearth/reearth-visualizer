@@ -184,7 +184,7 @@ const LeftSection: React.FC<Props> = ({
         </StyledLink>
       )}
       <Profile
-        data-testid="sidebar-profile"
+        data-testid="navbar-profile"
         currentUser={currentWorkspace?.name}
         currentWorkspace={currentWorkspace}
         workspaces={workspaces}
