@@ -3,7 +3,7 @@ import { PresetStyle } from "./types";
 export const defaultStyle: PresetStyle = {
   id: "default",
   title: "Default",
-  titleJa: "デフォルト",
+  titleJa: "デフォルトプリセット",
   testId: "preset-style-default",
   style: {
     marker: {
