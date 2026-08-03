@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.18 - 2026-08-03
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Preserve viewer getters in plugin API wrapper ([#2346](https://github.com/reearth/reearth-visualizer/pull/2346)) [`c5f23f`](https://github.com/reearth/reearth-visualizer/commit/c5f23f)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.18 ([#2347](https://github.com/reearth/reearth-visualizer/pull/2347)) [`f9444a`](https://github.com/reearth/reearth-visualizer/commit/f9444a)
+
+## 1.0.0-beta.16.17 - 2026-07-31
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Provide both wrapped and raw block property ([#2344](https://github.com/reearth/reearth-visualizer/pull/2344)) [`c1e100`](https://github.com/reearth/reearth-visualizer/commit/c1e100)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.17 ([#2345](https://github.com/reearth/reearth-visualizer/pull/2345)) [`106405`](https://github.com/reearth/reearth-visualizer/commit/106405)
+
+## 1.0.0-beta.16.16 - 2026-07-31
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Preserve dynamic getters in plugin API wrapper ([#2341](https://github.com/reearth/reearth-visualizer/pull/2341)) [`1dba7a`](https://github.com/reearth/reearth-visualizer/commit/1dba7a)
+- Plugin extension infoboxBlock and storyBlock cannot get block property ([#2340](https://github.com/reearth/reearth-visualizer/pull/2340)) [`84f722`](https://github.com/reearth/reearth-visualizer/commit/84f722)
+
+#### Miscellaneous Tasks
+
+- Bump package version to 1.0.0-beta.16.16 ([#2343](https://github.com/reearth/reearth-visualizer/pull/2343)) [`de0d32`](https://github.com/reearth/reearth-visualizer/commit/de0d32)
+
 ## 1.0.0-beta.16.15 - 2026-07-30
 
 ### Web
