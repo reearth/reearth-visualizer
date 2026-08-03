@@ -20,8 +20,6 @@ import (
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
-	"github.com/reearth/reearthx/util"
-
 	"github.com/99designs/gqlgen/graphql"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -731,9 +729,8 @@ func (i *Project) CheckProjectAlias(ctx context.Context, newAlias string, wsid a
 		}
 	}
 
-	ok := util.IsSafePathName(newAlias)
-	if !ok {
-		return false, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newAlias)
+	if err := alias.CheckAliasPatternScene(strings.ToLower(newAlias)); err != nil {
+		return false, err
 	}
 
 	err := i.projectRepo.CheckProjectAliasUnique(ctx, wsid, newAlias, pid)
@@ -1394,9 +1391,8 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 			return nil, err
 		}
 
-		ok := util.IsSafePathName(newProjectAlias)
-		if !ok {
-			return nil, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newProjectAlias)
+		if err := alias.CheckAliasPatternScene(strings.ToLower(newProjectAlias)); err != nil {
+			return nil, err
 		}
 	}
 

@@ -7,7 +7,7 @@
       },
       "invalid_project_alias": {
         "message": "Invalid alias name: {{.aliasName}}",
-        "description": "The entered alias contains characters that are not allowed."
+        "description": "The alias must be 5-32 characters long and can only contain alphanumeric characters and hyphens (a-z, 0-9, -)."
       },
       "project_alias_already_exists": {
         "message": "The alias is already in use within the workspace. Please try a different value.",

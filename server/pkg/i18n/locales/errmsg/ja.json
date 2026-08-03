@@ -7,7 +7,7 @@
       },
       "invalid_project_alias": {
         "message": "不正なエイリアス名です: {{.aliasName}}",
-        "description": "入力されたエイリアスに使用できない文字が含まれています。"
+        "description": "エイリアス名は5〜32文字で、英数字とハイフン（a-z、0-9、-）のみ使用できます。"
       },
       "project_alias_already_exists": {
         "message": "そのエイリアスはワークスペース内で既に使用されています。別の値を試してください",
