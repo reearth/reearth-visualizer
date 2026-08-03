@@ -19,7 +19,7 @@ import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
-import { processProperty } from "./convert";
+import { processProperty, processProperty as processPropertyForPlugin } from "./convert";
 import { processLayers, processNewProperty } from "./convert-new-property";
 import { convertNLSLayers } from "./convert-nls-layers";
 import { useGA } from "./googleAnalytics/useGA";
@@ -239,7 +239,9 @@ export default (alias?: string) => {
                   id: b.id,
                   pluginId: b.pluginId,
                   extensionId: b.extensionId,
-                  property: processNewProperty(b.property)
+                  extensionType: "storyBlock" as const,
+                  property: processNewProperty(b.property),
+                  propertyForPluginAPI: processPropertyForPlugin(b.property)
                 };
               })
             };
