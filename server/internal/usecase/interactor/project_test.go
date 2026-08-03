@@ -284,7 +284,7 @@ func TestProject_CheckProjectAlias(t *testing.T) {
 
 	existingAlias := "existing-alias"
 	pj := factory.NewProject(func(p *project.Builder) {
-		p.Workspace(ws.ID()).Alias(existingAlias)
+		p.Workspace(ws.ID()).ProjectAlias(existingAlias)
 	})
 	_ = uc.projectRepo.Save(ctx, pj)
 	pid := pj.ID()
