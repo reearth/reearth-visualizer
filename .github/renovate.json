@@ -3,5 +3,19 @@
   "extends": [
     "github>reearth/renovate-config"
   ],
-  "rebaseWhen": "conflicted"
+  "rebaseWhen": "conflicted",
+  "packageRules": [
+    {
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "Go dependencies",
+      "groupSlug": "gomod"
+    },
+    {
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "{{depName}} (major)",
+      "groupSlug": "{{depNameSanitized}}-major"
+    }
+  ]
 }

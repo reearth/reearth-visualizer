@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.18 - 2026-08-03
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Preserve viewer getters in plugin API wrapper ([#2346](https://github.com/reearth/reearth-visualizer/pull/2346)) [`c5f23f`](https://github.com/reearth/reearth-visualizer/commit/c5f23f)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.18 ([#2347](https://github.com/reearth/reearth-visualizer/pull/2347)) [`f9444a`](https://github.com/reearth/reearth-visualizer/commit/f9444a)
+
 ## 1.0.0-beta.16.17 - 2026-07-31
 
 ### Web
