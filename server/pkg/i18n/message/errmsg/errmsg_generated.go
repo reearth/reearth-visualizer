@@ -53,11 +53,11 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 	ErrKeyPkgProjectInvalidProjectAlias: {
 		language.English: {
 			Message:     "Invalid alias name: {{.aliasName}}",
-			Description: "The alias must be 5-32 characters long and can only contain alphanumeric characters and hyphens (a-z, 0-9, -).",
+			Description: "The alias must be 5-32 characters long, start and end with an alphanumeric character, and can only contain alphanumeric characters and hyphens (a-z, 0-9, -).",
 		},
 		language.Japanese: {
 			Message:     "不正なエイリアス名です: {{.aliasName}}",
-			Description: "エイリアス名は5〜32文字で、英数字とハイフン（a-z、0-9、-）のみ使用できます。",
+			Description: "エイリアス名は5〜32文字で、先頭と末尾は英数字でなければならず、英数字とハイフン（a-z、0-9、-）のみ使用できます。",
 		},
 	},
 	ErrKeyPkgProjectInvalidReservedAlias: {

@@ -713,9 +713,10 @@ func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.
 }
 
 func (i *Project) CheckProjectAlias(ctx context.Context, newAlias string, wsid accountsID.WorkspaceID, pid *id.ProjectID) (bool, error) {
+	normalizedAlias := strings.ToLower(newAlias)
 
 	if pid != nil {
-		if alias.ReservedReearthPrefixProject+pid.String() == newAlias || pid.String() == newAlias {
+		if alias.ReservedReearthPrefixProject+pid.String() == normalizedAlias || pid.String() == normalizedAlias {
 			return true, nil
 		}
 
@@ -724,16 +725,16 @@ func (i *Project) CheckProjectAlias(ctx context.Context, newAlias string, wsid a
 			return false, err
 		}
 
-		if prj.ProjectAlias() == newAlias {
+		if prj.ProjectAlias() == normalizedAlias {
 			return true, nil
 		}
 	}
 
-	if err := alias.CheckAliasPatternScene(strings.ToLower(newAlias)); err != nil {
+	if err := alias.CheckAliasPatternScene(normalizedAlias); err != nil {
 		return false, err
 	}
 
-	err := i.projectRepo.CheckProjectAliasUnique(ctx, wsid, newAlias, pid)
+	err := i.projectRepo.CheckProjectAliasUnique(ctx, wsid, normalizedAlias, pid)
 	if err != nil {
 		return false, err
 	}
@@ -1384,14 +1385,14 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	newProjectAlias := alias.ReservedReearthPrefixProject + prjID.String()
 	if input.ProjectAlias != nil {
 
-		newProjectAlias = *input.ProjectAlias
+		newProjectAlias = strings.ToLower(*input.ProjectAlias)
 
-		err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
-		if err != nil {
+		if err := alias.CheckAliasPatternScene(newProjectAlias); err != nil {
 			return nil, err
 		}
 
-		if err := alias.CheckAliasPatternScene(strings.ToLower(newProjectAlias)); err != nil {
+		err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
+		if err != nil {
 			return nil, err
 		}
 	}
