@@ -183,6 +183,7 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 			}
 
 			if len(ids) > 0 {
+				fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: saving scene properties: %v\n", ids)
 				return propCol.SaveAll(ctx, ids, newRows)
 			}
 			return nil
@@ -211,6 +212,8 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 				removed := false
 				for _, item := range doc.Items {
 					if item.SchemaGroup == "tiles" && item.Type == "group" {
+						val, _ := tileTypeFromTilesItem(item)
+						fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: widget property %q had tile_type=%q before removal\n", doc.ID, val)
 						removed = true
 						continue
 					}
@@ -226,6 +229,7 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 			}
 
 			if len(ids) > 0 {
+				fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: saving widget properties: %v\n", ids)
 				return propCol.SaveAll(ctx, ids, newRows)
 			}
 			return nil
