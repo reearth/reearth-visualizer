@@ -156,7 +156,7 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 				// the configured Pub/Sub push subscription / Cloud Function before trusting
 				// anything in the body, which is otherwise fully caller-controlled (SEC-02).
 				if err := verifyPushRequestToken(ctx, cfg, req); err != nil {
-					log.Errorf("import project push token verification err: %v", err)
+					log.Errorf("%s push token verification err: %v", req.URL.Path, err)
 					return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
 				}
 
