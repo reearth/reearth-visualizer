@@ -43,7 +43,6 @@ func TestCheckAliasPatternScene(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			err := CheckAliasPatternScene(tt.alias)
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -70,7 +69,6 @@ func TestCheckAliasPatternStorytelling(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			err := CheckAliasPatternStorytelling(tt.alias)
 			if tt.wantErr {
 				assert.Error(t, err)

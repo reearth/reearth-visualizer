@@ -307,19 +307,14 @@ func TestProject_CheckProjectAlias(t *testing.T) {
 		})
 	})
 
-	t.Run("normalization", func(t *testing.T) {
-		t.Run("uppercase input is normalized to lowercase", func(t *testing.T) {
+	t.Run("case handling", func(t *testing.T) {
+		t.Run("uppercase input passes pattern validation (lowercased for check)", func(t *testing.T) {
 			ok, err := uc.CheckProjectAlias(ctx, "My-Project-Alias", ws.ID(), nil)
 			assert.NoError(t, err)
 			assert.True(t, ok)
 		})
-		t.Run("same alias with different casing is treated as duplicate", func(t *testing.T) {
+		t.Run("uniqueness check is case-sensitive: different casing is not a duplicate", func(t *testing.T) {
 			ok, err := uc.CheckProjectAlias(ctx, strings.ToUpper(existingAlias), ws.ID(), nil)
-			assert.Error(t, err)
-			assert.False(t, ok)
-		})
-		t.Run("same alias returns true for existing project (unchanged)", func(t *testing.T) {
-			ok, err := uc.CheckProjectAlias(ctx, strings.ToUpper(existingAlias), ws.ID(), &pid)
 			assert.NoError(t, err)
 			assert.True(t, ok)
 		})
@@ -359,7 +354,7 @@ func TestProject_CheckProjectAlias(t *testing.T) {
 	})
 
 	t.Run("existing project (update scenario)", func(t *testing.T) {
-		t.Run("same alias returns true", func(t *testing.T) {
+		t.Run("exact same alias returns true", func(t *testing.T) {
 			ok, err := uc.CheckProjectAlias(ctx, existingAlias, ws.ID(), &pid)
 			assert.NoError(t, err)
 			assert.True(t, ok)
