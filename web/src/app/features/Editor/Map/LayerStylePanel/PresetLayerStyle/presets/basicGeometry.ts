@@ -3,7 +3,7 @@ import { PresetStyle, PresetStyleCategory } from "./types";
 const pointsStyle: PresetStyle = {
   id: "points",
   title: "Points",
-  titleJa: "点群",
+  titleJa: "ポイント",
   testId: "preset-style-points",
   style: {
     marker: {
@@ -21,7 +21,7 @@ const pointsStyle: PresetStyle = {
 const pointWithLabelStyle: PresetStyle = {
   id: "pointWithLabel",
   title: "Point with label",
-  titleJa: "ラベル付き点",
+  titleJa: "ポイント（ラベル）",
   testId: "preset-style-point-with-label",
   style: {
     marker: {
@@ -42,7 +42,7 @@ const pointWithLabelStyle: PresetStyle = {
 const polylineStyle: PresetStyle = {
   id: "polyline",
   title: "Polyline",
-  titleJa: "折れ線",
+  titleJa: "ポリライン",
   testId: "preset-style-polyline",
   style: {
     polyline: {
@@ -58,7 +58,7 @@ const polylineStyle: PresetStyle = {
 const polygonStyle: PresetStyle = {
   id: "polygon",
   title: "Polygon",
-  titleJa: "多角形",
+  titleJa: "ポリゴン",
   testId: "preset-style-polygon",
   style: {
     polygon: {
@@ -73,7 +73,7 @@ const polygonStyle: PresetStyle = {
 const extrudedPolygonStyle: PresetStyle = {
   id: "extrudedPolygon",
   title: "Extruded polygon",
-  titleJa: "押し出し多角形",
+  titleJa: "押し出しポリゴン",
   testId: "preset-style-extruded-polygon",
   style: {
     polygon: {
@@ -105,7 +105,7 @@ const threeDTilesStyle: PresetStyle = {
 export const basicGeometryPresets: PresetStyleCategory = {
   id: "basicGeometry",
   title: "Basic Geometry",
-  titleJa: "基本ジオメトリ",
+  titleJa: "ジオメトリ別テンプレート",
   testId: "preset-style-basic-geometry",
   subs: [
     pointsStyle,

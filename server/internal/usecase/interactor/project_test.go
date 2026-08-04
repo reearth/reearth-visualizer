@@ -260,6 +260,113 @@ func TestProject_CheckAlias(t *testing.T) {
 	})
 }
 
+func TestProject_CheckProjectAlias(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	us := factory.NewUser()
+	_ = uc.userRepo.Save(ctx, us)
+
+	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
+		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
+			accountsID.NewUserID(): {
+				Role:      accountsRole.RoleOwner,
+				Disabled:  false,
+				InvitedBy: accountsWorkspace.UserID(us.ID()),
+				Host:      "",
+			},
+		})
+	})
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	existingAlias := "existing-alias"
+	pj := factory.NewProject(func(p *project.Builder) {
+		p.Workspace(ws.ID()).ProjectAlias(existingAlias)
+	})
+	_ = uc.projectRepo.Save(ctx, pj)
+	pid := pj.ID()
+
+	t.Run("valid aliases", func(t *testing.T) {
+		t.Run("minimum length (5 chars)", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, "abcde", ws.ID(), nil)
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
+		t.Run("maximum length (32 chars)", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, strings.Repeat("a", 32), ws.ID(), nil)
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
+		t.Run("with hyphens in middle", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, "my-project-alias", ws.ID(), nil)
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
+	})
+
+	t.Run("case handling", func(t *testing.T) {
+		t.Run("uppercase input passes pattern validation (lowercased for check)", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, "My-Project-Alias", ws.ID(), nil)
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
+		t.Run("uniqueness check is case-sensitive: different casing is not a duplicate", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, strings.ToUpper(existingAlias), ws.ID(), nil)
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
+	})
+
+	t.Run("invalid aliases", func(t *testing.T) {
+		t.Run("too short (4 chars)", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, "abcd", ws.ID(), nil)
+			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
+			assert.False(t, ok)
+		})
+		t.Run("too long (33 chars)", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, strings.Repeat("a", 33), ws.ID(), nil)
+			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
+			assert.False(t, ok)
+		})
+		t.Run("ends with hyphen", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, "myalias-", ws.ID(), nil)
+			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
+			assert.False(t, ok)
+		})
+		t.Run("starts with hyphen", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, "-myalias", ws.ID(), nil)
+			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
+			assert.False(t, ok)
+		})
+		t.Run("reserved word", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, "admin", ws.ID(), nil)
+			assert.EqualError(t, err, alias.ErrInvalidReservedProjectAlias.Error())
+			assert.False(t, ok)
+		})
+		t.Run("alias already exists in workspace", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, existingAlias, ws.ID(), nil)
+			assert.Error(t, err)
+			assert.False(t, ok)
+		})
+	})
+
+	t.Run("existing project (update scenario)", func(t *testing.T) {
+		t.Run("exact same alias returns true", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, existingAlias, ws.ID(), &pid)
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
+		t.Run("new valid alias returns true", func(t *testing.T) {
+			ok, err := uc.CheckProjectAlias(ctx, "new-valid-alias", ws.ID(), &pid)
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
+	})
+}
+
 func TestProject_FindActiveById(t *testing.T) {
 	ctx := context.Background()
 

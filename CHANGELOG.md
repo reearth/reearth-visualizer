@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.18 - 2026-08-03
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Preserve viewer getters in plugin API wrapper ([#2346](https://github.com/reearth/reearth-visualizer/pull/2346)) [`c5f23f`](https://github.com/reearth/reearth-visualizer/commit/c5f23f)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.18 ([#2347](https://github.com/reearth/reearth-visualizer/pull/2347)) [`f9444a`](https://github.com/reearth/reearth-visualizer/commit/f9444a)
+
+## 1.0.0-beta.16.17 - 2026-07-31
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Provide both wrapped and raw block property ([#2344](https://github.com/reearth/reearth-visualizer/pull/2344)) [`c1e100`](https://github.com/reearth/reearth-visualizer/commit/c1e100)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.17 ([#2345](https://github.com/reearth/reearth-visualizer/pull/2345)) [`106405`](https://github.com/reearth/reearth-visualizer/commit/106405)
+
+## 1.0.0-beta.16.16 - 2026-07-31
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Preserve dynamic getters in plugin API wrapper ([#2341](https://github.com/reearth/reearth-visualizer/pull/2341)) [`1dba7a`](https://github.com/reearth/reearth-visualizer/commit/1dba7a)
+- Plugin extension infoboxBlock and storyBlock cannot get block property ([#2340](https://github.com/reearth/reearth-visualizer/pull/2340)) [`84f722`](https://github.com/reearth/reearth-visualizer/commit/84f722)
+
+#### Miscellaneous Tasks
+
+- Bump package version to 1.0.0-beta.16.16 ([#2343](https://github.com/reearth/reearth-visualizer/pull/2343)) [`de0d32`](https://github.com/reearth/reearth-visualizer/commit/de0d32)
+
+## 1.0.0-beta.16.15 - 2026-07-30
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Translation on preset style name  ([#2336](https://github.com/reearth/reearth-visualizer/pull/2336)) [`88158a`](https://github.com/reearth/reearth-visualizer/commit/88158a)
+- Plugin playground import: filter out macOS metadata and handle nested file properly [VIZ-DEV-153] ([#2332](https://github.com/reearth/reearth-visualizer/pull/2332)) [`664942`](https://github.com/reearth/reearth-visualizer/commit/664942)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.15 ([#2337](https://github.com/reearth/reearth-visualizer/pull/2337)) [`cbdfc0`](https://github.com/reearth/reearth-visualizer/commit/cbdfc0)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Skip Playwright tests on version-bump-only PRs ([#2333](https://github.com/reearth/reearth-visualizer/pull/2333)) [`713eb4`](https://github.com/reearth/reearth-visualizer/commit/713eb4)
+- Stop release.yml from double-prefixing version with v ([#2331](https://github.com/reearth/reearth-visualizer/pull/2331)) [`5d64a9`](https://github.com/reearth/reearth-visualizer/commit/5d64a9)
+
 ## 1.0.0-beta.16.14 - 2026-07-29
 
 ### Web

@@ -33,9 +33,10 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
   const layerStyleAddedRef = useRef<string | undefined>(undefined);
   const t = useT();
   const lang = useLang();
-  
+
   const localize = useCallback(
-    (title: string, titleJa?: string) => (lang === "ja" && titleJa ? titleJa : title),
+    (title: string, titleJa?: string) =>
+      lang === "ja" && titleJa ? titleJa : title,
     [lang]
   );
 
@@ -90,7 +91,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
         | { type: "category"; preset: PresetStyleCategory }
     ): PopupMenuItem => {
       if (config.type === "empty") {
-        const title = localize("Empty", "空");
+        const title = localize("Empty", "カスタム作成");
         return {
           id: "empty",
           title,
