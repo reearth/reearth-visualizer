@@ -13,12 +13,12 @@ const (
 
 var EntityMessages = map[message.EntityKey]map[language.Tag]string{
 	EntityKeyPkgProjectAliasAllowedChars: {
-		language.English: "alphanumeric, hyphen (a-z, 0-9, -)",
-		language.Japanese: "英数字、ハイフン（a-z、0-9、-）",
+		language.English: "alphanumeric characters and hyphens (a-z, 0-9, -), and must start and end with a letter or number",
+		language.Japanese: "英数字とハイフン（a-z、0-9、-）。先頭と末尾は英数字でなければなりません",
 	},
 	EntityKeyPkgStorytellingAliasAllowedChars: {
-		language.English: "alphanumeric, hyphen (a-z, 0-9, -)",
-		language.Japanese: "英数字、ハイフン（a-z、0-9、-）",
+		language.English: "alphanumeric characters and hyphens (a-z, 0-9, -), and must start and end with a letter or number",
+		language.Japanese: "英数字とハイフン（a-z、0-9、-）。先頭と末尾は英数字でなければなりません",
 	},
 }
 
