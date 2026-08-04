@@ -35,6 +35,7 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 	}
 
 	sceneToWidgetProps := map[string][]string{}
+	widgetToSceneProp := map[string]string{}
 	var widgetPropertyIDs []string
 	if err := sceneCol.Find(ctx, sceneFilter, &mongox.BatchConsumer{
 		Size: 1000,
@@ -58,6 +59,7 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 						if w.Extension == ext && w.Property != "" {
 							widgetPropertyIDs = append(widgetPropertyIDs, w.Property)
 							sceneToWidgetProps[doc.Property] = append(sceneToWidgetProps[doc.Property], w.Property)
+							widgetToSceneProp[w.Property] = doc.Property
 						}
 					}
 				}
@@ -119,14 +121,24 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 		affectedWidgetPropertyIDs = append(affectedWidgetPropertyIDs, wPropID)
 	}
 
-	// Map affected scene property ID -> correct tile_type.
+	// Map affected scene property ID -> correct tile_type. If a scene has more than
+	// one widget with a leftover legacy value, the first one wins (same policy as
+	// SetTileCategory) - log the rest so a discarded value is visible, not silent.
 	sceneTileType := map[string]string{}
+	sceneChosenWidget := map[string]string{}
 	for scenePropID, wPropIDs := range sceneToWidgetProps {
 		for _, wPropID := range wPropIDs {
-			if t, ok := widgetTileTypes[wPropID]; ok {
-				sceneTileType[scenePropID] = t
-				break // use the first widget's tile type
+			t, ok := widgetTileTypes[wPropID]
+			if !ok {
+				continue
 			}
+			if chosen, already := sceneChosenWidget[scenePropID]; already {
+				fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: scene property %q has more than one legacy widget tile value; keeping %q from widget property %q, discarding widget property %q (tile_type=%q)\n",
+					scenePropID, sceneTileType[scenePropID], chosen, wPropID, t)
+				continue
+			}
+			sceneTileType[scenePropID] = t
+			sceneChosenWidget[scenePropID] = wPropID
 		}
 	}
 
@@ -135,7 +147,14 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 		scenePropertyIDs = append(scenePropertyIDs, scenePropID)
 	}
 
-	var totalFixed, totalSkipped int
+	// confirmedSceneIDs tracks scene properties whose system tile group was actually
+	// found and now holds the correct tile_type - whether corrected here or already
+	// right. Only widget properties belonging to a confirmed scene are safe to clean
+	// up below: if a scene property is missing, fails to unmarshal, or has no system
+	// tile group to correct, its widget's leftover data is the only remaining record
+	// of the legacy value, so it must be left in place rather than deleted.
+	confirmedSceneIDs := map[string]bool{}
+	var totalFixed, totalSkipped, totalUnconfirmed int
 	if err := propCol.Find(ctx, bson.M{"id": bson.M{"$in": scenePropertyIDs}}, &mongox.BatchConsumer{
 		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
@@ -159,6 +178,7 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 				}
 
 				fixed := false
+				foundSystemGroup := false
 				for _, item := range doc.Items {
 					if item.SchemaGroup != "tiles" || item.Type != "grouplist" {
 						continue
@@ -175,6 +195,7 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 						if !isSystem {
 							continue
 						}
+						foundSystemGroup = true
 						for _, field := range group.Fields {
 							if field.Field != "tile_type" {
 								continue
@@ -188,11 +209,18 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 					}
 				}
 
+				if foundSystemGroup {
+					confirmedSceneIDs[doc.ID] = true
+				} else {
+					fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: WARNING scene property %q has no system tile group to correct (expected tile_type=%q); its widget's leftover tiles item will NOT be cleaned up this run\n", doc.ID, correctTileType)
+					totalUnconfirmed++
+				}
+
 				if fixed {
 					ids = append(ids, doc.ID)
 					newRows = append(newRows, doc)
 					totalFixed++
-				} else {
+				} else if foundSystemGroup {
 					totalSkipped++
 				}
 			}
@@ -206,12 +234,30 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 	}); err != nil {
 		return fmt.Errorf("failed to repair scene properties: %w", err)
 	}
-	fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: scene properties fixed=%d skipped=%d\n", totalFixed, totalSkipped)
+	fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: scene properties fixed=%d skipped=%d unconfirmed=%d\n", totalFixed, totalSkipped, totalUnconfirmed)
+
+	// Only clean up widget properties whose scene was confirmed above - otherwise
+	// their leftover legacy tile data is the only remaining record of the value and
+	// deleting it here would make the scene's wrong default unrecoverable.
+	confirmedWidgetPropertyIDs := make([]string, 0, len(affectedWidgetPropertyIDs))
+	for _, wPropID := range affectedWidgetPropertyIDs {
+		scenePropID, ok := widgetToSceneProp[wPropID]
+		if ok && confirmedSceneIDs[scenePropID] {
+			confirmedWidgetPropertyIDs = append(confirmedWidgetPropertyIDs, wPropID)
+			continue
+		}
+		fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: WARNING skipping cleanup of widget property %q (tile_type=%q) because its scene property %q was not confirmed corrected\n", wPropID, widgetTileTypes[wPropID], scenePropID)
+	}
+
+	if len(confirmedWidgetPropertyIDs) == 0 {
+		fmt.Println("[migration] RepairSetTileCategoryLegacyTileType: no confirmed widget properties to clean up")
+		return nil
+	}
 
 	// Now that the value has been carried over, remove the leftover group-shaped
 	// widget tiles items.
 	var widgetCleaned int
-	if err := propCol.Find(ctx, bson.M{"id": bson.M{"$in": affectedWidgetPropertyIDs}}, &mongox.BatchConsumer{
+	if err := propCol.Find(ctx, bson.M{"id": bson.M{"$in": confirmedWidgetPropertyIDs}}, &mongox.BatchConsumer{
 		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 			ids := make([]string, 0, len(rows))

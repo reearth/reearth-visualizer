@@ -25,9 +25,14 @@ func tileTypeFromTilesItem(item *mongodoc.PropertyItemDocument) (string, bool) {
 		return "", false
 	}
 
-	fieldSets := item.Groups
-	if item.Type == "group" {
+	var fieldSets []*mongodoc.PropertyItemDocument
+	switch item.Type {
+	case "group":
 		fieldSets = []*mongodoc.PropertyItemDocument{item}
+	case "grouplist":
+		fieldSets = item.Groups
+	default:
+		return "", false
 	}
 
 	// Scan every field rather than returning on the first match, so behavior

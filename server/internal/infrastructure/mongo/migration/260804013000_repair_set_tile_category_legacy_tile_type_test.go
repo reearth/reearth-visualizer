@@ -100,6 +100,73 @@ func TestRepairSetTileCategoryLegacyTileType_FixesGroupShapedLeftover(t *testing
 	assert.Empty(t, widgetPropResult.Items, "leftover group-shaped widget tiles item should have been removed")
 }
 
+// TestRepairSetTileCategoryLegacyTileType_LeavesWidgetIntactIfSceneUnconfirmed
+// verifies that when a scene property has no system tile group to correct (e.g. the
+// tiles item is missing entirely), the migration does NOT delete the corresponding
+// widget's leftover legacy tiles item - since that item is the only remaining record
+// of the correct tile_type, deleting it here would make the scene unrecoverable.
+func TestRepairSetTileCategoryLegacyTileType_LeavesWidgetIntactIfSceneUnconfirmed(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+	sceneCol := client.WithCollection("scene").Client()
+	propCol := client.WithCollection("property").Client()
+
+	_, err := sceneCol.InsertOne(ctx, sceneDocForMigration{
+		ID:       "repair_scene3",
+		Property: "repair_prop3",
+		Widgets: []struct {
+			ID        string `bson:"id"`
+			Plugin    string `bson:"plugin"`
+			Extension string `bson:"extension"`
+			Property  string `bson:"property"`
+			Enabled   bool   `bson:"enabled"`
+		}{
+			{ID: "rw3", Plugin: "reearth", Extension: "streetView", Property: "repair_wprop3", Enabled: true},
+		},
+	})
+	require.NoError(t, err)
+
+	// Scene property has no tiles item at all - SetTileCategory never created a
+	// system tile for it, so there is nothing here for the repair migration to
+	// correct.
+	_, err = propCol.InsertOne(ctx, mongodoc.PropertyDocument{
+		ID:    "repair_prop3",
+		Scene: "repair_scene3",
+		Items: []*mongodoc.PropertyItemDocument{},
+	})
+	require.NoError(t, err)
+
+	_, err = propCol.InsertOne(ctx, mongodoc.PropertyDocument{
+		ID:    "repair_wprop3",
+		Scene: "repair_scene3",
+		Items: []*mongodoc.PropertyItemDocument{
+			{
+				Type:        "group",
+				SchemaGroup: "tiles",
+				Fields: []*mongodoc.PropertyFieldDocument{
+					{Field: "tile_type", Type: "string", Value: "google_roadmap"},
+				},
+			},
+		},
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, RepairSetTileCategoryLegacyTileType(ctx, client))
+
+	var widgetPropResult mongodoc.PropertyDocument
+	require.NoError(t, propCol.FindOne(ctx, bson.M{"id": "repair_wprop3"}).Decode(&widgetPropResult))
+	require.Len(t, widgetPropResult.Items, 1, "leftover legacy tiles item should NOT have been removed since the scene was never confirmed corrected")
+
+	var tileType string
+	for _, f := range widgetPropResult.Items[0].Fields {
+		if f.Field == "tile_type" {
+			tileType = f.Value.(string)
+		}
+	}
+	assert.Equal(t, "google_roadmap", tileType, "the only remaining record of the legacy value must be preserved")
+}
+
 // TestRepairSetTileCategoryLegacyTileType_NoOpWhenAlreadyClean verifies that scenes
 // with no leftover group-shaped widget tiles item are left untouched.
 func TestRepairSetTileCategoryLegacyTileType_NoOpWhenAlreadyClean(t *testing.T) {
