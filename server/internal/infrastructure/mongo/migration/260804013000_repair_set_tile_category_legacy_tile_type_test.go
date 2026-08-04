@@ -157,5 +157,12 @@ func TestRepairSetTileCategoryLegacyTileType_NoOpWhenAlreadyClean(t *testing.T) 
 	var scenePropResult mongodoc.PropertyDocument
 	require.NoError(t, propCol.FindOne(ctx, bson.M{"id": "repair_prop2"}).Decode(&scenePropResult))
 	require.Len(t, scenePropResult.Items[0].Groups, 1)
-	assert.Equal(t, "google_roadmap", scenePropResult.Items[0].Groups[0].Fields[0].Value.(string), "should remain unchanged")
+
+	var tileType string
+	for _, f := range scenePropResult.Items[0].Groups[0].Fields {
+		if f.Field == "tile_type" {
+			tileType = f.Value.(string)
+		}
+	}
+	assert.Equal(t, "google_roadmap", tileType, "should remain unchanged")
 }

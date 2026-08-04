@@ -77,14 +77,20 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 
 	// Find widget properties still holding a "group"-shaped legacy tiles item -
 	// these are exactly the ones SetTileCategory failed to read and clean up.
+	// Keyed by property ID so a document with more than one matching item (or a
+	// re-scanned document) is only ever counted once.
 	widgetTileTypes := map[string]string{}
-	var affectedWidgetPropertyIDs []string
 	if err := propCol.Find(ctx, bson.M{"id": bson.M{"$in": widgetPropertyIDs}}, &mongox.BatchConsumer{
 		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 			for _, row := range rows {
 				var doc mongodoc.PropertyDocument
 				if err := bson.Unmarshal(row, &doc); err != nil {
+					var raw struct {
+						ID string `bson:"id"`
+					}
+					_ = bson.Unmarshal(row, &raw)
+					fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: failed to unmarshal widget property id=%q, skipping: %v\n", raw.ID, err)
 					continue
 				}
 				for _, item := range doc.Items {
@@ -93,7 +99,6 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 					}
 					if val, ok := tileTypeFromTilesItem(item); ok {
 						widgetTileTypes[doc.ID] = val
-						affectedWidgetPropertyIDs = append(affectedWidgetPropertyIDs, doc.ID)
 					}
 				}
 			}
@@ -103,11 +108,16 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 		return fmt.Errorf("failed to read widget properties: %w", err)
 	}
 
-	if len(affectedWidgetPropertyIDs) == 0 {
+	if len(widgetTileTypes) == 0 {
 		fmt.Println("[migration] RepairSetTileCategoryLegacyTileType: no leftover group-shaped widget tiles found, nothing to do")
 		return nil
 	}
-	fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: found %d widget properties with leftover group-shaped tiles\n", len(affectedWidgetPropertyIDs))
+	fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: found %d widget properties with leftover group-shaped tiles\n", len(widgetTileTypes))
+
+	affectedWidgetPropertyIDs := make([]string, 0, len(widgetTileTypes))
+	for wPropID := range widgetTileTypes {
+		affectedWidgetPropertyIDs = append(affectedWidgetPropertyIDs, wPropID)
+	}
 
 	// Map affected scene property ID -> correct tile_type.
 	sceneTileType := map[string]string{}
@@ -135,6 +145,11 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 			for _, row := range rows {
 				var doc mongodoc.PropertyDocument
 				if err := bson.Unmarshal(row, &doc); err != nil {
+					var raw struct {
+						ID string `bson:"id"`
+					}
+					_ = bson.Unmarshal(row, &raw)
+					fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: failed to unmarshal scene property id=%q, skipping: %v\n", raw.ID, err)
 					continue
 				}
 
@@ -205,6 +220,11 @@ func RepairSetTileCategoryLegacyTileType(ctx context.Context, c DBClient) error 
 			for _, row := range rows {
 				var doc mongodoc.PropertyDocument
 				if err := bson.Unmarshal(row, &doc); err != nil {
+					var raw struct {
+						ID string `bson:"id"`
+					}
+					_ = bson.Unmarshal(row, &raw)
+					fmt.Printf("[migration] RepairSetTileCategoryLegacyTileType: failed to unmarshal widget property id=%q, skipping: %v\n", raw.ID, err)
 					continue
 				}
 

@@ -30,16 +30,22 @@ func tileTypeFromTilesItem(item *mongodoc.PropertyItemDocument) (string, bool) {
 		fieldSets = []*mongodoc.PropertyItemDocument{item}
 	}
 
+	// Scan every field rather than returning on the first match, so behavior
+	// matches the original grouplist-only implementation: the last non-empty
+	// tile_type wins if a tiles item somehow holds more than one.
+	found := false
+	var result string
 	for _, group := range fieldSets {
 		for _, field := range group.Fields {
 			if field.Field == "tile_type" {
 				if val, ok := field.Value.(string); ok && val != "" {
-					return val, true
+					result = val
+					found = true
 				}
 			}
 		}
 	}
-	return "", false
+	return result, found
 }
 
 // SetTileCategory migrates scene properties by ensuring that any scene with a
