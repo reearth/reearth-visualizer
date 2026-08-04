@@ -19,6 +19,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -151,6 +152,14 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 			// Since access from the storage trigger does not include an Auth token,
 			// we supplement the operator.
 			if req.Method == "POST" && (req.URL.Path == "/api/import-project" || req.URL.Path == "/api/storage-event") {
+				// This request has no user auth token at all -- verify it actually came from
+				// the configured Pub/Sub push subscription / Cloud Function before trusting
+				// anything in the body, which is otherwise fully caller-controlled (SEC-02).
+				if err := verifyPushRequestToken(ctx, cfg, req); err != nil {
+					log.Errorf("import project push token verification err: %v", err)
+					return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
+				}
+
 				n, err := ParseNotification(c)
 				if err != nil {
 					log.Errorf("import project ParseNotification err: %v", err)
@@ -176,6 +185,16 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 
 					ctx = adapter.AttachUser(ctx, u)
 					ctx = adapter.AttachOperator(ctx, op)
+
+					// Rebuild the usecase container now that the operator is known, so it's
+					// actually filtered to this operator's own workspaces. uc above was
+					// captured before the operator existed, so it was unconditionally
+					// unfiltered -- same root cause as SEC-01, just at this call site.
+					rebuilt := BuildUsecases(ctx, cfg.Repos, cfg.Gateways, cfg.AccountRepos, cfg.AccountGateways, interactor.ContainerConfig{
+						SignupSecret:    cfg.Config.SignupSecret,
+						AuthSrvUIDomain: cfg.Config.Host_Web,
+					})
+					uc = &rebuilt
 				}
 			}
 
