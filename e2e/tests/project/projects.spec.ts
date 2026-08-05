@@ -317,8 +317,12 @@ test.describe("Project Management", () => {
   test("Should navigate to Scene panel and verify scene items", async () => {
     test.info().annotations.push({ type: "story", description: "US-EDIT-003" });
     test.setTimeout(60000);
-    // The Scene panel is always open by default in the left column.
-    // Clicking its header collapses it, so we assert visibility directly.
+    // localStorage may persist a collapsed state from a previous run.
+    // Expand the panel only if it is currently collapsed.
+    if ((await projectScreen.scenePanel.getAttribute("aria-expanded")) === "false") {
+      await projectScreen.scenePanel.click();
+      await page.waitForTimeout(500);
+    }
     await expect(projectScreen.getSceneItemByName("Main")).toBeVisible({ timeout: 15000 });
     await expect(projectScreen.getSceneItemByName("Tiles")).toBeVisible();
     await expect(projectScreen.getSceneItemByName("Terrain")).toBeVisible();
