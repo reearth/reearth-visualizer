@@ -176,8 +176,44 @@ func TestProject_FindByPublicName_UsesIndex(t *testing.T) {
 	winningPlan, ok := queryPlanner["winningPlan"].(bson.M)
 	require.True(t, ok, "queryPlanner missing winningPlan: %v", queryPlanner)
 
-	assert.NotEqual(t, "COLLSCAN", winningPlan["stage"], "expected an index scan, got a full collection scan: %v", winningPlan)
-}
+	var hasStage func(v any, stage string) bool
+	hasStage = func(v any, stage string) bool {
+		switch x := v.(type) {
+		case bson.M:
+			if s, ok := x["stage"].(string); ok && s == stage {
+				return true
+			}
+			for _, vv := range x {
+				if hasStage(vv, stage) {
+					return true
+				}
+			}
+		case map[string]any:
+			if s, ok := x["stage"].(string); ok && s == stage {
+				return true
+			}
+			for _, vv := range x {
+				if hasStage(vv, stage) {
+					return true
+				}
+			}
+		case bson.A:
+			for _, vv := range x {
+				if hasStage(vv, stage) {
+					return true
+				}
+			}
+		case []any:
+			for _, vv := range x {
+				if hasStage(vv, stage) {
+					return true
+				}
+			}
+		}
+		return false
+	}
+
+	assert.False(t, hasStage(winningPlan, "COLLSCAN"), "expected an index scan (no COLLSCAN stage), got: %v", winningPlan)
 
 func TestProject_FindStarredByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
