@@ -119,7 +119,7 @@ describe("PluginFrame", () => {
 
     const uiDiv = container.querySelector(".test-plugin-ui");
     expect(uiDiv).toBeTruthy();
-    // UI surface uses inline-block to only take needed space in widget alignment system
+    // Non-extended widgets use inline-block to size to content
     expect(uiDiv).toHaveStyle({
       display: "inline-block"
     });

@@ -38,6 +38,15 @@ export type Props = {
   uiContainerRef?: MutableRefObject<HTMLElement | null>;
   isMarshalable?: boolean | "json" | ((target: unknown) => boolean | "json");
   pluginContext: ReearthPluginContext;
+  /**
+   * Widget extension settings - determines if widget fills available space
+   * horizontally: widget fills full width of its alignment area
+   * vertically: widget fills full height of its alignment area
+   */
+  extended?: {
+    horizontally?: boolean;
+    vertically?: boolean;
+  };
   onMessage?: (message: unknown) => void;
   onPreInit?: () => void;
   onError?: (err: unknown) => void;
@@ -75,6 +84,7 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
     uiContainerRef,
     isMarshalable,
     pluginContext,
+    extended,
     onPreInit,
     onError,
     onDispose,
@@ -135,10 +145,11 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
   return (
     <>
       <style>{`
-        /* UI surface - let Zushi control dimensions, don't force 100% */
+        /* UI surface iframe fills its container */
         .zushi-ui-surface-container iframe {
+          width: 100%;
+          height: 100%;
           border: none;
-          display: block;
         }
         /* Modal and popup containers - let Zushi control dimensions, constrain to viewport */
         .zushi-modal-surface-container,
@@ -158,7 +169,15 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
         ref={surfaceRefs.uiContainer}
         className={`zushi-ui-surface-container ${className || ""}`}
         style={{
-          display: uiVisible ? "inline-block" : "none",
+          // Extended horizontally uses block (full width), otherwise inline-block (content width)
+          display: uiVisible
+            ? extended?.horizontally
+              ? "block"
+              : "inline-block"
+            : "none",
+          // Extended widgets fill their alignment area, non-extended size to content
+          width: extended?.horizontally ? "100%" : undefined,
+          height: extended?.vertically ? "100%" : undefined,
           ...iFrameProps?.style
         }}
         onClick={onClick}
