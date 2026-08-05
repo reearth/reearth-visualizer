@@ -2,6 +2,74 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.19 - 2026-08-05
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Use inline-block only when not horizontally extended ([#2364](https://github.com/reearth/reearth-visualizer/pull/2364)) [`c54a83`](https://github.com/reearth/reearth-visualizer/commit/c54a83)
+- Send correct language header for bare locale codes ([#2351](https://github.com/reearth/reearth-visualizer/pull/2351)) [`18a16c`](https://github.com/reearth/reearth-visualizer/commit/18a16c)
+- Content cleanup for plugin modal and popup close &amp; fix ui surface sizing ([#2357](https://github.com/reearth/reearth-visualizer/pull/2357)) [`8db721`](https://github.com/reearth/reearth-visualizer/commit/8db721)
+
+#### ✨ Refactor
+
+- Improve UI&#x2F;UX for tiles added by Street View and Google Search Widgets [VIZ-DEV-86] ([#2285](https://github.com/reearth/reearth-visualizer/pull/2285)) [`c8af10`](https://github.com/reearth/reearth-visualizer/commit/c8af10)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.19 ([#2362](https://github.com/reearth/reearth-visualizer/pull/2362)) [`5f3dcd`](https://github.com/reearth/reearth-visualizer/commit/5f3dcd)
+- Update @reearth&#x2F;core to 0.0.7-alpha.78 ([#2350](https://github.com/reearth/reearth-visualizer/pull/2350)) [`5be53a`](https://github.com/reearth/reearth-visualizer/commit/5be53a)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Handle group-shaped legacy tiles in SetTileCategory migration ([#2355](https://github.com/reearth/reearth-visualizer/pull/2355)) [`80feed`](https://github.com/reearth/reearth-visualizer/commit/80feed)
+- Update SetTileCategory migration timestamp ([#2354](https://github.com/reearth/reearth-visualizer/pull/2354)) [`4186ca`](https://github.com/reearth/reearth-visualizer/commit/4186ca)
+
+#### ✨ Refactor
+
+- Improve alias validation error message [VIZ-DEV-152] ([#2349](https://github.com/reearth/reearth-visualizer/pull/2349)) [`d9be9b`](https://github.com/reearth/reearth-visualizer/commit/d9be9b)
+
+#### Miscellaneous Tasks
+
+- Upgrade Go from 1.26.4 to 1.26.5 ([#2338](https://github.com/reearth/reearth-visualizer/pull/2338)) [`9034b6`](https://github.com/reearth/reearth-visualizer/commit/9034b6)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to a75bb60 ([#2309](https://github.com/reearth/reearth-visualizer/pull/2309)) [`53e9d0`](https://github.com/reearth/reearth-visualizer/commit/53e9d0)
+- Split major Go dependency updates into separate Renovate PRs ([#2339](https://github.com/reearth/reearth-visualizer/pull/2339)) [`963887`](https://github.com/reearth/reearth-visualizer/commit/963887)
+- Bump cerbos to 0.54.0 and fake-gcs-server to 1.55.1 ([#2217](https://github.com/reearth/reearth-visualizer/pull/2217)) [`a8a142`](https://github.com/reearth/reearth-visualizer/commit/a8a142)
+
+### e2e
+
+#### Miscellaneous Tasks
+
+- Add CLAUDE.md and story ID annotations to E2E tests ([#2352](https://github.com/reearth/reearth-visualizer/pull/2352)) [`8ee261`](https://github.com/reearth/reearth-visualizer/commit/8ee261)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to a75bb60 ([#2309](https://github.com/reearth/reearth-visualizer/pull/2309)) [`53e9d0`](https://github.com/reearth/reearth-visualizer/commit/53e9d0)
+- Split major Go dependency updates into separate Renovate PRs ([#2339](https://github.com/reearth/reearth-visualizer/pull/2339)) [`963887`](https://github.com/reearth/reearth-visualizer/commit/963887)
+- Bump cerbos to 0.54.0 and fake-gcs-server to 1.55.1 ([#2217](https://github.com/reearth/reearth-visualizer/pull/2217)) [`a8a142`](https://github.com/reearth/reearth-visualizer/commit/a8a142)
+
+## 1.0.0-beta.16.18 - 2026-08-03
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Preserve viewer getters in plugin API wrapper ([#2346](https://github.com/reearth/reearth-visualizer/pull/2346)) [`c5f23f`](https://github.com/reearth/reearth-visualizer/commit/c5f23f)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.18 ([#2347](https://github.com/reearth/reearth-visualizer/pull/2347)) [`f9444a`](https://github.com/reearth/reearth-visualizer/commit/f9444a)
+
 ## 1.0.0-beta.16.17 - 2026-07-31
 
 ### Web

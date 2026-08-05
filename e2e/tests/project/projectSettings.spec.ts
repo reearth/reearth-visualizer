@@ -72,6 +72,7 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("Navigate to Project Settings via context menu", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-001" });
     test.setTimeout(30000);
     const menuBtn = projectsPage.gridProjectMenuButton(projectName).first();
     await menuBtn.click();
@@ -84,10 +85,12 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("General: should display sidebar tabs", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-002" });
     await settingsPage.verifySidebarTabsVisible();
   });
 
   test("General: should display basic settings fields", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-004" });
     test.setTimeout(30000);
     await expect(settingsPage.generalSettingsTitle).toBeVisible();
     await expect(settingsPage.projectNameLabel).toBeVisible();
@@ -98,12 +101,14 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("General: should display thumbnail section", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-004" });
     await expect(settingsPage.thumbnailLabel).toBeVisible();
     await expect(settingsPage.thumbnailChooseButton).toBeVisible();
     await expect(settingsPage.thumbnailUploadButton).toBeVisible();
   });
 
   test("General: should display danger zone", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-005" });
     await expect(settingsPage.dangerZoneTitle).toBeVisible();
     await expect(settingsPage.removeProjectTitle).toBeVisible();
     await expect(settingsPage.removeProjectDescription).toBeVisible();
@@ -111,14 +116,17 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("General: should show correct project name", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-003" });
     await expect(settingsPage.projectNameInput).toHaveValue(projectName);
   });
 
   test("General: should show correct project alias", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-003" });
     await expect(settingsPage.projectAliasInput).toHaveValue(projectAlias);
   });
 
   test("README: should navigate and display editor", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-007" });
     test.setTimeout(30000);
     await settingsPage.navigateToReadmeTab();
     await expect(settingsPage.contentReadme).toBeVisible();
@@ -126,19 +134,23 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("README: should have Edit and Preview tabs", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-008" });
     await expect(settingsPage.readmeEditTab).toBeVisible();
     await expect(settingsPage.readmePreviewTab).toBeVisible();
   });
 
   test("README: should have Save button", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-010" });
     await expect(settingsPage.readmeSaveButton).toBeVisible();
   });
 
   test("README: should show textarea in edit mode", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-009" });
     await expect(settingsPage.readmeTextarea).toBeVisible();
   });
 
   test("README: should switch to preview mode", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-008" });
     await settingsPage.readmePreviewTab.click();
     await page.waitForTimeout(500);
     await expect(settingsPage.readmeTextarea).not.toBeVisible();
@@ -148,6 +160,7 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("License: should navigate and display editor", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-011" });
     test.setTimeout(30000);
     await settingsPage.navigateToLicenseTab();
     await expect(settingsPage.contentLicense).toBeVisible();
@@ -155,16 +168,19 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("License: should have Edit and Preview tabs", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-012" });
     await expect(settingsPage.licenseEditTab).toBeVisible();
     await expect(settingsPage.licensePreviewTab).toBeVisible();
   });
 
   test("License: should have Save and Choose Template buttons", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-013" });
     await expect(settingsPage.licenseSaveButton).toBeVisible();
     await expect(settingsPage.licenseChooseTemplateButton).toBeVisible();
   });
 
   test("License: should open template modal", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-014" });
     test.setTimeout(30000);
     await settingsPage.licenseChooseTemplateButton.click();
     await page.waitForTimeout(1000);
@@ -177,6 +193,7 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("Story: should navigate and display settings", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-015" });
     test.setTimeout(30000);
     await settingsPage.navigateToStoryTab();
     await expect(settingsPage.contentStory).toBeVisible();
@@ -184,16 +201,19 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("Story: should display panel position selector", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-016" });
     await expect(
       page.getByText("Panel Position", { exact: true })
     ).toBeVisible();
   });
 
   test("Story: should display background color field", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-017" });
     await expect(settingsPage.storyBackgroundColorField).toBeVisible();
   });
 
   test("Public: should navigate and display settings", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-018" });
     test.setTimeout(30000);
     // Public tab has sub-items (Scene/Story) that may already be visible.
     // Click the "Scene" sub-link directly to navigate to Public settings.
@@ -214,30 +234,36 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
   });
 
   test("Public: should display published page settings section", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-019" });
     await expect(settingsPage.publicInfoTitle).toBeVisible();
   });
 
   test("Public: should display alias setting section", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-019" });
     await expect(settingsPage.publicAliasSettingTitle).toBeVisible();
   });
 
   test("Public: should display basic authorization section", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-020" });
     await expect(settingsPage.publicBasicAuthTitle).toBeVisible();
     await expect(settingsPage.publicEnableBasicAuthSwitch).toBeVisible();
   });
 
   test("Public: should display Google Analytics section", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-020" });
     await expect(settingsPage.publicGoogleAnalyticsTitle).toBeVisible();
     await expect(settingsPage.publicEnableGASwitch).toBeVisible();
   });
 
   test("Assets: should navigate and display content", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-021" });
     test.setTimeout(30000);
     await settingsPage.navigateToAssetsTab();
     await expect(settingsPage.contentAssets).toBeVisible();
   });
 
   test("Cleanup: Move project to recycle bin from settings", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PSET-006" });
     test.setTimeout(60000);
     await settingsPage.navigateToGeneralTab();
     await page.waitForTimeout(1000);

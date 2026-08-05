@@ -104,6 +104,7 @@ test.describe.skip("Layer Deletion & Reordering", () => {
   });
 
   test("Add three sketch layers", async () => {
+    test.info().annotations.push({ type: "story", description: "US-LAYER-001" });
     test.setTimeout(90000);
     for (const name of layerNames) {
       await projectScreen.createNewLayer(name);
@@ -116,6 +117,7 @@ test.describe.skip("Layer Deletion & Reordering", () => {
   });
 
   test("Delete a layer via context menu", async () => {
+    test.info().annotations.push({ type: "story", description: "US-LAYER-001" });
     const layerItems = page.getByTestId("layer-item");
     const initialCount = await layerItems.count();
 
@@ -150,6 +152,7 @@ test.describe.skip("Layer Deletion & Reordering", () => {
   });
 
   test("Deleted layer is no longer in the list", async () => {
+    test.info().annotations.push({ type: "story", description: "US-LAYER-001" });
     const deletedLayer = projectScreen.getLayerByName(layerNames[0]);
     await expect(deletedLayer).not.toBeVisible();
 
@@ -159,11 +162,13 @@ test.describe.skip("Layer Deletion & Reordering", () => {
   });
 
   test("Can select a layer after another was deleted", async () => {
+    test.info().annotations.push({ type: "story", description: "US-LAYER-001" });
     await projectScreen.clickLayer(layerNames[1]);
     await expect(page.getByText("Inspector")).toBeVisible();
   });
 
   test.skip("Reorder layers via drag and drop", async () => {
+    test.info().annotations.push({ type: "story", description: "US-LAYER-002" });
     // SortableJS uses HTML5 drag events which Playwright's mouse API
     // cannot trigger in headless WebKit. Layer reorder is covered by
     // the API test suite (api/tests/layer-infobox.api.spec.ts).
@@ -208,6 +213,7 @@ test.describe.skip("Layer Deletion & Reordering", () => {
   });
 
   test("Rename a layer via context menu", async () => {
+    test.info().annotations.push({ type: "story", description: "US-LAYER-005" });
     const layerItems = page.getByTestId("layer-item");
     const targetLayer = layerItems.filter({ hasText: layerNames[1] });
 
@@ -236,6 +242,7 @@ test.describe.skip("Layer Deletion & Reordering", () => {
   });
 
   test("Toggle layer visibility", async () => {
+    test.info().annotations.push({ type: "story", description: "US-LAYER-006" });
     const layerItems = page.getByTestId("layer-item");
     const targetLayer = layerItems.filter({ hasText: "Renamed Layer" });
 
@@ -256,6 +263,7 @@ test.describe.skip("Layer Deletion & Reordering", () => {
   });
 
   test("Delete all remaining layers one by one", async () => {
+    test.info().annotations.push({ type: "story", description: "US-LAYER-001" });
     test.setTimeout(120000);
     const layerItems = page.getByTestId("layer-item");
     let count = await layerItems.count();
@@ -300,6 +308,7 @@ test.describe.skip("Layer Deletion & Reordering", () => {
   });
 
   test("Verify empty layer list and New Layer button is available", async () => {
+    test.info().annotations.push({ type: "story", description: "US-LAYER-001" });
     const layerItems = page.getByTestId("layer-item");
     const count = await layerItems.count();
     expect(count).toBe(0);

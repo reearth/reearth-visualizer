@@ -2,12 +2,12 @@
   "pkg": {
     "project": {
       "alias": {
-        "allowed_chars": "alphanumeric, hyphen (a-z, 0-9, -)"
+        "allowed_chars": "alphanumeric characters and hyphens (a-z, 0-9, -), and must start and end with a letter or number"
       }
     },
     "storytelling": {
       "alias": {
-        "allowed_chars": "alphanumeric, hyphen (a-z, 0-9, -)"
+        "allowed_chars": "alphanumeric characters and hyphens (a-z, 0-9, -), and must start and end with a letter or number"
       }
     }
   }

@@ -46,5 +46,7 @@ var migrations = migration.Migrations[DBClient]{
 	260520220637: AddProjectMetadataStarcountIndex,
 	260525120000: MigrateLegacyTilesToCesiumIon,
 	260701120000: MoveImportStatusToOwnCollection,
-	260724071505: RemoveLegacyImportStatusFields,
+	260804000000: SetTileCategory,
+	260804013000: RepairSetTileCategoryLegacyTileType,
+	260805000000: RemoveLegacyImportStatusFields,
 }
