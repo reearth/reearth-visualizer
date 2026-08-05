@@ -85,6 +85,15 @@ type geometryCollectionJSON struct {
 	Geometries []any  `json:"geometries"`
 }
 
+// nlsLayersJSON builds each layer's JSON one at a time, and getNLSLayerJSON below loads that
+// layer's infobox/photo overlay/infobox block properties via b.ploader with a single ID per call
+// (SCA-02, compliance scan issue #96), instead of collecting every layer's property IDs up front
+// and issuing one batched b.ploader(ctx, ids...) call the way scene- and story-level properties
+// already do (see builder.go). For a scene with hundreds of layers this means hundreds of
+// individual property loads instead of one. Left as a comment for now rather than fixed: this is
+// a performance concern, not a security one. There is currently no enforced limit on the number
+// of layers a scene can have, so consider batching this loading if large scenes become common or
+// cause operational issues.
 func (b *Builder) nlsLayersJSON(ctx context.Context) ([]*nlsLayerJSON, error) {
 
 	var res []*nlsLayerJSON
