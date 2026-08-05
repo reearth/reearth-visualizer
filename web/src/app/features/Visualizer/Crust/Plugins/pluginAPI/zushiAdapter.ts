@@ -728,10 +728,8 @@ function wrapCommonReearth(
 
   return {
     ...commonReearth,
-    viewer: {
-      ...commonReearth.viewer,
-      tools: {
-        ...commonReearth.viewer.tools,
+    viewer: copyWithOverrides(commonReearth.viewer, {
+      tools: copyWithOverrides(commonReearth.viewer.tools, {
         getTerrainHeightAsync: wrapAsync(
           commonReearth.viewer.tools.getTerrainHeightAsync,
           startEventLoop
@@ -744,16 +742,20 @@ function wrapCommonReearth(
           commonReearth.viewer.tools.getCurrentLocationAsync,
           startEventLoop
         )
-      },
-      interactionMode: {
-        ...commonReearth.viewer.interactionMode,
-        selectionMode: {
-          ...commonReearth.viewer.interactionMode.selectionMode,
-          on: selectionMode.on,
-          off: selectionMode.off
+      }),
+      interactionMode: copyWithOverrides(
+        commonReearth.viewer.interactionMode,
+        {
+          selectionMode: copyWithOverrides(
+            commonReearth.viewer.interactionMode.selectionMode,
+            {
+              on: selectionMode.on,
+              off: selectionMode.off
+            }
+          )
         }
-      }
-    },
+      )
+    }),
     camera: copyWithOverrides(commonReearth.camera, {
       on: camera.on,
       off: camera.off
