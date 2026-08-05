@@ -171,6 +171,8 @@ export default function Plugin({
       uiContainerRef={uiContainerRef}
       isMarshalable={isMarshalable}
       pluginContext={pluginContext}
+      extensionType={extensionType}
+      extended={widget?.extended}
       onError={onError}
       onDispose={onDispose}
       onClick={onClick}
