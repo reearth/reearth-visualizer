@@ -361,11 +361,11 @@ function createModalAdapter(
 
   /**
    * Clears surface content to ensure fresh state on next show.
-   * The old implementation destroyed the iframe on close (enabled={false} returned null).
-   * This mimics that behavior by clearing content, so next show() creates fresh iframe.
+   * Uses a minimal HTML structure to avoid ResizeObserver errors
+   * (empty string causes document.body.parentElement to be null).
    */
   const clearContent = () => {
-    surface.show("", {});
+    surface.show("<div></div>", {});
   };
 
   // Store external close function in ref so it can be called from outside
@@ -459,11 +459,10 @@ function createPopupAdapter(
 
   /**
    * Clears surface content to ensure fresh state on next show.
-   * The old implementation destroyed the iframe on close (enabled={false} returned null).
-   * This mimics that behavior by clearing content, so next show() creates fresh iframe.
+   * Uses a minimal HTML structure to avoid ResizeObserver errors.
    */
   const clearContent = () => {
-    surface.show("", {});
+    surface.show("<div></div>", {});
   };
 
   // Store external close function in ref so it can be called from outside
