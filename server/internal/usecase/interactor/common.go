@@ -176,6 +176,14 @@ func (i commonSceneLock) UpdateSceneLock(ctx context.Context, s id.SceneID, befo
 	return nil
 }
 
+// ReleaseSceneLock discards SaveLock's error and reuses the caller's context
+// as-is (compliance scan REL-03). If the caller's context is canceled (e.g. a
+// publish request whose client disconnected mid upload) the SaveLock write
+// itself can fail with "context canceled", which we swallow here rather than
+// retry on a fresh context. We're accepting this: it requires a publish to
+// fail with its request already canceled, which is rare in practice, and the
+// existing recovery path (SceneLock.ReleaseAllLock at process startup) clears
+// any scene left stuck this way on the next deploy/restart.
 func (i commonSceneLock) ReleaseSceneLock(ctx context.Context, s id.SceneID) {
 	_ = i.sceneLockRepo.SaveLock(ctx, s, scene.LockModeFree)
 }
