@@ -66,6 +66,7 @@ func serveExportFile(
 		},
 		optionalAuth,
 		appmiddleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		privateCache,
 	)
 
 	e.OPTIONS(
