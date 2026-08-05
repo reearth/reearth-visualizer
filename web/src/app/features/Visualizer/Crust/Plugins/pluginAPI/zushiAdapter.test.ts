@@ -212,7 +212,10 @@ describe("zushiAdapter", () => {
       const globalThis = factory(mockZushiContext as any);
 
       // Test UI show
-      globalThis.reearth.ui.show("<div>test</div>", { width: 300, height: 400 });
+      globalThis.reearth.ui.show("<div>test</div>", {
+        width: 300,
+        height: 400
+      });
       expect(uiSurface.show).toHaveBeenCalledWith("<div>test</div>", {
         width: 300,
         height: 400,
@@ -261,11 +264,14 @@ describe("zushiAdapter", () => {
         width: "50%",
         height: 500
       });
-      expect(modalSurface.show).toHaveBeenCalledWith("<div>modal content</div>", {
-        width: "50%",
-        height: 500,
-        visible: true
-      });
+      expect(modalSurface.show).toHaveBeenCalledWith(
+        "<div>modal content</div>",
+        {
+          width: "50%",
+          height: 500,
+          visible: true
+        }
+      );
 
       // Test modal close
       globalThis.reearth.modal.close();
@@ -273,7 +279,9 @@ describe("zushiAdapter", () => {
 
       // Test modal postMessage
       globalThis.reearth.modal.postMessage({ action: "update" });
-      expect(modalSurface.postMessage).toHaveBeenCalledWith({ action: "update" });
+      expect(modalSurface.postMessage).toHaveBeenCalledWith({
+        action: "update"
+      });
     });
 
     test("modal.update updates dimensions and triggers onModalShow callback", () => {
@@ -525,7 +533,10 @@ describe("zushiAdapter", () => {
 
       // Reset and test getTerrainHeightAsync
       startEventLoop.mockClear();
-      await globalThis.reearth.viewer.tools.getTerrainHeightAsync(139.6503, 35.6762);
+      await globalThis.reearth.viewer.tools.getTerrainHeightAsync(
+        139.6503,
+        35.6762
+      );
       expect(getTerrainHeightAsync).toHaveBeenCalledWith(139.6503, 35.6762);
       expect(startEventLoop).toHaveBeenCalled();
 
@@ -538,7 +549,9 @@ describe("zushiAdapter", () => {
 
     test("wraps async viewer.tools methods to trigger event loop on error", async () => {
       const startEventLoop = vi.fn();
-      const getCurrentLocationAsync = vi.fn().mockRejectedValue(new Error("Location unavailable"));
+      const getCurrentLocationAsync = vi
+        .fn()
+        .mockRejectedValue(new Error("Location unavailable"));
 
       const reearthContext = {
         ...createMockReearthContext(),
@@ -703,11 +716,12 @@ describe("zushiAdapter", () => {
       const closeHandler = vi.fn();
       globalThis.reearth.modal.on("close", closeHandler);
 
-      // Verify external close ref was set
-      expect(externalCloseRefs.modalCloseRef.current).not.toBeNull();
-
-      // Call external close
-      externalCloseRefs.modalCloseRef.current!();
+      // Verify external close ref was set and call it
+      const externalClose = externalCloseRefs.modalCloseRef.current;
+      expect(externalClose).not.toBeNull();
+      if (externalClose) {
+        externalClose();
+      }
 
       // Verify surface was hidden and content was cleared
       expect(modalSurface.setVisible).toHaveBeenCalledWith(false);
@@ -832,11 +846,12 @@ describe("zushiAdapter", () => {
       const closeHandler = vi.fn();
       globalThis.reearth.popup.on("close", closeHandler);
 
-      // Verify external close ref was set
-      expect(externalCloseRefs.popupCloseRef.current).not.toBeNull();
-
-      // Call external close
-      externalCloseRefs.popupCloseRef.current!();
+      // Verify external close ref was set and call it
+      const externalClose = externalCloseRefs.popupCloseRef.current;
+      expect(externalClose).not.toBeNull();
+      if (externalClose) {
+        externalClose();
+      }
 
       // Verify surface was hidden and content was cleared
       expect(popupSurface.setVisible).toHaveBeenCalledWith(false);
