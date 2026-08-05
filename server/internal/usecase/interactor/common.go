@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/url"
 	"strings"
+	"time"
 
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -18,6 +19,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -176,16 +178,23 @@ func (i commonSceneLock) UpdateSceneLock(ctx context.Context, s id.SceneID, befo
 	return nil
 }
 
-// ReleaseSceneLock discards SaveLock's error and reuses the caller's context
-// as-is (compliance scan REL-03). If the caller's context is canceled (e.g. a
-// publish request whose client disconnected mid upload) the SaveLock write
-// itself can fail with "context canceled", which we swallow here rather than
-// retry on a fresh context. We're accepting this: it requires a publish to
-// fail with its request already canceled, which is rare in practice, and the
-// existing recovery path (SceneLock.ReleaseAllLock at process startup) clears
-// any scene left stuck this way on the next deploy/restart.
+// sceneLockReleaseTimeout bounds the lock-release write below, in case the
+// detached context's SaveLock call is itself slow or hangs.
+const sceneLockReleaseTimeout = 10 * time.Second
+
+// ReleaseSceneLock detaches ctx from its parent's cancellation before saving
+// the lock. Callers defer this from publish flows using the same request
+// context the publish itself was using (REL-03, compliance scan); if that
+// request context is canceled (e.g. the client disconnected mid upload), a
+// SaveLock call on the bare ctx would fail with "context canceled" and leave
+// the scene locked forever, since sceneLock has no TTL and the only other
+// unlock path runs solely at process startup.
 func (i commonSceneLock) ReleaseSceneLock(ctx context.Context, s id.SceneID) {
-	_ = i.sceneLockRepo.SaveLock(ctx, s, scene.LockModeFree)
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), sceneLockReleaseTimeout)
+	defer cancel()
+	if err := i.sceneLockRepo.SaveLock(ctx, s, scene.LockModeFree); err != nil {
+		log.Errorfc(ctx, "failed to release scene lock for %s: %v", s, err)
+	}
 }
 
 type SceneDeleter struct {
