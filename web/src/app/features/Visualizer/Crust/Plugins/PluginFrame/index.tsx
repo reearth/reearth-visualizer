@@ -135,11 +135,10 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
   return (
     <>
       <style>{`
-        /* Ensure Zushi iframes fill their containers */
+        /* UI surface - let Zushi control dimensions, don't force 100% */
         .zushi-ui-surface-container iframe {
-          width: 100%;
-          height: 100%;
           border: none;
+          display: block;
         }
         /* Modal and popup containers - let Zushi control dimensions, constrain to viewport */
         .zushi-modal-surface-container,
@@ -159,9 +158,7 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
         ref={surfaceRefs.uiContainer}
         className={`zushi-ui-surface-container ${className || ""}`}
         style={{
-          display: uiVisible ? "block" : "none",
-          width: "100%",
-          height: "100%",
+          display: uiVisible ? "inline-block" : "none",
           ...iFrameProps?.style
         }}
         onClick={onClick}
