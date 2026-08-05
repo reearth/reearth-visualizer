@@ -1069,7 +1069,7 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 // (exportZipState.trackWrite) rather than a single check after the whole zip has already been
 // built -- by the time a post-hoc check could catch an oversized export, the damage (memory,
 // disk, GCS reads) is already done.
-const maxExportZipBytes = 500 * 1024 * 1024 // 500MB
+var maxExportZipBytes int64 = 500 * 1024 * 1024 // 500MB
 
 // exportZipState carries state across the whole SearchAssetURL/AddZipAsset recursion for one
 // export: assetNames is the existing per-asset metadata written into project.json; seen is a
@@ -1094,6 +1094,20 @@ func (s *exportZipState) trackWrite(n int64) error {
 		return fmt.Errorf("export exceeds maximum allowed size of %d bytes", maxExportZipBytes)
 	}
 	return nil
+}
+
+// budgetedWriter enforces state's byte budget as data is written, instead of
+// only after a full asset has already been copied into the zip.
+type budgetedWriter struct {
+	w     io.Writer
+	state *exportZipState
+}
+
+func (b *budgetedWriter) Write(p []byte) (int, error) {
+	if err := b.state.trackWrite(int64(len(p))); err != nil {
+		return 0, err
+	}
+	return b.w.Write(p)
 }
 
 func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, state *exportZipState) error {
@@ -1133,7 +1147,6 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 	if state.seen[urlString] {
 		return nil
 	}
-	state.seen[urlString] = true
 
 	parts := strings.Split(urlString, "/")
 	beforeUniversaName := parts[len(parts)-1]
@@ -1141,6 +1154,7 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 	if err != nil {
 		return nil // skip if not available
 	}
+	state.seen[urlString] = true
 	defer func() {
 		if cerr := stream.Close(); cerr != nil {
 			fmt.Printf("Error closing file: %v\n", cerr)
@@ -1152,12 +1166,8 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 	if err != nil {
 		return err
 	}
-	written, err := io.Copy(zipEntry, stream)
-	if err != nil {
+	if _, err := io.Copy(&budgetedWriter{w: zipEntry, state: state}, stream); err != nil {
 		_ = stream.Close()
-		return err
-	}
-	if err := state.trackWrite(written); err != nil {
 		return err
 	}
 	if a, err := assetRepo.FindByURL(ctx, urlString); a != nil && err == nil {
@@ -1193,6 +1203,9 @@ func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Write
 	}
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
+		return err
+	}
+	if err := state.trackWrite(int64(len(jsonData))); err != nil {
 		return err
 	}
 	if _, err = fileWriter.Write(jsonData); err != nil {

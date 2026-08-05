@@ -4,11 +4,13 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -26,6 +28,10 @@ type countingFile struct {
 func (f *countingFile) ReadAsset(_ context.Context, name string) (io.ReadCloser, error) {
 	f.reads[name]++
 	return io.NopCloser(bytes.NewReader(f.content)), nil
+}
+
+func (f *countingFile) UploadExportProjectZip(context.Context, afero.File) error {
+	return nil
 }
 
 // TestAddZipAsset_Dedup is a regression test for SCA-01: a scene referencing the same asset
@@ -75,6 +81,84 @@ func TestExportZipState_TrackWrite(t *testing.T) {
 	require.NoError(t, state.trackWrite(50)) // still under budget
 
 	err := state.trackWrite(100) // now over budget
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "exceeds maximum allowed size")
+}
+
+// flakyFile fails the first ReadAsset call for a given process, then succeeds on later calls.
+type flakyFile struct {
+	gateway.File
+	calls   int
+	content []byte
+}
+
+func (f *flakyFile) ReadAsset(_ context.Context, _ string) (io.ReadCloser, error) {
+	f.calls++
+	if f.calls == 1 {
+		return nil, errors.New("transient storage error")
+	}
+	return io.NopCloser(bytes.NewReader(f.content)), nil
+}
+
+// TestAddZipAsset_TransientReadErrorDoesNotBlockRetry is a regression test: state.seen used to be
+// marked true before confirming the read succeeded, so a transient storage error on an asset's
+// first reference permanently skipped every later reference to the same URL within the export.
+// This confirms a failed read is not deduplicated, so a later reference gets a fresh attempt.
+func TestAddZipAsset_TransientReadErrorDoesNotBlockRetry(t *testing.T) {
+	ctx := context.Background()
+	f := &flakyFile{content: []byte("asset-bytes")}
+	assetRepo := memory.NewAsset()
+	buf := &bytes.Buffer{}
+	zipWriter := zip.NewWriter(buf)
+	state := newExportZipState()
+	assetURL := "assets/retry-me.png"
+
+	require.NoError(t, AddZipAsset(ctx, assetRepo, f, zipWriter, assetURL, state)) // read fails, swallowed
+	require.NoError(t, AddZipAsset(ctx, assetRepo, f, zipWriter, assetURL, state)) // read succeeds
+	require.NoError(t, zipWriter.Close())
+
+	assert.Equal(t, 2, f.calls, "a failed read must not mark the asset as seen, so a later reference retries")
+
+	zr, err := zip.NewReader(bytes.NewReader(buf.Bytes()), int64(buf.Len()))
+	require.NoError(t, err)
+	assert.Len(t, zr.File, 1, "the asset should end up in the zip once a read finally succeeds")
+}
+
+// TestBudgetedWriter_AbortsMidWrite is a regression test: the byte budget used to only be checked
+// once after io.Copy fully finished, so a single oversized asset would be entirely copied into the
+// zip before being rejected. This confirms a write that would cross the budget is rejected before
+// any of its bytes reach the underlying writer.
+func TestBudgetedWriter_AbortsMidWrite(t *testing.T) {
+	state := newExportZipState()
+	state.written = maxExportZipBytes - 10
+
+	var dest bytes.Buffer
+	w := &budgetedWriter{w: &dest, state: state}
+
+	n, err := w.Write(bytes.Repeat([]byte("x"), 20))
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "exceeds maximum allowed size")
+	assert.Equal(t, 0, n)
+	assert.Equal(t, 0, dest.Len(), "no bytes should reach the underlying writer once the budget is exceeded")
+}
+
+// TestSaveExportProjectZip_ManifestCountsTowardBudget is a regression test: project.json's own
+// bytes used to never be tracked, so a large manifest could bypass the export size cap entirely.
+// This confirms writing the manifest is itself subject to the running budget.
+func TestSaveExportProjectZip_ManifestCountsTowardBudget(t *testing.T) {
+	original := maxExportZipBytes
+	maxExportZipBytes = 10 // smaller than any real manifest, so project.json alone trips it
+	defer func() { maxExportZipBytes = original }()
+
+	ctx := context.Background()
+	i := &Project{assetRepo: memory.NewAsset(), file: &countingFile{reads: map[string]int{}}}
+
+	buf := &bytes.Buffer{}
+	zipWriter := zip.NewWriter(buf)
+	zipFile, err := afero.TempFile(afero.NewMemMapFs(), "", "export-*.zip")
+	require.NoError(t, err)
+
+	err = i.SaveExportProjectZip(ctx, zipWriter, zipFile, map[string]interface{}{"project": map[string]interface{}{}}, nil)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "exceeds maximum allowed size")
 }
