@@ -141,11 +141,11 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
           height: 100%;
           border: none;
         }
-        /* Modal and popup containers should size to content */
+        /* Modal and popup containers - let Zushi control dimensions, constrain to viewport */
         .zushi-modal-surface-container,
         .zushi-popup-surface-container {
-          width: fit-content !important;
-          height: fit-content !important;
+          max-width: 100%;
+          max-height: 100%;
         }
         .zushi-modal-surface-container iframe,
         .zushi-popup-surface-container iframe {
