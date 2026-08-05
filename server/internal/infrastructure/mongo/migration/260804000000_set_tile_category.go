@@ -16,6 +16,43 @@ import (
 // have a system tile (tile_type=google_satellite, tile_category=system).
 var streetViewPluginExtensions = []string{"streetView", "googleMapSearch"}
 
+// tileTypeFromTilesItem reads the tile_type field off a "tiles" schema group item,
+// regardless of whether it was persisted as a single "group" (fields directly on the
+// item, as the streetView widget's tiles schema historically had no list:true) or as
+// a "grouplist" (fields nested under Groups, as the scene-level tiles schema has).
+func tileTypeFromTilesItem(item *mongodoc.PropertyItemDocument) (string, bool) {
+	if item == nil || item.SchemaGroup != "tiles" {
+		return "", false
+	}
+
+	var fieldSets []*mongodoc.PropertyItemDocument
+	switch item.Type {
+	case "group":
+		fieldSets = []*mongodoc.PropertyItemDocument{item}
+	case "grouplist":
+		fieldSets = item.Groups
+	default:
+		return "", false
+	}
+
+	// Scan every field rather than returning on the first match, so behavior
+	// matches the original grouplist-only implementation: the last non-empty
+	// tile_type wins if a tiles item somehow holds more than one.
+	found := false
+	var result string
+	for _, group := range fieldSets {
+		for _, field := range group.Fields {
+			if field.Field == "tile_type" {
+				if val, ok := field.Value.(string); ok && val != "" {
+					result = val
+					found = true
+				}
+			}
+		}
+	}
+	return result, found
+}
+
 // SetTileCategory migrates scene properties by ensuring that any scene with a
 // streetView or googleMapSearch widget has a system tile (tile_type=google_satellite,
 // tile_category=system). Existing user-added tiles are preserved as-is.
@@ -110,17 +147,8 @@ func SetTileCategory(ctx context.Context, c DBClient) error {
 						continue
 					}
 					for _, item := range doc.Items {
-						if item.SchemaGroup != "tiles" || item.Type != "grouplist" {
-							continue
-						}
-						for _, group := range item.Groups {
-							for _, field := range group.Fields {
-								if field.Field == "tile_type" {
-									if val, ok := field.Value.(string); ok && val != "" {
-										widgetTileTypes[doc.ID] = val
-									}
-								}
-							}
+						if val, ok := tileTypeFromTilesItem(item); ok {
+							widgetTileTypes[doc.ID] = val
 						}
 					}
 				}
@@ -302,17 +330,8 @@ func SetTileCategory(ctx context.Context, c DBClient) error {
 				filtered := doc.Items[:0]
 				removed := false
 				for _, item := range doc.Items {
-					if item.SchemaGroup == "tiles" && item.Type == "grouplist" {
-						var val string
-						for _, group := range item.Groups {
-							for _, field := range group.Fields {
-								if field.Field == "tile_type" {
-									if v, ok := field.Value.(string); ok && v != "" {
-										val = v
-									}
-								}
-							}
-						}
+					if item.SchemaGroup == "tiles" && (item.Type == "grouplist" || item.Type == "group") {
+						val, _ := tileTypeFromTilesItem(item)
 						fmt.Printf("[migration] SetTileCategory: widget property %q had tile_type=%q before removal\n", doc.ID, val)
 						removed = true
 						continue
