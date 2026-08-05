@@ -17,7 +17,10 @@ import {
   useState
 } from "react";
 
-import type { ReearthPluginContext } from "../pluginAPI/zushiAdapter";
+import type {
+  ExternalCloseRefs,
+  ReearthPluginContext
+} from "../pluginAPI/zushiAdapter";
 import { createZushiExposedAPI } from "../pluginAPI/zushiAdapter";
 
 /**
@@ -35,6 +38,18 @@ export type Options = {
   onPreInit?: () => void;
   onDispose?: () => void;
   onMessage?: (msg: unknown) => void;
+  /**
+   * Callback to register the modal close function with the parent.
+   * Called when the plugin is initialized with a function that can
+   * externally close the modal (fires close events, hides surface).
+   */
+  onRegisterModalClose?: (closeFn: () => void) => void;
+  /**
+   * Callback to register the popup close function with the parent.
+   * Called when the plugin is initialized with a function that can
+   * externally close the popup (fires close events, hides surface).
+   */
+  onRegisterPopupClose?: (closeFn: () => void) => void;
 };
 
 /**
@@ -105,11 +120,20 @@ export default function useZushiPlugin({
   onPreInit,
   onError = defaultOnError,
   onDispose,
-  onMessage: rawOnMessage
+  onMessage: rawOnMessage,
+  onRegisterModalClose,
+  onRegisterPopupClose
 }: Options): UseZushiPluginReturn {
   const [loaded, setLoaded] = useState(false);
   const [code, setCode] = useState("");
   const pluginRef = useRef<Plugin | undefined>(undefined);
+
+  // External close refs - populated by the modal/popup adapters so the parent can
+  // close surfaces (close-before-show) while still firing each surface's close events
+  const externalCloseRefs = useRef<ExternalCloseRefs>({
+    modalCloseRef: { current: null },
+    popupCloseRef: { current: null }
+  });
 
   /**
    * pluginContextRef Pattern
@@ -292,7 +316,8 @@ export default function useZushiPlugin({
           exposed: createZushiExposedAPI(
             () => pluginContextRef.current,
             messageHandlers,
-            (fn) => disposeCallbacksRef.current.push(fn)
+            (fn) => disposeCallbacksRef.current.push(fn),
+            externalCloseRefs.current
           )
         });
 
@@ -484,6 +509,23 @@ export default function useZushiPlugin({
     popupContainer,
     runDisposeCallbacks
   ]);
+
+  // Register external close callbacks with parent when plugin is loaded
+  useEffect(() => {
+    if (!loaded) return;
+
+    // Register modal close callback
+    const modalClose = externalCloseRefs.current.modalCloseRef.current;
+    if (modalClose && onRegisterModalClose) {
+      onRegisterModalClose(modalClose);
+    }
+
+    // Register popup close callback
+    const popupClose = externalCloseRefs.current.popupCloseRef.current;
+    if (popupClose && onRegisterPopupClose) {
+      onRegisterPopupClose(popupClose);
+    }
+  }, [loaded, onRegisterModalClose, onRegisterPopupClose]);
 
   // Listen for window postMessage events from plugin UI
   // Filter based on iframe source window

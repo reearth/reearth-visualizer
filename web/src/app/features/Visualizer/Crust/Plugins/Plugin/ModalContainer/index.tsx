@@ -51,15 +51,23 @@ const ModalContainer: ForwardRefRenderFunction<
 
 const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
   position: css.position.absolute,
-  left: "50%",
-  top: " 50%",
-  transform: "translate(-50%, -50%)",
+  left: 0,
+  top: 0,
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  pointerEvents: "none", // Allow clicks to pass through to Background
   visibility: visible ? "visible" : "hidden",
   zIndex: visible
     ? theme.zIndexes.visualizer.pluginModal
     : theme.zIndexes.hidden,
   transition: "opacity 0.25s",
-  opacity: visible ? "1" : "0"
+  opacity: visible ? "1" : "0",
+  "& > *": {
+    pointerEvents: "auto" // Modal content should receive clicks
+  }
 }));
 
 const Background = styled("div")<{ visible: boolean; background?: string }>(

@@ -28,6 +28,24 @@ export type CommonProps = {
   shownPluginPopupInfo?: PluginPopupInfo;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
+  /**
+   * Register a close callback for this plugin's modal.
+   * Called by the close-before-show pattern to close previous modal.
+   */
+  registerPluginModalClose?: (id: string, closeFn: () => void) => void;
+  /**
+   * Unregister the close callback for this plugin's modal.
+   */
+  unregisterPluginModalClose?: (id: string) => void;
+  /**
+   * Register a close callback for this plugin's popup.
+   * Called by the close-before-show pattern to close previous popup.
+   */
+  registerPluginPopupClose?: (id: string, closeFn: () => void) => void;
+  /**
+   * Unregister the close callback for this plugin's popup.
+   */
+  unregisterPluginPopupClose?: (id: string) => void;
 };
 
 export type ExternalPluginProps = Pick<
@@ -89,6 +107,10 @@ export default function Plugin({
   onVisibilityChange,
   onPluginModalShow,
   onPluginPopupShow,
+  registerPluginModalClose,
+  unregisterPluginModalClose,
+  registerPluginPopupClose,
+  unregisterPluginPopupClose,
   onClick,
   onRender,
   onResize
@@ -105,7 +127,9 @@ export default function Plugin({
     renderKey,
     pluginContext,
     onError,
-    onDispose
+    onDispose,
+    onRegisterModalClose,
+    onRegisterPopupClose
   } = usePluginInstance({
     mapRef,
     pluginId,
@@ -122,6 +146,10 @@ export default function Plugin({
     onVisibilityChange,
     onPluginModalShow,
     onPluginPopupShow,
+    registerPluginModalClose,
+    unregisterPluginModalClose,
+    registerPluginPopupClose,
+    unregisterPluginPopupClose,
     onRender,
     onResize
   });
@@ -146,6 +174,8 @@ export default function Plugin({
       onError={onError}
       onDispose={onDispose}
       onClick={onClick}
+      onRegisterModalClose={onRegisterModalClose}
+      onRegisterPopupClose={onRegisterPopupClose}
     />
   ) : null;
 }
