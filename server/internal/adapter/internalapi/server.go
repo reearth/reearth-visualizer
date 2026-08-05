@@ -729,7 +729,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 
 	}
 
-	// NOTE(REL-04, compliance scan issue #96): read-modify-write lost-update race.
+	// NOTE(REL-04, AI compliance scan finding): read-modify-write lost-update race.
 	// starredBy/starCount are read above, mutated in memory, then written back here with
 	// no transaction covering the span and no atomic update (e.g. $addToSet/$inc). If two
 	// users star/unstar the same project within the same narrow window, the second write can
