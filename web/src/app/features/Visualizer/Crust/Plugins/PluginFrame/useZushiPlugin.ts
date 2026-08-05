@@ -128,8 +128,8 @@ export default function useZushiPlugin({
   const [code, setCode] = useState("");
   const pluginRef = useRef<Plugin | undefined>(undefined);
 
-  // External close refs - populated by the adapter and used for external close
-  // Note: getModalContainer/getPopupContainer will be set after containers are created
+  // External close refs - populated by the modal/popup adapters so the parent can
+  // close surfaces (close-before-show) while still firing each surface's close events
   const externalCloseRefs = useRef<ExternalCloseRefs>({
     modalCloseRef: { current: null },
     popupCloseRef: { current: null }
