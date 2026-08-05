@@ -31,6 +31,10 @@ export default function ({
   onPluginModalShow,
   shownPluginPopupInfo,
   onPluginPopupShow,
+  registerPluginModalClose,
+  unregisterPluginModalClose,
+  registerPluginPopupClose,
+  unregisterPluginPopupClose,
   onRender: _onRender,
   onResize: _onResize
 }: {
@@ -49,6 +53,10 @@ export default function ({
   onVisibilityChange?: (widgetId: string, v: boolean) => void;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (modalInfo?: PluginModalInfo) => void;
+  registerPluginModalClose?: (id: string, closeFn: () => void) => void;
+  unregisterPluginModalClose?: (id: string) => void;
+  registerPluginPopupClose?: (id: string, closeFn: () => void) => void;
+  unregisterPluginPopupClose?: (id: string) => void;
   onRender?: (
     options:
       | {
@@ -100,6 +108,10 @@ export default function ({
     onPluginPopupShow,
     shownPluginModalInfo,
     shownPluginPopupInfo,
+    registerPluginModalClose,
+    unregisterPluginModalClose,
+    registerPluginPopupClose,
+    unregisterPluginPopupClose,
     widget,
     block
   });
@@ -110,6 +122,10 @@ export default function ({
       onPluginPopupShow,
       shownPluginModalInfo,
       shownPluginPopupInfo,
+      registerPluginModalClose,
+      unregisterPluginModalClose,
+      registerPluginPopupClose,
+      unregisterPluginPopupClose,
       widget,
       block
     };
@@ -147,14 +163,16 @@ export default function ({
   }, []);
 
   // Update modal visibility based on external state
+  // Note: We don't call handleModalClose here anymore. Closing is now handled
+  // by the close-before-show pattern in Crust hooks, which calls our registered
+  // close callback directly. This prevents the race condition where we would
+  // clear the global state that a new plugin just set.
   useEffect(() => {
     const visible = shownPluginModalInfo?.id === (widget?.id ?? block?.id);
     if (modalVisible !== visible) {
       setModalVisibility(visible);
-      if (!visible) {
-        // Modal was closed externally
-        handleModalClose();
-      }
+      // Don't call handleModalClose() here - closing is handled by
+      // the close-before-show pattern via registered close callbacks
     }
   }, [
     modalVisible,
@@ -162,19 +180,17 @@ export default function ({
     pluginId,
     extensionId,
     widget?.id,
-    block?.id,
-    handleModalClose
+    block?.id
   ]);
 
   // Update popup visibility based on external state
+  // Same note as modal: closing is handled by close-before-show pattern
   useEffect(() => {
     const visible = shownPluginPopupInfo?.id === (widget?.id ?? block?.id);
     if (popupVisible !== visible) {
       setPopupVisibility(visible);
-      if (!visible) {
-        // Popup was closed externally
-        handlePopupClose();
-      }
+      // Don't call handlePopupClose() here - closing is handled by
+      // the close-before-show pattern via registered close callbacks
     }
   }, [
     popupVisible,
@@ -182,8 +198,7 @@ export default function ({
     pluginId,
     extensionId,
     widget?.id,
-    block?.id,
-    handlePopupClose
+    block?.id
   ]);
 
   const onError = useCallback(
@@ -262,6 +277,43 @@ export default function ({
   const handlePopupShow = useCallback((options?: PluginPopupInfo) => {
     callbacksRef.current.onPluginPopupShow?.(options);
   }, []);
+
+  /**
+   * Callback for PluginFrame to register modal close function.
+   * Wraps the close function with the plugin's instance ID and registers
+   * it with the Crust level so other plugins can close this modal.
+   */
+  const handleRegisterModalClose = useCallback((closeFn: () => void) => {
+    const instanceId =
+      callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
+    if (instanceId) {
+      callbacksRef.current.registerPluginModalClose?.(instanceId, closeFn);
+    }
+  }, []);
+
+  /**
+   * Callback for PluginFrame to register popup close function.
+   * Wraps the close function with the plugin's instance ID and registers
+   * it with the Crust level so other plugins can close this popup.
+   */
+  const handleRegisterPopupClose = useCallback((closeFn: () => void) => {
+    const instanceId =
+      callbacksRef.current.widget?.id ?? callbacksRef.current.block?.id;
+    if (instanceId) {
+      callbacksRef.current.registerPluginPopupClose?.(instanceId, closeFn);
+    }
+  }, []);
+
+  // Unregister close callbacks on unmount
+  useEffect(() => {
+    const instanceId = widget?.id ?? block?.id;
+    return () => {
+      if (instanceId) {
+        callbacksRef.current.unregisterPluginModalClose?.(instanceId);
+        callbacksRef.current.unregisterPluginPopupClose?.(instanceId);
+      }
+    };
+  }, [widget?.id, block?.id]);
 
   // Plugin message sender registration ref
   const pluginMessageSenderRef = useRef<
@@ -382,6 +434,8 @@ export default function ({
     renderKey,
     pluginContext,
     onError,
-    onDispose: handleDispose
+    onDispose: handleDispose,
+    onRegisterModalClose: handleRegisterModalClose,
+    onRegisterPopupClose: handleRegisterPopupClose
   };
 }
