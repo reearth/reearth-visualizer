@@ -44,9 +44,9 @@ func BuildUsecases(ctx context.Context, r *repo.Container, g *gateway.Container,
 	}
 
 	var ar2 *accountsInfra.Container
-	if op := adapter.AcOperator(ctx); op != nil && ar != nil {
+	if op := adapter.Operator(ctx); op != nil && op.AcOperator != nil && ar != nil {
 		// apply filters to repos
-		ar2 = ar.Filtered(accountsWorkspace.WorkspaceFilterFromOperator(op))
+		ar2 = ar.Filtered(accountsWorkspace.WorkspaceFilterFromOperator(op.AcOperator))
 	} else {
 		ar2 = ar
 	}
