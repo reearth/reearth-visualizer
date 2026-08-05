@@ -44,6 +44,18 @@ export type Props = {
   onDispose?: () => void;
   onClick?: () => void;
   onRender?: (type: string) => void;
+  /**
+   * Callback to register the modal close function.
+   * Used by the close-before-show pattern to close previous modal
+   * when a new plugin shows its modal.
+   */
+  onRegisterModalClose?: (closeFn: () => void) => void;
+  /**
+   * Callback to register the popup close function.
+   * Used by the close-before-show pattern to close previous popup
+   * when a new plugin shows its popup.
+   */
+  onRegisterPopupClose?: (closeFn: () => void) => void;
 };
 
 const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
@@ -68,7 +80,9 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
     onDispose,
     onClick,
     onMessage,
-    onRender: _onRender
+    onRender: _onRender,
+    onRegisterModalClose,
+    onRegisterPopupClose
   },
   ref
 ) => {
@@ -83,7 +97,9 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
     onError,
     onPreInit,
     onDispose,
-    onMessage
+    onMessage,
+    onRegisterModalClose,
+    onRegisterPopupClose
   });
 
   // Populate UI container ref for popup positioning
@@ -119,13 +135,21 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
   return (
     <>
       <style>{`
-        /* Ensure Zushi iframes fill their containers */
-        .zushi-ui-surface-container iframe,
+        /* UI surface - let Zushi control dimensions, don't force 100% */
+        .zushi-ui-surface-container iframe {
+          border: none;
+          display: block;
+        }
+        /* Modal and popup containers - let Zushi control dimensions, constrain to viewport */
+        .zushi-modal-surface-container,
+        .zushi-popup-surface-container {
+          max-width: 100%;
+          max-height: 100%;
+        }
         .zushi-modal-surface-container iframe,
         .zushi-popup-surface-container iframe {
-          width: 100%;
-          height: 100%;
           border: none;
+          display: block;
         }
       `}</style>
 
@@ -134,9 +158,7 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
         ref={surfaceRefs.uiContainer}
         className={`zushi-ui-surface-container ${className || ""}`}
         style={{
-          display: uiVisible ? "block" : "none",
-          width: "100%",
-          height: "100%",
+          display: uiVisible ? "inline-block" : "none",
           ...iFrameProps?.style
         }}
         onClick={onClick}

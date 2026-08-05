@@ -119,10 +119,9 @@ describe("PluginFrame", () => {
 
     const uiDiv = container.querySelector(".test-plugin-ui");
     expect(uiDiv).toBeTruthy();
+    // UI surface uses inline-block to only take needed space in widget alignment system
     expect(uiDiv).toHaveStyle({
-      display: "block",
-      width: "100%",
-      height: "100%"
+      display: "inline-block"
     });
   });
 
@@ -174,7 +173,9 @@ describe("PluginFrame", () => {
     );
 
     // Modal is rendered in portal (ModalContainer Wrapper handles visibility)
-    const modalDiv = modalContainer.querySelector(".zushi-modal-surface-container") as HTMLElement;
+    const modalDiv = modalContainer.querySelector(
+      ".zushi-modal-surface-container"
+    ) as HTMLElement;
     expect(modalDiv).toBeTruthy();
     expect(modalDiv?.style.minWidth).toBe("300px");
     expect(modalDiv?.style.minHeight).toBe("200px");
@@ -196,7 +197,9 @@ describe("PluginFrame", () => {
     );
 
     // Modal container always exists (ModalContainer Wrapper controls visibility)
-    const modalDiv = modalContainer.querySelector(".zushi-modal-surface-container") as HTMLElement;
+    const modalDiv = modalContainer.querySelector(
+      ".zushi-modal-surface-container"
+    ) as HTMLElement;
     expect(modalDiv).toBeTruthy();
     expect(modalDiv?.style.minWidth).toBe("300px");
     expect(modalDiv?.style.minHeight).toBe("200px");
@@ -218,7 +221,9 @@ describe("PluginFrame", () => {
     );
 
     // Popup is rendered in portal (PopupContainer Wrapper controls visibility)
-    const popupDiv = popupContainer.querySelector(".zushi-popup-surface-container");
+    const popupDiv = popupContainer.querySelector(
+      ".zushi-popup-surface-container"
+    );
     expect(popupDiv).toBeTruthy();
     expect(popupDiv?.className).toContain("zushi-popup-surface-container");
 
@@ -308,7 +313,9 @@ describe("PluginFrame", () => {
     );
 
     // Check that modal element was appended
-    const modalDiv = modalContainer.querySelector(".zushi-modal-surface-container");
+    const modalDiv = modalContainer.querySelector(
+      ".zushi-modal-surface-container"
+    );
     expect(modalDiv).toBeTruthy();
     // Styles are set by useZushiPlugin, just verify the element exists
     expect(modalDiv?.className).toContain("zushi-modal-surface-container");
@@ -330,7 +337,9 @@ describe("PluginFrame", () => {
     );
 
     // Check that popup element was appended
-    const popupDiv = popupContainer.querySelector(".zushi-popup-surface-container");
+    const popupDiv = popupContainer.querySelector(
+      ".zushi-popup-surface-container"
+    );
     expect(popupDiv).toBeTruthy();
     // Styles are set by useZushiPlugin, just verify the element exists
     expect(popupDiv?.className).toContain("zushi-popup-surface-container");
