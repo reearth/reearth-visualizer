@@ -11,7 +11,11 @@ import { describe, expect, test, vi } from "vitest";
 
 import type { Context } from "../types";
 
-import { createZushiExposedAPI, type ReearthPluginContext } from "./zushiAdapter";
+import {
+  createZushiExposedAPI,
+  type ExternalCloseRefs,
+  type ReearthPluginContext
+} from "./zushiAdapter";
 
 // Mock SurfaceAPI
 function createMockSurface(): SurfaceAPI {
@@ -585,6 +589,264 @@ describe("zushiAdapter", () => {
 
       expect(getCurrentLocationAsync).toHaveBeenCalled();
       expect(startEventLoop).toHaveBeenCalled();
+    });
+
+    test("modal.close() clears content with empty div", () => {
+      const reearthContext = createMockReearthContext();
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
+
+      const modalSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: modalSurface,
+          popup: createMockSurface()
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Call modal.close()
+      globalThis.reearth.modal.close();
+
+      // Verify content was cleared with empty div
+      expect(modalSurface.show).toHaveBeenCalledWith("<div></div>", {});
+      expect(modalSurface.setVisible).toHaveBeenCalledWith(false);
+    });
+
+    test("modal.close() calls onModalClose callback", () => {
+      const onModalClose = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onModalClose
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
+
+      const modalSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: modalSurface,
+          popup: createMockSurface()
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Call modal.close()
+      globalThis.reearth.modal.close();
+
+      // Verify onModalClose was called
+      expect(onModalClose).toHaveBeenCalled();
+    });
+
+    test("external modal close ref triggers close events without calling onModalClose", () => {
+      const onModalClose = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onModalClose
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      // Create external close refs
+      const externalCloseRefs: ExternalCloseRefs = {
+        modalCloseRef: { current: null },
+        popupCloseRef: { current: null }
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {},
+        externalCloseRefs
+      );
+
+      const modalSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: modalSurface,
+          popup: createMockSurface()
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Register a close event handler
+      const closeHandler = vi.fn();
+      globalThis.reearth.modal.on("close", closeHandler);
+
+      // Verify external close ref was set
+      expect(externalCloseRefs.modalCloseRef.current).not.toBeNull();
+
+      // Call external close
+      externalCloseRefs.modalCloseRef.current!();
+
+      // Verify surface was hidden and content was cleared
+      expect(modalSurface.setVisible).toHaveBeenCalledWith(false);
+      expect(modalSurface.show).toHaveBeenCalledWith("<div></div>", {});
+
+      // Verify close event was triggered
+      expect(closeHandler).toHaveBeenCalled();
+
+      // Verify onModalClose was NOT called (critical for close-before-show pattern)
+      expect(onModalClose).not.toHaveBeenCalled();
+    });
+
+    test("popup.close() clears content with empty div", () => {
+      const reearthContext = createMockReearthContext();
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
+
+      const popupSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: createMockSurface(),
+          popup: popupSurface
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Call popup.close()
+      globalThis.reearth.popup.close();
+
+      // Verify content was cleared with empty div
+      expect(popupSurface.show).toHaveBeenCalledWith("<div></div>", {});
+      expect(popupSurface.setVisible).toHaveBeenCalledWith(false);
+    });
+
+    test("popup.close() calls onPopupClose callback", () => {
+      const onPopupClose = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onPopupClose
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
+
+      const popupSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: createMockSurface(),
+          popup: popupSurface
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Call popup.close()
+      globalThis.reearth.popup.close();
+
+      // Verify onPopupClose was called
+      expect(onPopupClose).toHaveBeenCalled();
+    });
+
+    test("external popup close ref triggers close events without calling onPopupClose", () => {
+      const onPopupClose = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onPopupClose
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      // Create external close refs
+      const externalCloseRefs: ExternalCloseRefs = {
+        modalCloseRef: { current: null },
+        popupCloseRef: { current: null }
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {},
+        externalCloseRefs
+      );
+
+      const popupSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: createMockSurface(),
+          popup: popupSurface
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Register a close event handler
+      const closeHandler = vi.fn();
+      globalThis.reearth.popup.on("close", closeHandler);
+
+      // Verify external close ref was set
+      expect(externalCloseRefs.popupCloseRef.current).not.toBeNull();
+
+      // Call external close
+      externalCloseRefs.popupCloseRef.current!();
+
+      // Verify surface was hidden and content was cleared
+      expect(popupSurface.setVisible).toHaveBeenCalledWith(false);
+      expect(popupSurface.show).toHaveBeenCalledWith("<div></div>", {});
+
+      // Verify close event was triggered
+      expect(closeHandler).toHaveBeenCalled();
+
+      // Verify onPopupClose was NOT called (critical for close-before-show pattern)
+      expect(onPopupClose).not.toHaveBeenCalled();
     });
   });
 });
