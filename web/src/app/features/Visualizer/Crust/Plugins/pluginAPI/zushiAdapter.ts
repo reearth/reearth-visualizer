@@ -360,6 +360,13 @@ function createModalAdapter(
   const closeEvents = createCloseEventManager("Modal");
 
   /**
+   * Idempotent close guard - prevents duplicate close events and
+   * prevents a plugin from interfering with another plugin's modal
+   * after being externally closed.
+   */
+  let isOpen = false;
+
+  /**
    * Clears surface content to ensure fresh state on next show.
    * Uses a minimal HTML structure to avoid ResizeObserver errors
    * (empty string causes document.body.parentElement to be null).
@@ -373,6 +380,8 @@ function createModalAdapter(
   // call onModalClose (global state is managed by the new plugin)
   if (externalCloseRef) {
     externalCloseRef.current = () => {
+      if (!isOpen) return; // Already closed, do nothing
+      isOpen = false;
       surface.setVisible(false);
       clearContent();
       closeEvents.trigger();
@@ -382,6 +391,7 @@ function createModalAdapter(
 
   return {
     show: (html, options) => {
+      isOpen = true;
       surface.setVisible(true);
       surface.show(html, {
         width: options?.width,
@@ -395,6 +405,8 @@ function createModalAdapter(
       });
     },
     close: () => {
+      if (!isOpen) return; // Already closed, do nothing
+      isOpen = false;
       surface.setVisible(false);
       clearContent();
       closeEvents.trigger();
@@ -458,6 +470,13 @@ function createPopupAdapter(
   const closeEvents = createCloseEventManager("Popup");
 
   /**
+   * Idempotent close guard - prevents duplicate close events and
+   * prevents a plugin from interfering with another plugin's popup
+   * after being externally closed.
+   */
+  let isOpen = false;
+
+  /**
    * Clears surface content to ensure fresh state on next show.
    * Uses a minimal HTML structure to avoid ResizeObserver errors.
    */
@@ -470,6 +489,8 @@ function createPopupAdapter(
   // call onPopupClose (global state is managed by the new plugin)
   if (externalCloseRef) {
     externalCloseRef.current = () => {
+      if (!isOpen) return; // Already closed, do nothing
+      isOpen = false;
       surface.setVisible(false);
       clearContent();
       closeEvents.trigger();
@@ -479,6 +500,7 @@ function createPopupAdapter(
 
   return {
     show: (html, options) => {
+      isOpen = true;
       surface.setVisible(true);
       surface.show(html, {
         width: options?.width,
@@ -500,6 +522,8 @@ function createPopupAdapter(
       });
     },
     close: () => {
+      if (!isOpen) return; // Already closed, do nothing
+      isOpen = false;
       surface.setVisible(false);
       clearContent();
       closeEvents.trigger();

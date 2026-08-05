@@ -630,6 +630,11 @@ describe("zushiAdapter", () => {
 
       const globalThis = factory(mockZushiContext as any);
 
+      // Must show first (idempotent guard requires modal to be open)
+      globalThis.reearth.modal.show("<div>test</div>", {});
+      vi.mocked(modalSurface.show).mockClear();
+      vi.mocked(modalSurface.setVisible).mockClear();
+
       // Call modal.close()
       globalThis.reearth.modal.close();
 
@@ -667,6 +672,9 @@ describe("zushiAdapter", () => {
       };
 
       const globalThis = factory(mockZushiContext as any);
+
+      // Must show first (idempotent guard requires modal to be open)
+      globalThis.reearth.modal.show("<div>test</div>", {});
 
       // Call modal.close()
       globalThis.reearth.modal.close();
@@ -711,6 +719,11 @@ describe("zushiAdapter", () => {
       };
 
       const globalThis = factory(mockZushiContext as any);
+
+      // Must show first (idempotent guard requires modal to be open)
+      globalThis.reearth.modal.show("<div>test</div>", {});
+      vi.mocked(modalSurface.show).mockClear();
+      vi.mocked(modalSurface.setVisible).mockClear();
 
       // Register a close event handler
       const closeHandler = vi.fn();
@@ -760,6 +773,11 @@ describe("zushiAdapter", () => {
 
       const globalThis = factory(mockZushiContext as any);
 
+      // Must show first (idempotent guard requires popup to be open)
+      globalThis.reearth.popup.show("<div>test</div>", {});
+      vi.mocked(popupSurface.show).mockClear();
+      vi.mocked(popupSurface.setVisible).mockClear();
+
       // Call popup.close()
       globalThis.reearth.popup.close();
 
@@ -797,6 +815,9 @@ describe("zushiAdapter", () => {
       };
 
       const globalThis = factory(mockZushiContext as any);
+
+      // Must show first (idempotent guard requires popup to be open)
+      globalThis.reearth.popup.show("<div>test</div>", {});
 
       // Call popup.close()
       globalThis.reearth.popup.close();
@@ -842,6 +863,11 @@ describe("zushiAdapter", () => {
 
       const globalThis = factory(mockZushiContext as any);
 
+      // Must show first (idempotent guard requires popup to be open)
+      globalThis.reearth.popup.show("<div>test</div>", {});
+      vi.mocked(popupSurface.show).mockClear();
+      vi.mocked(popupSurface.setVisible).mockClear();
+
       // Register a close event handler
       const closeHandler = vi.fn();
       globalThis.reearth.popup.on("close", closeHandler);
@@ -861,6 +887,214 @@ describe("zushiAdapter", () => {
       expect(closeHandler).toHaveBeenCalled();
 
       // Verify onPopupClose was NOT called (critical for close-before-show pattern)
+      expect(onPopupClose).not.toHaveBeenCalled();
+    });
+
+    test("modal.close() is idempotent - calling twice does not fire events twice", () => {
+      const onModalClose = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onModalClose
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
+
+      const modalSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: modalSurface,
+          popup: createMockSurface()
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Show modal first
+      globalThis.reearth.modal.show("<div>test</div>", {});
+
+      // Register close handler
+      const closeHandler = vi.fn();
+      globalThis.reearth.modal.on("close", closeHandler);
+
+      // Close twice
+      globalThis.reearth.modal.close();
+      globalThis.reearth.modal.close();
+
+      // Verify close handler and onModalClose only called once
+      expect(closeHandler).toHaveBeenCalledTimes(1);
+      expect(onModalClose).toHaveBeenCalledTimes(1);
+    });
+
+    test("modal.close() after external close does not call onModalClose", () => {
+      const onModalClose = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onModalClose
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const externalCloseRefs: ExternalCloseRefs = {
+        modalCloseRef: { current: null },
+        popupCloseRef: { current: null }
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {},
+        externalCloseRefs
+      );
+
+      const modalSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: modalSurface,
+          popup: createMockSurface()
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Show modal first
+      globalThis.reearth.modal.show("<div>test</div>", {});
+
+      // Register close handler
+      const closeHandler = vi.fn();
+      globalThis.reearth.modal.on("close", closeHandler);
+
+      // External close (simulating another plugin taking over)
+      const externalClose = externalCloseRefs.modalCloseRef.current;
+      if (externalClose) {
+        externalClose();
+      }
+
+      // Plugin A tries to close its modal (unaware it was externally closed)
+      globalThis.reearth.modal.close();
+
+      // Verify close handler fired once (from external close)
+      expect(closeHandler).toHaveBeenCalledTimes(1);
+      // Verify onModalClose was never called (external close skips it, subsequent close is guarded)
+      expect(onModalClose).not.toHaveBeenCalled();
+    });
+
+    test("popup.close() is idempotent - calling twice does not fire events twice", () => {
+      const onPopupClose = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onPopupClose
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
+
+      const popupSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: createMockSurface(),
+          popup: popupSurface
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Show popup first
+      globalThis.reearth.popup.show("<div>test</div>", {});
+
+      // Register close handler
+      const closeHandler = vi.fn();
+      globalThis.reearth.popup.on("close", closeHandler);
+
+      // Close twice
+      globalThis.reearth.popup.close();
+      globalThis.reearth.popup.close();
+
+      // Verify close handler and onPopupClose only called once
+      expect(closeHandler).toHaveBeenCalledTimes(1);
+      expect(onPopupClose).toHaveBeenCalledTimes(1);
+    });
+
+    test("popup.close() after external close does not call onPopupClose", () => {
+      const onPopupClose = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onPopupClose
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn()
+      };
+
+      const externalCloseRefs: ExternalCloseRefs = {
+        modalCloseRef: { current: null },
+        popupCloseRef: { current: null }
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {},
+        externalCloseRefs
+      );
+
+      const popupSurface = createMockSurface();
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: createMockSurface(),
+          popup: popupSurface
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      // Show popup first
+      globalThis.reearth.popup.show("<div>test</div>", {});
+
+      // Register close handler
+      const closeHandler = vi.fn();
+      globalThis.reearth.popup.on("close", closeHandler);
+
+      // External close (simulating another plugin taking over)
+      const externalClose = externalCloseRefs.popupCloseRef.current;
+      if (externalClose) {
+        externalClose();
+      }
+
+      // Plugin A tries to close its popup (unaware it was externally closed)
+      globalThis.reearth.popup.close();
+
+      // Verify close handler fired once (from external close)
+      expect(closeHandler).toHaveBeenCalledTimes(1);
+      // Verify onPopupClose was never called (external close skips it, subsequent close is guarded)
       expect(onPopupClose).not.toHaveBeenCalled();
     });
   });
