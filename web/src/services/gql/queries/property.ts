@@ -44,6 +44,11 @@ export const ADD_PROPERTY_ITEM = gql(`
         id
         ...PropertyFragment
       }
+      propertyItem {
+        ... on PropertyGroup {
+          id
+        }
+      }
     }
   }
 `);

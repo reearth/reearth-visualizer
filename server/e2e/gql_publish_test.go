@@ -156,7 +156,7 @@ func TestPublishProjectAliasPattern(t *testing.T) {
 
 func checkProjectInvalidAlias(alias string, res *httpexpect.Value, err *httpexpect.Value) {
 	message := fmt.Sprintf("Invalid alias name: %s", alias)
-	description := fmt.Sprintf("The alias '%s' must be 5-32 characters long and can only contain alphanumeric, hyphen (a-z, 0-9, -).", alias)
+	description := fmt.Sprintf("The alias '%s' must be 5-32 characters long and can only contain alphanumeric characters and hyphens (a-z, 0-9, -), and must start and end with a letter or number.", alias)
 	res.IsNull()
 	err.Array().IsEqual([]map[string]any{
 		{
@@ -410,7 +410,7 @@ func TestPublishStoryAliasPattern(t *testing.T) {
 
 func checkStoryInvalidAlias(alias string, res *httpexpect.Value, err *httpexpect.Value) {
 	message := fmt.Sprintf("Invalid alias name: %s", alias)
-	description := fmt.Sprintf("The alias '%s' must be 5-32 characters long and can only contain alphanumeric, hyphen (a-z, 0-9, -).", alias)
+	description := fmt.Sprintf("The alias '%s' must be 5-32 characters long and can only contain alphanumeric characters and hyphens (a-z, 0-9, -), and must start and end with a letter or number.", alias)
 	res.IsNull()
 	err.Array().IsEqual([]map[string]any{
 		{
