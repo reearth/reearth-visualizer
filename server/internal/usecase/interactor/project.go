@@ -694,6 +694,19 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 
 }
 
+// importClaimStaleAfter bounds how long a PROCESSING claim is treated as
+// still in flight before ClaimImport allows a retry to reclaim it. Chosen
+// comfortably larger than Cloud Run's ~540s request timeout on the
+// synchronous SaaS import path, and far larger than any observed import
+// latency in prod logs (max seen: ~15s for typical projects; large zips
+// take longer, but 15 minutes gives headroom before a legitimately-still-
+// running import gets reclaimed).
+const importClaimStaleAfter = 15 * time.Minute
+
+func (i *Project) ClaimImport(ctx context.Context, pid id.ProjectID) (bool, error) {
+	return i.projectMetadataRepo.ClaimImport(ctx, pid, importClaimStaleAfter)
+}
+
 func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, string, string, error) {
 
 	prj, err := i.projectRepo.FindByID(ctx, *pid)

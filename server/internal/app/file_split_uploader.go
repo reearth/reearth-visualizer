@@ -465,6 +465,16 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 	}()
 	defer m.cleanupSession(job.fileID)
 
+	claimed, err := job.usecases.Project.ClaimImport(bgctx, job.projectID)
+	if err != nil {
+		log.Errorf("[Import] failed to claim import for %s: %v", job.projectID.String(), err)
+		return
+	}
+	if !claimed {
+		log.Infof("[Import] skipping %s: already succeeded or in progress", job.projectID.String())
+		return
+	}
+
 	fs := afero.NewOsFs()
 	f, err := fs.Open(job.filePath)
 	if err != nil {
