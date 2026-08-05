@@ -67,6 +67,7 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Verify dashboard is loaded", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-001" });
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
@@ -74,6 +75,7 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Verify project creation modal", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-002" });
     await dashBoardPage.projects.click();
     await projectsPage.newProjectButton.waitFor({ state: "visible" });
     await page.waitForTimeout(500);
@@ -86,11 +88,13 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Verify project creation with empty name", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-002" });
     await projectsPage.projectNameInput.waitFor({ state: "visible" });
     await expect(projectsPage.applyButton).toBeDisabled();
   });
 
   test("Create a new project and verify after its creation", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-003" });
     await projectsPage.createNewProject(
       projectName,
       projectAlias,
@@ -101,6 +105,7 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Remove the project to the Recycle Bin", async () => {
+    test.info().annotations.push({ type: "story", description: "US-RBIN-001" });
     await projectsPage.deleteProject(projectName);
     // await expect(
     //   page.getByText("Successfully moved to Recycle bin!")
@@ -108,17 +113,20 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Go to the Recycle Bin and Recover the Deleted Project", async () => {
+    test.info().annotations.push({ type: "story", description: "US-RBIN-004" });
     await dashBoardPage.recycleBin.click();
     // await expect(recycleBinPage.projectTitles).toBeVisible();
     await recycleBinPage.recoverProject(projectName);
   });
 
   test("Verify the project has successfully been recover", async () => {
+    test.info().annotations.push({ type: "story", description: "US-RBIN-002" });
     await dashBoardPage.projects.click();
     await expect(page.getByText(projectName)).toBeVisible();
   });
 
   test("Remove the project, Go to the Recycle Bin And delete it ", async () => {
+    test.info().annotations.push({ type: "story", description: "US-RBIN-003" });
     await projectsPage.deleteProject(projectName);
     await expect(projectsPage.gridProjectItem(projectName)).not.toBeVisible();
     await dashBoardPage.recycleBin.click();
@@ -129,6 +137,7 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Verify project creation with special characters in name", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-004" });
     await dashBoardPage.projects.click();
     const specialProjectDescription = "Test project with special characters";
     await projectsPage.newProjectButton.waitFor({ state: "visible" });
@@ -144,6 +153,7 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Starred and UnStarred the Project and verify it", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-005" });
     await projectsPage.starredProject(specialProjectName);
     await projectsPage.verifyStarredProject(specialProjectName);
     await projectsPage.starredProjectNameMenuBar(specialProjectName);
@@ -156,6 +166,7 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Move the project to the Recycle Bin And delete it ", async () => {
+    test.info().annotations.push({ type: "story", description: "US-RBIN-003" });
     await projectsPage.deleteProject(specialProjectName);
     await expect(projectsPage.gridProjectItem(specialProjectName)).not.toBeVisible();
     await dashBoardPage.recycleBin.click();
@@ -216,6 +227,7 @@ test.describe("DASHBOARD - Test cases", () => {
       await context.close();
     });
     test("Verify dashboard is loaded", async () => {
+      test.info().annotations.push({ type: "story", description: "US-DASH-001" });
       await page.goto(REEARTH_WEB_E2E_BASEURL + "/dashboard", {
         waitUntil: "domcontentloaded"
       });
