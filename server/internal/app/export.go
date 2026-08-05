@@ -64,9 +64,13 @@ func serveExportFile(
 
 			return c.Stream(http.StatusOK, "application/zip", r)
 		},
+		// privateCache must be first: Echo composes middleware so the last one in this list
+		// runs closest to the handler, which would let optionalAuth short-circuit (e.g. a bad
+		// Authorization header) without this ever running. Listed first, it's outermost and
+		// always sets the header, even on responses rejected before reaching the handler.
+		privateCache,
 		optionalAuth,
 		appmiddleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
-		privateCache,
 	)
 
 	e.OPTIONS(
