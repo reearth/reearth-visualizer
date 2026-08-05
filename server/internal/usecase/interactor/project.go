@@ -194,8 +194,10 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 		return nil, err
 	}
 
-	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
-		return nil, errors.New("project is private")
+	if pj.Visibility() == string(project.VisibilityPrivate) {
+		if operator == nil || !operator.IsReadableWorkspace(pj.Workspace()) {
+			return nil, errors.New("project is private")
+		}
 	}
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
