@@ -149,7 +149,7 @@ test.describe("Project Management", () => {
     });
   });
 
-  test.skip("Should verify sketch tools are visible after adding style", async () => {
+  test("Should verify sketch tools are visible after adding style", async () => {
     test.info().annotations.push({ type: "story", description: "US-EDIT-003" });
     test.setTimeout(60000);
     await projectScreen.verifySketchToolsVisible();
@@ -314,13 +314,12 @@ test.describe("Project Management", () => {
     await projectScreen.verifyLayerAdded(customLayerName);
   });
 
-  test.skip("Should navigate to Scene panel and verify scene items", async () => {
+  test("Should navigate to Scene panel and verify scene items", async () => {
     test.info().annotations.push({ type: "story", description: "US-EDIT-003" });
     test.setTimeout(60000);
-    await projectScreen.scenePanel.click();
-    await page.waitForTimeout(1000);
-
-    await expect(projectScreen.getSceneItemByName("Main")).toBeVisible();
+    // The Scene panel is always open by default in the left column.
+    // Clicking its header collapses it, so we assert visibility directly.
+    await expect(projectScreen.getSceneItemByName("Main")).toBeVisible({ timeout: 15000 });
     await expect(projectScreen.getSceneItemByName("Tiles")).toBeVisible();
     await expect(projectScreen.getSceneItemByName("Terrain")).toBeVisible();
     await expect(projectScreen.getSceneItemByName("Globe")).toBeVisible();

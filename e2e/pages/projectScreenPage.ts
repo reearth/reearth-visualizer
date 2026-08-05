@@ -145,9 +145,7 @@ export class ProjectScreenPage {
   }
 
   getSceneItemByName = (name: string): Locator =>
-    this.page.locator(
-      `[data-testid="editor-map-scene-item"] div:has-text("${name}")`
-    );
+    this.page.locator(`[data-testid="editor-map-scene-item"]:has-text("${name}")`);
 
   getLayerByName = (name: string): Locator =>
     this.page.getByTestId("layer-item").filter({ hasText: name });
