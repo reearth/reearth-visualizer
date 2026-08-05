@@ -44,6 +44,18 @@ export type Props = {
   onDispose?: () => void;
   onClick?: () => void;
   onRender?: (type: string) => void;
+  /**
+   * Callback to register the modal close function.
+   * Used by the close-before-show pattern to close previous modal
+   * when a new plugin shows its modal.
+   */
+  onRegisterModalClose?: (closeFn: () => void) => void;
+  /**
+   * Callback to register the popup close function.
+   * Used by the close-before-show pattern to close previous popup
+   * when a new plugin shows its popup.
+   */
+  onRegisterPopupClose?: (closeFn: () => void) => void;
 };
 
 const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
@@ -68,7 +80,9 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
     onDispose,
     onClick,
     onMessage,
-    onRender: _onRender
+    onRender: _onRender,
+    onRegisterModalClose,
+    onRegisterPopupClose
   },
   ref
 ) => {
@@ -83,7 +97,9 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
     onError,
     onPreInit,
     onDispose,
-    onMessage
+    onMessage,
+    onRegisterModalClose,
+    onRegisterPopupClose
   });
 
   // Populate UI container ref for popup positioning
@@ -120,12 +136,21 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
     <>
       <style>{`
         /* Ensure Zushi iframes fill their containers */
-        .zushi-ui-surface-container iframe,
-        .zushi-modal-surface-container iframe,
-        .zushi-popup-surface-container iframe {
+        .zushi-ui-surface-container iframe {
           width: 100%;
           height: 100%;
           border: none;
+        }
+        /* Modal and popup containers should size to content */
+        .zushi-modal-surface-container,
+        .zushi-popup-surface-container {
+          width: fit-content !important;
+          height: fit-content !important;
+        }
+        .zushi-modal-surface-container iframe,
+        .zushi-popup-surface-container iframe {
+          border: none;
+          display: block;
         }
       `}</style>
 

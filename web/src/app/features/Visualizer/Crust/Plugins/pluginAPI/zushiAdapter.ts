@@ -334,6 +334,11 @@ function createUIAdapter(
 
 /**
  * Creates Modal surface adapter
+ *
+ * @param externalCloseRef - Optional ref to store the external close function.
+ *   External close fires close events and hides surface but does NOT call
+ *   onModalClose (which clears global state). Used when another plugin
+ *   takes over the modal.
  */
 function createModalAdapter(
   surface: SurfaceAPI,
@@ -342,7 +347,8 @@ function createModalAdapter(
     background?: string;
     clickBgToClose?: boolean;
   }) => void,
-  onModalClose?: () => void
+  onModalClose?: () => void,
+  externalCloseRef?: { current: (() => void) | null }
 ): {
   show: Reearth["modal"]["show"];
   close: Reearth["modal"]["close"];
@@ -352,6 +358,27 @@ function createModalAdapter(
   off: Reearth["modal"]["off"];
 } {
   const closeEvents = createCloseEventManager("Modal");
+
+  /**
+   * Clears surface content to ensure fresh state on next show.
+   * The old implementation destroyed the iframe on close (enabled={false} returned null).
+   * This mimics that behavior by clearing content, so next show() creates fresh iframe.
+   */
+  const clearContent = () => {
+    surface.show("", {});
+  };
+
+  // Store external close function in ref so it can be called from outside
+  // External close: fires close events and hides surface, but does NOT
+  // call onModalClose (global state is managed by the new plugin)
+  if (externalCloseRef) {
+    externalCloseRef.current = () => {
+      surface.setVisible(false);
+      clearContent();
+      closeEvents.trigger();
+      // Note: onModalClose is NOT called - global state managed by new plugin
+    };
+  }
 
   return {
     show: (html, options) => {
@@ -369,6 +396,7 @@ function createModalAdapter(
     },
     close: () => {
       surface.setVisible(false);
+      clearContent();
       closeEvents.trigger();
       onModalClose?.();
     },
@@ -401,6 +429,11 @@ function createModalAdapter(
 
 /**
  * Creates Popup surface adapter
+ *
+ * @param externalCloseRef - Optional ref to store the external close function.
+ *   External close fires close events and hides surface but does NOT call
+ *   onPopupClose (which clears global state). Used when another plugin
+ *   takes over the popup.
  */
 function createPopupAdapter(
   surface: SurfaceAPI,
@@ -412,7 +445,8 @@ function createPopupAdapter(
   getBlock?: () =>
     | (() => Reearth["extension"]["block"] | undefined)
     | undefined,
-  getUIContainerRef?: () => { current: HTMLElement | null } | undefined
+  getUIContainerRef?: () => { current: HTMLElement | null } | undefined,
+  externalCloseRef?: { current: (() => void) | null }
 ): {
   show: Reearth["popup"]["show"];
   close: Reearth["popup"]["close"];
@@ -422,6 +456,27 @@ function createPopupAdapter(
   off: Reearth["popup"]["off"];
 } {
   const closeEvents = createCloseEventManager("Popup");
+
+  /**
+   * Clears surface content to ensure fresh state on next show.
+   * The old implementation destroyed the iframe on close (enabled={false} returned null).
+   * This mimics that behavior by clearing content, so next show() creates fresh iframe.
+   */
+  const clearContent = () => {
+    surface.show("", {});
+  };
+
+  // Store external close function in ref so it can be called from outside
+  // External close: fires close events and hides surface, but does NOT
+  // call onPopupClose (global state is managed by the new plugin)
+  if (externalCloseRef) {
+    externalCloseRef.current = () => {
+      surface.setVisible(false);
+      clearContent();
+      closeEvents.trigger();
+      // Note: onPopupClose is NOT called - global state managed by new plugin
+    };
+  }
 
   return {
     show: (html, options) => {
@@ -447,6 +502,7 @@ function createPopupAdapter(
     },
     close: () => {
       surface.setVisible(false);
+      clearContent();
       closeEvents.trigger();
       onPopupClose?.();
     },
@@ -780,6 +836,15 @@ function wrapCommonReearth(
 }
 
 /**
+ * External close refs for modal and popup surfaces
+ * These allow closing surfaces externally when another plugin takes over
+ */
+export type ExternalCloseRefs = {
+  modalCloseRef: { current: (() => void) | null };
+  popupCloseRef: { current: (() => void) | null };
+};
+
+/**
  * Creates the exposed API factory function for Zushi
  *
  * This function returns a factory that Zushi will call with its PluginContext.
@@ -791,12 +856,15 @@ function wrapCommonReearth(
  *
  * @param getContext - Getter function that returns the latest ReearthPluginContext
  * @param messageHandlers - Message event handlers
+ * @param registerCleanup - Callback to register cleanup functions
+ * @param externalCloseRefs - Optional refs to store external close functions
  * @returns Factory function for Zushi's exposed parameter
  */
 export function createZushiExposedAPI(
   getContext: () => ReearthPluginContext,
   messageHandlers: MessageHandlers,
-  registerCleanup: (fn: () => void) => void
+  registerCleanup: (fn: () => void) => void,
+  externalCloseRefs?: ExternalCloseRefs
 ) {
   return (zushiCtx: ZushiPluginContext): GlobalThis => {
     // Get initial context for callbacks that don't need freshness
@@ -830,7 +898,8 @@ export function createZushiExposedAPI(
       zushiCtx.surfaces.modal,
       onRender,
       onModalShow,
-      onModalClose
+      onModalClose,
+      externalCloseRefs?.modalCloseRef
     );
     const popup = createPopupAdapter(
       zushiCtx.surfaces.popup,
@@ -840,7 +909,8 @@ export function createZushiExposedAPI(
       // Widget/block getters are accessed dynamically to get latest values
       () => getContext().getWidget,
       () => getContext().getBlock,
-      getUIContainerRef
+      getUIContainerRef,
+      externalCloseRefs?.popupCloseRef
     );
 
     // Create extension message handler
