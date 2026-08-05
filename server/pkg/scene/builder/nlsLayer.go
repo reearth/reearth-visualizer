@@ -91,8 +91,9 @@ type geometryCollectionJSON struct {
 // and issuing one batched b.ploader(ctx, ids...) call the way scene- and story-level properties
 // already do (see builder.go). For a scene with hundreds of layers this means hundreds of
 // individual property loads instead of one. Left as a comment for now rather than fixed: this is
-// a performance concern, not a security one, and there's currently no enforced limit on the
-// number of layers a scene can have, so batch this loading if that assumption changes.
+// a performance concern, not a security one. There is currently no enforced limit on the number
+// of layers a scene can have, so consider batching this loading if large scenes become common or
+// cause operational issues.
 func (b *Builder) nlsLayersJSON(ctx context.Context) ([]*nlsLayerJSON, error) {
 
 	var res []*nlsLayerJSON
