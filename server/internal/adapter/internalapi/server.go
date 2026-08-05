@@ -729,6 +729,13 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 
 	}
 
+	// NOTE(REL-04, compliance scan issue #96): read-modify-write lost-update race.
+	// starredBy/starCount are read above, mutated in memory, then written back here with
+	// no transaction covering the span and no atomic update (e.g. $addToSet/$inc). If two
+	// users star/unstar the same project within the same narrow window, the second write can
+	// silently overwrite the first. Left as a comment rather than fixed with an atomic update
+	// because it is unlikely in practice for two different users to star the exact same
+	// project within the same narrow race window at the same time.
 	meta, err := uc.ProjectMetadata.UpdateProjectMetadataByAnyUser(ctx, interfaces.UpdateProjectMetadataByAnyUserParam{
 		ID:        pid,
 		StarCount: &starCount,
