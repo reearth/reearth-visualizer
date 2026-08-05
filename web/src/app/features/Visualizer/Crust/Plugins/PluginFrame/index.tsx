@@ -38,6 +38,20 @@ export type Props = {
   uiContainerRef?: MutableRefObject<HTMLElement | null>;
   isMarshalable?: boolean | "json" | ((target: unknown) => boolean | "json");
   pluginContext: ReearthPluginContext;
+  /**
+   * Extension type - used to determine display behavior
+   * storyBlock and infoboxBlock always use block display
+   */
+  extensionType?: string;
+  /**
+   * Widget extension settings - determines if widget fills available space
+   * horizontally: widget fills full width of its alignment area
+   * vertically: widget fills full height of its alignment area
+   */
+  extended?: {
+    horizontally?: boolean;
+    vertically?: boolean;
+  };
   onMessage?: (message: unknown) => void;
   onPreInit?: () => void;
   onError?: (err: unknown) => void;
@@ -75,6 +89,8 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
     uiContainerRef,
     isMarshalable,
     pluginContext,
+    extensionType,
+    extended,
     onPreInit,
     onError,
     onDispose,
@@ -135,8 +151,10 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
   return (
     <>
       <style>{`
-        /* UI surface - let Zushi control dimensions, don't force 100% */
+        /* UI surface iframe fills its container */
         .zushi-ui-surface-container iframe {
+          width: 100%;
+          height: 100%;
           border: none;
           display: block;
         }
@@ -158,7 +176,22 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
         ref={surfaceRefs.uiContainer}
         className={`zushi-ui-surface-container ${className || ""}`}
         style={{
-          display: uiVisible ? "inline-block" : "none",
+          // storyBlock/infoboxBlock always use block, extended horizontally uses block, otherwise inline-block
+          display: uiVisible
+            ? extensionType === "storyBlock" ||
+              extensionType === "infoboxBlock" ||
+              extended?.horizontally
+              ? "block"
+              : "inline-block"
+            : "none",
+          // storyBlock/infoboxBlock and extended horizontally fill their area, non-extended size to content
+          width:
+            extensionType === "storyBlock" ||
+            extensionType === "infoboxBlock" ||
+            extended?.horizontally
+              ? "100%"
+              : undefined,
+          height: extended?.vertically ? "100%" : undefined,
           ...iFrameProps?.style
         }}
         onClick={onClick}
