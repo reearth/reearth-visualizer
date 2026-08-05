@@ -143,6 +143,42 @@ func TestProject_FindByPublicName(t *testing.T) {
 	assert.Equal(t, prj1, got)
 }
 
+// TestProject_FindByPublicName_UsesIndex is a regression test for SCA-03: FindByPublicName used
+// to $or in a second branch matching "domains.domain", a field with no supporting index (and no
+// project document has ever had it populated), which forced a collection scan on every call.
+// This confirms the query's winning plan is an index scan, not COLLSCAN, now that the dead
+// branch is gone and the remaining filter is fully covered by the alias,publishmentstatus index.
+func TestProject_FindByPublicName_UsesIndex(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+	client := mongox.NewClientWithDatabase(c)
+
+	r := NewProject(client)
+	require.NoError(t, r.Init(ctx))
+
+	prj := project.New().NewID().Workspace(accountsID.NewWorkspaceID()).Alias("explain-alias").PublishmentStatus(project.PublishmentStatusPublic).MustBuild()
+	_, err := c.Collection("project").InsertOne(ctx, util.DR(mongodoc.NewProject(prj)))
+	require.NoError(t, err)
+
+	cmd := bson.D{
+		{Key: "explain", Value: bson.D{
+			{Key: "find", Value: "project"},
+			{Key: "filter", Value: findByPublicNameFilter("explain-alias")},
+		}},
+		{Key: "verbosity", Value: "queryPlanner"},
+	}
+
+	var explainResult bson.M
+	require.NoError(t, c.RunCommand(ctx, cmd).Decode(&explainResult))
+
+	queryPlanner, ok := explainResult["queryPlanner"].(bson.M)
+	require.True(t, ok, "explain result missing queryPlanner: %v", explainResult)
+	winningPlan, ok := queryPlanner["winningPlan"].(bson.M)
+	require.True(t, ok, "queryPlanner missing winningPlan: %v", queryPlanner)
+
+	assert.NotEqual(t, "COLLSCAN", winningPlan["stage"], "expected an index scan, got a full collection scan: %v", winningPlan)
+}
+
 func TestProject_FindStarredByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
