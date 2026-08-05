@@ -259,6 +259,18 @@ type ProjectDeleter struct {
 	Asset           repo.Asset
 }
 
+// Delete runs the GCS deletes (assets, plugin files, built scene) inside the
+// same DB transaction as the Mongo removes. This means a transaction abort
+// after a storage delete already ran (e.g. a later step failing, or the
+// transaction hitting its time limit) can restore the project/scene rows
+// while the storage they point to is already gone (compliance scan REL-01).
+// We're accepting this tradeoff for now: splitting storage cleanup out of the
+// transaction would mean a delete that fails partway through can leave a
+// project's DB rows removed but some of its assets still in GCS -- orphaned
+// storage with no owning record. Given how rarely project deletes fail
+// partway through in practice, keeping deletion atomic against the DB (at the
+// cost of the rarer storage-outlives-rollback case above) is the safer
+// default.
 func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force bool, operator *usecase.Operator) error {
 	if prj == nil {
 		return nil
