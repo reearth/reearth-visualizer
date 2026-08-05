@@ -343,6 +343,86 @@ func TestSetTileCategory_CleansUpWidgetPropertyTilesGroup(t *testing.T) {
 	}
 }
 
+// TestSetTileCategory_CarriesOverLegacyTileType_GroupShaped verifies that when the
+// widget property's legacy tiles item is stored as a single "group" (fields directly
+// on the item, no Groups list) rather than a "grouplist" - the shape the streetView
+// widget's tiles schema actually produced, since it never had list:true - the system
+// tile still carries over the legacy tile_type and the widget property is still
+// cleaned up.
+func TestSetTileCategory_CarriesOverLegacyTileType_GroupShaped(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+	sceneCol := client.WithCollection("scene").Client()
+	propCol := client.WithCollection("property").Client()
+
+	_, err := sceneCol.InsertOne(ctx, sceneDocForMigration{
+		ID:       "scene6",
+		Property: "prop6",
+		Widgets: []struct {
+			ID        string `bson:"id"`
+			Plugin    string `bson:"plugin"`
+			Extension string `bson:"extension"`
+			Property  string `bson:"property"`
+			Enabled   bool   `bson:"enabled"`
+		}{
+			{ID: "w6", Plugin: "reearth", Extension: "streetView", Property: "wprop6", Enabled: true},
+		},
+	})
+	require.NoError(t, err)
+
+	_, err = propCol.InsertOne(ctx, mongodoc.PropertyDocument{
+		ID:    "prop6",
+		Scene: "scene6",
+		Items: []*mongodoc.PropertyItemDocument{},
+	})
+	require.NoError(t, err)
+
+	// Widget property's legacy tile setting is a "group", not a "grouplist".
+	_, err = propCol.InsertOne(ctx, mongodoc.PropertyDocument{
+		ID:    "wprop6",
+		Scene: "scene6",
+		Items: []*mongodoc.PropertyItemDocument{
+			{
+				Type:        "group",
+				SchemaGroup: "tiles",
+				Fields: []*mongodoc.PropertyFieldDocument{
+					{Field: "tile_type", Type: "string", Value: "google_roadmap"},
+				},
+			},
+		},
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, SetTileCategory(ctx, client))
+
+	var result mongodoc.PropertyDocument
+	require.NoError(t, propCol.FindOne(ctx, bson.M{"id": "prop6"}).Decode(&result))
+
+	require.Len(t, result.Items, 1)
+	require.Len(t, result.Items[0].Groups, 1)
+
+	var tileType, tileCategory string
+	for _, f := range result.Items[0].Groups[0].Fields {
+		if f.Field == "tile_type" {
+			tileType = f.Value.(string)
+		}
+		if f.Field == "tile_category" {
+			tileCategory = f.Value.(string)
+		}
+	}
+	assert.Equal(t, "google_roadmap", tileType, "should carry over legacy tile type from group-shaped widget property")
+	assert.Equal(t, "system", tileCategory)
+
+	var widgetProp mongodoc.PropertyDocument
+	require.NoError(t, propCol.FindOne(ctx, bson.M{"id": "wprop6"}).Decode(&widgetProp))
+	for _, item := range widgetProp.Items {
+		if item.SchemaGroup == "tiles" {
+			t.Errorf("expected legacy tiles group to be removed from widget property, but found one")
+		}
+	}
+}
+
 // TestSetTileCategory_NoMatchingScenes verifies that when no scenes with
 // streetView/googleMapSearch widgets exist, the migration completes without error and
 // makes no changes.
