@@ -214,6 +214,7 @@ func TestProject_FindByPublicName_UsesIndex(t *testing.T) {
 	}
 
 	assert.False(t, hasStage(winningPlan, "COLLSCAN"), "expected an index scan (no COLLSCAN stage), got: %v", winningPlan)
+}
 
 func TestProject_FindStarredByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
