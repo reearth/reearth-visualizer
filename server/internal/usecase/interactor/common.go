@@ -301,10 +301,10 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 }
 
 func IsCurrentHostAssets(ctx context.Context, u string) bool {
-	if strings.HasPrefix(u, "assets/") && strings.HasPrefix(u, adapter.CurrentHost(ctx)) {
+	if strings.HasPrefix(u, "assets/") || strings.HasPrefix(u, "/assets") {
 		return true
 	}
-	return false
+	return strings.HasPrefix(u, adapter.CurrentHost(ctx))
 }
 
 func ReplaceToCurrentHost(ctx context.Context, urlString string) string {
