@@ -304,7 +304,21 @@ func IsCurrentHostAssets(ctx context.Context, u string) bool {
 	if strings.HasPrefix(u, "assets/") || strings.HasPrefix(u, "/assets") {
 		return true
 	}
-	return strings.HasPrefix(u, adapter.CurrentHost(ctx))
+
+	currentHost := adapter.CurrentHost(ctx)
+	if currentHost == "" {
+		return false
+	}
+
+	parsedURL, err := url.Parse(u)
+	if err != nil {
+		return false
+	}
+	parsedHost, err := url.Parse(currentHost)
+	if err != nil {
+		return false
+	}
+	return parsedURL.Scheme == parsedHost.Scheme && parsedURL.Host == parsedHost.Host
 }
 
 func ReplaceToCurrentHost(ctx context.Context, urlString string) string {
