@@ -2,9 +2,13 @@ package interactor
 
 import (
 	"context"
+	"errors"
+	"io"
 	"net/url"
+	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
@@ -14,6 +18,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/testutil/factory"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/builtin"
@@ -27,6 +32,7 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func init() {
@@ -663,4 +669,82 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 		assert.Equal(t, privateProject.ID(), result.ID())
 		assert.Equal(t, "Private Project", result.Name())
 	})
+}
+
+// earlyFailFileGateway simulates a storage backend's early-return error paths (e.g. a bucket
+// lookup or delete failure) that return before ever reading from the content reader they were
+// given, the trigger condition for SCA-04's goroutine leak.
+type earlyFailFileGateway struct {
+	gateway.File
+}
+
+func (earlyFailFileGateway) UploadBuiltScene(context.Context, io.Reader, string) error {
+	return errors.New("simulated early storage failure")
+}
+
+// TestProject_uploadPublishScene_NoGoroutineLeakOnEarlyUploadFailure is a regression test for
+// SCA-04: the build goroutine writes into an io.Pipe that uploadPublishScene hands to the file
+// gateway. If the gateway returns early without draining that reader to EOF, the goroutine's
+// Write blocks forever with nothing left to unblock it, leaking for the life of the process.
+// This confirms the goroutine count returns to baseline shortly after the call returns, even
+// when the file gateway fails immediately without reading anything.
+func TestProject_uploadPublishScene_NoGoroutineLeakOnEarlyUploadFailure(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+	uc.sceneLockRepo = mongo.NewSceneLock(client)
+	uc.file = earlyFailFileGateway{}
+
+	us := factory.NewUser()
+	require.NoError(t, uc.userRepo.Save(ctx, us))
+
+	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
+		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
+			accountsID.NewUserID(): {Role: accountsRole.RoleOwner, InvitedBy: accountsWorkspace.UserID(us.ID())},
+		})
+	})
+	require.NoError(t, uc.workspaceRepo.Save(ctx, ws))
+
+	pj := factory.NewProject(func(p *project.Builder) {
+		p.Workspace(ws.ID()).Alias("leak-test-alias")
+	})
+	require.NoError(t, uc.projectRepo.Save(ctx, pj))
+
+	sid := id.NewSceneID()
+	schema := builtin.GetPropertySchemaByVisualizer(visualizer.VisualizerCesiumBeta)
+	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sid).Build()
+	require.NoError(t, err)
+	require.NoError(t, uc.propertyRepo.Save(ctx, prop))
+
+	sc := factory.NewScene(func(p *scene.Builder) {
+		p.ID(sid)
+		p.Project(pj.ID())
+		p.Workspace(pj.Workspace())
+		p.Property(prop.ID())
+	})
+	require.NoError(t, uc.sceneRepo.Save(ctx, sc))
+
+	// Let any goroutines from setup above settle before taking the baseline.
+	time.Sleep(50 * time.Millisecond)
+	runtime.GC()
+	baseline := runtime.NumGoroutine()
+
+	err = uc.uploadPublishScene(ctx, pj, sc, nil)
+	require.Error(t, err)
+
+	// Poll directly rather than via require.Eventually, whose own internal polling goroutine
+	// would otherwise be counted against the very baseline it's being compared to.
+	deadline := time.Now().Add(time.Second)
+	after := 0
+	for {
+		runtime.GC()
+		after = runtime.NumGoroutine()
+		if after <= baseline || time.Now().After(deadline) {
+			break
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	assert.LessOrEqual(t, after, baseline, "build goroutine leaked: NumGoroutine did not return to baseline")
 }
