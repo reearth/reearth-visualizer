@@ -70,6 +70,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
     bottomTabs,
     workspaces,
     currentTab,
+    userInfo,
     onSignOut,
     handleWorkspaceChange
   } = useHooks({ workspaceId, topTabItems, bottomTabsItems });
@@ -82,6 +83,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
             tab={currentTab}
             avatarURL={avatarURL}
             currentWorkspace={currentWorkspace}
+            userInfo={userInfo}
             workspaces={workspaces}
             topTabs={topTabs}
             bottomTabs={bottomTabs}

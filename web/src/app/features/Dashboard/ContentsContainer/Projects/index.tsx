@@ -1,3 +1,4 @@
+import CreateProjectModal from "@reearth/app/features/CreateProjectModal";
 import { Breadcrumb, Loading, Typography } from "@reearth/app/lib/reearth-ui";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import {
@@ -17,7 +18,6 @@ import { FC, useMemo, Fragment } from "react";
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
-import ProjectCreatorModal from "./ProjectCreatorModal";
 import ProjectImportErrorModal from "./ProjectImportErrorModal";
 
 const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
@@ -36,9 +36,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     fileInputRef,
     projectVisibility,
     showProjectCreator,
-    closeProjectCreator,
     handleProjectUpdate,
-    handleProjectCreate,
     handleProjectOpen,
     handleProjectSelect,
     handleLayoutChange,
@@ -248,13 +246,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         </ManagerEmptyContent>
       )}
 
-      {projectCreatorVisible && (
-        <ProjectCreatorModal
-          onClose={closeProjectCreator}
-          onProjectCreate={handleProjectCreate}
-          data-testid="project-creator-modal"
-        />
-      )}
+      {projectCreatorVisible && <CreateProjectModal />}
 
       {importStatus === ProjectImportStatus.Failed && (
         <ProjectImportErrorModal

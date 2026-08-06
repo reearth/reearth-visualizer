@@ -234,6 +234,14 @@ export const SidebarVersion: FC = () => {
   );
 };
 
+export const SidebarTopSection = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.row,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.normal,
+  padding: theme.spacing.normal,
+}));
+
 const Version = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.normal}px ${theme.spacing.small}px`
 }));

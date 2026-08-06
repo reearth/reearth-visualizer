@@ -1,9 +1,12 @@
+import Profile from "@reearth/app/features/UserProfile";
+import { IconButton } from "@reearth/app/lib/reearth-ui";
 import {
   SidebarButtonsWrapper,
   SidebarDivider,
   SidebarFooterSection,
   SidebarMainSection,
   SidebarMenuItem,
+  SidebarTopSection,
   SidebarVersion,
   SidebarWrapper
 } from "@reearth/app/ui/components/Sidebar";
@@ -12,14 +15,18 @@ import { FC } from "react";
 import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
 
+import { AvatarWrapper } from "./Avatar";
 import LogoWrapper from "./LogoWrapper";
-import Profile from "./Profile";
 
 type Props = {
   workspaces: Workspace[];
   avatarURL?: string;
   tab?: string;
   currentWorkspace?: Workspace;
+  userInfo?: {
+    name?: string;
+    email?: string;
+  };
   topTabs?: TabItems[];
   bottomTabs?: TabItems[];
   onSignOut: () => void;
@@ -30,6 +37,7 @@ const LeftSidePanel: FC<Props> = ({
   bottomTabs,
   tab: currentTab,
   currentWorkspace,
+  userInfo,
   avatarURL,
   workspaces,
   onSignOut,
@@ -38,15 +46,26 @@ const LeftSidePanel: FC<Props> = ({
   return (
     <SidebarWrapper data-testid="left-side-panel">
       <SidebarMainSection data-testid="sidebar-main-section">
-        <LogoWrapper data-testid="sidebar-logo" />
+        <SidebarTopSection data-testid="sidebar-top-section">
+          <LogoWrapper data-testid="sidebar-logo" />
+          <IconButton
+            icon="dotsNineVertical"
+            appearance="simple"
+            size="large"
+          />
+          <AvatarWrapper
+            avatarURL={avatarURL}
+            userName={userInfo?.name}
+            userEmail={userInfo?.email}
+            onSignOut={onSignOut}
+          />
+        </SidebarTopSection>
         <SidebarDivider data-testid="sidebar-divider-top" />
         <Profile
           data-testid="sidebar-profile"
           currentUser={currentWorkspace?.name}
-          avatarURL={avatarURL}
           currentWorkspace={currentWorkspace}
           workspaces={workspaces}
-          onSignOut={onSignOut}
           onWorkspaceChange={onWorkspaceChange}
         />
         <SidebarButtonsWrapper data-testid="sidebar-top-tabs">

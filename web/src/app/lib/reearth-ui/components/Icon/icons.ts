@@ -5,6 +5,7 @@ import AddStyle from "./Icons/AddStyle.svg?react";
 import AlertCircle from "./Icons/AlertCircle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
 import ArrowCounterClockWise from "./Icons/ArrowCounterClockWise.svg?react";
+import ArrowExternalLink from "./Icons/ArrowExternalLink.svg?react";
 import ArrowLeftRight from "./Icons/ArrowLeftRight.svg?react";
 import ArrowLongLeft from "./Icons/ArrowLongLeft.svg?react";
 import ArrowLongRight from "./Icons/ArrowLongRight.svg?react";
@@ -52,6 +53,7 @@ import Data from "./Icons/Data.svg?react";
 import Desktop from "./Icons/Desktop.svg?react";
 import DeviceMobile from "./Icons/DeviceMobile.svg?react";
 import Discord from "./Icons/Discord.svg?react";
+import DotsNineVertical from "./Icons/DotsNineVertical.svg?react";
 import DotsSixVertical from "./Icons/DotsSixVertical.svg?react";
 import DotsThreeVertical from "./Icons/DotsThreeVertical.svg?react";
 import DownloadSimple from "./Icons/DownloadSimple.svg?react";
@@ -213,6 +215,7 @@ export default {
   alertCircle: AlertCircle,
   appearance: Appearance,
   arrowCounterClockWise: ArrowCounterClockWise,
+  arrowExternalLink: ArrowExternalLink,
   arrowLeftRight: ArrowLeftRight,
   arrowLongLeft: ArrowLongLeft,
   arrowLongRight: ArrowLongRight,
@@ -260,6 +263,7 @@ export default {
   desktop: Desktop,
   deviceMobile: DeviceMobile,
   discord: Discord,
+  dotsNineVertical: DotsNineVertical,
   dotsSixVertical: DotsSixVertical,
   dotsThreeVertical: DotsThreeVertical,
   downloadSimple: DownloadSimple,
