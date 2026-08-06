@@ -48,38 +48,17 @@ test.describe("Plugin install/uninstall lifecycle via API", () => {
     sceneId = sc.createScene.scene.id;
   });
 
-  test.fixme(
-    "Uninstall and re-install the reearth plugin",
-    // Server returns "not found" when uninstalling the built-in reearth plugin.
-    // The built-in plugin cannot be managed via install/uninstall mutations.
-    async ({ gqlClient }) => {
-      const { status: uninstallStatus, data: uninstallData } =
-        await gqlClient.mutate<{
-          uninstallPlugin: {
-            pluginId: string;
-            scene: { id: string };
-          };
-        }>(UNINSTALL_PLUGIN, {
-          input: { sceneId, pluginId: "reearth" }
-        });
-
-      expect(uninstallStatus).toBe(200);
-      expect(uninstallData.uninstallPlugin.pluginId).toBe("reearth");
-
-      const { status: installStatus, data: installData } =
-        await gqlClient.mutate<{
-          installPlugin: {
-            scene: { id: string };
-            scenePlugin: { pluginId: string };
-          };
-        }>(INSTALL_PLUGIN, {
-          input: { sceneId, pluginId: "reearth" }
-        });
-
-      expect(installStatus).toBe(200);
-      expect(installData.installPlugin.scenePlugin.pluginId).toBe("reearth");
-    }
-  );
+  test("Built-in reearth plugin cannot be uninstalled via API", async ({
+    gqlClient
+  }) => {
+    // The server intentionally blocks managing built-in plugins.
+    // Verify this constraint is enforced.
+    await expect(
+      gqlClient.mutate(UNINSTALL_PLUGIN, {
+        input: { sceneId, pluginId: "reearth" }
+      })
+    ).rejects.toThrow();
+  });
 });
 
 // Negative scenarios
