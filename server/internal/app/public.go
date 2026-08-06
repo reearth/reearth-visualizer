@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"crypto/subtle"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -276,7 +277,15 @@ func PublishedAuthMiddleware() echo.MiddlewareFunc {
 
 			md, err := contr.Metadata(c.Request().Context(), name)
 			if err != nil {
-				return true
+				// Skipping here means "run the next handler without checking
+				// a password" -- only safe when we positively know there's
+				// nothing to password-protect (name isn't a project at all).
+				// Any other error (e.g. a transient Mongo failure) must fail
+				// closed: the Validator below has no metadata to check
+				// against and will reject with echo.ErrNotFound, but at
+				// least the password gate itself never gets bypassed
+				// (REL-02, compliance scan).
+				return errors.Is(err, rerror.ErrNotFound)
 			}
 
 			c.SetRequest(c.Request().WithContext(context.WithValue(c.Request().Context(), key, md)))
