@@ -41,4 +41,11 @@ func TestReplaceIDsInPlace(t *testing.T) {
 		replaceIDsInPlace(&data, []string{"a", "b", "b", "c"})
 		assert.Equal(t, `{"id":"b"}`, string(data))
 	})
+
+	t.Run("panics on an odd-length pair list", func(t *testing.T) {
+		data := []byte(`{"id":"a"}`)
+		assert.Panics(t, func() {
+			replaceIDsInPlace(&data, []string{"a"})
+		})
+	})
 }

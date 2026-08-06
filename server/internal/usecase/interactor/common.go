@@ -315,6 +315,9 @@ func replaceIDsInPlace(data *[]byte, pairs []string) {
 	if len(pairs) == 0 {
 		return
 	}
+	if len(pairs)%2 != 0 {
+		panic("replaceIDsInPlace: pairs must have an even length")
+	}
 	*data = []byte(strings.NewReplacer(pairs...).Replace(string(*data)))
 }
 
