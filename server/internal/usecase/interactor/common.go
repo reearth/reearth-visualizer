@@ -307,6 +307,20 @@ func IsCurrentHostAssets(ctx context.Context, u string) bool {
 	return false
 }
 
+// replaceIDsInPlace rewrites data with every old/new ID pair in pairs (old1, new1, old2, new2,
+// ...) applied in a single pass, instead of one bytes.Replace call per pair -- each of which
+// would otherwise allocate and copy the whole buffer on its own (SCA-05, compliance scan issue
+// #96). len(pairs) must be even.
+func replaceIDsInPlace(data *[]byte, pairs []string) {
+	if len(pairs) == 0 {
+		return
+	}
+	if len(pairs)%2 != 0 {
+		panic("replaceIDsInPlace: pairs must have an even length")
+	}
+	*data = []byte(strings.NewReplacer(pairs...).Replace(string(*data)))
+}
+
 func ReplaceToCurrentHost(ctx context.Context, urlString string) string {
 	u, err := url.Parse(urlString)
 	if err != nil {

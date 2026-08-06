@@ -1222,6 +1222,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 	filter := Filter(sceneID)
 
 	nlayerIDs := id.NLSLayerIDList{}
+	idReplacements := make([]string, 0, len(sceneJSON.NLSLayers)*2)
 
 	for nIndex, nlsLayerJSON := range sceneJSON.NLSLayers {
 
@@ -1233,7 +1234,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 		nlayerIDs = append(nlayerIDs, newNLSLayerID)
 
 		// Replace new layer id
-		*data = bytes.Replace(*data, []byte(nlsLayerJSON.ID), []byte(newNLSLayerID.String()), -1)
+		idReplacements = append(idReplacements, nlsLayerJSON.ID, newNLSLayerID.String())
 
 		nlBuilder := nlslayer.New().
 			ID(newNLSLayerID).Simple().
@@ -1375,6 +1376,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 		fmt.Println("[Import NLSLayer]  ", nlsLayerJSON.Title)
 		result[fmt.Sprintf("NLSLayer%d", nIndex)] = nlsLayerJSON.Title
 	}
+
+	replaceIDsInPlace(data, idReplacements)
 
 	return result, nil
 }
