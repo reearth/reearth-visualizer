@@ -3,6 +3,7 @@ import {
   type ReactNode,
   type RefObject,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState
@@ -36,11 +37,82 @@ export default function useHook({
   const [shownPluginPopupInfo, setShownPluginPopupInfo] = useState<PluginPopupInfo>();
   const pluginPopupContainerRef = useRef<HTMLDivElement | null>(null);
 
+  // Registry of close callbacks for each plugin instance
+  // Used by the close-before-show pattern to close previous modal/popup
+  // when a new plugin shows its modal/popup
+  const pluginModalCloseCallbacks = useRef<Map<string, () => void>>(new Map());
+  const pluginPopupCloseCallbacks = useRef<Map<string, () => void>>(new Map());
+
+  // Ref to track current modal info for use in callback (avoids stale closure)
+  const shownPluginModalInfoRef = useRef<PluginModalInfo | undefined>(undefined);
+  const shownPluginPopupInfoRef = useRef<PluginPopupInfo | undefined>(undefined);
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    shownPluginModalInfoRef.current = shownPluginModalInfo;
+  }, [shownPluginModalInfo]);
+
+  useEffect(() => {
+    shownPluginPopupInfoRef.current = shownPluginPopupInfo;
+  }, [shownPluginPopupInfo]);
+
+  // Register/unregister close callbacks for modal
+  const registerPluginModalClose = useCallback(
+    (id: string, closeFn: () => void) => {
+      pluginModalCloseCallbacks.current.set(id, closeFn);
+    },
+    []
+  );
+
+  const unregisterPluginModalClose = useCallback((id: string) => {
+    pluginModalCloseCallbacks.current.delete(id);
+  }, []);
+
+  // Register/unregister close callbacks for popup
+  const registerPluginPopupClose = useCallback(
+    (id: string, closeFn: () => void) => {
+      pluginPopupCloseCallbacks.current.set(id, closeFn);
+    },
+    []
+  );
+
+  const unregisterPluginPopupClose = useCallback((id: string) => {
+    pluginPopupCloseCallbacks.current.delete(id);
+  }, []);
+
+  /**
+   * Show a plugin's modal.
+   * Implements close-before-show pattern: if another plugin's modal is showing,
+   * close it first (triggering its close events) before showing the new one.
+   */
   const onPluginModalShow = useCallback((modalInfo?: PluginModalInfo) => {
+    const prevId = shownPluginModalInfoRef.current?.id;
+    const newId = modalInfo?.id;
+
+    // Close previous modal if exists and different from new one
+    if (prevId && prevId !== newId) {
+      const closeCallback = pluginModalCloseCallbacks.current.get(prevId);
+      closeCallback?.(); // Fires close events, hides surface
+    }
+
     setShownPluginModalInfo(modalInfo);
   }, []);
 
+  /**
+   * Show a plugin's popup.
+   * Implements close-before-show pattern: if another plugin's popup is showing,
+   * close it first (triggering its close events) before showing the new one.
+   */
   const onPluginPopupShow = useCallback((popupInfo?: PluginPopupInfo) => {
+    const prevId = shownPluginPopupInfoRef.current?.id;
+    const newId = popupInfo?.id;
+
+    // Close previous popup if exists and different from new one
+    if (prevId && prevId !== newId) {
+      const closeCallback = pluginPopupCloseCallbacks.current.get(prevId);
+      closeCallback?.(); // Fires close events, hides surface
+    }
+
     setShownPluginPopupInfo(popupInfo);
   }, []);
 
@@ -52,6 +124,10 @@ export default function useHook({
       pluginPopupContainer: pluginPopupContainerRef.current,
       shownPluginPopupInfo,
       onPluginPopupShow,
+      registerPluginModalClose,
+      unregisterPluginModalClose,
+      registerPluginPopupClose,
+      unregisterPluginPopupClose,
       pluginBaseUrl,
       pluginProperty,
       property: pluginProperty
@@ -61,6 +137,10 @@ export default function useHook({
       onPluginModalShow,
       shownPluginPopupInfo,
       onPluginPopupShow,
+      registerPluginModalClose,
+      unregisterPluginModalClose,
+      registerPluginPopupClose,
+      unregisterPluginPopupClose,
       pluginBaseUrl,
       pluginProperty
     ]
