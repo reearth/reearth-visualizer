@@ -340,7 +340,6 @@ Widget Manager: ウィジェット管理
 Project: プロジェクト
 Project Settings: プロジェクト設定
 Plugin: プラグイン
-Dashboard: ダッシュボード
 Editor: エディタ
 Map: マップ
 Widgets: ウィジェット
@@ -427,6 +426,14 @@ Zip file is empty: Zipファイルは空です
 Plugin link copied to clipboard: プラグインのリンクがクリップボードにコピーされました
 Show Story Panel: ストーリーパネルを表示
 UI Language: UI言語
+Dashboard: ダッシュボード
+Visualizer: ''
+CMS: ''
+Flow: ''
+Re:Earth Home: ''
+Community: ''
+Re:Earth products: ''
+Other: ''
 General: 一般
 README: リードミー
 License: ライセンス
