@@ -89,14 +89,15 @@ The plugin system serves multiple purposes:
 - Creates and starts Zushi Plugin instance
 - Sets up surface configuration with container refs
 - Handles plugin lifecycle (initialization, disposal)
-- Manages message routing between plugin and host
-- Tracks iframe windows for message filtering
+- Exposes `handleMessage` as the single dispatch point for plugin message handlers
+- Provides the `dispatchMessage` hook that the adapter wires to Zushi's built-in surface message events
 
 **zushiAdapter** provides the bridge:
 
 - Creates the exposed `reearth` API for plugin code
 - Maps Zushi surface methods to Re:Earth API methods
 - Handles message event registration (on/off/once)
+- Subscribes each surface's built-in `message` event and forwards messages to the plugin's extension handlers
 - Provides Re:Earth context (viewer, camera, layers, etc.)
 
 ## Dependencies
@@ -440,28 +441,33 @@ Each surface follows this lifecycle:
 
 ### Message Filtering
 
-To prevent plugins from receiving messages from other plugins, the system tracks iframe windows:
+Plugin UI messages are delivered through **Zushi's built-in surface `message` events** rather than a host-side window listener. Each `UISurface` owns a `SafeIFrame` whose message listener:
+
+- Consumes internal auto-resize messages (`___iframe_auto_resize___`) for iframe sizing only — they are **never** emitted as surface `message` events, so plugins never see them
+- Scopes messages to the surface's own iframe via `ev.source === iframe.contentWindow`, so messages from other plugins' iframes are ignored
+- Pumps the VM event loop after emitting, so async plugin message handlers run without extra wiring
+
+The adapter subscribes all three surfaces (UI, modal, popup) and forwards their `message` events into the plugin's extension message handlers:
 
 ```typescript
-// Track all iframe windows from plugin surfaces
-surfaceWindowsRef.current.add(iframe.contentWindow);
-
-// Filter messages by source
-window.addEventListener("message", (ev) => {
-  const isFromOurPlugin = surfaceWindowsRef.current.has(ev.source);
-  if (!isFromOurPlugin) return; // Ignore
-
-  handleMessage(ev.data);
-});
+// zushiAdapter.ts - createZushiExposedAPI
+const forwardSurfaceMessage = (name) => {
+  const unsubscribe = zushiCtx.surfaces[name].on("message", (msg) => {
+    messageHandlers.dispatchMessage(msg);
+  });
+  registerCleanup(unsubscribe);
+};
+forwardSurfaceMessage("ui");
+forwardSurfaceMessage("modal");
+forwardSurfaceMessage("popup");
 ```
 
 **Key Implementation**:
 
-- MutationObserver watches for dynamically added iframes
-- Waits for iframe.contentWindow to be available (load event)
-- Registers all iframe windows in a Set for fast lookup
+- No iframe-window tracking or MutationObserver is needed; `UISurface.on("message")` handles dynamic modal/popup iframes automatically
+- Subscriptions are cleaned up via `registerCleanup` when the plugin is disposed
 
-**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/PluginFrame/useZushiPlugin.ts:276-326`
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/pluginAPI/zushiAdapter.ts`, `src/app/features/Visualizer/Crust/Plugins/PluginFrame/useZushiPlugin.ts`
 
 ## Message Handling
 
@@ -470,11 +476,12 @@ window.addEventListener("message", (ev) => {
 ```
 Plugin Code → window.parent.postMessage()
      ↓
-Iframe contentWindow (source)
+Surface iframe contentWindow (source)
      ↓
-Host window.addEventListener("message")
+Zushi UISurface built-in "message" event
+(auto-resize messages are consumed internally, never emitted)
      ↓
-Message Filter (check source)
+dispatchMessage() (zushiAdapter)
      ↓
 handleMessage() (useZushiPlugin)
      ↓
@@ -542,8 +549,8 @@ await plugin.start();
 ### 3. Message Exchange
 
 - Plugin sends messages via `window.parent.postMessage()`
-- Host filters messages by iframe source
-- Host calls registered message handlers
+- Zushi's surface `message` events deliver them (auto-resize consumed internally, messages scoped to the surface's iframe)
+- The adapter forwards them to registered message handlers
 - Host can send messages to plugin via `postMessage()`
 
 ### 4. Cleanup/Disposal
@@ -818,45 +825,13 @@ test("shows UI surface when uiVisible=true", () => {
 
 ### Issue: "Modal/Popup close button doesn't work"
 
-**Symptoms**: Clicking close button in modal or popup has no effect. Messages from modal/popup iframes show `isFromOurPlugin: false` in logs.
+**Symptoms**: Clicking close button in modal or popup has no effect. Messages from modal/popup iframes don't reach the plugin.
 
-**Cause**: When Zushi creates an iframe for modal/popup surface, the iframe element exists in the DOM immediately, but `iframe.contentWindow` is `null` until the iframe loads. The system was trying to register contentWindow during initial collection, getting null, and never registering the window for message filtering.
+**Cause (historical)**: In the previous window-listener approach, the system tracked iframe windows (`surfaceWindowsRef`) to filter `postMessage` events. A modal/popup iframe's `contentWindow` could be `null` at registration time, so the window was never registered and messages from it were filtered out.
 
-**Root Cause**: Two collection points, both had the same issue:
-1. Initial collection after `plugin.start()` - iframe exists but not loaded
-2. MutationObserver for dynamically added iframes - detects iframe before it loads
+**Solution**: Message delivery now uses **Zushi's built-in surface `message` events** (`UISurface.on("message")`), which scope messages to each surface's own iframe via `ev.source` internally. No iframe-window tracking or MutationObserver is needed — messages from dynamically shown modal/popup iframes are delivered automatically once the iframe loads.
 
-**Solution**: The system now waits for iframe load event at both collection points:
-
-```typescript
-const collectIframeWindows = (container: HTMLElement) => {
-  const iframes = container.querySelectorAll('iframe');
-  iframes.forEach(iframe => {
-    const registerWindow = () => {
-      if (iframe.contentWindow) {
-        surfaceWindowsRef.current.add(iframe.contentWindow);
-        return true;
-      }
-      return false;
-    };
-
-    // Try to register immediately
-    if (!registerWindow()) {
-      // If contentWindow is not available yet, wait for load event
-      iframe.addEventListener('load', () => {
-        registerWindow();
-      }, { once: true });
-    }
-  });
-};
-```
-
-**Impact**: This pattern is applied to:
-- Initial iframe collection after plugin.start()
-- MutationObserver detection of dynamically added iframes
-- All three surfaces: UI, Modal, and Popup
-
-**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/PluginFrame/useZushiPlugin.ts:290-310`
+**Code Reference**: `src/app/features/Visualizer/Crust/Plugins/pluginAPI/zushiAdapter.ts` (surface `message` subscriptions in `createZushiExposedAPI`)
 
 ### Issue: "Plugin not loading"
 
@@ -881,16 +856,9 @@ if (!uiContainer.current || !modalContainer.current || !popupContainer.current) 
 
 **Symptoms**: Plugin receives messages intended for other plugins.
 
-**Cause**: Message filtering not working correctly.
+**Cause (historical)**: The previous window-listener approach re-filtered messages by tracked iframe windows; if registration was incomplete, messages could leak.
 
-**Solution**: System tracks iframe windows and filters by source:
-
-```typescript
-const isFromOurPlugin = surfaceWindowsRef.current.has(ev.source as Window);
-if (!isFromOurPlugin) return; // Ignore
-```
-
-Ensure MutationObserver is properly set up to track all iframes.
+**Solution**: Message delivery relies on Zushi's built-in surface `message` events, which scope each message to the surface's own iframe (`ev.source === iframe.contentWindow`). Messages from other plugins' iframes are never emitted as surface `message` events, so cross-plugin leakage is prevented by the framework itself. No additional filtering is required.
 
 ## Performance Considerations
 
@@ -1237,6 +1205,16 @@ reearth.ui.close();
 
 ## Changelog
 
+### 2026-08-07 - Use Zushi Built-in Surface Message Events
+
+**Changed:**
+- **Removed**: The host-side `window` "message" listener and iframe-window tracking (`surfaceWindowsRef`, MutationObserver) from `useZushiPlugin`
+- **Changed**: Plugin UI messages are now delivered through **Zushi's built-in surface `message` events** (`UISurface.on("message")`)
+  - `createZushiExposedAPI` subscribes the UI/modal/popup surfaces and forwards messages to the plugin's extension handlers via `messageHandlers.dispatchMessage`
+  - Auto-resize messages (`___iframe_auto_resize___`) are consumed internally by Zushi's `SafeIFrame` and never exposed to plugins
+  - Messages are scoped to each surface's own iframe by Zushi, preventing cross-plugin leakage
+  - The VM event loop is pumped automatically by Zushi after emitting, so async plugin message handlers run correctly
+
 ### 2026-07-07 - Plugin System Refactoring and Cleanup
 
 **Breaking Changes:**
@@ -1296,5 +1274,5 @@ reearth.ui.close();
 
 ---
 
-**Last Updated**: 2026-07-07
+**Last Updated**: 2026-08-07
 **Maintained By**: Platform Team

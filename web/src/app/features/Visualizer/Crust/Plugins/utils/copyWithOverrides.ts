@@ -4,11 +4,11 @@
 // camera.position) which would otherwise be evaluated once and captured as
 // static snapshots if using object spread ({ ...source }).
 export function copyWithOverrides<T extends object>(
-  source: T,
+  source: T | undefined | null,
   overrides: Partial<Record<PropertyKey, unknown>>
 ): T {
   const descriptors: Record<PropertyKey, PropertyDescriptor> = {};
-  const sourceDescs = Object.getOwnPropertyDescriptors(source);
+  const sourceDescs = Object.getOwnPropertyDescriptors(source ?? {});
   for (const key of Reflect.ownKeys(sourceDescs)) {
     descriptors[key] = sourceDescs[key as string];
   }

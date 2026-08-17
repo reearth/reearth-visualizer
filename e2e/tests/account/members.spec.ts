@@ -51,6 +51,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Navigate to members page via sidebar", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-001" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     const membersVisible = await membersLink
       .isVisible({ timeout: 5000 })
@@ -70,6 +71,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Display members page with table headers", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-002" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -82,6 +84,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Display search input for filtering members", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-003" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -92,6 +95,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Display invite user button", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-004" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -102,6 +106,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Display at least one member", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-002" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -114,6 +119,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Filter members by name or email", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-003" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -145,6 +151,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Show no results for non-existing member", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-003" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -159,6 +166,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Restore member list when search is cleared", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-003" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -172,6 +180,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Open add member modal", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-004" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -186,6 +195,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Show warning for non-existing user in add modal", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-004" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -201,6 +211,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Close add member modal on cancel", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-004" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
@@ -213,6 +224,7 @@ test.describe("MEMBERS PAGE - Test cases", () => {
   });
 
   test("Display member context menu with actions", async () => {
+    test.info().annotations.push({ type: "story", description: "US-MEM-005" });
     const membersLink = page.getByTestId("sidebar-tab-members-link");
     if (!(await membersLink.isVisible().catch(() => false))) {
       test.skip(true, "Members tab not available");
