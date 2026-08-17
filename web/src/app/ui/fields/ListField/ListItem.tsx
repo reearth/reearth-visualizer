@@ -97,7 +97,7 @@ const ListItem: FC<ItemProps> = ({
           }
           dragHandleClassName={dragHandleClassName}
           disableHover={isDragging}
-          optionsMenu={optionsMenu}
+          optionsMenu={item.readOnly ? undefined : optionsMenu}
           highlighted={selectedItem == item.id}
           optionsMenuWidth={100}
           onClick={() => onItemSelect?.(item?.id)}

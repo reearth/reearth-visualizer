@@ -137,6 +137,7 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test("Enable Photo Overlay on the sketch layer", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PHOTO-001" });
     test.setTimeout(60000);
     await projectScreen.clickLayer(layerName);
     await page.waitForTimeout(1000);
@@ -149,6 +150,7 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test("Select a feature and verify Photo Overlay section", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PHOTO-001" });
     test.setTimeout(90000);
     await photoOverlay.selectFeatureAndOpenInspector(400, 400);
     await expect(page.getByText("Photo Overlay").first()).toBeVisible();
@@ -156,6 +158,7 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test("Open Photo Overlay Editor and verify panel", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PHOTO-001" });
     test.setTimeout(60000);
     await photoOverlay.openPhotoOverlayEditor();
     await expect(photoOverlay.editorPanel).toBeVisible();
@@ -168,6 +171,7 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test("Upload an image and submit the Photo Overlay", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PHOTO-002" });
     test.setTimeout(90000);
     const testImagePath = path.resolve(__dirname, "../../test-data/testimage.jpg");
     await photoOverlay.uploadAsset(testImagePath);
@@ -182,6 +186,7 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test("Re-select feature and verify editor fields", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PHOTO-004" });
     test.setTimeout(90000);
     await projectScreen.clickLayer(layerName);
     await page.waitForTimeout(2000);
@@ -200,6 +205,7 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test.skip("Switch between size modes and verify width slider", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PHOTO-005" });
     test.setTimeout(90000);
     await projectScreen.clickLayer(layerName);
     await page.waitForTimeout(2000);
@@ -223,6 +229,7 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test.skip("Set transparency to edge values", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PHOTO-006" });
     test.setTimeout(90000);
     await projectScreen.clickLayer(layerName);
     await page.waitForTimeout(2000);
@@ -242,6 +249,7 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test.skip("Cancel editor closes panel without saving", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PHOTO-007" });
     test.setTimeout(90000);
     await projectScreen.clickLayer(layerName);
     await page.waitForTimeout(2000);

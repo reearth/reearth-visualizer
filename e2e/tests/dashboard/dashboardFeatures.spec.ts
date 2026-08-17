@@ -59,6 +59,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Create a project for feature tests", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-008" });
     await dashBoardPage.projects.click();
     await projectsPage.newProjectButton.waitFor({ state: "visible" });
     await page.waitForTimeout(500);
@@ -73,6 +74,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Filter projects by name", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-001" });
     await projectsPage.searchProject(projectName);
     await page.waitForTimeout(2000);
     await expect(
@@ -81,6 +83,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Show no results for non-existing project", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-002" });
     const randomSearch = faker.string.alpha(20);
     await projectsPage.searchProject(randomSearch);
     await page.waitForTimeout(2000);
@@ -90,6 +93,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Restore all projects when search is cleared", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-003" });
     await projectsPage.clearSearch();
     await page.waitForTimeout(2000);
     await expect(
@@ -98,11 +102,13 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Display sort dropdown with options", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-004" });
     await expect(projectsPage.sortLabel).toBeVisible();
     await expect(projectsPage.sortDropdown).toBeVisible();
   });
 
   test("Sort projects by Last Created", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-004" });
     await projectsPage.selectSortOption("Last Created");
     await page
       .getByTestId("projects-container")
@@ -114,6 +120,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Sort projects by A To Z", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-005" });
     await projectsPage.selectSortOption("A To Z");
     await page
       .getByTestId("projects-container")
@@ -126,6 +133,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Sort projects by Last Updated", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-006" });
     await projectsPage.selectSortOption("Last Updated");
     await page
       .getByTestId("projects-container")
@@ -138,6 +146,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Switch to list view", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-007" });
     await projectsPage.switchToListView();
     await page.waitForTimeout(1000);
     await expect(
@@ -149,6 +158,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("List view shows project dates", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-007" });
     await expect(
       projectsPage.listProjectUpdated(projectName).first()
     ).toBeVisible();
@@ -158,6 +168,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Switch back to grid view", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-008" });
     await projectsPage.switchToGridView();
     await page.waitForTimeout(1000);
     await expect(
@@ -166,6 +177,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Open context menu with rename option", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-009" });
     const menuBtn = projectsPage.gridProjectMenuButton(projectName).first();
     await menuBtn.click();
     await expect(projectsPage.renameMenuItem).toBeVisible();
@@ -176,12 +188,14 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Rename project via context menu", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-009" });
     await projectsPage.renameProject(projectName, renamedProjectName);
     await page.waitForTimeout(2000);
     await expect(page.getByText(renamedProjectName).first()).toBeVisible();
   });
 
   test("Export project from context menu", async () => {
+    test.info().annotations.push({ type: "story", description: "US-PFEAT-010" });
     const downloadPromise = page.waitForEvent("download", { timeout: 30000 });
 
     await projectsPage.exportProject(renamedProjectName);
@@ -198,6 +212,7 @@ test.describe("DASHBOARD FEATURES - Search, Sort, Views, Rename, Export", () => 
   });
 
   test("Delete the test project", async () => {
+    test.info().annotations.push({ type: "story", description: "US-RBIN-001" });
     await dashBoardPage.projects.click();
     await page.waitForTimeout(2000);
 
