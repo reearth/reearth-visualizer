@@ -449,6 +449,59 @@ describe("useZushiPlugin", () => {
       expect(onMessage).toHaveBeenCalledWith(testMessage);
     });
 
+    test("forwards surface message events to plugin extension message handlers", async () => {
+      let latest: UseZushiPluginReturn | undefined;
+      render(
+        createElement(ZushiHarness, {
+          pluginContext: mockPluginContext,
+          onReady: (value) => {
+            latest = value;
+          }
+        })
+      );
+
+      await waitFor(() => expect(latest?.loaded).toBe(true));
+
+      // Register an extension message handler through the exposed API
+      const { Plugin: PluginMock } = await import("@reearth/zushi");
+      const config = (PluginMock as unknown as { mock: { calls: any[][] } })
+        .mock.calls[0][0];
+
+      // Capture the callbacks the adapter subscribes for each surface's
+      // built-in "message" event
+      const messageSubscribers = new Set<(msg: unknown) => void>();
+      const createSurface = () => ({
+        show: vi.fn(),
+        update: vi.fn(),
+        setVisible: vi.fn(),
+        postMessage: vi.fn(),
+        close: vi.fn(),
+        on: vi.fn((type: string, cb: (msg: unknown) => void) => {
+          if (type === "message") messageSubscribers.add(cb);
+          return () => {};
+        }),
+        off: vi.fn()
+      });
+      const api = config.exposed({
+        startEventLoop: vi.fn(),
+        surfaces: {
+          ui: createSurface(),
+          modal: createSurface(),
+          popup: createSurface()
+        }
+      });
+
+      const handler = vi.fn();
+      api.reearth.extension.on("message", handler);
+
+      // Messages emitted through Zushi's built-in surface "message" event
+      // must reach the plugin's extension message handlers
+      const emitted = { type: "myMessage", value: 1 };
+      messageSubscribers.forEach((cb) => cb(emitted));
+
+      expect(handler).toHaveBeenCalledWith(emitted);
+    });
+
     test("loads code from src URL", async () => {
       const fetchSpy = vi
         .spyOn(globalThis, "fetch")
