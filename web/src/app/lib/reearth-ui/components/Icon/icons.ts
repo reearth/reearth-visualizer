@@ -41,6 +41,7 @@ import ClockClockwise from "./Icons/ClockClockwise.svg?react";
 import ClockFilled from "./Icons/ClockFilled.svg?react";
 import Close from "./Icons/Close.svg?react";
 import Compass from "./Icons/Compass.svg?react";
+import CmsLogo from "./Icons/CmsLogo.svg?react";
 import CompassFocus from "./Icons/CompassFocus.svg?react";
 import Copy from "./Icons/Copy.svg?react";
 import Copyright from "./Icons/Copyright.svg?react";
@@ -78,6 +79,7 @@ import FileMDFilled from "./Icons/FileMDFilled.svg?react";
 import Flask from "./Icons/Flask.svg?react";
 import Float from "./Icons/Float.svg?react";
 import FloppyDisk from "./Icons/FloppyDisk.svg?react";
+import FlowLogo from "./Icons/FlowLogo.svg?react";
 import FolderFilled from "./Icons/FolderFilled.svg?react";
 import FolderNotchOpen from "./Icons/FolderNotchOpen.svg?react";
 import FolderSimple from "./Icons/FolderSimple.svg?react";
@@ -251,6 +253,7 @@ export default {
   clockClockwise: ClockClockwise,
   close: Close,
   compass: Compass,
+  cmsLogo: CmsLogo,
   compassFocus: CompassFocus,
   copy: Copy,
   copyright: Copyright,
@@ -288,6 +291,7 @@ export default {
   flask: Flask,
   float: Float,
   floppyDisk: FloppyDisk,
+  flowLogo: FlowLogo,
   folderFilled: FolderFilled,
   folderNotchOpen: FolderNotchOpen,
   folderSimple: FolderSimple,

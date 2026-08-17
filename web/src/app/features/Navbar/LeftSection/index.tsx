@@ -1,3 +1,4 @@
+import ProductsMenu from "@reearth/app/features/ProductsMenu";
 import Profile from "@reearth/app/features/UserProfile";
 import useWorkspaceManagementMenu from "@reearth/app/hooks/useWorkspaceManagementMenu";
 import {
@@ -161,18 +162,7 @@ const LeftSection: React.FC<Props> = ({
         menu={accountMenuItems}
         dataTestid="avatar-popupMenu"
       />
-
-      <StyledLink
-        to={`/dashboard/${currentWorkspace?.id}`}
-        disabled={!currentWorkspace?.id}
-      >
-        <IconButton
-          icon="dotsNineVertical"
-          appearance="simple"
-          size="large"
-          tooltipText={t("Dashboard")}
-        />
-      </StyledLink>
+      <ProductsMenu workspaceId={currentWorkspace?.id} />
       {page === "projectSettings" && (
         <StyledLink to={`/scene/${sceneId}/map`} disabled={!sceneId}>
           <IconButton

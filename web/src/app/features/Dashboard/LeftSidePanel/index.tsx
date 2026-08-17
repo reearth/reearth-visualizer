@@ -1,5 +1,4 @@
 import Profile from "@reearth/app/features/UserProfile";
-import { IconButton } from "@reearth/app/lib/reearth-ui";
 import {
   SidebarButtonsWrapper,
   SidebarDivider,
@@ -12,6 +11,7 @@ import {
 } from "@reearth/app/ui/components/Sidebar";
 import { FC } from "react";
 
+import ProductsMenu from "../../ProductsMenu";
 import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
 
@@ -48,11 +48,7 @@ const LeftSidePanel: FC<Props> = ({
       <SidebarMainSection data-testid="sidebar-main-section">
         <SidebarTopSection data-testid="sidebar-top-section">
           <LogoWrapper data-testid="sidebar-logo" />
-          <IconButton
-            icon="dotsNineVertical"
-            appearance="simple"
-            size="large"
-          />
+          <ProductsMenu workspaceId={currentWorkspace?.id} />
           <AvatarWrapper
             avatarURL={avatarURL}
             userName={userInfo?.name}
