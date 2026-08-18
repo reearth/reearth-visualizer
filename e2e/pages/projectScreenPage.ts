@@ -54,7 +54,7 @@ export class ProjectScreenPage {
   cancelLayerStyleButton: Locator;
 
   constructor(private page: Page) {
-    this.scenePanel = this.page.getByText("Scene");
+    this.scenePanel = this.page.locator('[aria-expanded]:has-text("Scene")').first();
     this.sceneItems = this.page.locator(
       '[data-testid="editor-map-scene-item"]'
     );
@@ -145,9 +145,7 @@ export class ProjectScreenPage {
   }
 
   getSceneItemByName = (name: string): Locator =>
-    this.page.locator(
-      `[data-testid="editor-map-scene-item"] div:has-text("${name}")`
-    );
+    this.page.getByTestId("editor-map-scene-item").filter({ hasText: name });
 
   getLayerByName = (name: string): Locator =>
     this.page.getByTestId("layer-item").filter({ hasText: name });
