@@ -52,12 +52,12 @@ test.describe("Plugin install/uninstall lifecycle via API", () => {
     gqlClient
   }) => {
     // The server intentionally blocks managing built-in plugins.
-    // Verify this constraint is enforced.
+    // Verify this constraint is enforced — the server returns "not found" for system plugins.
     await expect(
       gqlClient.mutate(UNINSTALL_PLUGIN, {
         input: { sceneId, pluginId: "reearth" }
       })
-    ).rejects.toThrow();
+    ).rejects.toThrow("not found");
   });
 });
 

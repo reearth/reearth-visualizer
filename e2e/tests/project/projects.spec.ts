@@ -321,7 +321,6 @@ test.describe("Project Management", () => {
     // Expand the panel only if it is currently collapsed.
     if ((await projectScreen.scenePanel.getAttribute("aria-expanded")) === "false") {
       await projectScreen.scenePanel.click();
-      await page.waitForTimeout(500);
     }
     await expect(projectScreen.getSceneItemByName("Main")).toBeVisible({ timeout: 15000 });
     await expect(projectScreen.getSceneItemByName("Tiles")).toBeVisible();
