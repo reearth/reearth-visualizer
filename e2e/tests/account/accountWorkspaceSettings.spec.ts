@@ -60,6 +60,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   // Profile Menu — Account Settings Navigation
   // ──────────────────────────────────────────────────
   test.skip("Profile menu should have Account settings option", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-001" });
     test.setTimeout(30000);
     await dashBoardPage.profileDropdownButton.click();
     await page.waitForTimeout(500);
@@ -73,6 +74,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   });
 
   test.skip("Account settings: should navigate (new tab or same page)", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-001" });
     test.setTimeout(45000);
     await dashBoardPage.profileDropdownButton.click();
     await page.waitForTimeout(500);
@@ -128,6 +130,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   });
 
   test.skip("Account: should display page layout", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-001" });
     test.skip(
       !accountSettingsLoaded,
       "Account settings page not accessible (EE uses external URL)"
@@ -136,27 +139,32 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   });
 
   test.skip("Account: should display name field (readonly)", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-002" });
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await expect(accountSettings.nameField).toBeVisible();
   });
 
   test.skip("Account: should display email field (readonly)", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-001" });
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await expect(accountSettings.emailField).toBeVisible();
   });
 
   test.skip("Account: should display password field with change button", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-003" });
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await expect(accountSettings.passwordField).toBeVisible();
     await expect(accountSettings.changePasswordButton).toBeVisible();
   });
 
   test.skip("Account: should display language selector", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-001" });
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await expect(accountSettings.languageField).toBeVisible();
   });
 
   test.skip("Account: should open password change modal", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-003" });
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     test.setTimeout(30000);
     await accountSettings.openPasswordModal();
@@ -167,6 +175,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   });
 
   test.skip("Account: password modal should close on cancel", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-003" });
     test.skip(!accountSettingsLoaded, "Account settings page not accessible");
     await accountSettings.passwordModalCancelButton.click();
     await settingsPage.waitForTimeout(500);
@@ -174,6 +183,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   });
 
   test.skip("Profile menu should have Workspace settings option", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-004" });
     test.setTimeout(30000);
     await page.bringToFront();
     if (!page.url().includes("/dashboard/")) {
@@ -198,6 +208,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   });
 
   test.skip("Workspace settings: should navigate (new tab or same page)", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-004" });
     test.setTimeout(45000);
 
     if (accountSettingsLoaded) {
@@ -284,6 +295,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   });
 
   test.skip("Workspace: should display workspace name field", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-005" });
     test.skip(
       !workspaceSettingsLoaded,
       "Workspace settings page not accessible (EE uses external URL)"
@@ -292,6 +304,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   });
 
   test.skip("Workspace: should display sidebar with Account and Workspace tabs", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-004" });
     test.skip(
       !workspaceSettingsLoaded,
       "Workspace settings page not accessible"
@@ -301,6 +314,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   });
 
   test.skip("Workspace: sidebar navigation to Account Settings", async () => {
+    test.info().annotations.push({ type: "story", description: "US-ACCT-004" });
     test.skip(
       !workspaceSettingsLoaded,
       "Workspace settings page not accessible"

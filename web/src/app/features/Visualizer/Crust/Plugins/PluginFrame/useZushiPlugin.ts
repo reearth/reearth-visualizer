@@ -17,7 +17,10 @@ import {
   useState
 } from "react";
 
-import type { ReearthPluginContext } from "../pluginAPI/zushiAdapter";
+import type {
+  ExternalCloseRefs,
+  ReearthPluginContext
+} from "../pluginAPI/zushiAdapter";
 import { createZushiExposedAPI } from "../pluginAPI/zushiAdapter";
 
 /**
@@ -35,6 +38,18 @@ export type Options = {
   onPreInit?: () => void;
   onDispose?: () => void;
   onMessage?: (msg: unknown) => void;
+  /**
+   * Callback to register the modal close function with the parent.
+   * Called when the plugin is initialized with a function that can
+   * externally close the modal (fires close events, hides surface).
+   */
+  onRegisterModalClose?: (closeFn: () => void) => void;
+  /**
+   * Callback to register the popup close function with the parent.
+   * Called when the plugin is initialized with a function that can
+   * externally close the popup (fires close events, hides surface).
+   */
+  onRegisterPopupClose?: (closeFn: () => void) => void;
 };
 
 /**
@@ -105,11 +120,20 @@ export default function useZushiPlugin({
   onPreInit,
   onError = defaultOnError,
   onDispose,
-  onMessage: rawOnMessage
+  onMessage: rawOnMessage,
+  onRegisterModalClose,
+  onRegisterPopupClose
 }: Options): UseZushiPluginReturn {
   const [loaded, setLoaded] = useState(false);
   const [code, setCode] = useState("");
   const pluginRef = useRef<Plugin | undefined>(undefined);
+
+  // External close refs - populated by the modal/popup adapters so the parent can
+  // close surfaces (close-before-show) while still firing each surface's close events
+  const externalCloseRefs = useRef<ExternalCloseRefs>({
+    modalCloseRef: { current: null },
+    popupCloseRef: { current: null }
+  });
 
   /**
    * pluginContextRef Pattern
@@ -145,12 +169,6 @@ export default function useZushiPlugin({
 
   // Surface container refs
   const uiContainer = useRef<HTMLDivElement>(null);
-
-  // Store references to surface iframe windows for message filtering
-  const surfaceWindowsRef = useRef<Set<Window>>(new Set());
-
-  // Store MutationObserver for cleanup
-  const iframeObserverRef = useRef<MutationObserver | undefined>(undefined);
 
   // Cleanup callbacks registered by the exposed API (e.g. viewer event unsubscription)
   const disposeCallbacksRef = useRef<(() => void)[]>([]);
@@ -262,10 +280,14 @@ export default function useZushiPlugin({
               : true;
 
         // Create message handlers for the adapter
+        // dispatchMessage routes messages from Zushi's built-in surface
+        // message events (see createZushiExposedAPI) into the plugin's
+        // registered extension message handlers.
         const messageHandlers = {
           onMessage,
           offMessage,
-          onceMessage
+          onceMessage,
+          dispatchMessage: handleMessage
         };
 
         // Create Zushi plugin instance
@@ -292,7 +314,8 @@ export default function useZushiPlugin({
           exposed: createZushiExposedAPI(
             () => pluginContextRef.current,
             messageHandlers,
-            (fn) => disposeCallbacksRef.current.push(fn)
+            (fn) => disposeCallbacksRef.current.push(fn),
+            externalCloseRefs.current
           )
         });
 
@@ -301,8 +324,8 @@ export default function useZushiPlugin({
 
         if (disposed) {
           // Unmounted while start() was in flight - nothing above was assigned
-          // to pluginRef/iframeObserverRef yet, so just tear down what start()
-          // already registered (e.g. viewer event listeners) and dispose.
+          // to pluginRef yet, so just tear down what start() already registered
+          // (e.g. viewer event listeners) and dispose.
           runDisposeCallbacks();
           try {
             plugin.dispose();
@@ -311,110 +334,6 @@ export default function useZushiPlugin({
           }
           return;
         }
-
-        /**
-         * Iframe Window Registration with Load Event Handling
-         *
-         * WHY: We need to track which iframe windows belong to this plugin instance
-         * to filter postMessage events. Only messages from our plugin's iframes should
-         * be processed; messages from other plugins must be ignored.
-         *
-         * PROBLEM: When an iframe is created, its contentWindow may not be immediately
-         * available:
-         * - Zushi calls surface.show() which creates an iframe
-         * - The iframe element exists in the DOM
-         * - But iframe.contentWindow is null until the iframe loads
-         * - If we try to register it immediately, we get null
-         *
-         * This caused the modal close button bug: the modal iframe existed but its
-         * contentWindow was never registered, so messages from it were filtered out.
-         *
-         * SOLUTION: Try to register immediately, but if contentWindow is null, attach
-         * a load event listener to register it later when the iframe loads.
-         *
-         * HOW:
-         * 1. Query for all iframes in the container
-         * 2. Try to register iframe.contentWindow immediately
-         * 3. If null, attach a 'load' event listener (once: true)
-         * 4. When iframe loads, register its contentWindow
-         *
-         * This pattern is applied to:
-         * - Initial collection after plugin.start()
-         * - MutationObserver detection of dynamically added iframes
-         */
-        surfaceWindowsRef.current.clear();
-        const collectIframeWindows = (container: HTMLElement) => {
-          const iframes = container.querySelectorAll('iframe');
-          iframes.forEach(iframe => {
-            const registerWindow = () => {
-              if (iframe.contentWindow) {
-                surfaceWindowsRef.current.add(iframe.contentWindow);
-                return true;
-              }
-              return false;
-            };
-
-            // Try to register immediately
-            if (!registerWindow()) {
-              // If contentWindow is not available yet, wait for load event
-              iframe.addEventListener('load', () => {
-                registerWindow();
-              }, { once: true });
-            }
-          });
-        };
-
-        if (uiContainer.current) collectIframeWindows(uiContainer.current);
-        if (modalContainer.current) collectIframeWindows(modalContainer.current);
-        if (popupContainer.current) collectIframeWindows(popupContainer.current);
-
-        // Watch for dynamically added iframes (e.g., when popup.show() is called)
-        const observerCallback: MutationCallback = (mutations) => {
-          mutations.forEach((mutation) => {
-            mutation.addedNodes.forEach((node) => {
-              if (node.nodeType === Node.ELEMENT_NODE) {
-                const element = node as HTMLElement;
-
-                // Check if it's an iframe
-                if (element.tagName === 'IFRAME') {
-                  const iframe = element as HTMLIFrameElement;
-
-                  // contentWindow might be null immediately after creation
-                  // Try to register immediately, or wait for load
-                  const registerWindow = () => {
-                    if (iframe.contentWindow) {
-                      surfaceWindowsRef.current.add(iframe.contentWindow);
-                      return true;
-                    }
-                    return false;
-                  };
-
-                  // Try immediately
-                  if (!registerWindow()) {
-                    // If not available, wait for load event
-                    iframe.addEventListener('load', () => {
-                      registerWindow();
-                    }, { once: true });
-                  }
-                }
-                // Check if the added element contains nested iframes
-                // Use collectIframeWindows to handle load event timing
-                collectIframeWindows(element);
-              }
-            });
-          });
-        };
-
-        const observer = new MutationObserver(observerCallback);
-        const observerConfig = { childList: true, subtree: true };
-
-        // Observe all surface containers
-        if (uiContainer.current) observer.observe(uiContainer.current, observerConfig);
-        if (modalContainer.current) observer.observe(modalContainer.current, observerConfig);
-        if (popupContainer.current) observer.observe(popupContainer.current, observerConfig);
-
-        // Store observer for cleanup
-        iframeObserverRef.current = observer;
 
         pluginRef.current = plugin;
         setLoaded(true);
@@ -431,12 +350,6 @@ export default function useZushiPlugin({
     // Cleanup on unmount
     return () => {
       disposed = true;
-
-      // Disconnect MutationObserver
-      if (iframeObserverRef.current) {
-        iframeObserverRef.current.disconnect();
-        iframeObserverRef.current = undefined;
-      }
 
       // Tear down anything the exposed API registered (e.g. viewer event listeners)
       runDisposeCallbacks();
@@ -478,6 +391,7 @@ export default function useZushiPlugin({
     onMessage,
     offMessage,
     onceMessage,
+    handleMessage,
     messageEvents,
     messageOnceEvents,
     modalContainer,
@@ -485,31 +399,22 @@ export default function useZushiPlugin({
     runDisposeCallbacks
   ]);
 
-  // Listen for window postMessage events from plugin UI
-  // Filter based on iframe source window
+  // Register external close callbacks with parent when plugin is loaded
   useEffect(() => {
-    const handleWindowMessage = (ev: MessageEvent) => {
-      if (!loaded) return;
+    if (!loaded) return;
 
-      // Check if the message comes from one of our plugin's surface iframes
-      const isFromOurPlugin = surfaceWindowsRef.current.has(ev.source as Window);
+    // Register modal close callback
+    const modalClose = externalCloseRefs.current.modalCloseRef.current;
+    if (modalClose && onRegisterModalClose) {
+      onRegisterModalClose(modalClose);
+    }
 
-      // Only process messages from our plugin's iframes
-      if (!isFromOurPlugin) {
-        // Silently ignore messages from other plugins
-        return;
-      }
-
-      // Route message to plugin extension
-      handleMessage(ev.data);
-    };
-
-    window.addEventListener("message", handleWindowMessage);
-
-    return () => {
-      window.removeEventListener("message", handleWindowMessage);
-    };
-  }, [loaded, handleMessage]);
+    // Register popup close callback
+    const popupClose = externalCloseRefs.current.popupCloseRef.current;
+    if (popupClose && onRegisterPopupClose) {
+      onRegisterPopupClose(popupClose);
+    }
+  }, [loaded, onRegisterModalClose, onRegisterPopupClose]);
 
   // Expose plugin instance via ref
   useImperativeHandle(
