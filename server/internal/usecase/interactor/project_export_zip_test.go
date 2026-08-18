@@ -27,7 +27,11 @@ type countingFile struct {
 
 func (f *countingFile) ReadAsset(_ context.Context, name string) (io.ReadCloser, error) {
 	f.reads[name]++
-	return io.NopCloser(bytes.NewReader(f.content)), nil
+	// io.LimitReader (rather than bytes.Reader directly) deliberately does not implement
+	// io.WriterTo, so io.Copy can't take its single-shot fast path -- matching how real asset
+	// streams (network/file handles) are copied in fixed-size chunks, which
+	// TestAddZipAsset_AbortsMidCopyOnceBudgetExceeded below relies on.
+	return io.NopCloser(io.LimitReader(bytes.NewReader(f.content), int64(len(f.content)))), nil
 }
 
 func (f *countingFile) UploadExportProjectZip(context.Context, afero.File) error {
@@ -140,6 +144,37 @@ func TestBudgetedWriter_AbortsMidWrite(t *testing.T) {
 	assert.Contains(t, err.Error(), "exceeds maximum allowed size")
 	assert.Equal(t, 0, n)
 	assert.Equal(t, 0, dest.Len(), "no bytes should reach the underlying writer once the budget is exceeded")
+}
+
+// TestAddZipAsset_AbortsMidCopyOnceBudgetExceeded is an integration-style regression test
+// requested in review: TestBudgetedWriter_AbortsMidWrite above proves the budgetedWriter helper
+// itself rejects an over-budget write, but not that it's actually wired into the real
+// AddZipAsset/io.Copy path. This drives AddZipAsset directly with a temporarily small budget and
+// an asset large enough that io.Copy must issue it as multiple chunks, confirming the copy is
+// interrupted partway through: the first chunk reaches the zip entry, but the asset as a whole
+// is never fully consumed once the running budget is crossed.
+func TestAddZipAsset_AbortsMidCopyOnceBudgetExceeded(t *testing.T) {
+	original := maxExportZipBytes
+	const chunkSize = 32 * 1024 // io.Copy's default internal buffer size when no fast path applies
+	maxExportZipBytes = chunkSize + 100 // room for one full chunk, not two
+	defer func() { maxExportZipBytes = original }()
+
+	ctx := context.Background()
+	content := bytes.Repeat([]byte("a"), chunkSize*3) // forces io.Copy into multiple Write calls
+	f := &countingFile{reads: map[string]int{}, content: content}
+	assetRepo := memory.NewAsset()
+
+	buf := &bytes.Buffer{}
+	zipWriter := zip.NewWriter(buf)
+	state := newExportZipState()
+
+	err := AddZipAsset(ctx, assetRepo, f, zipWriter, "assets/oversized.png", state)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "exceeds maximum allowed size")
+
+	assert.Equal(t, 1, f.reads["oversized.png"], "the asset is read from storage exactly once")
+	assert.Greater(t, state.written, int64(0), "the first chunk must have been written before the budget was exceeded")
+	assert.Less(t, state.written, int64(len(content)), "the oversized asset must not have been fully consumed by the aborted copy")
 }
 
 // TestSaveExportProjectZip_ManifestCountsTowardBudget is a regression test: project.json's own
