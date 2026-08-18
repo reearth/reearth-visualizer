@@ -29,6 +29,9 @@ func initEcho(
 	if cfg.Config == nil {
 		log.Fatalf("ServerConfig.Config is nil")
 	}
+	if cfg.Config.DisablePubSubPushAuth {
+		log.Warnf("DisablePubSubPushAuth is set: /api/import-project and /api/storage-event will accept requests with no push token verification (SEC-02)")
+	}
 
 	e := echo.New()
 	e.Debug = cfg.Debug
@@ -122,20 +125,7 @@ func initEcho(
 		}
 	}
 
-	e.Use(
-		UsecaseMiddleware(
-			cfg.Repos,
-			cfg.Gateways,
-			cfg.AccountRepos,
-			cfg.AccountGateways,
-			interactor.ContainerConfig{
-				SignupSecret:       cfg.Config.SignupSecret,
-				PublishedIndexHTML: publishedIndexHTML,
-				PublishedIndexURL:  cfg.Config.Published.IndexURL,
-				AuthSrvUIDomain:    cfg.Config.Host_Web,
-			},
-		),
-	)
+	e.Use(newUsecaseMiddleware(cfg, publishedIndexHTML))
 
 	e.Use(AttachLanguageMiddleware)
 
@@ -157,6 +147,10 @@ func initEcho(
 	} else {
 		apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
 	}
+	// Re-run usecase construction now that the operator is known, so the workspace/scene
+	// filters actually get applied (SEC-01: the registration above runs before auth, so its
+	// operator is always nil there and repos are never filtered without this second pass).
+	apiPrivateRoute.Use(newUsecaseMiddleware(cfg, publishedIndexHTML))
 	apiPrivateRoute.Use(LatestLogoutAtHeader)
 
 	// Main backend API
@@ -186,6 +180,28 @@ func initEcho(
 	}).Handler(e)
 
 	return e
+}
+
+// newUsecaseMiddleware builds the usecase container from whatever operator is on the context
+// at the time it runs. It's registered globally in initEcho so anonymous routes (published
+// pages, /api/ping, asset serving, etc.) get a container, and registered again on
+// apiPrivateRoute, after the operator-attaching middleware, so authenticated routes get it
+// rebuilt with the now-known operator's workspace/scene filters applied. Without the second
+// registration, the global one always sees a nil operator (it runs before auth), so repos are
+// never filtered — see SEC-01.
+func newUsecaseMiddleware(cfg *ServerConfig, publishedIndexHTML string) echo.MiddlewareFunc {
+	return UsecaseMiddleware(
+		cfg.Repos,
+		cfg.Gateways,
+		cfg.AccountRepos,
+		cfg.AccountGateways,
+		interactor.ContainerConfig{
+			SignupSecret:       cfg.Config.SignupSecret,
+			PublishedIndexHTML: publishedIndexHTML,
+			PublishedIndexURL:  cfg.Config.Published.IndexURL,
+			AuthSrvUIDomain:    cfg.Config.Host_Web,
+		},
+	)
 }
 
 func errorHandler(next func(error, echo.Context)) func(error, echo.Context) {
