@@ -39,9 +39,10 @@ var (
 	fr *gateway.File
 
 	disabledAuthConfig = &config.Config{
-		Origins:  []string{"https://example.com"},
-		Dev:      true,
-		MockAuth: true,
+		Origins:               []string{"https://example.com"},
+		Dev:                   true,
+		MockAuth:              true,
+		DisablePubSubPushAuth: true,
 	}
 
 	internalApiConfig = &config.Config{

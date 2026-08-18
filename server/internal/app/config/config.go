@@ -63,9 +63,15 @@ type Config struct {
 	// requests against /api/import-project and /api/storage-event (SEC-02). /api/import-project
 	// is triggered by a GCS Cloud Function and /api/storage-event by a Pub/Sub push
 	// subscription, so these may end up as two different service accounts once both are
-	// configured to sign their requests -- hence a list, not a single value. Empty disables
-	// verification -- required for local dev and tests, where nothing signs real tokens.
+	// configured to sign their requests -- hence a list, not a single value.
 	PubSubPushServiceAccounts []string `pp:",omitempty"`
+
+	// DisablePubSubPushAuth turns off token verification for /api/import-project and
+	// /api/storage-event entirely. Required for local dev and tests, where nothing signs
+	// real tokens -- but it must be set explicitly: an empty PubSubPushServiceAccounts on
+	// its own does NOT disable verification, so a missing/misconfigured value in production
+	// fails closed (rejects the request) instead of silently reopening SEC-02.
+	DisablePubSubPushAuth bool `pp:",omitempty"`
 
 	// storage
 	GCS GCSConfig `pp:",omitempty"`

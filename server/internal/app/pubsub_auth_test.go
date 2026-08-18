@@ -19,10 +19,16 @@ func TestVerifyPushRequestToken(t *testing.T) {
 		return req
 	}
 
-	t.Run("disabled when no service accounts are configured", func(t *testing.T) {
+	t.Run("disabled only when DisablePubSubPushAuth is explicitly set", func(t *testing.T) {
+		cfg := &ServerConfig{Config: &config.Config{DisablePubSubPushAuth: true}}
+		err := verifyPushRequestToken(context.Background(), cfg, newReq(""))
+		assert.NoError(t, err, "verification must be a no-op when explicitly disabled, so local dev and existing tests keep working")
+	})
+
+	t.Run("rejects every request when service accounts are unconfigured and the flag is not set (fail closed)", func(t *testing.T) {
 		cfg := &ServerConfig{Config: &config.Config{}}
 		err := verifyPushRequestToken(context.Background(), cfg, newReq(""))
-		assert.NoError(t, err, "verification must be a no-op until PubSubPushServiceAccounts is configured, so local dev and existing tests keep working")
+		assert.Error(t, err, "an empty PubSubPushServiceAccounts must not silently disable verification (SEC-02)")
 	})
 
 	t.Run("rejects a missing token once configured", func(t *testing.T) {
