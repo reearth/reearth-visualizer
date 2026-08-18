@@ -1126,10 +1126,12 @@ func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file ga
 		}
 	case string:
 		cleanedStr := strings.Trim(v, "'")
-		if strings.HasPrefix(cleanedStr, adapter.CurrentHost(ctx)) {
-			if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, state); err != nil {
-				return err
-			}
+		// AddZipAsset (via IsCurrentHostAssets) is the single source of truth for
+		// recognizing an asset reference -- relative assets/... paths as well as
+		// absolute URLs under the current host. Filtering again here would just
+		// re-diverge from that logic, as it did before (SCA-01 / #2358).
+		if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, state); err != nil {
+			return err
 		}
 	default:
 
