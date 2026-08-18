@@ -155,7 +155,7 @@ func TestBudgetedWriter_AbortsMidWrite(t *testing.T) {
 // is never fully consumed once the running budget is crossed.
 func TestAddZipAsset_AbortsMidCopyOnceBudgetExceeded(t *testing.T) {
 	original := maxExportZipBytes
-	const chunkSize = 32 * 1024 // io.Copy's default internal buffer size when no fast path applies
+	const chunkSize = 32 * 1024         // io.Copy's default internal buffer size when no fast path applies
 	maxExportZipBytes = chunkSize + 100 // room for one full chunk, not two
 	defer func() { maxExportZipBytes = original }()
 
