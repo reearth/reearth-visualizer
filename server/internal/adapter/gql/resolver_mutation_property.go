@@ -3,6 +3,7 @@ package gql
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -170,9 +171,12 @@ func (r *mutationResolver) AddPropertyItem(ctx context.Context, input gqlmodel.A
 		if f == nil {
 			continue
 		}
-		fv := gqlmodel.FromPropertyValueAndType(f.Value, f.Type)
-		if fv == nil {
-			return nil, errors.New("invalid field value")
+		var fv *property.Value
+		if f.Value != nil {
+			fv = gqlmodel.FromPropertyValueAndType(f.Value, f.Type)
+			if fv == nil {
+				return nil, fmt.Errorf("invalid value for field %q", f.FieldID)
+			}
 		}
 		fields = append(fields, interfaces.AddPropertyItemFieldParam{
 			Field: id.PropertyFieldID(*gqlmodel.ToStringIDRef[id.PropertyField](&f.FieldID)),

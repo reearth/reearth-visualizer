@@ -167,14 +167,21 @@ func TestProperty_AddItem_WithFields_UnknownFieldAbortsWithoutPartialItem(t *tes
 		},
 	}, op)
 
-	// AddItem returns before propertyRepo.Save/tx.Commit are reached, so the
-	// caller never sees a half-initialized item back -- the same guarantee a
-	// real Mongo transaction gives on the persisted side (tx.End rolls back
-	// whatever wasn't committed).
+	// All requested fields are validated against the schema before AddItem
+	// creates the item at all, so the caller never sees a half-initialized
+	// item back, and -- unlike relying solely on the transaction rolling
+	// back -- p itself is never mutated on this path either. That matters
+	// because repo.Property.FindByID can return a direct reference into the
+	// backing store (as the in-memory repo used here does), so a mutation
+	// that happens before a failed Save/Commit would otherwise still be
+	// visible on it.
 	assert.Error(t, err)
 	assert.Nil(t, np)
 	assert.Nil(t, npl)
 	assert.Nil(t, npg)
+
+	stored, _ := memory.Property.FindByID(ctx, p.ID())
+	assert.Nil(t, stored.ItemBySchema(psg.ID()), "no item must have been added to the property, even in-memory")
 }
 
 func TestProperty_RemoveItem(t *testing.T) {

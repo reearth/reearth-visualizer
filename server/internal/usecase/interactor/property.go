@@ -255,6 +255,24 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 		return nil, nil, nil, err
 	}
 
+	// Validate every requested initial field against the schema before
+	// mutating p at all, so an unknown field is rejected up front instead of
+	// after the item has already been added to the in-memory property --
+	// which some repo.Property implementations (e.g. the in-memory one used
+	// in tests) return by reference, making that mutation visible even
+	// though it's never Saved/Committed.
+	if len(inp.Fields) > 0 {
+		if sgID, ok := inp.Pointer.ItemBySchemaGroup(); ok {
+			if sg := ps.Groups().Group(sgID); sg != nil {
+				for _, f := range inp.Fields {
+					if !sg.HasField(f.Field) {
+						return nil, nil, nil, fmt.Errorf("unknown field: %s", f.Field)
+					}
+				}
+			}
+		}
+	}
+
 	item, gl := p.AddListItem(ps, inp.Pointer, inp.Index)
 	if item == nil {
 		return nil, nil, nil, errors.New("failed to create item")

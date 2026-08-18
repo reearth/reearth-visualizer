@@ -5,7 +5,10 @@ import {
   valueToGQL,
   valueTypeToGQL
 } from "@reearth/app/utils/value";
-import { PropertyItemPayload } from "@reearth/services/gql";
+import {
+  PropertyFieldValueInput,
+  PropertyItemPayload
+} from "@reearth/services/gql";
 import {
   UPDATE_PROPERTY_VALUE,
   ADD_PROPERTY_ITEM,
@@ -86,17 +89,33 @@ export const usePropertyMutations = () => {
     ): Promise<
       MutationReturn<{ propertyId: string; newItemId: string | undefined }>
     > => {
-      const gqlFields = fields
-        ?.map((f) => {
+      let gqlFields: PropertyFieldValueInput[] | undefined;
+      if (fields) {
+        gqlFields = [];
+        for (const f of fields) {
           const gvt = valueTypeToGQL(f.valueType);
-          if (!gvt) return undefined;
-          return {
+          if (!gvt) {
+            // Bail out instead of silently sending a subset of the requested
+            // fields -- the caller relies on all of them being set atomically
+            // with the item's creation, so an unmappable value type must fail
+            // the whole call rather than create an item missing a field it
+            // depends on.
+            console.log(
+              `GraphQL: Failed to add property item, unknown value type for field "${f.fieldId}"`
+            );
+            setNotification({
+              type: "error",
+              text: t("Failed to update property.")
+            });
+            return { data: undefined, status: "error" };
+          }
+          gqlFields.push({
             fieldId: f.fieldId,
             value: valueToGQL(f.value, f.valueType),
             type: gvt
-          };
-        })
-        .filter((f): f is NonNullable<typeof f> => !!f);
+          });
+        }
+      }
 
       const { data, error } = await addPropertyItemMutation({
         variables: {
