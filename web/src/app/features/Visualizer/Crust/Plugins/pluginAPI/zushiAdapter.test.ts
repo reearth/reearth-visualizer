@@ -23,7 +23,9 @@ function createMockSurface(): SurfaceAPI {
     show: vi.fn(),
     update: vi.fn(),
     setVisible: vi.fn(),
-    postMessage: vi.fn()
+    postMessage: vi.fn(),
+    on: vi.fn(),
+    off: vi.fn()
   } as unknown as SurfaceAPI;
 }
 
@@ -146,7 +148,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -163,7 +166,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -191,7 +195,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -239,7 +244,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -293,7 +299,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -340,7 +347,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -381,7 +389,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -417,7 +426,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage,
         offMessage,
-        onceMessage
+        onceMessage,
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -445,12 +455,70 @@ describe("zushiAdapter", () => {
       expect(offMessage).toHaveBeenCalledWith(testCallback);
     });
 
+    test("subscribes to built-in surface message events and forwards them", () => {
+      const reearthContext = createMockReearthContext();
+      const dispatchMessage = vi.fn();
+
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn(),
+        dispatchMessage
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
+
+      // Capture the callbacks registered for each surface's "message" event
+      const messageSubscribers: Record<string, Set<(msg: unknown) => void>> = {
+        ui: new Set(),
+        modal: new Set(),
+        popup: new Set()
+      };
+      const createSurface = (name: "ui" | "modal" | "popup") => ({
+        show: vi.fn(),
+        update: vi.fn(),
+        setVisible: vi.fn(),
+        postMessage: vi.fn(),
+        close: vi.fn(),
+        on: vi.fn((type: string, cb: (msg: unknown) => void) => {
+          if (type === "message") messageSubscribers[name].add(cb);
+          return () => {};
+        }),
+        off: vi.fn()
+      });
+
+      const mockZushiContext = {
+        surfaces: {
+          ui: createSurface("ui"),
+          modal: createSurface("modal"),
+          popup: createSurface("popup")
+        }
+      };
+
+      factory(mockZushiContext as any);
+
+      // All three surfaces must be subscribed to their built-in "message" event
+      for (const name of ["ui", "modal", "popup"] as const) {
+        expect(messageSubscribers[name].size).toBe(1);
+      }
+
+      // Emitting a message on any surface must forward to dispatchMessage
+      const testMessage = { type: "myMessage", value: 1 };
+      messageSubscribers.ui.forEach((cb) => cb(testMessage));
+      expect(dispatchMessage).toHaveBeenCalledWith(testMessage);
+    });
+
     test("provides console access", () => {
       const reearthContext = createMockReearthContext();
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -506,7 +574,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -573,7 +642,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -609,7 +679,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -652,7 +723,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -692,7 +764,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       // Create external close refs
@@ -752,7 +825,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -795,7 +869,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -835,7 +910,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       // Create external close refs
@@ -899,7 +975,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -945,7 +1022,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const externalCloseRefs: ExternalCloseRefs = {
@@ -1003,7 +1081,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const factory = createZushiExposedAPI(
@@ -1049,7 +1128,8 @@ describe("zushiAdapter", () => {
       const messageHandlers = {
         onMessage: vi.fn(),
         offMessage: vi.fn(),
-        onceMessage: vi.fn()
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
       };
 
       const externalCloseRefs: ExternalCloseRefs = {

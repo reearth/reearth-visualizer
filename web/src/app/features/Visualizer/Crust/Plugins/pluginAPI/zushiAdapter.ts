@@ -194,6 +194,7 @@ type MessageHandlers = {
   onMessage: (handler: (msg: unknown) => void) => void;
   offMessage: (handler: (msg: unknown) => void) => void;
   onceMessage: (handler: (msg: unknown) => void) => void;
+  dispatchMessage: (msg: unknown) => void;
 };
 
 /**
@@ -944,6 +945,30 @@ export function createZushiExposedAPI(
       startEventLoop,
       registerPluginMessageSender
     );
+
+    // Forward surface iframe messages to the plugin's extension message
+    // handlers through Zushi's built-in surface `message` events.
+    //
+    // WHY (vs. a host-side window "message" listener):
+    // Zushi's SafeIFrame already:
+    //   - filters internal auto-resize messages (___iframe_auto_resize___),
+    //     so they are used only for iframe sizing and never reach plugins
+    //   - scopes messages to the surface's own iframe via ev.source, so
+    //     messages from other plugins' iframes are ignored
+    //   - pumps the VM event loop after emitting, so plugin message handlers
+    //     (including async ones) run without an extra startEventLoop call
+    const forwardSurfaceMessage = (name: "ui" | "modal" | "popup") => {
+      const surface = zushiCtx.surfaces[name];
+      const unsubscribe = surface.on?.("message", (msg: unknown) => {
+        messageHandlers.dispatchMessage(msg);
+      });
+      if (typeof unsubscribe === "function") {
+        registerCleanup(unsubscribe);
+      }
+    };
+    forwardSurfaceMessage("ui");
+    forwardSurfaceMessage("modal");
+    forwardSurfaceMessage("popup");
 
     // Wrap client storage with event loop trigger
     // context.clientStorage is accessed via context getter, so it's fresh
