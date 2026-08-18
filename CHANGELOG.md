@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.20 - 2026-08-17
+
+### Web
+
+#### ✨ Refactor
+
+- Route plugin UI msg through zushi&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s builtin surface message events ([#2374](https://github.com/reearth/reearth-visualizer/pull/2374)) [`96cbbb`](https://github.com/reearth/reearth-visualizer/commit/96cbbb)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.20 ([#2378](https://github.com/reearth/reearth-visualizer/pull/2378)) [`11e0a3`](https://github.com/reearth/reearth-visualizer/commit/11e0a3)
+
 ## 1.0.0-beta.16.19 - 2026-08-05
 
 ### Web
