@@ -75,6 +75,7 @@ test.describe("Project Management", () => {
   });
 
   test("Verify dashboard is loaded", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-001" });
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
@@ -82,6 +83,7 @@ test.describe("Project Management", () => {
   });
 
   test("Verify project creation modal", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-002" });
     await dashBoardPage.projects.click();
     await projectsPage.newProjectButton.waitFor({ state: "visible" });
     await page.waitForTimeout(500);
@@ -94,6 +96,7 @@ test.describe("Project Management", () => {
   });
 
   test("Create a new project and verify after its creation", async () => {
+    test.info().annotations.push({ type: "story", description: "US-DASH-003" });
     await projectsPage.createNewProject(
       projectName,
       projectAlias,
@@ -104,12 +107,14 @@ test.describe("Project Management", () => {
   });
 
   test("Go to the newly created project", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-001" });
     await projectsPage.goToProjectPage(projectName);
     await expect(projectScreen.newLayerButton).toBeVisible();
     await expect(projectScreen.addNewStyleButton).toBeVisible();
   });
 
   test("Should add new layer and add points on the map", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-002" });
     test.setTimeout(60000);
     await projectScreen.createNewLayer(layerName);
     await projectScreen.verifyLayerAdded(layerName);
@@ -144,12 +149,14 @@ test.describe("Project Management", () => {
     });
   });
 
-  test.skip("Should verify sketch tools are visible after adding style", async () => {
+  test("Should verify sketch tools are visible after adding style", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-003" });
     test.setTimeout(60000);
     await projectScreen.verifySketchToolsVisible();
   });
 
   test.skip("Should draw a polyline on the map", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-003" });
     test.setTimeout(90000);
     const polylineLayerName = faker.string.alpha(5);
 
@@ -198,6 +205,7 @@ test.describe("Project Management", () => {
   });
 
   test.skip("Should draw a polygon on the map", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-004" });
     test.setTimeout(90000);
     const polygonLayerName = faker.string.alpha(5);
 
@@ -229,6 +237,7 @@ test.describe("Project Management", () => {
   });
 
   test.skip("Should draw a circle on the map", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-005" });
     test.setTimeout(90000);
     const circleLayerName = faker.string.alpha(5);
 
@@ -254,6 +263,7 @@ test.describe("Project Management", () => {
   });
 
   test.skip("Should draw a square on the map", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-006" });
     test.setTimeout(90000);
     const squareLayerName = faker.string.alpha(5);
 
@@ -279,6 +289,7 @@ test.describe("Project Management", () => {
   });
 
   test("Should create layer with custom text property", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-002" });
     test.setTimeout(60000);
     const customLayerName = faker.string.alpha(5);
 
@@ -291,6 +302,7 @@ test.describe("Project Management", () => {
   });
 
   test("Should create layer with custom number property", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-002" });
     test.setTimeout(60000);
     const customLayerName = faker.string.alpha(5);
 
@@ -302,12 +314,15 @@ test.describe("Project Management", () => {
     await projectScreen.verifyLayerAdded(customLayerName);
   });
 
-  test.skip("Should navigate to Scene panel and verify scene items", async () => {
+  test("Should navigate to Scene panel and verify scene items", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EDIT-003" });
     test.setTimeout(60000);
-    await projectScreen.scenePanel.click();
-    await page.waitForTimeout(1000);
-
-    await expect(projectScreen.getSceneItemByName("Main")).toBeVisible();
+    // localStorage may persist a collapsed state from a previous run.
+    // Expand the panel only if it is currently collapsed.
+    if ((await projectScreen.scenePanel.getAttribute("aria-expanded")) === "false") {
+      await projectScreen.scenePanel.click();
+    }
+    await expect(projectScreen.getSceneItemByName("Main")).toBeVisible({ timeout: 15000 });
     await expect(projectScreen.getSceneItemByName("Tiles")).toBeVisible();
     await expect(projectScreen.getSceneItemByName("Terrain")).toBeVisible();
     await expect(projectScreen.getSceneItemByName("Globe")).toBeVisible();

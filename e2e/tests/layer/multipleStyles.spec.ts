@@ -105,6 +105,7 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Add an Empty style", async () => {
+    test.info().annotations.push({ type: "story", description: "US-STYLE-001" });
     await stylePanel.addPresetStyle("Empty");
     await expect(stylePanel.getStyleByName("Empty.01")).toBeVisible({
       timeout: 10_000
@@ -112,6 +113,7 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Add a Default style as second style", async () => {
+    test.info().annotations.push({ type: "story", description: "US-STYLE-002" });
     await stylePanel.addPresetStyle("Default");
     await expect(stylePanel.getStyleByName("Default.01")).toBeVisible({
       timeout: 10_000
@@ -119,6 +121,7 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Add a Professional style as third style", async () => {
+    test.info().annotations.push({ type: "story", description: "US-STYLE-002" });
     await stylePanel.addPresetStyle("Professional");
     await expect(stylePanel.getStyleByName("Professional.01")).toBeVisible({
       timeout: 10_000
@@ -126,7 +129,9 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Switch between styles by clicking style entries", async () => {
+    test.info().annotations.push({ type: "story", description: "US-STYLE-003" });
     await stylePanel.selectStyle("Empty.01");
+
     await expect(stylePanel.interfaceTab).toBeVisible();
 
     await stylePanel.selectStyle("Default.01");
@@ -134,11 +139,13 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Style editor shows Interface and Code tabs", async () => {
+    test.info().annotations.push({ type: "story", description: "US-STYLE-003" });
     await expect(stylePanel.interfaceTab).toBeVisible();
     await expect(stylePanel.codeTab).toBeVisible();
   });
 
   test("Switch to Code tab and back to Interface", async () => {
+    test.info().annotations.push({ type: "story", description: "US-STYLE-003" });
     await stylePanel.codeTab.click();
     await page.waitForTimeout(500);
     await stylePanel.interfaceTab.click();
@@ -146,13 +153,14 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Rename a style via context menu", async () => {
+    test.info().annotations.push({ type: "story", description: "US-STYLE-004" });
     await stylePanel.renameStyle("Empty.01", "Custom Style");
     await expect(stylePanel.getStyleByName("Custom Style")).toBeVisible();
   });
 
   test("Delete a style via context menu", async () => {
+    test.info().annotations.push({ type: "story", description: "US-STYLE-005" });
     await expect(stylePanel.getStyleByName("Professional.01")).toBeVisible();
-
     await stylePanel.deleteStyle("Professional.01");
 
     await expect(
@@ -161,6 +169,7 @@ test.describe("Multiple Style Assignment and Switching", () => {
   });
 
   test("Styles persist after deselecting and reselecting layer", async () => {
+    test.info().annotations.push({ type: "story", description: "US-STYLE-006" });
     await expect(stylePanel.getStyleByName("Custom Style")).toBeVisible();
     await expect(stylePanel.getStyleByName("Default.01")).toBeVisible();
 
