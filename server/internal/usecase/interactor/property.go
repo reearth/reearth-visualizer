@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -262,6 +263,21 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 	// Set nameFieldValue to the name field
 	if inp.NameFieldValue != nil {
 		item.RepresentativeField(ps).UpdateUnsafe(inp.NameFieldValue)
+	}
+
+	// Set any additional initial field values in the same transaction as the
+	// item creation, so a caller never observes an item that exists but is
+	// missing fields it depends on to be recognized correctly (e.g. a
+	// discriminator field like tile_category).
+	for _, f := range inp.Fields {
+		if f.Value == nil {
+			continue
+		}
+		field, _ := item.GetOrCreateField(ps, f.Field)
+		if field == nil {
+			return nil, nil, nil, fmt.Errorf("failed to create field: %s", f.Field)
+		}
+		field.UpdateUnsafe(f.Value)
 	}
 
 	err = i.propertyRepo.Save(ctx, p)

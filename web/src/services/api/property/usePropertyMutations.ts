@@ -77,14 +77,32 @@ export const usePropertyMutations = () => {
   const addPropertyItem = useCallback(
     async (
       propertyId: string,
-      schemaGroupId: string
+      schemaGroupId: string,
+      fields?: {
+        fieldId: string;
+        value: ValueTypes[ValueType];
+        valueType: ValueType;
+      }[]
     ): Promise<
       MutationReturn<{ propertyId: string; newItemId: string | undefined }>
     > => {
+      const gqlFields = fields
+        ?.map((f) => {
+          const gvt = valueTypeToGQL(f.valueType);
+          if (!gvt) return undefined;
+          return {
+            fieldId: f.fieldId,
+            value: valueToGQL(f.value, f.valueType),
+            type: gvt
+          };
+        })
+        .filter((f): f is NonNullable<typeof f> => !!f);
+
       const { data, error } = await addPropertyItemMutation({
         variables: {
           propertyId,
-          schemaGroupId
+          schemaGroupId,
+          fields: gqlFields
         },
         refetchQueries: ["GetScene"]
       });
@@ -102,7 +120,9 @@ export const usePropertyMutations = () => {
       const property = data.addPropertyItem.property;
       const propertyItem = data.addPropertyItem.propertyItem;
       const newItemId =
-        propertyItem?.__typename === "PropertyGroup" ? propertyItem.id : undefined;
+        propertyItem?.__typename === "PropertyGroup"
+          ? propertyItem.id
+          : undefined;
 
       return {
         data: { propertyId: property.id, newItemId },

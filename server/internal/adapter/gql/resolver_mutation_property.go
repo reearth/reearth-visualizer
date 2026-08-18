@@ -165,11 +165,27 @@ func (r *mutationResolver) AddPropertyItem(ctx context.Context, input gqlmodel.A
 		}
 	}
 
+	fields := make([]interfaces.AddPropertyItemFieldParam, 0, len(input.Fields))
+	for _, f := range input.Fields {
+		if f == nil {
+			continue
+		}
+		fv := gqlmodel.FromPropertyValueAndType(f.Value, f.Type)
+		if fv == nil {
+			return nil, errors.New("invalid field value")
+		}
+		fields = append(fields, interfaces.AddPropertyItemFieldParam{
+			Field: id.PropertyFieldID(*gqlmodel.ToStringIDRef[id.PropertyField](&f.FieldID)),
+			Value: fv,
+		})
+	}
+
 	p, pgl, pi, err := usecases(ctx).Property.AddItem(ctx, interfaces.AddPropertyItemParam{
 		PropertyID:     pid,
 		Pointer:        gqlmodel.FromPointer(gqlmodel.ToStringIDRef[id.PropertySchemaGroup](&input.SchemaGroupID), nil, nil),
 		Index:          input.Index,
 		NameFieldValue: v,
+		Fields:         fields,
 	}, getOperator(ctx))
 
 	if err != nil {

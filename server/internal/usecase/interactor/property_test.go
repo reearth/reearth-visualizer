@@ -67,6 +67,116 @@ func TestProperty_AddItem(t *testing.T) {
 	assert.Equal(t, np, np2)
 }
 
+func TestProperty_AddItem_WithFields(t *testing.T) {
+	ctx := context.Background()
+	memory := memory.New()
+
+	ws := accountsID.NewWorkspaceID()
+	scene := scene.New().NewID().Workspace(ws).MustBuild()
+	tileTypeField := property.NewSchemaField().ID("tile_type").Type(property.ValueTypeString).MustBuild()
+	tileCategoryField := property.NewSchemaField().ID("tile_category").Type(property.ValueTypeString).MustBuild()
+	psg := property.NewSchemaGroup().ID("tiles").IsList(true).Fields([]*property.SchemaField{
+		tileTypeField,
+		tileCategoryField,
+	}).MustBuild()
+	ps := property.NewSchema().ID(id.MustPropertySchemaID("xxx~1.1.1/aa")).
+		Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
+			psg,
+		})).
+		MustBuild()
+	p := property.New().NewID().Scene(scene.ID()).Schema(ps.ID()).MustBuild()
+	_ = memory.Scene.Save(ctx, scene)
+	_ = memory.PropertySchema.Save(ctx, ps)
+	_ = memory.Property.Save(ctx, p)
+
+	uc := &Property{
+		commonSceneLock:    commonSceneLock{sceneLockRepo: memory.SceneLock},
+		propertyRepo:       memory.Property,
+		propertySchemaRepo: memory.PropertySchema,
+		transaction:        memory.Transaction,
+	}
+	op := &usecase.Operator{
+		ReadableScenes: []id.SceneID{scene.ID()},
+		WritableScenes: []id.SceneID{scene.ID()},
+	}
+
+	index := -1
+	np, npl, npg, err := uc.AddItem(ctx, interfaces.AddPropertyItemParam{
+		PropertyID: p.ID(),
+		Index:      &index,
+		Pointer:    property.PointItemBySchema(psg.ID()),
+		Fields: []interfaces.AddPropertyItemFieldParam{
+			{Field: tileTypeField.ID(), Value: property.ValueTypeString.ValueFrom("google_satellite")},
+			{Field: tileCategoryField.ID(), Value: property.ValueTypeString.ValueFrom("system")},
+		},
+	}, op)
+	assert.NoError(t, err)
+	assert.NotNil(t, np)
+	assert.NotNil(t, npl)
+	assert.NotNil(t, npg)
+
+	// Both fields must have been set atomically in the same call that created the item.
+	assert.Equal(t, property.ValueTypeString.ValueFrom("google_satellite"), npg.Field(tileTypeField.ID()).Value())
+	assert.Equal(t, property.ValueTypeString.ValueFrom("system"), npg.Field(tileCategoryField.ID()).Value())
+
+	np2, _ := memory.Property.FindByID(ctx, p.ID())
+	assert.Equal(t, np, np2)
+	npl2 := property.ToGroupList(np2.ItemBySchema(psg.ID()))
+	assert.Equal(t, 1, len(npl2.Groups()))
+}
+
+func TestProperty_AddItem_WithFields_UnknownFieldAbortsWithoutPartialItem(t *testing.T) {
+	ctx := context.Background()
+	memory := memory.New()
+
+	ws := accountsID.NewWorkspaceID()
+	scene := scene.New().NewID().Workspace(ws).MustBuild()
+	tileTypeField := property.NewSchemaField().ID("tile_type").Type(property.ValueTypeString).MustBuild()
+	psg := property.NewSchemaGroup().ID("tiles").IsList(true).Fields([]*property.SchemaField{
+		tileTypeField,
+	}).MustBuild()
+	ps := property.NewSchema().ID(id.MustPropertySchemaID("xxx~1.1.1/aa")).
+		Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
+			psg,
+		})).
+		MustBuild()
+	p := property.New().NewID().Scene(scene.ID()).Schema(ps.ID()).MustBuild()
+	_ = memory.Scene.Save(ctx, scene)
+	_ = memory.PropertySchema.Save(ctx, ps)
+	_ = memory.Property.Save(ctx, p)
+
+	uc := &Property{
+		commonSceneLock:    commonSceneLock{sceneLockRepo: memory.SceneLock},
+		propertyRepo:       memory.Property,
+		propertySchemaRepo: memory.PropertySchema,
+		transaction:        memory.Transaction,
+	}
+	op := &usecase.Operator{
+		ReadableScenes: []id.SceneID{scene.ID()},
+		WritableScenes: []id.SceneID{scene.ID()},
+	}
+
+	index := -1
+	np, npl, npg, err := uc.AddItem(ctx, interfaces.AddPropertyItemParam{
+		PropertyID: p.ID(),
+		Index:      &index,
+		Pointer:    property.PointItemBySchema(psg.ID()),
+		Fields: []interfaces.AddPropertyItemFieldParam{
+			{Field: tileTypeField.ID(), Value: property.ValueTypeString.ValueFrom("google_satellite")},
+			{Field: id.PropertyFieldID("does_not_exist"), Value: property.ValueTypeString.ValueFrom("system")},
+		},
+	}, op)
+
+	// AddItem returns before propertyRepo.Save/tx.Commit are reached, so the
+	// caller never sees a half-initialized item back -- the same guarantee a
+	// real Mongo transaction gives on the persisted side (tx.End rolls back
+	// whatever wasn't committed).
+	assert.Error(t, err)
+	assert.Nil(t, np)
+	assert.Nil(t, npl)
+	assert.Nil(t, npg)
+}
+
 func TestProperty_RemoveItem(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()

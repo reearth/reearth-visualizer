@@ -217,12 +217,19 @@ input UnlinkPropertyValueInput {
   fieldId: ID!
 }
 
+input PropertyFieldValueInput {
+  fieldId: ID!
+  value: Any
+  type: ValueType!
+}
+
 input AddPropertyItemInput {
   propertyId: ID!
   schemaGroupId: ID!
   index: Int
   nameFieldValue: Any
   nameFieldType: ValueType
+  fields: [PropertyFieldValueInput!]
 }
 
 input MovePropertyItemInput {
