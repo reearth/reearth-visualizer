@@ -1,8 +1,8 @@
 name: Reviewer lottery
 on:
-  pull_request_target:
+  pull_request_target: # git-cascade:allow
     paths:
-        - web/**
+      - web/**
     types: [opened, ready_for_review, reopened]
 
 permissions:
