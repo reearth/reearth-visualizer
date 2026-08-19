@@ -199,7 +199,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   }, [formState, onClose, onProjectCreate]);
 
   return (
-    <Modal visible size="small" data-testid="project-creator-modal">
+    <Modal visible size="small" dataTestid="project-creator-modal">
       <ModalPanel
         title={t("Create new project")}
         onCancel={onClose}

@@ -67,6 +67,17 @@ describe("ProjectCreatorModal", () => {
     vi.useRealTimers();
   });
 
+  it("applies its test id to the modal root", () => {
+    render(<ProjectCreatorModal onProjectCreate={vi.fn()} />);
+
+    // Modal exposes `dataTestid`, not `data-testid` — passing the latter compiles
+    // (TypeScript special-cases data-* attributes) but is dropped at runtime.
+    expect(screen.getByTestId("project-creator-modal")).toHaveAttribute(
+      "role",
+      "dialog"
+    );
+  });
+
   it("keeps Apply disabled until the name is set and the alias has been validated", async () => {
     mockValidateProjectAlias.mockResolvedValue({ available: true });
 

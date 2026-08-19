@@ -252,7 +252,6 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         <ProjectCreatorModal
           onClose={closeProjectCreator}
           onProjectCreate={handleProjectCreate}
-          data-testid="project-creator-modal"
         />
       )}
 
