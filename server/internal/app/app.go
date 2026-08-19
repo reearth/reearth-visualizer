@@ -29,6 +29,9 @@ func initEcho(
 	if cfg.Config == nil {
 		log.Fatalf("ServerConfig.Config is nil")
 	}
+	if cfg.Config.DisablePubSubPushAuth {
+		log.Warnf("DisablePubSubPushAuth is set: /api/import-project and /api/storage-event will accept requests with no push token verification (SEC-02)")
+	}
 
 	e := echo.New()
 	e.Debug = cfg.Debug
