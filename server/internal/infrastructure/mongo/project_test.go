@@ -156,8 +156,20 @@ func TestProject_FindByPublicName_UsesIndex(t *testing.T) {
 	r := NewProject(client)
 	require.NoError(t, r.Init(ctx))
 
+	// Insert enough decoy documents that the planner's cost-based plan
+	// selection is actually exercised, rather than trivially picking the sole
+	// candidate index on a near-empty collection.
+	decoys := make([]any, 0, 100)
+	for i := range 100 {
+		decoy := project.New().NewID().Workspace(accountsID.NewWorkspaceID()).
+			Alias(fmt.Sprintf("decoy-alias-%d", i)).PublishmentStatus(project.PublishmentStatusPublic).MustBuild()
+		decoys = append(decoys, util.DR(mongodoc.NewProject(decoy)))
+	}
+	_, err := c.Collection("project").InsertMany(ctx, decoys)
+	require.NoError(t, err)
+
 	prj := project.New().NewID().Workspace(accountsID.NewWorkspaceID()).Alias("explain-alias").PublishmentStatus(project.PublishmentStatusPublic).MustBuild()
-	_, err := c.Collection("project").InsertOne(ctx, util.DR(mongodoc.NewProject(prj)))
+	_, err = c.Collection("project").InsertOne(ctx, util.DR(mongodoc.NewProject(prj)))
 	require.NoError(t, err)
 
 	cmd := bson.D{
