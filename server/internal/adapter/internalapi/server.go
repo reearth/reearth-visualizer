@@ -486,7 +486,7 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 
 	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", pid.String()))
 	if err != nil {
-		return nil, errors.New("Fail Zip Create :" + err.Error())
+		return nil, fmt.Errorf("failed to create zip file: %w", err)
 	}
 	defer func() {
 		if cerr := zipFile.Close(); cerr != nil && err == nil {
@@ -507,17 +507,17 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 
 	prj, err := uc.Project.ExportProjectData(ctx, pid, zipWriter, op)
 	if err != nil {
-		return nil, errors.New("Fail ExportProject :" + err.Error())
+		return nil, fmt.Errorf("failed to export project: %w", err)
 	}
 
 	sce, exportData, err := uc.Scene.ExportSceneData(ctx, prj)
 	if err != nil {
-		return nil, errors.New("Fail ExportSceneData :" + err.Error())
+		return nil, fmt.Errorf("failed to export scene data: %w", err)
 	}
 
 	plugins, schemas, err := uc.Plugin.ExportPlugins(ctx, sce, zipWriter)
 	if err != nil {
-		return nil, errors.New("Fail ExportPlugins :" + err.Error())
+		return nil, fmt.Errorf("failed to export plugins: %w", err)
 	}
 
 	exportData["project"] = gqlmodel.ToProjectExport(prj)
@@ -531,15 +531,15 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 	}
 	b, err := json.Marshal(exportData)
 	if err != nil {
-		return nil, errors.New("failed normalize export data marshal: " + err.Error())
+		return nil, fmt.Errorf("failed normalize export data marshal: %w", err)
 	}
 	var data map[string]any
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, errors.New("failed normalize export data unmarshal: " + err.Error())
+		return nil, fmt.Errorf("failed normalize export data unmarshal: %w", err)
 	}
 	err = uc.Project.SaveExportProjectZip(ctx, zipWriter, zipFile, data, prj)
 	if err != nil {
-		return nil, errors.New("Fail SaveExportProjectZip :" + err.Error())
+		return nil, fmt.Errorf("failed to save export project zip: %w", err)
 	}
 
 	return &pb.ExportProjectResponse{
@@ -704,7 +704,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 
 	metadata, err := uc.ProjectMetadata.FindProjectByIDByAnyUser(ctx, pid)
 	if err != nil {
-		return nil, errors.New("failed to fetch project metadata: " + err.Error())
+		return nil, fmt.Errorf("failed to fetch project metadata: %w", err)
 	}
 
 	userID := usr.ID().String()
