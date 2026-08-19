@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.21 - 2026-08-19
+
+### Web
+
+#### ✨ Refactor
+
+- Improve popup menu component ([#2342](https://github.com/reearth/reearth-visualizer/pull/2342)) [`fd6650`](https://github.com/reearth/reearth-visualizer/commit/fd6650)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.21 ([#2383](https://github.com/reearth/reearth-visualizer/pull/2383)) [`b073f2`](https://github.com/reearth/reearth-visualizer/commit/b073f2)
+- Add immutable flag to yarn install workflows and allow pull request target ([#2382](https://github.com/reearth/reearth-visualizer/pull/2382)) [`12a8d8`](https://github.com/reearth/reearth-visualizer/commit/12a8d8)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Restore asset URL prefix check in project export ([#2358](https://github.com/reearth/reearth-visualizer/pull/2358)) [`c86cdd`](https://github.com/reearth/reearth-visualizer/commit/c86cdd)
+- Dedup export zip assets and cap total export size (SCA-01) ([#2356](https://github.com/reearth/reearth-visualizer/pull/2356)) [`7f8e7c`](https://github.com/reearth/reearth-visualizer/commit/7f8e7c)
+- Verify push-request tokens and filter repos for import routes (SEC-02) ([#2353](https://github.com/reearth/reearth-visualizer/pull/2353)) [`2acd90`](https://github.com/reearth/reearth-visualizer/commit/2acd90)
+- Apply workspace&#x2F;scene filters to authenticated requests (SEC-01) ([#2348](https://github.com/reearth/reearth-visualizer/pull/2348)) [`811d8f`](https://github.com/reearth/reearth-visualizer/commit/811d8f)
+
+#### 📖 Documentation
+
+- Note accepted tradeoff for storage deletes inside project delete transaction (REL-01) ([#2370](https://github.com/reearth/reearth-visualizer/pull/2370)) [`e369cf`](https://github.com/reearth/reearth-visualizer/commit/e369cf)
+
+### e2e
+
+#### 🔧 Bug Fixes
+
+- Restore two skipped UI tests and replace fixme plugin test ([#2365](https://github.com/reearth/reearth-visualizer/pull/2365)) [`fbd05d`](https://github.com/reearth/reearth-visualizer/commit/fbd05d)
+
 ## 1.0.0-beta.16.20 - 2026-08-17
 
 ### Web
