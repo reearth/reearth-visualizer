@@ -314,7 +314,7 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 }
 
 func IsCurrentHostAssets(ctx context.Context, u string) bool {
-	if strings.HasPrefix(u, "assets/") || strings.HasPrefix(u, "/assets") {
+	if strings.HasPrefix(u, "assets/") || strings.HasPrefix(u, "/assets/") {
 		return true
 	}
 

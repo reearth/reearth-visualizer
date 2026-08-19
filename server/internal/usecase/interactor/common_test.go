@@ -21,6 +21,7 @@ func TestIsCurrentHostAssets(t *testing.T) {
 	assert.True(t, IsCurrentHostAssets(ctx, "https://api.example.com/assets/foo.png"), "an absolute URL under the current host must be recognized")
 	assert.False(t, IsCurrentHostAssets(ctx, "https://other-host.com/assets/foo.png"), "an absolute URL under a different host must not be recognized")
 	assert.False(t, IsCurrentHostAssets(ctx, "https://api.example.com.evil.com/assets/foo.png"), "a host that merely shares a string prefix with the current host must not be recognized")
+	assert.False(t, IsCurrentHostAssets(ctx, "/assets-foo.png"), "a path that merely shares a string prefix with /assets/ must not be recognized")
 }
 
 // TestIsCurrentHostAssets_NoCurrentHost is a regression test: comparing hosts with a raw
