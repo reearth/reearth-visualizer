@@ -10,6 +10,7 @@ import (
 )
 
 type recordingSceneLockRepo struct {
+	saveLockCalled bool
 	saveLockCtxErr error
 }
 
@@ -22,6 +23,7 @@ func (r *recordingSceneLockRepo) GetAllLock(context.Context, id.SceneIDList) ([]
 }
 
 func (r *recordingSceneLockRepo) SaveLock(ctx context.Context, _ id.SceneID, _ scene.LockMode) error {
+	r.saveLockCalled = true
 	r.saveLockCtxErr = ctx.Err()
 	return ctx.Err()
 }
@@ -46,5 +48,6 @@ func TestReleaseSceneLock_SurvivesCanceledContext(t *testing.T) {
 
 	d.ReleaseSceneLock(ctx, id.NewSceneID())
 
+	assert.True(t, repo.saveLockCalled, "SaveLock must actually be called -- otherwise this test would pass even if ReleaseSceneLock stopped releasing the lock at all")
 	assert.NoError(t, repo.saveLockCtxErr)
 }

@@ -185,7 +185,7 @@ const sceneLockReleaseTimeout = 10 * time.Second
 // ReleaseSceneLock detaches ctx from its parent's cancellation before saving
 // the lock. Callers defer this from publish flows using the same request
 // context the publish itself was using (REL-03, compliance scan); if that
-// request context is canceled (e.g. the client disconnected mid upload), a
+// request context is canceled (e.g. the client disconnected mid-upload), a
 // SaveLock call on the bare ctx would fail with "context canceled" and leave
 // the scene locked forever, since sceneLock has no TTL and the only other
 // unlock path runs solely at process startup.
