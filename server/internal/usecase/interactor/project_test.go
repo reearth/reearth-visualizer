@@ -436,6 +436,22 @@ func TestProject_FindActiveById(t *testing.T) {
 		assert.Nil(t, result)
 		assert.Equal(t, "project is private", err.Error())
 	})
+
+	// SEC-03 regression: a non-nil operator with no relationship to the project's workspace
+	// used to be enough to read a private project, since the check only tested operator
+	// presence, not membership. A caller reaching the internal API and forging any existing
+	// user's "user-id" metadata (see unaryAttachOperatorInterceptor in internal/app/grpc.go)
+	// got a non-nil operator with no proof of workspace membership.
+	t.Run("when project is private and operator has no relationship to the workspace", func(t *testing.T) {
+		result, err := uc.FindActiveById(ctx, pj.ID(), &usecase.Operator{
+			AcOperator: &accountsWorkspace.Operator{
+				ReadableWorkspaces: accountsID.WorkspaceIDList{accountsID.NewWorkspaceID()},
+			},
+		})
+		require.Error(t, err)
+		assert.Nil(t, result)
+		assert.Equal(t, "project is private", err.Error())
+	})
 }
 
 // TestProject_FindByWorkspace_NilImportStatus is a regression test: a
