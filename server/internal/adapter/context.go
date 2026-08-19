@@ -4,7 +4,6 @@ import (
 	"context"
 
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
-	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearthx/appx"
@@ -113,15 +112,6 @@ func Lang(ctx context.Context, lang *language.Tag) string {
 func Operator(ctx context.Context) *usecase.Operator {
 	if v := ctx.Value(contextOperator); v != nil {
 		if v2, ok := v.(*usecase.Operator); ok {
-			return v2
-		}
-	}
-	return nil
-}
-
-func AcOperator(ctx context.Context) *accountsWorkspace.Operator {
-	if v := ctx.Value(contextOperator); v != nil {
-		if v2, ok := v.(*accountsWorkspace.Operator); ok {
 			return v2
 		}
 	}
