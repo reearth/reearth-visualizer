@@ -276,6 +276,19 @@ type ProjectDeleter struct {
 	Asset           repo.Asset
 }
 
+// Delete runs the storage deletes (assets, plugin files, built scene, via
+// gateway.File -- GCS, S3, or local depending on deployment) inside the same
+// DB transaction as the Mongo removes. This means a transaction abort after
+// a storage delete already ran (e.g. a later step failing, or the
+// transaction hitting its time limit) can restore the project/scene rows
+// while the storage they point to is already gone (compliance scan REL-01).
+// We're accepting this tradeoff for now: splitting storage cleanup out of the
+// transaction would mean a delete that fails partway through can leave a
+// project's DB rows removed but some of its assets still in storage --
+// orphaned with no owning record. Given how rarely project deletes fail
+// partway through in practice, keeping the database-side deletion
+// transactional (at the cost of the rarer storage-outlives-rollback case
+// above) is the safer default.
 func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force bool, operator *usecase.Operator) error {
 	if prj == nil {
 		return nil
@@ -318,10 +331,26 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 }
 
 func IsCurrentHostAssets(ctx context.Context, u string) bool {
-	if strings.HasPrefix(u, "assets/") && strings.HasPrefix(u, adapter.CurrentHost(ctx)) {
+	if strings.HasPrefix(u, "assets/") || strings.HasPrefix(u, "/assets/") {
 		return true
 	}
-	return false
+
+	currentHost := adapter.CurrentHost(ctx)
+	if currentHost == "" {
+		return false
+	}
+
+	parsedURL, err := url.Parse(u)
+	if err != nil {
+		return false
+	}
+	parsedHost, err := url.Parse(currentHost)
+	if err != nil {
+		return false
+	}
+	return parsedURL.Scheme == parsedHost.Scheme &&
+		parsedURL.Host == parsedHost.Host &&
+		strings.HasPrefix(parsedURL.Path, "/assets/")
 }
 
 func ReplaceToCurrentHost(ctx context.Context, urlString string) string {
