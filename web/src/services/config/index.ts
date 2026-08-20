@@ -87,6 +87,7 @@ export type Config = {
   platformUrl?: string;
   tileServerBaseUrl?: string;
   tileServerToken?: string;
+  cmsUrl?: string;
 } & AuthInfo;
 
 declare global {

@@ -24,7 +24,9 @@ export class DashBoardPage {
   switchWorkspace: Locator;
   switchWorkspaceSubmenuTrigger: Locator;
   workspaceSettings: Locator;
-  newWorkspace: Locator;
+  membersSettings: Locator;
+
+  // Avatar Menu Items (from avatar popup)
   accountSettings: Locator;
   logOutCTA: Locator;
 
@@ -63,17 +65,18 @@ export class DashBoardPage {
       .locator("svg");
 
     this.switchWorkspace = this.page.getByTestId(
-      "profile-switchWorkspace-item-0"
+      "profile-switchWorkspace-item-1"
     );
     this.switchWorkspaceSubmenuTrigger = this.page.getByTestId(
-      "profile-switchWorkspace-submenu-0-trigger"
+      "profile-switchWorkspace-submenu-1-trigger"
     );
     this.workspaceSettings = this.page.getByTestId(
-      "workspace-settings-item-1"
+      "workspace-settings-item-2"
     );
-    this.newWorkspace = this.page.getByTestId("add-workspace-item-2");
-    this.accountSettings = this.page.getByTestId("account-settings-item-3");
-    this.logOutCTA = this.page.getByTestId("profile-signOut-item-4");
+    this.membersSettings = this.page.getByTestId("members-settings-item-3");
+
+    this.accountSettings = this.page.getByTestId("avatar-accountSettings-item-1");
+    this.logOutCTA = this.page.getByTestId("avatar-signOut-item-2");
 
     this.logo = this.page.locator('img[src*="LogoWithText.svg"]');
     this.appVersion = this.page.locator("p", { hasText: /Version/i });
@@ -81,7 +84,7 @@ export class DashBoardPage {
 
   // Action
   async logOut() {
-    await this.profileDropdownButton.click();
+    await this.profileAvatar.click();
     await this.logOutCTA.click();
   }
 }
