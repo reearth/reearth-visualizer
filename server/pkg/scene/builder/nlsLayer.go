@@ -85,6 +85,38 @@ type geometryCollectionJSON struct {
 	Geometries []any  `json:"geometries"`
 }
 
+// nlsLayersJSON builds each layer's JSON one at a time, which issues far more queries than it
+// needs to (SCA-02, AI compliance scan finding). There are two separate causes, and fixing only
+// the first still leaves the query count scaling with the number of layers.
+//
+// 1. Property loads. getNLSLayerJSON below loads each layer's infobox, photo overlay and infobox
+// block properties through b.ploader one ID at a time, instead of one batched
+// b.ploader(ctx, ids...) call the way scene- and story-level properties already do (see
+// builder.go). Note the per-block call in nlsInfoboxBlockJSON, so a scene of L layers each
+// holding B infobox blocks costs roughly L*(2+B) loads, not L.
+//
+// This one is fully removable. Every property ID is reachable from data already in memory, so
+// once the layer tree is materialized the whole set can be collected in one walk and loaded
+// before any JSON is built, with no further queries needed to discover IDs. Load it in
+// fixed-size chunks rather than a single call: the layer count is unbounded, so one batched load
+// would trade many small queries for one arbitrarily large query and result set. Chunking bounds
+// query size and peak memory without limiting what a scene can contain.
+//
+// 2. Tree traversal. b.nlsloader is called once per layer group to fetch that group's children,
+// and a group's children are not known until the group itself has been loaded, so this is a real
+// discover-then-fetch cycle that batching properties does not touch. It can still be reduced by
+// walking the tree level by level, collecting every group at one depth and issuing a single
+// nlsloader call for all of their children, which makes the traversal cost track tree depth
+// rather than group count.
+//
+// Capping the number of layers per scene would bound the total, but it is a product decision
+// rather than a substitute for either fix, since a capped scene still issues one load per layer.
+// If a cap is wanted, the policy checker is the natural home for it (see
+// internal/usecase/gateway/policy_checker.go, alongside the existing asset size and custom domain
+// count checks), so the limit can vary per workspace instead of being a global constant.
+//
+// Left as a comment for now rather than fixed: this is a performance concern, not a security one,
+// and today's scenes are small enough that the extra round trips do not show up in practice.
 func (b *Builder) nlsLayersJSON(ctx context.Context) ([]*nlsLayerJSON, error) {
 
 	var res []*nlsLayerJSON
