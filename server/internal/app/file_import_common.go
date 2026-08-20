@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/apperr"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -203,9 +204,20 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 
 			res, err := handler(c, ctx, uc, op)
 			if err != nil {
-				log.Errorf("upload handler err: %v", err)
 				if he, ok := err.(*echo.HTTPError); ok {
+					// A 4xx means the request was bad, not the server. Keep it
+					// out of the ERROR-based alerting.
+					if he.Code < http.StatusInternalServerError {
+						log.Warnfc(ctx, "upload handler rejected request: %v", err)
+					} else {
+						log.Errorfc(ctx, "upload handler err: %v", err)
+					}
 					return he
+				}
+				if apperr.IsExpected(err) {
+					log.Warnfc(ctx, "upload handler rejected request: %v", err)
+				} else {
+					log.Errorfc(ctx, "upload handler err: %v", err)
 				}
 				return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 			}
