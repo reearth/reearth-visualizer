@@ -193,8 +193,10 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 		return nil, err
 	}
 
-	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
-		return nil, errors.New("project is private")
+	if pj.Visibility() == string(project.VisibilityPrivate) {
+		if operator == nil || !operator.IsReadableWorkspace(pj.Workspace()) {
+			return nil, errors.New("project is private")
+		}
 	}
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
@@ -693,6 +695,33 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 
 }
 
+// importClaimStaleAfter bounds how long a PROCESSING claim is treated as
+// still in flight before ClaimImport allows a retry to reclaim it. Chosen
+// comfortably larger than Cloud Run's ~540s request timeout on the
+// synchronous SaaS import path, and far larger than any observed import
+// latency in prod logs (max seen: ~15s for typical projects; large zips
+// take longer, but 15 minutes gives headroom before a legitimately-still-
+// running import gets reclaimed).
+const importClaimStaleAfter = 15 * time.Minute
+
+// ClaimImport authorizes against the project's own workspace before claiming.
+// The import endpoints derive their acting identity from the uploaded object's
+// filename, so without this check a request naming another tenant's project
+// would claim it: that project's import status becomes PROCESSING and its owner
+// cannot start a real import until the claim goes stale (SEC-02). The check
+// cannot live in the repo, because it needs the project's workspace and a
+// project does not necessarily have a projectmetadata document to read it from.
+func (i *Project) ClaimImport(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (bool, error) {
+	prj, err := i.projectRepo.FindByID(ctx, pid)
+	if err != nil {
+		return false, err
+	}
+	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
+		return false, err
+	}
+	return i.projectMetadataRepo.ClaimImport(ctx, pid, importClaimStaleAfter)
+}
+
 func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, string, string, error) {
 
 	prj, err := i.projectRepo.FindByID(ctx, *pid)
@@ -925,6 +954,9 @@ func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s 
 
 	// publish
 	r, w := io.Pipe()
+	// If UploadBuiltScene returns early without draining r to EOF, the build goroutine's
+	// blocked Write leaks forever. Closing r unblocks it either way.
+	defer func() { _ = r.Close() }()
 
 	// Build
 	go func() {
@@ -1126,10 +1158,12 @@ func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file ga
 		}
 	case string:
 		cleanedStr := strings.Trim(v, "'")
-		if strings.HasPrefix(cleanedStr, adapter.CurrentHost(ctx)) {
-			if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, state); err != nil {
-				return err
-			}
+		// AddZipAsset (via IsCurrentHostAssets) is the single source of truth for
+		// recognizing an asset reference -- relative assets/... paths as well as
+		// absolute URLs under the current host. Filtering again here would just
+		// re-diverge from that logic, as it did before (SCA-01 / #2358).
+		if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, state); err != nil {
+			return err
 		}
 	default:
 
