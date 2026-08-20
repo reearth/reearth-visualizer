@@ -59,6 +59,20 @@ type Config struct {
 	SignupDisabled         bool              `pp:",omitempty"`
 	HTTPSREDIRECT          bool              `pp:",omitempty"`
 
+	// PubSubPushServiceAccounts are the expected `email` claims on OIDC tokens attached to
+	// requests against /api/import-project and /api/storage-event (SEC-02). /api/import-project
+	// is triggered by a GCS Cloud Function and /api/storage-event by a Pub/Sub push
+	// subscription, so these may end up as two different service accounts once both are
+	// configured to sign their requests -- hence a list, not a single value.
+	PubSubPushServiceAccounts []string `pp:",omitempty"`
+
+	// DisablePubSubPushAuth turns off token verification for /api/import-project and
+	// /api/storage-event entirely. Required for local dev and tests, where nothing signs
+	// real tokens -- but it must be set explicitly: an empty PubSubPushServiceAccounts on
+	// its own does NOT disable verification, so a missing/misconfigured value in production
+	// fails closed (rejects the request) instead of silently reopening SEC-02.
+	DisablePubSubPushAuth bool `pp:",omitempty"`
+
 	// storage
 	GCS GCSConfig `pp:",omitempty"`
 	S3  S3Config  `pp:",omitempty"`

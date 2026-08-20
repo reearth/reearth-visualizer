@@ -149,7 +149,7 @@ test.describe("Project Management", () => {
     });
   });
 
-  test.skip("Should verify sketch tools are visible after adding style", async () => {
+  test("Should verify sketch tools are visible after adding style", async () => {
     test.info().annotations.push({ type: "story", description: "US-EDIT-003" });
     test.setTimeout(60000);
     await projectScreen.verifySketchToolsVisible();
@@ -314,13 +314,15 @@ test.describe("Project Management", () => {
     await projectScreen.verifyLayerAdded(customLayerName);
   });
 
-  test.skip("Should navigate to Scene panel and verify scene items", async () => {
+  test("Should navigate to Scene panel and verify scene items", async () => {
     test.info().annotations.push({ type: "story", description: "US-EDIT-003" });
     test.setTimeout(60000);
-    await projectScreen.scenePanel.click();
-    await page.waitForTimeout(1000);
-
-    await expect(projectScreen.getSceneItemByName("Main")).toBeVisible();
+    // localStorage may persist a collapsed state from a previous run.
+    // Expand the panel only if it is currently collapsed.
+    if ((await projectScreen.scenePanel.getAttribute("aria-expanded")) === "false") {
+      await projectScreen.scenePanel.click();
+    }
+    await expect(projectScreen.getSceneItemByName("Main")).toBeVisible({ timeout: 15000 });
     await expect(projectScreen.getSceneItemByName("Tiles")).toBeVisible();
     await expect(projectScreen.getSceneItemByName("Terrain")).toBeVisible();
     await expect(projectScreen.getSceneItemByName("Globe")).toBeVisible();

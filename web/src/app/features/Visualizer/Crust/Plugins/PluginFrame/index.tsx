@@ -38,12 +38,38 @@ export type Props = {
   uiContainerRef?: MutableRefObject<HTMLElement | null>;
   isMarshalable?: boolean | "json" | ((target: unknown) => boolean | "json");
   pluginContext: ReearthPluginContext;
+  /**
+   * Extension type - used to determine display behavior
+   * storyBlock and infoboxBlock always use block display
+   */
+  extensionType?: string;
+  /**
+   * Widget extension settings - determines if widget fills available space
+   * horizontally: widget fills full width of its alignment area
+   * vertically: widget fills full height of its alignment area
+   */
+  extended?: {
+    horizontally?: boolean;
+    vertically?: boolean;
+  };
   onMessage?: (message: unknown) => void;
   onPreInit?: () => void;
   onError?: (err: unknown) => void;
   onDispose?: () => void;
   onClick?: () => void;
   onRender?: (type: string) => void;
+  /**
+   * Callback to register the modal close function.
+   * Used by the close-before-show pattern to close previous modal
+   * when a new plugin shows its modal.
+   */
+  onRegisterModalClose?: (closeFn: () => void) => void;
+  /**
+   * Callback to register the popup close function.
+   * Used by the close-before-show pattern to close previous popup
+   * when a new plugin shows its popup.
+   */
+  onRegisterPopupClose?: (closeFn: () => void) => void;
 };
 
 const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
@@ -63,12 +89,16 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
     uiContainerRef,
     isMarshalable,
     pluginContext,
+    extensionType,
+    extended,
     onPreInit,
     onError,
     onDispose,
     onClick,
     onMessage,
-    onRender: _onRender
+    onRender: _onRender,
+    onRegisterModalClose,
+    onRegisterPopupClose
   },
   ref
 ) => {
@@ -83,7 +113,9 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
     onError,
     onPreInit,
     onDispose,
-    onMessage
+    onMessage,
+    onRegisterModalClose,
+    onRegisterPopupClose
   });
 
   // Populate UI container ref for popup positioning
@@ -119,13 +151,23 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
   return (
     <>
       <style>{`
-        /* Ensure Zushi iframes fill their containers */
-        .zushi-ui-surface-container iframe,
-        .zushi-modal-surface-container iframe,
-        .zushi-popup-surface-container iframe {
+        /* UI surface iframe fills its container */
+        .zushi-ui-surface-container iframe {
           width: 100%;
           height: 100%;
           border: none;
+          display: block;
+        }
+        /* Modal and popup containers - let Zushi control dimensions, constrain to viewport */
+        .zushi-modal-surface-container,
+        .zushi-popup-surface-container {
+          max-width: 100%;
+          max-height: 100%;
+        }
+        .zushi-modal-surface-container iframe,
+        .zushi-popup-surface-container iframe {
+          border: none;
+          display: block;
         }
       `}</style>
 
@@ -134,9 +176,22 @@ const PluginFrameZushi: ForwardRefRenderFunction<Ref, Props> = (
         ref={surfaceRefs.uiContainer}
         className={`zushi-ui-surface-container ${className || ""}`}
         style={{
-          display: uiVisible ? "block" : "none",
-          width: "100%",
-          height: "100%",
+          // storyBlock/infoboxBlock always use block, extended horizontally uses block, otherwise inline-block
+          display: uiVisible
+            ? extensionType === "storyBlock" ||
+              extensionType === "infoboxBlock" ||
+              extended?.horizontally
+              ? "block"
+              : "inline-block"
+            : "none",
+          // storyBlock/infoboxBlock and extended horizontally fill their area, non-extended size to content
+          width:
+            extensionType === "storyBlock" ||
+            extensionType === "infoboxBlock" ||
+            extended?.horizontally
+              ? "100%"
+              : undefined,
+          height: extended?.vertically ? "100%" : undefined,
           ...iFrameProps?.style
         }}
         onClick={onClick}
