@@ -940,6 +940,9 @@ func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s 
 
 	// publish
 	r, w := io.Pipe()
+	// If UploadBuiltScene returns early without draining r to EOF, the build goroutine's
+	// blocked Write leaks forever. Closing r unblocks it either way.
+	defer func() { _ = r.Close() }()
 
 	// Build
 	go func() {
