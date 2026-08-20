@@ -11,23 +11,33 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 )
 
+// importClaim mirrors the shape of a projectimport document in the mongo
+// repo (status + updatedat) for ClaimImport's staleness check.
+type importClaim struct {
+	status    project.ProjectImportStatus
+	updatedAt time.Time
+}
+
 type ProjectMetadata struct {
-	lock sync.Mutex
-	data map[id.ProjectMetadataID]*project.ProjectMetadata
-	f    repo.WorkspaceFilter
+	lock         sync.Mutex
+	data         map[id.ProjectMetadataID]*project.ProjectMetadata
+	importClaims map[id.ProjectID]*importClaim
+	f            repo.WorkspaceFilter
 }
 
 func NewProjectMetadata() repo.ProjectMetadata {
 	return &ProjectMetadata{
-		data: map[id.ProjectMetadataID]*project.ProjectMetadata{},
+		data:         map[id.ProjectMetadataID]*project.ProjectMetadata{},
+		importClaims: map[id.ProjectID]*importClaim{},
 	}
 }
 
 func (r *ProjectMetadata) Filtered(f repo.WorkspaceFilter) repo.ProjectMetadata {
 	return &ProjectMetadata{
 		// note data is shared between the source repo and mutex cannot work well
-		data: r.data,
-		f:    r.f.Merge(f),
+		data:         r.data,
+		importClaims: r.importClaims,
+		f:            r.f.Merge(f),
 	}
 }
 
@@ -72,7 +82,33 @@ func (r *ProjectMetadata) Save(ctx context.Context, p *project.ProjectMetadata) 
 	updated := time.Now()
 	p.SetUpdatedAt(&updated)
 	r.data[p.ID()] = p
+
+	if p.ImportStatus() != nil {
+		r.importClaims[p.Project()] = &importClaim{status: *p.ImportStatus(), updatedAt: updated}
+	}
+
 	return nil
+}
+
+// ClaimImport mirrors the mongo repo's atomic claim: it fails if a prior
+// attempt already succeeded, or one is currently PROCESSING and not yet
+// stale. Otherwise it claims by recording PROCESSING with the current time.
+func (r *ProjectMetadata) ClaimImport(ctx context.Context, pid id.ProjectID, staleAfter time.Duration) (bool, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	now := time.Now()
+	if existing, ok := r.importClaims[pid]; ok {
+		if existing.status == project.ProjectImportStatusSuccess {
+			return false, nil
+		}
+		if existing.status == project.ProjectImportStatusProcessing && now.Sub(existing.updatedAt) < staleAfter {
+			return false, nil
+		}
+	}
+
+	r.importClaims[pid] = &importClaim{status: project.ProjectImportStatusProcessing, updatedAt: now}
+	return true, nil
 }
 
 func (r *ProjectMetadata) Remove(ctx context.Context, id id.ProjectID) error {
