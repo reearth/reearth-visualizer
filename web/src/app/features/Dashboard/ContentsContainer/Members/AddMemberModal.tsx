@@ -14,7 +14,7 @@ import { useT } from "@reearth/services/i18n/hooks";
 import { Workspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "react-use";
 
 type AddMemberModalProps = {
@@ -55,16 +55,21 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
     skip: !debouncedSearchTerm
   });
 
-  const existingMemberIdsRef = useRef<string[]>([]);
-  existingMemberIdsRef.current =
-    workspace?.members
-      ?.map((m) => m.user?.id)
-      ?.filter((id) => id !== undefined) ?? [];
+  // Derived instead of written to a ref during render, so that a workspace refetch
+  // re-evaluates the "already joined" warning rather than leaving it stale.
+  const existingMemberIds = useMemo(
+    () =>
+      new Set(
+        workspace?.members
+          ?.map((m) => m.user?.id)
+          ?.filter((id) => id !== undefined) ?? []
+      ),
+    [workspace?.members]
+  );
 
   useEffect(() => {
     setUserNotFoundWarningVisible(!user);
-    const alreadyExists =
-      !!user && existingMemberIdsRef.current.includes(user.id);
+    const alreadyExists = !!user && existingMemberIds.has(user.id);
     setUserExistsWarningVisible(alreadyExists);
     if (user && !alreadyExists) {
       setSearchResult((prev) =>
@@ -80,21 +85,31 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
             ]
       );
     }
-  }, [user]);
+  }, [user, existingMemberIds]);
 
   const { addMemberToWorkspace } = useWorkspaceMutations();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddMembersToWorkspace = useCallback(async () => {
-    if (searchResult.length === 0 || !workspace?.id) return;
-    for (const user of searchResult) {
-      await addMemberToWorkspace({
-        workspaceId: workspace.id,
-        userId: user.id,
-        role: Role.Reader
-      });
+    if (searchResult.length === 0 || !workspace?.id || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const failed: typeof searchResult = [];
+      for (const user of searchResult) {
+        const result = await addMemberToWorkspace({
+          workspaceId: workspace.id,
+          userId: user.id,
+          role: Role.Reader
+        });
+        if (result.status !== "success") failed.push(user);
+      }
+      setSearchResult(failed);
+      if (failed.length === 0) onClose();
+    } finally {
+      setIsSubmitting(false);
     }
-    onClose();
-  }, [searchResult, workspace, addMemberToWorkspace, onClose]);
+  }, [searchResult, workspace?.id, isSubmitting, addMemberToWorkspace, onClose]);
 
   const handleRemoveUserFromSearchResult = useCallback((userId: string) => {
     setSearchResult((prev) => prev.filter((u) => u.id !== userId));
@@ -117,6 +132,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
             key="add"
             title={t("Add")}
             appearance="primary"
+            disabled={isSubmitting || searchResult.length === 0}
             onClick={handleAddMembersToWorkspace}
           />
         ]}
