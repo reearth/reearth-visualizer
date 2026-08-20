@@ -12,14 +12,34 @@ import {
   REMOVE_PROPERTY_ITEM,
   MOVE_PROPERTY_ITEM
 } from "@reearth/services/gql/queries/property";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 
 import { MutationReturn } from "../types";
 
+export type PropertyMutationOptions = {
+  /**
+   * Skip the `GetScene` refetch this mutation would otherwise trigger. Set it
+   * when the caller chains several property writes together and a single
+   * refetch at the end of the chain brings the cache up to date for all of
+   * them, instead of one full `GetScene` round trip per write.
+   */
+  skipRefetch?: boolean;
+  /**
+   * Suppress the success notification. For writes the user did not initiate
+   * directly (internal plumbing such as the system tile) a toast is noise.
+   * Errors are still reported.
+   */
+  silentSuccess?: boolean;
+};
+
+const refetchQueriesFor = (options?: PropertyMutationOptions) =>
+  options?.skipRefetch ? [] : ["GetScene"];
+
 export const usePropertyMutations = () => {
   const t = useT();
+  const currentLang = useLang();
   const [, setNotification] = useNotification();
 
   const [updatePropertyValueMutation] = useMutation(UPDATE_PROPERTY_VALUE);
@@ -35,7 +55,8 @@ export const usePropertyMutations = () => {
       fieldId: string,
       lang: string,
       v: ValueTypes[ValueType] | undefined,
-      vt: ValueType
+      vt: ValueType,
+      options?: PropertyMutationOptions
     ) => {
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
@@ -48,9 +69,9 @@ export const usePropertyMutations = () => {
           fieldId,
           value,
           type: gvt,
-          lang: lang
+          lang
         },
-        refetchQueries: ["GetScene"]
+        refetchQueries: refetchQueriesFor(options)
       });
 
       if (error || !data?.updatePropertyValue) {
@@ -62,10 +83,12 @@ export const usePropertyMutations = () => {
 
         return { status: "error" };
       }
-      setNotification({
-        type: "success",
-        text: t("Successfully updated the property value!")
-      });
+      if (!options?.silentSuccess) {
+        setNotification({
+          type: "success",
+          text: t("Successfully updated the property value!")
+        });
+      }
       return {
         data: data.updatePropertyValue.property,
         status: "success"
@@ -77,16 +100,18 @@ export const usePropertyMutations = () => {
   const addPropertyItem = useCallback(
     async (
       propertyId: string,
-      schemaGroupId: string
+      schemaGroupId: string,
+      options?: PropertyMutationOptions
     ): Promise<
       MutationReturn<{ propertyId: string; newItemId: string | undefined }>
     > => {
       const { data, error } = await addPropertyItemMutation({
         variables: {
           propertyId,
-          schemaGroupId
+          schemaGroupId,
+          lang: currentLang
         },
-        refetchQueries: ["GetScene"]
+        refetchQueries: refetchQueriesFor(options)
       });
 
       if (error || !data?.addPropertyItem?.property?.id) {
@@ -109,14 +134,15 @@ export const usePropertyMutations = () => {
         status: "success"
       };
     },
-    [addPropertyItemMutation, setNotification, t]
+    [addPropertyItemMutation, setNotification, t, currentLang]
   );
 
   const removePropertyItem = useCallback(
     async (
       propertyId: string,
       schemaGroupId: string,
-      itemId: string
+      itemId: string,
+      options?: PropertyMutationOptions
     ): Promise<
       MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
     > => {
@@ -124,9 +150,10 @@ export const usePropertyMutations = () => {
         variables: {
           propertyId,
           schemaGroupId,
-          itemId
+          itemId,
+          lang: currentLang
         },
-        refetchQueries: ["GetScene"]
+        refetchQueries: refetchQueriesFor(options)
       });
 
       if (error || !data?.removePropertyItem?.property?.id) {
@@ -144,7 +171,7 @@ export const usePropertyMutations = () => {
         status: "success"
       };
     },
-    [removePropertyItemMutation, setNotification, t]
+    [removePropertyItemMutation, setNotification, t, currentLang]
   );
 
   const movePropertyItem = useCallback(
@@ -161,7 +188,8 @@ export const usePropertyMutations = () => {
           propertyId,
           schemaGroupId,
           itemId,
-          index
+          index,
+          lang: currentLang
         },
         refetchQueries: ["GetScene"]
       });
@@ -181,7 +209,7 @@ export const usePropertyMutations = () => {
         status: "success"
       };
     },
-    [movePropertyItemMutation, setNotification, t]
+    [movePropertyItemMutation, setNotification, t, currentLang]
   );
 
   return {
