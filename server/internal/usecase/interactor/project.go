@@ -193,8 +193,10 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 		return nil, err
 	}
 
-	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
-		return nil, errors.New("project is private")
+	if pj.Visibility() == string(project.VisibilityPrivate) {
+		if operator == nil || !operator.IsReadableWorkspace(pj.Workspace()) {
+			return nil, errors.New("project is private")
+		}
 	}
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
@@ -925,6 +927,9 @@ func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s 
 
 	// publish
 	r, w := io.Pipe()
+	// If UploadBuiltScene returns early without draining r to EOF, the build goroutine's
+	// blocked Write leaks forever. Closing r unblocks it either way.
+	defer func() { _ = r.Close() }()
 
 	// Build
 	go func() {
@@ -1126,10 +1131,12 @@ func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file ga
 		}
 	case string:
 		cleanedStr := strings.Trim(v, "'")
-		if strings.HasPrefix(cleanedStr, adapter.CurrentHost(ctx)) {
-			if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, state); err != nil {
-				return err
-			}
+		// AddZipAsset (via IsCurrentHostAssets) is the single source of truth for
+		// recognizing an asset reference -- relative assets/... paths as well as
+		// absolute URLs under the current host. Filtering again here would just
+		// re-diverge from that logic, as it did before (SCA-01 / #2358).
+		if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, state); err != nil {
+			return err
 		}
 	default:
 
