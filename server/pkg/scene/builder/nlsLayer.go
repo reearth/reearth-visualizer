@@ -86,7 +86,7 @@ type geometryCollectionJSON struct {
 }
 
 // nlsLayersJSON builds each layer's JSON one at a time, which issues far more queries than it
-// needs to (SCA-02, compliance scan issue #96). There are two separate causes, and fixing only
+// needs to (SCA-02, AI compliance scan finding). There are two separate causes, and fixing only
 // the first still leaves the query count scaling with the number of layers.
 //
 // 1. Property loads. getNLSLayerJSON below loads each layer's infobox, photo overlay and infobox
