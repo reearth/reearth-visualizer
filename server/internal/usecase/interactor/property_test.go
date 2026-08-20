@@ -184,6 +184,59 @@ func TestProperty_AddItem_WithFields_UnknownFieldAbortsWithoutPartialItem(t *tes
 	assert.Nil(t, stored.ItemBySchema(psg.ID()), "no item must have been added to the property, even in-memory")
 }
 
+func TestProperty_AddItem_WithFields_TypeMismatchAbortsWithoutPartialItem(t *testing.T) {
+	ctx := context.Background()
+	memory := memory.New()
+
+	ws := accountsID.NewWorkspaceID()
+	scene := scene.New().NewID().Workspace(ws).MustBuild()
+	tileTypeField := property.NewSchemaField().ID("tile_type").Type(property.ValueTypeString).MustBuild()
+	psg := property.NewSchemaGroup().ID("tiles").IsList(true).Fields([]*property.SchemaField{
+		tileTypeField,
+	}).MustBuild()
+	ps := property.NewSchema().ID(id.MustPropertySchemaID("xxx~1.1.1/aa")).
+		Groups(property.NewSchemaGroupList([]*property.SchemaGroup{
+			psg,
+		})).
+		MustBuild()
+	p := property.New().NewID().Scene(scene.ID()).Schema(ps.ID()).MustBuild()
+	_ = memory.Scene.Save(ctx, scene)
+	_ = memory.PropertySchema.Save(ctx, ps)
+	_ = memory.Property.Save(ctx, p)
+
+	uc := &Property{
+		commonSceneLock:    commonSceneLock{sceneLockRepo: memory.SceneLock},
+		propertyRepo:       memory.Property,
+		propertySchemaRepo: memory.PropertySchema,
+		transaction:        memory.Transaction,
+	}
+	op := &usecase.Operator{
+		ReadableScenes: []id.SceneID{scene.ID()},
+		WritableScenes: []id.SceneID{scene.ID()},
+	}
+
+	// tile_type is declared as a string in the schema, so a number value for it
+	// cannot be stored. Without the up-front type check the item would be
+	// created and the value silently discarded, leaving tile_type unset.
+	index := -1
+	np, npl, npg, err := uc.AddItem(ctx, interfaces.AddPropertyItemParam{
+		PropertyID: p.ID(),
+		Index:      &index,
+		Pointer:    property.PointItemBySchema(psg.ID()),
+		Fields: []interfaces.AddPropertyItemFieldParam{
+			{Field: tileTypeField.ID(), Value: property.ValueTypeNumber.ValueFrom(42)},
+		},
+	}, op)
+
+	assert.Error(t, err)
+	assert.Nil(t, np)
+	assert.Nil(t, npl)
+	assert.Nil(t, npg)
+
+	stored, _ := memory.Property.FindByID(ctx, p.ID())
+	assert.Nil(t, stored.ItemBySchema(psg.ID()), "no item must have been added to the property, even in-memory")
+}
+
 func TestProperty_RemoveItem(t *testing.T) {
 	ctx := context.Background()
 	memory := memory.New()

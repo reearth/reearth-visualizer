@@ -265,8 +265,18 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 		if sgID, ok := inp.Pointer.ItemBySchemaGroup(); ok {
 			if sg := ps.Groups().Group(sgID); sg != nil {
 				for _, f := range inp.Fields {
-					if !sg.HasField(f.Field) {
+					sf := sg.Field(f.Field)
+					if sf == nil {
 						return nil, nil, nil, fmt.Errorf("unknown field: %s", f.Field)
+					}
+					// A value whose type disagrees with the schema is silently
+					// dropped further down: GetOrCreateField builds the field
+					// with the schema's type, and OptionalValue.SetValue ignores
+					// a value of any other type. That would create the item with
+					// the field left unset, which is the state this atomic
+					// creation exists to prevent, so reject it up front.
+					if f.Value != nil && sf.Type() != f.Value.Type() {
+						return nil, nil, nil, fmt.Errorf("invalid value type for field %s: schema expects %s, got %s", f.Field, sf.Type(), f.Value.Type())
 					}
 				}
 			}
