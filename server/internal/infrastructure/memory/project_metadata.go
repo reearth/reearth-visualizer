@@ -97,6 +97,17 @@ func (r *ProjectMetadata) ClaimImport(ctx context.Context, pid id.ProjectID, sta
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	// Same workspace filter as Save: the claim is a write, and the import
+	// endpoints build their operator from the request (SEC-02).
+	for _, pm := range r.data {
+		if pm.Project() == pid {
+			if !r.f.CanWrite(pm.Workspace()) {
+				return false, repo.ErrOperationDenied
+			}
+			break
+		}
+	}
+
 	now := time.Now()
 	if existing, ok := r.importClaims[pid]; ok {
 		if existing.status == project.ProjectImportStatusSuccess {
