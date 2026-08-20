@@ -77,22 +77,24 @@ func (r *mutationResolver) UploadFileToProperty(ctx context.Context, input gqlmo
 	}
 
 	uc := usecases(ctx)
+	// Fetch returns a slice with a nil entry for an ID that does not exist,
+	// so the length alone is not enough to know the item was found.
 	pr, err := uc.Property.Fetch(ctx, []id.PropertyID{pid}, getOperator(ctx))
-	if err != nil || len(pr) == 0 {
+	if err != nil || len(pr) == 0 || pr[0] == nil {
 		if err == nil {
 			err = rerror.ErrNotFound
 		}
 		return nil, err
 	}
 	ws, err := uc.Scene.Fetch(ctx, []id.SceneID{pr[0].Scene()}, getOperator(ctx))
-	if err != nil || len(ws) == 0 {
+	if err != nil || len(ws) == 0 || ws[0] == nil {
 		if err == nil {
 			err = rerror.ErrNotFound
 		}
 		return nil, err
 	}
 	prj, err := uc.Project.Fetch(ctx, []id.ProjectID{ws[0].Project()}, getOperator(ctx))
-	if err != nil || len(prj) == 0 {
+	if err != nil || len(prj) == 0 || prj[0] == nil {
 		if err == nil {
 			err = rerror.ErrNotFound
 		}
