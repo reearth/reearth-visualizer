@@ -29,7 +29,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/alias"
-	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -194,8 +193,10 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 		return nil, err
 	}
 
-	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
-		return nil, errors.New("project is private")
+	if pj.Visibility() == string(project.VisibilityPrivate) {
+		if operator == nil || !operator.IsReadableWorkspace(pj.Workspace()) {
+			return nil, errors.New("project is private")
+		}
 	}
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
@@ -694,6 +695,33 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 
 }
 
+// importClaimStaleAfter bounds how long a PROCESSING claim is treated as
+// still in flight before ClaimImport allows a retry to reclaim it. Chosen
+// comfortably larger than Cloud Run's ~540s request timeout on the
+// synchronous SaaS import path, and far larger than any observed import
+// latency in prod logs (max seen: ~15s for typical projects; large zips
+// take longer, but 15 minutes gives headroom before a legitimately-still-
+// running import gets reclaimed).
+const importClaimStaleAfter = 15 * time.Minute
+
+// ClaimImport authorizes against the project's own workspace before claiming.
+// The import endpoints derive their acting identity from the uploaded object's
+// filename, so without this check a request naming another tenant's project
+// would claim it: that project's import status becomes PROCESSING and its owner
+// cannot start a real import until the claim goes stale (SEC-02). The check
+// cannot live in the repo, because it needs the project's workspace and a
+// project does not necessarily have a projectmetadata document to read it from.
+func (i *Project) ClaimImport(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (bool, error) {
+	prj, err := i.projectRepo.FindByID(ctx, pid)
+	if err != nil {
+		return false, err
+	}
+	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
+		return false, err
+	}
+	return i.projectMetadataRepo.ClaimImport(ctx, pid, importClaimStaleAfter)
+}
+
 func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, string, string, error) {
 
 	prj, err := i.projectRepo.FindByID(ctx, *pid)
@@ -926,6 +954,9 @@ func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s 
 
 	// publish
 	r, w := io.Pipe()
+	// If UploadBuiltScene returns early without draining r to EOF, the build goroutine's
+	// blocked Write leaks forever. Closing r unblocks it either way.
+	defer func() { _ = r.Close() }()
 
 	// Build
 	go func() {
@@ -1066,26 +1097,73 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 	return prj, nil
 }
 
-func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, assetNames map[string]string) error {
+// maxExportZipBytes bounds the total size of an export's assets, enforced as a running total
+// (exportZipState.trackWrite) rather than a single check after the whole zip has already been
+// built -- by the time a post-hoc check could catch an oversized export, the damage (memory,
+// disk, GCS reads) is already done.
+var maxExportZipBytes int64 = 500 * 1024 * 1024 // 500MB
+
+// exportZipState carries state across the whole SearchAssetURL/AddZipAsset recursion for one
+// export: assetNames is the existing per-asset metadata written into project.json; seen is a
+// dedup set so an asset referenced by many layers is downloaded and zipped once, not once per
+// reference; written is the running total used by the size guard above.
+type exportZipState struct {
+	assetNames map[string]string
+	seen       map[string]bool
+	written    int64
+}
+
+func newExportZipState() *exportZipState {
+	return &exportZipState{
+		assetNames: make(map[string]string),
+		seen:       make(map[string]bool),
+	}
+}
+
+func (s *exportZipState) trackWrite(n int64) error {
+	s.written += n
+	if s.written > maxExportZipBytes {
+		return fmt.Errorf("export exceeds maximum allowed size of %d bytes", maxExportZipBytes)
+	}
+	return nil
+}
+
+// budgetedWriter enforces state's byte budget as data is written, instead of
+// only after a full asset has already been copied into the zip.
+type budgetedWriter struct {
+	w     io.Writer
+	state *exportZipState
+}
+
+func (b *budgetedWriter) Write(p []byte) (int, error) {
+	if err := b.state.trackWrite(int64(len(p))); err != nil {
+		return 0, err
+	}
+	return b.w.Write(p)
+}
+
+func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, state *exportZipState) error {
 	switch v := data.(type) {
 	case map[string]any:
 		for _, value := range v {
-			if err := SearchAssetURL(ctx, value, assetRepo, file, zipWriter, assetNames); err != nil {
+			if err := SearchAssetURL(ctx, value, assetRepo, file, zipWriter, state); err != nil {
 				return err
 			}
 		}
 	case []any:
 		for _, item := range v {
-			if err := SearchAssetURL(ctx, item, assetRepo, file, zipWriter, assetNames); err != nil {
+			if err := SearchAssetURL(ctx, item, assetRepo, file, zipWriter, state); err != nil {
 				return err
 			}
 		}
 	case string:
 		cleanedStr := strings.Trim(v, "'")
-		if strings.HasPrefix(cleanedStr, adapter.CurrentHost(ctx)) {
-			if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, assetNames); err != nil {
-				return err
-			}
+		// AddZipAsset (via IsCurrentHostAssets) is the single source of truth for
+		// recognizing an asset reference -- relative assets/... paths as well as
+		// absolute URLs under the current host. Filtering again here would just
+		// re-diverge from that logic, as it did before (SCA-01 / #2358).
+		if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, state); err != nil {
+			return err
 		}
 	default:
 
@@ -1094,9 +1172,13 @@ func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file ga
 }
 
 // If the given path is the URL of an Asset, it will be added to the ZIP.
-func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, urlString string, assetNames map[string]string) error {
+func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, urlString string, state *exportZipState) error {
 
 	if !IsCurrentHostAssets(ctx, urlString) {
+		return nil
+	}
+
+	if state.seen[urlString] {
 		return nil
 	}
 
@@ -1106,6 +1188,7 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 	if err != nil {
 		return nil // skip if not available
 	}
+	state.seen[urlString] = true
 	defer func() {
 		if cerr := stream.Close(); cerr != nil {
 			fmt.Printf("Error closing file: %v\n", cerr)
@@ -1117,14 +1200,13 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 	if err != nil {
 		return err
 	}
-	_, err = io.Copy(zipEntry, stream)
-	if err != nil {
+	if _, err := io.Copy(&budgetedWriter{w: zipEntry, state: state}, stream); err != nil {
 		_ = stream.Close()
 		return err
 	}
 	if a, err := assetRepo.FindByURL(ctx, urlString); a != nil && err == nil {
 		if parsedURL, err := url.Parse(urlString); err == nil {
-			assetNames[path.Base(parsedURL.Path)] = a.Name()
+			state.assetNames[path.Base(parsedURL.Path)] = a.Name()
 		}
 	}
 
@@ -1133,22 +1215,21 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 
 func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project) error {
 
-	assetNames := make(map[string]string)
+	state := newExportZipState()
 	if project, ok := data["project"].(map[string]interface{}); ok {
 		if imageUrl, ok := project["imageUrl"].(map[string]interface{}); ok {
 			if path, ok := imageUrl["Path"].(string); ok {
-				err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, adapter.CurrentHost(ctx)+path, assetNames)
+				err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, adapter.CurrentHost(ctx)+path, state)
 				if err != nil {
-					fmt.Printf("not notfound asset file: %v\n", err)
+					return err
 				}
 			}
 		}
 	}
-	err := SearchAssetURL(ctx, data, i.assetRepo, i.file, zipWriter, assetNames)
-	if err != nil {
-		fmt.Printf("not notfound asset file: %v\n", err)
+	if err := SearchAssetURL(ctx, data, i.assetRepo, i.file, zipWriter, state); err != nil {
+		return err
 	}
-	data["assets"] = assetNames
+	data["assets"] = state.assetNames
 
 	fileWriter, err := zipWriter.Create("project.json")
 	if err != nil {
@@ -1156,6 +1237,9 @@ func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Write
 	}
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
+		return err
+	}
+	if err := state.trackWrite(int64(len(jsonData))); err != nil {
 		return err
 	}
 	if _, err = fileWriter.Write(jsonData); err != nil {
@@ -1167,10 +1251,6 @@ func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Write
 	}
 
 	if _, err := zipFile.Seek(0, 0); err != nil {
-		return err
-	}
-	// 500MB
-	if _, err := file.FileSizeCheck(500, zipFile); err != nil {
 		return err
 	}
 
