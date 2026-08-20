@@ -101,7 +101,17 @@ func servSignatureUploadFiles(
 				return map[string]string{"status": "skipped", "reason": "already processed or in progress"}, nil
 			}
 
-			defer removeGcsZip(ctx, cfg.Gateways.File, base)
+			// The uploaded zip is the only copy of the import input. It is kept
+			// until a complete local copy exists, so that a redelivery after a
+			// failed download still has something to read. Once the copy is
+			// complete, re-downloading cannot change the outcome, so it is
+			// removed as before regardless of how the import ends.
+			removeZip := false
+			defer func() {
+				if removeZip {
+					removeGcsZip(ctx, cfg.Gateways.File, base)
+				}
+			}()
 
 			result := map[string]any{}
 
@@ -113,28 +123,40 @@ func servSignatureUploadFiles(
 			}
 			defer f.Close()
 
+			// Every failure past this point records a terminal status before
+			// returning. Leaving the claim PROCESSING would make the redelivery
+			// skip the import and acknowledge the message, so it would never run.
 			tmpfile, err := os.CreateTemp("", "import-*.zip")
 			if err != nil {
-				return nil, fmt.Errorf("failed to create temp file: %w", err)
+				errMsg := fmt.Sprintf("failed to create temp file: %v", err)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				return nil, errors.New(errMsg)
 			}
 			defer os.Remove(tmpfile.Name())
 			defer tmpfile.Close()
 
 			if _, err := io.Copy(tmpfile, f); err != nil {
-				return nil, fmt.Errorf("failed to copy to temp file: %w", err)
+				errMsg := fmt.Sprintf("failed to copy to temp file: %v", err)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				return nil, errors.New(errMsg)
 			}
 
 			if _, err := tmpfile.Seek(0, io.SeekStart); err != nil {
-				return nil, fmt.Errorf("failed to seek: %w", err)
+				errMsg := fmt.Sprintf("failed to seek: %v", err)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				return nil, errors.New(errMsg)
 			}
+
+			// A complete local copy exists from here on.
+			removeZip = true
 
 			currentHost := adapter.CurrentHost(ctx)
 			importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(currentHost, tmpfile)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 				if errors.Is(err, zip.ErrFormat) || errors.Is(err, zip.ErrAlgorithm) || errors.Is(err, zip.ErrChecksum) {
 					// Corrupt or invalid zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
-					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
 				}
 				// I/O or other transient error — return 500 to allow Pub/Sub to retry
@@ -196,7 +218,17 @@ func servSignatureUploadFiles(
 				return map[string]string{"status": "skipped", "reason": "already processed or in progress"}, nil
 			}
 
-			defer removeGcsZip(ctx, cfg.Gateways.File, base)
+			// The uploaded zip is the only copy of the import input. It is kept
+			// until a complete local copy exists, so that a redelivery after a
+			// failed download still has something to read. Once the copy is
+			// complete, re-downloading cannot change the outcome, so it is
+			// removed as before regardless of how the import ends.
+			removeZip := false
+			defer func() {
+				if removeZip {
+					removeGcsZip(ctx, cfg.Gateways.File, base)
+				}
+			}()
 
 			result := map[string]any{}
 
@@ -213,10 +245,14 @@ func servSignatureUploadFiles(
 			}
 			defer f.Close()
 
+			// Every failure past this point records a terminal status before
+			// returning. Leaving the claim PROCESSING would make the redelivery
+			// skip the import and acknowledge the message, so it would never run.
 			tmpfile, err := os.CreateTemp("", "import-*.zip")
 			if err != nil {
 				errMsg := fmt.Sprintf("failed to create temp file: %v", err)
 				log.Errorf("[Import] %s", errMsg)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 			}
 			defer os.Remove(tmpfile.Name())
@@ -225,23 +261,28 @@ func servSignatureUploadFiles(
 			if _, err := io.Copy(tmpfile, f); err != nil {
 				errMsg := fmt.Sprintf("failed to copy to temp file: %v", err)
 				log.Errorf("[Import] %s", errMsg)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 			}
 
 			if _, err := tmpfile.Seek(0, io.SeekStart); err != nil {
 				errMsg := fmt.Sprintf("failed to seek: %v", err)
 				log.Errorf("[Import] %s", errMsg)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 			}
+
+			// A complete local copy exists from here on.
+			removeZip = true
 
 			currentHost := adapter.CurrentHost(ctx)
 			importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(currentHost, tmpfile)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
 				log.Errorf("[Import] %s", errMsg)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 				if errors.Is(err, zip.ErrFormat) || errors.Is(err, zip.ErrAlgorithm) || errors.Is(err, zip.ErrChecksum) {
 					// Corrupt or invalid zip — retrying will never fix it, acknowledge to stop Pub/Sub retries
-					UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 					return map[string]string{"status": "unrecoverable", "reason": errMsg}, nil
 				}
 				// I/O or other transient error — return 500 to allow Pub/Sub to retry
