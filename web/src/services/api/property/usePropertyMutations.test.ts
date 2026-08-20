@@ -1,96 +1,139 @@
-import {
-  ADD_PROPERTY_ITEM,
-  MOVE_PROPERTY_ITEM,
-  REMOVE_PROPERTY_ITEM,
-  UPDATE_PROPERTY_VALUE
-} from "@reearth/services/gql/queries/property";
-import { renderHook } from "@testing-library/react";
-import { print } from "graphql";
+import { renderHook, act } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { usePropertyMutations } from "./usePropertyMutations";
 
-const calls: { variables?: Record<string, unknown> }[] = [];
+// useMutation is stubbed once per mutation the hook creates, so this single
+// mock stands in for whichever one the test at hand exercises.
+const mutate = vi.fn();
 
 vi.mock("@apollo/client/react", () => ({
-  useMutation: () => [
-    vi.fn(async (options: { variables?: Record<string, unknown> }) => {
-      calls.push(options);
-      return {
-        data: {
-          updatePropertyValue: { property: { id: "property-id" } },
-          addPropertyItem: {
-            property: { id: "property-id" },
-            propertyItem: { __typename: "PropertyGroup", id: "item-id" }
-          },
-          removePropertyItem: { property: { id: "property-id" } },
-          movePropertyItem: { property: { id: "property-id" } }
-        }
-      };
-    })
-  ]
+  useMutation: () => [mutate]
 }));
 
 vi.mock("@reearth/services/i18n/hooks", () => ({
-  useT: () => (key: string) => key,
+  useT: () => (s: string) => s,
   useLang: () => "ja"
 }));
 
 vi.mock("@reearth/services/state", () => ({
-  useNotification: () => [null, vi.fn()]
+  useNotification: () => [undefined, vi.fn()]
 }));
 
-const DOCUMENTS = {
-  UPDATE_PROPERTY_VALUE,
-  ADD_PROPERTY_ITEM,
-  REMOVE_PROPERTY_ITEM,
-  MOVE_PROPERTY_ITEM
-};
-
-describe("usePropertyMutations", () => {
+describe("usePropertyMutations.addPropertyItem", () => {
   beforeEach(() => {
-    calls.length = 0;
+    mutate.mockReset();
   });
 
-  // Every one of these documents keys its schema fields on `$lang`
-  // (`translatedTitle(lang: $lang)`). PropertySchemaGroup has no id, so it is
-  // cached inline and a write replaces the array wholesale — sending a
-  // different lang than GetScene read with discards its translations.
-  it.each(Object.entries(DOCUMENTS))("%s declares $lang", (_name, document) => {
-    expect(print(document)).toContain("$lang: Lang");
-  });
-
-  it("forwards the language it is given for updatePropertyValue", async () => {
+  it("does not call the mutation when a field's value type has no GraphQL mapping", async () => {
     const { result } = renderHook(() => usePropertyMutations());
 
-    await result.current.updatePropertyValue(
-      "property-id",
-      "tiles",
-      "item-id",
-      "tile_type",
-      "ja",
-      "google_satellite",
-      "string"
+    const res = await act(async () =>
+      result.current.addPropertyItem("property-id", "tiles", [
+        // "tiletype" is a real ValueType with no entry in valueTypeMapper, so
+        // valueTypeToGQL("tiletype") returns undefined -- this must fail the
+        // whole call instead of silently sending a partial field list.
+        {
+          fieldId: "tile_type",
+          value: "google_satellite",
+          valueType: "tiletype"
+        }
+      ])
     );
 
-    expect(calls).toHaveLength(1);
-    expect(calls[0].variables).toMatchObject({ lang: "ja" });
+    expect(mutate).not.toHaveBeenCalled();
+    expect(res.status).toBe("error");
   });
 
-  // These three take no language from their callers, so without this the
-  // variable went out undefined and the response landed under a different
-  // cache key than the one GetScene reads.
-  it("uses the current language for the mutations that take none", async () => {
+  it("sends all fields when every value type maps to a GraphQL type", async () => {
+    mutate.mockResolvedValue({
+      data: {
+        addPropertyItem: {
+          property: { id: "property-id" },
+          propertyItem: { __typename: "PropertyGroup", id: "new-item-id" }
+        }
+      }
+    });
+
     const { result } = renderHook(() => usePropertyMutations());
 
-    await result.current.addPropertyItem("property-id", "tiles");
-    await result.current.removePropertyItem("property-id", "tiles", "item-id");
-    await result.current.movePropertyItem("property-id", "tiles", "item-id", 0);
+    await act(async () =>
+      result.current.addPropertyItem("property-id", "tiles", [
+        {
+          fieldId: "tile_type",
+          value: "google_satellite",
+          valueType: "string"
+        },
+        { fieldId: "tile_category", value: "system", valueType: "string" }
+      ])
+    );
 
-    expect(calls).toHaveLength(3);
-    for (const call of calls) {
-      expect(call.variables).toMatchObject({ lang: "ja" });
+    expect(mutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: expect.objectContaining({
+          fields: [
+            { fieldId: "tile_type", value: "google_satellite", type: "STRING" },
+            { fieldId: "tile_category", value: "system", type: "STRING" }
+          ]
+        })
+      })
+    );
+  });
+});
+
+describe("usePropertyMutations language", () => {
+  beforeEach(() => {
+    mutate.mockReset();
+    mutate.mockResolvedValue({
+      data: {
+        addPropertyItem: {
+          property: { id: "property-id" },
+          propertyItem: { __typename: "PropertyGroup", id: "new-item-id" }
+        },
+        removePropertyItem: { property: { id: "property-id" } },
+        movePropertyItem: { property: { id: "property-id" } }
+      }
+    });
+  });
+
+  // These three take no language from their callers. Without one the variable
+  // went out undefined, so `translatedTitle(lang: null)` was written where
+  // GetScene reads `translatedTitle(lang: "ja")` -- and because
+  // PropertySchemaGroup has no id it is cached inline, so the write replaced
+  // the array wholesale and discarded the cached translations.
+  it("sends the current language for the mutations that take none", async () => {
+    const { result } = renderHook(() => usePropertyMutations());
+
+    await act(async () => {
+      await result.current.addPropertyItem("property-id", "tiles");
+      await result.current.removePropertyItem("property-id", "tiles", "item-id");
+      await result.current.movePropertyItem("property-id", "tiles", "item-id", 0);
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(3);
+    for (const call of mutate.mock.calls) {
+      expect(call[0].variables).toMatchObject({ lang: "ja" });
     }
   });
 
+  it("forwards the language updatePropertyValue is given", async () => {
+    mutate.mockResolvedValue({
+      data: { updatePropertyValue: { property: { id: "property-id" } } }
+    });
+    const { result } = renderHook(() => usePropertyMutations());
+
+    await act(async () => {
+      await result.current.updatePropertyValue(
+        "property-id",
+        "tiles",
+        "item-id",
+        "tile_type",
+        "ja",
+        "google_satellite",
+        "string"
+      );
+    });
+
+    expect(mutate.mock.calls[0][0].variables).toMatchObject({ lang: "ja" });
+  });
 });

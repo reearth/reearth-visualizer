@@ -5,7 +5,10 @@ import {
   valueToGQL,
   valueTypeToGQL
 } from "@reearth/app/utils/value";
-import { PropertyItemPayload } from "@reearth/services/gql";
+import {
+  PropertyFieldValueInput,
+  PropertyItemPayload
+} from "@reearth/services/gql";
 import {
   UPDATE_PROPERTY_VALUE,
   ADD_PROPERTY_ITEM,
@@ -18,27 +21,9 @@ import { useCallback } from "react";
 
 import { MutationReturn } from "../types";
 
-export type PropertyMutationOptions = {
-  /**
-   * Skip the `GetScene` refetch this mutation would otherwise trigger. Set it
-   * when the caller chains several property writes together and a single
-   * refetch at the end of the chain brings the cache up to date for all of
-   * them, instead of one full `GetScene` round trip per write.
-   */
-  skipRefetch?: boolean;
-  /**
-   * Suppress the success notification. For writes the user did not initiate
-   * directly (internal plumbing such as the system tile) a toast is noise.
-   * Errors are still reported.
-   */
-  silentSuccess?: boolean;
-};
-
-const refetchQueriesFor = (options?: PropertyMutationOptions) =>
-  options?.skipRefetch ? [] : ["GetScene"];
-
 export const usePropertyMutations = () => {
   const t = useT();
+  // Named to avoid shadowing updatePropertyValue's own `lang` parameter.
   const currentLang = useLang();
   const [, setNotification] = useNotification();
 
@@ -55,8 +40,7 @@ export const usePropertyMutations = () => {
       fieldId: string,
       lang: string,
       v: ValueTypes[ValueType] | undefined,
-      vt: ValueType,
-      options?: PropertyMutationOptions
+      vt: ValueType
     ) => {
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
@@ -69,9 +53,9 @@ export const usePropertyMutations = () => {
           fieldId,
           value,
           type: gvt,
-          lang
+          lang: lang
         },
-        refetchQueries: refetchQueriesFor(options)
+        refetchQueries: ["GetScene"]
       });
 
       if (error || !data?.updatePropertyValue) {
@@ -83,12 +67,10 @@ export const usePropertyMutations = () => {
 
         return { status: "error" };
       }
-      if (!options?.silentSuccess) {
-        setNotification({
-          type: "success",
-          text: t("Successfully updated the property value!")
-        });
-      }
+      setNotification({
+        type: "success",
+        text: t("Successfully updated the property value!")
+      });
       return {
         data: data.updatePropertyValue.property,
         status: "success"
@@ -101,17 +83,50 @@ export const usePropertyMutations = () => {
     async (
       propertyId: string,
       schemaGroupId: string,
-      options?: PropertyMutationOptions
+      fields?: {
+        fieldId: string;
+        value: ValueTypes[ValueType];
+        valueType: ValueType;
+      }[]
     ): Promise<
       MutationReturn<{ propertyId: string; newItemId: string | undefined }>
     > => {
+      let gqlFields: PropertyFieldValueInput[] | undefined;
+      if (fields) {
+        gqlFields = [];
+        for (const f of fields) {
+          const gvt = valueTypeToGQL(f.valueType);
+          if (!gvt) {
+            // Bail out instead of silently sending a subset of the requested
+            // fields -- the caller relies on all of them being set atomically
+            // with the item's creation, so an unmappable value type must fail
+            // the whole call rather than create an item missing a field it
+            // depends on.
+            console.log(
+              `GraphQL: Failed to add property item, unknown value type for field "${f.fieldId}"`
+            );
+            setNotification({
+              type: "error",
+              text: t("Failed to update property.")
+            });
+            return { data: undefined, status: "error" };
+          }
+          gqlFields.push({
+            fieldId: f.fieldId,
+            value: valueToGQL(f.value, f.valueType),
+            type: gvt
+          });
+        }
+      }
+
       const { data, error } = await addPropertyItemMutation({
         variables: {
           propertyId,
           schemaGroupId,
+          fields: gqlFields,
           lang: currentLang
         },
-        refetchQueries: refetchQueriesFor(options)
+        refetchQueries: ["GetScene"]
       });
 
       if (error || !data?.addPropertyItem?.property?.id) {
@@ -127,7 +142,9 @@ export const usePropertyMutations = () => {
       const property = data.addPropertyItem.property;
       const propertyItem = data.addPropertyItem.propertyItem;
       const newItemId =
-        propertyItem?.__typename === "PropertyGroup" ? propertyItem.id : undefined;
+        propertyItem?.__typename === "PropertyGroup"
+          ? propertyItem.id
+          : undefined;
 
       return {
         data: { propertyId: property.id, newItemId },
@@ -141,8 +158,7 @@ export const usePropertyMutations = () => {
     async (
       propertyId: string,
       schemaGroupId: string,
-      itemId: string,
-      options?: PropertyMutationOptions
+      itemId: string
     ): Promise<
       MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
     > => {
@@ -153,7 +169,7 @@ export const usePropertyMutations = () => {
           itemId,
           lang: currentLang
         },
-        refetchQueries: refetchQueriesFor(options)
+        refetchQueries: ["GetScene"]
       });
 
       if (error || !data?.removePropertyItem?.property?.id) {

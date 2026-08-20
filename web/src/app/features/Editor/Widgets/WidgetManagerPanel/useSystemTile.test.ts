@@ -1,35 +1,44 @@
-import { SYSTEM_TILE_CATEGORY } from "@reearth/app/utils/convert-object";
 import { renderHook, act } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { useSystemTile } from "./useSystemTile";
 
 const addPropertyItem = vi.fn();
-const updatePropertyValue = vi.fn();
 const removePropertyItem = vi.fn();
 
-const emptyTilesGroup = {
-  __typename: "PropertyGroupList" as const,
-  id: "tiles-group-list-id",
-  schemaGroupId: "tiles",
-  groups: []
+type Scene = {
+  property?: {
+    id: string;
+    items: {
+      __typename: string;
+      schemaGroupId: string;
+      groups: { id: string; fields: { fieldId: string; value: unknown }[] }[];
+    }[];
+  };
 };
 
-const systemTileGroup = {
-  id: "system-tile-item-id",
-  fields: [{ fieldId: "tile_category", value: SYSTEM_TILE_CATEGORY }]
+const withSystemTile: Scene = {
+  property: {
+    id: "property-id",
+    items: [
+      {
+        __typename: "PropertyGroupList",
+        schemaGroupId: "tiles",
+        groups: [
+          {
+            id: "system-tile-id",
+            fields: [{ fieldId: "tile_category", value: "system" }]
+          }
+        ]
+      }
+    ]
+  }
 };
 
-let scene: unknown = {
-  property: { id: "property-id", items: [emptyTilesGroup] }
-};
+let scene: Scene = { property: { id: "property-id", items: [] } };
 
 vi.mock("@reearth/services/api/property", () => ({
-  usePropertyMutations: () => ({
-    addPropertyItem,
-    updatePropertyValue,
-    removePropertyItem
-  })
+  usePropertyMutations: () => ({ addPropertyItem, removePropertyItem })
 }));
 
 vi.mock("@reearth/services/api/scene", () => ({
@@ -40,77 +49,47 @@ vi.mock("@reearth/services/api/scene", () => ({
   })
 }));
 
-vi.mock("@reearth/services/i18n/hooks", () => ({
-  useLang: () => "en"
-}));
-
-const optionsOf = (call: unknown[]) => call[call.length - 1];
-
 describe("useSystemTile", () => {
   beforeEach(() => {
     addPropertyItem.mockReset();
-    updatePropertyValue.mockReset();
+    addPropertyItem.mockResolvedValue({ status: "success" });
     removePropertyItem.mockReset();
-    scene = { property: { id: "property-id", items: [emptyTilesGroup] } };
-
-    addPropertyItem.mockResolvedValue({
-      status: "success",
-      data: { propertyId: "property-id", newItemId: "new-item-id" }
-    });
-    updatePropertyValue.mockResolvedValue({ status: "success" });
+    scene = { property: { id: "property-id", items: [] } };
   });
 
-  it("refetches GetScene only once for the whole chain (SCA-06)", async () => {
+  it("creates the tile with tile_type and tile_category in a single addPropertyItem call (REL-07)", async () => {
     const { result } = renderHook(() => useSystemTile("scene-id"));
 
     await act(async () => {
       await result.current.addSystemTile();
     });
 
-    // Item creation and the first value write are intermediate steps.
-    expect(optionsOf(addPropertyItem.mock.calls[0])).toMatchObject({
-      skipRefetch: true
-    });
-    expect(optionsOf(updatePropertyValue.mock.calls[0])).toMatchObject({
-      skipRefetch: true
-    });
-
-    // The last write is what brings every GetScene consumer up to date.
-    expect(optionsOf(updatePropertyValue.mock.calls[1])).not.toMatchObject({
-      skipRefetch: true
-    });
-
-    const refetching = [
-      ...addPropertyItem.mock.calls,
-      ...updatePropertyValue.mock.calls
-    ].filter(
-      (call) => !(optionsOf(call) as { skipRefetch?: boolean })?.skipRefetch
-    );
-    expect(refetching).toHaveLength(1);
+    expect(addPropertyItem).toHaveBeenCalledTimes(1);
+    expect(addPropertyItem).toHaveBeenCalledWith("property-id", "tiles", [
+      { fieldId: "tile_type", value: "google_satellite", valueType: "string" },
+      { fieldId: "tile_category", value: "system", valueType: "string" }
+    ]);
   });
 
-  it("does not notify success for the internal tile writes", async () => {
+  it("does not create a tile when a system tile already exists", async () => {
+    scene = withSystemTile;
     const { result } = renderHook(() => useSystemTile("scene-id"));
 
     await act(async () => {
       await result.current.addSystemTile();
     });
 
-    for (const call of updatePropertyValue.mock.calls) {
-      expect(optionsOf(call)).toMatchObject({ silentSuccess: true });
-    }
+    expect(addPropertyItem).not.toHaveBeenCalled();
   });
 
-  it("creates a single tile when called concurrently", async () => {
+  // The existence check reads the watched scene query, which only settles once
+  // the write completes, so concurrent callers would otherwise both pass it.
+  it("creates a single tile when called concurrently (SCA-06)", async () => {
     let release: (() => void) | undefined;
     addPropertyItem.mockImplementation(
       async () =>
         new Promise((resolve) => {
-          release = () =>
-            resolve({
-              status: "success",
-              data: { propertyId: "property-id", newItemId: "new-item-id" }
-            });
+          release = () => resolve({ status: "success" });
         })
     );
 
@@ -127,34 +106,18 @@ describe("useSystemTile", () => {
     expect(addPropertyItem).toHaveBeenCalledTimes(1);
   });
 
-  it("does nothing when a system tile already exists", async () => {
-    scene = {
-      property: {
-        id: "property-id",
-        items: [{ ...emptyTilesGroup, groups: [systemTileGroup] }]
-      }
-    };
+  it("removes the tagged system tile item", async () => {
+    scene = withSystemTile;
     const { result } = renderHook(() => useSystemTile("scene-id"));
 
     await act(async () => {
-      await result.current.addSystemTile();
-    });
-
-    expect(addPropertyItem).not.toHaveBeenCalled();
-  });
-
-  it("rolls back the new item when a value write fails", async () => {
-    updatePropertyValue.mockResolvedValueOnce({ status: "error" });
-    const { result } = renderHook(() => useSystemTile("scene-id"));
-
-    await act(async () => {
-      await result.current.addSystemTile();
+      await result.current.removeSystemTile();
     });
 
     expect(removePropertyItem).toHaveBeenCalledWith(
       "property-id",
       "tiles",
-      "new-item-id"
+      "system-tile-id"
     );
   });
 });
