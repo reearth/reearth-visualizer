@@ -92,7 +92,7 @@ func servSignatureUploadFiles(
 				return nil, err
 			}
 
-			claimed, err := usecases.Project.ClaimImport(ctx, *pid)
+			claimed, err := usecases.Project.ClaimImport(ctx, *pid, op)
 			if err != nil {
 				return nil, err
 			}
@@ -208,7 +208,7 @@ func servSignatureUploadFiles(
 				return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid filename format: %v", err))
 			}
 
-			claimed, err := usecases.Project.ClaimImport(ctx, *pid)
+			claimed, err := usecases.Project.ClaimImport(ctx, *pid, op)
 			if err != nil {
 				log.Errorf("[Import] Failed to claim import for %s: %v", pid.String(), err)
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("failed to claim import: %v", err))

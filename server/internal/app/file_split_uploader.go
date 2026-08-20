@@ -465,7 +465,7 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 	}()
 	defer m.cleanupSession(job.fileID)
 
-	claimed, err := job.usecases.Project.ClaimImport(bgctx, job.projectID)
+	claimed, err := job.usecases.Project.ClaimImport(bgctx, job.projectID, job.op)
 	if err != nil {
 		log.Errorf("[Import] failed to claim import for %s: %v", job.projectID.String(), err)
 		return

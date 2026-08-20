@@ -107,20 +107,6 @@ func (r *ProjectMetadata) Remove(ctx context.Context, id id.ProjectID) error {
 // filter matched to the exact state just read (optimistic concurrency)
 // avoids ever attempting an insert when a document already exists.
 func (r *ProjectMetadata) ClaimImport(ctx context.Context, pid id.ProjectID, staleAfter time.Duration) (claimed bool, err error) {
-	// Claiming writes on the caller's behalf, so it has to honour the same
-	// workspace filter Save does. The import endpoints build their operator
-	// from the request, so without this an unauthenticated push could stamp
-	// PROCESSING on any project id it names, which both writes into another
-	// tenant's import state and blocks that project's own imports until the
-	// claim goes stale (SEC-02).
-	meta, err := r.findOne(ctx, bson.M{"project": pid.String()})
-	if err != nil {
-		return false, err
-	}
-	if !r.f.CanWrite(meta.Workspace()) {
-		return false, repo.ErrOperationDenied
-	}
-
 	now := time.Now().UTC()
 	staleCutoff := now.Add(-staleAfter)
 

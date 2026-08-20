@@ -41,7 +41,7 @@ func (f *fakeProjectUsecase) UpdateImportStatus(ctx context.Context, pid id.Proj
 // ClaimImport defaults to always granting the claim, since most of these
 // tests exercise timeout/panic handling rather than the idempotency guard
 // itself - only tests that care override claimImport.
-func (f *fakeProjectUsecase) ClaimImport(ctx context.Context, pid id.ProjectID) (bool, error) {
+func (f *fakeProjectUsecase) ClaimImport(ctx context.Context, pid id.ProjectID, op *usecase.Operator) (bool, error) {
 	if f.claimImport != nil {
 		return f.claimImport(ctx, pid)
 	}

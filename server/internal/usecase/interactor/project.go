@@ -704,7 +704,21 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 // running import gets reclaimed).
 const importClaimStaleAfter = 15 * time.Minute
 
-func (i *Project) ClaimImport(ctx context.Context, pid id.ProjectID) (bool, error) {
+// ClaimImport authorizes against the project's own workspace before claiming.
+// The import endpoints derive their acting identity from the uploaded object's
+// filename, so without this check a request naming another tenant's project
+// would claim it: that project's import status becomes PROCESSING and its owner
+// cannot start a real import until the claim goes stale (SEC-02). The check
+// cannot live in the repo, because it needs the project's workspace and a
+// project does not necessarily have a projectmetadata document to read it from.
+func (i *Project) ClaimImport(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (bool, error) {
+	prj, err := i.projectRepo.FindByID(ctx, pid)
+	if err != nil {
+		return false, err
+	}
+	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
+		return false, err
+	}
 	return i.projectMetadataRepo.ClaimImport(ctx, pid, importClaimStaleAfter)
 }
 
