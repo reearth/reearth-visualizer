@@ -5,9 +5,8 @@ import { useSystemTile } from "./useSystemTile";
 
 const addPropertyItem = vi.fn();
 const removePropertyItem = vi.fn();
-const refetch = vi.fn();
 
-let scene: {
+type Scene = {
   property?: {
     id: string;
     items: {
@@ -16,7 +15,27 @@ let scene: {
       groups: { id: string; fields: { fieldId: string; value: unknown }[] }[];
     }[];
   };
-} = { property: { id: "property-id", items: [] } };
+};
+
+const withSystemTile: Scene = {
+  property: {
+    id: "property-id",
+    items: [
+      {
+        __typename: "PropertyGroupList",
+        schemaGroupId: "tiles",
+        groups: [
+          {
+            id: "system-tile-id",
+            fields: [{ fieldId: "tile_category", value: "system" }]
+          }
+        ]
+      }
+    ]
+  }
+};
+
+let scene: Scene = { property: { id: "property-id", items: [] } };
 
 vi.mock("@reearth/services/api/property", () => ({
   usePropertyMutations: () => ({ addPropertyItem, removePropertyItem })
@@ -26,17 +45,15 @@ vi.mock("@reearth/services/api/scene", () => ({
   useScene: () => ({
     get scene() {
       return scene;
-    },
-    refetch
+    }
   })
 }));
 
 describe("useSystemTile", () => {
   beforeEach(() => {
     addPropertyItem.mockReset();
+    addPropertyItem.mockResolvedValue({ status: "success" });
     removePropertyItem.mockReset();
-    refetch.mockReset();
-    refetch.mockResolvedValue({ data: { node: undefined } });
     scene = { property: { id: "property-id", items: [] } };
   });
 
@@ -54,29 +71,8 @@ describe("useSystemTile", () => {
     ]);
   });
 
-  it("does not create a tile when a system tile already exists after refetch", async () => {
-    refetch.mockResolvedValue({
-      data: {
-        node: {
-          __typename: "Scene",
-          property: {
-            items: [
-              {
-                __typename: "PropertyGroupList",
-                schemaGroupId: "tiles",
-                groups: [
-                  {
-                    id: "existing-tile",
-                    fields: [{ fieldId: "tile_category", value: "system" }]
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      }
-    });
-
+  it("does not create a tile when a system tile already exists", async () => {
+    scene = withSystemTile;
     const { result } = renderHook(() => useSystemTile("scene-id"));
 
     await act(async () => {
@@ -86,25 +82,32 @@ describe("useSystemTile", () => {
     expect(addPropertyItem).not.toHaveBeenCalled();
   });
 
-  it("removes the tagged system tile item", async () => {
-    scene = {
-      property: {
-        id: "property-id",
-        items: [
-          {
-            __typename: "PropertyGroupList",
-            schemaGroupId: "tiles",
-            groups: [
-              {
-                id: "system-tile-id",
-                fields: [{ fieldId: "tile_category", value: "system" }]
-              }
-            ]
-          }
-        ]
-      }
-    };
+  // The existence check reads the watched scene query, which only settles once
+  // the write completes, so concurrent callers would otherwise both pass it.
+  it("creates a single tile when called concurrently (SCA-06)", async () => {
+    let release: (() => void) | undefined;
+    addPropertyItem.mockImplementation(
+      async () =>
+        new Promise((resolve) => {
+          release = () => resolve({ status: "success" });
+        })
+    );
 
+    const { result } = renderHook(() => useSystemTile("scene-id"));
+
+    await act(async () => {
+      const first = result.current.addSystemTile();
+      const second = result.current.addSystemTile();
+      await Promise.resolve();
+      release?.();
+      await Promise.all([first, second]);
+    });
+
+    expect(addPropertyItem).toHaveBeenCalledTimes(1);
+  });
+
+  it("removes the tagged system tile item", async () => {
+    scene = withSystemTile;
     const { result } = renderHook(() => useSystemTile("scene-id"));
 
     await act(async () => {
