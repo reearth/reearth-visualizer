@@ -89,11 +89,12 @@ type AddNLSLayerSimplePayload struct {
 }
 
 type AddPropertyItemInput struct {
-	PropertyID     ID         `json:"propertyId"`
-	SchemaGroupID  ID         `json:"schemaGroupId"`
-	Index          *int       `json:"index,omitempty"`
-	NameFieldValue any        `json:"nameFieldValue,omitempty"`
-	NameFieldType  *ValueType `json:"nameFieldType,omitempty"`
+	PropertyID     ID                         `json:"propertyId"`
+	SchemaGroupID  ID                         `json:"schemaGroupId"`
+	Index          *int                       `json:"index,omitempty"`
+	NameFieldValue any                        `json:"nameFieldValue,omitempty"`
+	NameFieldType  *ValueType                 `json:"nameFieldType,omitempty"`
+	Fields         []*PropertyFieldValueInput `json:"fields,omitempty"`
 }
 
 type AddStyleInput struct {
@@ -797,6 +798,12 @@ type PropertyField struct {
 type PropertyFieldPayload struct {
 	Property      *Property      `json:"property"`
 	PropertyField *PropertyField `json:"propertyField,omitempty"`
+}
+
+type PropertyFieldValueInput struct {
+	FieldID ID        `json:"fieldId"`
+	Value   any       `json:"value,omitempty"`
+	Type    ValueType `json:"type"`
 }
 
 type PropertyGroup struct {

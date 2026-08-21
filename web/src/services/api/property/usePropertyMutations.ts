@@ -5,7 +5,10 @@ import {
   valueToGQL,
   valueTypeToGQL
 } from "@reearth/app/utils/value";
-import { PropertyItemPayload } from "@reearth/services/gql";
+import {
+  PropertyFieldValueInput,
+  PropertyItemPayload
+} from "@reearth/services/gql";
 import {
   UPDATE_PROPERTY_VALUE,
   ADD_PROPERTY_ITEM,
@@ -77,14 +80,48 @@ export const usePropertyMutations = () => {
   const addPropertyItem = useCallback(
     async (
       propertyId: string,
-      schemaGroupId: string
+      schemaGroupId: string,
+      fields?: {
+        fieldId: string;
+        value: ValueTypes[ValueType];
+        valueType: ValueType;
+      }[]
     ): Promise<
       MutationReturn<{ propertyId: string; newItemId: string | undefined }>
     > => {
+      let gqlFields: PropertyFieldValueInput[] | undefined;
+      if (fields) {
+        gqlFields = [];
+        for (const f of fields) {
+          const gvt = valueTypeToGQL(f.valueType);
+          if (!gvt) {
+            // Bail out instead of silently sending a subset of the requested
+            // fields -- the caller relies on all of them being set atomically
+            // with the item's creation, so an unmappable value type must fail
+            // the whole call rather than create an item missing a field it
+            // depends on.
+            console.log(
+              `GraphQL: Failed to add property item, unknown value type for field "${f.fieldId}"`
+            );
+            setNotification({
+              type: "error",
+              text: t("Failed to update property.")
+            });
+            return { data: undefined, status: "error" };
+          }
+          gqlFields.push({
+            fieldId: f.fieldId,
+            value: valueToGQL(f.value, f.valueType),
+            type: gvt
+          });
+        }
+      }
+
       const { data, error } = await addPropertyItemMutation({
         variables: {
           propertyId,
-          schemaGroupId
+          schemaGroupId,
+          fields: gqlFields
         },
         refetchQueries: ["GetScene"]
       });
@@ -102,7 +139,9 @@ export const usePropertyMutations = () => {
       const property = data.addPropertyItem.property;
       const propertyItem = data.addPropertyItem.propertyItem;
       const newItemId =
-        propertyItem?.__typename === "PropertyGroup" ? propertyItem.id : undefined;
+        propertyItem?.__typename === "PropertyGroup"
+          ? propertyItem.id
+          : undefined;
 
       return {
         data: { propertyId: property.id, newItemId },
