@@ -3,6 +3,8 @@ import path from "path";
 
 import { faker } from "@faker-js/faker";
 
+import { GET_PROJECT_IMPORT_STATUS } from "../graphql/queries";
+
 // Crockford Base32 charset used by oklog/ulid
 const CROCKFORD = "0123456789abcdefghjkmnpqrstvwxyz";
 
@@ -33,4 +35,85 @@ export function getAuthHeaders(): Record<string, string> {
     Authorization: `Bearer ${token}`,
     ...extraHeaders
   };
+}
+
+/**
+ * Builds a multipart/form-data body. Playwright's `multipart` option cannot
+ * express a chunk of a larger file, which is what /api/split-import takes, so
+ * the body is assembled here instead of inline in each test.
+ */
+export function buildMultipart(
+  fields: Record<string, string>,
+  file?: { name: string; filename: string; contentType: string; content: Buffer }
+): { body: Buffer; contentType: string } {
+  const boundary = `----FormBoundary${faker.string.alphanumeric(16)}`;
+  const crlf = "\r\n";
+  const parts: Buffer[] = [];
+
+  for (const [name, value] of Object.entries(fields)) {
+    parts.push(
+      Buffer.from(
+        `--${boundary}${crlf}` +
+          `Content-Disposition: form-data; name="${name}"${crlf}${crlf}` +
+          `${value}${crlf}`
+      )
+    );
+  }
+
+  if (file) {
+    parts.push(
+      Buffer.from(
+        `--${boundary}${crlf}` +
+          `Content-Disposition: form-data; name="${file.name}"; filename="${file.filename}"${crlf}` +
+          `Content-Type: ${file.contentType}${crlf}${crlf}`
+      )
+    );
+    parts.push(file.content);
+    parts.push(Buffer.from(crlf));
+  }
+
+  parts.push(Buffer.from(`--${boundary}--${crlf}`));
+
+  return {
+    body: Buffer.concat(parts),
+    contentType: `multipart/form-data; boundary=${boundary}`
+  };
+}
+
+type ImportStatusResult = {
+  importStatus: string | null;
+  importResultLog: unknown;
+};
+
+/**
+ * Polls a project's import status until it reaches `expected`, or fails with
+ * the status and result log it actually reached. The import runs in a
+ * background worker, so the upload response cannot tell us the outcome.
+ */
+export async function waitForImportStatus(
+  gqlClient: {
+    query: <T>(q: string, v?: Record<string, unknown>) => Promise<{ data: T }>;
+  },
+  projectId: string,
+  expected: string,
+  timeoutMs = 30000
+): Promise<ImportStatusResult> {
+  const deadline = Date.now() + timeoutMs;
+  let last: ImportStatusResult = { importStatus: null, importResultLog: null };
+
+  while (Date.now() < deadline) {
+    const { data } = await gqlClient.query<{
+      node: { metadata: ImportStatusResult | null } | null;
+    }>(GET_PROJECT_IMPORT_STATUS, { projectId });
+
+    last = data.node?.metadata ?? last;
+    if (last.importStatus === expected) return last;
+    if (last.importStatus === "FAILED" && expected !== "FAILED") break;
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  throw new Error(
+    `import status did not reach ${expected} within ${timeoutMs}ms; last status ${last.importStatus}, log: ${JSON.stringify(last.importResultLog)}`
+  );
 }
