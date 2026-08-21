@@ -91,14 +91,14 @@ func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmo
 // does not exist, as opposed to a real failure.
 //
 // Searching for someone who has not signed up is a normal outcome, but the
-// accounts client reports it as an error rather than an empty result, and the
-// caller has no way to tell the two apart: only 401 gets a typed error
-// (gqlerror.ErrUnauthorized), everything else is returned verbatim. Left as an
-// error it reaches the web client as a GraphQL error, which the global error
-// link turns into an error notification containing the raw message. Matching on
-// the message is the only handle available; it is narrow because it is applied
-// to a single lookup by alias, where "not found" can only mean the alias
-// matched nobody.
+// accounts client reports it as an error rather than an empty result, and
+// gives no way to tell the two apart: it returns a typed error only for 401
+// (ErrUnauthorized, in the reearth-accounts package pkg/gqlclient/gqlerror),
+// and everything else verbatim. Left as an error it reaches the web client as
+// a GraphQL error, which the global error link turns into an error
+// notification carrying the raw message. Matching on the message is the only
+// handle available; it is narrow because it is applied to a single lookup by
+// alias, where "not found" can only mean the alias matched nobody.
 func isAccountsNotFound(err error) bool {
 	return err != nil && strings.Contains(strings.ToLower(err.Error()), "not found")
 }
