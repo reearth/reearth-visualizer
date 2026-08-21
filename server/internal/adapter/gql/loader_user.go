@@ -64,6 +64,9 @@ func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmo
 	if c.client != nil {
 		u, err := c.client.UserRepo.FindByAlias(ctx, trimmed)
 		if err != nil {
+			if isAccountsNotFound(err) {
+				return nil, nil
+			}
 			return nil, err
 		}
 		if u == nil {
@@ -82,6 +85,22 @@ func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmo
 		}
 	}
 	return nil, nil
+}
+
+// isAccountsNotFound reports whether err is the accounts API saying the record
+// does not exist, as opposed to a real failure.
+//
+// Searching for someone who has not signed up is a normal outcome, but the
+// accounts client reports it as an error rather than an empty result, and the
+// caller has no way to tell the two apart: only 401 gets a typed error
+// (gqlerror.ErrUnauthorized), everything else is returned verbatim. Left as an
+// error it reaches the web client as a GraphQL error, which the global error
+// link turns into an error notification containing the raw message. Matching on
+// the message is the only handle available; it is narrow because it is applied
+// to a single lookup by alias, where "not found" can only mean the alias
+// matched nobody.
+func isAccountsNotFound(err error) bool {
+	return err != nil && strings.Contains(strings.ToLower(err.Error()), "not found")
 }
 
 // data loader
