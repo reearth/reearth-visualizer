@@ -32,12 +32,14 @@ export const ADD_PROPERTY_ITEM = gql(`
   mutation AddPropertyItem(
     $propertyId: ID!
     $schemaGroupId: ID!
+    $fields: [PropertyFieldValueInput!]
     $lang: Lang
   ) {
     addPropertyItem(
       input: {
         propertyId: $propertyId
         schemaGroupId: $schemaGroupId
+        fields: $fields
       }
     ) {
       property {

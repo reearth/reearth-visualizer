@@ -476,6 +476,8 @@ func (i *Storytelling) uploadPublishStory(ctx context.Context, story *storytelli
 
 	// publish
 	r, w := io.Pipe()
+	// See the matching comment in Project.uploadPublishScene.
+	defer func() { _ = r.Close() }()
 
 	// Build
 	go func() {

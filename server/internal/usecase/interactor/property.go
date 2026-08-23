@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -254,6 +255,34 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 		return nil, nil, nil, err
 	}
 
+	// Validate every requested initial field against the schema before
+	// mutating p at all, so an unknown field is rejected up front instead of
+	// after the item has already been added to the in-memory property --
+	// which some repo.Property implementations (e.g. the in-memory one used
+	// in tests) return by reference, making that mutation visible even
+	// though it's never Saved/Committed.
+	if len(inp.Fields) > 0 {
+		if sgID, ok := inp.Pointer.ItemBySchemaGroup(); ok {
+			if sg := ps.Groups().Group(sgID); sg != nil {
+				for _, f := range inp.Fields {
+					sf := sg.Field(f.Field)
+					if sf == nil {
+						return nil, nil, nil, fmt.Errorf("unknown field: %s", f.Field)
+					}
+					// A value whose type disagrees with the schema is silently
+					// dropped further down: GetOrCreateField builds the field
+					// with the schema's type, and OptionalValue.SetValue ignores
+					// a value of any other type. That would create the item with
+					// the field left unset, which is the state this atomic
+					// creation exists to prevent, so reject it up front.
+					if f.Value != nil && sf.Type() != f.Value.Type() {
+						return nil, nil, nil, fmt.Errorf("invalid value type for field %s: schema expects %s, got %s", f.Field, sf.Type(), f.Value.Type())
+					}
+				}
+			}
+		}
+	}
+
 	item, gl := p.AddListItem(ps, inp.Pointer, inp.Index)
 	if item == nil {
 		return nil, nil, nil, errors.New("failed to create item")
@@ -262,6 +291,21 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 	// Set nameFieldValue to the name field
 	if inp.NameFieldValue != nil {
 		item.RepresentativeField(ps).UpdateUnsafe(inp.NameFieldValue)
+	}
+
+	// Set any additional initial field values in the same transaction as the
+	// item creation, so a caller never observes an item that exists but is
+	// missing fields it depends on to be recognized correctly (e.g. a
+	// discriminator field like tile_category).
+	for _, f := range inp.Fields {
+		if f.Value == nil {
+			continue
+		}
+		field, _ := item.GetOrCreateField(ps, f.Field)
+		if field == nil {
+			return nil, nil, nil, fmt.Errorf("failed to create field: %s", f.Field)
+		}
+		field.UpdateUnsafe(f.Value)
 	}
 
 	err = i.propertyRepo.Save(ctx, p)

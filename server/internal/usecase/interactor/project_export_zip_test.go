@@ -8,6 +8,7 @@ import (
 	"io"
 	"testing"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/spf13/afero"
@@ -43,9 +44,6 @@ func (f *countingFile) UploadExportProjectZip(context.Context, afero.File) error
 // and GCS reads for no reason. This confirms the fix: the asset is read and written exactly
 // once, no matter how many times SearchAssetURL encounters its URL.
 func TestAddZipAsset_Dedup(t *testing.T) {
-	// IsCurrentHostAssets requires the URL to start with both "assets/" and the current host,
-	// so with no host attached (CurrentHost defaults to ""), a bare "assets/..." path satisfies
-	// both -- matching how AddZipAsset actually gates which URLs it treats as assets.
 	ctx := context.Background()
 
 	f := &countingFile{reads: map[string]int{}, content: []byte("asset-bytes")}
@@ -72,6 +70,35 @@ func TestAddZipAsset_Dedup(t *testing.T) {
 	zr, err := zip.NewReader(bytes.NewReader(buf.Bytes()), int64(buf.Len()))
 	require.NoError(t, err)
 	assert.Len(t, zr.File, 1, "the zip must contain exactly one entry for the deduplicated asset")
+}
+
+// TestSearchAssetURL_RelativeAssetPathWithConfiguredHost is a regression test for #2358: with a
+// current host configured (the normal case in any real deployment), SearchAssetURL used to gate
+// calls to AddZipAsset behind its own strings.HasPrefix(cleanedStr, currentHost) check, which a
+// relative "assets/..." path never satisfies. That meant relative asset references were silently
+// dropped from every export, even after IsCurrentHostAssets itself was fixed to recognize them,
+// because SearchAssetURL's own filter ran first and never let them through to it. This confirms
+// a relative asset path is now actually included in the exported zip when a host is configured.
+func TestSearchAssetURL_RelativeAssetPathWithConfiguredHost(t *testing.T) {
+	ctx := adapter.AttachCurrentHost(context.Background(), "https://api.example.com")
+
+	f := &countingFile{reads: map[string]int{}, content: []byte("asset-bytes")}
+	assetRepo := memory.NewAsset()
+
+	buf := &bytes.Buffer{}
+	zipWriter := zip.NewWriter(buf)
+
+	sceneData := map[string]any{"texture": "assets/relative-texture.png"}
+
+	state := newExportZipState()
+	require.NoError(t, SearchAssetURL(ctx, sceneData, assetRepo, f, zipWriter, state))
+	require.NoError(t, zipWriter.Close())
+
+	assert.Equal(t, 1, f.reads["relative-texture.png"], "a relative assets/ path must still be read and exported when a host is configured")
+
+	zr, err := zip.NewReader(bytes.NewReader(buf.Bytes()), int64(buf.Len()))
+	require.NoError(t, err)
+	assert.Len(t, zr.File, 1, "the zip must contain the relative asset even though a host is configured")
 }
 
 // TestExportZipState_TrackWrite is a regression test for SCA-01's other half: the 500MB guard
