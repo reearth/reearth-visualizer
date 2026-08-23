@@ -113,7 +113,16 @@ export async function waitForImportStatus(
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
+  // Only the message, not the whole result log: that carries the full scene
+  // JSON and buries the failure in kilobytes of output.
+  const reason =
+    typeof last.importResultLog === "object" &&
+    last.importResultLog !== null &&
+    "message" in last.importResultLog
+      ? String((last.importResultLog as { message: unknown }).message)
+      : "no message recorded";
+
   throw new Error(
-    `import status did not reach ${expected} within ${timeoutMs}ms; last status ${last.importStatus}, log: ${JSON.stringify(last.importResultLog)}`
+    `import status did not reach ${expected} within ${timeoutMs}ms; last status ${last.importStatus}: ${reason}`
   );
 }
