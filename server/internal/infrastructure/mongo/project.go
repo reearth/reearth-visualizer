@@ -558,17 +558,20 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 		return nil, rerror.ErrNotFound
 	}
 
-	f := bson.D{
-		{
-			Key: "$or",
-			Value: []bson.D{
-				{{Key: "alias", Value: name}, {Key: "publishmentstatus", Value: bson.D{{Key: "$in", Value: []string{"public", "limited"}}}}},
-				{{Key: "domains.domain", Value: name}, {Key: "publishmentstatus", Value: "public"}},
-			},
-		},
-	}
+	return r.findOne(ctx, findByPublicNameFilter(name), false)
+}
 
-	return r.findOne(ctx, f, false)
+// findByPublicNameFilter builds FindByPublicName's filter. Extracted so a test can explain the
+// exact filter this method issues (SCA-03, compliance scan issue #96): this used to also match
+// on "domains.domain", an unindexed field that has never existed on any project document (no
+// schema field, no write path ever sets it) -- that branch of the $or could never match
+// anything, but its lack of an index still forced a collection scan on every call. Dropped
+// rather than indexed, since there's no feature depending on it.
+func findByPublicNameFilter(name string) bson.D {
+	return bson.D{
+		{Key: "alias", Value: name},
+		{Key: "publishmentstatus", Value: bson.D{{Key: "$in", Value: []string{"public", "limited"}}}},
+	}
 }
 
 func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
