@@ -1,24 +1,26 @@
 import { SYSTEM_TILE_CATEGORY } from "@reearth/app/utils/convert-object";
 import { usePropertyMutations } from "@reearth/services/api/property";
 import { useScene } from "@reearth/services/api/scene";
-import { useLang } from "@reearth/services/i18n/hooks";
 import { useCallback } from "react";
 
 const TILES_GROUP = "tiles";
 
 export const useSystemTile = (sceneId?: string) => {
   const { scene, refetch } = useScene({ sceneId });
-  const { addPropertyItem, updatePropertyValue, removePropertyItem } = usePropertyMutations();
-  const lang = useLang();
+  const { addPropertyItem, removePropertyItem } = usePropertyMutations();
 
   const getSystemTileItemId = useCallback((): string | undefined => {
     const tilesGroupList = scene?.property?.items.find(
-      (item) => item.__typename === "PropertyGroupList" && item.schemaGroupId === TILES_GROUP
+      (item) =>
+        item.__typename === "PropertyGroupList" &&
+        item.schemaGroupId === TILES_GROUP
     );
     if (tilesGroupList?.__typename !== "PropertyGroupList") return undefined;
 
     return tilesGroupList.groups.find((group) =>
-      group.fields.some((f) => f.fieldId === "tile_category" && f.value === SYSTEM_TILE_CATEGORY)
+      group.fields.some(
+        (f) => f.fieldId === "tile_category" && f.value === SYSTEM_TILE_CATEGORY
+      )
     )?.id;
   }, [scene?.property]);
 
@@ -32,60 +34,35 @@ export const useSystemTile = (sceneId?: string) => {
     const freshNode = freshResult.data?.node;
     if (freshNode?.__typename === "Scene") {
       const freshTilesGroup = freshNode.property?.items.find(
-        (item) => item.__typename === "PropertyGroupList" && item.schemaGroupId === TILES_GROUP
+        (item) =>
+          item.__typename === "PropertyGroupList" &&
+          item.schemaGroupId === TILES_GROUP
       );
       const alreadyExists =
         freshTilesGroup?.__typename === "PropertyGroupList" &&
         freshTilesGroup.groups.some((group) =>
           group.fields.some(
-            (f) => f.fieldId === "tile_category" && f.value === SYSTEM_TILE_CATEGORY
+            (f) =>
+              f.fieldId === "tile_category" && f.value === SYSTEM_TILE_CATEGORY
           )
         );
       if (alreadyExists) return;
     }
 
-    const result = await addPropertyItem(propertyId, TILES_GROUP);
-    if (result.status !== "success" || !result.data?.newItemId) return;
-
-    const { newItemId } = result.data;
-
-    const tileTypeResult = await updatePropertyValue(
-      propertyId,
-      TILES_GROUP,
-      newItemId,
-      "tile_type",
-      lang,
-      "google_satellite",
-      "string"
-    );
-
-    if (tileTypeResult?.status !== "success") {
-      await removePropertyItem(propertyId, TILES_GROUP, newItemId);
-      return;
-    }
-
-    const tileCategoryResult = await updatePropertyValue(
-      propertyId,
-      TILES_GROUP,
-      newItemId,
-      "tile_category",
-      lang,
-      SYSTEM_TILE_CATEGORY,
-      "string"
-    );
-
-    if (tileCategoryResult?.status !== "success") {
-      await removePropertyItem(propertyId, TILES_GROUP, newItemId);
-      return;
-    }
-  }, [
-    scene?.property?.id,
-    refetch,
-    addPropertyItem,
-    updatePropertyValue,
-    removePropertyItem,
-    lang
-  ]);
+    // tile_type and tile_category are set as part of the same
+    // addPropertyItem call, in the same server-side transaction as the
+    // item's creation, so there's no window where the item exists without
+    // being tagged as a system tile -- a failure here means nothing was
+    // created at all, with nothing left to roll back.
+    await addPropertyItem(propertyId, TILES_GROUP, [
+      { fieldId: "tile_type", value: "google_satellite", valueType: "string" },
+      {
+        fieldId: "tile_category",
+        value: SYSTEM_TILE_CATEGORY,
+        valueType: "string"
+      }
+    ]);
+  }, [scene?.property?.id, refetch, addPropertyItem]);
   const removeSystemTile = useCallback(async () => {
     const propertyId = scene?.property?.id;
     const systemItemId = getSystemTileItemId();
