@@ -127,6 +127,19 @@ func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercept
 			return nil, errors.New("unauthorized")
 		}
 
+		// The operator built below carries user-id's real workspace memberships,
+		// so user-id is a privileged claim and must only be honoured on a request
+		// that proved it holds the internal token. unaryAuthInterceptor skips that
+		// check for read-only methods (and unconditionally for ExportProject), so
+		// without this an unauthenticated caller could set user-id to any user and
+		// read or export that user's private projects (SEC-03). Verified here
+		// rather than trusting the earlier interceptor, so the guard cannot be
+		// reopened by a change to which methods skip the token check.
+		if tokenFromGrpcMetadata(md) != cfg.Config.Visualizer.InternalApi.Token {
+			log.Errorf("unaryAttachOperatorInterceptor: user-id supplied without a valid internal token")
+			return nil, errors.New("unauthorized")
+		}
+
 		userID, err := accountsID.UserIDFrom(md["user-id"][0])
 		if err != nil {
 			log.Errorf("unaryAttachOperatorInterceptor: invalid user id")
