@@ -135,7 +135,8 @@ func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercept
 		// read or export that user's private projects (SEC-03). Verified here
 		// rather than trusting the earlier interceptor, so the guard cannot be
 		// reopened by a change to which methods skip the token check.
-		if tokenFromGrpcMetadata(md) != cfg.Config.Visualizer.InternalApi.Token {
+		token := tokenFromGrpcMetadata(md)
+		if token == "" || token != cfg.Config.Visualizer.InternalApi.Token {
 			log.Errorf("unaryAttachOperatorInterceptor: user-id supplied without a valid internal token")
 			return nil, errors.New("unauthorized")
 		}
