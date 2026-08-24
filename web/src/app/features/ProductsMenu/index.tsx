@@ -13,7 +13,7 @@ import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { FC, useCallback } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 export type ProductId = "dashboard" | "visualizer" | "cms" | "flow";
 export type OtherLinkId = "home" | "community";
@@ -40,7 +40,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
 
   const platformUrl = c?.platformUrl;
   const cmsUrl = c?.cmsUrl;
-  const isEE = c?.featureCollection === "ee";
+  const visualizerUrl = c?.visualizerUrl;
 
   const goToDashboard = workspaceId
     ? () => navigate(`/dashboard/${workspaceId}`)
@@ -53,19 +53,6 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
     },
     [onSelect]
   );
-
-  if (!isEE) {
-    return (
-      <StyledLink to={`/dashboard/${workspaceId}`} disabled={!workspaceId}>
-        <IconButton
-          icon="dotsNineVertical"
-          appearance="simple"
-          size="large"
-          tooltipText={t("Dashboard")}
-        />
-      </StyledLink>
-    );
-  }
 
   const products: MenuItem[] = [
     {
@@ -81,7 +68,9 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
       icon: "logo",
       iconColor: brandRed.dynamicRed,
       background: "#4A3131",
-      onNavigate: goToDashboard
+      onNavigate: visualizerUrl
+        ? () => openUrlInNewTab(visualizerUrl)
+        : undefined
     },
     {
       id: "cms",
@@ -89,13 +78,6 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
       icon: "cmsLogo",
       background: "#4B3F22",
       onNavigate: cmsUrl ? () => openUrlInNewTab(cmsUrl) : undefined
-    },
-    {
-      id: "flow",
-      title: t("Flow"),
-      icon: "flowLogo",
-      background: "#2C3F34",
-      disabled: true
     }
   ];
 
@@ -229,15 +211,3 @@ const PillButton = styled("button")(({ theme }) => ({
     backgroundColor: theme.bg[2]
   }
 }));
-
-const StyledLink = styled(Link)<{ disabled?: boolean }>(
-  ({ theme, disabled }) => ({
-    display: css.display.flex,
-    color: theme.content.main,
-    textDecoration: css.textDecoration.none,
-    pointerEvents: disabled ? "none" : "all",
-    "&:hover": {
-      textDecoration: css.textDecoration.none
-    }
-  })
-);

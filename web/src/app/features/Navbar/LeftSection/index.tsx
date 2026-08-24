@@ -9,6 +9,7 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { useProjectImportExportMutations } from "@reearth/services/api/project";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
@@ -49,6 +50,7 @@ const LeftSection: React.FC<Props> = ({
   const t = useT();
   const theme = useTheme();
   const navigate = useNavigate();
+  const isEE = config()?.featureCollection === "ee";
 
   const { exportProject } = useProjectImportExportMutations();
   const { accountMenuItems } = useWorkspaceManagementMenu({
@@ -162,7 +164,21 @@ const LeftSection: React.FC<Props> = ({
         menu={accountMenuItems}
         dataTestid="avatar-popupMenu"
       />
-      <ProductsMenu workspaceId={currentWorkspace?.id} />
+      {isEE ? (
+        <ProductsMenu workspaceId={currentWorkspace?.id} />
+      ) : (
+        <StyledLink
+          to={`/dashboard/${currentWorkspace?.id}`}
+          disabled={!currentWorkspace?.id}
+        >
+          <IconButton
+            icon="grid"
+            appearance="simple"
+            size="large"
+            tooltipText={t("Dashboard")}
+          />
+        </StyledLink>
+      )}
       {page === "projectSettings" && (
         <StyledLink to={`/scene/${sceneId}/map`} disabled={!sceneId}>
           <IconButton

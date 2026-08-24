@@ -9,6 +9,9 @@ import {
   SidebarVersion,
   SidebarWrapper
 } from "@reearth/app/ui/components/Sidebar";
+import { config } from "@reearth/services/config";
+import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import ProductsMenu from "../../ProductsMenu";
@@ -43,18 +46,22 @@ const LeftSidePanel: FC<Props> = ({
   onSignOut,
   onWorkspaceChange
 }) => {
+  const isEE = config()?.featureCollection === "ee";
+
   return (
     <SidebarWrapper data-testid="left-side-panel">
       <SidebarMainSection data-testid="sidebar-main-section">
         <SidebarTopSection data-testid="sidebar-top-section">
           <LogoWrapper data-testid="sidebar-logo" />
-          <ProductsMenu workspaceId={currentWorkspace?.id} />
-          <AvatarWrapper
-            avatarURL={avatarURL}
-            userName={userInfo?.name}
-            userEmail={userInfo?.email}
-            onSignOut={onSignOut}
-          />
+          {isEE && <ProductsMenu workspaceId={currentWorkspace?.id} />}
+          <AvatarSlot alignRight={!isEE}>
+            <AvatarWrapper
+              avatarURL={avatarURL}
+              userName={userInfo?.name}
+              userEmail={userInfo?.email}
+              onSignOut={onSignOut}
+            />
+          </AvatarSlot>
         </SidebarTopSection>
         <SidebarDivider data-testid="sidebar-divider-top" />
         <Profile
@@ -107,5 +114,14 @@ const LeftSidePanel: FC<Props> = ({
     </SidebarWrapper>
   );
 };
+
+const AvatarSlot = styled("div")<{ alignRight: boolean }>(
+  ({ alignRight }) => ({
+    display: css.display.flex,
+    flex: alignRight ? 1 : "0 0 auto",
+    alignItems: css.alignItems.center,
+    justifyContent: css.justifyContent.flexEnd
+  })
+);
 
 export default LeftSidePanel;
