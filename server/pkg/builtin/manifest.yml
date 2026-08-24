@@ -406,15 +406,6 @@ extensions:
               type: bool
               title: Terrain
               description: Show elevation when close to the surface.
-            - id: terrainWaterMask
-              type: bool
-              title: Water Mask
-              description: Renders water bodies with a realistic water surface effect.
-              defaultValue: false
-              availableIf:
-                field: terrain
-                type: bool
-                value: true
             - id: terrainType
               type: string
               title: Terrain type

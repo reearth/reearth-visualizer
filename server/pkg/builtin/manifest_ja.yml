@@ -207,9 +207,6 @@ extensions:
           terrain:
             title: 地形
             description: 有効にすると、標高データが読み込みこまれ、立体的な地形を表現することができます。
-          terrainWaterMask:
-            title: ウォーターマスク
-            description: 水域をリアルな水面エフェクトで表示します。
           terrainType:
             title: 種類
             description: 地形の種類を指定します。
