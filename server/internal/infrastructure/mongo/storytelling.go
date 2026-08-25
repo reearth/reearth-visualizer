@@ -178,6 +178,12 @@ func (r *Storytelling) findOne(ctx context.Context, filter any, filterByScene bo
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
+	// FindOne matched a document, but the consumer drops it when it is outside
+	// the scene filter, leaving Result empty. Treat that as not found rather
+	// than indexing into an empty slice and panicking.
+	if len(c.Result) == 0 {
+		return nil, rerror.ErrNotFound
+	}
 	return c.Result[0], nil
 }
 
