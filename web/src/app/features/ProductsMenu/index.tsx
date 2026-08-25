@@ -40,7 +40,6 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
 
   const platformUrl = c?.platformUrl;
   const cmsUrl = c?.cmsUrl;
-  const visualizerUrl = c?.visualizerUrl;
 
   const goToDashboard = workspaceId
     ? () => navigate(`/dashboard/${workspaceId}`)
@@ -68,9 +67,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
       icon: "logo",
       iconColor: brandRed.dynamicRed,
       background: "#4A3131",
-      onNavigate: visualizerUrl
-        ? () => openUrlInNewTab(visualizerUrl)
-        : undefined
+      onNavigate: goToDashboard
     },
     {
       id: "cms",
@@ -86,7 +83,9 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
       id: "home",
       title: t("Re:Earth Home"),
       icon: "home",
-      onNavigate: goToDashboard
+      onNavigate: platformUrl
+        ? () => openUrlInNewTab(`${platformUrl}/home`)
+        : undefined
     },
     {
       id: "community",
