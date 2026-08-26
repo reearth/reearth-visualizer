@@ -5,6 +5,7 @@ import (
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearthx/rerror"
 )
 
 func (r *Resolver) Query() QueryResolver {
@@ -145,6 +146,13 @@ func (r *queryResolver) PropertySchemas(ctx context.Context, ids []gqlmodel.ID) 
 	if len(err) > 0 && err[0] != nil {
 		return nil, err[0]
 	}
+	// The field is [PropertySchema!]!, so an unknown id has to be reported as
+	// not found rather than returned as a null element.
+	for _, d := range data {
+		if d == nil {
+			return nil, rerror.ErrNotFound
+		}
+	}
 	return data, nil
 }
 
@@ -156,6 +164,13 @@ func (r *queryResolver) Plugins(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 	data, err := dataloaders(ctx).Plugin.LoadAll(ids)
 	if len(err) > 0 && err[0] != nil {
 		return nil, err[0]
+	}
+	// The field is [Plugin!]!, so an unknown id has to be reported as not
+	// found rather than returned as a null element.
+	for _, d := range data {
+		if d == nil {
+			return nil, rerror.ErrNotFound
+		}
 	}
 	return data, nil
 }
