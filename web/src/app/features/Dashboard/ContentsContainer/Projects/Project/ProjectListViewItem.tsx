@@ -10,7 +10,7 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MouseEvent, useMemo } from "react";
 
-import ProjectRemoveModal from "../ProjectRemoveModal";
+import ProjectRemoveModal from "../ProjectModals/ProjectRemoveModal";
 
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
@@ -48,6 +48,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     isStarred,
     hasMapOrStoryPublished,
     projectRemoveModalVisible,
+    isRemovingProject,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
@@ -57,7 +58,6 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     handleProjectRemove
   } = useHooks({
     project,
-    selectedProjectId,
     onProjectUpdate,
     onProjectSelect,
     onProjectRemove
@@ -115,14 +115,18 @@ const ProjectListViewItem: FC<ProjectProps> = ({
               {projectName}
             </TitleWrapper>
           ) : (
-            <TextInput
-              onChange={handleProjectNameChange}
-              onBlur={handleProjectNameBlur}
-              value={projectName}
-              autoFocus={isEditing}
-              appearance="present"
-              data-testid={`project-list-item-title-input-${project.name}`}
-            />
+            // Stop the click from bubbling to the row's onClick — otherwise
+            // placing the cursor in the field also (re)selects the row.
+            <div onClick={(e: MouseEvent) => e.stopPropagation()}>
+              <TextInput
+                onChange={handleProjectNameChange}
+                onBlur={handleProjectNameBlur}
+                value={projectName}
+                autoFocus={isEditing}
+                appearance="present"
+                data-testid={`project-list-item-title-input-${project.name}`}
+              />
+            </div>
           )}
         </ProjectNameCol>
         {projectVisibility && (
@@ -177,6 +181,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
       {projectRemoveModalVisible && (
         <ProjectRemoveModal
           isVisible={projectRemoveModalVisible}
+          disabled={isRemovingProject}
           onClose={() => handleProjectRemoveModal(false)}
           onProjectRemove={() => handleProjectRemove(project.id)}
           data-testid={`project-list-item-remove-modal-${project.name}`}
