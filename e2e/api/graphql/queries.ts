@@ -185,3 +185,15 @@ export const GET_SCENE = `
     }
   }
 `;
+
+export const GET_PROJECT_IMPORT_STATUS = `
+  query GetProjectImportStatus($projectId: ID!) {
+    node(id: $projectId, type: PROJECT) {
+      id
+      ... on Project {
+        name
+        metadata { importStatus importResultLog }
+      }
+    }
+  }
+`;
