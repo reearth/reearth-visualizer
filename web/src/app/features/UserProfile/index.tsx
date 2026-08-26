@@ -168,6 +168,7 @@ const Profile: FC<ProfileProps> = ({
               />
             }
             menu={popupMenu}
+            width={160}
           />
         </PopupWrapper>
       </ProfileWrapper>

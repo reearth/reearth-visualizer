@@ -205,12 +205,25 @@ describe("useWorkspaceManagementMenu", () => {
     expect(mockWindowOpen).toHaveBeenCalledWith(externalUrl, "_blank");
   });
 
-  it("should always return accountMenuItems with project-header, account, and documents", () => {
+  it("should always return accountMenuItems with projects, account, and documents", () => {
     const { result } = renderHook(() => useWorkspaceManagementMenu({}));
 
     const ids = result.current.accountMenuItems.map(item => item.id);
-    expect(ids).toContain("project-header");
+    expect(ids).toContain("projects");
     expect(ids).toContain("account");
     expect(ids).toContain("documents");
+  });
+
+  it("should navigate to the workspace dashboard when projects is clicked", () => {
+    const { result } = renderHook(() =>
+      useWorkspaceManagementMenu({ workspaceId: "workspace-1" })
+    );
+
+    const projects = result.current.accountMenuItems.find(
+      item => item.id === "projects"
+    );
+    projects?.onClick?.(projects.id);
+
+    expect(mockNavigate).toHaveBeenCalledWith("/dashboard/workspace-1");
   });
 });

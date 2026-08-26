@@ -285,9 +285,17 @@ const PopupMenuWrapper = styled("div", {
   boxShadow: theme.shadow.popup,
   borderRadius: `${theme.radius.small}px`,
   border: `1px solid ${theme.outline.weaker}`,
-  width: extendContentWidth ? "100%" : width ? `${width}px` : "fit-content",
+  width: extendContentWidth
+    ? "100%"
+    : nested || !width
+      ? "fit-content"
+      : `${width}px`,
   minWidth: `${minWidth ?? DEFAULT_MIN_WIDTH}px`,
-  maxWidth: maxWidth ? `${maxWidth}px` : width ? undefined : `${DEFAULT_MAX_WIDTH}px`,
+  maxWidth: maxWidth
+    ? `${maxWidth}px`
+    : !nested && width
+      ? undefined
+      : `${DEFAULT_MAX_WIDTH}px`,
   maxHeight: "250px",
   overflowY: hasFooter ? css.overflow.hidden : css.overflow.auto,
   boxSizing: css.boxSizing.borderBox,

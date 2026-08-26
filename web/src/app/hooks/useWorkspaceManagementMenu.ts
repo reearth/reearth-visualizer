@@ -90,13 +90,13 @@ export default ({
   const accountMenuItems: PopupMenuItem[] = useMemo(
     () => [
       {
-        id: "project-header",
-        isHeader: true,
-        title: t("Project"),
+        id: "projects",
+        dataTestid: "projects",
+        title: t("Projects"),
         icon: "grid",
-        color: theme.content.main
+        color: theme.content.main,
+        onClick: () => navigate(`/dashboard/${workspaceId}`)
       },
-
       {
         id: "account",
         title: t("Account"),
@@ -119,7 +119,7 @@ export default ({
           )
       }
     ],
-    [t, theme.content.main, avatarMenuItems, lang]
+    [t, theme.content.main, avatarMenuItems, lang, navigate, workspaceId]
   );
 
   return {

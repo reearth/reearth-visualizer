@@ -82,7 +82,6 @@ const LeftSection: React.FC<Props> = ({
         id: "project-header",
         isHeader: true,
         title: t("Project"),
-        icon: "grid"
       },
       {
         id: "project-name",
@@ -152,14 +151,16 @@ const LeftSection: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Icon icon="logo" color={brandRed.dynamicRed} size={30} />
       <PopupMenu
         label={
-          <Icon
-            icon="caretDown"
-            size="small"
-            data-testid="profile-caretDownIcon"
-          />
+          <LogoTrigger>
+            <Icon icon="logo" color={brandRed.dynamicRed} size={30} />
+            <Icon
+              icon="caretDown"
+              size="small"
+              data-testid="profile-caretDownIcon"
+            />
+          </LogoTrigger>
         }
         menu={accountMenuItems}
         dataTestid="avatar-popupMenu"
@@ -211,6 +212,18 @@ const Wrapper = styled("div")(({ theme }) => ({
   alignItems: css.alignItems.center,
   height: 32,
   gap: theme.spacing.small
+}));
+
+const LogoTrigger = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.smallest,
+  padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
+  borderRadius: `${theme.radius.small}px`,
+  color: theme.content.weak,
+  "&:hover": {
+    backgroundColor: theme.bg[2]
+  }
 }));
 
 const StyledLink = styled(Link)<{ disabled?: boolean }>(
