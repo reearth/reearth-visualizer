@@ -14,6 +14,7 @@ type Props = {
   isVisible: boolean;
   projectName: string;
   disabled?: boolean;
+  dataTestid?: string;
   onClose: () => void;
   onProjectDelete: () => void;
 };
@@ -21,14 +22,20 @@ const ProjectDeleteModal: FC<Props> = ({
   isVisible,
   projectName,
   disabled,
+  dataTestid,
   onClose,
   onProjectDelete
 }) => {
   const t = useT();
   const [deleteInputName, setDeleteInputName] = useState("");
 
+  // An unnamed project would otherwise match an untouched input, enabling the
+  // destructive button without any confirmation typed.
+  const isNameConfirmed =
+    !!projectName && deleteInputName.trim() === projectName;
+
   return (
-    <Modal visible={isVisible} size="small">
+    <Modal visible={isVisible} size="small" dataTestid={dataTestid}>
       <ModalPanel
         title={t("Delete project")}
         onCancel={onClose}
@@ -43,7 +50,7 @@ const ProjectDeleteModal: FC<Props> = ({
             key="delete"
             title={t("I am sure I want to delete this project")}
             appearance="dangerous"
-            disabled={deleteInputName !== projectName || disabled}
+            disabled={!isNameConfirmed || disabled}
             onClick={onProjectDelete}
           />
         ]}

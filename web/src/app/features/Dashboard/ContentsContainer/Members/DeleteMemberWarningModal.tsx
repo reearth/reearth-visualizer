@@ -11,7 +11,7 @@ import { useT } from "@reearth/services/i18n/hooks";
 import { Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 
 type DeleteMemberWarningModalProps = {
   visible: boolean;
@@ -28,19 +28,32 @@ const DeleteMemberWarningModal: FC<DeleteMemberWarningModalProps> = ({
 }) => {
   const t = useT();
 
+  const [isRemoving, setIsRemoving] = useState(false);
   const { removeMemberFromWorkspace } = useWorkspaceMutations();
-  const onRemoveMember = useCallback(
-    (userId: string) => {
-      if (!userId || !workspace?.id) return;
-      removeMemberFromWorkspace({ workspaceId: workspace?.id, userId });
-    },
-    [workspace?.id, removeMemberFromWorkspace]
-  );
-  const handleRemoveMember = useCallback(() => {
-    if (!member?.user?.id) return;
-    onRemoveMember(member.user?.id);
-    onClose();
-  }, [member?.user?.id, onClose, onRemoveMember]);
+
+  const handleRemoveMember = useCallback(async () => {
+    const userId = member?.user?.id;
+    if (!userId || !workspace?.id || isRemoving) return;
+
+    setIsRemoving(true);
+    try {
+      // Awaited so the modal can't close over a removal that failed — previously
+      // it closed immediately and only a toast reported the failure.
+      const result = await removeMemberFromWorkspace({
+        workspaceId: workspace.id,
+        userId
+      });
+      if (result.status === "success") onClose();
+    } finally {
+      setIsRemoving(false);
+    }
+  }, [
+    member?.user?.id,
+    workspace?.id,
+    isRemoving,
+    removeMemberFromWorkspace,
+    onClose
+  ]);
 
   return (
     <Modal visible={visible} size="small">
@@ -56,8 +69,8 @@ const DeleteMemberWarningModal: FC<DeleteMemberWarningModalProps> = ({
             key="remove"
             title={t("Remove")}
             appearance="dangerous"
-            disabled={false}
-            onClick={() => handleRemoveMember()}
+            disabled={isRemoving}
+            onClick={handleRemoveMember}
           />
         ]}
         appearance="simple"
