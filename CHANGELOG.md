@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.22 - 2026-08-26
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Only touch the system tile when its widget mutation succeeds ([#2379](https://github.com/reearth/reearth-visualizer/pull/2379)) [`098877`](https://github.com/reearth/reearth-visualizer/commit/098877)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.22 ([#2393](https://github.com/reearth/reearth-visualizer/pull/2393)) [`83846a`](https://github.com/reearth/reearth-visualizer/commit/83846a)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Set no-cache headers on private project export downloads (SEC-04) ([#2360](https://github.com/reearth/reearth-visualizer/pull/2360)) [`7cb0f4`](https://github.com/reearth/reearth-visualizer/commit/7cb0f4)
+- Scope story lookup to the authorized scene in page mutations ([#2391](https://github.com/reearth/reearth-visualizer/pull/2391)) [`42b548`](https://github.com/reearth/reearth-visualizer/commit/42b548)
+- Require the internal token before trusting the gRPC user-id (SEC-03) ([#2392](https://github.com/reearth/reearth-visualizer/pull/2392)) [`4170bb`](https://github.com/reearth/reearth-visualizer/commit/4170bb)
+- Drop unused domains.domain branch from public project lookup (SCA-03) ([#2363](https://github.com/reearth/reearth-visualizer/pull/2363)) [`e18a81`](https://github.com/reearth/reearth-visualizer/commit/e18a81)
+- Finish REL-04 import status cutover, add duplicate-import guard [VIZ-DEV-65] ([#2335](https://github.com/reearth/reearth-visualizer/pull/2335)) [`e27e01`](https://github.com/reearth/reearth-visualizer/commit/e27e01)
+- Stop scene lock release from getting stuck on a canceled context (REL-03) ([#2371](https://github.com/reearth/reearth-visualizer/pull/2371)) [`1be23f`](https://github.com/reearth/reearth-visualizer/commit/1be23f)
+- Close pipe reader to prevent goroutine leak on publish upload failure (SCA-04) ([#2366](https://github.com/reearth/reearth-visualizer/pull/2366)) [`2a035e`](https://github.com/reearth/reearth-visualizer/commit/2a035e)
+- Fail closed on basic-auth metadata lookup errors for published pages (REL-02) ([#2372](https://github.com/reearth/reearth-visualizer/pull/2372)) [`459a2b`](https://github.com/reearth/reearth-visualizer/commit/459a2b)
+- Check workspace membership for private project access (SEC-03) ([#2359](https://github.com/reearth/reearth-visualizer/pull/2359)) [`330dc5`](https://github.com/reearth/reearth-visualizer/commit/330dc5)
+
+### server,web
+
+#### 🔧 Bug Fixes
+
+- Create the system tile&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s fields atomically with the item (REL-07) ([#2380](https://github.com/reearth/reearth-visualizer/pull/2380)) [`50d1cf`](https://github.com/reearth/reearth-visualizer/commit/50d1cf)
+
+### web,server
+
+#### 🚀 Features
+
+- Allow users to toggle water mask rendering on terrain ([#2373](https://github.com/reearth/reearth-visualizer/pull/2373)) [`2b91ab`](https://github.com/reearth/reearth-visualizer/commit/2b91ab)
+
 ## 1.0.0-beta.16.21 - 2026-08-19
 
 ### Web
