@@ -46,6 +46,17 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global pull.rebase false
+      - name: Sync release branch
+        # A re-run checks out the commit the run first started from, which is
+        # behind if an earlier attempt already pushed. Fast-forwarding to the
+        # current tip makes a re-run behave like a fresh dispatch. Tags come
+        # along so the tag check below sees what is already on the remote.
+        # ff-only on purpose: if the branch has diverged, stop and let someone
+        # look rather than quietly discarding whatever is here.
+        run: |
+          git fetch --tags --force origin release
+          git switch release
+          git merge --ff-only origin/release
       - id: changelog
         name: Generate CHANGELOG
         uses: reearth/changelog-action@86cb9d7a3727f3cb6afe36a1536fad61e9775287 # main
@@ -70,12 +81,50 @@ jobs:
         run: |
           rm CHANGELOG_latest.md
           git add CHANGELOG.md
-          git commit -am "$TAG"
-          git tag $TAG
-          git push --atomic origin release $TAG
+          # The changelog action is idempotent, so a re-run after a partial
+          # failure regenerates an identical CHANGELOG.md and leaves nothing to
+          # commit. That means the work is already done, not that it failed.
+          if git diff --cached --quiet; then
+            echo "CHANGELOG.md is already committed, skipping commit"
+          else
+            git commit -m "$TAG"
+          fi
+          # Reuse an existing tag, but only where it already points at this
+          # commit. Anything else is a real problem and should stop the release.
+          if git rev-parse -q --verify "refs/tags/$TAG" > /dev/null; then
+            # Peel to the commit, so an annotated tag created during a manual
+            # recovery compares as equal instead of resolving to its tag object.
+            if [ "$(git rev-parse "$TAG^{commit}")" != "$(git rev-parse "HEAD^{commit}")" ]; then
+              echo "::error::$TAG already exists and points at a different commit"
+              exit 1
+            fi
+            echo "tag $TAG already exists at this commit, skipping tag"
+          else
+            git tag "$TAG"
+          fi
+          # Already-pushed refs make this a no-op rather than a failure.
+          git push --atomic origin release "$TAG"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Commit & push to main
-        run: git switch main && git cherry-pick release && git push
+        run: |
+          git switch main
+          git pull --ff-only origin main
+          if git diff --quiet release -- CHANGELOG.md; then
+            echo "main already has the release CHANGELOG, skipping cherry-pick"
+          else
+            git cherry-pick release
+          fi
+          # This push has failed with an intermittent 500 from GitHub, so retry
+          # once, which also covers someone else pushing to main in between. If
+          # the second attempt fails too, fail the job rather than keep trying:
+          # the changelog can be brought to main with an ordinary pull request,
+          # and a real problem is better seen straight away.
+          if ! git push origin main; then
+            echo "push to main failed, retrying once"
+            sleep 5
+            git pull --rebase origin main
+            git push origin main
+          fi
 
   promote-to-version:
     needs: release
