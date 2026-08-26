@@ -24,7 +24,7 @@ import { keyframes, styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-import { Project } from "../../type";
+import { Project } from "../Dashboard/type";
 
 const VALIDATION_DEBOUNCE_MS = 600;
 
@@ -257,14 +257,14 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
             )}
             <FormInputWrapper>
               <TextAreaField
-                title={t("Description")}
+                title={t("About")}
                 value={formState.description}
                 placeholder={t("Write down your content")}
                 data-testid="project-description-input"
                 rows={4}
                 onChange={(value) => handleFieldChange("description", value)}
                 description={t(
-                  "Provide a short summary (within 200 characters) describing the purpose or key features of this project."
+                  "Provide a short summary (within 500 characters) describing the purpose or key features of this project."
                 )}
               />
             </FormInputWrapper>
