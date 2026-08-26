@@ -1173,6 +1173,13 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 	storyJSON := sceneJSON.Story
 	result := map[string]any{}
 
+	// story is omitempty in the export format, so a project exported without a
+	// story has no story key at all. Dereferencing it panicked partway through
+	// the import, once the project, scene and layers had already been written.
+	if storyJSON == nil {
+		return result, nil
+	}
+
 	pages := []*storytelling.Page{}
 	resultPages := map[string]any{}
 	for pIndex, pageJSON := range storyJSON.Pages {
