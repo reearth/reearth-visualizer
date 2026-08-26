@@ -92,7 +92,9 @@ jobs:
           # Reuse an existing tag, but only where it already points at this
           # commit. Anything else is a real problem and should stop the release.
           if git rev-parse -q --verify "refs/tags/$TAG" > /dev/null; then
-            if [ "$(git rev-parse "$TAG")" != "$(git rev-parse HEAD)" ]; then
+            # Peel to the commit, so an annotated tag created during a manual
+            # recovery compares as equal instead of resolving to its tag object.
+            if [ "$(git rev-parse "$TAG^{commit}")" != "$(git rev-parse "HEAD^{commit}")" ]; then
               echo "::error::$TAG already exists and points at a different commit"
               exit 1
             fi
