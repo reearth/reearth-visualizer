@@ -1,6 +1,8 @@
 # Retags an already-built image under a new tag via a registry-side manifest
 # copy (no rebuild, no pull/push of image layers). Used by stage.yml and
 # release.yml to promote nightly -> rc -> a version tag without re-running CI.
+# Can also be run by hand, which is useful when a release run failed after the
+# images were built but before they were promoted.
 name: promote-images
 on:
   workflow_call:
@@ -9,6 +11,16 @@ on:
         type: string
         required: true
       to_tag:
+        type: string
+        required: true
+  workflow_dispatch:
+    inputs:
+      from_tag:
+        description: 'Existing tag to copy from, for example nightly or rc'
+        type: string
+        required: true
+      to_tag:
+        description: 'New tag to create, for example rc or 1.0.0-beta.16.22'
         type: string
         required: true
 
