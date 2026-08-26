@@ -2,6 +2,7 @@ package gql
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
@@ -9,6 +10,7 @@ import (
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
 
@@ -70,4 +72,74 @@ func TestUserLoader_Fetch_BatchesWithClient(t *testing.T) {
 			t.Errorf("expected user id %s at index %d, got %s", id, i, users[i].ID)
 		}
 	}
+}
+
+// TestUserLoader_SearchUser_NotFoundIsEmptyResult covers a search that matches
+// nobody. That is a normal outcome, but the accounts client reports it as an
+// error, and returning that error makes the web client raise a global error
+// notification carrying the raw message instead of letting the invite modal
+// show its own "user not found" state.
+func TestUserLoader_SearchUser_NotFoundIsEmptyResult(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockUserRepo := userMock.NewMockRepo(ctrl)
+	mockUserRepo.EXPECT().
+		FindByAlias(gomock.Any(), "nobody").
+		Return(nil, errors.New("Message: not found, Locations: [], Extensions: map[], Path: [findUserByAlias]")).
+		Times(1)
+
+	loader := NewUserLoader(&gqlclient.Client{UserRepo: mockUserRepo}, nil)
+
+	u, err := loader.SearchUser(context.Background(), "nobody")
+
+	assert.NoError(t, err)
+	assert.Nil(t, u)
+}
+
+// TestUserLoader_SearchUser_RealErrorStillPropagates guards the narrowness of
+// the check above: anything that is not a missing record must still surface.
+func TestUserLoader_SearchUser_RealErrorStillPropagates(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	wantErr := errors.New("unauthorized")
+	mockUserRepo := userMock.NewMockRepo(ctrl)
+	mockUserRepo.EXPECT().
+		FindByAlias(gomock.Any(), "someone").
+		Return(nil, wantErr).
+		Times(1)
+
+	loader := NewUserLoader(&gqlclient.Client{UserRepo: mockUserRepo}, nil)
+
+	u, err := loader.SearchUser(context.Background(), "someone")
+
+	assert.ErrorIs(t, err, wantErr)
+	assert.Nil(t, u)
+}
+
+func TestUserLoader_SearchUser_ReturnsTheMatch(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	uid := accountsID.NewUserID()
+	found, err := accountsUser.New().ID(uid).Name("Someone").Email("someone@example.com").Workspace(accountsID.NewWorkspaceID()).Build()
+	if err != nil {
+		t.Fatalf("failed to build user: %v", err)
+	}
+
+	mockUserRepo := userMock.NewMockRepo(ctrl)
+	// The keyword is trimmed before it reaches the repo.
+	mockUserRepo.EXPECT().
+		FindByAlias(gomock.Any(), "someone").
+		Return(found, nil).
+		Times(1)
+
+	loader := NewUserLoader(&gqlclient.Client{UserRepo: mockUserRepo}, nil)
+
+	u, err := loader.SearchUser(context.Background(), "  someone  ")
+
+	assert.NoError(t, err)
+	assert.NotNil(t, u)
+	assert.Equal(t, "Someone", u.Name)
 }
