@@ -1,7 +1,6 @@
 package interactor
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -643,6 +642,8 @@ func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]b
 		}
 	}
 
+	idReplacements := make([]string, 0, len(sceneJSON.Widgets)*2)
+
 	for _, widgetJSON := range sceneJSON.Widgets {
 
 		pluginID, extensionID, extension, err := i.getWidgePluginWithID(ctx, widgetJSON.PluginID, widgetJSON.ExtensionID, &filter)
@@ -667,7 +668,7 @@ func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]b
 		newWidgetID := id.NewWidgetID()
 
 		// Replace new widget id
-		*data = bytes.Replace(*data, []byte(widgetJSON.ID), []byte(newWidgetID.String()), -1)
+		idReplacements = append(idReplacements, widgetJSON.ID, newWidgetID.String())
 
 		widget, err := scene.NewWidget(
 			newWidgetID,
@@ -684,6 +685,8 @@ func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]b
 
 		sce.Widgets().Add(widget)
 	}
+
+	replaceIDsInPlace(data, idReplacements)
 
 	alignSystem, err := builder.ParserWidgetAlignSystem(data)
 	if err != nil {
