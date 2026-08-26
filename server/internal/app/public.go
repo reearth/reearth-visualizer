@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"crypto/subtle"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -259,7 +260,11 @@ func PublishedAuthMiddleware() echo.MiddlewareFunc {
 		Validator: func(user string, password string, c echo.Context) (bool, error) {
 			md, ok := c.Request().Context().Value(key).(interfaces.PublishedMetadata)
 			if !ok {
-				return true, echo.ErrNotFound
+				// No metadata means the Skipper's own lookup failed (fail
+				// closed, REL-02) rather than genuinely finding no project --
+				// treat it as invalid credentials so this consistently
+				// produces a 401 challenge instead of a confusing 404.
+				return false, nil
 			}
 			return !md.IsBasicAuthActive || subtle.ConstantTimeCompare([]byte(user), []byte(md.BasicAuthUsername)) == 1 && subtle.ConstantTimeCompare([]byte(password), []byte(md.BasicAuthPassword)) == 1, nil
 		},
@@ -276,7 +281,15 @@ func PublishedAuthMiddleware() echo.MiddlewareFunc {
 
 			md, err := contr.Metadata(c.Request().Context(), name)
 			if err != nil {
-				return true
+				// Skipping here means "run the next handler without checking
+				// a password" -- only safe when we positively know there's
+				// nothing to password-protect (name isn't a project at all).
+				// Any other error (e.g. a transient Mongo failure) must fail
+				// closed: the Validator above has no metadata to check
+				// against and forces a basic-auth challenge instead, so the
+				// password gate itself never gets bypassed (REL-02,
+				// compliance scan).
+				return errors.Is(err, rerror.ErrNotFound)
 			}
 
 			c.SetRequest(c.Request().WithContext(context.WithValue(c.Request().Context(), key, md)))
