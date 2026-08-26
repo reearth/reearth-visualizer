@@ -476,6 +476,8 @@ func (i *Storytelling) uploadPublishStory(ctx context.Context, story *storytelli
 
 	// publish
 	r, w := io.Pipe()
+	// See the matching comment in Project.uploadPublishScene.
+	defer func() { _ = r.Close() }()
 
 	// Build
 	go func() {
@@ -606,7 +608,9 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
-	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	// Scope the lookup to the authorized scene so the story resolves consistently
+	// with the permission check above.
+	story, err := i.storytellingRepo.Filtered(Filter(inp.SceneID)).FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -676,7 +680,9 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
-	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	// Scope the lookup to the authorized scene so the story resolves consistently
+	// with the permission check above.
+	story, err := i.storytellingRepo.Filtered(Filter(inp.SceneID)).FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
 	}
