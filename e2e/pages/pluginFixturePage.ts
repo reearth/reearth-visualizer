@@ -53,6 +53,17 @@ export class PluginFixturePage {
     return this.page;
   }
 
+  private get baseUrl(): string {
+    const url = process.env.REEARTH_WEB_E2E_BASEURL?.replace(/\/$/, "");
+    if (!url) {
+      throw new Error(
+        "[PluginFixture] REEARTH_WEB_E2E_BASEURL is not set. " +
+          "Add it to your .env file and restart the test run."
+      );
+    }
+    return url;
+  }
+
   private get gql(): GraphQLClient {
     if (!this.client) {
       throw new Error(
@@ -112,12 +123,11 @@ export class PluginFixturePage {
    * interaction. Without it, sceneId is null and uploadPlugin silently returns.
    */
   async uploadPluginZip(projectId: string): Promise<void> {
-    const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL?.replace(/\/$/, "");
     console.log(
       `[PluginFixture] Navigating to plugin settings for project ${projectId}`
     );
     await this.ui.goto(
-      `${baseUrl}/settings/projects/${projectId}/plugins`,
+      `${this.baseUrl}/settings/projects/${projectId}/plugins`,
       { waitUntil: "networkidle" }
     );
 
@@ -178,11 +188,10 @@ export class PluginFixturePage {
     sceneId: string,
     widgetName: string
   ): Promise<void> {
-    const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL?.replace(/\/$/, "");
     console.log(
       `[PluginFixture] Navigating to editor widgets tab for scene ${sceneId}`
     );
-    await this.ui.goto(`${baseUrl}/scene/${sceneId}/widgets`, {
+    await this.ui.goto(`${this.baseUrl}/scene/${sceneId}/widgets`, {
       waitUntil: "domcontentloaded"
     });
 
@@ -238,8 +247,7 @@ export class PluginFixturePage {
   }
 
   async navigateToEditor(sceneId: string): Promise<void> {
-    const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL?.replace(/\/$/, "");
-    await this.ui.goto(`${baseUrl}/scene/${sceneId}/map`, {
+    await this.ui.goto(`${this.baseUrl}/scene/${sceneId}/map`, {
       waitUntil: "domcontentloaded"
     });
   }
@@ -303,6 +311,12 @@ export function createPluginClient(
   const apiTokenPath = path.join(__dirname, "../.auth/api-token.json");
   const storagePath = path.join(__dirname, "../.auth/user.json");
   const apiUrl = process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "");
+  if (!apiUrl) {
+    throw new Error(
+      "createPluginClient: REEARTH_E2E_API_URL is not set. " +
+        "Add it to your .env file and restart the test run."
+    );
+  }
   const endpoint = `${apiUrl}/api/graphql`;
 
   if (fs.existsSync(apiTokenPath)) {

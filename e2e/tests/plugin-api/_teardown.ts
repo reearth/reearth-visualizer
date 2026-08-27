@@ -35,15 +35,17 @@ teardown("delete shared plugin project", async ({ request }) => {
     return;
   }
 
-  const client = createPluginClient(request);
-  // page is not needed for teardown (only client.mutate is called)
-  const fixture = new PluginFixturePage(null, client);
-  await fixture.teardown(projectId);
-
   try {
-    fs.unlinkSync(STATE_PATH);
-  } catch {
-    console.warn("[plugin-api-teardown] Could not remove state file — continuing.");
+    const client = createPluginClient(request);
+    // page is not needed for teardown (only client.mutate is called)
+    const fixture = new PluginFixturePage(null, client);
+    await fixture.teardown(projectId);
+    console.log(`[plugin-api-teardown] Deleted project ${projectId}`);
+  } finally {
+    try {
+      fs.unlinkSync(STATE_PATH);
+    } catch {
+      console.warn("[plugin-api-teardown] Could not remove state file — continuing.");
+    }
   }
-  console.log(`[plugin-api-teardown] Deleted project ${projectId}`);
 });
