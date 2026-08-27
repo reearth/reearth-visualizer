@@ -13,10 +13,6 @@
  *   npx playwright test --project=chromium-visual \
  *     tests/plugin-api/camera.visual.spec.ts --update-snapshots
  *
- * maxDiffPixelRatio is NOT set here. Calibrate it after running the suite
- * ~20 times on CI and observing the real max diff, then set it in the
- * chromium-visual project's snapshotPathTemplate or expect config.
- *
  * NOTE: Add the chromium-visual project to playwright.config.ts when the
  * GPU runner is available:
  *
@@ -33,9 +29,9 @@
  *     }
  *   }
  *
- * Prerequisite: plugin-api-setup project must have run (uploads shared zip,
- * writes .auth/plugin-project.json). Run together via:
- *   npx playwright test tests/plugin-api/ --project=plugin-api
+ * Prerequisite: plugin-api-setup project must have run (uploads zip, installs
+ * widget, writes .auth/plugin-project.json). Triggered automatically via:
+ *   npx playwright test --project=plugin-api
  */
 
 import { CameraAssertions } from "@pages/cameraAssertions";
@@ -43,8 +39,7 @@ import { CesiumViewerPage } from "@pages/cesiumViewerPage";
 import { CesiumVisualAssertions } from "@pages/cesiumVisualAssertions";
 import {
   PluginFixturePage,
-  ProjectIds,
-  createPluginClient
+  ProjectIds
 } from "@pages/pluginFixturePage";
 import { test, BrowserContext, Page } from "@playwright/test";
 import { createIAPContext } from "@utils/iap-auth";
@@ -69,47 +64,31 @@ test.describe("Camera Plugin API — visual snapshots (Chromium)", () => {
   let cameraAssertions: CameraAssertions;
   let cesiumVisual: CesiumVisualAssertions;
   let ids: ProjectIds;
-  let widgetId: string;
 
-  test.beforeAll(async ({ browser, request }) => {
+  test.beforeAll(async ({ browser }) => {
     context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL ?? "", {
       storageState: STORAGE_STATE
     });
     page = await context.newPage();
 
-    const client = createPluginClient(request);
-    pluginFixture = new PluginFixturePage(page, client);
+    // No GraphQL client needed — widget is already installed by plugin-api-setup
+    pluginFixture = new PluginFixturePage(page);
     cesiumViewer = new CesiumViewerPage(page);
     cameraAssertions = new CameraAssertions(page);
     cesiumVisual = new CesiumVisualAssertions(page);
 
-    // Read the shared project state written by plugin-api-setup
     ids = PluginFixturePage.readSharedState();
-
-    // Add this suite's widget to the shared scene via UI, return its widgetId
-    widgetId = await pluginFixture.addWidget(
-      ids.sceneId,
-      "Camera Test Widget",
-      "camera-test"
-    );
 
     await pluginFixture.navigateToEditor(ids.sceneId);
     await cesiumViewer.waitForGlobeReady();
     await pluginFixture.waitForIframeReady("Set Tokyo");
 
-    // Freeze Timeline and disable Sky animation once for the entire suite
     await cesiumVisual.stabilizeScene();
-
     await cameraAssertions.resetToBaseline();
-    // Wait for the canvas to settle at baseline (no testInfo in beforeAll)
     await cesiumVisual.waitForCanvasStable(process.env.CI ? 90_000 : 30_000);
   });
 
-  test.afterAll(async ({ request }) => {
-    if (widgetId && ids?.sceneId) {
-      const teardown = new PluginFixturePage(null as any, createPluginClient(request));
-      await teardown.removeWidget(ids.sceneId, widgetId);
-    }
+  test.afterAll(async () => {
     await context.close().catch(() => {});
   });
 
@@ -130,10 +109,7 @@ test.describe("Camera Plugin API — visual snapshots (Chromium)", () => {
     await pluginFixture.triggerSetTokyo();
     await page.waitForTimeout(800);
 
-    await cesiumVisual.expectCanvasMatchesSnapshot(
-      "camera-tokyo.png",
-      testInfo
-    );
+    await cesiumVisual.expectCanvasMatchesSnapshot("camera-tokyo.png", testInfo);
   });
 
   test(

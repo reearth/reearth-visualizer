@@ -27,42 +27,53 @@ export type ProjectIds = {
 };
 
 /**
- * Handles fixture plugin lifecycle for plugin API E2E tests.
+ * Handles the shared plugin fixture lifecycle for plugin API E2E tests.
  *
- * Zip upload is UI-driven (once, via _setup.ts). Each API test suite
- * adds/removes its own widget via GraphQL (ADD_WIDGET / REMOVE_WIDGET).
+ * Design: one widget is installed once per run (by _setup.ts) and persists
+ * for the entire test session. Individual test suites never add or remove widgets.
  *
  * Usage pattern:
- *   _setup.ts:    fixture.createProjectAndScene() + uploadPluginZip()
- *   each suite:   fixture.addWidget() in beforeAll, removeWidget() in afterAll
+ *   _setup.ts    — createProjectAndScene() → uploadPluginZip() → addWidget()
+ *   each suite   — new PluginFixturePage(page) → readSharedState() → navigate → test
+ *   _teardown.ts — teardown(projectId) deletes the project (widget goes with it)
  */
 export class PluginFixturePage {
   constructor(
     private page: Page,
-    private client: GraphQLClient
+    private client?: GraphQLClient
   ) {}
+
+  private get gql(): GraphQLClient {
+    if (!this.client) {
+      throw new Error(
+        "[PluginFixture] GraphQL client not provided. " +
+          "Pass createPluginClient(request) to the PluginFixturePage constructor."
+      );
+    }
+    return this.client;
+  }
 
   /**
    * Locates the active plugin widget iframe.
    *
    * Re:Earth renders plugin UI in Zushi iframes with no name/title/id.
-   * Each test suite ensures only ONE widget is active at a time (add in
-   * beforeAll, remove in afterAll), so this selector is unambiguous.
+   * One widget is permanently installed per shared project, so this
+   * selector is always unambiguous within a test suite's browser context.
    */
   get iframe(): FrameLocator {
     return this.page.frameLocator(".zushi-ui-surface-container iframe");
   }
 
   /**
-   * Creates a project and scene via GraphQL. Shared across all plugin
-   * API suites — called once from _setup.ts.
+   * Creates a project and scene via GraphQL.
+   * Called once from _setup.ts — shared across all API test suites.
    */
   async createProjectAndScene(projectName: string): Promise<ProjectIds> {
-    const { data: me } = await this.client.query<{
+    const { data: me } = await this.gql.query<{
       me: { myWorkspaceId: string };
     }>(GET_ME);
 
-    const { data: projData } = await this.client.mutate<{
+    const { data: projData } = await this.gql.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
@@ -74,20 +85,18 @@ export class PluginFixturePage {
     });
     const projectId = projData.createProject.project.id;
 
-    const { data: sceneData } = await this.client.mutate<{
+    const { data: sceneData } = await this.gql.mutate<{
       createScene: { scene: { id: string } };
     }>(CREATE_SCENE, { input: { projectId } });
     const sceneId = sceneData.createScene.scene.id;
 
-    // pluginId matches the `id` field in reearth-api-test/reearth.yml
     const pluginId = "reearth-api-test-plugin";
-
     return { projectId, sceneId, pluginId };
   }
 
   /**
    * Uploads the unified plugin zip to the project via the real UI.
-   * Called once from _setup.ts — all API test suites share the result.
+   * Called once from _setup.ts.
    *
    * Uses "networkidle" so Apollo Client's scene query finishes before
    * interaction. Without it, sceneId is null and uploadPlugin silently returns.
@@ -102,30 +111,19 @@ export class PluginFixturePage {
       { waitUntil: "networkidle" }
     );
 
-    console.log(
-      `[PluginFixture] Waiting for project-settings-tab-plugins to be visible`
-    );
     await this.page
       .getByTestId("project-settings-tab-plugins")
       .waitFor({ state: "visible", timeout: 15_000 });
 
-    console.log(`[PluginFixture] Clicking Personal Installed tab`);
     await this.page.getByTestId("tab-Personal").click();
 
-    console.log(
-      `[PluginFixture] Triggering file chooser for zip: ${PLUGIN_ZIP}`
-    );
+    console.log(`[PluginFixture] Uploading zip: ${PLUGIN_ZIP}`);
     const [fileChooser] = await Promise.all([
       this.page.waitForEvent("filechooser"),
       this.page.getByText("Zip file from PC").click()
     ]);
     await fileChooser.setFiles(PLUGIN_ZIP);
 
-    // Wait for the plugin name to appear in the list (not the toast, which
-    // disappears in ~3s and causes race conditions).
-    console.log(
-      `[PluginFixture] Waiting for "ReEarth API Test" to appear in installed list`
-    );
     await this.page
       .getByText("ReEarth API Test", { exact: true })
       .waitFor({ state: "visible", timeout: 30_000 });
@@ -133,12 +131,12 @@ export class PluginFixturePage {
   }
 
   /**
-   * Adds a widget instance via the UI (Add Widget popup), then queries the
-   * scene to return the new widgetId. Callers must pass it to removeWidget()
-   * in afterAll.
+   * Adds the unified widget to the scene via the UI editor, then returns its
+   * widgetId via GET_SCENE_WIDGETS. Called once from _setup.ts — the widget
+   * persists for the lifetime of the shared project.
    *
-   * @param sceneId     - from PluginFixturePage.readSharedState()
-   * @param widgetName  - display name in Add Widget popup (reearth.yml extension.name)
+   * @param sceneId     - scene to add the widget to
+   * @param widgetName  - display name in the Add Widget popup (reearth.yml extension.name)
    * @param extensionId - yml extension id, used to locate the widget after add
    */
   async addWidget(
@@ -148,8 +146,7 @@ export class PluginFixturePage {
   ): Promise<string> {
     await this.addWidgetFromEditorUI(sceneId, widgetName);
 
-    // Find the widget by extensionId — more reliable than a before/after diff
-    const { data } = await this.client.query<{
+    const { data } = await this.gql.query<{
       node: { widgets: { id: string; extensionId: string }[] };
     }>(GET_SCENE_WIDGETS, { sceneId });
 
@@ -181,16 +178,16 @@ export class PluginFixturePage {
 
     // Panel uses camelCase dataTestid prop — outer testid is not in DOM;
     // use "widget-manager-wrapper" from the inner Wrapper styled-div instead.
-    console.log(`[PluginFixture] Waiting for widget-manager-wrapper`);
     await this.page
       .getByTestId("widget-manager-wrapper")
       .waitFor({ state: "visible", timeout: 60_000 });
 
     // Sidebar nav also has role="menu" — must scope to floating-ui popup attr.
-    console.log(`[PluginFixture] Clicking add-widget-button`);
     await this.page.getByTestId("add-widget-button").click();
 
-    const popupMenu = this.page.locator('[role="menu"][data-floating-ui-focusable]');
+    const popupMenu = this.page.locator(
+      '[role="menu"][data-floating-ui-focusable]'
+    );
     await popupMenu.waitFor({ state: "visible", timeout: 10_000 });
 
     console.log(`[PluginFixture] Clicking "${widgetName}" menuitem`);
@@ -205,13 +202,12 @@ export class PluginFixturePage {
   }
 
   /**
-   * Removes a widget from the shared scene via GraphQL.
-   * Called in each suite's afterAll so the next suite starts with a clean scene.
-   * Errors are swallowed — teardown must never break afterAll.
+   * Removes a widget via GraphQL. Not used in normal test flow (widget persists
+   * for the entire run). Kept for ad-hoc cleanup if needed.
    */
   async removeWidget(sceneId: string, widgetId: string): Promise<void> {
     console.log(`[PluginFixture] Removing widget: ${widgetId}`);
-    await this.client
+    await this.gql
       .mutate(REMOVE_WIDGET, { input: { type: "DESKTOP", sceneId, widgetId } })
       .catch(err =>
         console.warn(`[PluginFixture] removeWidget failed (non-fatal): ${err}`)
@@ -223,10 +219,10 @@ export class PluginFixturePage {
    * Called once from _teardown.ts. Errors are swallowed.
    */
   async teardown(projectId: string): Promise<void> {
-    await this.client
+    await this.gql
       .mutate(UPDATE_PROJECT, { input: { projectId, deleted: true } })
       .catch(() => {});
-    await this.client
+    await this.gql
       .mutate(DELETE_PROJECT, { input: { projectId } })
       .catch(() => {});
   }
@@ -240,7 +236,7 @@ export class PluginFixturePage {
 
   /**
    * Waits for the widget iframe to mount and a specific button to be visible.
-   * Pass the first button text from the widget's HTML (e.g. "Set Tokyo").
+   * Pass the first button text that the spec interacts with (e.g. "Set Tokyo").
    */
   async waitForIframeReady(readyButtonText = "Set Tokyo"): Promise<void> {
     await this.iframe
@@ -279,7 +275,7 @@ export class PluginFixturePage {
 }
 
 /**
- * Creates a GraphQLClient for use in browser-test beforeAll hooks.
+ * Creates a GraphQLClient for use in _setup.ts and _teardown.ts.
  * Reads auth token from .auth/api-token.json (written by api-setup project)
  * or falls back to extracting the Auth0 access_token from .auth/user.json.
  */

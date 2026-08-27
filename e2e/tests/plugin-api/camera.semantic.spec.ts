@@ -12,17 +12,16 @@
  * These tests do NOT do pixel comparison (that is camera.visual.spec.ts).
  * They confirm the camera API renders the globe at the expected location.
  *
- * Prerequisite: plugin-api-setup project must have run (uploads shared zip,
- * writes .auth/plugin-project.json). Run together via:
- *   npx playwright test tests/plugin-api/ --project=plugin-api
+ * Prerequisite: plugin-api-setup project must have run (uploads zip, installs
+ * widget, writes .auth/plugin-project.json). Triggered automatically via:
+ *   npx playwright test --project=plugin-api
  */
 
 import { CameraAssertions } from "@pages/cameraAssertions";
 import { CesiumViewerPage } from "@pages/cesiumViewerPage";
 import {
   PluginFixturePage,
-  ProjectIds,
-  createPluginClient
+  ProjectIds
 } from "@pages/pluginFixturePage";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 import { createIAPContext } from "@utils/iap-auth";
@@ -46,51 +45,32 @@ test.describe("Camera Plugin API — semantic (webkit)", () => {
   let cesiumViewer: CesiumViewerPage;
   let cameraAssertions: CameraAssertions;
   let ids: ProjectIds;
-  let widgetId: string;
 
-  test.beforeAll(async ({ browser, request }) => {
+  test.beforeAll(async ({ browser }) => {
     context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL ?? "", {
       storageState: STORAGE_STATE
     });
     page = await context.newPage();
 
-    const client = createPluginClient(request);
-    pluginFixture = new PluginFixturePage(page, client);
+    // No GraphQL client needed — widget is already installed by plugin-api-setup
+    pluginFixture = new PluginFixturePage(page);
     cesiumViewer = new CesiumViewerPage(page);
     cameraAssertions = new CameraAssertions(page);
 
-    // Read the shared project state written by plugin-api-setup
     ids = PluginFixturePage.readSharedState();
 
-    // Add this suite's widget to the shared scene via UI, return its widgetId
-    widgetId = await pluginFixture.addWidget(
-      ids.sceneId,
-      "Camera Test Widget",
-      "camera-test"
-    );
-
-    // Navigate to the editor and wait for the globe and widget iframe
     await pluginFixture.navigateToEditor(ids.sceneId);
     await cesiumViewer.waitForGlobeReady();
     await pluginFixture.waitForIframeReady("Set Tokyo");
-
-    // Establish a known camera baseline after the editor loads
     await cameraAssertions.resetToBaseline();
   });
 
-  test.afterAll(async ({ request }) => {
-    // Use afterAll's own request fixture — beforeAll's request cannot be reused here.
-    // removeWidget only calls this.client, so page can be null.
-    if (widgetId && ids?.sceneId) {
-      const teardown = new PluginFixturePage(null as any, createPluginClient(request));
-      await teardown.removeWidget(ids.sceneId, widgetId);
-    }
+  test.afterAll(async () => {
     await context.close().catch(() => {});
-    // Note: the shared project is deleted by plugin-api-teardown
+    // Shared project is deleted by plugin-api-teardown — nothing to clean up here.
   });
 
   test.beforeEach(async () => {
-    // Reset to a known camera state before each test to prevent state bleed
     await cameraAssertions.resetToBaseline();
   });
 
@@ -100,8 +80,6 @@ test.describe("Camera Plugin API — semantic (webkit)", () => {
       description: "PLUGIN-CAM-000"
     });
 
-    // Smoke test: run first in serial mode so iframe mount failures produce
-    // a clear message instead of confusing "button not found" errors downstream.
     await expect(
       pluginFixture.iframe.getByRole("button", { name: "Set Tokyo" })
     ).toBeVisible();
@@ -120,12 +98,8 @@ test.describe("Camera Plugin API — semantic (webkit)", () => {
     });
 
     await pluginFixture.triggerSetTokyo();
-
-    // setView is instant — wait one frame for Cesium to apply the camera update
     await page.waitForTimeout(800);
 
-    // Primary assertion: getGlobeIntersection proves the camera is actually
-    // looking at Tokyo on the rendered globe (not just internal state)
     await cameraAssertions.expectViewCenterNear(35.681, 139.767, 2);
   });
 
@@ -137,7 +111,6 @@ test.describe("Camera Plugin API — semantic (webkit)", () => {
 
     await pluginFixture.triggerFlyToSydney();
 
-    // flyTo has a 1s animation — poll until position converges
     await cameraAssertions.waitUntilNear(
       -33.87,
       151.21,

@@ -2,7 +2,7 @@ id: reearth-api-test-plugin
 name: ReEarth API Test
 version: 1.0.0
 extensions:
-  - id: camera-test
+  - id: reearth-api-test
     type: widget
-    name: Camera Test Widget
-    description: E2E fixture widget for Camera API testing
+    name: ReEarth API Test Widget
+    description: Unified E2E fixture widget for all Plugin API tests

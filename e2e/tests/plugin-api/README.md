@@ -1,81 +1,166 @@
-# Plugin API E2E Tests
+# Plugin API E2E Testing
 
-Reference guide for writing new plugin API tests. The camera tests are the reference implementation — follow the same pattern for every new API.
+> End-to-end tests for the Re:Earth Plugin JavaScript API.
+> This document covers the full architecture, how to run existing tests, and the
+> complete step-by-step process for adding a new API test suite.
+
+---
+
+## Overview
+
+The Plugin API E2E suite verifies that plugin widgets can call `reearth.*` APIs
+and that those calls produce observable changes in the Cesium engine. The
+infrastructure is designed so:
+
+- **One plugin upload per run** — the unified zip is uploaded once at startup
+- **One widget on the scene** — installed once, shared by all suites
+- **Zero widget management per suite** — test files only navigate and assert
+- **Scale by adding a fragment** — new APIs require a new JS fragment file and
+  a new spec file; nothing else changes
 
 ---
 
 ## Architecture
 
-One shared project and one zip upload per test run. Each API suite adds and removes its own widget.
+```
+e2e/fixtures/plugins/reearth-api-test/
+  camera-test.js          ← fragment: Camera API buttons + handlers
+  layers-test.js          ← fragment: Layers API buttons + handlers (future)
+  build-plugin.js         ← build script: combines all fragments
+  reearth-api-test.js     ← GENERATED — do not edit directly
+  reearth.yml             ← single extension: reearth-api-test
+
+e2e/fixtures/plugins/
+  reearth-api-test.zip    ← committed zip: reearth.yml + reearth-api-test.js
+
+e2e/tests/plugin-api/
+  _setup.ts               ← Playwright setup: create project, upload zip, add widget
+  _teardown.ts            ← Playwright teardown: delete shared project
+  camera.semantic.spec.ts ← Camera API semantic tests
+  camera.visual.spec.ts   ← Camera API visual snapshot tests (future GPU runner)
+  README.md               ← this file
+
+e2e/pages/
+  pluginFixturePage.ts    ← PluginFixturePage class + createPluginClient helper
+  cameraAssertions.ts     ← Camera-specific assertion helpers
+  cesiumVisualAssertions.ts ← Canvas snapshot assertion helpers
+```
+
+### Full Run Flow
 
 ```
-plugin-api-setup (_setup.ts)  — runs once
-  → GraphQL: create project + scene
-  → UI: upload reearth-api-test.zip
-  → writes .auth/plugin-project.json { projectId, sceneId, pluginId }
-
-plugin-api project (all [^_]*.spec.ts files)  — depends on setup
-  camera.semantic.spec.ts:
-    beforeAll → addWidget("camera-test") → navigate to map → waitForIframeReady
-    tests → camera API assertions
-    afterAll → removeWidget(widgetId)
-
-  layer.semantic.spec.ts (future, same pattern):
-    beforeAll → addWidget("layers-test") → ...
-    afterAll → removeWidget(widgetId)
-
-plugin-api-teardown (_teardown.ts)  — auto-runs after plugin-api
-  → GraphQL: delete shared project
-  → removes .auth/plugin-project.json
+Playwright runs --project=plugin-api
+│
+├── [plugin-api-setup] _setup.ts
+│     1. GraphQL: CREATE_PROJECT → projectId
+│     2. GraphQL: CREATE_SCENE   → sceneId
+│     3. UI: upload reearth-api-test.zip → installs "ReEarth API Test" plugin
+│     4. UI: add "ReEarth API Test Widget" → widget on scene (permanent)
+│     5. Write { projectId, sceneId } → .auth/plugin-project.json
+│
+├── [plugin-api] camera.semantic.spec.ts
+│     beforeAll:
+│       readSharedState()    → { sceneId }
+│       navigateToEditor()   → /scene/{sceneId}/map
+│       waitForGlobeReady()
+│       waitForIframeReady() → wait for "Set Tokyo" button
+│       resetToBaseline()
+│
+│     tests:
+│       click iframe button → reearth.camera.setView/flyTo/zoomIn → assert coords
+│
+│     afterAll:
+│       context.close()      ← widget stays; project stays
+│
+├── [plugin-api] layers.semantic.spec.ts  (future)
+│     beforeAll: readSharedState() → navigate → wait for iframe
+│     tests: click layer buttons → assert layer state
+│     afterAll: context.close()
+│
+└── [plugin-api-teardown] _teardown.ts
+      GraphQL: soft-delete + hard-delete project
+      Delete .auth/plugin-project.json
 ```
 
-The `afterAll` widget removal ensures the scene has at most one widget active at a time, keeping the `.zushi-ui-surface-container iframe` selector unambiguous.
+Key points:
+- Each test suite gets its **own browser context** — Cesium state is fresh per suite
+- The widget is installed once and never removed between suites
+- State isolation is at the browser-context level, not the widget level
 
 ---
 
-## Running tests
+## Running Tests
 
 ```bash
 cd e2e
 
-# Full plugin-api run (setup → tests → teardown)
+# Run all plugin-api tests (setup + semantic tests + teardown)
 npx playwright test --project=plugin-api
 
-# Headed for debugging
+# Debug mode (headed browser)
 npx playwright test --project=plugin-api --headed
 
-# Single spec
-npx playwright test tests/plugin-api/camera.semantic.spec.ts --project=plugin-api
+# Run only specific spec files (e.g. only camera and layers out of 4 suites)
+npx playwright test \
+  tests/plugin-api/camera.semantic.spec.ts \
+  tests/plugin-api/layers.semantic.spec.ts \
+  --project=plugin-api
+
+# Run setup only (useful when iterating on a spec without re-uploading the plugin)
+npx playwright test --project=plugin-api-setup
 ```
 
-> `--project=plugin-api` automatically triggers `plugin-api-setup` (and `plugin-api-teardown` after). No need to specify them manually.
+> `--project=plugin-api` automatically triggers `plugin-api-setup` and
+> `plugin-api-teardown`. You do not need to specify them separately.
+
+### Running with a partial zip (only selected APIs)
+
+By default the zip contains all fragment APIs. If you want a smaller widget
+(e.g. only camera and layers), rebuild the zip with only those fragments before
+running setup:
+
+```bash
+cd e2e/fixtures/plugins/reearth-api-test
+
+# Build zip with only camera and layers fragments
+node build-plugin.js camera layers
+zip -j ../reearth-api-test.zip reearth.yml reearth-api-test.js
+
+# Then run only those two specs
+cd ../../..
+npx playwright test \
+  tests/plugin-api/camera.semantic.spec.ts \
+  tests/plugin-api/layers.semantic.spec.ts \
+  --project=plugin-api
+```
+
+`build-plugin.js` accepts fragment name prefixes as arguments (without the
+`-test.js` suffix). With no arguments it combines all `*-test.js` files.
+
+> **Note**: In most cases you do not need a partial zip. The widget contains all
+> API buttons — each spec only interacts with the buttons it needs and ignores
+> the rest. Use `npx playwright test <spec-files> --project=plugin-api` to run
+> a subset of tests without rebuilding the zip.
 
 ---
 
-## How to add a new API test
+## Adding a New Plugin API Test Suite
 
-### Step 1 — Extend the plugin
+Follow these four steps. You should not need to modify `_setup.ts`,
+`_teardown.ts`, or `playwright.config.ts`.
 
-Edit `e2e/fixtures/plugins/reearth-api-test/reearth.yml` and add an extension:
+### Step 1 — Write the fragment file
 
-```yaml
-extensions:
-  - id: camera-test          # existing
-    type: widget
-    name: Camera Test Widget
-    description: E2E fixture widget for Camera API testing
-  - id: layers-test          # new
-    type: widget
-    name: Layers Test Widget
-    description: E2E fixture widget for Layers API testing
-```
+Create `e2e/fixtures/plugins/reearth-api-test/{api}-test.js`:
 
-### Step 2 — Add the JavaScript file
+```js
+// Layers API Test Fragment
+// API coverage: reearth.layers — add, remove, show, hide
+//
+// BUILD FRAGMENT — do not call reearth APIs at module level.
+// Run `node build-plugin.js` to combine all fragments into reearth-api-test.js.
 
-Create `e2e/fixtures/plugins/reearth-api-test/layers-test.js`:
-
-```javascript
-reearth.ui.show(`
+exports.html = `
   <button id="add-layer">Add Layer</button>
   <button id="remove-layer">Remove Layer</button>
   <script>
@@ -86,40 +171,62 @@ reearth.ui.show(`
       parent.postMessage({ action: "remove-layer" }, "*");
     });
   </script>
-`);
+`;
 
-reearth.extension.on("message", function(msg) {
-  if (msg.action === "add-layer") {
-    reearth.layers.add({ /* ... */ });
-  } else if (msg.action === "remove-layer") {
-    reearth.layers.remove(msg.layerId);
+exports.onMessage = function(msg) {
+  var action = msg.action;
+  if (action === "add-layer") {
+    reearth.layers.add({ ... });
+  } else if (action === "remove-layer") {
+    reearth.layers.delete("layer-id");
   }
-});
+};
 ```
 
-> **Always use `reearth.extension.on("message", ...)` — not `reearth.ui.on()`.**
-> `reearth.ui.on` only supports `"update"` and `"close"` events.
+Fragment contract:
+- `exports.html` — HTML string. Include all buttons and their `<script>` click
+  handlers. Button IDs must be globally unique across all fragments.
+- `exports.onMessage` — `function(msg)` that handles the action. May freely
+  reference `reearth.*` — it runs in the plugin context, not in Node.
 
-### Step 3 — Rebuild the zip
+### Step 2 — Build and zip
 
 ```bash
 cd e2e/fixtures/plugins/reearth-api-test
-zip -j ../reearth-api-test.zip reearth.yml *.js
-git add ../reearth-api-test.zip
+
+# Regenerate the combined widget JS
+node build-plugin.js
+
+# Rebuild the zip (only reearth.yml + reearth-api-test.js go in the zip)
+zip -j ../reearth-api-test.zip reearth.yml reearth-api-test.js
+
+# Stage both generated files
+git add reearth-api-test.js ../reearth-api-test.zip
 ```
 
-### Step 4 — Write the test file
+### Step 3 — Write the spec file
 
-Create `e2e/tests/plugin-api/layers.semantic.spec.ts`. Copy the structure from `camera.semantic.spec.ts` and change:
+Create `e2e/tests/plugin-api/layers.semantic.spec.ts`.
+Use `camera.semantic.spec.ts` as the reference — copy it and change:
 
-- `extensionId` in `addWidget()`: `"layers-test"`
-- `waitForIframeReady()` argument: first button text in your widget HTML (e.g. `"Add Layer"`)
-- Test IDs: `PLUGIN-LAY-001`, `PLUGIN-LAY-002`, ...
-- Assertions: use `page.evaluate(() => window.reearth.layers.findById(id)?.visible)` etc.
+| Field | Change to |
+|-------|-----------|
+| `waitForIframeReady(...)` | First button text in your fragment (e.g. `"Add Layer"`) |
+| `test.describe(...)` | `"Layers Plugin API — semantic (webkit)"` |
+| Test IDs | `"PLUGIN-LAY-001"`, `"PLUGIN-LAY-002"`, … |
+| Assertions | `reearth.layers.*` checks (see Assertions section) |
 
-**Template beforeAll / afterAll:**
+Minimal spec template:
 
 ```typescript
+import { PluginFixturePage, ProjectIds } from "@pages/pluginFixturePage";
+import { test, BrowserContext, Page } from "@playwright/test";
+import { createIAPContext } from "@utils/iap-auth";
+import { STORAGE_STATE } from "@/global-setup";
+
+const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
+// ... env guards ...
+
 test.describe.configure({ mode: "serial" });
 
 test.describe("Layers Plugin API — semantic (webkit)", () => {
@@ -127,112 +234,222 @@ test.describe("Layers Plugin API — semantic (webkit)", () => {
   let page: Page;
   let pluginFixture: PluginFixturePage;
   let ids: ProjectIds;
-  let widgetId: string;
 
-  test.beforeAll(async ({ browser, request }) => {
+  test.beforeAll(async ({ browser }) => {
     context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL ?? "", {
       storageState: STORAGE_STATE
     });
     page = await context.newPage();
 
-    const client = createPluginClient(request);
-    pluginFixture = new PluginFixturePage(page, client);
-
+    // No GraphQL client — widget is already installed by plugin-api-setup
+    pluginFixture = new PluginFixturePage(page);
     ids = PluginFixturePage.readSharedState();
-    widgetId = await pluginFixture.addWidget(ids.sceneId, "Layers Test Widget", "layers-test");
 
     await pluginFixture.navigateToEditor(ids.sceneId);
-    await new CesiumViewerPage(page).waitForGlobeReady();
+    // await cesiumViewer.waitForGlobeReady(); // if needed
     await pluginFixture.waitForIframeReady("Add Layer");
   });
 
   test.afterAll(async () => {
-    if (widgetId && ids?.sceneId) {
-      await pluginFixture.removeWidget(ids.sceneId, widgetId);
-    }
     await context.close().catch(() => {});
   });
 
-  // tests go here ...
+  test("add-layer button adds a layer", async () => {
+    test.info().annotations.push({ type: "story", description: "PLUGIN-LAY-001" });
+    await pluginFixture.iframe.getByRole("button", { name: "Add Layer" }).click();
+    // assert via page.evaluate(() => window.reearth.layers.findById(...))
+  });
 });
 ```
 
-> **No changes needed** to `_setup.ts`, `_teardown.ts`, or `playwright.config.ts`.
+### Step 4 — Done
+
+Run `npx playwright test --project=plugin-api` to verify the new spec passes
+alongside the existing camera tests.
 
 ---
 
-## Selector reference
+## Fragment File Format
 
-| Element | Selector | Notes |
-|---------|----------|-------|
-| Plugins sidebar tab | `[data-testid="project-settings-tab-plugins"]` | |
+```
+e2e/fixtures/plugins/reearth-api-test/
+  camera-test.js    ← fragment (committed, hand-written)
+  layers-test.js    ← fragment (committed, hand-written)
+  build-plugin.js   ← build script (committed)
+  reearth-api-test.js   ← generated output (committed — needed for zip)
+  reearth.yml           ← single extension declaration (committed)
+```
+
+The **build script** (`build-plugin.js`) reads all `*-test.js` files in
+alphabetical order, extracts their `html` strings and `onMessage` function
+bodies, and writes a single combined `reearth-api-test.js`.
+
+Rules for fragment files:
+- Button IDs must be **globally unique** across all fragments (prefix with the
+  API name: `set-tokyo`, `add-layer`, not just `add`)
+- Message action strings follow the same convention: `"set-tokyo"`, `"add-layer"`
+- Do **not** call `reearth.ui.show()` or `reearth.extension.on()` at module level
+  — that is the build script's job
+- ESLint will warn about `exports` and `reearth` being undefined — this is expected
+  since these files are plugin scripts, not Node.js modules
+
+---
+
+## Key Selectors Reference
+
+| Step | Selector | Notes |
+|------|----------|-------|
+| Plugin settings tab | `[data-testid="project-settings-tab-plugins"]` | |
 | Personal sub-tab | `[data-testid="tab-Personal"]` | Default is Marketplace |
-| Zip upload trigger | `getByText("Zip file from PC")` | filechooser event |
-| Upload confirmation | `getByText("ReEarth API Test", { exact: true })` | Plugin list name |
-| Widget manager panel | `[data-testid="widget-manager-wrapper"]` | NOT `widget-manager-panel` — Panel component uses camelCase prop |
+| Zip upload trigger | `page.getByText("Zip file from PC")` | Pair with `waitForEvent("filechooser")` |
+| Upload confirmation | `page.getByText("ReEarth API Test", { exact: true })` | Wait for list entry, not toast |
+| Widget manager panel | `[data-testid="widget-manager-wrapper"]` | Panel's camelCase prop does not render as data-testid |
 | Add Widget button | `[data-testid="add-widget-button"]` | |
-| Add Widget popup | `[role="menu"][data-floating-ui-focusable]` | Both popup and sidebar nav have `role="menu"`; the floating-ui attr disambiguates |
-| Installed widget list | `getByTestId("installed-widgets-list").getByText(widgetName)` | Container is always in DOM; must scope to text |
-| Plugin iframe | `page.frameLocator(".zushi-ui-surface-container iframe")` | No name/title/id on iframe |
+| Add Widget popup | `[role="menu"][data-floating-ui-focusable]` | Must scope to floating-ui attr — sidebar nav also has role="menu" |
+| Installed widgets list | `getByTestId("installed-widgets-list").getByText(name).first()` | List is always in DOM; wait for text, not the container |
+| Plugin iframe | `page.frameLocator(".zushi-ui-surface-container iframe")` | No name/title/id on Zushi iframes |
 
 ---
 
-## Known pitfalls
+## Assertions Reference
 
-**Silent upload failure** — the most common cause of flaky setups.
-
-`handleInstallPluginFromFile` has `if (!sceneId) return`. If the page is loaded with `waitUntil: "domcontentloaded"`, Apollo Client's scene query is not yet complete, `sceneId` is null, and the upload is silently dropped.
-
-Fix: always use `waitUntil: "networkidle"` when navigating to the plugins settings page.
-
----
-
-**Two `role="menu"` elements**
-
-The sidebar nav and the Add Widget floating popup both have `role="menu"`. Using `page.getByRole("menu")` throws a strict-mode violation. Always use:
+### Camera API
 
 ```typescript
+// Semantic: getGlobeIntersection proves the camera is looking at the right spot
+await page.evaluate(() =>
+  (window as any).reearth.camera.getGlobeIntersection({ calcViewSize: false })
+    ?.center?.lat
+);
+
+// CameraAssertions helpers (from cameraAssertions.ts)
+await cameraAssertions.expectViewCenterNear(35.681, 139.767, toleranceDeg);
+await cameraAssertions.waitUntilNear(lat, lng, toleranceDeg, timeoutMs);
+await cameraAssertions.resetToBaseline(); // top-down view, no specific location
+```
+
+> `getGlobeIntersection` only returns a value when `pitch === -Math.PI / 2`
+> (looking straight down). `setView` and `flyTo` in the fixture always set
+> `pitch: -Math.PI / 2` for this reason.
+
+### Layers API (future)
+
+```typescript
+await page.evaluate(() =>
+  (window as any).reearth.layers.findById("layer-id")?.visible
+);
+```
+
+### Visual (canvas snapshots)
+
+```typescript
+// cesiumVisualAssertions.ts helpers
+await cesiumVisual.stabilizeScene();        // freeze timeline + disable sky
+await cesiumVisual.waitForCanvasStable(ms); // wait until canvas stops changing
+await cesiumVisual.expectCanvasMatchesSnapshot("name.png", testInfo);
+```
+
+Visual tests require the `chromium-visual` Playwright project with a GPU runner
+— see `camera.visual.spec.ts` for the project config template.
+
+---
+
+## Known Pitfalls
+
+### 1. Plugin upload silently fails without `networkidle`
+
+The upload hook in the app checks `if (!sceneId) return`. If the page is
+navigated with `waitUntil: "domcontentloaded"`, Apollo has not yet resolved the
+scene query, so `sceneId` is null and the upload is silently skipped.
+
+**Always navigate to the plugins settings page with `waitUntil: "networkidle"`.**
+
+### 2. Two selectors match `role="menu"`
+
+The sidebar nav and the Add Widget popup both have `role="menu"`. Using
+`page.getByRole("menu")` causes a strict mode violation.
+
+```typescript
+// ✅ Correct
 page.locator('[role="menu"][data-floating-ui-focusable]')
+// ❌ Wrong — strict mode violation
+page.getByRole("menu")
 ```
 
----
+### 3. Widget manager's `data-testid` is not in the DOM
 
-**`installed-widgets-list` is always visible**
-
-The list container exists in the DOM even when empty. Wait for the widget name text inside it:
+The `Panel` component uses a camelCase `dataTestid` prop that React does not
+render as an HTML attribute.
 
 ```typescript
-page.getByTestId("installed-widgets-list").getByText("My Widget Name").waitFor(...)
+// ✅ Correct — inner Wrapper styled-div has this testid
+page.getByTestId("widget-manager-wrapper")
+// ❌ Wrong — never in DOM
+page.getByTestId("editor-widgets-widget-manager-panel")
+```
+
+### 4. Installed-widgets-list is always in the DOM (even when empty)
+
+Waiting for the list container to be visible passes immediately even when no
+widgets are installed. Wait for the widget **name text** instead.
+
+```typescript
+// ✅ Correct
+page.getByTestId("installed-widgets-list")
+  .getByText("ReEarth API Test Widget").first()
+  .waitFor({ state: "visible" })
+// ❌ Wrong — container is visible even when empty
+page.getByTestId("installed-widgets-list").waitFor({ state: "visible" })
+```
+
+### 5. Plugin JS must use `reearth.extension.on`, not `reearth.ui.on`
+
+`reearth.ui.on` only supports `"update"` and `"close"` events. Iframe-to-plugin
+messages must go through `reearth.extension.on("message", handler)`.
+
+### 6. Button IDs must be globally unique across all fragments
+
+All fragments are combined into a single widget HTML. If two fragments both have
+`<button id="add">`, only the first handler will fire. Prefix IDs with the API
+name: `camera-set-tokyo`, `layers-add`, etc. (or use the action string as the ID).
+
+### 7. Auth token for GraphQL calls
+
+`createPluginClient` reads `.auth/api-token.json` (written by `api-setup`).
+The token expires after ~23 hours. If GraphQL calls fail with 401, re-run:
+
+```bash
+npx playwright test --project=api-setup
 ```
 
 ---
 
-## Test ID naming
+## Test ID Naming Convention
 
-| API | Prefix |
-|-----|--------|
-| Camera | `PLUGIN-CAM-001` |
-| Layers | `PLUGIN-LAY-001` |
-| Timeline | `PLUGIN-TIM-001` |
-| Scene | `PLUGIN-SCN-001` |
-| Viewer | `PLUGIN-VWR-001` |
+```
+PLUGIN-{API}-{sequence}
+PLUGIN-{API}-VIS-{sequence}   (visual snapshots)
+```
 
----
+| API | Prefix | Example |
+|-----|--------|---------|
+| Camera | `PLUGIN-CAM` | `PLUGIN-CAM-001` |
+| Layers | `PLUGIN-LAY` | `PLUGIN-LAY-001` |
+| Scene | `PLUGIN-SCN` | `PLUGIN-SCN-001` |
+| Timeline | `PLUGIN-TIM` | `PLUGIN-TIM-001` |
+| Viewer | `PLUGIN-VWR` | `PLUGIN-VWR-001` |
 
-## Assertion patterns
-
-| API | Semantic assertion |
-|-----|-------------------|
-| Camera | `page.evaluate(() => window.reearth.camera.getGlobeIntersection({ calcViewSize: false })?.center?.lat)` — requires pitch = `-Math.PI/2` |
-| Layers | `page.evaluate(() => window.reearth.layers.findById(id)?.visible)` |
-| Timeline | Read `window.reearth.timeline.*` properties |
-| All | Canvas screenshot comparison (visual tests, `chromium-visual` project) |
-
-API types: `src/app/features/Visualizer/Crust/Plugins/pluginAPI/types/`
+Sequence `000` is reserved for the iframe mount smoke test. Start API-specific
+tests at `001`.
 
 ---
 
-## Auth notes
+## CI Notes
 
-- `createPluginClient()` reads `.auth/api-token.json` (resource-owner password grant, written by `api-setup`). This token is required; PKCE tokens from `user.json` are rejected by the API server.
-- Token lifetime: ~23h. If expired: `npx playwright test --project=api-setup`
+- Semantic tests (`*.semantic.spec.ts`) — run under the `plugin-api` Playwright
+  project (webkit, headless). These are the primary CI tests.
+- Visual snapshot tests (`*.visual.spec.ts`) — require a `chromium-visual`
+  project with a dedicated GPU runner. Not yet configured; tests are committed
+  and will be enabled once the runner is available.
+- The `webkit` project in `playwright.config.ts` has `testIgnore:
+  /tests\/plugin-api\/.*/` to prevent double-running these tests.
