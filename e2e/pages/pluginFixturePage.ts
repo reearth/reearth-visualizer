@@ -39,9 +39,19 @@ export type ProjectIds = {
  */
 export class PluginFixturePage {
   constructor(
-    private page: Page,
+    private page: Page | null,
     private client?: GraphQLClient
   ) {}
+
+  private get ui(): Page {
+    if (!this.page) {
+      throw new Error(
+        "[PluginFixture] page is not set — this method requires a browser page. " +
+          "Pass a real Page instance to the PluginFixturePage constructor."
+      );
+    }
+    return this.page;
+  }
 
   private get gql(): GraphQLClient {
     if (!this.client) {
@@ -61,7 +71,7 @@ export class PluginFixturePage {
    * selector is always unambiguous within a test suite's browser context.
    */
   get iframe(): FrameLocator {
-    return this.page.frameLocator(".zushi-ui-surface-container iframe");
+    return this.ui.frameLocator(".zushi-ui-surface-container iframe");
   }
 
   /**
@@ -106,25 +116,25 @@ export class PluginFixturePage {
     console.log(
       `[PluginFixture] Navigating to plugin settings for project ${projectId}`
     );
-    await this.page.goto(
+    await this.ui.goto(
       `${baseUrl}/settings/projects/${projectId}/plugins`,
       { waitUntil: "networkidle" }
     );
 
-    await this.page
+    await this.ui
       .getByTestId("project-settings-tab-plugins")
       .waitFor({ state: "visible", timeout: 15_000 });
 
-    await this.page.getByTestId("tab-Personal").click();
+    await this.ui.getByTestId("tab-Personal").click();
 
     console.log(`[PluginFixture] Uploading zip: ${PLUGIN_ZIP}`);
     const [fileChooser] = await Promise.all([
-      this.page.waitForEvent("filechooser"),
-      this.page.getByText("Zip file from PC").click()
+      this.ui.waitForEvent("filechooser"),
+      this.ui.getByText("Zip file from PC").click()
     ]);
     await fileChooser.setFiles(PLUGIN_ZIP);
 
-    await this.page
+    await this.ui
       .getByText("ReEarth API Test", { exact: true })
       .waitFor({ state: "visible", timeout: 30_000 });
     console.log(`[PluginFixture] Plugin zip uploaded successfully`);
@@ -172,20 +182,20 @@ export class PluginFixturePage {
     console.log(
       `[PluginFixture] Navigating to editor widgets tab for scene ${sceneId}`
     );
-    await this.page.goto(`${baseUrl}/scene/${sceneId}/widgets`, {
+    await this.ui.goto(`${baseUrl}/scene/${sceneId}/widgets`, {
       waitUntil: "domcontentloaded"
     });
 
     // Panel uses camelCase dataTestid prop — outer testid is not in DOM;
     // use "widget-manager-wrapper" from the inner Wrapper styled-div instead.
-    await this.page
+    await this.ui
       .getByTestId("widget-manager-wrapper")
       .waitFor({ state: "visible", timeout: 60_000 });
 
     // Sidebar nav also has role="menu" — must scope to floating-ui popup attr.
-    await this.page.getByTestId("add-widget-button").click();
+    await this.ui.getByTestId("add-widget-button").click();
 
-    const popupMenu = this.page.locator(
+    const popupMenu = this.ui.locator(
       '[role="menu"][data-floating-ui-focusable]'
     );
     await popupMenu.waitFor({ state: "visible", timeout: 10_000 });
@@ -193,7 +203,7 @@ export class PluginFixturePage {
     console.log(`[PluginFixture] Clicking "${widgetName}" menuitem`);
     await popupMenu.getByRole("menuitem", { name: widgetName }).click();
 
-    await this.page
+    await this.ui
       .getByTestId("installed-widgets-list")
       .getByText(widgetName)
       .first()
@@ -229,7 +239,7 @@ export class PluginFixturePage {
 
   async navigateToEditor(sceneId: string): Promise<void> {
     const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL?.replace(/\/$/, "");
-    await this.page.goto(`${baseUrl}/scene/${sceneId}/map`, {
+    await this.ui.goto(`${baseUrl}/scene/${sceneId}/map`, {
       waitUntil: "domcontentloaded"
     });
   }
@@ -270,7 +280,15 @@ export class PluginFixturePage {
           "npx playwright test --project=plugin-api-setup"
       );
     }
-    return JSON.parse(fs.readFileSync(SHARED_STATE_PATH, "utf-8"));
+    try {
+      return JSON.parse(fs.readFileSync(SHARED_STATE_PATH, "utf-8"));
+    } catch {
+      throw new Error(
+        `[PluginFixture] ${SHARED_STATE_PATH} is malformed. ` +
+          "Delete it and run plugin-api-setup again: " +
+          "npx playwright test --project=plugin-api-setup"
+      );
+    }
   }
 }
 

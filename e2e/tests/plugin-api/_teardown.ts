@@ -26,15 +26,24 @@ teardown("delete shared plugin project", async ({ request }) => {
   try {
     ({ projectId } = JSON.parse(fs.readFileSync(STATE_PATH, "utf-8")));
   } catch {
-    console.warn("[plugin-api-teardown] Could not parse state file — skipping.");
+    console.warn("[plugin-api-teardown] Could not parse state file — removing it.");
+    try {
+      fs.unlinkSync(STATE_PATH);
+    } catch {
+      // ignore
+    }
     return;
   }
 
   const client = createPluginClient(request);
   // page is not needed for teardown (only client.mutate is called)
-  const fixture = new PluginFixturePage(null as any, client);
+  const fixture = new PluginFixturePage(null, client);
   await fixture.teardown(projectId);
 
-  fs.unlinkSync(STATE_PATH);
+  try {
+    fs.unlinkSync(STATE_PATH);
+  } catch {
+    console.warn("[plugin-api-teardown] Could not remove state file — continuing.");
+  }
   console.log(`[plugin-api-teardown] Deleted project ${projectId}`);
 });
