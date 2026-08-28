@@ -89,6 +89,25 @@ Key points:
 
 ---
 
+## Semantic vs Visual Tests
+
+Each API has two spec files. They test different things and run in different environments.
+
+| | `*.semantic.spec.ts` | `*.visual.spec.ts` |
+|-|----------------------|--------------------|
+| **What it checks** | The API call produced the correct data value (e.g. camera coordinates) | The Cesium canvas looks correct — pixel comparison against a stored baseline PNG |
+| **How it asserts** | `page.evaluate(() => reearth.camera.getGlobeIntersection(...))` — reads lat/lng numbers | `expect(canvas).toMatchSnapshot("name.png")` — compares rendered pixels |
+| **Browser** | WebKit (headless) | Chromium with GPU (`--use-gl=egl`, non-headless) |
+| **When it runs** | Every CI run — fast, no GPU needed | Only on a dedicated GPU runner — not yet configured |
+| **What it catches** | Wrong coordinates, API not responding, message routing broken | Correct coordinates but globe renders with glitch, wrong tile, visual artifact |
+| **Playwright project** | `plugin-api` | `chromium-visual` (future) |
+
+**Rule of thumb**: semantic tests are your primary safety net. Visual tests catch the narrow class of bugs where the data is right but the render is wrong — useful once you have a stable GPU runner.
+
+When adding a new API suite, write the semantic spec first. Add a visual spec only if the API has rendering output that semantic assertions cannot verify.
+
+---
+
 ## Running Tests
 
 ```bash
@@ -100,7 +119,8 @@ npx playwright test --project=plugin-api
 # Debug mode (headed browser)
 npx playwright test --project=plugin-api --headed
 
-# Run only specific spec files (e.g. only camera and layers out of 4 suites)
+# Run only specific spec files (setup and teardown still run automatically)
+npx playwright test tests/plugin-api/camera.semantic.spec.ts --project=plugin-api
 npx playwright test \
   tests/plugin-api/camera.semantic.spec.ts \
   tests/plugin-api/layers.semantic.spec.ts \
@@ -113,34 +133,9 @@ npx playwright test --project=plugin-api-setup
 > `--project=plugin-api` automatically triggers `plugin-api-setup` and
 > `plugin-api-teardown`. You do not need to specify them separately.
 
-### Running with a partial zip (only selected APIs)
-
-By default the zip contains all fragment APIs. If you want a smaller widget
-(e.g. only camera and layers), rebuild the zip with only those fragments before
-running setup:
-
-```bash
-cd e2e/fixtures/plugins/reearth-api-test
-
-# Build zip with only camera and layers fragments
-node build-plugin.js camera layers
-zip -j ../reearth-api-test.zip reearth.yml reearth-api-test.js
-
-# Then run only those two specs
-cd ../../..
-npx playwright test \
-  tests/plugin-api/camera.semantic.spec.ts \
-  tests/plugin-api/layers.semantic.spec.ts \
-  --project=plugin-api
-```
-
-`build-plugin.js` accepts fragment name prefixes as arguments (without the
-`-test.js` suffix). With no arguments it combines all `*-test.js` files.
-
-> **Note**: In most cases you do not need a partial zip. The widget contains all
-> API buttons — each spec only interacts with the buttons it needs and ignores
-> the rest. Use `npx playwright test <spec-files> --project=plugin-api` to run
-> a subset of tests without rebuilding the zip.
+The widget contains all API buttons. Each spec only interacts with the buttons
+it needs and ignores the rest. Specifying a subset of spec files does not
+require rebuilding the zip.
 
 ---
 
