@@ -104,6 +104,28 @@ export default defineConfig({
         storageState: STORAGE_STATE,
         viewport: { width: 1920, height: 1080 }
       }
+    },
+    {
+      name: "chromium-visual",
+      testDir: "./tests/plugin-api",
+      testMatch: /[^_].*\.visual\.spec\.ts/,
+      dependencies: ["plugin-api-setup"],
+      expect: {
+        toMatchSnapshot: {
+          // Cesium renders sub-pixel differences across runs on the same GPU.
+          // 50px absolute tolerance handles antialiasing and tile shimmer
+          // without masking real rendering regressions.
+          maxDiffPixels: 50
+        }
+      },
+      use: {
+        ...devices["Desktop Chrome"],
+        headless: false,
+        screenshot: "only-on-failure",
+        storageState: STORAGE_STATE,
+        viewport: { width: 1920, height: 1080 },
+        deviceScaleFactor: 1
+      }
     }
   ]
 });
