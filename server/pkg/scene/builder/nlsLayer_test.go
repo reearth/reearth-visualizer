@@ -28,7 +28,7 @@ func TestGetNLSLayerJSON_DataSourceName(t *testing.T) {
 			ploader:   property.LoaderFrom(nil),
 		}
 
-		result, err := b.getNLSLayerJSON(ctx, layer)
+		result, err := b.getNLSLayerJSON(ctx, layer, nil)
 		require.NoError(t, err)
 		require.NotNil(t, result)
 
@@ -54,7 +54,7 @@ func TestGetNLSLayerJSON_DataSourceName(t *testing.T) {
 			ploader:   property.LoaderFrom(nil),
 		}
 
-		result, err := b.getNLSLayerJSON(ctx, layer)
+		result, err := b.getNLSLayerJSON(ctx, layer, nil)
 		require.NoError(t, err)
 		require.NotNil(t, result)
 
