@@ -3,7 +3,9 @@ package builder
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
+	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/samber/lo"
 )
 
@@ -85,54 +87,32 @@ type geometryCollectionJSON struct {
 	Geometries []any  `json:"geometries"`
 }
 
-// nlsLayersJSON builds each layer's JSON one at a time, loading that layer's properties as it
-// goes, so the query count scales with the number of layers (SCA-02, AI compliance scan finding).
+// propertyLoadChunkSize bounds how many property IDs go into a single load. The layer count is
+// unbounded, so loading every ID in one call would trade many small queries for one arbitrarily
+// large query and result set.
+const propertyLoadChunkSize = 500
+
+// nlsLayersJSON collects every layer's property IDs up front and loads them in batches before
+// building any JSON, the way scene- and story-level properties already do (see builder.go).
+// Loading them per layer instead cost roughly L*(2+B) queries for L layers holding B infobox
+// blocks each (SCA-02, AI compliance scan finding).
 //
-// The property loads are the whole of it. getNLSLayerJSON below loads each layer's infobox, photo
-// overlay and infobox block properties through b.ploader one ID at a time, instead of one batched
-// b.ploader(ctx, ids...) call the way scene- and story-level properties already do (see
-// builder.go). Note the per-block call in nlsInfoboxBlockJSON, so a scene of L layers each holding
-// B infobox blocks costs roughly L*(2+B) loads, not L.
-//
-// This is fully removable. Every property ID is reachable from data already in memory, so the
-// whole set can be collected in one walk and loaded before any JSON is built, with no further
-// queries needed to discover IDs. Load it in fixed-size chunks rather than a single call: the
-// layer count is unbounded, so one batched load would trade many small queries for one
-// arbitrarily large query and result set. Chunking bounds query size and peak memory without
-// limiting what a scene can contain.
-//
-// The b.nlsloader call in getNLSLayerJSON is a separate matter and is NOT a source of queries
-// today. It only runs for layer groups, and nothing can currently create one: ImportNLSLayers
-// forces .Simple() and logs any children in the imported JSON as "Unsupported nlsLayer" before
-// discarding them, no GraphQL mutation constructs a group (gql/newlayer.graphql opens with
-// "TODO: Make LayerGroup Real"), and NewNLSLayerGroup is only reached when decoding a document
-// that already carries group fields. So this branch is unreachable in practice.
-//
-// If groups are ever made real, do not batch these loads per tree depth -- drop them entirely.
-// The scene's full layer list is already in memory: NLSLayer.FindByScene filters on scene alone
-// with no root predicate, so it returns children as well as roots, and every caller passes that
-// whole list to WithNLSLayers. A group's child IDs are likewise already on the group, via
-// lg.Children().Layers(). Index *b.nlsLayer on ID once and resolve children from it, and traversal
-// costs no queries at all. Note also that rendering groups will need a root filter in the loop
-// below, since a child reached through its parent would otherwise also be emitted at top level.
-//
-// Capping the number of layers per scene would bound the property loads, but it is a product
-// decision rather than a substitute for batching them, since a capped scene still issues one load
-// per layer. If a cap is wanted, the policy checker is the natural home for it (see
-// internal/usecase/gateway/policy_checker.go, alongside the existing asset size and custom domain
-// count checks), so the limit can vary per workspace instead of being a global constant.
-//
-// Left as a comment for now rather than fixed: this is a performance concern, not a security one,
-// and today's scenes are small enough that the extra round trips do not show up in practice.
+// The b.nlsloader call in getNLSLayerJSON is not part of this and issues no queries today: it only
+// runs for layer groups, which nothing can currently create. If groups are ever made real, resolve
+// children by indexing *b.nlsLayer on ID rather than loading them, since NLSLayer.FindByScene
+// returns children as well as roots and a group already holds its child IDs. The loop below would
+// then also need a root filter, or a child would be emitted both nested and at top level.
 func (b *Builder) nlsLayersJSON(ctx context.Context) ([]*nlsLayerJSON, error) {
 
 	var res []*nlsLayerJSON
+
+	props := b.loadNLSLayerProperties(ctx)
 
 	for _, l := range *b.nlsLayer {
 		if l == nil {
 			continue
 		}
-		if c, _ := b.getNLSLayerJSON(ctx, *l); c != nil {
+		if c, _ := b.getNLSLayerJSON(ctx, *l, props); c != nil {
 			res = append(res, c)
 		}
 	}
@@ -140,7 +120,68 @@ func (b *Builder) nlsLayersJSON(ctx context.Context) ([]*nlsLayerJSON, error) {
 	return res, nil
 }
 
-func (b *Builder) getNLSLayerJSON(ctx context.Context, layer nlslayer.NLSLayer) (*nlsLayerJSON, error) {
+// loadNLSLayerProperties fetches every property referenced by the scene's layers, keyed by ID.
+//
+// Load failures are tolerated rather than returned, matching the previous per-layer behaviour: a
+// property that cannot be loaded is absent from the map and renders as an empty property, instead
+// of failing the whole scene build. Callers look properties up by ID, not by scanning a slice,
+// because a large scene has thousands of them and a linear scan per lookup would replace the
+// query cost with a quadratic one.
+func (b *Builder) loadNLSLayerProperties(ctx context.Context) map[id.PropertyID]*property.Property {
+	if b.nlsLayer == nil {
+		return nil
+	}
+
+	ids := make(id.PropertyIDList, 0)
+	seen := make(map[id.PropertyID]struct{})
+	add := func(pid id.PropertyID) {
+		if _, ok := seen[pid]; ok {
+			return
+		}
+		seen[pid] = struct{}{}
+		ids = append(ids, pid)
+	}
+
+	for _, l := range *b.nlsLayer {
+		if l == nil {
+			continue
+		}
+		layer := *l
+		if infobox := layer.Infobox(); infobox != nil {
+			add(infobox.Property())
+			for _, block := range infobox.Blocks() {
+				if block != nil {
+					add(block.Property())
+				}
+			}
+		}
+		if photooverlay := layer.PhotoOverlay(); photooverlay != nil {
+			add(photooverlay.Property())
+		}
+	}
+
+	if len(ids) == 0 {
+		return nil
+	}
+
+	res := make(map[id.PropertyID]*property.Property, len(ids))
+	for start := 0; start < len(ids); start += propertyLoadChunkSize {
+		end := min(start+propertyLoadChunkSize, len(ids))
+		loaded, err := b.ploader(ctx, ids[start:end]...)
+		if err != nil {
+			continue
+		}
+		for _, p := range loaded {
+			if p != nil {
+				res[p.ID()] = p
+			}
+		}
+	}
+
+	return res
+}
+
+func (b *Builder) getNLSLayerJSON(ctx context.Context, layer nlslayer.NLSLayer, props map[id.PropertyID]*property.Property) (*nlsLayerJSON, error) {
 
 	var children []*nlsLayerJSON
 	if lg := nlslayer.ToNLSLayerGroup(layer); lg != nil {
@@ -152,7 +193,7 @@ func (b *Builder) getNLSLayerJSON(ctx context.Context, layer nlslayer.NLSLayer) 
 			if c == nil {
 				continue
 			}
-			if d, _ := b.getNLSLayerJSON(ctx, *c); d != nil {
+			if d, _ := b.getNLSLayerJSON(ctx, *c, props); d != nil {
 				children = append(children, d)
 			}
 		}
@@ -165,8 +206,8 @@ func (b *Builder) getNLSLayerJSON(ctx context.Context, layer nlslayer.NLSLayer) 
 		LayerType:      string(layer.LayerType()),
 		Config:         (*configJSON)(layer.Config()),
 		IsVisible:      layer.IsVisible(),
-		Infobox:        b.nlsInfoboxJSON(ctx, layer.Infobox()),
-		PhotoOverlay:   b.nlsPhotoOverlayJSON(ctx, layer.PhotoOverlay()),
+		Infobox:        b.nlsInfoboxJSON(ctx, layer.Infobox(), props),
+		PhotoOverlay:   b.nlsPhotoOverlayJSON(ctx, layer.PhotoOverlay(), props),
 		IsSketch:       layer.IsSketch(),
 		SketchInfo:     b.sketchInfoJSON(ctx, layer.Sketch()),
 		DataSourceName: layer.DataSourceName(),
@@ -174,43 +215,38 @@ func (b *Builder) getNLSLayerJSON(ctx context.Context, layer nlslayer.NLSLayer) 
 	}, nil
 }
 
-func (b *Builder) nlsInfoboxJSON(ctx context.Context, infobox *nlslayer.Infobox) *nlsInfoboxJSON {
+func (b *Builder) nlsInfoboxJSON(ctx context.Context, infobox *nlslayer.Infobox, props map[id.PropertyID]*property.Property) *nlsInfoboxJSON {
 	if infobox == nil {
 		return nil
 	}
 
-	p, _ := b.ploader(ctx, infobox.Property())
-
 	return &nlsInfoboxJSON{
 		ID:       infobox.Id().String(),
-		Property: b.property(ctx, findProperty(p, infobox.Property())),
+		Property: b.property(ctx, props[infobox.Property()]),
 		Blocks: lo.FilterMap(infobox.Blocks(), func(block *nlslayer.InfoboxBlock, _ int) (nlsInfoboxBlockJSON, bool) {
 			if block == nil {
 				return nlsInfoboxBlockJSON{}, false
 			}
-			return b.nlsInfoboxBlockJSON(ctx, *block), true
+			return b.nlsInfoboxBlockJSON(ctx, *block, props), true
 		}),
 	}
 }
 
-func (b *Builder) nlsPhotoOverlayJSON(ctx context.Context, photooverlay *nlslayer.PhotoOverlay) *nlsPhotoOverlayJSON {
+func (b *Builder) nlsPhotoOverlayJSON(ctx context.Context, photooverlay *nlslayer.PhotoOverlay, props map[id.PropertyID]*property.Property) *nlsPhotoOverlayJSON {
 	if photooverlay == nil {
 		return nil
 	}
 
-	p, _ := b.ploader(ctx, photooverlay.Property())
-
 	return &nlsPhotoOverlayJSON{
 		ID:       photooverlay.Id().String(),
-		Property: b.property(ctx, findProperty(p, photooverlay.Property())),
+		Property: b.property(ctx, props[photooverlay.Property()]),
 	}
 }
 
-func (b *Builder) nlsInfoboxBlockJSON(ctx context.Context, block nlslayer.InfoboxBlock) nlsInfoboxBlockJSON {
-	p, _ := b.ploader(ctx, block.Property())
+func (b *Builder) nlsInfoboxBlockJSON(ctx context.Context, block nlslayer.InfoboxBlock, props map[id.PropertyID]*property.Property) nlsInfoboxBlockJSON {
 	return nlsInfoboxBlockJSON{
 		ID:          block.ID().String(),
-		Property:    b.property(ctx, findProperty(p, block.Property())),
+		Property:    b.property(ctx, props[block.Property()]),
 		Plugins:     nil,
 		ExtensionId: block.Extension().String(),
 		PluginId:    block.Plugin().String(),
