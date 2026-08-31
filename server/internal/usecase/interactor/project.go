@@ -13,15 +13,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
-	"github.com/reearth/reearthx/i18n"
-	"github.com/reearth/reearthx/idx"
-	"github.com/reearth/reearthx/log"
-	"github.com/reearth/reearthx/rerror"
-	"github.com/99designs/gqlgen/graphql"
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -34,6 +30,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/i18n"
+	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
@@ -711,15 +711,32 @@ const importClaimStaleAfter = 15 * time.Minute
 // cannot start a real import until the claim goes stale (SEC-02). The check
 // cannot live in the repo, because it needs the project's workspace and a
 // project does not necessarily have a projectmetadata document to read it from.
-func (i *Project) ClaimImport(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (bool, error) {
+func (i *Project) ClaimImport(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (project.ImportClaim, error) {
 	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
-		return false, err
+		return project.ImportClaimInProgress, err
 	}
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
-		return false, err
+		return project.ImportClaimInProgress, err
 	}
-	return i.projectMetadataRepo.ClaimImport(ctx, pid, importClaimStaleAfter)
+	claimed, err := i.projectMetadataRepo.ClaimImport(ctx, pid, importClaimStaleAfter)
+	if err != nil {
+		return project.ImportClaimInProgress, err
+	}
+	if claimed {
+		return project.ImportClaimGranted, nil
+	}
+	// Not claimed: distinguish an import that already succeeded (safe to skip)
+	// from one still marked PROCESSING, which may be a crashed worker's stale
+	// claim. Callers on a retryable transport redeliver the latter instead of
+	// dropping it (REL-08). Best-effort read; any error falls through to the
+	// safe, retryable InProgress.
+	if meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid); err == nil && meta != nil {
+		if st := meta.ImportStatus(); st != nil && *st == project.ProjectImportStatusSuccess {
+			return project.ImportClaimAlreadySucceeded, nil
+		}
+	}
+	return project.ImportClaimInProgress, nil
 }
 
 func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, string, string, error) {

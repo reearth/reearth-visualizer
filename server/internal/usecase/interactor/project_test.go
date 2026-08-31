@@ -764,3 +764,45 @@ func TestProject_uploadPublishScene_NoGoroutineLeakOnEarlyUploadFailure(t *testi
 	}
 	assert.LessOrEqual(t, after, baseline, "build goroutine leaked: NumGoroutine did not return to baseline")
 }
+
+// TestProject_ClaimImport_DistinguishesInProgressFromSucceeded is a regression
+// test for REL-08: a not-granted claim must report whether the import already
+// SUCCEEDED (safe for a Pub/Sub caller to ack/skip) or is still PROCESSING
+// (which may be a crashed worker's stale claim, so the caller must redeliver
+// rather than drop it). Before the fix ClaimImport returned a bare bool that
+// conflated the two.
+func TestProject_ClaimImport_DistinguishesInProgressFromSucceeded(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	ws := factory.NewWorkspace()
+	_ = uc.workspaceRepo.Save(ctx, ws)
+	pj := factory.NewProject(func(p *project.Builder) {
+		p.Workspace(ws.ID()).Visibility(project.VisibilityPublic)
+	})
+	_ = uc.projectRepo.Save(ctx, pj)
+	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
+		m.Project(pj.ID())
+		m.Workspace(ws.ID())
+	})
+	_ = uc.projectMetadataRepo.Save(ctx, meta)
+	op := &usecase.Operator{AcOperator: &accountsWorkspace.Operator{
+		WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
+	}}
+
+	c1, err := uc.ClaimImport(ctx, pj.ID(), op)
+	assert.NoError(t, err)
+	assert.Equal(t, project.ImportClaimGranted, c1, "first claim should be granted")
+
+	c2, err := uc.ClaimImport(ctx, pj.ID(), op)
+	assert.NoError(t, err)
+	assert.Equal(t, project.ImportClaimInProgress, c2, "a fresh PROCESSING claim must read as in-progress, not already-succeeded (REL-08)")
+
+	_, err = uc.UpdateImportStatus(ctx, pj.ID(), project.ProjectImportStatusSuccess, nil, op)
+	assert.NoError(t, err)
+	c3, err := uc.ClaimImport(ctx, pj.ID(), op)
+	assert.NoError(t, err)
+	assert.Equal(t, project.ImportClaimAlreadySucceeded, c3, "a succeeded import must read as already-succeeded")
+}
