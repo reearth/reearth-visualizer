@@ -57,6 +57,12 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 		}
 	}()
 
+	// Look up the scene first so a scene that does not exist is reported as not
+	// found rather than as a denial (CanWriteScene only checks the operator's
+	// writable list).
+	if _, err := i.sceneRepo.FindByID(ctx, param.SceneID); err != nil {
+		return nil, err
+	}
 	if err := i.CanWriteScene(param.SceneID, operator); err != nil {
 		return nil, err
 	}
