@@ -214,7 +214,7 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 					}
 					return he
 				}
-				if apperr.IsExpected(err) {
+				if apperr.Expected(err) {
 					log.Warnfc(ctx, "upload handler rejected request: %v", err)
 				} else {
 					log.Errorfc(ctx, "upload handler err: %v", err)

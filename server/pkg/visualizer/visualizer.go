@@ -21,7 +21,7 @@ const (
 // the ERROR-based alerting.
 func ErrorWithCallerLogging(ctx context.Context, msg string, err error) error {
 	_, file, line, _ := runtime.Caller(1)
-	if apperr.IsExpected(err) {
+	if apperr.Expected(err) {
 		log.Warnfc(ctx, "[Warn] error with caller logging: %s at %s:%d %+v", msg, file, line, err)
 		return err
 	}

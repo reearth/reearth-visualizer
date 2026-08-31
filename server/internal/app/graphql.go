@@ -111,7 +111,7 @@ func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *gqlclient.Client, 
 // (not found, operation denied, invalid input) which should be logged at WARN
 // rather than ERROR.
 func isHandledError(e error) bool {
-	return apperr.IsExpected(e) || apperr.IsExpectedUpstream(e)
+	return apperr.Expected(e)
 }
 
 // customErrorPresenter handles custom GraphQL error presentation by converting various error types
