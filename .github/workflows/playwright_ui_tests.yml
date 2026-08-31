@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   test:
-    timeout-minutes: 20
+    timeout-minutes: 35
     permissions:
       contents: read
       id-token: write
@@ -82,6 +82,17 @@ jobs:
           REEARTH_E2E_API_URL: ${{ secrets.REEARTH_E2E_API_URL }}
           USE_IAP_AUTH: false
         run: npm run test:ui
+
+      - name: Run Plugin API tests
+        if: always()
+        env:
+          REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
+          REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
+          REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
+          REEARTH_E2E_API_URL: ${{ secrets.REEARTH_E2E_API_URL }}
+          USE_IAP_AUTH: false
+          SKIP_STORAGE_STATE: "true"
+        run: npm run test:plugin-api
 
       - name: Authenticate to Google Cloud for GCS
         if: always()
