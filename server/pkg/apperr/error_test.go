@@ -19,7 +19,7 @@ func TestClass_ExpectedPolicy(t *testing.T) {
 		ClassAlreadyExists:    true,
 		ClassInvalidInput:     true,
 		ClassCanceled:         true,
-		ClassPermissionDenied: false, // denials stay at ERROR by decision
+		ClassPermissionDenied: true,  // denials are expected (WARN)
 		ClassUnexpected:       false, // a defect
 	}
 	for c, want := range expected {

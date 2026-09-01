@@ -109,11 +109,14 @@ func TestIsHandledError(t *testing.T) {
 		assert.True(t, isHandledError(fmt.Errorf("wrapped: %w", rerror.ErrNotFound)))
 	})
 
+	t.Run("returns true for denials", func(t *testing.T) {
+		assert.True(t, isHandledError(interfaces.ErrOperationDenied))
+		assert.True(t, isHandledError(repo.ErrOperationDenied))
+	})
+
 	t.Run("returns false for unrelated errors", func(t *testing.T) {
 		assert.False(t, isHandledError(errors.New("some unexpected error")))
 		assert.False(t, isHandledError(rerror.ErrNotImplemented))
-		assert.False(t, isHandledError(interfaces.ErrOperationDenied))
-		assert.False(t, isHandledError(repo.ErrOperationDenied))
 	})
 }
 
@@ -130,7 +133,7 @@ func TestCustomErrorPresenter_Severity(t *testing.T) {
 		want string
 	}{
 		{name: "not found", err: rerror.ErrNotFound, want: "WARNING"},
-		{name: "operation denied stays an error", err: interfaces.ErrOperationDenied, want: "ERROR"},
+		{name: "operation denied is a warning", err: interfaces.ErrOperationDenied, want: "WARNING"},
 		{name: "wrapped not found keeps its chain", err: fmt.Errorf("failed to export project: %w", rerror.ErrNotFound), want: "WARNING"},
 		{name: "invalid id", err: idx.ErrInvalidID, want: "WARNING"},
 		{name: "not found relayed by the accounts api", err: graphql.Errors{{Message: "input: updateWorkspace not found"}}, want: "WARNING"},

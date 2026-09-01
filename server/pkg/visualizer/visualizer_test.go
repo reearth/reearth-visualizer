@@ -30,7 +30,7 @@ func TestErrorWithCallerLogging_Severity(t *testing.T) {
 		want string
 	}{
 		{name: "not found", err: rerror.ErrNotFound, want: "WARNING"},
-		{name: "operation denied stays an error", err: apperr.ErrOperationDenied, want: "ERROR"},
+		{name: "operation denied is a warning", err: apperr.ErrOperationDenied, want: "WARNING"},
 		{name: "wrapped not found", err: fmt.Errorf("failed to export project: %w", rerror.ErrNotFound), want: "WARNING"},
 		{name: "context canceled", err: context.Canceled, want: "WARNING"},
 		{name: "anything else is a defect", err: errors.New("boom"), want: "ERROR"},

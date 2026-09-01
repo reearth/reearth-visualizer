@@ -49,9 +49,7 @@ const (
 	ClassAlreadyExists
 	// ClassInvalidInput: the request was malformed or violated a business rule.
 	ClassInvalidInput
-	// ClassPermissionDenied: the caller is not allowed to do this. Expected in
-	// the sense that the server did nothing wrong, but kept at ERROR: repeated
-	// denials can be probing, and they say something about who is calling.
+	// ClassPermissionDenied: the caller is not allowed to do this.
 	ClassPermissionDenied
 	// ClassCanceled: the client went away before the request finished.
 	ClassCanceled
@@ -83,9 +81,9 @@ func (c ErrorClass) String() string {
 // the call sites.
 func (c ErrorClass) Expected() bool {
 	switch c {
-	case ClassNotFound, ClassAlreadyExists, ClassInvalidInput, ClassCanceled:
+	case ClassNotFound, ClassAlreadyExists, ClassInvalidInput, ClassPermissionDenied, ClassCanceled:
 		return true
-	default: // ClassPermissionDenied, ClassUnexpected
+	default: // ClassUnexpected
 		return false
 	}
 }
