@@ -19,6 +19,7 @@ func serveFiles(
 	allowedOrigins []string,
 	domainChecker gateway.DomainChecker,
 	fileGateway gateway.File,
+	publishedHost string,
 ) {
 	if fileGateway == nil {
 		return
@@ -49,7 +50,7 @@ func serveFiles(
 			r, err := fileGateway.ReadAsset(ctx.Request().Context(), filename)
 			return r, filename, err
 		}),
-		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 
 	// Handle OPTIONS for assets endpoint
@@ -57,7 +58,7 @@ func serveFiles(
 		func(c echo.Context) error {
 			return c.NoContent(http.StatusNoContent)
 		},
-		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 
 	ec.GET(
@@ -71,7 +72,7 @@ func serveFiles(
 			r, err := fileGateway.ReadPluginFile(ctx.Request().Context(), pid, filename)
 			return r, filename, err
 		}),
-		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 
 	ec.GET(
@@ -81,6 +82,6 @@ func serveFiles(
 			r, err := fileGateway.ReadBuiltSceneFile(ctx.Request().Context(), name)
 			return r, name + ".json", err
 		}),
-		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 }

@@ -393,6 +393,9 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 
 	bucket, err := f.bucket(ctx)
 	if err != nil {
+		if errors.Is(err, context.Canceled) {
+			return nil, err
+		}
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read bucket err", rerror.ErrInternalByWithContext(ctx, err))
 	}
 
@@ -403,6 +406,10 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 	}
 
 	if err != nil {
+		// A cancelled request is the client giving up, not a server fault.
+		if errors.Is(err, context.Canceled) {
+			return nil, err
+		}
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read attrs err", rerror.ErrInternalByWithContext(ctx, err))
 	}
 
@@ -436,6 +443,9 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 		if errors.Is(err, storage.ErrObjectNotExist) {
 			return nil, rerror.ErrNotFound
 		}
+		if errors.Is(err, context.Canceled) {
+			return nil, err
+		}
 		log.Errorfc(ctx, "gcs: attrs err: %+v\n", err)
 		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
@@ -447,6 +457,9 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 				return nil, errors.New("no read permission")
 			}
 			return nil, rerror.ErrNotFound
+		}
+		if errors.Is(err, context.Canceled) {
+			return nil, err
 		}
 		log.Errorfc(ctx, "gcs: generation read err: %+v\n", err)
 		return nil, rerror.ErrInternalByWithContext(ctx, err)

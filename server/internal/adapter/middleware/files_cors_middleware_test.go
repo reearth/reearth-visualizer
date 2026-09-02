@@ -35,7 +35,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 		h := middleware(handler)
 
 		err := h(c)
@@ -59,7 +59,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com", "https://test.com"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com", "https://test.com"}, "")
 		h := middleware(handler)
 
 		err := h(c)
@@ -92,7 +92,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -121,7 +121,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -150,7 +150,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{})
+			middleware := FilesCORSMiddleware(mockChecker, []string{}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -176,7 +176,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -199,7 +199,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -225,7 +225,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -246,7 +246,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -267,7 +267,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -295,7 +295,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{})
+			middleware := FilesCORSMiddleware(mockChecker, []string{}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -321,7 +321,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -343,7 +343,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -365,7 +365,7 @@ func TestFilesCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 			h := middleware(handler)
 
 			err := h(c)
@@ -386,7 +386,7 @@ func TestFilesCORSMiddleware_ConcurrentRequests(t *testing.T) {
 		},
 	}
 
-	middleware := FilesCORSMiddleware(mockChecker, []string{"https://allowed.com"})
+	middleware := FilesCORSMiddleware(mockChecker, []string{"https://allowed.com"}, "")
 
 	handler := func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
@@ -436,7 +436,7 @@ func TestFilesCORSMiddleware_NilDomainChecker(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := FilesCORSMiddleware(nil, []string{"https://allowed.com"})
+		middleware := FilesCORSMiddleware(nil, []string{"https://allowed.com"}, "")
 		h := middleware(handler)
 
 		assert.Panics(t, func() {
@@ -454,7 +454,7 @@ func TestFilesCORSMiddleware_NilDomainChecker(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := FilesCORSMiddleware(nil, []string{"https://allowed.com"})
+		middleware := FilesCORSMiddleware(nil, []string{"https://allowed.com"}, "")
 		h := middleware(handler)
 
 		assert.NotPanics(t, func() {
@@ -487,7 +487,7 @@ func TestFilesCORSMiddleware_EdgeCases(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 		h := middleware(handler)
 
 		err := h(c)
@@ -513,7 +513,7 @@ func TestFilesCORSMiddleware_EdgeCases(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 		h := middleware(handler)
 
 		err := h(c)
@@ -534,7 +534,7 @@ func TestFilesCORSMiddleware_EdgeCases(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com:8080"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com:8080"}, "")
 		h := middleware(handler)
 
 		err := h(c)
@@ -555,7 +555,7 @@ func TestFilesCORSMiddleware_EdgeCases(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := FilesCORSMiddleware(mockChecker, []string{"http://localhost:3000"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"http://localhost:3000"}, "")
 		h := middleware(handler)
 
 		err := h(c)
@@ -565,10 +565,93 @@ func TestFilesCORSMiddleware_EdgeCases(t *testing.T) {
 	})
 }
 
+func TestFilesCORSMiddleware_FirstPartyPublishedOrigin(t *testing.T) {
+	const publishedHost = "{}.visualizer.reearth.io"
+
+	// The domain checker must never be consulted for a first-party origin.
+	failingChecker := &mockDomainChecker{
+		checkFunc: func(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
+			t.Errorf("domain checker was called for a first-party origin: %q", req.Domain)
+			return &gateway.DomainCheckResponse{Allowed: false}, nil
+		},
+	}
+	handler := func(c echo.Context) error { return c.String(http.StatusOK, "OK") }
+
+	t.Run("published subdomain is allowed without the domain checker", func(t *testing.T) {
+		e := echo.New()
+		req := httptest.NewRequest("GET", "/", nil)
+		req.Header.Set("Origin", "https://nagaoka-war.visualizer.reearth.io")
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		h := FilesCORSMiddleware(failingChecker, []string{}, publishedHost)(handler)
+		assert.NoError(t, h(c))
+		assert.Equal(t, "https://nagaoka-war.visualizer.reearth.io", rec.Header().Get("Access-Control-Allow-Origin"))
+	})
+
+	t.Run("look-alike suffix is not treated as first-party", func(t *testing.T) {
+		e := echo.New()
+		req := httptest.NewRequest("GET", "/", nil)
+		req.Header.Set("Origin", "https://nagaoka-war.visualizer.reearth.io.evil.com")
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		checked := false
+		checker := &mockDomainChecker{
+			checkFunc: func(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
+				checked = true
+				return &gateway.DomainCheckResponse{Allowed: false}, nil
+			},
+		}
+		h := FilesCORSMiddleware(checker, []string{}, publishedHost)(handler)
+		assert.NoError(t, h(c))
+		assert.True(t, checked, "a non-first-party origin must fall through to the domain checker")
+		assert.Empty(t, rec.Header().Get("Access-Control-Allow-Origin"))
+	})
+
+	t.Run("empty published host disables the short-circuit", func(t *testing.T) {
+		e := echo.New()
+		req := httptest.NewRequest("GET", "/", nil)
+		req.Header.Set("Origin", "https://nagaoka-war.visualizer.reearth.io")
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		checked := false
+		checker := &mockDomainChecker{
+			checkFunc: func(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
+				checked = true
+				return &gateway.DomainCheckResponse{Allowed: false}, nil
+			},
+		}
+		h := FilesCORSMiddleware(checker, []string{}, "")(handler)
+		assert.NoError(t, h(c))
+		assert.True(t, checked, "with no published host, the checker must still run")
+	})
+}
+
+func TestFilesCORSMiddleware_CanceledCheckIsNotAllowed(t *testing.T) {
+	e := echo.New()
+	req := httptest.NewRequest("GET", "/", nil)
+	req.Header.Set("Origin", "https://custom.example.com")
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	checker := &mockDomainChecker{
+		checkFunc: func(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
+			return nil, context.Canceled
+		},
+	}
+	handler := func(c echo.Context) error { return c.String(http.StatusOK, "OK") }
+	h := FilesCORSMiddleware(checker, []string{}, "{}.visualizer.reearth.io")(handler)
+
+	assert.NoError(t, h(c))
+	assert.Empty(t, rec.Header().Get("Access-Control-Allow-Origin"))
+}
+
 func BenchmarkFilesCORSMiddleware_AllowedOrigin(b *testing.B) {
 	e := echo.New()
 	mockChecker := &mockDomainChecker{}
-	middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
+	middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"}, "")
 
 	handler := func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
@@ -593,7 +676,7 @@ func BenchmarkFilesCORSMiddleware_DomainChecker(b *testing.B) {
 			return &gateway.DomainCheckResponse{Allowed: true}, nil
 		},
 	}
-	middleware := FilesCORSMiddleware(mockChecker, []string{})
+	middleware := FilesCORSMiddleware(mockChecker, []string{}, "")
 
 	handler := func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
