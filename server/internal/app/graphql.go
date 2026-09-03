@@ -15,12 +15,10 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/apperr"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearthx/log"
-	"github.com/reearth/reearthx/rerror"
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opentelemetry.io/otel"
@@ -110,11 +108,10 @@ func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *gqlclient.Client, 
 }
 
 // isHandledError returns true for errors that represent expected user-facing failures
-// (not found, operation denied) which should be logged at WARN rather than ERROR.
+// (not found, operation denied, invalid input) which should be logged at WARN
+// rather than ERROR.
 func isHandledError(e error) bool {
-	return errors.Is(e, rerror.ErrNotFound) ||
-		errors.Is(e, interfaces.ErrOperationDenied) ||
-		errors.Is(e, repo.ErrOperationDenied)
+	return apperr.Expected(e)
 }
 
 // customErrorPresenter handles custom GraphQL error presentation by converting various error types

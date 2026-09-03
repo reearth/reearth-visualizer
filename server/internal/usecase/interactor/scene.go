@@ -577,21 +577,21 @@ func (i *Scene) ExportSceneData(ctx context.Context, prj *project.Project) (*sce
 
 	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
 	if err != nil {
-		return nil, nil, errors.New("Fail scene :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to find scene: %w", err)
 	}
 
 	sceneID := sce.ID()
 	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, errors.New("Fail nlsLayer :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to find NLS layers: %w", err)
 	}
 	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, errors.New("Fail layerStyles :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to find layer styles: %w", err)
 	}
 	storyList, err := i.storytellingRepo.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, errors.New("Fail storytelling :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to find stories: %w", err)
 	}
 	var story *storytelling.Story
 	if storyList != nil && len(*storyList) > 0 {
@@ -609,7 +609,7 @@ func (i *Scene) ExportSceneData(ctx context.Context, prj *project.Project) (*sce
 		prj.TrackingID(),
 	)
 	if err != nil {
-		return nil, nil, errors.New("Fail BuildResult :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to build result: %w", err)
 	}
 
 	res := make(map[string]any)
