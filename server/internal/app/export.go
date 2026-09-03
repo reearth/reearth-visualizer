@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -59,10 +60,25 @@ func serveExportFile(
 				fmt.Printf("[export] !!!! download error: %s \n", filename)
 				return err
 			}
-			defer r.Close()
 			fmt.Printf("[export] download file: %s \n", filename)
 
-			return c.Stream(http.StatusOK, "application/zip", r)
+			// Close the reader before removing the object so the delete never races an
+			// open handle, and so the connection is released as soon as streaming ends.
+			streamErr := c.Stream(http.StatusOK, "application/zip", r)
+			_ = r.Close()
+			if streamErr != nil {
+				return streamErr
+			}
+
+			// The export zip is a single-use handoff: once the client has downloaded it,
+			// remove it from storage so it does not linger. A bucket lifecycle policy backs
+			// this up for downloads that never complete. Use a detached context because the
+			// request context is being torn down as the response finishes. A genuine delete
+			// failure is already logged at ERROR by the gateway (an already-removed object is
+			// treated as success), so a real failure surfaces on the error alert.
+			_ = fileGateway.RemoveExportProjectZip(context.WithoutCancel(ctx), filename)
+
+			return nil
 		},
 		// privateCache must be first: Echo composes middleware so the last one in this list
 		// runs closest to the handler, which would let optionalAuth short-circuit (e.g. a bad
