@@ -130,7 +130,7 @@ func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSu
 	if b.nlsLayer != nil {
 		nlsLayers, err := b.buildNLSLayers(ctx)
 		if err != nil {
-			return nil, fmt.Errorf("failed to build nlslayers: %w", err)
+			return nil, fmt.Errorf("failed to build NLS layers: %w", err)
 		}
 		sceneData.NLSLayers = nlsLayers
 	}

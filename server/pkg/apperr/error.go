@@ -5,7 +5,9 @@
 //
 // The ErrorClass drives the logging severity from one place
 // (ErrorClass.Expected): expected failures log at WARN so they do not page the
-// alerting channel; defects and denials stay at ERROR. ErrorClass.String is a
+// alerting channel; genuine defects stay at ERROR. Permission denials count as
+// expected (WARN): in practice they are legitimate users reaching resources
+// they cannot access, not attacks worth paging on. ErrorClass.String is a
 // stable, machine-readable code suitable for GraphQL extensions "code" and
 // metric labels, and leaves room for more axes later (e.g. a Temporary flag)
 // without touching call sites.

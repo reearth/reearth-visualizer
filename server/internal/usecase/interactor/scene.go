@@ -583,7 +583,7 @@ func (i *Scene) ExportSceneData(ctx context.Context, prj *project.Project) (*sce
 	sceneID := sce.ID()
 	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to find nlslayers: %w", err)
+		return nil, nil, fmt.Errorf("failed to find NLS layers: %w", err)
 	}
 	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
 	if err != nil {
