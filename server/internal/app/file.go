@@ -1,6 +1,8 @@
 package app
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"io"
 	"mime"
@@ -29,7 +31,11 @@ func serveFiles(
 		return func(ctx echo.Context) error {
 			reader, filename, err := handler(ctx)
 			if err != nil {
-				fmt.Printf("file handler err: %s\n", err.Error())
+				// A cancelled request is the client giving up, not a server fault,
+				// so do not log it as a handler error.
+				if !errors.Is(err, context.Canceled) {
+					fmt.Printf("file handler err: %s\n", err.Error())
+				}
 				return err
 			}
 			ct := "application/octet-stream"

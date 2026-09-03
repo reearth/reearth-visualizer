@@ -629,6 +629,26 @@ func TestFilesCORSMiddleware_FirstPartyPublishedOrigin(t *testing.T) {
 	})
 }
 
+func TestExtractDomain(t *testing.T) {
+	cases := []struct {
+		name string
+		raw  string
+		want string
+	}{
+		{"host with port", "http://example.com:8080", "example.com"},
+		{"host without port", "https://example.com", "example.com"},
+		{"ipv6 with port", "http://[::1]:3000", "::1"},
+		{"ipv6 without port", "http://[2001:db8::1]", "2001:db8::1"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := extractDomain(tc.raw)
+			assert.NoError(t, err)
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}
+
 func TestFilesCORSMiddleware_CanceledCheckIsNotAllowed(t *testing.T) {
 	e := echo.New()
 	req := httptest.NewRequest("GET", "/", nil)
