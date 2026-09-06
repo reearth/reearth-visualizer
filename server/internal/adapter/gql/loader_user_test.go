@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	graphql "github.com/hasura/go-graphql-client"
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	userMock "github.com/reearth/reearth-accounts/server/pkg/gqlclient/user/mockrepo"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -83,10 +84,12 @@ func TestUserLoader_SearchUser_NotFoundIsEmptyResult(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	// The accounts client returns the not-found as a GraphQL error, the same
+	// shape production sees, so the accounts predicate recognises it.
 	mockUserRepo := userMock.NewMockRepo(ctrl)
 	mockUserRepo.EXPECT().
 		FindByAlias(gomock.Any(), "nobody").
-		Return(nil, errors.New("Message: not found, Locations: [], Extensions: map[], Path: [findUserByAlias]")).
+		Return(nil, graphql.Errors{{Message: "input: findUserByAlias not found"}}).
 		Times(1)
 
 	loader := NewUserLoader(&gqlclient.Client{UserRepo: mockUserRepo}, nil)
@@ -94,6 +97,29 @@ func TestUserLoader_SearchUser_NotFoundIsEmptyResult(t *testing.T) {
 	u, err := loader.SearchUser(context.Background(), "nobody")
 
 	assert.NoError(t, err)
+	assert.Nil(t, u)
+}
+
+// TestUserLoader_SearchUser_PlainNotFoundStringPropagates guards against the
+// over-broad match airslice flagged: an error that merely contains "not found"
+// but is not a GraphQL not-found (e.g. a transport 404) must still surface,
+// rather than being silently swallowed as an empty search result.
+func TestUserLoader_SearchUser_PlainNotFoundStringPropagates(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	wantErr := errors.New("404 page not found")
+	mockUserRepo := userMock.NewMockRepo(ctrl)
+	mockUserRepo.EXPECT().
+		FindByAlias(gomock.Any(), "nobody").
+		Return(nil, wantErr).
+		Times(1)
+
+	loader := NewUserLoader(&gqlclient.Client{UserRepo: mockUserRepo}, nil)
+
+	u, err := loader.SearchUser(context.Background(), "nobody")
+
+	assert.ErrorIs(t, err, wantErr)
 	assert.Nil(t, u)
 }
 
