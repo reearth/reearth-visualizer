@@ -165,16 +165,31 @@ func (b *Builder) loadNLSLayerProperties(ctx context.Context) map[id.PropertyID]
 	}
 
 	res := make(map[id.PropertyID]*property.Property, len(ids))
-	for start := 0; start < len(ids); start += propertyLoadChunkSize {
-		end := min(start+propertyLoadChunkSize, len(ids))
-		loaded, err := b.ploader(ctx, ids[start:end]...)
-		if err != nil {
-			continue
-		}
+	merge := func(loaded property.List) {
 		for _, p := range loaded {
 			if p != nil {
 				res[p.ID()] = p
 			}
+		}
+	}
+	for start := 0; start < len(ids); start += propertyLoadChunkSize {
+		end := min(start+propertyLoadChunkSize, len(ids))
+		chunk := ids[start:end]
+		loaded, err := b.ploader(ctx, chunk...)
+		merge(loaded) // keep any partial results returned alongside an error
+		if err == nil {
+			continue
+		}
+		// The chunk load failed. Retry the still-missing IDs one at a time so a
+		// single unloadable property does not blank the other valid ones in the
+		// chunk, matching the per-property behaviour before batching. Missing
+		// properties remain absent and render empty.
+		for _, pid := range chunk {
+			if _, ok := res[pid]; ok {
+				continue
+			}
+			one, _ := b.ploader(ctx, pid)
+			merge(one)
 		}
 	}
 
