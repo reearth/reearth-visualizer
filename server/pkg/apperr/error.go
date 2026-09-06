@@ -160,9 +160,11 @@ func Classify(err error) ErrorClass {
 		return ClassCanceled
 	}
 
-	// Accounts GraphQL errors cross the process boundary as a plain message
-	// with no code, so the message is all there is to match on. The type check
-	// keeps this from reaching errors raised on our side.
+	// Accounts GraphQL errors cross the process boundary carrying a message and,
+	// for transport or internal failures, a structured "code"/"internal"
+	// extension. classifyUpstream reads those first and only message-matches
+	// genuine business errors. The type check keeps this from reaching errors
+	// raised on our side.
 	if c, ok := classifyUpstream(err); ok {
 		return c
 	}
@@ -173,9 +175,10 @@ func Classify(err error) ErrorClass {
 // Expected is a convenience over Classify(err).Expected().
 func Expected(err error) bool { return Classify(err).Expected() }
 
-// upstreamMessages maps a substring of an accounts-API error message to a
-// class. Anything not listed (notably "internal") falls through to
-// ClassUnexpected.
+// upstreamMessages maps a substring of an accounts-API business error message
+// to a class. It is only consulted after transport and internal failures have
+// been excluded (see matchUpstreamError), so an internal error whose message
+// happens to contain one of these substrings is not downgraded.
 var upstreamMessages = []struct {
 	substr string
 	class  ErrorClass
@@ -200,28 +203,55 @@ func classifyUpstream(err error) (ErrorClass, bool) {
 			return ClassUnexpected, false
 		}
 		// Every entry must be the same class; a mixed list is a defect.
-		first, ok := matchUpstream(list[0].Message)
+		first, ok := matchUpstreamError(list[0])
 		if !ok {
 			return ClassUnexpected, false
 		}
 		for _, e := range list[1:] {
-			if c, ok := matchUpstream(e.Message); !ok || c != first {
+			if c, ok := matchUpstreamError(e); !ok || c != first {
 				return ClassUnexpected, false
 			}
 		}
 		return first, true
 	case errors.As(err, &one):
-		return matchUpstream(one.Message)
+		return matchUpstreamError(one)
 	}
 	return ClassUnexpected, false
 }
 
-func matchUpstream(message string) (ErrorClass, bool) {
-	message = strings.ToLower(message)
+// matchUpstreamError classifies a single accounts GraphQL error. It only ever
+// downgrades a genuine business error: a transport or internal failure is never
+// treated as expected, so a server-side fault still reaches ERROR even when its
+// message happens to contain an expected phrase such as "not found".
+func matchUpstreamError(e graphql.Error) (ErrorClass, bool) {
+	if isUpstreamInternal(e) {
+		return ClassUnexpected, false
+	}
+	message := strings.ToLower(e.Message)
+	// A message-based fallback cannot distinguish "not found" (a business error)
+	// from "internal error: ... not found" (a defect), so exclude anything that
+	// announces itself as internal before applying the substring table.
+	if strings.Contains(message, "internal") {
+		return ClassUnexpected, false
+	}
 	for _, m := range upstreamMessages {
 		if strings.Contains(message, m.substr) {
 			return m.class, true
 		}
 	}
 	return ClassUnexpected, false
+}
+
+// isUpstreamInternal reports whether a GraphQL error carries a structured signal
+// that it is a transport-level or internal upstream failure rather than a
+// business error: the client sets Extensions["code"] to "request_error" for
+// transport failures and populates Extensions["internal"] with server detail.
+func isUpstreamInternal(e graphql.Error) bool {
+	if code, ok := e.Extensions["code"].(string); ok && code == graphql.ErrRequestError {
+		return true
+	}
+	if _, ok := e.Extensions["internal"]; ok {
+		return true
+	}
+	return false
 }
