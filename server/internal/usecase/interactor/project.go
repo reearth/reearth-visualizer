@@ -1101,6 +1101,14 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 // (exportZipState.trackWrite) rather than a single check after the whole zip has already been
 // built -- by the time a post-hoc check could catch an oversized export, the damage (memory,
 // disk, GCS reads) is already done.
+//
+// SCA-07 (accepted tradeoff): the zip is assembled in the container filesystem, which on Cloud Run
+// is in memory, so peak memory scales with the export size. Kept as-is deliberately: real exports
+// are small, so the concern is dormant at current load; lowering this cap would make a legitimate
+// large export fail, and raising instance memory or isolating export onto its own worker is
+// disproportionate to the current risk. Revisit if export sizes or concurrency grow materially;
+// shrinking the cap is not the answer -- the options (each with tradeoffs) are weighed in the
+// internal tracker.
 var maxExportZipBytes int64 = 500 * 1024 * 1024 // 500MB
 
 // exportZipState carries state across the whole SearchAssetURL/AddZipAsset recursion for one

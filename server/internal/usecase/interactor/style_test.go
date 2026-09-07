@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -84,5 +85,15 @@ func TestStyle_CrossTenantIDOR(t *testing.T) {
 		}, owner)
 		assert.NoError(t, err)
 		assert.Equal(t, newName, s.Name())
+	})
+
+	t.Run("AddStyle to a scene that does not exist is not found, not denied", func(t *testing.T) {
+		s, err := uc.AddStyle(ctx, interfaces.AddStyleInput{
+			SceneID: id.NewSceneID(), // never created
+			Name:    "orphan style",
+		}, owner)
+		assert.Nil(t, s)
+		assert.ErrorIs(t, err, rerror.ErrNotFound)
+		assert.NotErrorIs(t, err, interfaces.ErrOperationDenied)
 	})
 }
