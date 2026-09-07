@@ -118,8 +118,15 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		}
 	}()
 
+	// Look up the scene first so a scene that does not exist is reported as not
+	// found rather than as a denial. CanWriteScene only consults the operator's
+	// writable list, so without this a missing scene id is indistinguishable
+	// from one the caller may not write.
+	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
+		return nil, err
+	}
 	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", interfaces.ErrOperationDenied), interfaces.ErrOperationDenied)
+		return nil, interfaces.ErrOperationDenied
 	}
 
 	builder := nlslayer.NewNLSLayerSimple().

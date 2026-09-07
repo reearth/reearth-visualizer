@@ -87,6 +87,7 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
     }
   ],
   "terrain.terrain": "terrain.enabled",
+  "terrain.terrainWaterMask": "terrain.waterMask",
   "terrain.terrainType": "terrain.type",
   "terrain.terrainCesiumIonAsset": "assets.cesium.terrain.ionAsset",
   "terrain.terrainCesiumIonAccessToken": "assets.cesium.terrain.ionAccessToken",
