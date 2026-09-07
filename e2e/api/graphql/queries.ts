@@ -186,12 +186,26 @@ export const GET_SCENE = `
   }
 `;
 
+// Status only: this is polled on an interval, so it must not pull the
+// importResultLog, which can carry the full scene JSON.
 export const GET_PROJECT_IMPORT_STATUS = `
   query GetProjectImportStatus($projectId: ID!) {
     node(id: $projectId, type: PROJECT) {
       id
       ... on Project {
-        name
+        metadata { importStatus }
+      }
+    }
+  }
+`;
+
+// Includes the (potentially large) importResultLog. Fetched once, only when a
+// wait ends without reaching the expected status, to build the error message.
+export const GET_PROJECT_IMPORT_RESULT_LOG = `
+  query GetProjectImportResultLog($projectId: ID!) {
+    node(id: $projectId, type: PROJECT) {
+      id
+      ... on Project {
         metadata { importStatus importResultLog }
       }
     }

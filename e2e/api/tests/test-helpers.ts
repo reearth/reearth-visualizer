@@ -3,7 +3,10 @@ import path from "path";
 
 import { faker } from "@faker-js/faker";
 
-import { GET_PROJECT_IMPORT_STATUS } from "../graphql/queries";
+import {
+  GET_PROJECT_IMPORT_STATUS,
+  GET_PROJECT_IMPORT_RESULT_LOG
+} from "../graphql/queries";
 
 // Crockford Base32 charset used by oklog/ulid
 const CROCKFORD = "0123456789abcdefghjkmnpqrstvwxyz";
@@ -44,7 +47,12 @@ export function getAuthHeaders(): Record<string, string> {
  */
 export function buildMultipart(
   fields: Record<string, string>,
-  file?: { name: string; filename: string; contentType: string; content: Buffer }
+  file?: {
+    name: string;
+    filename: string;
+    contentType: string;
+    content: Buffer;
+  }
 ): { body: Buffer; contentType: string } {
   const boundary = `----FormBoundary${faker.string.alphanumeric(16)}`;
   const crlf = "\r\n";
@@ -85,10 +93,16 @@ type ImportStatusResult = {
   importResultLog: unknown;
 };
 
+// Terminal import states never change once reached, so polling past one is
+// pointless.
+const TERMINAL_STATUSES = new Set(["SUCCESS", "FAILED"]);
+
 /**
- * Polls a project's import status until it reaches `expected`, or fails with
- * the status and result log it actually reached. The import runs in a
- * background worker, so the upload response cannot tell us the outcome.
+ * Polls a project's import status until it reaches `expected`, then returns it.
+ * The import runs in a background worker, so the upload response cannot tell us
+ * the outcome. Polls the status alone; if the wait ends without reaching
+ * `expected` (a different terminal status, or timeout) it fetches the result log
+ * once and throws with the status it actually reached and that log's message.
  */
 export async function waitForImportStatus(
   gqlClient: {
@@ -99,30 +113,36 @@ export async function waitForImportStatus(
   timeoutMs = 30000
 ): Promise<ImportStatusResult> {
   const deadline = Date.now() + timeoutMs;
-  let last: ImportStatusResult = { importStatus: null, importResultLog: null };
+  let lastStatus: string | null = null;
 
   while (Date.now() < deadline) {
     const { data } = await gqlClient.query<{
-      node: { metadata: ImportStatusResult | null } | null;
+      node: { metadata: { importStatus: string | null } | null } | null;
     }>(GET_PROJECT_IMPORT_STATUS, { projectId });
 
-    last = data.node?.metadata ?? last;
-    if (last.importStatus === expected) return last;
-    if (last.importStatus === "FAILED" && expected !== "FAILED") break;
+    lastStatus = data.node?.metadata?.importStatus ?? lastStatus;
+    if (lastStatus === expected) {
+      return { importStatus: lastStatus, importResultLog: null };
+    }
+    // A terminal status other than the expected one will never change, so stop
+    // now instead of waiting out the timeout.
+    if (lastStatus !== null && TERMINAL_STATUSES.has(lastStatus)) break;
 
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
-  // Only the message, not the whole result log: that carries the full scene
-  // JSON and buries the failure in kilobytes of output.
+  // Fetch the result log only now, once, and surface only its message: the log
+  // itself can carry the full scene JSON and would bury the failure.
+  const { data } = await gqlClient.query<{
+    node: { metadata: ImportStatusResult | null } | null;
+  }>(GET_PROJECT_IMPORT_RESULT_LOG, { projectId });
+  const log = data.node?.metadata?.importResultLog ?? null;
   const reason =
-    typeof last.importResultLog === "object" &&
-    last.importResultLog !== null &&
-    "message" in last.importResultLog
-      ? String((last.importResultLog as { message: unknown }).message)
+    typeof log === "object" && log !== null && "message" in log
+      ? String((log as { message: unknown }).message)
       : "no message recorded";
 
   throw new Error(
-    `import status did not reach ${expected} within ${timeoutMs}ms; last status ${last.importStatus}: ${reason}`
+    `import status did not reach ${expected} within ${timeoutMs}ms; last status ${lastStatus}: ${reason}`
   );
 }
