@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -47,6 +48,10 @@ func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 	resp, err := h.client.Do(httpReq)
 
 	if err != nil {
+		// A cancelled request is the client giving up, not a server fault.
+		if errors.Is(err, context.Canceled) {
+			return nil, err
+		}
 		return nil, rerror.ErrInternalBy(fmt.Errorf("domain check request failed: %w", err))
 	}
 	defer func() {
