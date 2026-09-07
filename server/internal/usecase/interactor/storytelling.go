@@ -86,17 +86,20 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		}
 	}()
 
+	// Fetch the scene first: a scene that does not exist must be reported as not
+	// found rather than as a denial, and nothing should be written until the
+	// scene is confirmed and the permission check has passed (addNewProperty
+	// below persists a property).
+	sc, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
+	if err != nil {
+		return nil, err
+	}
 	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, interfaces.ErrOperationDenied
 	}
 	storySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
 	filter := Filter(inp.SceneID)
 	prop, err := i.addNewProperty(ctx, storySchema.ID(), inp.SceneID, &filter)
-	if err != nil {
-		return nil, err
-	}
-
-	sc, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
 	if err != nil {
 		return nil, err
 	}
@@ -523,6 +526,11 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 		}
 	}()
 
+	// A missing scene is not found, not a denial (CanWriteScene only checks the
+	// operator's writable list).
+	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
+		return nil, nil, err
+	}
 	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
@@ -604,6 +612,11 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 		}
 	}()
 
+	// A missing scene is not found, not a denial (CanWriteScene only checks the
+	// operator's writable list).
+	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
+		return nil, nil, err
+	}
 	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
@@ -676,6 +689,11 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 		}
 	}()
 
+	// A missing scene is not found, not a denial (CanWriteScene only checks the
+	// operator's writable list).
+	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
+		return nil, nil, err
+	}
 	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
