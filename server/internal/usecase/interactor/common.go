@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"math/rand/v2"
 	"net/url"
 	"strings"
 	"time"
@@ -24,15 +25,57 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 )
 
+// txMaxRetries is the number of additional attempts a contended transaction
+// gets. Kept in one place so the retried call sites stay consistent.
+const txMaxRetries = 3
+
+// txRetryBaseDelay is the first backoff step between transaction attempts.
+// Retrying immediately is not enough on its own: MongoDB gives up on a
+// contended transaction after about 5ms of lock waiting
+// (maxTransactionLockRequestTimeoutMillis), so an immediate retry tends to land
+// inside the same contention window as the attempt that just failed. A short
+// randomised delay lets the winning transaction commit first.
+const txRetryBaseDelay = 10 * time.Millisecond
+
+// txRetryMaxShift caps the exponent so the delay cannot overflow or grow
+// unreasonably if a caller passes a large maxRetries.
+const txRetryMaxShift = 6
+
+// txRetryDelay returns the backoff before the attempt after the given one,
+// using exponential growth with full jitter. Jitter matters more than the mean
+// here: without it, two transactions that collided will tend to wake together
+// and collide again.
+func txRetryDelay(attempt int) time.Duration {
+	shift := attempt
+	if shift > txRetryMaxShift {
+		shift = txRetryMaxShift
+	}
+	window := int64(txRetryBaseDelay) << shift
+	return time.Duration(rand.Int64N(window))
+}
+
 // runWithTxRetry runs fn in a fresh MongoDB transaction for each attempt,
 // retrying up to maxRetries additional times on TransientTransactionError.
-// Each retry starts a new session so the driver can safely renegotiate locks.
+// Each retry starts a new session so the driver can safely renegotiate locks,
+// and re-runs fn so its reads observe the state committed by whichever
+// transaction won the previous round. Retrying without re-reading would turn a
+// write conflict into a lost update.
 func runWithTxRetry(ctx context.Context, t usecasex.Transaction, maxRetries int, fn func(context.Context) error) error {
 	if t == nil {
 		return fn(ctx)
 	}
 	var lastErr error
 	for attempt := 0; attempt <= maxRetries; attempt++ {
+		if attempt > 0 {
+			// Wait before re-attempting, but give up if the caller is already
+			// gone -- there is no point holding a request open to retry a
+			// transaction whose response nobody will read.
+			select {
+			case <-ctx.Done():
+				return lastErr
+			case <-time.After(txRetryDelay(attempt - 1)):
+			}
+		}
 		tx, err := t.Begin(ctx)
 		if err != nil {
 			return err
