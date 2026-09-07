@@ -86,7 +86,7 @@ func serveExportFile(
 		// always sets the header, even on responses rejected before reaching the handler.
 		privateCache,
 		optionalAuth,
-		appmiddleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		appmiddleware.FilesCORSMiddleware(domainChecker, allowedOrigins, cfg.Config.Published.Host),
 	)
 
 	e.OPTIONS(
@@ -94,6 +94,6 @@ func serveExportFile(
 		func(c echo.Context) error {
 			return c.NoContent(http.StatusNoContent)
 		},
-		appmiddleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		appmiddleware.FilesCORSMiddleware(domainChecker, allowedOrigins, cfg.Config.Published.Host),
 	)
 }
