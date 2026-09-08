@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -98,4 +99,70 @@ func TestStorytelling_RemovePage_RejectsForeignScene(t *testing.T) {
 	stored, ferr := env.db.Storytelling.FindByID(ctx, story.Id())
 	require.NoError(t, ferr)
 	assert.NotNil(t, stored.Pages().Page(pageID), "the page must still exist")
+}
+
+// TestStorytelling_CreateStory_SceneNotFound covers the denial-vs-not-found
+// mislabel: CreateStory took a client-supplied scene id and, for a scene that
+// did not exist, returned operation denied (CanWriteScene only checks the
+// operator's writable list). It now looks the scene up first, so a missing
+// scene is not found. Moving the lookup up also means no property is written
+// before the scene is confirmed.
+func TestStorytelling_CreateStory_SceneNotFound(t *testing.T) {
+	ctx := context.Background()
+	env := setupStorytellingTestEnv(ctx, t)
+
+	story, err := env.storytellingUC.Create(ctx, interfaces.CreateStoryInput{
+		SceneID: id.NewSceneID(), // never created
+		Title:   "orphan",
+	}, env.operator)
+
+	assert.Nil(t, story)
+	assert.ErrorIs(t, err, rerror.ErrNotFound)
+	assert.NotErrorIs(t, err, interfaces.ErrOperationDenied)
+}
+
+// TestStorytelling_PageMutations_SceneNotFound covers the same denial-vs-not-found
+// mislabel on the story page mutations: CreatePage, UpdatePage and RemovePage
+// authorized inp.SceneID before confirming the scene exists, so a scene that
+// does not exist was reported as operation denied. Each now looks the scene up
+// first.
+func TestStorytelling_PageMutations_SceneNotFound(t *testing.T) {
+	ctx := context.Background()
+	env := setupStorytellingTestEnv(ctx, t)
+	fakeScene := id.NewSceneID() // never created
+
+	t.Run("CreatePage", func(t *testing.T) {
+		story, page, err := env.storytellingUC.CreatePage(ctx, interfaces.CreatePageParam{
+			SceneID: fakeScene,
+			StoryID: id.NewStoryID(),
+		}, env.operator)
+		assert.Nil(t, story)
+		assert.Nil(t, page)
+		assert.ErrorIs(t, err, rerror.ErrNotFound)
+		assert.NotErrorIs(t, err, interfaces.ErrOperationDenied)
+	})
+
+	t.Run("UpdatePage", func(t *testing.T) {
+		story, page, err := env.storytellingUC.UpdatePage(ctx, interfaces.UpdatePageParam{
+			SceneID: fakeScene,
+			StoryID: id.NewStoryID(),
+			PageID:  id.NewPageID(),
+		}, env.operator)
+		assert.Nil(t, story)
+		assert.Nil(t, page)
+		assert.ErrorIs(t, err, rerror.ErrNotFound)
+		assert.NotErrorIs(t, err, interfaces.ErrOperationDenied)
+	})
+
+	t.Run("RemovePage", func(t *testing.T) {
+		story, pageID, err := env.storytellingUC.RemovePage(ctx, interfaces.RemovePageParam{
+			SceneID: fakeScene,
+			StoryID: id.NewStoryID(),
+			PageID:  id.NewPageID(),
+		}, env.operator)
+		assert.Nil(t, story)
+		assert.Nil(t, pageID)
+		assert.ErrorIs(t, err, rerror.ErrNotFound)
+		assert.NotErrorIs(t, err, interfaces.ErrOperationDenied)
+	})
 }
