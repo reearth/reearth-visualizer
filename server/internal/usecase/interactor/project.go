@@ -13,15 +13,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
-	"github.com/reearth/reearthx/i18n"
-	"github.com/reearth/reearthx/idx"
-	"github.com/reearth/reearthx/log"
-	"github.com/reearth/reearthx/rerror"
-	"github.com/99designs/gqlgen/graphql"
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -34,6 +30,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/i18n"
+	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
@@ -1089,7 +1089,7 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
 	if err != nil {
-		return nil, errors.New("project metadata " + err.Error())
+		return nil, fmt.Errorf("project metadata: %w", err)
 	}
 
 	prj.SetMetadata(meta)
