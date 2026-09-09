@@ -2,6 +2,105 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.23 - 2026-09-09
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.23 ([#2409](https://github.com/reearth/reearth-visualizer/pull/2409)) [`64f6dc`](https://github.com/reearth/reearth-visualizer/commit/64f6dc)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Log the stack when an import panics ([#2406](https://github.com/reearth/reearth-visualizer/pull/2406)) [`abe58c`](https://github.com/reearth/reearth-visualizer/commit/abe58c)
+- Record terminal status and distinguish import-claim states (REL-08, REL-09) ([#2401](https://github.com/reearth/reearth-visualizer/pull/2401)) [`710025`](https://github.com/reearth/reearth-visualizer/commit/710025)
+- Log expected failures at WARN instead of ERROR ([#2384](https://github.com/reearth/reearth-visualizer/pull/2384)) [`294b41`](https://github.com/reearth/reearth-visualizer/commit/294b41)
+- Batch layer property loads in the scene builder ([#2361](https://github.com/reearth/reearth-visualizer/pull/2361)) [`2ec099`](https://github.com/reearth/reearth-visualizer/commit/2ec099)
+- Batch ID replacements during project import instead of per-item (SCA-05) ([#2369](https://github.com/reearth/reearth-visualizer/pull/2369)) [`d27f77`](https://github.com/reearth/reearth-visualizer/commit/d27f77)
+- Report not found instead of crashing or returning null entries ([#2386](https://github.com/reearth/reearth-visualizer/pull/2386)) [`773fef`](https://github.com/reearth/reearth-visualizer/commit/773fef)
+- Do not panic importing an export that has no story ([#2388](https://github.com/reearth/reearth-visualizer/pull/2388)) [`00392d`](https://github.com/reearth/reearth-visualizer/commit/00392d)
+- Retry property value updates on write conflict ([#2399](https://github.com/reearth/reearth-visualizer/pull/2399)) [`468f7b`](https://github.com/reearth/reearth-visualizer/commit/468f7b)
+- Guard findOne against an empty filtered result (REL-10) ([#2402](https://github.com/reearth/reearth-visualizer/pull/2402)) [`271fa2`](https://github.com/reearth/reearth-visualizer/commit/271fa2)
+- Report a missing scene as not found, not operation denied ([#2403](https://github.com/reearth/reearth-visualizer/pull/2403)) [`5d9569`](https://github.com/reearth/reearth-visualizer/commit/5d9569)
+- Skip domain check for first-party published subdomains and stop logging client cancellations as internal errors ([#2404](https://github.com/reearth/reearth-visualizer/pull/2404)) [`d1e0c7`](https://github.com/reearth/reearth-visualizer/commit/d1e0c7)
+- Delete export zip from storage after download ([#2405](https://github.com/reearth/reearth-visualizer/pull/2405)) [`b31a9b`](https://github.com/reearth/reearth-visualizer/commit/b31a9b)
+
+#### 📖 Documentation
+
+- Document star count lost-update race in PatchStarCount (REL-04) ([#2368](https://github.com/reearth/reearth-visualizer/pull/2368)) [`ad19f8`](https://github.com/reearth/reearth-visualizer/commit/ad19f8)
+- Note accepted tradeoff for in-memory export zip assembly (SCA-07) ([#2400](https://github.com/reearth/reearth-visualizer/pull/2400)) [`e4026d`](https://github.com/reearth/reearth-visualizer/commit/e4026d)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Add 1.0.0-beta.16.22 changelog to main ([#2394](https://github.com/reearth/reearth-visualizer/pull/2394)) [`332b8a`](https://github.com/reearth/reearth-visualizer/commit/332b8a)
+
+### ci
+
+#### Miscellaneous Tasks
+
+- Allow promote-images to be run manually ([#2395](https://github.com/reearth/reearth-visualizer/pull/2395)) [`398590`](https://github.com/reearth/reearth-visualizer/commit/398590)
+
+### e2e
+
+#### 🧪 Testing
+
+- SearchUser for a missing user returns empty, not an error ([#2407](https://github.com/reearth/reearth-visualizer/pull/2407)) [`ab4297`](https://github.com/reearth/reearth-visualizer/commit/ab4297)
+- Make the split-import test verify the import it triggers ([#2389](https://github.com/reearth/reearth-visualizer/pull/2389)) [`bf8076`](https://github.com/reearth/reearth-visualizer/commit/bf8076)
+
+### server,web
+
+#### 🔧 Bug Fixes
+
+- Stop a member search that matches nobody from raising an error ([#2390](https://github.com/reearth/reearth-visualizer/pull/2390)) [`6e1f89`](https://github.com/reearth/reearth-visualizer/commit/6e1f89)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Add 1.0.0-beta.16.22 changelog to main ([#2394](https://github.com/reearth/reearth-visualizer/pull/2394)) [`332b8a`](https://github.com/reearth/reearth-visualizer/commit/332b8a)
+
+## 1.0.0-beta.16.22 - 2026-08-26
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Only touch the system tile when its widget mutation succeeds ([#2379](https://github.com/reearth/reearth-visualizer/pull/2379)) [`098877`](https://github.com/reearth/reearth-visualizer/commit/098877)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.22 ([#2393](https://github.com/reearth/reearth-visualizer/pull/2393)) [`83846a`](https://github.com/reearth/reearth-visualizer/commit/83846a)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Set no-cache headers on private project export downloads (SEC-04) ([#2360](https://github.com/reearth/reearth-visualizer/pull/2360)) [`7cb0f4`](https://github.com/reearth/reearth-visualizer/commit/7cb0f4)
+- Scope story lookup to the authorized scene in page mutations ([#2391](https://github.com/reearth/reearth-visualizer/pull/2391)) [`42b548`](https://github.com/reearth/reearth-visualizer/commit/42b548)
+- Require the internal token before trusting the gRPC user-id (SEC-03) ([#2392](https://github.com/reearth/reearth-visualizer/pull/2392)) [`4170bb`](https://github.com/reearth/reearth-visualizer/commit/4170bb)
+- Drop unused domains.domain branch from public project lookup (SCA-03) ([#2363](https://github.com/reearth/reearth-visualizer/pull/2363)) [`e18a81`](https://github.com/reearth/reearth-visualizer/commit/e18a81)
+- Finish REL-04 import status cutover, add duplicate-import guard [VIZ-DEV-65] ([#2335](https://github.com/reearth/reearth-visualizer/pull/2335)) [`e27e01`](https://github.com/reearth/reearth-visualizer/commit/e27e01)
+- Stop scene lock release from getting stuck on a canceled context (REL-03) ([#2371](https://github.com/reearth/reearth-visualizer/pull/2371)) [`1be23f`](https://github.com/reearth/reearth-visualizer/commit/1be23f)
+- Close pipe reader to prevent goroutine leak on publish upload failure (SCA-04) ([#2366](https://github.com/reearth/reearth-visualizer/pull/2366)) [`2a035e`](https://github.com/reearth/reearth-visualizer/commit/2a035e)
+- Fail closed on basic-auth metadata lookup errors for published pages (REL-02) ([#2372](https://github.com/reearth/reearth-visualizer/pull/2372)) [`459a2b`](https://github.com/reearth/reearth-visualizer/commit/459a2b)
+- Check workspace membership for private project access (SEC-03) ([#2359](https://github.com/reearth/reearth-visualizer/pull/2359)) [`330dc5`](https://github.com/reearth/reearth-visualizer/commit/330dc5)
+
+### server,web
+
+#### 🔧 Bug Fixes
+
+- Create the system tile&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s fields atomically with the item (REL-07) ([#2380](https://github.com/reearth/reearth-visualizer/pull/2380)) [`50d1cf`](https://github.com/reearth/reearth-visualizer/commit/50d1cf)
+
+### web,server
+
+#### 🚀 Features
+
+- Allow users to toggle water mask rendering on terrain ([#2373](https://github.com/reearth/reearth-visualizer/pull/2373)) [`2b91ab`](https://github.com/reearth/reearth-visualizer/commit/2b91ab)
+
 ## 1.0.0-beta.16.21 - 2026-08-19
 
 ### Web
