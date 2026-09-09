@@ -1,6 +1,8 @@
 package app
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"io"
 	"mime"
@@ -19,6 +21,7 @@ func serveFiles(
 	allowedOrigins []string,
 	domainChecker gateway.DomainChecker,
 	fileGateway gateway.File,
+	publishedHost string,
 ) {
 	if fileGateway == nil {
 		return
@@ -28,7 +31,11 @@ func serveFiles(
 		return func(ctx echo.Context) error {
 			reader, filename, err := handler(ctx)
 			if err != nil {
-				fmt.Printf("file handler err: %s\n", err.Error())
+				// A cancelled request is the client giving up, not a server fault,
+				// so do not log it as a handler error.
+				if !errors.Is(err, context.Canceled) {
+					fmt.Printf("file handler err: %s\n", err.Error())
+				}
 				return err
 			}
 			ct := "application/octet-stream"
@@ -49,7 +56,7 @@ func serveFiles(
 			r, err := fileGateway.ReadAsset(ctx.Request().Context(), filename)
 			return r, filename, err
 		}),
-		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 
 	// Handle OPTIONS for assets endpoint
@@ -57,7 +64,7 @@ func serveFiles(
 		func(c echo.Context) error {
 			return c.NoContent(http.StatusNoContent)
 		},
-		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 
 	ec.GET(
@@ -71,7 +78,7 @@ func serveFiles(
 			r, err := fileGateway.ReadPluginFile(ctx.Request().Context(), pid, filename)
 			return r, filename, err
 		}),
-		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 
 	ec.GET(
@@ -81,6 +88,6 @@ func serveFiles(
 			r, err := fileGateway.ReadBuiltSceneFile(ctx.Request().Context(), name)
 			return r, name + ".json", err
 		}),
-		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins),
+		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 }
