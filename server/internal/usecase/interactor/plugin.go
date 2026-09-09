@@ -232,7 +232,7 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 							}
 							// save PropertySchema -------------
 							if err := i.propertySchemaRepo.Filtered(filter).Save(ctx, ps); err != nil {
-								return result, errors.New("Save propertySchema :" + err.Error())
+								return result, fmt.Errorf("failed to save property schema: %w", err)
 							}
 							propertySchemaIDs = append(propertySchemaIDs, ps.ID())
 
@@ -263,7 +263,7 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 			// save Plugin -------------
 			if err := i.pluginRepo.Filtered(filter).Save(ctx, p); err != nil {
 				log.Errorf("[Import Error] plugin : %s", i18n.StringFrom(pluginJSON.Name))
-				return result, errors.New("Save plugin :" + err.Error())
+				return result, fmt.Errorf("failed to save plugin: %w", err)
 			}
 		}
 
