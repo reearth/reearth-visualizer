@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/gqlclient/user"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -64,6 +65,13 @@ func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmo
 	if c.client != nil {
 		u, err := c.client.UserRepo.FindByAlias(ctx, trimmed)
 		if err != nil {
+			// Searching for someone who has not signed up is a normal outcome, but
+			// the accounts client reports it as an error. Reuse the accounts client's
+			// own predicate, which matches a GraphQL "not found" message and ignores
+			// transport or other failures, so only a genuine not-found is swallowed.
+			if accountsUser.ErrUserNotFound(err) {
+				return nil, nil
+			}
 			return nil, err
 		}
 		if u == nil {
