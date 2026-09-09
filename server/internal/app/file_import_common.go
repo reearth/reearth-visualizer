@@ -288,7 +288,11 @@ func UpdateImportStatus(
 	defer cancel()
 	_, err := usecases.Project.UpdateImportStatus(writeCtx, pid, status, &importResultLog, op)
 	if err != nil {
-		log.Printf("failed to update import status: %v", err)
+		// This write is the only thing that moves the project out of its prior
+		// status (e.g. UPLOADING). If it fails while recording a terminal status,
+		// the project can stay stuck there after its upload is cleaned up, so log
+		// at ERROR with the ids to make that rare condition diagnosable.
+		log.Errorfc(ctx, "[Import] failed to update import status for %s to %s: %v", pid, status, err)
 	}
 }
 
