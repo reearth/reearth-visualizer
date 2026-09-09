@@ -75,8 +75,8 @@ export class DashBoardPage {
     );
     this.membersSettings = this.page.getByTestId("members-settings-item-3");
 
-    this.accountSettings = this.page.getByTestId("avatar-accountSettings-item-1");
-    this.logOutCTA = this.page.getByTestId("avatar-signOut-item-2");
+    this.accountSettings = this.page.getByTestId("avatar-account-settings-item-1");
+    this.logOutCTA = this.page.getByTestId("avatar-sign-out-item-2");
 
     this.logo = this.page.locator('img[src*="LogoWithText.svg"]');
     this.appVersion = this.page.locator("p", { hasText: /Version/i });

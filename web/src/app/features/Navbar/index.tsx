@@ -2,6 +2,7 @@ import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 
 import CreateProjectModal from "../CreateProjectModal";
+import AddWorkspaceModal from "../CreateWorkspaceModal";
 
 import useHook from "./hooks";
 import LeftSection from "./LeftSection";
@@ -72,6 +73,7 @@ const Navbar: React.FC<Props> = ({
         {rightSide}
       </Wrapper>
       {projectCreatorVisible && <CreateProjectModal />}
+      <AddWorkspaceModal />
     </>
   );
 };

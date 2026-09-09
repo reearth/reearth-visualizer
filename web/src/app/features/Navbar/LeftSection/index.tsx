@@ -95,7 +95,7 @@ const LeftSection: React.FC<Props> = ({
           })) ?? []),
           {
             id: "new-project",
-            dataTestid: "profile-newProject",
+            dataTestid: "profile-new-project",
             hasFooter: true,
             title: t("New Project"),
             icon: "plus" as const,
@@ -163,7 +163,7 @@ const LeftSection: React.FC<Props> = ({
           </LogoTrigger>
         }
         menu={accountMenuItems}
-        dataTestid="avatar-popupMenu"
+        dataTestid="avatar-popup-menu"
       />
       {isEE ? (
         <ProductsMenu workspaceId={currentWorkspace?.id} />

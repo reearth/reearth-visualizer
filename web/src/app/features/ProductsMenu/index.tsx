@@ -15,7 +15,7 @@ import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { FC, useCallback } from "react";
 import { useNavigate } from "react-router";
 
-export type ProductId = "dashboard" | "visualizer" | "cms" | "flow";
+export type ProductId = "dashboard" | "visualizer" | "cms";
 export type OtherLinkId = "home" | "community";
 
 type MenuItem = {
@@ -40,6 +40,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
 
   const platformUrl = c?.platformUrl;
   const cmsUrl = c?.cmsUrl;
+  const homeUrl = c?.homeUrl;
 
   const goToDashboard = workspaceId
     ? () => navigate(`/dashboard/${workspaceId}`)
@@ -83,9 +84,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
       id: "home",
       title: t("Re:Earth Home"),
       icon: "home",
-      onNavigate: platformUrl
-        ? () => openUrlInNewTab(`${platformUrl}/home`)
-        : undefined
+      onNavigate: homeUrl ? () => openUrlInNewTab(homeUrl) : undefined
     },
     {
       id: "community",

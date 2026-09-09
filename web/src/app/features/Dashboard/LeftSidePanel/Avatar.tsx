@@ -10,28 +10,30 @@ export const AvatarWrapper: FC<{
   userEmail?: string;
   onSignOut?: () => void;
 }> = ({ avatarURL, userName, userEmail, onSignOut }) => {
-  const [showAvatar, setShowAvatar] = useState(!!avatarURL);
+  const [failedURL, setFailedURL] = useState<string>();
+  const showImage = !!avatarURL && avatarURL !== failedURL;
+  const initial = userName?.trim().charAt(0).toUpperCase() || "?";
   const popupMenu = useAvatarMenuItems({ userName, userEmail, onSignOut });
 
   return (
     <PopupMenu
       label={
         <Avatar data-testid="profile-avatar">
-          {avatarURL && showAvatar ? (
+          {showImage ? (
             <AvatarImage
               src={avatarURL}
               alt="Avatar"
-              onError={() => setShowAvatar(false)}
+              onError={() => setFailedURL(avatarURL)}
             />
           ) : (
             <Typography size="body" data-testid="profile-avatar-initial">
-              {userName?.charAt(0).toUpperCase()}
+              {initial}
             </Typography>
           )}
         </Avatar>
       }
       menu={popupMenu}
-      dataTestid="avatar-popupMenu"
+      dataTestid="avatar-popup-menu"
     />
   );
 };

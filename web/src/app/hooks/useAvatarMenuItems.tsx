@@ -28,7 +28,7 @@ export const useAvatarMenuItems = ({
     const menu: PopupMenuItem[] = [
       {
         id: "userInfo",
-        dataTestid: "avatar-userInfo",
+        dataTestid: "avatar-user-info",
         hasBorderBottom: true,
         disabled: true,
         tileComponent: (
@@ -54,7 +54,7 @@ export const useAvatarMenuItems = ({
         title: t("Account Settings"),
         icon: externalAccountManagementUrl ? "arrowExternalLink" : undefined,
         iconPosition: "right",
-        dataTestid: "avatar-accountSettings",
+        dataTestid: "avatar-account-settings",
         onClick: () =>
           externalAccountManagementUrl
             ? window.open(
@@ -72,7 +72,7 @@ export const useAvatarMenuItems = ({
       color: theme.dangerous.main,
       iconColor: theme.dangerous.main,
       onClick: onSignOut,
-      dataTestid: "avatar-signOut"
+      dataTestid: "avatar-sign-out"
     });
 
     return menu;

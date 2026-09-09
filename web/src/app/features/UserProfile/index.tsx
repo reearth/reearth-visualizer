@@ -85,7 +85,7 @@ const Profile: FC<ProfileProps> = ({
     if (workspaceCreation) {
       items.push({
         id: "newWorkspace",
-        dataTestid: "profile-newWorkspace",
+        dataTestid: "profile-new-workspace",
         hasFooter: true,
         title: t("New workspace"),
         icon: "plus",
