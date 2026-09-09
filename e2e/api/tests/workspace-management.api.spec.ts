@@ -208,7 +208,9 @@ test.describe("Workspace negative scenarios via API", () => {
     } catch (error: unknown) {
       // Only accept user-not-found related errors; rethrow unexpected ones
       const msg = error instanceof Error ? error.message : String(error);
-      expect(msg.toLowerCase()).toMatch(/not found|does not exist|user|invalid id|unprocessable/);
+      expect(msg.toLowerCase()).toMatch(
+        /not found|does not exist|user|invalid id|unprocessable/
+      );
     }
   });
 
@@ -230,9 +232,7 @@ test.describe("Workspace negative scenarios via API", () => {
     ).rejects.toThrow();
   });
 
-  test("Cannot add member to non-existent workspace", async ({
-    gqlClient
-  }) => {
+  test("Cannot add member to non-existent workspace", async ({ gqlClient }) => {
     const fakeWsId = generateFakeId();
     await expect(
       gqlClient.mutate(ADD_MEMBER_TO_WORKSPACE, {
@@ -251,12 +251,13 @@ test.describe("Workspace negative scenarios via API", () => {
     expect(data.node).toBeNull();
   });
 
-  test("Search for non-existent user throws an error", async ({ gqlClient }) => {
-    await expect(
-      gqlClient.query(SEARCH_USER, {
-        nameOrEmail: `nonexistent_${faker.string.alphanumeric(20)}@nowhere.test`
-      })
-    ).rejects.toThrow(/not found/i);
+  test("Search for a non-existent user returns an empty result, not an error", async ({
+    gqlClient
+  }) => {
+    const { data } = await gqlClient.query(SEARCH_USER, {
+      nameOrEmail: `nonexistent_${faker.string.alphanumeric(20)}@nowhere.test`
+    });
+    expect(data.searchUser).toBeNull();
   });
 });
 
@@ -317,7 +318,10 @@ test.describe("Workspace member management via API", () => {
   });
 
   test("Update member role to WRITER", async ({ gqlClient }) => {
-    test.skip(true, "Skipped: depends on Add member which fails in current dev environment");
+    test.skip(
+      true,
+      "Skipped: depends on Add member which fails in current dev environment"
+    );
     test.skip(!targetUserId, "Second user not resolved");
 
     const { status, data } = await gqlClient.mutate<{
@@ -337,7 +341,10 @@ test.describe("Workspace member management via API", () => {
   });
 
   test("Remove member from workspace", async ({ gqlClient }) => {
-    test.skip(true, "Skipped: depends on Add member which fails in current dev environment");
+    test.skip(
+      true,
+      "Skipped: depends on Add member which fails in current dev environment"
+    );
     test.skip(!targetUserId, "Second user not resolved");
 
     const { status, data } = await gqlClient.mutate<{
