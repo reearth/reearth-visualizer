@@ -1,7 +1,6 @@
 package interactor
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 
@@ -57,6 +56,12 @@ func (i *Style) AddStyle(ctx context.Context, param interfaces.AddStyleInput, op
 		}
 	}()
 
+	// Look up the scene first so a scene that does not exist is reported as not
+	// found rather than as a denial (CanWriteScene only checks the operator's
+	// writable list).
+	if _, err := i.sceneRepo.FindByID(ctx, param.SceneID); err != nil {
+		return nil, err
+	}
 	if err := i.CanWriteScene(param.SceneID, operator); err != nil {
 		return nil, err
 	}
@@ -223,6 +228,7 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], data
 
 	styleIDs := id.StyleIDList{}
 	styles := []*scene.Style{}
+	idReplacements := make([]string, 0, len(sceneJSON.LayerStyles)*2)
 
 	for lIndex, layerStyleJson := range sceneJSON.LayerStyles {
 
@@ -230,7 +236,7 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], data
 		styleIDs = append(styleIDs, newStyleID)
 
 		// Replace new style id
-		*data = bytes.Replace(*data, []byte(layerStyleJson.ID), []byte(newStyleID.String()), -1)
+		idReplacements = append(idReplacements, layerStyleJson.ID, newStyleID.String())
 
 		style, err := scene.NewStyle().
 			ID(newStyleID).
@@ -252,6 +258,8 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], data
 	if err := i.styleRepo.Filtered(filter).SaveAll(ctx, styleList); err != nil {
 		return result, err
 	}
+
+	replaceIDsInPlace(data, idReplacements)
 
 	if len(styleIDs) == 0 {
 		return result, nil

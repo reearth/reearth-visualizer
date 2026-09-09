@@ -57,47 +57,47 @@ func (i *Property) FetchSchema(ctx context.Context, ids []id.PropertySchemaID, o
 	return i.propertySchemaRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropertyValueParam, operator *usecase.Operator) (p *property.Property, _ *property.GroupList, _ *property.Group, _ *property.Field, err error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return
-	}
+// UpdateValue is retried on write conflict: the editor issues these in bursts
+// (a single user dragging or applying values produced ~16 calls/second in
+// production), and concurrent edits all rewrite the same property document, so
+// MongoDB aborts the losers with a WriteConflict. Every attempt re-reads the
+// property inside the new transaction, so a retry applies its change on top of
+// whichever write landed first rather than clobbering it.
+func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropertyValueParam, operator *usecase.Operator) (*property.Property, *property.GroupList, *property.Group, *property.Field, error) {
+	var p *property.Property
+	var pgl *property.GroupList
+	var pg *property.Group
+	var field *property.Field
 
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
+	if err := runWithTxRetry(ctx, i.transaction, txMaxRetries, func(txCtx context.Context) error {
+		var err error
+		p, err = i.propertyRepo.FindByID(txCtx, inp.PropertyID)
+		if err != nil {
+			return err
 		}
-	}()
+		if err := i.CanWriteScene(p.Scene(), operator); err != nil {
+			return err
+		}
 
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
-		return nil, nil, nil, nil, err
-	}
+		if err := i.CheckSceneLock(txCtx, p.Scene()); err != nil {
+			return err
+		}
 
-	if err := i.CheckSceneLock(ctx, p.Scene()); err != nil {
-		return nil, nil, nil, nil, err
-	}
+		ps, err := i.propertySchemaRepo.FindByID(txCtx, p.Schema())
+		if err != nil {
+			return err
+		}
 
-	ps, err := i.propertySchemaRepo.FindByID(ctx, p.Schema())
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
+		field, pgl, pg, err = p.UpdateValue(ps, inp.Pointer, inp.Value)
+		if err != nil {
+			return err
+		}
 
-	field, pgl, pg, err := p.UpdateValue(ps, inp.Pointer, inp.Value)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	err = i.propertyRepo.Save(ctx, p)
-	if err != nil {
+		return i.propertyRepo.Save(txCtx, p)
+	}); err != nil {
 		return nil, nil, nil, nil, err
 	}
 
-	tx.Commit()
 	return p, pgl, pg, field, nil
 }
 
