@@ -92,13 +92,21 @@ func servSignatureUploadFiles(
 				return nil, err
 			}
 
-			claimed, err := usecases.Project.ClaimImport(ctx, *pid, op)
+			claim, err := usecases.Project.ClaimImport(ctx, *pid, op)
 			if err != nil {
 				return nil, err
 			}
-			if !claimed {
-				log.Infof("[Import] skipping %s: already succeeded or in progress", pid.String())
-				return map[string]string{"status": "skipped", "reason": "already processed or in progress"}, nil
+			switch claim {
+			case project.ImportClaimAlreadySucceeded:
+				log.Infof("[Import] skipping %s: already succeeded", pid.String())
+				return map[string]string{"status": "skipped", "reason": "already succeeded"}, nil
+			case project.ImportClaimInProgress:
+				// REL-08: do not ack. A PROCESSING claim may be a crashed worker's
+				// leftover; answering 200 would make Pub/Sub drop the redelivery
+				// forever. A retryable error makes it redeliver, and once the claim
+				// goes stale a later delivery reclaims and runs the import.
+				log.Infof("[Import] %s already in progress; requesting redelivery", pid.String())
+				return nil, echo.NewHTTPError(http.StatusConflict, "import already in progress")
 			}
 
 			// The uploaded zip is the only copy of the import input. It is kept
@@ -208,14 +216,19 @@ func servSignatureUploadFiles(
 				return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid filename format: %v", err))
 			}
 
-			claimed, err := usecases.Project.ClaimImport(ctx, *pid, op)
+			claim, err := usecases.Project.ClaimImport(ctx, *pid, op)
 			if err != nil {
 				log.Errorf("[Import] Failed to claim import for %s: %v", pid.String(), err)
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("failed to claim import: %v", err))
 			}
-			if !claimed {
-				log.Infof("[Import] skipping %s: already succeeded or in progress", pid.String())
-				return map[string]string{"status": "skipped", "reason": "already processed or in progress"}, nil
+			switch claim {
+			case project.ImportClaimAlreadySucceeded:
+				log.Infof("[Import] skipping %s: already succeeded", pid.String())
+				return map[string]string{"status": "skipped", "reason": "already succeeded"}, nil
+			case project.ImportClaimInProgress:
+				// REL-08: do not ack (see /import-project handler above).
+				log.Infof("[Import] %s already in progress; requesting redelivery", pid.String())
+				return nil, echo.NewHTTPError(http.StatusConflict, "import already in progress")
 			}
 
 			// The uploaded zip is the only copy of the import input. It is kept

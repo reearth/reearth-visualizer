@@ -116,6 +116,6 @@ type Project interface {
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
 	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *map[string]any, *usecase.Operator) (*project.ProjectMetadata, error)
-	ClaimImport(context.Context, id.ProjectID, *usecase.Operator) (bool, error)
+	ClaimImport(context.Context, id.ProjectID, *usecase.Operator) (project.ImportClaim, error)
 	SaveExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
 }

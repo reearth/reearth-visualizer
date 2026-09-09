@@ -41,11 +41,18 @@ func (f *fakeProjectUsecase) UpdateImportStatus(ctx context.Context, pid id.Proj
 // ClaimImport defaults to always granting the claim, since most of these
 // tests exercise timeout/panic handling rather than the idempotency guard
 // itself - only tests that care override claimImport.
-func (f *fakeProjectUsecase) ClaimImport(ctx context.Context, pid id.ProjectID, op *usecase.Operator) (bool, error) {
+func (f *fakeProjectUsecase) ClaimImport(ctx context.Context, pid id.ProjectID, op *usecase.Operator) (project.ImportClaim, error) {
 	if f.claimImport != nil {
-		return f.claimImport(ctx, pid)
+		claimed, err := f.claimImport(ctx, pid)
+		if err != nil {
+			return project.ImportClaimInProgress, err
+		}
+		if claimed {
+			return project.ImportClaimGranted, nil
+		}
+		return project.ImportClaimInProgress, nil
 	}
-	return true, nil
+	return project.ImportClaimGranted, nil
 }
 
 // writeTestExportZip builds the minimal zip UncompressExportZip accepts —
@@ -722,5 +729,47 @@ func TestValidateChunkRequest(t *testing.T) {
 					tt.fileID, tt.chunkNum, tt.totalChunks, err, tt.wantErr)
 			}
 		})
+	}
+}
+
+// TestSplitUploadManager_RunImportJob_ClaimErrorWritesFailed is a regression
+// test for REL-09: when ClaimImport errors (e.g. a transient Mongo failure),
+// the worker used to return before writing any terminal status while the
+// deferred cleanup deleted the assembled upload, leaving the project stuck at
+// UPLOADING forever. It must record FAILED so the editor stops spinning.
+func TestSplitUploadManager_RunImportJob_ClaimErrorWritesFailed(t *testing.T) {
+	m := newTestManager(t)
+
+	prj, err := project.New().NewID().Build()
+	if err != nil {
+		t.Fatalf("failed to build project: %v", err)
+	}
+	if _, err := m.getOrCreateSession("claim-err", 1); err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	var gotFailed bool
+	fake := &fakeProjectUsecase{
+		claimImport: func(ctx context.Context, pid id.ProjectID) (bool, error) {
+			return false, errors.New("transient mongo failure")
+		},
+		updateImportStatus: func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error) {
+			if status == project.ProjectImportStatusFailed {
+				gotFailed = true
+			}
+			return nil, nil
+		},
+	}
+
+	job := importJob{
+		usecases:  &interfaces.Container{Project: fake},
+		fileID:    "claim-err",
+		filePath:  writeTestExportZip(t),
+		projectID: prj.ID(),
+	}
+	m.runImportJob(job)
+
+	if !gotFailed {
+		t.Error("ClaimImport error must write a terminal FAILED status (REL-09)")
 	}
 }
