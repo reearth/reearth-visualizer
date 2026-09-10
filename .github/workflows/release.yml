@@ -25,7 +25,7 @@ jobs:
       contents: write
     outputs:
       version: ${{ steps.version.outputs.version }}
-      sha: ${{ steps.commit.outputs.sha }}
+      sha: ${{ steps.sha.outputs.sha }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -46,8 +46,25 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global pull.rebase false
+      - name: Check whether this release was already cut
+        id: gate
+        # The tag is the checkpoint for the whole release. For a custom version
+        # the tag is known before any work runs, so a re-run can tell "already
+        # cut, only reconcile main" from a first run. This also stops the
+        # changelog action from aborting a re-run: it throws when its tag already
+        # exists, so when the tag is present we skip it rather than let it fail.
+        run: |
+          git fetch --tags --force origin
+          if [ "${{ github.event.inputs.version }}" = "custom" ] \
+            && git rev-parse -q --verify "refs/tags/v${{ github.event.inputs.custom_version }}" > /dev/null; then
+            echo "cut=true" >> "$GITHUB_OUTPUT"
+            echo "tag v${{ github.event.inputs.custom_version }} already exists; skipping the cut, only reconciling main"
+          else
+            echo "cut=false" >> "$GITHUB_OUTPUT"
+          fi
       - id: changelog
         name: Generate CHANGELOG
+        if: steps.gate.outputs.cut != 'true'
         uses: reearth/changelog-action@86cb9d7a3727f3cb6afe36a1536fad61e9775287 # main
         with:
           version: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || github.event.inputs.version }}
@@ -55,27 +72,53 @@ jobs:
           latest: CHANGELOG_latest.md
       - id: version
         name: Determine version
+        # On a fresh cut the version comes from the changelog action (authoritative
+        # for the patch/minor/major path); on a re-run that skipped it, from the
+        # custom input.
         env:
           RAW_VERSION: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || steps.changelog.outputs.version }}
         run: echo "version=${RAW_VERSION#v}" >> "$GITHUB_OUTPUT"
       - name: Upload latest CHANGELOG
+        if: steps.gate.outputs.cut != 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: changelog-${{ steps.version.outputs.version }}
           path: CHANGELOG_latest.md
-      - id: commit
-        name: Commit & push to release
+      - name: Commit & tag release
+        if: steps.gate.outputs.cut != 'true'
         env:
           TAG: v${{ steps.version.outputs.version }}
         run: |
           rm CHANGELOG_latest.md
           git add CHANGELOG.md
-          git commit -am "$TAG"
-          git tag $TAG
-          git push --atomic origin release $TAG
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-      - name: Commit & push to main
-        run: git switch main && git cherry-pick release && git push
+          git commit -m "$TAG"
+          git tag "$TAG"
+          # Atomic: the branch and tag land together or not at all, so a failure
+          # here never leaves a tag without its changelog commit. The tag is the
+          # last thing pushed, so nothing after it can strand a half-done release.
+          git push --atomic origin release "$TAG"
+      - id: sha
+        name: Resolve release commit
+        env:
+          TAG: v${{ steps.version.outputs.version }}
+        run: echo "sha=$(git rev-parse "$TAG^{commit}")" >> "$GITHUB_OUTPUT"
+      - name: Reconcile main
+        # Runs last on every attempt, so main is brought up to the release
+        # changelog whether this run cut the release or an earlier attempt did.
+        # A no-op when main already has it, so a re-run is safe; if this push is
+        # the step that fails, re-running reaches it again through the gate above.
+        env:
+          TAG: v${{ steps.version.outputs.version }}
+        run: |
+          git fetch --force origin main release
+          git switch -C main origin/main
+          if git diff --quiet origin/release -- CHANGELOG.md; then
+            echo "main already has the release CHANGELOG, nothing to reconcile"
+          else
+            git checkout origin/release -- CHANGELOG.md
+            git commit -m "$TAG" -- CHANGELOG.md
+            git push origin main
+          fi
 
   promote-to-version:
     needs: release
