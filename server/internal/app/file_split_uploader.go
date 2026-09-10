@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime/debug"
 	"strconv"
 	"sync"
 	"time"
@@ -459,7 +460,10 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 	defer func() {
 		if r := recover(); r != nil {
 			errMsg := fmt.Sprintf("panic during import: %v", r)
-			log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
+			// Log the goroutine stack so the panicking line is diagnosable. It is
+			// kept out of errMsg, which is surfaced to the client via the import
+			// result log; only the server log gets the stack.
+			log.Errorf("[Import] %s (file %s)\n%s", errMsg, job.fileID, debug.Stack())
 			UpdateImportStatus(bgctx, job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, result)
 		}
 	}()
