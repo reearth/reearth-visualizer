@@ -28,21 +28,19 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 
   return (
     <ManagerWrapper>
-      {filteredDeletedProjects?.length ? (
+      {filteredDeletedProjects.length ? (
         <ManagerContent>
           <ContentWrapper>
             <ProjectsWrapper ref={wrapperRef} data-testid="recycle-bin-wrapper">
               <ProjectsContainer ref={contentRef}>
                 <ProjectsGroup>
-                  {filteredDeletedProjects?.map((project) => (
+                  {filteredDeletedProjects.map((project) => (
                     <RecycleBinItem
-                      key={project?.id}
+                      key={project.id}
                       project={project}
                       disabled={disabled}
                       onProjectRecovery={() => handleProjectRecovery(project)}
-                      onProjectDelete={() =>
-                        project && handleProjectDelete(project.id)
-                      }
+                      onProjectDelete={() => handleProjectDelete(project.id)}
                     />
                   ))}
                 </ProjectsGroup>

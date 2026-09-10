@@ -93,6 +93,10 @@ export const useDeletedProjects = (input: GetDeletedProjectsQueryVariables) => {
   const { data, networkStatus, ...rest } = useQuery(GET_DELETED_PROJECTS, {
     variables: input,
     skip: !input.workspaceId,
+    // Projects are archived from the Projects tab while this query is inactive, so
+    // its refetchQueries entry is a no-op and the cache goes stale. Revalidate on
+    // mount instead of calling refetch() in an effect, which bypasses `skip`.
+    fetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true
   });
 

@@ -35,9 +35,14 @@ export function paginationMergeNodes(
     nodes: unknown[];
     pageInfo: { startCursor: string };
   } | null,
-  incoming: { nodes: unknown[]; pageInfo: { startCursor: string } }
+  incoming: { nodes: unknown[]; pageInfo: { startCursor: string } },
+  { args }: Pick<FieldFunctionOptions, "args">
 ) {
-  if (existing && incoming && isEqual(existing, incoming)) return incoming;
+  // A request without an `after` cursor is a fresh first page — an initial load,
+  // a refetchQueries entry, or a cache-and-network revalidation — so it replaces
+  // the accumulated list. Appending it instead would re-add rows that are
+  // already cached and show every project twice.
+  if (!args?.pagination?.after) return incoming;
 
   const merged = existing ? existing.nodes.slice(0) : [];
 

@@ -9,16 +9,16 @@ import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { DeletedProject } from "../../../type";
 import ProjectDeleteModal from "../ProjectDeleteModal";
 
 type Prop = {
-  project?: DeletedProject | null;
+  project: DeletedProject;
   disabled?: boolean;
-  onProjectDelete: () => void;
-  onProjectRecovery?: (projectId?: string) => void;
+  onProjectDelete: () => Promise<boolean>;
+  onProjectRecovery?: () => void;
 };
 const RecycleBinItem: FC<Prop> = ({
   project,
@@ -31,26 +31,43 @@ const RecycleBinItem: FC<Prop> = ({
   const { projectVisibility } = appFeature();
   const theme = useTheme();
 
+  const handleDeleteModalOpen = useCallback(() => {
+    setDeleteModalVisible(true);
+  }, []);
+
   const handleDeleteModalClose = useCallback(() => {
-    setDeleteModalVisible(!deleteModalVisible);
-  }, [deleteModalVisible]);
+    setDeleteModalVisible(false);
+  }, []);
 
-  const popupMenu: PopupMenuItem[] = [
-    {
-      id: "recover",
-      title: t("Recover"),
-      icon: "arrowCounterClockWise",
-      onClick: () => project?.id && onProjectRecovery?.(project.id)
-    },
-    {
-      id: "delete",
-      title: t("Delete"),
-      icon: "trash",
-      onClick: handleDeleteModalClose
-    }
-  ];
+  const handleProjectDelete = useCallback(async () => {
+    const deleted = await onProjectDelete();
+    // On success this item usually unmounts once the list refetches, but close
+    // explicitly so a slow refetch can't leave the modal open over a deleted
+    // project. On failure the modal stays open so the user can retry.
+    if (deleted) setDeleteModalVisible(false);
+  }, [onProjectDelete]);
 
-  return project ? (
+  const popupMenu: PopupMenuItem[] = useMemo(
+    () => [
+      {
+        id: "recover",
+        title: t("Recover"),
+        icon: "arrowCounterClockWise",
+        disabled,
+        onClick: () => onProjectRecovery?.()
+      },
+      {
+        id: "delete",
+        title: t("Delete"),
+        icon: "trash",
+        disabled,
+        onClick: handleDeleteModalOpen
+      }
+    ],
+    [t, disabled, onProjectRecovery, handleDeleteModalOpen]
+  );
+
+  return (
     <Card data-testid={`recycle-bin-item-${project.name}`}>
       <CardImage
         data-testid={`recycle-bin-item-image-${project.name}`}
@@ -83,17 +100,17 @@ const RecycleBinItem: FC<Prop> = ({
           )}
         </ButtonWrapper>
       </CardImage>
-      <CardFooter data-testid={`recycle-bin-item-footer-${project?.name}`}>
+      <CardFooter data-testid={`recycle-bin-item-footer-${project.name}`}>
         <CardTitleWrapper>
-          <CardTitle data-testid={`recycle-bin-item-title-${project?.name}`}>
-            {project?.name}
+          <CardTitle data-testid={`recycle-bin-item-title-${project.name}`}>
+            {project.name}
           </CardTitle>
         </CardTitleWrapper>
         <PopupMenu
           menu={popupMenu}
           label={
             <Button
-              data-testid={`recycle-bin-item-menu-btn-${project?.name}`}
+              data-testid={`recycle-bin-item-menu-btn-${project.name}`}
               icon="dotsThreeVertical"
               iconButton
               appearance="simple"
@@ -105,14 +122,14 @@ const RecycleBinItem: FC<Prop> = ({
         <ProjectDeleteModal
           isVisible={deleteModalVisible}
           disabled={disabled}
-          projectName={project?.name || ""}
+          projectName={project.name}
           onClose={handleDeleteModalClose}
-          onProjectDelete={onProjectDelete}
-          data-testid={`recycle-bin-item-${project?.name}`}
+          onProjectDelete={handleProjectDelete}
+          dataTestid={`recycle-bin-item-delete-modal-${project.name}`}
         />
       )}
     </Card>
-  ) : null;
+  );
 };
 
 export default RecycleBinItem;
