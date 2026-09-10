@@ -18,7 +18,7 @@ import { FC, useMemo, Fragment } from "react";
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
-import ProjectImportErrorModal from "./ProjectImportErrorModal";
+import ProjectImportErrorModal from "./ProjectModals/ProjectImportErrorModal";
 
 const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {

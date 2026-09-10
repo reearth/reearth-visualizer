@@ -22,8 +22,8 @@ const CreateProjectModal: FC = () => {
         "name" | "description" | "projectAlias" | "visibility"
       > & { license?: string }
     ) => {
-      if (!currentWorkspace?.id) return;
-      await createProject(
+      if (!currentWorkspace?.id) return false;
+      const { status } = await createProject(
         currentWorkspace.id,
         Visualizer.Cesium,
         data.name,
@@ -33,9 +33,11 @@ const CreateProjectModal: FC = () => {
         data.description,
         data.license
       );
-      setCreateProjectModal(false);
+      // The modal closes itself via onClose once this resolves true, so a
+      // failed creation keeps the form and what the user typed.
+      return status === "success";
     },
-    [createProject, currentWorkspace?.id, setCreateProjectModal]
+    [createProject, currentWorkspace?.id]
   );
 
   return (

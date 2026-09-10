@@ -7,6 +7,11 @@ const fetchMore = vi.fn();
 const fetchMoreStarred = vi.fn();
 const refetch = vi.fn();
 const navigate = vi.fn();
+const updateProjectRecycleBin = vi.fn();
+const publishProject = vi.fn();
+const cacheIdentify = vi.fn(() => "Project:project-1");
+const cacheEvict = vi.fn();
+const cacheGc = vi.fn();
 
 let capturedLoadMoreHandlers: (() => Promise<void> | void)[] = [];
 
@@ -17,9 +22,9 @@ vi.mock("react-router", () => ({
 vi.mock("@apollo/client/react", () => ({
   useApolloClient: () => ({
     cache: {
-      identify: vi.fn(),
-      evict: vi.fn(),
-      gc: vi.fn()
+      identify: cacheIdentify,
+      evict: cacheEvict,
+      gc: cacheGc
     }
   })
 }));
@@ -61,8 +66,8 @@ vi.mock("@reearth/services/api/project", () => ({
   useProjectMutations: () => ({
     updateProject: vi.fn(),
     createProject: vi.fn(),
-    updateProjectRecycleBin: vi.fn(),
-    publishProject: vi.fn()
+    updateProjectRecycleBin,
+    publishProject
   }),
   useProjects: () => ({
     projects: [],
@@ -298,5 +303,87 @@ describe("dashboard starred projects hook", () => {
     );
 
     consoleErrorSpy.mockRestore();
+  });
+});
+
+describe("dashboard project remove", () => {
+  const baseProject = {
+    id: "project-1",
+    name: "My Project",
+    workspaceId: "workspace-id",
+    status: "unpublished"
+  } as const;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    capturedLoadMoreHandlers = [];
+    localStorage.clear();
+    updateProjectRecycleBin.mockResolvedValue({ status: "success" });
+    publishProject.mockResolvedValue({ status: "success" });
+  });
+
+  it("archives the project and evicts it from the cache on success", async () => {
+    const { result } = renderHook(() => useHooks("workspace-id"));
+
+    const removed = await act(async () =>
+      result.current.handleProjectRemove(baseProject)
+    );
+
+    expect(publishProject).not.toHaveBeenCalled();
+    expect(updateProjectRecycleBin).toHaveBeenCalledWith({
+      projectId: baseProject.id,
+      deleted: true
+    });
+    expect(cacheEvict).toHaveBeenCalledTimes(1);
+    expect(cacheGc).toHaveBeenCalledTimes(1);
+    expect(removed).toBe(true);
+  });
+
+  it.each(["published", "limited"] as const)(
+    "unpublishes a %s project before archiving it",
+    async (status) => {
+      const { result } = renderHook(() => useHooks("workspace-id"));
+
+      await act(async () =>
+        result.current.handleProjectRemove({ ...baseProject, status })
+      );
+
+      expect(publishProject).toHaveBeenCalledWith(
+        "unpublished",
+        baseProject.id
+      );
+      expect(updateProjectRecycleBin).toHaveBeenCalledTimes(1);
+    }
+  );
+
+  it("does not archive or touch the cache when unpublishing fails", async () => {
+    publishProject.mockResolvedValue({ status: "error" });
+
+    const { result } = renderHook(() => useHooks("workspace-id"));
+
+    const removed = await act(async () =>
+      result.current.handleProjectRemove({ ...baseProject, status: "published" })
+    );
+
+    expect(updateProjectRecycleBin).not.toHaveBeenCalled();
+    expect(cacheEvict).not.toHaveBeenCalled();
+    expect(cacheGc).not.toHaveBeenCalled();
+    expect(removed).toBe(false);
+  });
+
+  it("does not evict the cache when moving to the Recycle Bin fails", async () => {
+    updateProjectRecycleBin.mockResolvedValue({ status: "error" });
+
+    const { result } = renderHook(() => useHooks("workspace-id"));
+
+    const removed = await act(async () =>
+      result.current.handleProjectRemove(baseProject)
+    );
+
+    // A failed archive must not make the project silently disappear from
+    // the dashboard — the cache should be left untouched.
+    expect(cacheEvict).not.toHaveBeenCalled();
+    expect(cacheGc).not.toHaveBeenCalled();
+    expect(removed).toBe(false);
   });
 });
