@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import useDoubleClick from "@reearth/app/hooks/useDoubleClick";
 import { PopupMenuItem } from "@reearth/app/lib/reearth-ui";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
@@ -17,15 +18,13 @@ import { Project as ProjectType } from "../../../type";
 
 type Props = {
   project: ProjectType;
-  selectedProjectId?: string;
   onProjectUpdate?: (project: ProjectType, projectId: string) => void;
   onProjectSelect?: (e?: MouseEvent<Element>, projectId?: string) => void;
-  onProjectRemove?: (projectId: string) => void;
+  onProjectRemove?: (projectId: string) => Promise<boolean>;
 };
 
 export default ({
   project,
-  selectedProjectId,
   onProjectUpdate,
   onProjectSelect,
   onProjectRemove
@@ -48,26 +47,34 @@ export default ({
   const [isStarred, setIsStarred] = useState(project.starred);
   const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
     useState(false);
+  const [isRemovingProject, setIsRemovingProject] = useState(false);
 
   const handleProjectNameChange = useCallback((newValue: string) => {
     setProjectName(newValue);
   }, []);
 
   const handleProjectNameBlur = useCallback(() => {
-    if (!project || projectName === project.name) return setIsEditing(false);
+    const trimmedName = projectName.trim();
+    // An empty name would still not-equal project.name and get submitted,
+    // leaving the card with a blank title until the next refetch — revert
+    // to the original name instead.
+    if (!project || !trimmedName || trimmedName === project.name) {
+      setProjectName(project.name);
+      setIsEditing(false);
+      return;
+    }
     const updatedProject: ProjectType = {
       ...project,
-      name: projectName
+      name: trimmedName
     };
     onProjectUpdate?.(updatedProject, project.id);
     setIsEditing(false);
   }, [project, projectName, onProjectUpdate]);
 
   const handleProjectNameEdit = useCallback(() => {
-    setIsEditing?.(true);
-    if (selectedProjectId !== project.id || selectedProjectId)
-      onProjectSelect?.(undefined);
-  }, [onProjectSelect, project.id, selectedProjectId]);
+    setIsEditing(true);
+    onProjectSelect?.(undefined);
+  }, [onProjectSelect]);
 
   const handleExportProject = useCallback(async () => {
     if (!project.id) return;
@@ -185,12 +192,28 @@ export default ({
 
   const handleProjectRemove = useCallback(
     async (projectId: string) => {
-      if (!projectId) return;
-      handleProjectPublish(projectId);
-      onProjectRemove?.(projectId);
-      handleProjectRemoveModal(false);
+      if (!projectId || isRemovingProject) return;
+      setIsRemovingProject(true);
+      try {
+        // Unpublishing must finish before the project is archived, otherwise
+        // a published project could land in the Recycle Bin while still
+        // public.
+        await handleProjectPublish(projectId);
+        const removed = await onProjectRemove?.(projectId);
+        // Only dismiss the modal once the project is actually archived, so a
+        // failed removal doesn't look like it succeeded.
+        if (removed === false) return;
+        handleProjectRemoveModal(false);
+      } finally {
+        setIsRemovingProject(false);
+      }
     },
-    [handleProjectRemoveModal, handleProjectPublish, onProjectRemove]
+    [
+      isRemovingProject,
+      handleProjectRemoveModal,
+      handleProjectPublish,
+      onProjectRemove
+    ]
   );
 
   return {
@@ -201,6 +224,7 @@ export default ({
     isStarred,
     hasMapOrStoryPublished,
     projectRemoveModalVisible,
+    isRemovingProject,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
