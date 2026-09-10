@@ -17,8 +17,8 @@ import { FC, useMemo, Fragment } from "react";
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
-import ProjectCreatorModal from "./ProjectCreatorModal";
-import ProjectImportErrorModal from "./ProjectImportErrorModal";
+import ProjectCreatorModal from "./ProjectModals/ProjectCreatorModal";
+import ProjectImportErrorModal from "./ProjectModals/ProjectImportErrorModal";
 
 const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
@@ -252,7 +252,6 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         <ProjectCreatorModal
           onClose={closeProjectCreator}
           onProjectCreate={handleProjectCreate}
-          data-testid="project-creator-modal"
         />
       )}
 

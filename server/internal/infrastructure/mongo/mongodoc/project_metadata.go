@@ -35,25 +35,17 @@ func NewProjectMetadataConsumer(workspaces []accountsID.WorkspaceID) *ProjectMet
 func NewProjectMetadata(r *project.ProjectMetadata) (*ProjectMetadataDocument, string) {
 	rid := r.ID().String()
 
-	var importStatus *string
-	if r.ImportStatus() != nil {
-		v := string(*r.ImportStatus())
-		importStatus = &v
-	}
-
 	return &ProjectMetadataDocument{
-		ID:              rid,
-		Workspace:       r.Workspace().String(),
-		Project:         r.Project().String(),
-		ImportStatus:    importStatus,
-		ImportResultLog: r.ImportResultLog(),
-		Readme:          r.Readme(),
-		License:         r.License(),
-		Topics:          r.Topics(),
-		StarCount:       r.StarCount(),
-		StarredBy:       r.StarredBy(),
-		CreatedAt:       r.CreatedAt(),
-		UpdatedAt:       r.UpdatedAt(),
+		ID:        rid,
+		Workspace: r.Workspace().String(),
+		Project:   r.Project().String(),
+		Readme:    r.Readme(),
+		License:   r.License(),
+		Topics:    r.Topics(),
+		StarCount: r.StarCount(),
+		StarredBy: r.StarredBy(),
+		CreatedAt: r.CreatedAt(),
+		UpdatedAt: r.UpdatedAt(),
 	}, rid
 
 }

@@ -86,17 +86,20 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		}
 	}()
 
+	// Fetch the scene first: a scene that does not exist must be reported as not
+	// found rather than as a denial, and nothing should be written until the
+	// scene is confirmed and the permission check has passed (addNewProperty
+	// below persists a property).
+	sc, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
+	if err != nil {
+		return nil, err
+	}
 	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, interfaces.ErrOperationDenied
 	}
 	storySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
 	filter := Filter(inp.SceneID)
 	prop, err := i.addNewProperty(ctx, storySchema.ID(), inp.SceneID, &filter)
-	if err != nil {
-		return nil, err
-	}
-
-	sc, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
 	if err != nil {
 		return nil, err
 	}
@@ -476,6 +479,8 @@ func (i *Storytelling) uploadPublishStory(ctx context.Context, story *storytelli
 
 	// publish
 	r, w := io.Pipe()
+	// See the matching comment in Project.uploadPublishScene.
+	defer func() { _ = r.Close() }()
 
 	// Build
 	go func() {
@@ -521,6 +526,11 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 		}
 	}()
 
+	// A missing scene is not found, not a denial (CanWriteScene only checks the
+	// operator's writable list).
+	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
+		return nil, nil, err
+	}
 	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
@@ -602,11 +612,18 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 		}
 	}()
 
+	// A missing scene is not found, not a denial (CanWriteScene only checks the
+	// operator's writable list).
+	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
+		return nil, nil, err
+	}
 	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
-	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	// Scope the lookup to the authorized scene so the story resolves consistently
+	// with the permission check above.
+	story, err := i.storytellingRepo.Filtered(Filter(inp.SceneID)).FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -672,11 +689,18 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 		}
 	}()
 
+	// A missing scene is not found, not a denial (CanWriteScene only checks the
+	// operator's writable list).
+	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
+		return nil, nil, err
+	}
 	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
-	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
+	// Scope the lookup to the authorized scene so the story resolves consistently
+	// with the permission check above.
+	story, err := i.storytellingRepo.Filtered(Filter(inp.SceneID)).FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -1166,6 +1190,13 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 	filter := Filter(sceneID)
 	storyJSON := sceneJSON.Story
 	result := map[string]any{}
+
+	// story is omitempty in the export format, so a project exported without a
+	// story has no story key at all. Dereferencing it panicked partway through
+	// the import, once the project, scene and layers had already been written.
+	if storyJSON == nil {
+		return result, nil
+	}
 
 	pages := []*storytelling.Page{}
 	resultPages := map[string]any{}

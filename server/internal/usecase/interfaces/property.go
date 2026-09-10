@@ -37,11 +37,17 @@ type UnlinkPropertyValueParam struct {
 	Pointer    *property.Pointer
 }
 
+type AddPropertyItemFieldParam struct {
+	Field id.PropertyFieldID
+	Value *property.Value
+}
+
 type AddPropertyItemParam struct {
 	PropertyID     id.PropertyID
 	Pointer        *property.Pointer
 	Index          *int
 	NameFieldValue *property.Value
+	Fields         []AddPropertyItemFieldParam
 }
 
 type MovePropertyItemParam struct {

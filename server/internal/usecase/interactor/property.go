@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -56,47 +57,47 @@ func (i *Property) FetchSchema(ctx context.Context, ids []id.PropertySchemaID, o
 	return i.propertySchemaRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropertyValueParam, operator *usecase.Operator) (p *property.Property, _ *property.GroupList, _ *property.Group, _ *property.Field, err error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return
-	}
+// UpdateValue is retried on write conflict: the editor issues these in bursts
+// (a single user dragging or applying values produced ~16 calls/second in
+// production), and concurrent edits all rewrite the same property document, so
+// MongoDB aborts the losers with a WriteConflict. Every attempt re-reads the
+// property inside the new transaction, so a retry applies its change on top of
+// whichever write landed first rather than clobbering it.
+func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropertyValueParam, operator *usecase.Operator) (*property.Property, *property.GroupList, *property.Group, *property.Field, error) {
+	var p *property.Property
+	var pgl *property.GroupList
+	var pg *property.Group
+	var field *property.Field
 
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
+	if err := runWithTxRetry(ctx, i.transaction, txMaxRetries, func(txCtx context.Context) error {
+		var err error
+		p, err = i.propertyRepo.FindByID(txCtx, inp.PropertyID)
+		if err != nil {
+			return err
 		}
-	}()
+		if err := i.CanWriteScene(p.Scene(), operator); err != nil {
+			return err
+		}
 
-	p, err = i.propertyRepo.FindByID(ctx, inp.PropertyID)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-	if err := i.CanWriteScene(p.Scene(), operator); err != nil {
-		return nil, nil, nil, nil, err
-	}
+		if err := i.CheckSceneLock(txCtx, p.Scene()); err != nil {
+			return err
+		}
 
-	if err := i.CheckSceneLock(ctx, p.Scene()); err != nil {
-		return nil, nil, nil, nil, err
-	}
+		ps, err := i.propertySchemaRepo.FindByID(txCtx, p.Schema())
+		if err != nil {
+			return err
+		}
 
-	ps, err := i.propertySchemaRepo.FindByID(ctx, p.Schema())
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
+		field, pgl, pg, err = p.UpdateValue(ps, inp.Pointer, inp.Value)
+		if err != nil {
+			return err
+		}
 
-	field, pgl, pg, err := p.UpdateValue(ps, inp.Pointer, inp.Value)
-	if err != nil {
-		return nil, nil, nil, nil, err
-	}
-
-	err = i.propertyRepo.Save(ctx, p)
-	if err != nil {
+		return i.propertyRepo.Save(txCtx, p)
+	}); err != nil {
 		return nil, nil, nil, nil, err
 	}
 
-	tx.Commit()
 	return p, pgl, pg, field, nil
 }
 
@@ -254,6 +255,34 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 		return nil, nil, nil, err
 	}
 
+	// Validate every requested initial field against the schema before
+	// mutating p at all, so an unknown field is rejected up front instead of
+	// after the item has already been added to the in-memory property --
+	// which some repo.Property implementations (e.g. the in-memory one used
+	// in tests) return by reference, making that mutation visible even
+	// though it's never Saved/Committed.
+	if len(inp.Fields) > 0 {
+		if sgID, ok := inp.Pointer.ItemBySchemaGroup(); ok {
+			if sg := ps.Groups().Group(sgID); sg != nil {
+				for _, f := range inp.Fields {
+					sf := sg.Field(f.Field)
+					if sf == nil {
+						return nil, nil, nil, fmt.Errorf("unknown field: %s", f.Field)
+					}
+					// A value whose type disagrees with the schema is silently
+					// dropped further down: GetOrCreateField builds the field
+					// with the schema's type, and OptionalValue.SetValue ignores
+					// a value of any other type. That would create the item with
+					// the field left unset, which is the state this atomic
+					// creation exists to prevent, so reject it up front.
+					if f.Value != nil && sf.Type() != f.Value.Type() {
+						return nil, nil, nil, fmt.Errorf("invalid value type for field %s: schema expects %s, got %s", f.Field, sf.Type(), f.Value.Type())
+					}
+				}
+			}
+		}
+	}
+
 	item, gl := p.AddListItem(ps, inp.Pointer, inp.Index)
 	if item == nil {
 		return nil, nil, nil, errors.New("failed to create item")
@@ -262,6 +291,21 @@ func (i *Property) AddItem(ctx context.Context, inp interfaces.AddPropertyItemPa
 	// Set nameFieldValue to the name field
 	if inp.NameFieldValue != nil {
 		item.RepresentativeField(ps).UpdateUnsafe(inp.NameFieldValue)
+	}
+
+	// Set any additional initial field values in the same transaction as the
+	// item creation, so a caller never observes an item that exists but is
+	// missing fields it depends on to be recognized correctly (e.g. a
+	// discriminator field like tile_category).
+	for _, f := range inp.Fields {
+		if f.Value == nil {
+			continue
+		}
+		field, _ := item.GetOrCreateField(ps, f.Field)
+		if field == nil {
+			return nil, nil, nil, fmt.Errorf("failed to create field: %s", f.Field)
+		}
+		field.UpdateUnsafe(f.Value)
 	}
 
 	err = i.propertyRepo.Save(ctx, p)

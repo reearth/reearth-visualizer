@@ -43,8 +43,7 @@ export default ({ sceneId, selectWidget }: Props) => {
     type: widgetsViewDevice
   });
 
-  const { addSystemTile, removeSystemTile } =
-    useSystemTile(sceneId);
+  const { addSystemTile, removeSystemTile } = useSystemTile(sceneId);
 
   const hasInstalledGSSVWidget = useCallback(
     (excludeWidgetId?: string) =>
@@ -62,9 +61,13 @@ export default ({ sceneId, selectWidget }: Props) => {
       const shouldEnsureSystemTile =
         isGSSVWidgetId(id) && !hasInstalledGSSVWidget();
 
-      await addWidget(sceneId, id, toWidgetAlignSystemType(widgetsViewDevice));
+      const result = await addWidget(
+        sceneId,
+        id,
+        toWidgetAlignSystemType(widgetsViewDevice)
+      );
 
-      if (shouldEnsureSystemTile) {
+      if (shouldEnsureSystemTile && result.status === "success") {
         await addSystemTile();
       }
     },
@@ -91,13 +94,13 @@ export default ({ sceneId, selectWidget }: Props) => {
       const shouldRemoveSystemTile =
         isRemovingGSSVWidget && !hasInstalledGSSVWidget(id);
 
-      await removeWidget(
+      const result = await removeWidget(
         sceneId,
         id,
         toWidgetAlignSystemType(widgetsViewDevice)
       );
 
-      if (shouldRemoveSystemTile) {
+      if (shouldRemoveSystemTile && result.status === "success") {
         await removeSystemTile();
       }
     },

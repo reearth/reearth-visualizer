@@ -3,6 +3,7 @@ package gql
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -77,22 +78,24 @@ func (r *mutationResolver) UploadFileToProperty(ctx context.Context, input gqlmo
 	}
 
 	uc := usecases(ctx)
+	// Fetch returns a slice with a nil entry for an ID that does not exist,
+	// so the length alone is not enough to know the item was found.
 	pr, err := uc.Property.Fetch(ctx, []id.PropertyID{pid}, getOperator(ctx))
-	if err != nil || len(pr) == 0 {
+	if err != nil || len(pr) == 0 || pr[0] == nil {
 		if err == nil {
 			err = rerror.ErrNotFound
 		}
 		return nil, err
 	}
 	ws, err := uc.Scene.Fetch(ctx, []id.SceneID{pr[0].Scene()}, getOperator(ctx))
-	if err != nil || len(ws) == 0 {
+	if err != nil || len(ws) == 0 || ws[0] == nil {
 		if err == nil {
 			err = rerror.ErrNotFound
 		}
 		return nil, err
 	}
 	prj, err := uc.Project.Fetch(ctx, []id.ProjectID{ws[0].Project()}, getOperator(ctx))
-	if err != nil || len(prj) == 0 {
+	if err != nil || len(prj) == 0 || prj[0] == nil {
 		if err == nil {
 			err = rerror.ErrNotFound
 		}
@@ -165,11 +168,30 @@ func (r *mutationResolver) AddPropertyItem(ctx context.Context, input gqlmodel.A
 		}
 	}
 
+	fields := make([]interfaces.AddPropertyItemFieldParam, 0, len(input.Fields))
+	for _, f := range input.Fields {
+		if f == nil {
+			continue
+		}
+		var fv *property.Value
+		if f.Value != nil {
+			fv = gqlmodel.FromPropertyValueAndType(f.Value, f.Type)
+			if fv == nil {
+				return nil, fmt.Errorf("invalid value for field %q", f.FieldID)
+			}
+		}
+		fields = append(fields, interfaces.AddPropertyItemFieldParam{
+			Field: id.PropertyFieldID(*gqlmodel.ToStringIDRef[id.PropertyField](&f.FieldID)),
+			Value: fv,
+		})
+	}
+
 	p, pgl, pi, err := usecases(ctx).Property.AddItem(ctx, interfaces.AddPropertyItemParam{
 		PropertyID:     pid,
 		Pointer:        gqlmodel.FromPointer(gqlmodel.ToStringIDRef[id.PropertySchemaGroup](&input.SchemaGroupID), nil, nil),
 		Index:          input.Index,
 		NameFieldValue: v,
+		Fields:         fields,
 	}, getOperator(ctx))
 
 	if err != nil {

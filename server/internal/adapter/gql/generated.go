@@ -5671,6 +5671,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPagination,
 		ec.unmarshalInputPolicyCheckInput,
 		ec.unmarshalInputProjectSort,
+		ec.unmarshalInputPropertyFieldValueInput,
 		ec.unmarshalInputPublishProjectInput,
 		ec.unmarshalInputPublishStoryInput,
 		ec.unmarshalInputRemoveAssetInput,
@@ -6902,12 +6903,19 @@ input UnlinkPropertyValueInput {
   fieldId: ID!
 }
 
+input PropertyFieldValueInput {
+  fieldId: ID!
+  value: Any
+  type: ValueType!
+}
+
 input AddPropertyItemInput {
   propertyId: ID!
   schemaGroupId: ID!
   index: Int
   nameFieldValue: Any
   nameFieldType: ValueType
+  fields: [PropertyFieldValueInput!]
 }
 
 input MovePropertyItemInput {
@@ -34005,7 +34013,7 @@ func (ec *executionContext) unmarshalInputAddPropertyItemInput(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"propertyId", "schemaGroupId", "index", "nameFieldValue", "nameFieldType"}
+	fieldsInOrder := [...]string{"propertyId", "schemaGroupId", "index", "nameFieldValue", "nameFieldType", "fields"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -34047,6 +34055,13 @@ func (ec *executionContext) unmarshalInputAddPropertyItemInput(ctx context.Conte
 				return it, err
 			}
 			it.NameFieldType = data
+		case "fields":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fields"))
+			data, err := ec.unmarshalOPropertyFieldValueInput2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldValueInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Fields = data
 		}
 	}
 
@@ -35379,6 +35394,47 @@ func (ec *executionContext) unmarshalInputProjectSort(ctx context.Context, obj a
 				return it, err
 			}
 			it.Direction = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPropertyFieldValueInput(ctx context.Context, obj any) (gqlmodel.PropertyFieldValueInput, error) {
+	var it gqlmodel.PropertyFieldValueInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"fieldId", "value", "type"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "fieldId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fieldId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FieldID = data
+		case "value":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
+			data, err := ec.unmarshalOAny2interface(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Value = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNValueType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐValueType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		}
 	}
 
@@ -48633,6 +48689,11 @@ func (ec *executionContext) marshalNPropertyField2ᚖgithubᚗcomᚋreearthᚋre
 	return ec._PropertyField(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNPropertyFieldValueInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldValueInput(ctx context.Context, v any) (*gqlmodel.PropertyFieldValueInput, error) {
+	res, err := ec.unmarshalInputPropertyFieldValueInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNPropertyGroup2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.PropertyGroup) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -50646,6 +50707,24 @@ func (ec *executionContext) marshalOPropertyFieldPayload2ᚖgithubᚗcomᚋreear
 		return graphql.Null
 	}
 	return ec._PropertyFieldPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPropertyFieldValueInput2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldValueInputᚄ(ctx context.Context, v any) ([]*gqlmodel.PropertyFieldValueInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*gqlmodel.PropertyFieldValueInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNPropertyFieldValueInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyFieldValueInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) marshalOPropertyGroup2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPropertyGroup(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PropertyGroup) graphql.Marshaler {

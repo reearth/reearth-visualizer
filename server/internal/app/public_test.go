@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -55,6 +56,25 @@ func TestPublishedAuthMiddleware(t *testing.T) {
 			PublishedName:     "active",
 			BasicAuthUsername: "fooo",
 			BasicAuthPassword: "baar",
+		},
+		{
+			// REL-02: a non-NotFound Metadata error (e.g. a transient Mongo
+			// failure) must fail closed -- basic auth still gets enforced --
+			// rather than skip the password check entirely.
+			Name:          "metadata lookup error fails closed",
+			PublishedName: "db-error",
+			Error:         echo.ErrUnauthorized,
+		},
+		{
+			// Same failure, but with credentials sent: the Validator has no
+			// metadata to check against either way, and must still produce a
+			// 401 challenge -- not a 404 -- so a legitimate user retrying
+			// their password during a blip isn't told the page is missing.
+			Name:              "metadata lookup error with credentials still fails closed",
+			PublishedName:     "db-error",
+			BasicAuthUsername: "fooo",
+			BasicAuthPassword: "baar",
+			Error:             echo.ErrUnauthorized,
 		},
 	}
 
@@ -295,6 +315,8 @@ func (p *mockPublished) Metadata(ctx context.Context, name string) (interfaces.P
 			BasicAuthUsername: "fooo",
 			BasicAuthPassword: "baar",
 		}, nil
+	case "db-error":
+		return interfaces.PublishedMetadata{}, errors.New("internal: server selection error")
 	}
 	return interfaces.PublishedMetadata{}, rerror.ErrNotFound
 }

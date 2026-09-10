@@ -13,15 +13,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
-	"github.com/reearth/reearthx/i18n"
-	"github.com/reearth/reearthx/idx"
-	"github.com/reearth/reearthx/log"
-	"github.com/reearth/reearthx/rerror"
-	"github.com/99designs/gqlgen/graphql"
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -34,6 +30,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/i18n"
+	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
@@ -193,8 +193,10 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 		return nil, err
 	}
 
-	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
-		return nil, errors.New("project is private")
+	if pj.Visibility() == string(project.VisibilityPrivate) {
+		if operator == nil || !operator.IsReadableWorkspace(pj.Workspace()) {
+			return nil, errors.New("project is private")
+		}
 	}
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
@@ -693,6 +695,50 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 
 }
 
+// importClaimStaleAfter bounds how long a PROCESSING claim is treated as
+// still in flight before ClaimImport allows a retry to reclaim it. Chosen
+// comfortably larger than Cloud Run's ~540s request timeout on the
+// synchronous SaaS import path, and far larger than any observed import
+// latency in prod logs (max seen: ~15s for typical projects; large zips
+// take longer, but 15 minutes gives headroom before a legitimately-still-
+// running import gets reclaimed).
+const importClaimStaleAfter = 15 * time.Minute
+
+// ClaimImport authorizes against the project's own workspace before claiming.
+// The import endpoints derive their acting identity from the uploaded object's
+// filename, so without this check a request naming another tenant's project
+// would claim it: that project's import status becomes PROCESSING and its owner
+// cannot start a real import until the claim goes stale (SEC-02). The check
+// cannot live in the repo, because it needs the project's workspace and a
+// project does not necessarily have a projectmetadata document to read it from.
+func (i *Project) ClaimImport(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (project.ImportClaim, error) {
+	prj, err := i.projectRepo.FindByID(ctx, pid)
+	if err != nil {
+		return project.ImportClaimInProgress, err
+	}
+	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
+		return project.ImportClaimInProgress, err
+	}
+	claimed, err := i.projectMetadataRepo.ClaimImport(ctx, pid, importClaimStaleAfter)
+	if err != nil {
+		return project.ImportClaimInProgress, err
+	}
+	if claimed {
+		return project.ImportClaimGranted, nil
+	}
+	// Not claimed: distinguish an import that already succeeded (safe to skip)
+	// from one still marked PROCESSING, which may be a crashed worker's stale
+	// claim. Callers on a retryable transport redeliver the latter instead of
+	// dropping it (REL-08). Best-effort read; any error falls through to the
+	// safe, retryable InProgress.
+	if meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid); err == nil && meta != nil {
+		if st := meta.ImportStatus(); st != nil && *st == project.ProjectImportStatusSuccess {
+			return project.ImportClaimAlreadySucceeded, nil
+		}
+	}
+	return project.ImportClaimInProgress, nil
+}
+
 func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, string, string, error) {
 
 	prj, err := i.projectRepo.FindByID(ctx, *pid)
@@ -925,6 +971,9 @@ func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s 
 
 	// publish
 	r, w := io.Pipe()
+	// If UploadBuiltScene returns early without draining r to EOF, the build goroutine's
+	// blocked Write leaks forever. Closing r unblocks it either way.
+	defer func() { _ = r.Close() }()
 
 	// Build
 	go func() {
@@ -1057,7 +1106,7 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
 	if err != nil {
-		return nil, errors.New("project metadata " + err.Error())
+		return nil, fmt.Errorf("project metadata: %w", err)
 	}
 
 	prj.SetMetadata(meta)
@@ -1069,6 +1118,14 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 // (exportZipState.trackWrite) rather than a single check after the whole zip has already been
 // built -- by the time a post-hoc check could catch an oversized export, the damage (memory,
 // disk, GCS reads) is already done.
+//
+// SCA-07 (accepted tradeoff): the zip is assembled in the container filesystem, which on Cloud Run
+// is in memory, so peak memory scales with the export size. Kept as-is deliberately: real exports
+// are small, so the concern is dormant at current load; lowering this cap would make a legitimate
+// large export fail, and raising instance memory or isolating export onto its own worker is
+// disproportionate to the current risk. Revisit if export sizes or concurrency grow materially;
+// shrinking the cap is not the answer -- the options (each with tradeoffs) are weighed in the
+// internal tracker.
 var maxExportZipBytes int64 = 500 * 1024 * 1024 // 500MB
 
 // exportZipState carries state across the whole SearchAssetURL/AddZipAsset recursion for one
@@ -1126,10 +1183,12 @@ func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file ga
 		}
 	case string:
 		cleanedStr := strings.Trim(v, "'")
-		if strings.HasPrefix(cleanedStr, adapter.CurrentHost(ctx)) {
-			if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, state); err != nil {
-				return err
-			}
+		// AddZipAsset (via IsCurrentHostAssets) is the single source of truth for
+		// recognizing an asset reference -- relative assets/... paths as well as
+		// absolute URLs under the current host. Filtering again here would just
+		// re-diverge from that logic, as it did before (SCA-01 / #2358).
+		if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, state); err != nil {
+			return err
 		}
 	default:
 

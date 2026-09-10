@@ -3,8 +3,10 @@ package interactor
 import (
 	"context"
 	"errors"
+	"math/rand/v2"
 	"net/url"
 	"strings"
+	"time"
 
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -18,19 +20,62 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
 
+// txMaxRetries is the number of additional attempts a contended transaction
+// gets. Kept in one place so the retried call sites stay consistent.
+const txMaxRetries = 3
+
+// txRetryBaseDelay is the first backoff step between transaction attempts.
+// Retrying immediately is not enough on its own: MongoDB gives up on a
+// contended transaction after about 5ms of lock waiting
+// (maxTransactionLockRequestTimeoutMillis), so an immediate retry tends to land
+// inside the same contention window as the attempt that just failed. A short
+// randomised delay lets the winning transaction commit first.
+const txRetryBaseDelay = 10 * time.Millisecond
+
+// txRetryMaxShift caps the exponent so the delay cannot overflow or grow
+// unreasonably if a caller passes a large maxRetries.
+const txRetryMaxShift = 6
+
+// txRetryDelay returns the backoff before the attempt after the given one,
+// using exponential growth with full jitter. Jitter matters more than the mean
+// here: without it, two transactions that collided will tend to wake together
+// and collide again.
+func txRetryDelay(attempt int) time.Duration {
+	shift := attempt
+	if shift > txRetryMaxShift {
+		shift = txRetryMaxShift
+	}
+	window := int64(txRetryBaseDelay) << shift
+	return time.Duration(rand.Int64N(window))
+}
+
 // runWithTxRetry runs fn in a fresh MongoDB transaction for each attempt,
 // retrying up to maxRetries additional times on TransientTransactionError.
-// Each retry starts a new session so the driver can safely renegotiate locks.
+// Each retry starts a new session so the driver can safely renegotiate locks,
+// and re-runs fn so its reads observe the state committed by whichever
+// transaction won the previous round. Retrying without re-reading would turn a
+// write conflict into a lost update.
 func runWithTxRetry(ctx context.Context, t usecasex.Transaction, maxRetries int, fn func(context.Context) error) error {
 	if t == nil {
 		return fn(ctx)
 	}
 	var lastErr error
 	for attempt := 0; attempt <= maxRetries; attempt++ {
+		if attempt > 0 {
+			// Wait before re-attempting, but give up if the caller is already
+			// gone -- there is no point holding a request open to retry a
+			// transaction whose response nobody will read.
+			select {
+			case <-ctx.Done():
+				return lastErr
+			case <-time.After(txRetryDelay(attempt - 1)):
+			}
+		}
 		tx, err := t.Begin(ctx)
 		if err != nil {
 			return err
@@ -176,8 +221,23 @@ func (i commonSceneLock) UpdateSceneLock(ctx context.Context, s id.SceneID, befo
 	return nil
 }
 
+// sceneLockReleaseTimeout bounds the lock-release write below, in case the
+// detached context's SaveLock call is itself slow or hangs.
+const sceneLockReleaseTimeout = 10 * time.Second
+
+// ReleaseSceneLock detaches ctx from its parent's cancellation before saving
+// the lock. Callers defer this from publish flows using the same request
+// context the publish itself was using (REL-03, compliance scan); if that
+// request context is canceled (e.g. the client disconnected mid-upload), a
+// SaveLock call on the bare ctx would fail with "context canceled" and leave
+// the scene locked forever, since sceneLock has no TTL and the only other
+// unlock path runs solely at process startup.
 func (i commonSceneLock) ReleaseSceneLock(ctx context.Context, s id.SceneID) {
-	_ = i.sceneLockRepo.SaveLock(ctx, s, scene.LockModeFree)
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), sceneLockReleaseTimeout)
+	defer cancel()
+	if err := i.sceneLockRepo.SaveLock(ctx, s, scene.LockModeFree); err != nil {
+		log.Errorfc(ctx, "failed to release scene lock for %s: %v", s, err)
+	}
 }
 
 type SceneDeleter struct {
@@ -314,10 +374,40 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 }
 
 func IsCurrentHostAssets(ctx context.Context, u string) bool {
-	if strings.HasPrefix(u, "assets/") && strings.HasPrefix(u, adapter.CurrentHost(ctx)) {
+	if strings.HasPrefix(u, "assets/") || strings.HasPrefix(u, "/assets/") {
 		return true
 	}
-	return false
+
+	currentHost := adapter.CurrentHost(ctx)
+	if currentHost == "" {
+		return false
+	}
+
+	parsedURL, err := url.Parse(u)
+	if err != nil {
+		return false
+	}
+	parsedHost, err := url.Parse(currentHost)
+	if err != nil {
+		return false
+	}
+	return parsedURL.Scheme == parsedHost.Scheme &&
+		parsedURL.Host == parsedHost.Host &&
+		strings.HasPrefix(parsedURL.Path, "/assets/")
+}
+
+// replaceIDsInPlace rewrites data with every old/new ID pair in pairs (old1, new1, old2, new2,
+// ...) applied in a single pass, instead of one bytes.Replace call per pair -- each of which
+// would otherwise allocate and copy the whole buffer on its own (SCA-05, compliance scan issue
+// #96). len(pairs) must be even.
+func replaceIDsInPlace(data *[]byte, pairs []string) {
+	if len(pairs) == 0 {
+		return
+	}
+	if len(pairs)%2 != 0 {
+		panic("replaceIDsInPlace: pairs must have an even length")
+	}
+	*data = []byte(strings.NewReplacer(pairs...).Replace(string(*data)))
 }
 
 func ReplaceToCurrentHost(ctx context.Context, urlString string) string {

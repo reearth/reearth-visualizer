@@ -1,5 +1,15 @@
 version: "2"
 linters:
+  enable:
+    # Error wrapping has to survive, otherwise errors.Is stops recognising the
+    # sentinels that pkg/apperr classifies, and expected failures go back to
+    # being logged at ERROR and paging the alerts channel.
+    - errorlint
+  settings:
+    errorlint:
+      errorf: true
+      asserts: false
+      comparison: false
   exclusions:
     presets:
       - comments
