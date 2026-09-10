@@ -11,12 +11,10 @@ export const LogoWrapper: FC = () => {
   );
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
+const Wrapper = styled("div")(() => ({
   display: css.display.flex,
   justifyContent: css.justifyContent.center,
   alignItems: css.alignItems.center,
-  padding: theme.spacing.normal,
-  minHeight: "90px"
 }));
 
 export default LogoWrapper;

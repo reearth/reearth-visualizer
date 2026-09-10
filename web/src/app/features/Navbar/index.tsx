@@ -1,10 +1,12 @@
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 
+import CreateProjectModal from "../CreateProjectModal";
 import AddWorkspaceModal from "../CreateWorkspaceModal";
 
 import useHook from "./hooks";
 import LeftSection from "./LeftSection";
+import { NavbarProject } from "./types";
 import useRightSide from "./useRightSection";
 
 type Props = {
@@ -36,6 +38,10 @@ const Navbar: React.FC<Props> = ({
     currentProject,
     currentWorkspace,
     workspaces,
+    userInfo,
+    projects,
+    showProjectCreator,
+    projectCreatorVisible,
     handleLogout,
     handleWorkspaceChange
   } = useHook({
@@ -55,14 +61,18 @@ const Navbar: React.FC<Props> = ({
         <LeftSection
           currentProject={currentProject}
           currentWorkspace={currentWorkspace}
+          projects={projects as NavbarProject[]}
           workspaces={workspaces}
           sceneId={sceneId}
+          userInfo={userInfo}
           page={page}
+          showProjectCreator={showProjectCreator}
           onWorkspaceChange={handleWorkspaceChange}
           onSignOut={handleLogout}
         />
         {rightSide}
       </Wrapper>
+      {projectCreatorVisible && <CreateProjectModal />}
       <AddWorkspaceModal />
     </>
   );

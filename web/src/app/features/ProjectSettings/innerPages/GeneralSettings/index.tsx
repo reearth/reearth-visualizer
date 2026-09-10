@@ -254,7 +254,7 @@ const GeneralSettings: FC<Props> = ({
               />
             </AliasInputWrapper>
             <TextareaField
-              title={t("Description")}
+              title={t("About")}
               value={project.description}
               resizable="height"
               onChangeComplete={handleDescriptionUpdate}

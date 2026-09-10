@@ -8,11 +8,8 @@ import {
 } from "@reearth/services/api/project";
 import { toPublishmentStatus } from "@reearth/services/api/utils";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import {
-  ProjectSortField,
-  SortDirection,
-  Visualizer
-} from "@reearth/services/gql";
+import { ProjectSortField, SortDirection } from "@reearth/services/gql";
+import { useCreateProjectModal } from "@reearth/services/state";
 import {
   useCallback,
   useMemo,
@@ -40,12 +37,8 @@ export type SortType =
   | "date-updated";
 
 export default (workspaceId?: string) => {
-  const {
-    updateProject,
-    createProject,
-    updateProjectRecycleBin,
-    publishProject
-  } = useProjectMutations();
+  const { updateProject, updateProjectRecycleBin, publishProject } =
+    useProjectMutations();
 
   const navigate = useNavigate();
   const client = useApolloClient();
@@ -157,37 +150,12 @@ export default (workspaceId?: string) => {
   }, []);
 
   // project create
-  const [projectCreatorVisible, setProjectCreatorVisible] = useState(false);
+  const [projectCreatorVisible, setCreateProjectModal] =
+    useCreateProjectModal();
 
   const showProjectCreator = useCallback(() => {
-    setProjectCreatorVisible(true);
-  }, []);
-  const closeProjectCreator = useCallback(() => {
-    setProjectCreatorVisible(false);
-  }, []);
-
-  const handleProjectCreate = useCallback(
-    async (
-      data: Pick<
-        Project,
-        "name" | "description" | "projectAlias" | "visibility"
-      > & { license?: string }
-    ) => {
-      if (!workspaceId) return false;
-      const { status } = await createProject(
-        workspaceId,
-        Visualizer.Cesium,
-        data.name,
-        true,
-        data.projectAlias,
-        data.visibility,
-        data.description,
-        data?.license
-      );
-      return status === "success";
-    },
-    [createProject, workspaceId]
-  );
+    setCreateProjectModal(true);
+  }, [setCreateProjectModal]);
 
   // project update
   const handleProjectUpdate = useCallback(
@@ -348,13 +316,11 @@ export default (workspaceId?: string) => {
     }
   }, [hasMoreStarredProjects, fetchMoreStarred, starredEndCursor]);
 
-  const {
-    wrapperRef: starredWrapperRef,
-    contentRef: starredContentRef
-  } = useLoadMore({
-    data: starredProjects,
-    onLoadMore: handleGetMoreStarredProjects
-  });
+  const { wrapperRef: starredWrapperRef, contentRef: starredContentRef } =
+    useLoadMore({
+      data: starredProjects,
+      onLoadMore: handleGetMoreStarredProjects
+    });
 
   return {
     filtedProjects,
@@ -374,10 +340,8 @@ export default (workspaceId?: string) => {
     fileInputRef,
     projectVisibility,
     showProjectCreator,
-    closeProjectCreator,
     handleProjectUpdate,
     handleProjectOpen,
-    handleProjectCreate,
     handleProjectSelect,
     handleLayoutChange,
     handleProjectSortChange,

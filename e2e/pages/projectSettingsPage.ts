@@ -109,7 +109,7 @@ export class ProjectSettingsPage {
       .nth(1);
     this.projectDescriptionLabel = this.page
       .locator('[data-testid="project-settings-content-general"]')
-      .getByText("Description", { exact: true });
+      .getByText("About", { exact: true });
     this.projectDescriptionInput = this.page
       .locator('[data-testid="project-settings-content-general"]')
       .getByRole("textbox")
