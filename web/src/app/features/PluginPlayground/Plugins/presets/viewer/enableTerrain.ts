@@ -70,7 +70,7 @@ reearth.ui.show(\`
 // ================================
 
 // Move the camera to a specified position
-// Documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
+// Documentation for Camera "flyTo" method https://docs.reearth.io/en/developer/plugin/api-reference/camera/#flyto
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {
@@ -88,11 +88,11 @@ reearth.camera.flyTo(
 );
 
 // Listen for messages from the UI to trigger terrain
-// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
+// Documentation for Extension "on" event https://docs.reearth.io/en/developer/plugin/api-reference/extension/#message
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "activateTerrain") {
-  // Documentation for Viewer "overrideProperty" method https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
+  // Documentation for Viewer "overrideProperty" method https://docs.reearth.io/en/developer/plugin/api-reference/viewer/#overrideproperty
     reearth.viewer.overrideProperty({
       // Enable Cesium World Terrain
       terrain: {

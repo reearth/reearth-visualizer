@@ -74,7 +74,7 @@ const parking = {
     },
   },
   // Settings for the feature style. This statement is required even if no style is set.
-  // Documentation on feature style: https://visualizer.developer.reearth.io/plugin-api/layers/#layer-appearance-types
+  // Documentation on feature style: https://docs.reearth.io/en/developer/plugin/api-reference/layers/#layer-appearance-types
   marker: {
     image:
       "https://reearth.github.io/visualizer-plugin-sample-data/public/image/parking.svg",
@@ -109,7 +109,7 @@ const road = {
 };
 
 // Add the inline GeoJSON layer to Re:Earth
-// Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
+// Documentation on Layers "add" event: https://docs.reearth.io/en/developer/plugin/api-reference/layers/#add
 reearth.layers.add(parking);
 reearth.layers.add(buildings);
 reearth.layers.add(road);

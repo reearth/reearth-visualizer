@@ -74,11 +74,11 @@ const layer3dTiles = {
 };
 
 // Add the 3D Tiles layer from the URL to Re:Earth
-// Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
+// Documentation on Layers "add" event: https://docs.reearth.io/en/developer/plugin/api-reference/layers/#add
 reearth.layers.add(layer3dTiles);
 
 // Enable Terrain
-// Documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
+// Documentation on Viewer "overrideProperty" event: https://docs.reearth.io/en/developer/plugin/api-reference/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   terrain: {
     enabled: true,
@@ -86,7 +86,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Define the camera position to be moved to
-// Documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
+// Documentation on Camera "flyTo" event: https://docs.reearth.io/en/developer/plugin/api-reference/camera/#flyto
 reearth.camera.flyTo(
   {
     heading: 4.022965234428543,
@@ -119,14 +119,14 @@ function handleLayerSelect(layerId, featureId) {
   const building_height = feature?.properties?.["bldg:measuredHeight"] || "";
 
   // Send selected feature id and height to plugin UI
-  // Documentation on UI "postMessage" event: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
+  // Documentation on UI "postMessage" event: https://docs.reearth.io/en/developer/plugin/api-reference/ui/#postmessage
   reearth.ui.postMessage({
     action: "buildingClick",
     payload: { gmlId: gml_id ,buildingHeight : building_height},
   });
 }
 // Set "handleLayerSelect" to work when a feature is selected
-// Documentation on Layers "on" event: https://visualizer.developer.reearth.io/plugin-api/layers/#select-1
+// Documentation on Layers "on" event: https://docs.reearth.io/en/developer/plugin/api-reference/layers/#select-1
 reearth.layers.on("select", handleLayerSelect);`
 };
 

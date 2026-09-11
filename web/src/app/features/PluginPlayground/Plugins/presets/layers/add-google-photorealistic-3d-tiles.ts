@@ -36,11 +36,11 @@ const layerPhotorealistic3dTiles = {
 };
 
 // Add the Google Photorealistic 3D Tiles layer to Re:Earth
-// Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
+// Documentation on Layers "add" event: https://docs.reearth.io/en/developer/plugin/api-reference/layers/#add
 reearth.layers.add(layerPhotorealistic3dTiles);
 
 // Move the camera to the position where the Google Photorealistic 3D Tiles data is displayed.
-// Documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
+// Documentation on Camera "flyTo" event: https://docs.reearth.io/en/developer/plugin/api-reference/camera/#flyto
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {

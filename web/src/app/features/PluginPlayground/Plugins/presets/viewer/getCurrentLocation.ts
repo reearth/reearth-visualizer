@@ -101,7 +101,7 @@ reearth.ui.show(\`
 \`);
 
 // Handle button click to get current location
-// Documentation for Viewer "getCurrentLocationAsync" function https://visualizer.developer.reearth.io/plugin-api/viewer/#-getcurrentlocationasync
+// Documentation for Viewer "getCurrentLocationAsync" function https://docs.reearth.io/en/developer/plugin/api-reference/viewer/#-getcurrentlocationasync
 reearth.extension.on("message", async (msg) => {
   if (msg.type === "getCurrentLocation") {
     const myLocation = await reearth.viewer.tools.getCurrentLocationAsync();

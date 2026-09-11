@@ -68,15 +68,15 @@ reearth.ui.show(\`
 // ================================
 
 // Listen for messages from the UI and update zoom level
-// Documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
+// Documentation on Extension "on" event: https://docs.reearth.io/en/developer/plugin/api-reference/extension/#message
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "zoomIn") {
     // Increasing the value increases the change to zoom
-    // Documentation on Camera "zoomIn" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomin
+    // Documentation on Camera "zoomIn" method: https://docs.reearth.io/en/developer/plugin/api-reference/camera/#zoomin
     reearth.camera.zoomIn(2);
   } else if (action === "zoomOut") {
-  // Documentation on Camera "zoomOut" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomout
+  // Documentation on Camera "zoomOut" method: https://docs.reearth.io/en/developer/plugin/api-reference/camera/#zoomout
     reearth.camera.zoomOut(2);
   }
 });`
