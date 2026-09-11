@@ -92,11 +92,11 @@ const model3D = {
 };
 
 // Add 3D models to the layer
-// Documentation for Layers "add" method https://docs.reearth.io/en/developer/plugin/api-reference/layers/#add
+// Documentation for Layers "add" method https://docs.reearth.io/developer/plugin/api-reference/layers/#add
 reearth.layers.add(model3D);
 
 // Move the camera to a specified position
-// Documentation for Camera "flyTo" method https://docs.reearth.io/en/developer/plugin/api-reference/camera/#flyto
+// Documentation for Camera "flyTo" method https://docs.reearth.io/developer/plugin/api-reference/camera/#flyto
 reearth.camera.flyTo(
   {
     // Defines the target camera position
@@ -115,7 +115,7 @@ reearth.camera.flyTo(
 
 // In this example, the time width is set to set the time for the shadow to appear
 // Set the time range on the timeline
-// Documentation for Timeline "setTime" method https://docs.reearth.io/en/developer/plugin/api-reference/timeline/#settime
+// Documentation for Timeline "setTime" method https://docs.reearth.io/developer/plugin/api-reference/timeline/#settime
 reearth.timeline.setTime({
 start: new Date("2023-12-01T09:00:00+01:00"),
 stop: new Date("2023-12-01T10:00:00+01:00"),
@@ -123,7 +123,7 @@ current: new Date("2023-12-01T09:00:00+01:00"),
 });
 
 // Listen for messages from the UI to trigger shadow
-// Documentation for Extension "on" event https://docs.reearth.io/en/developer/plugin/api-reference/extension/#message
+// Documentation for Extension "on" event https://docs.reearth.io/developer/plugin/api-reference/extension/#message
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "activateShadow") {
@@ -135,7 +135,7 @@ reearth.extension.on("message", (msg) => {
       },
     });
   } else if (action === "deactivateShadow") {
-  // Documentation for Viewer "overrideProperty" method https://docs.reearth.io/en/developer/plugin/api-reference/viewer/#overrideproperty
+  // Documentation for Viewer "overrideProperty" method https://docs.reearth.io/developer/plugin/api-reference/viewer/#overrideproperty
     reearth.viewer.overrideProperty({
       scene: {
         shadow: {

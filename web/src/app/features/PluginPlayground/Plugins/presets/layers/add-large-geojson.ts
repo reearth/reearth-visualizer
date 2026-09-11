@@ -66,7 +66,7 @@ const kanagawaStyledGeoJson = {
 };
 
 // Add the GeoJSON layer from the URL to Visualizer
-// Documentation on Layers "add" event: https://docs.reearth.io/en/developer/plugin/api-reference/layers/#add
+// Documentation on Layers "add" event: https://docs.reearth.io/developer/plugin/api-reference/layers/#add
 reearth.layers.add(tokyoBoundary);
 reearth.layers.add(kanagawaStyledGeoJson);
 

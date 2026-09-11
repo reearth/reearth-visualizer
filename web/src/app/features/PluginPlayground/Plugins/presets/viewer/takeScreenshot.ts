@@ -97,16 +97,16 @@ const widgetFile: FileType = {
 \`);
 
 // Set up the extension to handle messages from the UI
-// Documentation for Extension "on" event https://docs.reearth.io/en/developer/plugin/api-reference/extension/#message
+// Documentation for Extension "on" event https://docs.reearth.io/developer/plugin/api-reference/extension/#message
 reearth.extension.on('message', msg => {
   if (msg.type === 'capture-request') {
     try {
       // Capture the current view as a PNG image
-      // Documentation for Viewer "capture" method: https://docs.reearth.io/en/developer/plugin/api-reference/viewer/#capture
+      // Documentation for Viewer "capture" method: https://docs.reearth.io/developer/plugin/api-reference/viewer/#capture
       const imageData = reearth.viewer.capture('image/png');
 
       // Check if capture was successful and send response
-      // Documentation for UI "postMessage" method: https://docs.reearth.io/en/developer/plugin/api-reference/ui/#postmessage
+      // Documentation for UI "postMessage" method: https://docs.reearth.io/developer/plugin/api-reference/ui/#postmessage
       reearth.ui.postMessage({
         type: 'capture-response',
         imageData: imageData || null,

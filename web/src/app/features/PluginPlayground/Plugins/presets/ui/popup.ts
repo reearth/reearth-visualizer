@@ -293,28 +293,28 @@ const widgetFile: FileType = {
 \`;
 
 // Handle messages from the UI
-// Documentation for Extension "on" event https://docs.reearth.io/en/developer/plugin/api-reference/extension/#message
+// Documentation for Extension "on" event https://docs.reearth.io/developer/plugin/api-reference/extension/#message
 reearth.extension.on("message", (msg) => {
   if (msg.type === "showPopup") {
-  // Documentation for Popup "show" method https://docs.reearth.io/en/developer/plugin/api-reference/popup/#show
+  // Documentation for Popup "show" method https://docs.reearth.io/developer/plugin/api-reference/popup/#show
     reearth.popup.show(popupHTML, { position: "bottom-start" });
   }
   else if (msg.type === "closePopup") {
-  // Documentation for Popup "close" method https://docs.reearth.io/en/developer/plugin/api-reference/popup/#close
+  // Documentation for Popup "close" method https://docs.reearth.io/developer/plugin/api-reference/popup/#close
     reearth.popup.close();
     // Notify UI that popup is closed
-    // Documentation for Extension "postMessage" method https://docs.reearth.io/en/developer/plugin/api-reference/ui/#postmessage
+    // Documentation for Extension "postMessage" method https://docs.reearth.io/developer/plugin/api-reference/ui/#postmessage
     reearth.ui.postMessage({ type: "popupClosed" });
   }
   else if (msg.type === "updatePopup") {
-  // Documentation for Popup "update" method https://docs.reearth.io/en/developer/plugin/api-reference/popup/#update
+  // Documentation for Popup "update" method https://docs.reearth.io/developer/plugin/api-reference/popup/#update
     reearth.popup.update({
       position: msg.position,
       offset: msg.offset
     });
   }
   else if (msg.type === "postMessageToPopup") {
-  // Documentation for Popup "postMessage" method https://docs.reearth.io/en/developer/plugin/api-reference/popup/#postmessage
+  // Documentation for Popup "postMessage" method https://docs.reearth.io/developer/plugin/api-reference/popup/#postmessage
     reearth.popup.postMessage({ message: msg.message });
   }
   else if (msg.type === "messageToUI") {

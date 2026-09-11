@@ -89,11 +89,11 @@ const samplePointData = {
 };
 
 // Add the layer to Re:Earth
-// Documentation for Layers "add" method https://docs.reearth.io/en/developer/plugin/api-reference/layers/#add
+// Documentation for Layers "add" method https://docs.reearth.io/developer/plugin/api-reference/layers/#add
 const layerId = reearth.layers.add(samplePointData);
 
 // Move the camera to the specified position
-// Documentation for Camera "flyTo" method https://docs.reearth.io/en/developer/plugin/api-reference/camera/#flyto
+// Documentation for Camera "flyTo" method https://docs.reearth.io/developer/plugin/api-reference/camera/#flyto
 reearth.camera.flyTo(
   {
     // Define the camera's target position
@@ -111,7 +111,7 @@ reearth.camera.flyTo(
 );
 
 // Listen for messages from the UI and override the style
-// Documentation for Extension "on" event https://docs.reearth.io/en/developer/plugin/api-reference/extension/#message
+// Documentation for Extension "on" event https://docs.reearth.io/developer/plugin/api-reference/extension/#message
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "showAllFeatures") {
@@ -121,7 +121,7 @@ reearth.extension.on("message", (msg) => {
       },
     });
   } else if (action === "showFeaturesBelow20000") {
-  // Documentation for Layers "override" method https://docs.reearth.io/en/developer/plugin/api-reference/layers/#override
+  // Documentation for Layers "override" method https://docs.reearth.io/developer/plugin/api-reference/layers/#override
     reearth.layers.override(layerId, {
       marker: {
         show: {
