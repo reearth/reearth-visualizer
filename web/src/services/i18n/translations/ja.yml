@@ -91,7 +91,8 @@ For Open & Public projects, anyone can view the project. For Private projects, o
 Description: 説明
 Write down your content: 内容を書き込む
 Provide a short summary (within 200 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な特徴を200文字以内で簡潔に説明してください。
-We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator.: 他の人があなたの作品をどのように使用できるかを明確にし、創作者としての権利を保護するために、ライセンスを選択することを強くお勧めします。
+Choose a license: ''
+We recommend selecting a license to define how others can use your work and ensure your rights as the creator are protected. You can also create a custom license later in the settings.: ''
 Download Error Log: エラーログをダウンロード
 Ok: 確認
 Import Failed: インポート失敗
@@ -450,12 +451,11 @@ Confirm visibility: 表示を確認する
 Project Visibility: プロジェクトの公開範囲
 Please upgrade your plan to create a private project.: 非公開プロジェクトを作成するには、プランをアップグレードしてください。
 Preview: プレビュー
+License Editing: ''
 Choose a template: テンプレートを選択してください
+Cancel changes: ''
 Save License: ライセンスを保存
 Write down your license: ライセンスを書き込む
-You can select a license from the following templates to apply to your current project.: 以下のテンプレートからライセンスを選択して、現在のプロジェクトに適用できます。
-Once selected, it will replace the current license setting. Please make sure you understand the implications of the new license.: 選択すると、現在のライセンス設定が置き換えられます。新しいライセンスの影響を十分に理解していることを確認してください。
-Select a license: ライセンスを選択してください
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
@@ -575,7 +575,14 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
+Open — Free to use: ''
+Share-alike — Derivatives stay open: ''
+Limited use: ''
+No license: ''
+Keep all rights reserved — you can select a license or create your own later.: ''
 Please select: 選択してください
+Open in a new tab: ''
+Scroll down: ''
 This function is currently experimental and remains somewhat unstable.: この機能は試験運用中です。不具合が生じる可能性があることをご了承ください。
 'Sort:': '並び替え:'
 Grid Layout: グリッドレイアウト
