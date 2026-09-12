@@ -174,7 +174,7 @@ const widgetFile: FileType = {
 </script>
 \`);
 
-// Documentation on Camera "on" event: https://visualizer.developer.reearth.io/plugin-api/camera/#move-1
+// Documentation on Camera "on" event: https://docs.reearth.io/developer/plugin/api-reference/camera/#move-1
 reearth.camera.on("move", (camera) => {
   reearth.ui.postMessage({
     type: 'currentPosition',
@@ -189,7 +189,7 @@ reearth.camera.on("move", (camera) => {
   });
 });
 
-// Documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
+// Documentation on Extension "on" event: https://docs.reearth.io/developer/plugin/api-reference/extension/#message
 reearth.extension.on('message', (msg) => {
   // Apply camera position
   if (msg.type === 'applyCameraPosition') {
@@ -214,7 +214,7 @@ reearth.extension.on('message', (msg) => {
       );
 
       // Send confirmation message
-      // Documentation on UI "postMessage" event: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
+      // Documentation on UI "postMessage" event: https://docs.reearth.io/developer/plugin/api-reference/ui/#postmessage
       reearth.ui.postMessage({
         type: 'positionApplied'
       });

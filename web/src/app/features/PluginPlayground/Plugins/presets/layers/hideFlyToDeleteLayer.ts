@@ -182,7 +182,7 @@ reearth.ui.show(\`
 </script>
 \`);
 
-// Documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
+// Documentation on Extension "on" event: https://docs.reearth.io/developer/plugin/api-reference/extension/#message
 reearth.extension.on("message", (msg) => {
   switch (msg.type) {
     case "delete":

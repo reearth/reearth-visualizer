@@ -39,7 +39,7 @@ const widgetFile: FileType = {
   </div>\`
 
 // Set a modal window
-// Documentation for Modal "show" method https://visualizer.developer.reearth.io/plugin-api/modal/#show
+// Documentation for Modal "show" method https://docs.reearth.io/developer/plugin/api-reference/modal/#show
 reearth.modal.show(modalContent, {
   width: 400, // Define window width
   height: 300, // Define window height
@@ -48,11 +48,11 @@ reearth.modal.show(modalContent, {
 });
 
 // Listen for a message from the modal window and close it
-// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
+// Documentation for Extension "on" event https://docs.reearth.io/developer/plugin/api-reference/extension/#message
 reearth.extension.on("message", msg => {
   if (msg.action === "closeModal") {
     // Close a modal window
-    // Documentation for Modal "close" method https://visualizer.developer.reearth.io/plugin-api/modal/#close
+    // Documentation for Modal "close" method https://docs.reearth.io/developer/plugin/api-reference/modal/#close
     reearth.modal.close();
   }
 });`

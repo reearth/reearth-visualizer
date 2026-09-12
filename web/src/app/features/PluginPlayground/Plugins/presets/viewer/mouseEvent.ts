@@ -81,7 +81,7 @@ const widgetFile: FileType = {
 \`);
 
 // Handle click events and send to UI for any map click
-// Documentation for Viewer "on" event https://visualizer.developer.reearth.io/plugin-api/viewer/#mouse-events
+// Documentation for Viewer "on" event https://docs.reearth.io/developer/plugin/api-reference/viewer/#mouse-events
 reearth.viewer.on("click", (event) => {
   const { lat, lng, height } = event;
 

@@ -30,11 +30,11 @@ const layerOsm3dTiles = {
 };
 
 // Add the OSM 3D Tiles layer from the URL to Re:Earth
-// Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
+// Documentation on Layers "add" event: https://docs.reearth.io/developer/plugin/api-reference/layers/#add
 reearth.layers.add(layerOsm3dTiles);
 
 // Enable Terrain
-// Documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
+// Documentation on Viewer "overrideProperty" event: https://docs.reearth.io/developer/plugin/api-reference/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   terrain: {
     enabled: true,
@@ -42,7 +42,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the position where the OSM 3D Tiles data is displayed.
-// Documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
+// Documentation on Camera "flyTo" event: https://docs.reearth.io/developer/plugin/api-reference/camera/#flyto
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {

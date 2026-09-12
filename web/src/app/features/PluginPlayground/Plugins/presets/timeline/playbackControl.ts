@@ -172,11 +172,11 @@ const widgetFile: FileType = {
   };
 
   // Add the 3D Tiles layer
-  // Documentation for Layers "add" method https://visualizer.developer.reearth.io/plugin-api/layers/#add
+  // Documentation for Layers "add" method https://docs.reearth.io/developer/plugin/api-reference/layers/#add
   reearth.layers.add(buildings3dTiles);
 
   // Configure viewer for realistic day/night cycle
-  // Documentation for Viewer "overrideProperty" method https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
+  // Documentation for Viewer "overrideProperty" method https://docs.reearth.io/developer/plugin/api-reference/viewer/#overrideproperty
   reearth.viewer.overrideProperty({
     globe: {
       enableLighting: true,
@@ -221,7 +221,7 @@ const widgetFile: FileType = {
 });
 
   // Set camera position for optimal ground+sky view
-  // Documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
+  // Documentation for Camera "flyTo" method https://docs.reearth.io/developer/plugin/api-reference/camera/#flyto
   reearth.camera.flyTo({
     lat: 35.4562,
     lng: 139.6431,
@@ -260,7 +260,7 @@ const widgetFile: FileType = {
   }
 
   // Handle messages from UI
-  // Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
+  // Documentation for Extension "on" event https://docs.reearth.io/developer/plugin/api-reference/extension/#message
   reearth.extension.on("message", msg => {
     switch (msg.type) {
       case "playback":
@@ -291,7 +291,7 @@ const widgetFile: FileType = {
   });
 
   // Listen for timeline ticks
-  // Documentation for Timeline "tick" event https://visualizer.developer.reearth.io/plugin-api/timeline/#tick-1
+  // Documentation for Timeline "tick" event https://docs.reearth.io/developer/plugin/api-reference/timeline/#tick-1
   timeline.on("tick", (time) => {
     reearth.ui.postMessage({
       type: "timeUpdate",
