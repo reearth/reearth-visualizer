@@ -142,20 +142,17 @@ export default (workspaceId?: string) => {
     onLoadMore: handleGetMoreProjects
   });
 
-  const handleProjectSortChange = useCallback(
-    (value?: string) => {
-      if (!value) return;
-      setSort((value as SortType) ?? sortValue);
-    },
-    [sortValue]
-  );
+  const handleProjectSortChange = useCallback((value?: string) => {
+    if (!value) return;
+    setSort(value as SortType);
+  }, []);
 
   // search
   const handleSearch = useCallback((value?: string) => {
     if (!value || value.length < 1) {
-      setSearchTerm?.(undefined);
+      setSearchTerm(undefined);
     } else {
-      setSearchTerm?.(value);
+      setSearchTerm(value);
     }
   }, []);
 
@@ -176,8 +173,8 @@ export default (workspaceId?: string) => {
         "name" | "description" | "projectAlias" | "visibility"
       > & { license?: string }
     ) => {
-      if (!workspaceId) return;
-      await createProject(
+      if (!workspaceId) return false;
+      const { status } = await createProject(
         workspaceId,
         Visualizer.Cesium,
         data.name,
@@ -187,6 +184,7 @@ export default (workspaceId?: string) => {
         data.description,
         data?.license
       );
+      return status === "success";
     },
     [createProject, workspaceId]
   );
@@ -195,7 +193,6 @@ export default (workspaceId?: string) => {
   const handleProjectUpdate = useCallback(
     async (project: Project, projectId: string) => {
       await updateProject({ projectId, ...project });
-      // if (sortBy) refetch();
     },
     [updateProject]
   );
@@ -298,10 +295,22 @@ export default (workspaceId?: string) => {
         projectId: project.id,
         deleted: true
       };
-      if (project?.status === "limited") {
-        await publishProject("unpublished", project.id);
+      // Cover both "published" and "limited" — not just "limited" — so a
+      // fully published project can never reach the Recycle Bin while still
+      // publicly accessible.
+      if (project?.status === "published" || project?.status === "limited") {
+        const publishResult = await publishProject(
+          "unpublished",
+          project.id
+        );
+        if (publishResult?.status !== "success") return false;
       }
-      await updateProjectRecycleBin(updatedProject);
+
+      const { status } = await updateProjectRecycleBin(updatedProject);
+      // Only touch the cache once the project is actually archived on the
+      // backend — otherwise a failed mutation would still make the project
+      // vanish from the dashboard, even though it's still live.
+      if (status !== "success") return false;
 
       client.cache.evict({
         id: client.cache.identify({
@@ -310,6 +319,7 @@ export default (workspaceId?: string) => {
         })
       });
       client.cache.gc();
+      return true;
     },
 
     [client, publishProject, updateProjectRecycleBin]
