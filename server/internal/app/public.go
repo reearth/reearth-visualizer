@@ -90,7 +90,66 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 	}
 }
 
-func PublishedMetadata() echo.HandlerFunc {
+// gatewayTokenHeader carries the shared secret the reearth-cloud gateway presents
+// on /api/published and /api/published_data (SEC-01/02/03/04, compliance scan
+// issue #146).
+const gatewayTokenHeader = "X-Reearth-Gateway-Token"
+
+// hasValidGatewayToken reports whether the request carries a header matching any
+// of the configured tokens. Accepting more than one value is what makes a secret
+// rotation safe: during a rotation, Secret Manager gets a new "current" value
+// while the old one is kept as "previous" for the overlap window until every
+// caller (reearth-cloud's own deploy) has picked up the new value, instead of an
+// instant cutover that 401s every in-flight/lagging caller the moment the secret
+// changes. A blank token is never a match -- there is no way for a caller to
+// "present" an unconfigured secret -- which also means credentials get stripped/
+// the gate is enforced in any environment where no token has been set up yet.
+func hasValidGatewayToken(c echo.Context, tokens ...string) bool {
+	given := c.Request().Header.Get(gatewayTokenHeader)
+	if given == "" {
+		return false
+	}
+	valid := false
+	for _, t := range tokens {
+		if t == "" {
+			continue
+		}
+		if subtle.ConstantTimeCompare([]byte(given), []byte(t)) == 1 {
+			valid = true
+		}
+	}
+	return valid
+}
+
+func anyGatewayTokenConfigured(tokens []string) bool {
+	for _, t := range tokens {
+		if t != "" {
+			return true
+		}
+	}
+	return false
+}
+
+// RequireGatewayToken gates a route behind the shared reearth-cloud gateway
+// token(s) -- pass the current token and, during a rotation, the previous one
+// too. If no token is configured at all, the middleware is a no-op: this is what
+// keeps OSS/self-hosted deployments (no gateway in front of them, no token ever
+// configured) on today's behavior, where browsers fetch these routes directly.
+func RequireGatewayToken(tokens ...string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if !anyGatewayTokenConfigured(tokens) {
+				return next(c)
+			}
+			if !hasValidGatewayToken(c, tokens...) {
+				return echo.NewHTTPError(http.StatusUnauthorized, "missing or invalid gateway token")
+			}
+			return next(c)
+		}
+	}
+}
+
+func PublishedMetadata(gatewayTokens ...string) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		name := c.Param("name")
 		if name == "" {
@@ -105,6 +164,16 @@ func PublishedMetadata() echo.HandlerFunc {
 		res, err := contr.Metadata(c.Request().Context(), name)
 		if err != nil {
 			return err
+		}
+
+		// Only the trusted gateway needs the raw basic-auth credentials to run its
+		// own edge auth check (interfaces/published.go). No first-party client
+		// consumes them from this endpoint -- the web app reads them over
+		// authenticated GraphQL -- so anyone without a valid gateway token gets
+		// them stripped (SEC-01/03, compliance scan issue #146).
+		if !hasValidGatewayToken(c, gatewayTokens...) {
+			res.BasicAuthUsername = ""
+			res.BasicAuthPassword = ""
 		}
 
 		return c.JSON(http.StatusOK, res)

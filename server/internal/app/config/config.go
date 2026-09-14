@@ -115,6 +115,13 @@ type HealthCheckConfig struct {
 type VisualizerConfig struct {
 	InternalApi InternalApiConfig `pp:",omitempty"`
 
+	// PublishedGateway is the shared secret the reearth-cloud gateway presents on
+	// /api/published and /api/published_data (SEC-01/02/03/04, compliance scan
+	// issue #146). Empty by default so OSS/self-hosted deployments -- which have
+	// no gateway in front of them and rely on browsers fetching these routes
+	// directly -- keep today's behavior unchanged.
+	PublishedGateway PublishedGatewayConfig `pp:",omitempty"`
+
 	// Policy Checker Configuration
 	Policy        Policy              `pp:",omitempty"`
 	DomainChecker DomainCheckerConfig `pp:",omitempty"`
@@ -142,6 +149,15 @@ type InternalApiConfig struct {
 	Active bool   `default:"false" pp:",omitempty"`
 	Port   string `default:"50051" pp:",omitempty"`
 	Token  string `default:"" pp:",omitempty"`
+}
+
+type PublishedGatewayConfig struct {
+	Token string `default:"" pp:",omitempty"`
+	// PreviousToken is accepted alongside Token for the duration of a secret
+	// rotation, so rolling the Secret Manager value forward doesn't 401 callers
+	// (reearth-cloud) that haven't redeployed with the new value yet. Clear it
+	// once every caller has picked up the current Token.
+	PreviousToken string `default:"" pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {

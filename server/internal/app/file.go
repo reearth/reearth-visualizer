@@ -22,6 +22,8 @@ func serveFiles(
 	domainChecker gateway.DomainChecker,
 	fileGateway gateway.File,
 	publishedHost string,
+	gatewayToken string,
+	previousGatewayToken string,
 ) {
 	if fileGateway == nil {
 		return
@@ -89,5 +91,6 @@ func serveFiles(
 			return r, name + ".json", err
 		}),
 		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
+		RequireGatewayToken(gatewayToken, previousGatewayToken),
 	)
 }
