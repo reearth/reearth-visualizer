@@ -4,6 +4,7 @@
 
 type TerrainProperty = {
   terrain?: boolean;
+  terrainWaterMask?: boolean;
   terrainType?: "cesium" | "cesiumion"; // default: cesium
   terrainCesiumIonAsset?: string;
   terrainCesiumIonAccessToken?: string;

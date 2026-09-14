@@ -505,3 +505,114 @@ func TestAuthenticationFlow(t *testing.T) {
 		})
 	}
 }
+
+// TestUnaryAttachOperatorInterceptor_UserIDRequiresToken is a regression test
+// for SEC-03. The operator built from user-id carries that user's real
+// workspace memberships, and unaryAuthInterceptor skips the token check for
+// read-only methods, so before the fix a caller could set user-id to any user
+// on GetProject/ExportProject with no valid token and act as them. A user-id
+// must now be backed by the internal token.
+func TestUnaryAttachOperatorInterceptor_UserIDRequiresToken(t *testing.T) {
+	cfg := &ServerConfig{
+		Config: &config.Config{
+			Host: "https://example.com",
+			Visualizer: config.VisualizerConfig{
+				InternalApi: config.InternalApiConfig{
+					Token: "test-token",
+				},
+			},
+		},
+	}
+	interceptor := unaryAttachOperatorInterceptor(cfg)
+	mockHandler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return "success", nil
+	}
+
+	// GetProject is read-only, so unaryAuthInterceptor lets it through without a
+	// token; the guard has to live in this interceptor.
+	const readOnly = "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"
+
+	testCases := []struct {
+		name     string
+		metadata metadata.MD
+	}{
+		{
+			name: "user-id with no token is rejected",
+			metadata: metadata.New(map[string]string{
+				"user-id": "01h0000000000000000000user",
+			}),
+		},
+		{
+			name: "user-id with a wrong token is rejected",
+			metadata: metadata.New(map[string]string{
+				"authorization": "Bearer not-the-internal-token",
+				"user-id":       "01h0000000000000000000user",
+			}),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := metadata.NewIncomingContext(context.Background(), tc.metadata)
+			info := &grpc.UnaryServerInfo{FullMethod: readOnly}
+
+			result, err := interceptor(ctx, nil, info, mockHandler)
+
+			assert.Error(t, err)
+			assert.Nil(t, result)
+		})
+	}
+}
+
+// TestUnaryAttachOperatorInterceptor_AnonymousReadStillAllowed confirms the fix
+// does not close the anonymous read path: a read-only call with no user-id
+// proceeds without an operator, which is what public project browsing relies on.
+func TestUnaryAttachOperatorInterceptor_AnonymousReadStillAllowed(t *testing.T) {
+	cfg := &ServerConfig{
+		Config: &config.Config{
+			Host: "https://example.com",
+			Visualizer: config.VisualizerConfig{
+				InternalApi: config.InternalApiConfig{Token: "test-token"},
+			},
+		},
+	}
+	interceptor := unaryAttachOperatorInterceptor(cfg)
+	mockHandler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return "success", nil
+	}
+
+	ctx := metadata.NewIncomingContext(context.Background(), metadata.New(map[string]string{}))
+	info := &grpc.UnaryServerInfo{FullMethod: "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"}
+
+	result, err := interceptor(ctx, nil, info, mockHandler)
+
+	assert.NoError(t, err)
+	assert.Equal(t, "success", result)
+}
+
+// TestUnaryAttachOperatorInterceptor_EmptyConfiguredTokenStillRejectsUserID
+// covers the config default where an active internal API has no token set. An
+// empty extracted token must not equal an empty configured token and let a
+// forged user-id through.
+func TestUnaryAttachOperatorInterceptor_EmptyConfiguredTokenStillRejectsUserID(t *testing.T) {
+	cfg := &ServerConfig{
+		Config: &config.Config{
+			Host: "https://example.com",
+			// InternalApi.Token intentionally left empty (the config default).
+		},
+	}
+	interceptor := unaryAttachOperatorInterceptor(cfg)
+	mockHandler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return "success", nil
+	}
+
+	ctx := metadata.NewIncomingContext(context.Background(), metadata.New(map[string]string{
+		"user-id": "01h0000000000000000000user",
+	}))
+	info := &grpc.UnaryServerInfo{FullMethod: "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"}
+
+	result, err := interceptor(ctx, nil, info, mockHandler)
+
+	assert.Error(t, err)
+	assert.Nil(t, result)
+}

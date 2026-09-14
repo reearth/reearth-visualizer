@@ -2,7 +2,7 @@ package interactor
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -130,7 +130,7 @@ func (i *ProjectMetadata) Create(ctx context.Context, p interfaces.CreateProject
 func (i *ProjectMetadata) FindByProjectID(ctx context.Context, id id.ProjectID, operator *usecase.Operator) (*project.ProjectMetadata, error) {
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, id)
 	if err != mongo.ErrNoDocuments && err != nil {
-		return nil, errors.New("failed to find project metadata: " + err.Error())
+		return nil, fmt.Errorf("failed to find project metadata: %w", err)
 	}
 
 	if err := i.CanReadWorkspace(meta.Workspace(), operator); err != nil {
@@ -175,7 +175,7 @@ func (i *ProjectMetadata) UpdateProjectMetadataByAnyUser(ctx context.Context, p 
 func (i *ProjectMetadata) FindProjectByIDByAnyUser(ctx context.Context, id id.ProjectID) (*project.ProjectMetadata, error) {
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, id)
 	if err != mongo.ErrNoDocuments && err != nil {
-		return nil, errors.New("failed to find project metadata: " + err.Error())
+		return nil, fmt.Errorf("failed to find project metadata: %w", err)
 	}
 
 	return meta, nil

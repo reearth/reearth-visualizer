@@ -1,7 +1,6 @@
 package interactor
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -577,21 +576,21 @@ func (i *Scene) ExportSceneData(ctx context.Context, prj *project.Project) (*sce
 
 	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
 	if err != nil {
-		return nil, nil, errors.New("Fail scene :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to find scene: %w", err)
 	}
 
 	sceneID := sce.ID()
 	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, errors.New("Fail nlsLayer :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to find NLS layers: %w", err)
 	}
 	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, errors.New("Fail layerStyles :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to find layer styles: %w", err)
 	}
 	storyList, err := i.storytellingRepo.FindByScene(ctx, sceneID)
 	if err != nil {
-		return nil, nil, errors.New("Fail storytelling :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to find stories: %w", err)
 	}
 	var story *storytelling.Story
 	if storyList != nil && len(*storyList) > 0 {
@@ -609,7 +608,7 @@ func (i *Scene) ExportSceneData(ctx context.Context, prj *project.Project) (*sce
 		prj.TrackingID(),
 	)
 	if err != nil {
-		return nil, nil, errors.New("Fail BuildResult :" + err.Error())
+		return nil, nil, fmt.Errorf("failed to build result: %w", err)
 	}
 
 	res := make(map[string]any)
@@ -643,6 +642,8 @@ func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]b
 		}
 	}
 
+	idReplacements := make([]string, 0, len(sceneJSON.Widgets)*2)
+
 	for _, widgetJSON := range sceneJSON.Widgets {
 
 		pluginID, extensionID, extension, err := i.getWidgePluginWithID(ctx, widgetJSON.PluginID, widgetJSON.ExtensionID, &filter)
@@ -667,7 +668,7 @@ func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]b
 		newWidgetID := id.NewWidgetID()
 
 		// Replace new widget id
-		*data = bytes.Replace(*data, []byte(widgetJSON.ID), []byte(newWidgetID.String()), -1)
+		idReplacements = append(idReplacements, widgetJSON.ID, newWidgetID.String())
 
 		widget, err := scene.NewWidget(
 			newWidgetID,
@@ -684,6 +685,8 @@ func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]b
 
 		sce.Widgets().Add(widget)
 	}
+
+	replaceIDsInPlace(data, idReplacements)
 
 	alignSystem, err := builder.ParserWidgetAlignSystem(data)
 	if err != nil {

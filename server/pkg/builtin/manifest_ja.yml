@@ -69,6 +69,9 @@ extensions:
           terrainCesiumIonUrl:
             title: Cesium Ion テラインURL
             description: Cesium のテラインデータを Cesium Ion ではなくオンプレミスのサーバーで配信している場合はそのURLを指定します。アセットIDの指定よりも優先されます。
+          terrainWaterMask:
+            title: ウォーターマスク
+            description: 水域をリアルな水面エフェクトで表示します。
           terrainExaggeration:
             title: 地形の強調
             description: 地形の強調を設定します。デフォルトは1.0（誇張しない）です。2.0は、地形を2倍に拡大します。0.0の値は地形を完全に平らにします。

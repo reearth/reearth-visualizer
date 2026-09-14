@@ -138,7 +138,7 @@ func initEcho(
 	apiRoot.GET("/mockuser", MockUser())
 
 	// Asset API for handling GCP files
-	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
+	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File, cfg.Config.Published.Host)
 	serveExportFile(e, cfg, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	apiPrivateRoute := apiRoot.Group("", privateCache)

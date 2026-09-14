@@ -1,10 +1,9 @@
 package repo
 
 import (
-	"errors"
-
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/apperr"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearthx/usecasex"
@@ -18,7 +17,9 @@ import (
 )
 
 var (
-	ErrOperationDenied  = errors.New("operation denied")
+	// ErrOperationDenied aliases apperr.ErrOperationDenied so that errors.Is
+	// matches it whichever layer returned it.
+	ErrOperationDenied  = apperr.ErrOperationDenied
 	ErrResourceNotFound = verror.NewVError(errmsg.ErrKeyUsecaseRepoResourceNotFound, errmsg.ErrorMessages[errmsg.ErrKeyUsecaseRepoResourceNotFound], nil, nil)
 )
 

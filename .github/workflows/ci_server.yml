@@ -29,6 +29,16 @@ jobs:
           version: v2.12.2
           args: --new-from-rev=origin/main --timeout=10m
           working-directory: server
+      - name: Check error wrapping
+        # errors.New("...: " + err.Error()) keeps the text but drops the error,
+        # so errors.Is stops matching and expected failures are logged at ERROR
+        # again. errorlint cannot see this form, hence the grep.
+        run: |
+          if grep -rn --include='*.go' -E 'errors\.New\([^)]*\berr\.Error\(\)' . | grep -v '_test.go'; then
+            echo "::error::Rebuilding an error from its text breaks the chain. Use fmt.Errorf(\"...: %w\", err) so pkg/apperr can classify it."
+            exit 1
+          fi
+        working-directory: server
       - name: Run go generate
         run: |
           make generate

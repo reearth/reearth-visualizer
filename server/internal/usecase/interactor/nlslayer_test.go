@@ -15,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -422,6 +423,18 @@ func TestAddLayerSimple(t *testing.T) {
 		assert.NotNil(t, layer)
 		assert.Equal(t, layerName, layer.Title())
 		assert.Nil(t, layer.DataSourceName())
+	})
+
+	t.Run("a scene that does not exist is not found, not denied", func(t *testing.T) {
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:   id.NewSceneID(), // never created
+			LayerType: "simple",
+			Title:     "orphan",
+		}, operator)
+
+		assert.Nil(t, layer)
+		assert.ErrorIs(t, err, rerror.ErrNotFound)
+		assert.NotErrorIs(t, err, interfaces.ErrOperationDenied)
 	})
 }
 

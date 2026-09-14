@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime/debug"
 	"strconv"
 	"sync"
 	"time"
@@ -459,18 +460,30 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 	defer func() {
 		if r := recover(); r != nil {
 			errMsg := fmt.Sprintf("panic during import: %v", r)
-			log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
+			// Log the goroutine stack so the panicking line is diagnosable. It is
+			// kept out of errMsg, which is surfaced to the client via the import
+			// result log; only the server log gets the stack.
+			log.Errorf("[Import] %s (file %s)\n%s", errMsg, job.fileID, debug.Stack())
 			UpdateImportStatus(bgctx, job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, result)
 		}
 	}()
 	defer m.cleanupSession(job.fileID)
 
-	claimed, err := job.usecases.Project.ClaimImport(bgctx, job.projectID, job.op)
+	claim, err := job.usecases.Project.ClaimImport(bgctx, job.projectID, job.op)
 	if err != nil {
-		log.Errorf("[Import] failed to claim import for %s: %v", job.projectID.String(), err)
+		// REL-09: record a terminal status before bailing. This is a background
+		// job with no retry, and the deferred cleanupSession deletes the only
+		// copy of the assembled upload, so returning without writing FAILED
+		// leaves the project stuck at UPLOADING forever with no way to recover.
+		errMsg := fmt.Sprintf("failed to claim import: %v", err)
+		log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
+		UpdateImportStatus(bgctx, job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, result)
 		return
 	}
-	if !claimed {
+	if claim != project.ImportClaimGranted {
+		// AlreadySucceeded or InProgress: a duplicate; skip without writing a
+		// terminal status so a legitimate in-flight/finished import is not
+		// clobbered. This background job has no retry transport of its own.
 		log.Infof("[Import] skipping %s: already succeeded or in progress", job.projectID.String())
 		return
 	}

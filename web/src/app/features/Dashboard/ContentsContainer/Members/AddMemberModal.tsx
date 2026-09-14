@@ -117,15 +117,16 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
             key="add"
             title={t("Add")}
             appearance="primary"
+            disabled={searchResult.length === 0}
             onClick={handleAddMembersToWorkspace}
           />
         ]}
       >
-        <Typography size="body">
-          {t("Search by email address or user name")}
-        </Typography>
+        {/* The lookup behind this box matches on alias only, so naming any
+        other field here sends people to a search that cannot succeed. */}
+        <Typography size="body">{t("Search by user alias")}</Typography>
         <TextInput
-          placeholder="name@reearth.io"
+          placeholder="user-alias"
           value={searchTerm}
           onChange={setSearchTerm}
         />
