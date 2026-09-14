@@ -91,8 +91,9 @@ For Open & Public projects, anyone can view the project. For Private projects, o
 Description: 説明
 Write down your content: 内容を書き込む
 Provide a short summary (within 200 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な特徴を200文字以内で簡潔に説明してください。
-Choose a license: ''
-We recommend selecting a license to define how others can use your work and ensure your rights as the creator are protected. You can also create a custom license later in the settings.: ''
+Choose a license: ライセンス選択
+We recommend selecting a license to define how others can use your work and ensure your rights as the creator are protected. You can also create a custom license later in the settings.: >-
+  ライセンスを選択して、他のユーザーが作品をどのように利用できるかを明確にし、制作者としての権利を保護することをおすすめします。カスタムライセンスは後から設定で作成することもできます。
 Download Error Log: エラーログをダウンロード
 Ok: 確認
 Import Failed: インポート失敗
@@ -451,9 +452,9 @@ Confirm visibility: 表示を確認する
 Project Visibility: プロジェクトの公開範囲
 Please upgrade your plan to create a private project.: 非公開プロジェクトを作成するには、プランをアップグレードしてください。
 Preview: プレビュー
-License Editing: ''
+License Editing: ライセンス編集
 Choose a template: テンプレートを選択してください
-Cancel changes: ''
+Cancel changes: 変更を取り消す
 Save License: ライセンスを保存
 Write down your license: ライセンスを書き込む
 Plugin Marketplace: プラグインマーケットプレイス
@@ -575,14 +576,26 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
-Open — Free to use: ''
-Share-alike — Derivatives stay open: ''
-Limited use: ''
-No license: ''
-Keep all rights reserved — you can select a license or create your own later.: ''
+Open — Free to use: オープン — 自由に使用可能
+Share-alike — Derivatives stay open: 継承 — 派生物もオープンに
+Limited use: 制限的使用
+No license: ライセンスなし
+Keep all rights reserved — you can select a license or create your own later.: 全著作権を保留します — 後でライセンスを選択するか、独自のライセンスを作成できます。
+Anyone can use, share, and adapt your work for any purpose, including commercially, as long as they credit you.: 商用利用を含むあらゆる目的で使用・共有・改変が可能です（クレジット表記が必要）。
+Anyone can use, change, and share your work, including in commercial or closed products – they only keep your copyright notice.: 商用・クローズドソース製品を含め、自由に使用・変更・共有できます（著作権表記の保持が必要）。
+Like MIT, plus an explicit patent grant for extra legal protection. Anyone can use it commercially; they keep notices and mark any changes.: MITに加え、明示的な特許許諾を含みます。商用利用可能（表記の保持と変更箇所のマークが必要）。
+Anyone can freely use, modify, and share your data for any purpose – they only keep the attribution notice.: あらゆる目的でデータを自由に使用・変更・共有できます（帰属表記の保持が必要）。
+Anyone can use and adapt your database, including commercially, as long as they credit you.: 商用利用を含め、データベースの使用・改変が可能です（クレジット表記が必要）。
+Anyone can use and adapt your work, including commercially, but must credit you and release their versions under this same license.: 商用利用を含め使用・改変が可能ですが、クレジット表記と同一ライセンスでの公開が必要です。
+Anyone can use and modify your software, but anything they build on it must also be shared as open source under this license.: ソフトウェアの使用・改変は自由ですが、派生物もこのライセンスでオープンソースとして公開する必要があります。
+Others can include your code in their own programs, even closed ones. Only changes to your code itself must be shared as open source.: 他者はクローズドソース製品にもコードを組み込めます。コード自体への変更のみオープンソースとして公開が必要です。
+A European open-source license. Anyone can use and modify your work, but their versions must stay open under a compatible license.: 欧州のオープンソースライセンスです。使用・改変は自由ですが、派生版は互換性のあるライセンスでオープンに保つ必要があります。
+Anyone can use and adapt your database, including commercially, but must credit you and share any adapted database under this same license.: 商用利用を含め、データベースの使用・改変が可能ですが、クレジット表記と改変データベースの同一ライセンスでの共有が必要です。
+Anyone can share your work, including commercially, but must credit you and cannot publish modified versions.: 商用利用を含め共有は自由ですが、クレジット表記が必要で、改変版の公開はできません。
+Anyone can share and adapt your work for non-commercial purposes only, as long as they credit you.: クレジット表記の条件のもと、非商用目的に限り共有・改変が可能です。
 Please select: 選択してください
-Open in a new tab: ''
-Scroll down: ''
+Open in a new tab: 新しいタブで開く
+Scroll down: 下にスクロール
 This function is currently experimental and remains somewhat unstable.: この機能は試験運用中です。不具合が生じる可能性があることをご了承ください。
 'Sort:': '並び替え:'
 Grid Layout: グリッドレイアウト

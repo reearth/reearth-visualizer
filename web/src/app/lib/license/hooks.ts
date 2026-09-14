@@ -41,7 +41,7 @@ export const useLicenseSelectorOptions = ({
         licenses.map((license) => ({
           value: license.value,
           label: license.label,
-          description: license.summary,
+          description: t(license.summary),
           descriptionLink: license.url,
           group: groupLabels[key]
         }))

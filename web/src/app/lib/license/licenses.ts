@@ -15,8 +15,8 @@ const licenseOptions: LicenseOption[] = [
     description:
       "A permissive data license that allows unrestricted use, modification, and distribution of data with minimal obligations. Only requires attribution preservation and warranty disclaimers for redistributed data.",
     summary:
-      "Anyone can freely use, modify, and share your data for any purpose - they only keep the attribution notice.",
-    url: "https://github.com/microsoft/Open-Use-of-Data-Agreement/blob/v1.0/O-UDA-1.0.md"
+      "Anyone can freely use, modify, and share your data for any purpose – they only keep the attribution notice.",
+    url: "https://cdla.dev/open-use-of-data-agreement-v1-0/"
   },
   {
     value: "eupl-1.2",
@@ -25,7 +25,7 @@ const licenseOptions: LicenseOption[] = [
       "A copyleft license created by the European Commission, available in 23 EU languages. Compatible with several other open source licenses and provides patent grants. Ensures derivatives remain under EUPL or compatible licenses.",
     summary:
       "A European open-source license. Anyone can use and modify your work, but their versions must stay open under a compatible license.",
-    url: "https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12"
+    url: "https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"
   },
   {
     value: "lgpl-3.0",
@@ -60,7 +60,7 @@ const licenseOptions: LicenseOption[] = [
     description:
       "A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.",
     summary:
-      "Anyone can use, change, and share your work, including in commercial or closed products - they only keep your copyright notice.",
+      "Anyone can use, change, and share your work, including in commercial or closed products – they only keep your copyright notice.",
     url: "https://opensource.org/license/mit"
   },
   {
