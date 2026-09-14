@@ -563,3 +563,40 @@ func TestProject_PolicyChecker(t *testing.T) {
 		})
 	})
 }
+
+func TestProject_Publish_StampsUpdatedByOnPublishAndUnpublish(t *testing.T) {
+	ctx := context.Background()
+	env := setupProjectTestEnv(ctx, t)
+	env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+		Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).Maybe()
+
+	prj := project.New().NewID().Workspace(env.wsID).Name("Publishable").MustBuild()
+	_ = env.db.Project.Save(ctx, prj)
+	sc := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+	_ = env.db.Scene.Save(ctx, sc)
+
+	ctx = adapter.AttachInternal(ctx, true)
+
+	// Publishing stamps the acting user as updatedBy and records publishedAt.
+	publisher := accountsID.NewUserID()
+	env.operator.AcOperator.User = &publisher
+	published, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
+		ID:     prj.ID(),
+		Status: project.PublishmentStatusPublic,
+	}, env.operator)
+	assert.NoError(t, err)
+	assert.Equal(t, publisher.String(), published.UpdatedBy())
+	assert.False(t, published.UpdatedAt().IsZero())
+	assert.False(t, published.PublishedAt().IsZero())
+
+	// Unpublishing is also an update: a different actor is stamped as updatedBy.
+	unpublisher := accountsID.NewUserID()
+	env.operator.AcOperator.User = &unpublisher
+	unpublished, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
+		ID:     prj.ID(),
+		Status: project.PublishmentStatusPrivate,
+	}, env.operator)
+	assert.NoError(t, err)
+	assert.Equal(t, project.PublishmentStatusPrivate, unpublished.PublishmentStatus())
+	assert.Equal(t, unpublisher.String(), unpublished.UpdatedBy())
+}

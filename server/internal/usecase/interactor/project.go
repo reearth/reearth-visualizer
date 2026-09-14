@@ -39,6 +39,16 @@ import (
 	"github.com/spf13/afero"
 )
 
+// operatorUserID returns the acting user's ID as a string, or "" when there is
+// no authenticated user (for example internal calls). Used to stamp createdBy /
+// updatedBy on a project.
+func operatorUserID(operator *usecase.Operator) string {
+	if operator == nil || operator.AcOperator == nil || operator.AcOperator.User == nil {
+		return ""
+	}
+	return operator.AcOperator.User.String()
+}
+
 type Project struct {
 	common
 	commonSceneLock
@@ -624,6 +634,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
+	prj.SetUpdatedBy(operatorUserID(operator))
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
@@ -666,6 +677,7 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
+	prj.SetUpdatedBy(operatorUserID(operator))
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
@@ -923,6 +935,11 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		}
 		prj.SetPublishedAt(time.Now())
 	}
+
+	// A publishment status change counts as an update, whether the project is
+	// being published or unpublished, so stamp it in both cases.
+	prj.SetUpdatedAt(time.Now().UTC())
+	prj.SetUpdatedBy(operatorUserID(op))
 
 	// Phase 3: short transaction containing only the two DB saves, with retry
 	// on TransientTransactionError. Each attempt gets a fresh session.
@@ -1480,10 +1497,14 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		return nil, err
 	}
 
+	actor := operatorUserID(operator)
+
 	prj := project.New().
 		ID(prjID).
 		Workspace(input.WorkspaceID).
 		Visualizer(input.Visualizer).
+		CreatedBy(actor).
+		UpdatedBy(actor).
 		Metadata(metadata)
 
 	newProjectAlias := alias.ReservedReearthPrefixProject + prjID.String()

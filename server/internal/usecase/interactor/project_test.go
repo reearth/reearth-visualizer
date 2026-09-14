@@ -176,6 +176,36 @@ func TestProject_createProject(t *testing.T) {
 	})
 }
 
+func TestProject_createProject_StampsActor(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	us := factory.NewUser()
+	_ = uc.userRepo.Save(ctx, us)
+
+	ws := factory.NewWorkspace()
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	creatorID := accountsID.NewUserID()
+	got, err := uc.createProject(ctx, createProjectInput{
+		WorkspaceID: ws.ID(),
+		Visualizer:  visualizer.VisualizerCesium,
+		Name:        lo.ToPtr("stamped"),
+	}, &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
+			User:               &creatorID,
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
+		},
+	})
+	assert.NoError(t, err)
+	// On create both the creator and the last editor are the acting user.
+	assert.Equal(t, creatorID.String(), got.CreatedBy())
+	assert.Equal(t, creatorID.String(), got.UpdatedBy())
+}
+
 func TestProject_CheckAlias(t *testing.T) {
 	ctx := context.Background()
 

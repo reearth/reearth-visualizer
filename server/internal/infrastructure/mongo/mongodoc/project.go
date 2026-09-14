@@ -18,6 +18,8 @@ type ProjectDocument struct {
 	Description  string
 	ImageURL     string
 	UpdatedAt    time.Time
+	CreatedBy    string
+	UpdatedBy    string
 	Visualizer   string
 	Archived     bool
 	CoreSupport  bool
@@ -64,6 +66,8 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 		Description:  p.Description(),
 		ImageURL:     imageURL,
 		UpdatedAt:    p.UpdatedAt(),
+		CreatedBy:    p.CreatedBy(),
+		UpdatedBy:    p.UpdatedBy(),
 		Visualizer:   string(p.Visualizer()),
 		Archived:     p.IsArchived(),
 		CoreSupport:  p.CoreSupport(),
@@ -117,6 +121,8 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		Description(d.Description).
 		ImageURL(imageURL).
 		UpdatedAt(d.UpdatedAt).
+		CreatedBy(d.CreatedBy).
+		UpdatedBy(d.UpdatedBy).
 		Visualizer(visualizer.Visualizer(d.Visualizer)).
 		IsArchived(d.Archived).
 		CoreSupport(d.CoreSupport).
