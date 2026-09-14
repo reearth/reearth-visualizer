@@ -135,7 +135,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
         <IconButton icon="dotsNineVertical" appearance="simple" size="large" />
       }
     >
-      <Panel width={340}>
+      <Panel width={300}>
         <ContentWrapper>
           <Typography size="footnote">{t("Re:Earth products")}</Typography>
           <Grid>
