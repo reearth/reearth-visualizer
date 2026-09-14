@@ -12,6 +12,7 @@ import ArrowLongRight from "./Icons/ArrowLongRight.svg?react";
 import ArrowsHorizontalIn from "./Icons/ArrowsHorizontalIn.svg?react";
 import ArrowsHorizontalOut from "./Icons/ArrowsHorizontalOut.svg?react";
 import ArrowSquareOut from "./Icons/ArrowSquareOut.svg?react";
+import ArrowUpRightBadge from "./Icons/ArrowUpRightBadge.svg?react";
 import Article from "./Icons/Article.svg?react";
 import AToZ from "./Icons/AToZ.svg?react";
 import Book from "./Icons/Book.svg?react";
@@ -224,6 +225,7 @@ export default {
   arrowsHorizontalIn: ArrowsHorizontalIn,
   arrowsHorizontalOut: ArrowsHorizontalOut,
   arrowSquareOut: ArrowSquareOut,
+  arrowUpRightBadge: ArrowUpRightBadge,
   article: Article,
   aToZ: AToZ,
   book: Book,

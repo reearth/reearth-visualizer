@@ -429,10 +429,14 @@ Show Story Panel: ストーリーパネルを表示
 UI Language: UI言語
 Visualizer: ''
 CMS: ''
-Re:Earth Home: ''
-Community: ''
-Re:Earth products: ''
-Other: ''
+Open terrain tiles for 3D globes: 3D地球儀向けの地形タイルを開く
+Open 3D buildings tiles for the world: 世界の3D建物タイルを開く
+Open Map Tile Service: 地図タイルサービスを開く
+Re:Earth Home: Re:Earth ホーム
+Community: コミュニティ
+Re:Earth products: Re:Earth プロダクト
+Re:Earth data services: Re:Earth データサービス
+Other: その他
 General: 一般
 README: リードミー
 License: ライセンス
