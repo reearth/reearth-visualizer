@@ -32,7 +32,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Define the camera position to be moved to
-// Documentation for Camera "flyTo" method https://docs.reearth.io/developer/plugin/api-reference/camera/#flyto
+// Documentation for Camera "flyTo" method https://docs.reearth.io/developer/plugin/api-reference/camera/?utm_source=visualizer#flyto
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {

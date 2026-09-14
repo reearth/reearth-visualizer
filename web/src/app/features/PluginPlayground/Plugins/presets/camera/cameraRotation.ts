@@ -84,10 +84,10 @@ const sample3dTiles = {
 };
 
 // Add the 3D Tiles layer to Re:Earth
-// Documentation on Layers "add" event: https://docs.reearth.io/developer/plugin/api-reference/layers/#add
+// Documentation on Layers "add" event: https://docs.reearth.io/developer/plugin/api-reference/layers/?utm_source=visualizer#add
 reearth.layers.add(sample3dTiles);
 
-// Documentation on Viewer "overrideProperty" event: https://docs.reearth.io/developer/plugin/api-reference/viewer/#overrideproperty
+// Documentation on Viewer "overrideProperty" event: https://docs.reearth.io/developer/plugin/api-reference/viewer/?utm_source=visualizer#overrideproperty
 reearth.viewer.overrideProperty({
   // Enable Cesium World Terrain
   terrain: {
@@ -100,7 +100,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the specified position
-// Documentation on Camera "flyTo" event: https://docs.reearth.io/developer/plugin/api-reference/camera/#flyto
+// Documentation on Camera "flyTo" event: https://docs.reearth.io/developer/plugin/api-reference/camera/?utm_source=visualizer#flyto
 reearth.camera.flyTo(
   {
     // Define the camera's target position
@@ -118,7 +118,7 @@ reearth.camera.flyTo(
 );
 
 // Listen for messages from the UI to trigger camera rotation
-// Documentation on Extension "on" event: https://docs.reearth.io/developer/plugin/api-reference/extension/#message
+// Documentation on Extension "on" event: https://docs.reearth.io/developer/plugin/api-reference/extension/?utm_source=visualizer#message
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "rotateCamera"){
