@@ -92,8 +92,9 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 
 // gatewayTokenHeader carries the shared secret the reearth-cloud gateway presents
 // on /api/published and /api/published_data (SEC-01/02/03/04, compliance scan
-// issue #146).
-const gatewayTokenHeader = "X-Reearth-Gateway-Token"
+// issue #146). Matches the header name reearth-cloud already sends (see its
+// reearth.go setInternalAuth) -- keep these in sync across both repos.
+const gatewayTokenHeader = "X-Internal-Auth"
 
 // hasValidGatewayToken reports whether the request carries a header matching any
 // of the configured tokens. Accepting more than one value is what makes a secret
