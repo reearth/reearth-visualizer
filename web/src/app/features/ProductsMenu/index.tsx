@@ -293,11 +293,12 @@ const PillButton = styled("button")(({ theme }) => ({
   padding: `6px ${theme.spacing.normal}px`,
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: "99px",
-  color: theme.content.main,
+  color: theme.content.weak,
   fontSize: theme.fonts.sizes.body,
   cursor: css.cursor.pointer,
   "&:hover": {
     backgroundColor: theme.select.main,
-    border: `1px solid ${theme.select.main}`
+    border: `1px solid ${theme.select.main}`,
+    color: theme.content.main
   }
 }));
