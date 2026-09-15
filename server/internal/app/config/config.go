@@ -208,7 +208,7 @@ func (c *Config) UseMockAuth() bool {
 }
 
 func (c *Config) secrets() []string {
-	s := []string{c.DB, c.Auth0.ClientSecret}
+	s := []string{c.DB, c.Auth0.ClientSecret, c.Visualizer.PublishedGateway.Token, c.Visualizer.PublishedGateway.PreviousToken}
 	for _, ac := range c.DB_Users {
 		s = append(s, ac.URI)
 	}

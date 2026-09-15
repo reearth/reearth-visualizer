@@ -86,7 +86,7 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
 	ec.GET("/reearth_config.json", WebConfigHandler(w.AuthConfig, w.WebConfig, publishedHost))
-	ec.GET("/data.json", PublishedData(w.HostPattern, false)) // for prod / dev
+	ec.GET("/data.json", PublishedData(w.HostPattern, false), RequireGatewayToken(w.GatewayToken, w.PreviousGatewayToken)) // for prod / dev
 
 	if favicon != nil && faviconPath != "" {
 		ec.GET(faviconPath, func(c echo.Context) error {
