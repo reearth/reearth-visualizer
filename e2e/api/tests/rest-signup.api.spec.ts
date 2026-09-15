@@ -15,33 +15,34 @@ test.describe("POST /api/signup", () => {
       data: {
         name,
         email,
-        password: faker.string.alphanumeric(16)
+        // The accounts password policy requires an upper case letter, a lower
+        // case letter and a digit. Plain alphanumeric(16) satisfies that only
+        // by chance, which made this test fail intermittently, so the three
+        // required classes are appended explicitly.
+        password: `${faker.string.alphanumeric(12)}aA1`
       }
     });
 
-    // Signup may return 200 (success) or 400/500 depending on auth mode and
-    // whether the user already exists. In mock mode, duplicate sub returns error.
-    // We accept 200 as success.
-    if (res.status() === 200) {
-      const body = await res.json();
-      expect(body).toHaveProperty("id");
-      expect(body).toHaveProperty("name");
-      expect(body).toHaveProperty("email");
-    } else {
-      // In non-mock auth mode or if the user already exists, the endpoint may
-      // return an error. This is expected behavior — just verify it's a known status.
-      expect([400, 500]).toContain(res.status());
-    }
+    // The name is randomised per run, so a fresh signup has to succeed. This
+    // used to accept 400 and 500 as well, which hid the fact that signup
+    // returned 500 on every CI run for months.
+    expect(res.status()).toBe(200);
+
+    const body = await res.json();
+    expect(body).toHaveProperty("id");
+    expect(body.name).toBe(name);
+    expect(body.email).toBe(email);
   });
 
-  test("Signup with empty body returns client or server error", async ({
-    request
-  }) => {
+  test("Signup with empty body returns a client error", async ({ request }) => {
     const res = await request.post(`${API_BASE_URL}/api/signup`, {
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       data: {}
     });
 
+    // A missing payload is the caller's fault. The server answers 500 today
+    // because every accounts error is mapped to Internal Server Error, so this
+    // asserts on the class rather than the code so as not to bless that status.
     expect(res.status()).toBeGreaterThanOrEqual(400);
   });
 });

@@ -71,8 +71,18 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 				if inp.Secret != nil {
 					secret = *inp.Secret
 				}
-				u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
-					inp.Email, inp.Password, secret, workspaceID, false)
+				// The accounts gqlclient's Signup document always references
+				// $id and $workspaceID, but only declares them when the caller
+				// supplies both, so a signup without IDs is rejected as
+				// malformed before it reaches a resolver. SignupNoID uses the
+				// document that omits them and lets the server mint the IDs.
+				if userID == "" || workspaceID == "" {
+					u, err = cfg.AccountsAPIClient.UserRepo.SignupNoID(ctx, inp.Name,
+						inp.Email, inp.Password, secret, false)
+				} else {
+					u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
+						inp.Email, inp.Password, secret, workspaceID, false)
+				}
 			}
 
 			if err != nil {
