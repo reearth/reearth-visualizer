@@ -72,14 +72,14 @@ const layerCzmlUrl = {
 };
 
 // Add the encoded CZML layer to Re:Earth
-// Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
+// Documentation on Layers "add" event: https://docs.reearth.io/developer/plugin/api-reference/layers/?utm_source=visualizer#add
 reearth.layers.add(layerCzmlEncoded);
 
 // Add the CZML layer from the URL to Re:Earth
 reearth.layers.add(layerCzmlUrl);
 
 // Move the camera to the position where the CZML data is displayed
-// Documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
+// Documentation on Camera "flyTo" event: https://docs.reearth.io/developer/plugin/api-reference/camera/?utm_source=visualizer#flyto
 reearth.camera.flyTo(
   {
     lng: -88.93602871895675,
