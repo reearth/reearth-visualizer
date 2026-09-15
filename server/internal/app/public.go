@@ -71,27 +71,23 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 				if inp.Secret != nil {
 					secret = *inp.Secret
 				}
-				// The ids are only honoured as a pair. Signup would drop a
-				// lone id on the floor and hand back a user with a different
-				// one, so a half specified payload is rejected instead.
-				if (userID == "") != (workspaceID == "") {
+				// The two ids are only usable as a pair: Signup needs both to
+				// build a well formed document, and SignupNoID omits them so
+				// the server generates its own.
+				switch {
+				case userID == "" && workspaceID == "":
+					u, err = cfg.AccountsAPIClient.UserRepo.SignupNoID(ctx, inp.Name,
+						inp.Email, inp.Password, secret, false)
+
+				case userID != "" && workspaceID != "":
+					u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
+						inp.Email, inp.Password, secret, workspaceID, false)
+
+				default:
 					return &echo.HTTPError{
 						Code:    http.StatusBadRequest,
 						Message: "userId and workspaceId must be supplied together",
 					}
-				}
-
-				// The accounts gqlclient's Signup document always references
-				// $id and $workspaceID, but only declares them when both are
-				// supplied, so a signup without ids is rejected as malformed
-				// before it reaches a resolver. SignupNoID uses the document
-				// that omits them and lets the server mint the ids.
-				if userID == "" {
-					u, err = cfg.AccountsAPIClient.UserRepo.SignupNoID(ctx, inp.Name,
-						inp.Email, inp.Password, secret, false)
-				} else {
-					u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
-						inp.Email, inp.Password, secret, workspaceID, false)
 				}
 			}
 
