@@ -5,6 +5,12 @@ import { test, expect } from "../fixtures/api-test-fixtures";
 
 import { getAuthHeaders } from "./test-helpers";
 
+// Meets the accounts password policy: 8+ chars with upper, lower and a digit.
+const VALID_PASSWORD = "E2eTestPassw0rd";
+
+// A syntactically valid ULID, used to send one id without the other.
+const SAMPLE_ULID = "01jpagdy2t9srnkz60waes48jd";
+
 test.describe("POST /api/signup", () => {
   test("Signup with valid payload returns user info", async ({ request }) => {
     const name = `e2e-user-${faker.string.alphanumeric(8)}`;
@@ -15,33 +21,53 @@ test.describe("POST /api/signup", () => {
       data: {
         name,
         email,
-        password: faker.string.alphanumeric(16)
+        password: VALID_PASSWORD
       }
     });
 
-    // Signup may return 200 (success) or 400/500 depending on auth mode and
-    // whether the user already exists. In mock mode, duplicate sub returns error.
-    // We accept 200 as success.
-    if (res.status() === 200) {
-      const body = await res.json();
-      expect(body).toHaveProperty("id");
-      expect(body).toHaveProperty("name");
-      expect(body).toHaveProperty("email");
-    } else {
-      // In non-mock auth mode or if the user already exists, the endpoint may
-      // return an error. This is expected behavior — just verify it's a known status.
-      expect([400, 500]).toContain(res.status());
-    }
+    // The name is randomised per run, so a fresh signup has to succeed. This
+    // used to accept 400 and 500 as well, which hid the fact that signup
+    // returned 500 on every CI run for months.
+    expect(res.status()).toBe(200);
+
+    const body = await res.json();
+    expect(body).toHaveProperty("id");
+    expect(body.name).toBe(name);
+    expect(body.email).toBe(email);
   });
 
-  test("Signup with empty body returns client or server error", async ({
-    request
-  }) => {
+  test("Signup with empty body returns an error", async ({ request }) => {
     const res = await request.post(`${API_BASE_URL}/api/signup`, {
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       data: {}
     });
 
+    // A missing payload is the caller's fault. The server answers 500 today
+    // because every accounts error is mapped to Internal Server Error, so this
+    // asserts on the class rather than the code so as not to bless that status.
     expect(res.status()).toBeGreaterThanOrEqual(400);
   });
+
+  // The ids are only honoured as a pair: the accounts Signup document is well
+  // formed only when both are supplied, and the id-free mutation would discard
+  // a lone one and return a user with a different id. Either way a half
+  // specified payload cannot be served, so it is rejected. These cases also
+  // pin the routing, since sending a partial payload on to Signup brings back
+  // the malformed document and a 500.
+  for (const [shape, extra] of [
+    ["only a user id", { userId: SAMPLE_ULID }],
+    ["only a workspace id", { workspaceId: SAMPLE_ULID }]
+  ] as const) {
+    test(`Signup with ${shape} is rejected`, async ({ request }) => {
+      const name = `e2e-user-${faker.string.alphanumeric(8)}`;
+      const email = `${name}@e2e-test.example.com`;
+
+      const res = await request.post(`${API_BASE_URL}/api/signup`, {
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+        data: { name, email, password: VALID_PASSWORD, ...extra }
+      });
+
+      expect(res.status()).toBe(400);
+    });
+  }
 });
