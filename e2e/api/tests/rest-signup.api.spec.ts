@@ -48,16 +48,17 @@ test.describe("POST /api/signup", () => {
     expect(res.status()).toBeGreaterThanOrEqual(400);
   });
 
-  // The accounts Signup document is only well formed when both ids are
-  // supplied, so a payload carrying just one of them has to take the id-free
-  // mutation too. Without these cases, narrowing the handler's condition to
-  // require both ids to be absent would still pass the tests above while
-  // sending the malformed document again.
+  // The ids are only honoured as a pair: the accounts Signup document is well
+  // formed only when both are supplied, and the id-free mutation would discard
+  // a lone one and return a user with a different id. Either way a half
+  // specified payload cannot be served, so it is rejected. These cases also
+  // pin the routing, since sending a partial payload on to Signup brings back
+  // the malformed document and a 500.
   for (const [shape, extra] of [
     ["only a user id", { userId: SAMPLE_ULID }],
     ["only a workspace id", { workspaceId: SAMPLE_ULID }]
   ] as const) {
-    test(`Signup with ${shape} still succeeds`, async ({ request }) => {
+    test(`Signup with ${shape} is rejected`, async ({ request }) => {
       const name = `e2e-user-${faker.string.alphanumeric(8)}`;
       const email = `${name}@e2e-test.example.com`;
 
@@ -66,11 +67,7 @@ test.describe("POST /api/signup", () => {
         data: { name, email, password: VALID_PASSWORD, ...extra }
       });
 
-      expect(res.status()).toBe(200);
-
-      const body = await res.json();
-      expect(body).toHaveProperty("id");
-      expect(body.email).toBe(email);
+      expect(res.status()).toBe(400);
     });
   }
 });
