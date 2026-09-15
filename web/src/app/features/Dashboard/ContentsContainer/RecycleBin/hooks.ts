@@ -4,7 +4,7 @@ import {
   useDeletedProjects,
   useProjectMutations
 } from "@reearth/services/api/project";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import { DeletedProject } from "../../type";
 
@@ -16,23 +16,40 @@ export default (workspaceId?: string) => {
     deletedProjects,
     hasMoreDeletedProjects,
     loading,
-    refetch,
     endCursor: deletedEndCursor,
     fetchMore: fetchMoreDeleted
   } = useDeletedProjects({
     workspaceId: workspaceId || "",
     pagination: { first: DELETED_PROJECTS_PER_PAGE }
   });
-  
-  const [disabled, setDisabled] = useState(false);
+
   const client = useApolloClient();
 
-  const filteredDeletedProjects = useMemo(
-    () => (deletedProjects ?? []).filter(Boolean),
+  // True while a recycle-bin operation (recover / permanent delete) is running.
+  // Deliberately a single flag rather than per-item: both actions are destructive
+  // and mutate the same list, so no second one should start while one is in flight.
+  const [disabled, setDisabled] = useState(false);
+  const isMutating = useRef(false);
+
+  const filteredDeletedProjects = useMemo<DeletedProject[]>(
+    () =>
+      (deletedProjects ?? []).flatMap((project) =>
+        project
+          ? [
+              {
+                id: project.id,
+                name: project.name,
+                imageUrl: project.imageUrl,
+                isDeleted: project.isDeleted,
+                visibility: project.visibility,
+                starred: project.starred,
+                updatedAt: new Date(project.updatedAt)
+              }
+            ]
+          : []
+      ),
     [deletedProjects]
   );
-
-  const isLoading = useMemo(() => loading, [loading]);
 
   const isFetchingMore = useRef(false);
 
@@ -64,29 +81,41 @@ export default (workspaceId?: string) => {
 
   const handleProjectRecovery = useCallback(
     async (project?: DeletedProject | null) => {
-      if (!project) return;
-      const updatedProject = {
-        projectId: project.id,
-        deleted: false
-      };
-
-      await updateProjectRecycleBin(updatedProject);
-    },
-
-    [updateProjectRecycleBin]
-  );
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
-  const handleProjectDelete = useCallback(
-    async (projectId: string) => {
-      if (!projectId) return;
+      if (!project || isMutating.current) return false;
+      isMutating.current = true;
       setDisabled(true);
 
       try {
-        await deleteProject({ projectId });
+        const result = await updateProjectRecycleBin({
+          projectId: project.id,
+          deleted: false
+        });
+        return result.status === "success";
+      } catch (error) {
+        console.error("Failed to recover project:", error);
+        return false;
+      } finally {
+        isMutating.current = false;
+        setDisabled(false);
+      }
+    },
+    [updateProjectRecycleBin]
+  );
+
+  const handleProjectDelete = useCallback(
+    async (projectId: string) => {
+      if (!projectId || isMutating.current) return false;
+      isMutating.current = true;
+      setDisabled(true);
+
+      try {
+        const result = await deleteProject({ projectId });
+        // deleteProject resolves with { status: "error" } when the server answers
+        // with a null payload, so failure has to be checked explicitly. Evicting
+        // on a failed delete would make the project disappear from the bin while
+        // it still exists on the server.
+        if (result.status !== "success") return false;
+
         client.cache.evict({
           id: client.cache.identify({
             __typename: "Project",
@@ -94,17 +123,21 @@ export default (workspaceId?: string) => {
           })
         });
         client.cache.gc();
+        return true;
       } catch (error) {
         console.error("Failed to delete project:", error);
+        return false;
       } finally {
+        isMutating.current = false;
         setDisabled(false);
       }
     },
     [client, deleteProject]
   );
+
   return {
     filteredDeletedProjects,
-    isLoading,
+    isLoading: loading,
     disabled,
     wrapperRef,
     contentRef,

@@ -2,11 +2,11 @@ import { Button, TextInput, Typography } from "@reearth/app/lib/reearth-ui";
 import { useMe } from "@reearth/services/api/user";
 import { useWorkspace } from "@reearth/services/api/workspace";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { WorkspaceMember } from "@reearth/services/gql";
+import { Role, WorkspaceMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { Workspace } from "../../type";
 
@@ -31,41 +31,48 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
   const t = useT();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredMembers, setFilteredMembers] = useState<
-    Workspace["members"] | null
-  >(null);
 
   const [selectedMember, setSelectedMember] = useState<WorkspaceMember>();
   const [addMemberModalVisible, setAddMemberModalVisible] = useState(false);
   const [updateRoleModalVisible, setUpdateRoleModalVisible] = useState(false);
-  const [deleteMemerModalVisible, setDeleteMemerModalVisible] = useState(false);
+  const [deleteMemberModalVisible, setDeleteMemberModalVisible] =
+    useState(false);
 
-  useEffect(() => {
-    setFilteredMembers(workspace?.members || null);
-  }, [workspace]);
+  const members = useMemo(() => workspace?.members ?? [], [workspace?.members]);
 
-  const handleSearch = (value: string) => {
+  const handleSearch = useCallback((value: string) => {
     setSearchQuery(value);
-    if (!workspace?.members) return;
-    const v = value.toLowerCase();
-    const members = value
-      ? workspace.members.filter(({ user }) =>
-          [user?.name, user?.email].some((str) =>
-            str?.toLowerCase().includes(v)
-          )
-        )
-      : workspace.members;
-    setFilteredMembers(members);
-  };
+  }, []);
 
-  const sortedMembers = useMemo(() => {
-    if (!filteredMembers) return [];
-    return filteredMembers.sort(
-      (a, b) =>
-        ROLE_PRIORITY[a.role] - ROLE_PRIORITY[b.role] ||
-        (a.user?.name || "").localeCompare(b.user?.name || "")
+  // Derived rather than mirrored in state: the member list is refetched after every
+  // invite/remove/role change, and a state copy would silently fall back to showing
+  // everyone while the search box still displayed the query.
+  const filteredMembers = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return members;
+    return members.filter(({ user }) =>
+      [user?.name, user?.email].some((str) => str?.toLowerCase().includes(query))
     );
-  }, [filteredMembers]);
+  }, [members, searchQuery]);
+
+  const sortedMembers = useMemo(
+    () =>
+      // Copy before sorting: `members` is the Apollo cache result, which is
+      // deep-frozen in development, and Array#sort reorders in place.
+      [...filteredMembers].sort(
+        (a, b) =>
+          ROLE_PRIORITY[a.role] - ROLE_PRIORITY[b.role] ||
+          (a.user?.name || "").localeCompare(b.user?.name || "")
+      ),
+    [filteredMembers]
+  );
+
+  // A workspace must keep at least one owner or it becomes unmanageable. Counted
+  // over every member, not the filtered view, so searching can't change the answer.
+  const ownerCount = useMemo(
+    () => members.filter((m) => m.role === Role.Owner).length,
+    [members]
+  );
 
   const { membersManagementOnDashboard } = appFeature();
 
@@ -108,9 +115,9 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
               member={member}
               setUpdateRoleModalVisible={setUpdateRoleModalVisible}
               setSelectedMember={setSelectedMember}
-              setDeleteMemerModalVisible={setDeleteMemerModalVisible}
+              setDeleteMemberModalVisible={setDeleteMemberModalVisible}
               meRole={meRole}
-              isLastOwner={sortedMembers.length === 1}
+              isLastOwner={member.role === Role.Owner && ownerCount <= 1}
             />
           ))
         ) : (
@@ -130,12 +137,12 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           meRole={meRole}
         />
       )}
-      {deleteMemerModalVisible && (
+      {deleteMemberModalVisible && selectedMember && (
         <DeleteMemberWarningModal
           workspace={workspace}
           member={selectedMember}
           visible
-          onClose={() => setDeleteMemerModalVisible(false)}
+          onClose={() => setDeleteMemberModalVisible(false)}
         />
       )}
       {addMemberModalVisible && (

@@ -11,7 +11,7 @@ const ListItem: FC<{
   member: WorkspaceMember;
   setUpdateRoleModalVisible: (visible: boolean) => void;
   setSelectedMember: (member: WorkspaceMember) => void;
-  setDeleteMemerModalVisible: (visible: boolean) => void;
+  setDeleteMemberModalVisible: (visible: boolean) => void;
   meRole: Role | undefined;
   //when the item is the last owner, it can't be removed or modified
   isLastOwner: boolean;
@@ -19,7 +19,7 @@ const ListItem: FC<{
   member,
   setUpdateRoleModalVisible,
   setSelectedMember,
-  setDeleteMemerModalVisible,
+  setDeleteMemberModalVisible,
   meRole,
   isLastOwner
 }) => {
@@ -33,12 +33,12 @@ const ListItem: FC<{
     [setUpdateRoleModalVisible, setSelectedMember]
   );
 
-  const handleDeleteRole = useCallback(
+  const handleRemoveMember = useCallback(
     (member: WorkspaceMember) => {
       setSelectedMember(member);
-      setDeleteMemerModalVisible(true);
+      setDeleteMemberModalVisible(true);
     },
-    [setDeleteMemerModalVisible, setSelectedMember]
+    [setDeleteMemberModalVisible, setSelectedMember]
   );
 
   return (
@@ -87,7 +87,7 @@ const ListItem: FC<{
                   member.role,
                   isLastOwner
                 ),
-                onClick: () => handleDeleteRole(member)
+                onClick: () => handleRemoveMember(member)
               }
             ]}
           />
