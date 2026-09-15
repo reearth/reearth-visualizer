@@ -5,6 +5,9 @@ import { test, expect } from "../fixtures/api-test-fixtures";
 
 import { getAuthHeaders } from "./test-helpers";
 
+// Meets the accounts password policy: 8+ chars with upper, lower and a digit.
+const VALID_PASSWORD = "E2eTestPassw0rd";
+
 test.describe("POST /api/signup", () => {
   test("Signup with valid payload returns user info", async ({ request }) => {
     const name = `e2e-user-${faker.string.alphanumeric(8)}`;
@@ -15,11 +18,7 @@ test.describe("POST /api/signup", () => {
       data: {
         name,
         email,
-        // The accounts password policy requires an upper case letter, a lower
-        // case letter and a digit. Plain alphanumeric(16) satisfies that only
-        // by chance, which made this test fail intermittently, so the three
-        // required classes are appended explicitly.
-        password: `${faker.string.alphanumeric(12)}aA1`
+        password: VALID_PASSWORD
       }
     });
 
