@@ -71,8 +71,24 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 				if inp.Secret != nil {
 					secret = *inp.Secret
 				}
-				u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
-					inp.Email, inp.Password, secret, workspaceID, false)
+				// The two ids are only usable as a pair: Signup needs both to
+				// build a well formed document, and SignupNoID omits them so
+				// the server generates its own.
+				switch {
+				case userID == "" && workspaceID == "":
+					u, err = cfg.AccountsAPIClient.UserRepo.SignupNoID(ctx, inp.Name,
+						inp.Email, inp.Password, secret, false)
+
+				case userID != "" && workspaceID != "":
+					u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
+						inp.Email, inp.Password, secret, workspaceID, false)
+
+				default:
+					return &echo.HTTPError{
+						Code:    http.StatusBadRequest,
+						Message: "userId and workspaceId must be supplied together",
+					}
+				}
 			}
 
 			if err != nil {
