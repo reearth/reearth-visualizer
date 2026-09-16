@@ -35,7 +35,7 @@ func Start(debug bool, version string) {
 	// arrive as ERROR from inside the client and read as server defects in
 	// alerting: a single end to end run puts a dozen of them in the dev error
 	// metric. A transport failure still reaches ERROR.
-	gqlerror.SetClassifyExpected(true)
+	gqlerror.SetWarnExpected(true)
 
 	// Init profiler
 	initProfiler(conf.Profiler, version)
