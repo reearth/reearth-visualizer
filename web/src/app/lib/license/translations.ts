@@ -38,7 +38,4 @@ export function registerLicenseTranslations(t: TFunction) {
   t(
     "Anyone can share your work, including commercially, but must credit you and cannot publish modified versions."
   );
-  t(
-    "Anyone can share and adapt your work for non-commercial purposes only, as long as they credit you."
-  );
 }
