@@ -44,8 +44,10 @@ export class ProjectSettingsPage {
   licenseSaveButton: Locator;
   licenseChooseTemplateButton: Locator;
   licenseTextarea: Locator;
-  licenseCancelChangesButton: Locator;
-  licenseTemplateOptions: Locator;
+  licenseTemplateModalTitle: Locator;
+  licenseTemplateSelect: Locator;
+  licenseTemplateApplyButton: Locator;
+  licenseTemplateCancelButton: Locator;
   storyPanelSettingsTitle: Locator;
   storyPanelPositionSelect: Locator;
   storyBackgroundColorField: Locator;
@@ -146,11 +148,16 @@ export class ProjectSettingsPage {
       name: "Choose a template"
     });
     this.licenseTextarea = this.page.locator("textarea").first();
-    this.licenseCancelChangesButton = this.page.getByRole("button", {
-      name: "Cancel changes"
+    this.licenseTemplateModalTitle = this.page
+      .getByText("Choose a template")
+      .last();
+    this.licenseTemplateSelect = this.page.getByTestId("select-input");
+    this.licenseTemplateApplyButton = this.page.getByRole("button", {
+      name: "Apply"
     });
-    // "Choose a template" opens a dropdown of licenses rather than a modal.
-    this.licenseTemplateOptions = this.page.getByRole("option");
+    this.licenseTemplateCancelButton = this.page
+      .getByRole("button", { name: "Cancel" })
+      .last();
     this.storyPanelSettingsTitle = this.page.getByText(
       "Story Panel settings"
     );
