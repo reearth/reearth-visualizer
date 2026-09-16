@@ -3,10 +3,9 @@ package app
 import (
 	"context"
 	"os"
-
-	"github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
 	"strconv"
 
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/app/otel"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
