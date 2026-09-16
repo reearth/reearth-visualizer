@@ -92,7 +92,7 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 			}
 
 			if err != nil {
-				return &echo.HTTPError{Code: http.StatusInternalServerError, Message: fmt.Sprintf("signup failed: %v", err)}
+				return &echo.HTTPError{Code: signupErrorStatus(err), Message: fmt.Sprintf("signup failed: %v", err)}
 			}
 
 			return c.JSON(http.StatusOK, http1.SignupOutput{
