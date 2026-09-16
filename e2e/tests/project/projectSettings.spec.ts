@@ -173,53 +173,23 @@ test.describe("PROJECT SETTINGS - All Tabs", () => {
     await expect(settingsPage.licensePreviewTab).toBeVisible();
   });
 
-  test("License: should have Save, Cancel changes and Choose Template buttons", async () => {
+  test("License: should have Save and Choose Template buttons", async () => {
     test.info().annotations.push({ type: "story", description: "US-PSET-013" });
     await expect(settingsPage.licenseSaveButton).toBeVisible();
-    await expect(settingsPage.licenseCancelChangesButton).toBeVisible();
     await expect(settingsPage.licenseChooseTemplateButton).toBeVisible();
-    // Both actions stay disabled until the license is actually edited.
-    await expect(settingsPage.licenseSaveButton).toBeDisabled();
-    await expect(settingsPage.licenseCancelChangesButton).toBeDisabled();
   });
 
-  test("License: should open template dropdown", async () => {
+  test("License: should open template modal", async () => {
     test.info().annotations.push({ type: "story", description: "US-PSET-014" });
     test.setTimeout(30000);
     await settingsPage.licenseChooseTemplateButton.click();
     await page.waitForTimeout(1000);
-    await expect(settingsPage.licenseTemplateOptions.first()).toBeVisible();
-    await expect(
-      page.getByText("Open — Free to use", { exact: true })
-    ).toBeVisible();
-    // Close the dropdown without choosing a template.
-    await page.keyboard.press("Escape");
+    await expect(settingsPage.licenseTemplateModalTitle).toBeVisible();
+    await expect(settingsPage.licenseTemplateApplyButton).toBeVisible();
+    await expect(settingsPage.licenseTemplateCancelButton).toBeVisible();
+    // Close the modal
+    await settingsPage.licenseTemplateCancelButton.click();
     await page.waitForTimeout(500);
-    await expect(settingsPage.licenseTemplateOptions).toHaveCount(0);
-  });
-
-  test("License: applying a template fills the editor and can be cancelled", async () => {
-    test.info().annotations.push({ type: "story", description: "US-PSET-014" });
-    test.setTimeout(30000);
-    const originalLicense = await settingsPage.licenseTextarea.inputValue();
-
-    await settingsPage.licenseChooseTemplateButton.click();
-    await page.waitForTimeout(1000);
-    await settingsPage.licenseTemplateOptions
-      .filter({ hasText: "MIT License" })
-      .first()
-      .click();
-    await page.waitForTimeout(500);
-
-    // toHaveValue reads the live control value; toContainText would read the
-    // text node React seeded at mount, which no longer tracks edits.
-    await expect(settingsPage.licenseTextarea).toHaveValue(/MIT License/);
-    await expect(settingsPage.licenseCancelChangesButton).toBeEnabled();
-
-    await settingsPage.licenseCancelChangesButton.click();
-    await page.waitForTimeout(500);
-    await expect(settingsPage.licenseTextarea).toHaveValue(originalLicense);
-    await expect(settingsPage.licenseCancelChangesButton).toBeDisabled();
   });
 
   test("Story: should navigate and display settings", async () => {

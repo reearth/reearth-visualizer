@@ -1,7 +1,6 @@
 import {
-  NO_LICENSE_VALUE,
-  licenseContent,
-  useLicenseSelectorOptions
+  visualizerProjectLicensesOptions,
+  licenseContent
 } from "@reearth/app/lib/license";
 import {
   Button,
@@ -50,7 +49,6 @@ type FormState = {
 type AliasStatus = "idle" | "loading" | "success" | "error";
 
 const getLicenseContent = (value?: string): string | undefined => {
-  if (!value || value === NO_LICENSE_VALUE) return undefined;
   return licenseContent[value as keyof typeof licenseContent];
 };
 
@@ -88,10 +86,6 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     ],
     [t, enableToCreatePrivateProject]
   );
-
-  const licenseSelectOptions = useLicenseSelectorOptions({
-    withNoLicense: true
-  });
 
   const handleFieldChange = useCallback(
     (field: keyof FormState, newValue: string) => {
@@ -205,7 +199,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   }, [formState, onClose, onProjectCreate]);
 
   return (
-    <Modal visible width={450} dataTestid="project-creator-modal">
+    <Modal visible size="small" dataTestid="project-creator-modal">
       <ModalPanel
         title={t("Create new project")}
         onCancel={onClose}
@@ -295,16 +289,18 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
             </FormInputWrapper>
             <FormInputWrapper>
               <SelectField
-                title={t("Choose a license")}
+                title={"Choose a license"}
                 value={formState.license}
                 onChange={(value) =>
                   handleFieldChange("license", value as string)
                 }
                 data-testid="project-license-input"
-                options={licenseSelectOptions}
-                maxHeight={320}
+                options={visualizerProjectLicensesOptions.map((license) => ({
+                  value: license.value,
+                  label: license.label
+                }))}
                 description={t(
-                  "We recommend selecting a license to define how others can use your work and ensure your rights as the creator are protected. You can also create a custom license later in the settings."
+                  "We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator."
                 )}
               />
             </FormInputWrapper>
