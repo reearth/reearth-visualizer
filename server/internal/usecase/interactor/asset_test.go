@@ -1,18 +1,22 @@
 package interactor
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
+	"errors"
 	"image"
 	"image/color"
 	"image/png"
 	"io"
+	"net/url"
 	"strings"
 	"testing"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -23,6 +27,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	pkgimage "github.com/reearth/reearth/server/pkg/image"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -224,6 +229,95 @@ func TestAsset_CreateIconAsset(t *testing.T) {
 
 		assert.ErrorIs(t, err, interfaces.ErrIconImageTooLarge)
 	})
+}
+
+// failOnPathFile wraps a real gateway.File and fails UploadAsset for one specific path, letting
+// every other call through unchanged.
+type failOnPathFile struct {
+	gateway.File
+	failPath string
+}
+
+func (f *failOnPathFile) UploadAsset(ctx context.Context, ff *file.File) (*url.URL, int64, error) {
+	if ff.Path == f.failPath {
+		return nil, 0, errors.New("simulated upload failure")
+	}
+	return f.File.UploadAsset(ctx, ff)
+}
+
+// TestAsset_ImportAssetFiles_ClosesReaderBeforeStoppingOnError is a regression test for the
+// SCA-10 fix: each zip entry's reader is now closed inside a per-iteration closure instead of via
+// a defer that used to accumulate across the whole loop and only run once ImportAssetFiles
+// returned. Restructuring the loop body into that closure is the kind of change that can subtly
+// invert error propagation (e.g. an outer err shadowed by the closure's own named return). This
+// confirms a failure partway through the loop still stops the import immediately with that error,
+// and that only the assets processed before the failure appear in the result -- the entry that
+// failed and any after it must not.
+func TestAsset_ImportAssetFiles_ClosesReaderBeforeStoppingOnError(t *testing.T) {
+	ctx := adapter.AttachCurrentHost(context.Background(), "https://visualizer.example.com")
+
+	ws := accountsWorkspace.New().NewID().MustBuild()
+	prj := project.New().NewID().Workspace(ws.ID()).MustBuild()
+
+	realFile, err := fs.NewFile(afero.NewMemMapFs(), "")
+	require.NoError(t, err)
+
+	wsRepo := accountsInfra.NewMemoryWorkspace()
+	require.NoError(t, wsRepo.Save(ctx, ws))
+
+	uContainer := &Asset{
+		repos: &repo.Container{
+			Asset:     memory.NewAsset(),
+			Workspace: wsRepo,
+		},
+		gateways: &gateway.Container{
+			File: &failOnPathFile{File: realFile, failPath: "before2.png"},
+		},
+	}
+
+	operator := &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
+		},
+	}
+
+	// Only two assets, one of which always fails: map iteration order over `assets` below is
+	// nondeterministic, so the test can't assume which one runs first. Either way the import
+	// must stop with the failure and never produce a result entry for the failing asset.
+	beforeNames := []string{"before1.png", "before2.png"}
+
+	buf := &bytes.Buffer{}
+	zipWriter := zip.NewWriter(buf)
+	for _, name := range beforeNames {
+		w, err := zipWriter.Create(name)
+		require.NoError(t, err)
+		_, err = w.Write([]byte("asset-bytes-" + name))
+		require.NoError(t, err)
+	}
+	require.NoError(t, zipWriter.Close())
+
+	zr, err := zip.NewReader(bytes.NewReader(buf.Bytes()), int64(buf.Len()))
+	require.NoError(t, err)
+
+	assets := make(map[string]*zip.File, len(zr.File))
+	dataStr := `{"assets":{`
+	for i, f := range zr.File {
+		assets[f.Name] = f
+		if i > 0 {
+			dataStr += ","
+		}
+		dataStr += `"` + f.Name + `":"` + f.Name + `"`
+	}
+	dataStr += `}}`
+	data := []byte(dataStr)
+
+	_, result, err := uContainer.ImportAssetFiles(ctx, assets, &data, prj, operator)
+	require.Error(t, err, "the import must stop and surface the upload failure")
+	assert.Contains(t, err.Error(), "simulated upload failure")
+	assert.LessOrEqual(t, len(result), 1, "at most the one asset processed before the failure may have a result entry")
+	for _, name := range result {
+		assert.NotContains(t, name, "before2", "the failing asset must never produce a successful result entry")
+	}
 }
 
 func createTestPNGImage(width, height int) []byte {

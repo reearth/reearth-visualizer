@@ -214,38 +214,48 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 			continue
 		}
 		realName := assetNames[beforeName]
-		readCloser, err := zipFile.Open()
-		if err != nil {
-			fmt.Printf("open failed for %s: %v", realName, err.Error())
-			return nil, result, err
-		}
 
-		defer func() {
-			if cerr := readCloser.Close(); cerr != nil {
-				log.Errorf("[Import Error] closing file: %v\n", cerr)
+		// Closes its own zip entry reader before returning, on every path, instead of deferring
+		// to ImportAssetFiles' own return: a defer inside this loop's body used to accumulate
+		// across every iteration and only run once the whole import finished, so every entry's
+		// flate decompressor (and its 32KB history window) stayed open for the entire import
+		// (SCA-10, compliance scan issue #146).
+		afterName, err := func() (string, error) {
+			readCloser, err := zipFile.Open()
+			if err != nil {
+				fmt.Printf("open failed for %s: %v", realName, err.Error())
+				return "", err
 			}
+			defer func() {
+				if cerr := readCloser.Close(); cerr != nil {
+					log.Errorf("[Import Error] closing file: %v\n", cerr)
+				}
+			}()
+
+			file := &file.File{
+				Content:     readCloser,
+				Path:        realName,
+				Size:        int64(zipFile.UncompressedSize64),
+				ContentType: http.DetectContentType([]byte(zipFile.Name)),
+			}
+
+			pid := newProject.ID()
+			_, url, err := i.uploadAndSave(ctx, file, ws, &pid, true)
+			if err != nil {
+				log.Errorf("[Import Error] asset upload failed for %s: %v", realName, err.Error())
+				return "", err
+			}
+
+			// Project logo update will be at this time
+			if err := i.updateProjectImage(ctx, newProject, url, beforeName); err != nil {
+				return "", err
+			}
+
+			return path.Base(url.Path), nil
 		}()
-
-		file := &file.File{
-			Content:     readCloser,
-			Path:        realName,
-			Size:        int64(zipFile.UncompressedSize64),
-			ContentType: http.DetectContentType([]byte(zipFile.Name)),
-		}
-
-		pid := newProject.ID()
-		_, url, err := i.uploadAndSave(ctx, file, ws, &pid, true)
 		if err != nil {
-			log.Errorf("[Import Error] asset upload failed for %s: %v", realName, err.Error())
 			return nil, result, err
 		}
-
-		// Project logo update will be at this time
-		if err := i.updateProjectImage(ctx, newProject, url, beforeName); err != nil {
-			return nil, result, err
-		}
-
-		afterName := path.Base(url.Path)
 
 		// Replace new asset file name
 		beforeUrl := fmt.Sprintf("%s/assets/%s", currentHost, beforeName)
