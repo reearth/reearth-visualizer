@@ -1,23 +1,17 @@
 import {
-  visualizerProjectLicensesOptions,
-  licenseContent
+  licenseContent,
+  useLicenseSelectorOptions
 } from "@reearth/app/lib/license";
-import {
-  Button,
-  Modal,
-  ModalPanel,
-  TextArea,
-  Typography
-} from "@reearth/app/lib/reearth-ui";
-import { SelectField } from "@reearth/app/ui/fields";
+import { Button, Selector, TextArea } from "@reearth/app/lib/reearth-ui";
 import { ProjectMetadata } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
-import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 
 import CommonLayout, { PreviewWrapper } from "../common";
+
+const LICENSE_MENU_WIDTH = 420;
+const LICENSE_MENU_MAX_HEIGHT = 320;
 
 type Props = {
   projectMetadata?: ProjectMetadata | null;
@@ -33,131 +27,99 @@ const LicenseSettings: FC<Props> = ({
   onUpdateProjectMetadata
 }) => {
   const t = useT();
-  const theme = useTheme();
   const tabs = [
     { id: "edit", label: t("Edit") },
     { id: "preview", label: t("Preview") }
   ];
 
-  const [activeTab, setActiveTab] = useState("edit");
-  const [content, setContent] = useState(projectMetadata?.license || "");
-  const [selectedLicense, setSelectedLicense] = useState<string>("");
-  const [open, setOpen] = useState(false);
+  const savedLicense = projectMetadata?.license || "";
 
-  const handleCloseModal = useCallback(() => {
-    setOpen(false);
-    setSelectedLicense("");
+  const [activeTab, setActiveTab] = useState("edit");
+  const [content, setContent] = useState(savedLicense);
+  const [selectedLicense, setSelectedLicense] = useState<string>("");
+
+  const licenseOptions = useLicenseSelectorOptions();
+
+  // Picking a template replaces the editor outright, which is only safe
+  // because "Cancel changes" can put the saved license back.
+  const handleSelectTemplate = useCallback((value: string | string[]) => {
+    const license = value as string;
+    setSelectedLicense(license);
+    setContent(getLicenseContent(license) ?? "");
   }, []);
 
-  const handleApply = useCallback(() => {
-    const content = getLicenseContent(selectedLicense);
-    setContent(content ?? "");
-    handleCloseModal();
-  }, [handleCloseModal, selectedLicense]);
-
-  const selectedLicenseObj = visualizerProjectLicensesOptions.find(
-    (l) => l.value === selectedLicense
+  const hasChanges = useMemo(
+    () => content.trim() !== savedLicense.trim(),
+    [content, savedLicense]
   );
 
+  const handleCancelChanges = useCallback(() => {
+    setContent(savedLicense);
+    setSelectedLicense("");
+  }, [savedLicense]);
+
+  const handleSave = useCallback(() => {
+    onUpdateProjectMetadata?.({ license: content });
+  }, [content, onUpdateProjectMetadata]);
+
   return (
-    <>
-      <CommonLayout
-        title="License Editing"
-        activeTab={activeTab}
-        tabs={tabs}
-        onTabChange={setActiveTab}
-        actions={
-          <>
+    <CommonLayout
+      title={t("License Editing")}
+      activeTab={activeTab}
+      tabs={tabs}
+      onTabChange={setActiveTab}
+      tabAdornment={
+        <Selector
+          value={selectedLicense}
+          options={licenseOptions}
+          onChange={handleSelectTemplate}
+          menuWidth={LICENSE_MENU_WIDTH}
+          menuPlacement="bottom-end"
+          maxHeight={LICENSE_MENU_MAX_HEIGHT}
+          dataTestid="license-template-selector"
+          trigger={
             <Button
-              appearance="primary"
+              appearance="simple"
               title={t("Choose a template")}
-              onClick={() => setOpen(true)}
+              data-testid="license-template-trigger"
             />
-            <Button
-              appearance="primary"
-              title={t("Save License")}
-              onClick={() => onUpdateProjectMetadata?.({ license: content })}
-              disabled={
-                content.trim() === (projectMetadata?.license?.trim() || "")
-              }
-            />
-          </>
-        }
-      >
-        {activeTab === "edit" ? (
-          <TextArea
-            value={content}
-            appearance="present"
-            rows={30}
-            onChange={setContent}
-            placeholder={t("Write down your license")}
+          }
+        />
+      }
+      actions={
+        <>
+          <Button
+            title={t("Cancel changes")}
+            onClick={handleCancelChanges}
+            disabled={!hasChanges}
+            data-testid="license-cancel-changes-btn"
           />
-        ) : (
-          <PreviewWrapper className="markdown-body">
-            <ReactMarkdown>{content}</ReactMarkdown>
-          </PreviewWrapper>
-        )}
-      </CommonLayout>
-      {open && (
-        <Modal visible={true} size="small">
-          <ModalPanel
-            onCancel={handleCloseModal}
-            title={t("Choose a template")}
-            actions={[
-              <Button
-                key="cancel"
-                title={t("Cancel")}
-                appearance="secondary"
-                onClick={handleCloseModal}
-              />,
-              <Button
-                key="apply"
-                title={t("Apply")}
-                appearance="primary"
-                disabled={!selectedLicense}
-                onClick={() => handleApply()}
-              />
-            ]}
-            data-testid="project-licence-modal-edit"
-          >
-            <ContentWrapper>
-              <Typography size="body">
-                {t(
-                  "You can select a license from the following templates to apply to your current project."
-                )}
-              </Typography>
-              <Typography size="body" color={theme.warning.main}>
-                {t(
-                  "Once selected, it will replace the current license setting. Please make sure you understand the implications of the new license."
-                )}
-              </Typography>
-              <SelectField
-                title={"Choose a license"}
-                value={selectedLicense}
-                onChange={(value) => setSelectedLicense(value as string)}
-                placeholder={t("Select a license")}
-                options={visualizerProjectLicensesOptions.map((license) => ({
-                  value: license.value,
-                  label: license.label
-                }))}
-                description={selectedLicenseObj?.description}
-              />
-            </ContentWrapper>
-          </ModalPanel>
-        </Modal>
+          <Button
+            appearance="primary"
+            title={t("Save License")}
+            onClick={handleSave}
+            disabled={!hasChanges}
+            data-testid="license-save-btn"
+          />
+        </>
+      }
+    >
+      {activeTab === "edit" ? (
+        <TextArea
+          value={content}
+          appearance="present"
+          rows={30}
+          onChange={setContent}
+          placeholder={t("Write down your license")}
+          dataTestid="license-editor"
+        />
+      ) : (
+        <PreviewWrapper className="markdown-body">
+          <ReactMarkdown>{content}</ReactMarkdown>
+        </PreviewWrapper>
       )}
-    </>
+    </CommonLayout>
   );
 };
 
 export default LicenseSettings;
-
-const ContentWrapper = styled("div")(({ theme }) => ({
-  background: theme.bg[1],
-  borderBottom: `1px solid ${theme.outline.weak}`,
-  borderTop: `1px solid ${theme.outline.weak}`,
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  gap: theme.spacing.large,
-  padding: theme.spacing.normal
-}));
