@@ -15,7 +15,7 @@ import {
   REMOVE_PROPERTY_ITEM,
   MOVE_PROPERTY_ITEM
 } from "@reearth/services/gql/queries/property";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 
@@ -23,6 +23,8 @@ import { MutationReturn } from "../types";
 
 export const usePropertyMutations = () => {
   const t = useT();
+  // Named to avoid shadowing updatePropertyValue's own `lang` parameter.
+  const currentLang = useLang();
   const [, setNotification] = useNotification();
 
   const [updatePropertyValueMutation] = useMutation(UPDATE_PROPERTY_VALUE);
@@ -121,7 +123,8 @@ export const usePropertyMutations = () => {
         variables: {
           propertyId,
           schemaGroupId,
-          fields: gqlFields
+          fields: gqlFields,
+          lang: currentLang
         },
         refetchQueries: ["GetScene"]
       });
@@ -148,7 +151,7 @@ export const usePropertyMutations = () => {
         status: "success"
       };
     },
-    [addPropertyItemMutation, setNotification, t]
+    [addPropertyItemMutation, setNotification, t, currentLang]
   );
 
   const removePropertyItem = useCallback(
@@ -163,7 +166,8 @@ export const usePropertyMutations = () => {
         variables: {
           propertyId,
           schemaGroupId,
-          itemId
+          itemId,
+          lang: currentLang
         },
         refetchQueries: ["GetScene"]
       });
@@ -183,7 +187,7 @@ export const usePropertyMutations = () => {
         status: "success"
       };
     },
-    [removePropertyItemMutation, setNotification, t]
+    [removePropertyItemMutation, setNotification, t, currentLang]
   );
 
   const movePropertyItem = useCallback(
@@ -200,7 +204,8 @@ export const usePropertyMutations = () => {
           propertyId,
           schemaGroupId,
           itemId,
-          index
+          index,
+          lang: currentLang
         },
         refetchQueries: ["GetScene"]
       });
@@ -220,7 +225,7 @@ export const usePropertyMutations = () => {
         status: "success"
       };
     },
-    [movePropertyItemMutation, setNotification, t]
+    [movePropertyItemMutation, setNotification, t, currentLang]
   );
 
   return {
