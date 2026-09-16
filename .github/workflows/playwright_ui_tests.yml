@@ -13,6 +13,25 @@ on:
         description: "URL to run tests against"
         type: string
         required: false
+    secrets:
+      GC_SA_EMAIL:
+        required: true
+      GC_WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+      REEARTH_E2E_API_URL:
+        required: true
+      REEARTH_E2E_AUTH0_AUDIENCE:
+        required: true
+      REEARTH_E2E_AUTH0_CLIENT_ID:
+        required: true
+      REEARTH_E2E_AUTH0_DOMAIN:
+        required: true
+      REEARTH_E2E_EMAIL:
+        required: true
+      REEARTH_E2E_PASSWORD:
+        required: true
+      REEARTH_WEB_E2E_BASEURL:
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
