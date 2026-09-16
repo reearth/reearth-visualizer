@@ -102,16 +102,11 @@ const TabContainer = styled("div")(({ theme }) => ({
 
 const TabGroup = styled("div")(({ theme }) => ({
   display: css.display.flex,
-  alignItems: css.alignItems.center,
   backgroundColor: theme.bg[0],
   borderRadius: theme.radius.normal,
   gap: theme.spacing.micro,
   flex: 1,
   padding: theme.spacing.smallest + 1
-}));
-
-const TabAdornmentWrapper = styled("div")(() => ({
-  marginLeft: "auto"
 }));
 
 const Tab = styled("div")<{ active?: boolean }>(({ active, theme }) => ({
@@ -151,9 +146,6 @@ const ContentArea = styled("div")(({ theme }) => ({
 
 type CommonLayoutProps = {
   actions?: ReactNode;
-  // Sits at the far end of the tab bar itself, rather than beside it with the
-  // page actions.
-  tabAdornment?: ReactNode;
   title?: string;
   activeTab: string;
   tabs: { id: string; label: string }[];
@@ -167,7 +159,6 @@ const CommonLayout: FC<CommonLayoutProps> = ({
   tabs,
   onTabChange,
   actions,
-  tabAdornment,
   children
 }) => {
   return (
@@ -188,9 +179,6 @@ const CommonLayout: FC<CommonLayoutProps> = ({
                 {tab.label}
               </Tab>
             ))}
-            {tabAdornment && (
-              <TabAdornmentWrapper>{tabAdornment}</TabAdornmentWrapper>
-            )}
           </TabGroup>
           {actions && <ButtonWrapper>{actions}</ButtonWrapper>}
         </TabContainer>
