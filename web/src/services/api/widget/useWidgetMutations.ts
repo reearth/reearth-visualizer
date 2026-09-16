@@ -13,7 +13,7 @@ import {
   UPDATE_WIDGET,
   UPDATE_WIDGET_ALIGN_SYSTEM
 } from "@reearth/services/gql/queries/widget";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
 import { WidgetAreaState, useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 
@@ -23,6 +23,7 @@ import { WidgetLocation } from "./types";
 
 export const useWidgetMutations = () => {
   const t = useT();
+  const lang = useLang();
   const [, setNotification] = useNotification();
 
   const [addWidgetMutation] = useMutation(ADD_WIDGET, {
@@ -42,7 +43,7 @@ export const useWidgetMutations = () => {
 
       const [pluginId, extensionId] = id.split("/");
       const { data, error } = await addWidgetMutation({
-        variables: { sceneId: sceneId ?? "", pluginId, extensionId, type }
+        variables: { sceneId: sceneId ?? "", pluginId, extensionId, type, lang }
       });
 
       if (error || !data?.addWidget) {
@@ -57,7 +58,7 @@ export const useWidgetMutations = () => {
         status: "success"
       };
     },
-    [addWidgetMutation, setNotification, t]
+    [addWidgetMutation, setNotification, t, lang]
   );
 
   const [updateWidgetMutation] = useMutation(UPDATE_WIDGET, {

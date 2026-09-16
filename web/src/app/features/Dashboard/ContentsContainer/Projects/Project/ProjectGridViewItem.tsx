@@ -9,7 +9,7 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
-import ProjectRemoveModal from "../ProjectRemoveModal";
+import ProjectRemoveModal from "../ProjectModals/ProjectRemoveModal";
 
 import useHooks from "./hooks";
 import { ProjectProps } from "./types";
@@ -33,6 +33,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     isStarred,
     hasMapOrStoryPublished,
     projectRemoveModalVisible,
+    isRemovingProject,
     handleProjectNameChange,
     handleProjectNameBlur,
     handleProjectHover,
@@ -42,7 +43,6 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
     handleProjectRemove
   } = useHooks({
     project,
-    selectedProjectId,
     onProjectUpdate,
     onProjectSelect,
     onProjectRemove
@@ -136,6 +136,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
       {projectRemoveModalVisible && (
         <ProjectRemoveModal
           isVisible={projectRemoveModalVisible}
+          disabled={isRemovingProject}
           onClose={() => handleProjectRemoveModal(false)}
           onProjectRemove={() => handleProjectRemove(project.id)}
           data-testid={`project-grid-item-remove-modal-${project.name}`}

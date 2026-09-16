@@ -107,10 +107,13 @@ export default ({
             break;
           case ProjectImportStatus.Processing:
           case ProjectImportStatus.Uploading:
+          case ProjectImportStatus.None:
             setImportStatus(status);
             break;
           default:
-            setImportStatus(ProjectImportStatus.None);
+            // The poll returned no resolvable project (e.g. a transient
+            // refetch hiccup) — keep the last known status instead of
+            // hiding import progress until the next tick.
             break;
         }
       });
@@ -131,10 +134,13 @@ export default ({
 
     const element = document.createElement("a");
     const file = new Blob([importResultLog], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
+    const url = URL.createObjectURL(file);
+    element.href = url;
     element.download = "import_error_log.txt";
     document.body.appendChild(element);
     element.click();
+    document.body.removeChild(element);
+    URL.revokeObjectURL(url);
   }, [importResultLog]);
 
   const handleProjectImportErrorClose = useCallback(() => {

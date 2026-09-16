@@ -2,6 +2,17 @@ name: deploy-server-nightly
 on:
   workflow_dispatch:
   workflow_call:
+    secrets:
+      GC_REGION:
+        required: true
+      GC_SA_EMAIL:
+        required: true
+      GC_WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+      SERVER_IMAGE:
+        required: true
+      SERVER_IMAGE_GC:
+        required: true
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
