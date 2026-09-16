@@ -158,7 +158,7 @@ func (c *countingFileGateway) RemoveStory(_ context.Context, _ string) error  { 
 func (c *countingFileGateway) ReadExportProjectZip(_ context.Context, _ string) (io.ReadCloser, error) {
 	return nil, nil
 }
-func (c *countingFileGateway) UploadExportProjectZip(_ context.Context, _ afero.File) error {
+func (c *countingFileGateway) UploadExportProjectZip(_ context.Context, _ afero.File, _ string) error {
 	return nil
 }
 func (c *countingFileGateway) RemoveExportProjectZip(_ context.Context, _ string) error { return nil }

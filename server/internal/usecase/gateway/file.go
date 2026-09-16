@@ -43,7 +43,7 @@ type File interface {
 	RemoveStory(context.Context, string) error
 
 	ReadExportProjectZip(context.Context, string) (io.ReadCloser, error)
-	UploadExportProjectZip(context.Context, afero.File) error
+	UploadExportProjectZip(ctx context.Context, zipFile afero.File, objectName string) error
 	RemoveExportProjectZip(context.Context, string) error
 
 	GenerateSignedUploadUrl(context.Context, string) (*string, int, *string, error)

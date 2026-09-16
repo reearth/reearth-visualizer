@@ -172,7 +172,7 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 
 	fs := afero.NewOsFs()
 
-	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", pid.String()))
+	zipFile, objectName, err := file.NewExportZipScratchFile(fs, pid.String())
 	if err != nil {
 		return nil, fmt.Errorf("failed to create zip file: %w", err)
 	}
@@ -225,12 +225,12 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	if err := json.Unmarshal(b, &data); err != nil {
 		return nil, fmt.Errorf("failed normalize export data unmarshal: %w", err)
 	}
-	err = uc.Project.SaveExportProjectZip(ctx, zipWriter, zipFile, data, prj)
+	err = uc.Project.SaveExportProjectZip(ctx, zipWriter, zipFile, data, prj, objectName)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save export project zip: %w", err)
 	}
 
 	return &gqlmodel.ExportProjectPayload{
-		ProjectDataPath: "/export/" + zipFile.Name(),
+		ProjectDataPath: "/export/" + objectName,
 	}, nil
 }

@@ -1238,7 +1238,7 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 	return nil
 }
 
-func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project) error {
+func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project, objectName string) error {
 
 	state := newExportZipState()
 	if project, ok := data["project"].(map[string]interface{}); ok {
@@ -1285,7 +1285,7 @@ func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Write
 		}
 	}()
 
-	if err := i.file.UploadExportProjectZip(ctx, zipFile); err != nil {
+	if err := i.file.UploadExportProjectZip(ctx, zipFile, objectName); err != nil {
 		return err
 	}
 	return nil

@@ -227,8 +227,8 @@ func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.Re
 	return f.read(ctx, path.Join(exportBasePath, sn))
 }
 
-func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
-	sanitizedName := sanitize.Path(zipFile.Name())
+func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File, objectName string) error {
+	sanitizedName := sanitize.Path(objectName)
 	_, err := f.upload(ctx, path.Join(exportBasePath, sanitizedName), zipFile)
 	return err
 }

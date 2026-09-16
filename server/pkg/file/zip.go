@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearthx/log"
+	"github.com/spf13/afero"
 )
 
 // ReadSeekerAt is satisfied by *os.File and afero.File — both call sites already pass one of these.
@@ -19,6 +20,20 @@ type ReadSeekerAt interface {
 }
 
 const EXPORT_DATA_VERSION = "1"
+
+// NewExportZipScratchFile creates the local scratch file a project export writes into while it
+// streams assets and the manifest, plus the object name the finished zip should be uploaded and
+// served as. The scratch file's name is unique per call (via afero.TempFile) even for the same
+// projectID: two concurrent exports of the same project used to both fs.Create the same fixed
+// "<projectID>.zip" path, so the second export truncated the file the first was still streaming
+// into, and the first export's deferred os.Remove then deleted the second export's file out from
+// under it (SCA-05, compliance scan issue #146). objectName stays the deterministic
+// "<projectID>.zip" the download route and storage key both depend on.
+func NewExportZipScratchFile(fs afero.Fs, projectID string) (zipFile afero.File, objectName string, err error) {
+	objectName = projectID + ".zip"
+	zipFile, err = afero.TempFile(fs, "", projectID+"-*.zip")
+	return zipFile, objectName, err
+}
 
 type ZipReader struct {
 	zr *zip.Reader

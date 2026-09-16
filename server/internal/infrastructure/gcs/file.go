@@ -299,9 +299,9 @@ func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.Re
 	return r, err
 }
 
-func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
-	fname := sanitize.Path(zipFile.Name())
-	size, err := f.upload(ctx, path.Join(gcsExportBasePath, zipFile.Name()), zipFile)
+func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File, objectName string) error {
+	fname := sanitize.Path(objectName)
+	size, err := f.upload(ctx, path.Join(gcsExportBasePath, fname), zipFile)
 	fmt.Println("[export] save file name:", fname, " size:", size)
 	return err
 }

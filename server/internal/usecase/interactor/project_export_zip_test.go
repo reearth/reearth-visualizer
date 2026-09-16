@@ -35,7 +35,7 @@ func (f *countingFile) ReadAsset(_ context.Context, name string) (io.ReadCloser,
 	return io.NopCloser(io.LimitReader(bytes.NewReader(f.content), int64(len(f.content)))), nil
 }
 
-func (f *countingFile) UploadExportProjectZip(context.Context, afero.File) error {
+func (f *countingFile) UploadExportProjectZip(context.Context, afero.File, string) error {
 	return nil
 }
 
@@ -220,7 +220,7 @@ func TestSaveExportProjectZip_ManifestCountsTowardBudget(t *testing.T) {
 	zipFile, err := afero.TempFile(afero.NewMemMapFs(), "", "export-*.zip")
 	require.NoError(t, err)
 
-	err = i.SaveExportProjectZip(ctx, zipWriter, zipFile, map[string]interface{}{"project": map[string]interface{}{}}, nil)
+	err = i.SaveExportProjectZip(ctx, zipWriter, zipFile, map[string]interface{}{"project": map[string]interface{}{}}, nil, "export-test.zip")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "exceeds maximum allowed size")
 }

@@ -183,15 +183,9 @@ func (f *fileRepo) ReadExportProjectZip(ctx context.Context, filename string) (i
 	return f.read(ctx, filepath.Join(exportDir, sanitize.Path(filename)))
 }
 
-func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
-
-	file, ok := zipFile.(*os.File)
-	if !ok {
-		return errors.New("invalid file type: expected *os.File")
-	}
-
-	fname := sanitize.Path(file.Name())
-	size, err := f.upload(ctx, path.Join(exportDir, fname), file)
+func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File, objectName string) error {
+	fname := sanitize.Path(objectName)
+	size, err := f.upload(ctx, path.Join(exportDir, fname), zipFile)
 	fmt.Println("[export] save file name:", fname, " size:", size)
 
 	return err
