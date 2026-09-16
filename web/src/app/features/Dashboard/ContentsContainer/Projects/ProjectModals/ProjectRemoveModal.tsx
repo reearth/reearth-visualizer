@@ -15,17 +15,19 @@ type Props = {
   disabled?: boolean;
   onClose: () => void;
   onProjectRemove: () => void;
+  "data-testid"?: string;
 };
 const ProjectRemoveModal: FC<Props> = ({
   isVisible,
   disabled,
   onClose,
-  onProjectRemove
+  onProjectRemove,
+  "data-testid": dataTestId
 }) => {
   const t = useT();
 
   return (
-    <Modal size="small" visible={isVisible}>
+    <Modal size="small" visible={isVisible} dataTestid={dataTestId}>
       <ModalPanel
         actions={
           <>

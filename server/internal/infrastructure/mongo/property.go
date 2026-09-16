@@ -199,6 +199,12 @@ func (r *Property) findOne(ctx context.Context, filter any) (*property.Property,
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
+	// REL-10: FindOne can return no error while the readable/scene/workspace
+	// filter leaves Result empty; guard the index so that reads as not-found
+	// instead of panicking (same fix as storytelling.findOne).
+	if len(c.Result) == 0 {
+		return nil, rerror.ErrNotFound
+	}
 	return c.Result[0], nil
 }
 

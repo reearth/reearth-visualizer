@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/apperr"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -203,9 +204,20 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 
 			res, err := handler(c, ctx, uc, op)
 			if err != nil {
-				log.Errorf("upload handler err: %v", err)
 				if he, ok := err.(*echo.HTTPError); ok {
+					// A 4xx means the request was bad, not the server. Keep it
+					// out of the ERROR-based alerting.
+					if he.Code < http.StatusInternalServerError {
+						log.Warnfc(ctx, "upload handler rejected request: %v", err)
+					} else {
+						log.Errorfc(ctx, "upload handler err: %v", err)
+					}
 					return he
+				}
+				if apperr.Expected(err) {
+					log.Warnfc(ctx, "upload handler rejected request: %v", err)
+				} else {
+					log.Errorfc(ctx, "upload handler err: %v", err)
 				}
 				return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 			}
@@ -276,7 +288,11 @@ func UpdateImportStatus(
 	defer cancel()
 	_, err := usecases.Project.UpdateImportStatus(writeCtx, pid, status, &importResultLog, op)
 	if err != nil {
-		log.Printf("failed to update import status: %v", err)
+		// This write is the only thing that moves the project out of its prior
+		// status (e.g. UPLOADING). If it fails while recording a terminal status,
+		// the project can stay stuck there after its upload is cleaned up, so log
+		// at ERROR with the ids to make that rare condition diagnosable.
+		log.Errorfc(ctx, "[Import] failed to update import status for %s to %s: %v", pid, status, err)
 	}
 }
 

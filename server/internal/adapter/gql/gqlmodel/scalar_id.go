@@ -1,7 +1,6 @@
 package gqlmodel
 
 import (
-	"errors"
 	"io"
 	"strconv"
 
@@ -22,7 +21,7 @@ func UnmarshalPropertyFieldID(v interface{}) (id.PropertyFieldID, error) {
 	if tmpStr, ok := v.(string); ok {
 		return id.PropertyFieldID(tmpStr), nil
 	}
-	return id.PropertyFieldID(""), errors.New("invalid ID")
+	return id.PropertyFieldID(""), idx.ErrInvalidID
 }
 
 func MarshalPluginID(t id.PluginID) graphql.Marshaler {
@@ -35,7 +34,7 @@ func UnmarshalPluginID(v interface{}) (id.PluginID, error) {
 	if tmpStr, ok := v.(string); ok {
 		return id.PluginIDFrom(tmpStr)
 	}
-	return id.PluginID{}, errors.New("invalid ID")
+	return id.PluginID{}, idx.ErrInvalidID
 }
 
 func MarshalPluginExtensionID(t id.PluginExtensionID) graphql.Marshaler {
@@ -48,7 +47,7 @@ func UnmarshalPluginExtensionID(v interface{}) (id.PluginExtensionID, error) {
 	if tmpStr, ok := v.(string); ok {
 		return id.PluginExtensionID(tmpStr), nil
 	}
-	return id.PluginExtensionID(""), errors.New("invalid ID")
+	return id.PluginExtensionID(""), idx.ErrInvalidID
 }
 
 func MarshalPropertySchemaID(t id.PropertySchemaID) graphql.Marshaler {
@@ -61,7 +60,7 @@ func UnmarshalPropertySchemaID(v interface{}) (id.PropertySchemaID, error) {
 	if tmpStr, ok := v.(string); ok {
 		return id.PropertySchemaIDFrom(tmpStr)
 	}
-	return id.PropertySchemaID{}, errors.New("invalid ID")
+	return id.PropertySchemaID{}, idx.ErrInvalidID
 }
 
 func MarshalPropertySchemaGroupID(t id.PropertySchemaGroupID) graphql.Marshaler {
@@ -74,7 +73,7 @@ func UnmarshalPropertySchemaGroupID(v interface{}) (id.PropertySchemaGroupID, er
 	if tmpStr, ok := v.(string); ok {
 		return id.PropertySchemaGroupID(tmpStr), nil
 	}
-	return id.PropertySchemaGroupID(""), errors.New("invalid ID")
+	return id.PropertySchemaGroupID(""), idx.ErrInvalidID
 }
 
 func IDFrom[T idx.Type](i idx.ID[T]) ID {

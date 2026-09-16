@@ -1,6 +1,7 @@
 import {
-  visualizerProjectLicensesOptions,
-  licenseContent
+  NO_LICENSE_VALUE,
+  licenseContent,
+  useLicenseSelectorOptions
 } from "@reearth/app/lib/license";
 import {
   Button,
@@ -22,9 +23,9 @@ import { useT } from "@reearth/services/i18n/hooks";
 import { useWorkspace } from "@reearth/services/state";
 import { keyframes, styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { Project } from "../../type";
+import { Project } from "../../../type";
 
 const VALIDATION_DEBOUNCE_MS = 600;
 
@@ -35,7 +36,7 @@ type ProjectCreatorModalProps = {
       Project,
       "name" | "description" | "projectAlias" | "visibility"
     > & { license?: string }
-  ) => void;
+  ) => Promise<boolean>;
 };
 
 type FormState = {
@@ -49,6 +50,7 @@ type FormState = {
 type AliasStatus = "idle" | "loading" | "success" | "error";
 
 const getLicenseContent = (value?: string): string | undefined => {
+  if (!value || value === NO_LICENSE_VALUE) return undefined;
   return licenseContent[value as keyof typeof licenseContent];
 };
 
@@ -87,6 +89,10 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     [t, enableToCreatePrivateProject]
   );
 
+  const licenseSelectOptions = useLicenseSelectorOptions({
+    withNoLicense: true
+  });
+
   const handleFieldChange = useCallback(
     (field: keyof FormState, newValue: string) => {
       setFormState((prev) => ({ ...prev, [field]: newValue }));
@@ -98,6 +104,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   const [aliasWarning, setAliasWarning] = useState<string>("");
   const [aliasValidating, setAliasValidating] = useState<boolean>(false);
   const [debouncedAlias, setDebouncedAlias] = useState<string>("");
+  const aliasValidationRequestId = useRef(0);
 
   // Show loader immediately when user types
   useEffect(() => {
@@ -123,6 +130,8 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
 
   // Validate project alias when debounced value changes
   useEffect(() => {
+    const requestId = ++aliasValidationRequestId.current;
+
     const validateAlias = async () => {
       if (!currentWorkspace || !debouncedAlias.trim()) {
         setAliasValid(false);
@@ -136,6 +145,10 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
         currentWorkspace?.id,
         undefined
       );
+
+      // Discard this result if a newer validation request has since started,
+      // otherwise a slower earlier response could overwrite a fresher one.
+      if (requestId !== aliasValidationRequestId.current) return;
 
       setAliasValidating(false);
 
@@ -157,9 +170,8 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     if (!formState.projectAlias.trim()) return "idle";
     if (aliasValidating) return "loading";
     if (aliasValid) return "success";
-    if (aliasWarning) return "error";
-    return "idle";
-  }, [formState.projectAlias, aliasValidating, aliasValid, aliasWarning]);
+    return "error";
+  }, [formState.projectAlias, aliasValidating, aliasValid]);
 
   const aliasStatusIcon = useMemo(() => {
     if (aliasStatus === "loading") return <Spinner />;
@@ -170,20 +182,30 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     return null;
   }, [aliasStatus, theme]);
 
-  const onSubmit = useCallback(() => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = useCallback(async () => {
     const license = getLicenseContent(formState?.license);
-    onProjectCreate({
-      name: formState.projectName,
-      description: formState.description,
-      projectAlias: formState.projectAlias.trim(),
-      visibility: formState.visibility,
-      license
-    });
-    onClose?.();
+    setIsSubmitting(true);
+    try {
+      const result = await onProjectCreate({
+        name: formState.projectName,
+        description: formState.description,
+        projectAlias: formState.projectAlias.trim(),
+        visibility: formState.visibility,
+        license
+      });
+      // Only dismiss the modal once creation actually succeeds, so a failed
+      // submission doesn't silently discard what the user typed.
+      if (result === false) return;
+      onClose?.();
+    } finally {
+      setIsSubmitting(false);
+    }
   }, [formState, onClose, onProjectCreate]);
 
   return (
-    <Modal visible size="small" data-testid="project-creator-modal">
+    <Modal visible size="small" dataTestid="project-creator-modal">
       <ModalPanel
         title={t("Create new project")}
         onCancel={onClose}
@@ -201,7 +223,10 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               appearance="primary"
               onClick={onSubmit}
               disabled={
-                !formState.projectName || !formState.projectAlias || !aliasValid
+                !formState.projectName ||
+                !formState.projectAlias ||
+                !aliasValid ||
+                isSubmitting
               }
               data-testid="project-creator-apply-btn"
             />
@@ -270,18 +295,16 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
             </FormInputWrapper>
             <FormInputWrapper>
               <SelectField
-                title={"Choose a license"}
+                title={t("Choose a license")}
                 value={formState.license}
                 onChange={(value) =>
                   handleFieldChange("license", value as string)
                 }
                 data-testid="project-license-input"
-                options={visualizerProjectLicensesOptions.map((license) => ({
-                  value: license.value,
-                  label: license.label
-                }))}
+                options={licenseSelectOptions}
+                maxHeight={320}
                 description={t(
-                  "We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator."
+                  "We recommend selecting a license to define how others can use your work and ensure your rights as the creator are protected. You can also create a custom license later in the settings."
                 )}
               />
             </FormInputWrapper>

@@ -8,6 +8,7 @@ import (
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+	"github.com/reearth/reearth/server/pkg/apperr"
 	"golang.org/x/text/language"
 )
 
@@ -20,8 +21,10 @@ const (
 )
 
 var (
-	ErrSceneIsLocked   error = errors.New("scene is locked")
-	ErrOperationDenied error = errors.New("operation denied")
+	ErrSceneIsLocked error = errors.New("scene is locked")
+	// ErrOperationDenied aliases apperr.ErrOperationDenied so that errors.Is
+	// matches it whichever layer returned it.
+	ErrOperationDenied error = apperr.ErrOperationDenied
 	ErrFileNotIncluded error = errors.New("file not included")
 	ErrFeatureNotFound error = errors.New("feature not found")
 )

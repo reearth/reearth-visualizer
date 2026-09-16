@@ -29,6 +29,34 @@ func TestGetGCSObjectNameFromURL(t *testing.T) {
 	assert.Equal(t, "", getGCSObjectNameFromURL(b, nil))
 }
 
+func TestGCSFile_ReadAsset_CanceledReturnsRaw(t *testing.T) {
+	// A cancelled read must surface as context.Canceled, not be wrapped into an
+	// internal error (which logs ERROR + STACK).
+	baseURL, _ := url.Parse(testutil.GCSBaseURLForTesting)
+	bucketName := strings.ToLower(uuid.New().String())
+
+	testGCS, err := testutil.NewGCSForTesting()
+	if err != nil {
+		t.Fatalf("failed to create GCSForTesting: %v", err)
+	}
+	testGCS.CreateBucket(bucketName)
+	defer func() {
+		testGCS.DeleteBucketWithObjects(bucketName)
+		if err := testGCS.Close(); err != nil {
+			t.Fatalf("failed to close client: %v", err)
+		}
+	}()
+
+	repo, err := NewFile(true, bucketName, baseURL.String(), "")
+	assert.NoError(t, err)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // client gave up before the read completed
+
+	_, err = repo.ReadAsset(ctx, "whatever.txt")
+	assert.ErrorIs(t, err, context.Canceled)
+}
+
 func TestGCSFile_UploadAssetFromURL(t *testing.T) {
 	ctx := context.Background()
 
