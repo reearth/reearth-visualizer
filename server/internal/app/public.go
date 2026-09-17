@@ -106,21 +106,8 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 	}
 }
 
-// gatewayTokenHeader carries the shared secret the reearth-cloud gateway presents
-// on /api/published and /api/published_data. Matches the header name
-// reearth-cloud already sends (see its reearth.go setInternalAuth) -- keep these
-// in sync across both repos.
 const gatewayTokenHeader = "X-Internal-Auth"
 
-// hasValidGatewayToken reports whether the request carries a header matching any
-// of the configured tokens. Accepting more than one value is what makes a secret
-// rotation safe: during a rotation, Secret Manager gets a new "current" value
-// while the old one is kept as "previous" for the overlap window until every
-// caller (reearth-cloud's own deploy) has picked up the new value, instead of an
-// instant cutover that 401s every in-flight/lagging caller the moment the secret
-// changes. A blank token is never a match -- there is no way for a caller to
-// "present" an unconfigured secret -- which also means credentials get stripped/
-// the gate is enforced in any environment where no token has been set up yet.
 func hasValidGatewayToken(c echo.Context, tokens ...string) bool {
 	given := c.Request().Header.Get(gatewayTokenHeader)
 	if given == "" {
@@ -147,11 +134,6 @@ func anyGatewayTokenConfigured(tokens []string) bool {
 	return false
 }
 
-// RequireGatewayToken gates a route behind the shared reearth-cloud gateway
-// token(s) -- pass the current token and, during a rotation, the previous one
-// too. If no token is configured at all, the middleware is a no-op: this is what
-// keeps OSS/self-hosted deployments (no gateway in front of them, no token ever
-// configured) on today's behavior, where browsers fetch these routes directly.
 func RequireGatewayToken(tokens ...string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -183,11 +165,6 @@ func PublishedMetadata(gatewayTokens ...string) echo.HandlerFunc {
 			return err
 		}
 
-		// Only the trusted gateway needs the raw basic-auth credentials to run its
-		// own edge auth check (interfaces/published.go). No first-party client
-		// consumes them from this endpoint -- the web app reads them over
-		// authenticated GraphQL -- so anyone without a valid gateway token gets
-		// them stripped.
 		if !hasValidGatewayToken(c, gatewayTokens...) {
 			res.BasicAuthUsername = ""
 			res.BasicAuthPassword = ""

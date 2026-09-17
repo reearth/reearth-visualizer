@@ -119,9 +119,6 @@ func TestPublishedMetadata(t *testing.T) {
 		WantPassword  string
 	}{
 		{
-			// No gateway token configured at all (e.g. OSS/self-hosted, which has
-			// no gateway in front of it) -- credentials must never be returned to
-			// an anonymous caller.
 			Name: "no token configured strips credentials",
 		},
 		{
@@ -141,9 +138,6 @@ func TestPublishedMetadata(t *testing.T) {
 			WantPassword:  "baar",
 		},
 		{
-			// Rotation: a caller still presenting the previous secret must keep
-			// working during the overlap window, not get cut off the instant the
-			// current token changes.
 			Name:          "during rotation, previous token still returns credentials",
 			GatewayToken:  "new-secret",
 			PreviousToken: "old-secret",
@@ -198,8 +192,6 @@ func TestRequireGatewayToken(t *testing.T) {
 		Error         error
 	}{
 		{
-			// Keeps OSS/self-hosted (no token ever configured) on today's behavior:
-			// browsers fetch this route directly with no header.
 			Name: "no token configured allows the request through",
 		},
 		{
@@ -219,8 +211,6 @@ func TestRequireGatewayToken(t *testing.T) {
 			RequestHeader: "secret",
 		},
 		{
-			// Rotation: the previous secret keeps working during the overlap
-			// window instead of 401ing a caller that hasn't redeployed yet.
 			Name:          "during rotation, previous token is allowed through",
 			GatewayToken:  "new-secret",
 			PreviousToken: "old-secret",

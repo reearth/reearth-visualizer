@@ -24,11 +24,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestWeb_DataJSON_RequiresGatewayToken guards the bare host-routed /data.json
-// route: it serves the identical built-scene data /api/published_data and
-// /published/:name are gated on, so it must be gated the same way once a
-// token is configured -- and left open when one isn't, so OSS/self-hosted
-// deployments are unaffected.
 func TestWeb_DataJSON_RequiresGatewayToken(t *testing.T) {
 	const dataJSON = `{"data":"data"}`
 	const alias = "alias"
@@ -40,8 +35,6 @@ func TestWeb_DataJSON_RequiresGatewayToken(t *testing.T) {
 
 	ctx := context.Background()
 	mfs := afero.NewMemMapFs()
-	// Handler() bails out before registering /data.json (and everything else
-	// past it) unless a "web" directory exists on the filesystem.
 	lo.Must0(afero.WriteFile(mfs, "web/index.html", []byte("<html></html>"), 0777))
 	lo.Must0(afero.WriteFile(mfs, "web/published.html", []byte("<html></html>"), 0777))
 	prjRepo := memory.NewProject()
@@ -52,10 +45,6 @@ func TestWeb_DataJSON_RequiresGatewayToken(t *testing.T) {
 
 	newEcho := func(gatewayToken, previousGatewayToken string) *echo.Echo {
 		e := echo.New()
-		// Echo's default error handler already maps *echo.HTTPError.Code (what
-		// RequireGatewayToken returns) to the response status correctly; the
-		// production errorHandler (app.go) does the same plus rerror.ErrNotFound
-		// translation, which these test cases don't need.
 		e.Use(ContextMiddleware(func(ctx context.Context) context.Context {
 			return adapter.AttachUsecases(ctx, &interfaces.Container{
 				Published: interactor.NewPublished(prjRepo, storyRepo, fileg, ""),
