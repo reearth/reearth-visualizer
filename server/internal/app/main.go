@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/app/otel"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
@@ -29,13 +28,6 @@ func Start(debug bool, version string) {
 		log.Fatalf("failed to load config: %v", cerr)
 	}
 	log.Infof("config: %s", conf.Print())
-
-	// Expected failures from the accounts service are rejections the caller
-	// caused and can correct, so they are logged at WARN. Without this they
-	// arrive as ERROR from inside the client and read as server defects in
-	// alerting: a single end to end run puts a dozen of them in the dev error
-	// metric. A transport failure still reaches ERROR.
-	gqlerror.SetWarnExpected(true)
 
 	// Init profiler
 	initProfiler(conf.Profiler, version)
