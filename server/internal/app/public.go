@@ -107,9 +107,9 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 }
 
 // gatewayTokenHeader carries the shared secret the reearth-cloud gateway presents
-// on /api/published and /api/published_data (SEC-01/02/03/04, compliance scan
-// issue #146). Matches the header name reearth-cloud already sends (see its
-// reearth.go setInternalAuth) -- keep these in sync across both repos.
+// on /api/published and /api/published_data. Matches the header name
+// reearth-cloud already sends (see its reearth.go setInternalAuth) -- keep these
+// in sync across both repos.
 const gatewayTokenHeader = "X-Internal-Auth"
 
 // hasValidGatewayToken reports whether the request carries a header matching any
@@ -187,7 +187,7 @@ func PublishedMetadata(gatewayTokens ...string) echo.HandlerFunc {
 		// own edge auth check (interfaces/published.go). No first-party client
 		// consumes them from this endpoint -- the web app reads them over
 		// authenticated GraphQL -- so anyone without a valid gateway token gets
-		// them stripped (SEC-01/03, compliance scan issue #146).
+		// them stripped.
 		if !hasValidGatewayToken(c, gatewayTokens...) {
 			res.BasicAuthUsername = ""
 			res.BasicAuthPassword = ""

@@ -119,9 +119,9 @@ func TestPublishedMetadata(t *testing.T) {
 		WantPassword  string
 	}{
 		{
-			// SEC-01/03: no gateway token configured at all (e.g. OSS/self-hosted,
-			// which has no gateway in front of it) -- credentials must never be
-			// returned to an anonymous caller.
+			// No gateway token configured at all (e.g. OSS/self-hosted, which has
+			// no gateway in front of it) -- credentials must never be returned to
+			// an anonymous caller.
 			Name: "no token configured strips credentials",
 		},
 		{
@@ -198,8 +198,8 @@ func TestRequireGatewayToken(t *testing.T) {
 		Error         error
 	}{
 		{
-			// SEC-02/04, keeping OSS/self-hosted (no token ever configured) on
-			// today's behavior: browsers fetch this route directly with no header.
+			// Keeps OSS/self-hosted (no token ever configured) on today's behavior:
+			// browsers fetch this route directly with no header.
 			Name: "no token configured allows the request through",
 		},
 		{

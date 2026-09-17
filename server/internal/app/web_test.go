@@ -25,10 +25,10 @@ import (
 )
 
 // TestWeb_DataJSON_RequiresGatewayToken guards the bare host-routed /data.json
-// route (SEC-02/04, compliance scan issue #146): it serves the identical
-// built-scene data /api/published_data and /published/:name are gated on, so
-// it must be gated the same way once a token is configured -- and left open
-// when one isn't, so OSS/self-hosted deployments are unaffected.
+// route: it serves the identical built-scene data /api/published_data and
+// /published/:name are gated on, so it must be gated the same way once a
+// token is configured -- and left open when one isn't, so OSS/self-hosted
+// deployments are unaffected.
 func TestWeb_DataJSON_RequiresGatewayToken(t *testing.T) {
 	const dataJSON = `{"data":"data"}`
 	const alias = "alias"

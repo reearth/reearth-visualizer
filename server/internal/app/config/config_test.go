@@ -50,9 +50,9 @@ func TestReadConfig(t *testing.T) {
 }
 
 // TestConfig_Print_MasksPublishedGatewayTokens guards against the published
-// gateway token(s) (SEC-01/02/03/04) leaking into the startup config log --
-// Print() logs the whole config via main.go, and secrets() is a manually
-// maintained allowlist that a new secret field can silently fall outside of.
+// gateway token(s) leaking into the startup config log -- Print() logs the
+// whole config via main.go, and secrets() is a manually maintained allowlist
+// that a new secret field can silently fall outside of.
 func TestConfig_Print_MasksPublishedGatewayTokens(t *testing.T) {
 	c := &Config{}
 	c.Visualizer.PublishedGateway.Token = "SENTINEL_CURRENT_TOKEN"
