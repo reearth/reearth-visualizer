@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.24 - 2026-09-16
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Align licence  content with the design ([#2418](https://github.com/reearth/reearth-visualizer/pull/2418)) [`63861b`](https://github.com/reearth/reearth-visualizer/commit/63861b)
+- Reduce redundant GetScene refetches when adding system tiles ([#2387](https://github.com/reearth/reearth-visualizer/pull/2387)) [`c2eaa4`](https://github.com/reearth/reearth-visualizer/commit/c2eaa4)
+
+#### ✨ Refactor
+
+- Revert improve license UI&#x2F;UX for the for ecosystem consistency [VIZ-DEV-224] ([#2421](https://github.com/reearth/reearth-visualizer/pull/2421)) [`cf5e5d`](https://github.com/reearth/reearth-visualizer/commit/cf5e5d)
+- Revert align licence  content with the design ([#2420](https://github.com/reearth/reearth-visualizer/pull/2420)) [`d1e7fe`](https://github.com/reearth/reearth-visualizer/commit/d1e7fe)
+- Improve license UI&#x2F;UX for the for ecosystem consistency [VIZ-DEV-224] ([#2411](https://github.com/reearth/reearth-visualizer/pull/2411)) [`3acbed`](https://github.com/reearth/reearth-visualizer/commit/3acbed)
+- Improve Recycle Bin and workspace member workflows [VIZ-DEV-179] ([#2385](https://github.com/reearth/reearth-visualizer/pull/2385)) [`3e587a`](https://github.com/reearth/reearth-visualizer/commit/3e587a)
+- Fixed async ordering and UI state issues in project flows [VIZ-DEV-177] ([#2381](https://github.com/reearth/reearth-visualizer/pull/2381)) [`f6a466`](https://github.com/reearth/reearth-visualizer/commit/f6a466)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.24 ([#2419](https://github.com/reearth/reearth-visualizer/pull/2419)) [`902574`](https://github.com/reearth/reearth-visualizer/commit/902574)
+- Update plugin playground preset doc URLs to docs.reearth.io ([#2410](https://github.com/reearth/reearth-visualizer/pull/2410)) [`3d386e`](https://github.com/reearth/reearth-visualizer/commit/3d386e)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Use SignupNoID when signup has no user or workspace id ([#2414](https://github.com/reearth/reearth-visualizer/pull/2414)) [`c2b2cf`](https://github.com/reearth/reearth-visualizer/commit/c2b2cf)
+
+### ci
+
+#### Miscellaneous Tasks
+
+- Pass named secrets to reusable workflows instead of inherit ([#2415](https://github.com/reearth/reearth-visualizer/pull/2415)) [`b4a8e6`](https://github.com/reearth/reearth-visualizer/commit/b4a8e6)
+
 ## 1.0.0-beta.16.23 - 2026-09-09
 
 ### Web
