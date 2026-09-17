@@ -106,7 +106,49 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 	}
 }
 
-func PublishedMetadata() echo.HandlerFunc {
+const gatewayTokenHeader = "X-Internal-Auth"
+
+func hasValidGatewayToken(c echo.Context, tokens ...string) bool {
+	given := c.Request().Header.Get(gatewayTokenHeader)
+	if given == "" {
+		return false
+	}
+	valid := false
+	for _, t := range tokens {
+		if t == "" {
+			continue
+		}
+		if subtle.ConstantTimeCompare([]byte(given), []byte(t)) == 1 {
+			valid = true
+		}
+	}
+	return valid
+}
+
+func anyGatewayTokenConfigured(tokens []string) bool {
+	for _, t := range tokens {
+		if t != "" {
+			return true
+		}
+	}
+	return false
+}
+
+func RequireGatewayToken(tokens ...string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if !anyGatewayTokenConfigured(tokens) {
+				return next(c)
+			}
+			if !hasValidGatewayToken(c, tokens...) {
+				return echo.NewHTTPError(http.StatusUnauthorized, "missing or invalid gateway token")
+			}
+			return next(c)
+		}
+	}
+}
+
+func PublishedMetadata(gatewayTokens ...string) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		name := c.Param("name")
 		if name == "" {
@@ -121,6 +163,11 @@ func PublishedMetadata() echo.HandlerFunc {
 		res, err := contr.Metadata(c.Request().Context(), name)
 		if err != nil {
 			return err
+		}
+
+		if !hasValidGatewayToken(c, gatewayTokens...) {
+			res.BasicAuthUsername = ""
+			res.BasicAuthPassword = ""
 		}
 
 		return c.JSON(http.StatusOK, res)

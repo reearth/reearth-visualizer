@@ -115,6 +115,8 @@ type HealthCheckConfig struct {
 type VisualizerConfig struct {
 	InternalApi InternalApiConfig `pp:",omitempty"`
 
+	PublishedGateway PublishedGatewayConfig `pp:",omitempty"`
+
 	// Policy Checker Configuration
 	Policy        Policy              `pp:",omitempty"`
 	DomainChecker DomainCheckerConfig `pp:",omitempty"`
@@ -142,6 +144,11 @@ type InternalApiConfig struct {
 	Active bool   `default:"false" pp:",omitempty"`
 	Port   string `default:"50051" pp:",omitempty"`
 	Token  string `default:"" pp:",omitempty"`
+}
+
+type PublishedGatewayConfig struct {
+	Token         string `default:"" pp:",omitempty"`
+	PreviousToken string `default:"" pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {
@@ -192,7 +199,7 @@ func (c *Config) UseMockAuth() bool {
 }
 
 func (c *Config) secrets() []string {
-	s := []string{c.DB, c.Auth0.ClientSecret}
+	s := []string{c.DB, c.Auth0.ClientSecret, c.Visualizer.PublishedGateway.Token, c.Visualizer.PublishedGateway.PreviousToken}
 	for _, ac := range c.DB_Users {
 		s = append(s, ac.URI)
 	}
