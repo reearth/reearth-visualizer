@@ -11,6 +11,11 @@ on:
       to_tag:
         type: string
         required: true
+    secrets:
+      DOCKERHUB_TOKEN:
+        required: true
+      DOCKERHUB_USERNAME:
+        required: true
 
 jobs:
   promote:
