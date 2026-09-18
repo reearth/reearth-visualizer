@@ -49,6 +49,17 @@ func TestReadConfig(t *testing.T) {
 	assert.Equal(t, []string{"https://hoge.com/myplugin", "https://hoge.com/myplugin2"}, cfg.Ext_Plugin)
 }
 
+func TestConfig_Print_MasksPublishedGatewayTokens(t *testing.T) {
+	c := &Config{}
+	c.Visualizer.PublishedGateway.Token = "SENTINEL_CURRENT_TOKEN"
+	c.Visualizer.PublishedGateway.PreviousToken = "SENTINEL_PREVIOUS_TOKEN"
+
+	s := c.Print()
+
+	assert.NotContains(t, s, "SENTINEL_CURRENT_TOKEN")
+	assert.NotContains(t, s, "SENTINEL_PREVIOUS_TOKEN")
+}
+
 func Test_AddHTTPScheme(t *testing.T) {
 	assert.Equal(t, "http://a", addHTTPScheme("a"))
 	assert.Equal(t, "http://a", addHTTPScheme("http://a"))

@@ -24,6 +24,80 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestWeb_DataJSON_RequiresGatewayToken(t *testing.T) {
+	const dataJSON = `{"data":"data"}`
+	const alias = "alias"
+
+	prj := project.New().NewID().Workspace(accountsID.NewWorkspaceID()).
+		Alias(alias).
+		PublishmentStatus(project.PublishmentStatusPublic).
+		MustBuild()
+
+	ctx := context.Background()
+	mfs := afero.NewMemMapFs()
+	lo.Must0(afero.WriteFile(mfs, "web/index.html", []byte("<html></html>"), 0777))
+	lo.Must0(afero.WriteFile(mfs, "web/published.html", []byte("<html></html>"), 0777))
+	prjRepo := memory.NewProject()
+	storyRepo := memory.NewStorytelling()
+	lo.Must0(prjRepo.Save(ctx, prj))
+	fileg := lo.Must(fs.NewFile(mfs, ""))
+	lo.Must0(fileg.UploadBuiltScene(ctx, strings.NewReader(dataJSON), prj.Alias()))
+
+	newEcho := func(gatewayToken, previousGatewayToken string) *echo.Echo {
+		e := echo.New()
+		e.Use(ContextMiddleware(func(ctx context.Context) context.Context {
+			return adapter.AttachUsecases(ctx, &interfaces.Container{
+				Published: interactor.NewPublished(prjRepo, storyRepo, fileg, ""),
+			})
+		}))
+		(&WebHandler{
+			HostPattern:          `{}.example.com`,
+			FS:                   mfs,
+			GatewayToken:         gatewayToken,
+			PreviousGatewayToken: previousGatewayToken,
+		}).Handler(e)
+		return e
+	}
+
+	get := func(e *echo.Echo, header string) *httptest.ResponseRecorder {
+		r := httptest.NewRequest(http.MethodGet, "/data.json", nil)
+		r.Host = alias + ".example.com"
+		if header != "" {
+			r.Header.Set("X-Internal-Auth", header)
+		}
+		w := httptest.NewRecorder()
+		e.ServeHTTP(w, r)
+		return w
+	}
+
+	t.Run("no token configured leaves the route open", func(t *testing.T) {
+		e := newEcho("", "")
+		w := get(e, "")
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, dataJSON, w.Body.String())
+	})
+
+	t.Run("token configured rejects a request without it", func(t *testing.T) {
+		e := newEcho("secret", "")
+		w := get(e, "")
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+
+	t.Run("token configured allows a request with it", func(t *testing.T) {
+		e := newEcho("secret", "")
+		w := get(e, "secret")
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, dataJSON, w.Body.String())
+	})
+
+	t.Run("during rotation, the previous token is still allowed", func(t *testing.T) {
+		e := newEcho("new-secret", "old-secret")
+		w := get(e, "old-secret")
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, dataJSON, w.Body.String())
+	})
+}
+
 func TestPublishedEmptyNameDoesNotTriggerAuth(t *testing.T) {
 	authCalled := false
 	e := echo.New()
