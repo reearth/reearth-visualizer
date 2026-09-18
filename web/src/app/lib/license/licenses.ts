@@ -73,15 +73,6 @@ const licenseOptions: LicenseOption[] = [
     url: "https://creativecommons.org/licenses/by-nd/4.0/"
   },
   {
-    value: "cc-by-nc-4.0",
-    label: "Creative Commons Attribution-NonCommercial 4.0 International",
-    description:
-      "Allows redistribution and creation of derivatives for non-commercial purposes only. Requires attribution to the original creator. Commercial use is prohibited.",
-    summary:
-      "Anyone can share and adapt your work for non-commercial purposes only, as long as they credit you.",
-    url: "https://creativecommons.org/licenses/by-nc/4.0/"
-  },
-  {
     value: "cc-by-sa-4.0",
     label: "Creative Commons Attribution-ShareAlike 4.0 International",
     description:
