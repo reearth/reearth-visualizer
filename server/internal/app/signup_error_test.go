@@ -31,7 +31,7 @@ func TestSignupErrorStatus(t *testing.T) {
 		{"password too short", gqlErr("input: signup password at least 8 characters", nil), http.StatusBadRequest},
 		{"password needs a number", gqlErr("input: signup password should have numbers", nil), http.StatusBadRequest},
 
-		{"already exists", gqlErr("input: signup user already exists", nil), http.StatusConflict},
+		{"already exists", gqlErr("input: signup user already exists", nil), http.StatusBadRequest},
 
 		// A failure that never reached a resolver is the server's problem, even
 		// when its text reads like a caller mistake.

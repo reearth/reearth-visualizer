@@ -12,20 +12,18 @@ import (
 // transport or internal failure whose message happens to read like a caller
 // mistake. Anything it does not recognise stays a 500, so a genuine server
 // fault is never reported as the caller's error.
+//
+// Every caller error answers 400, an email that is already taken included.
+// Signup is public and unauthenticated, so a status that singled that case out
+// would tell an unauthenticated caller which addresses are registered.
 func signupErrorStatus(err error) int {
 	if err == nil {
 		return http.StatusOK
 	}
 
 	switch apperr.Classify(err) {
-	case apperr.ClassInvalidInput:
+	case apperr.ClassInvalidInput, apperr.ClassAlreadyExists, apperr.ClassNotFound, apperr.ClassPermissionDenied:
 		return http.StatusBadRequest
-	case apperr.ClassAlreadyExists:
-		return http.StatusConflict
-	case apperr.ClassPermissionDenied:
-		return http.StatusForbidden
-	case apperr.ClassNotFound:
-		return http.StatusNotFound
 	default:
 		return http.StatusInternalServerError
 	}
