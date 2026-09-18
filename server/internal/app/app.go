@@ -138,7 +138,7 @@ func initEcho(
 	apiRoot.GET("/mockuser", MockUser())
 
 	// Asset API for handling GCP files
-	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File, cfg.Config.Published.Host)
+	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File, cfg.Config.Published.Host, cfg.Config.Visualizer.PublishedGateway.Token, cfg.Config.Visualizer.PublishedGateway.PreviousToken)
 	serveExportFile(e, cfg, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	apiPrivateRoute := apiRoot.Group("", privateCache)
@@ -169,14 +169,16 @@ func initEcho(
 	)
 
 	(&WebHandler{
-		Disabled:    cfg.Config.Web_Disabled,
-		AppDisabled: cfg.Config.Web_App_Disabled,
-		WebConfig:   cfg.Config.WebConfig(),
-		AuthConfig:  cfg.Config.AuthForWeb(),
-		HostPattern: cfg.Config.Published.Host,
-		Title:       cfg.Config.Web_Title,
-		FaviconURL:  cfg.Config.Web_FaviconURL,
-		FS:          nil,
+		Disabled:             cfg.Config.Web_Disabled,
+		AppDisabled:          cfg.Config.Web_App_Disabled,
+		WebConfig:            cfg.Config.WebConfig(),
+		AuthConfig:           cfg.Config.AuthForWeb(),
+		HostPattern:          cfg.Config.Published.Host,
+		Title:                cfg.Config.Web_Title,
+		FaviconURL:           cfg.Config.Web_FaviconURL,
+		FS:                   nil,
+		GatewayToken:         cfg.Config.Visualizer.PublishedGateway.Token,
+		PreviousGatewayToken: cfg.Config.Visualizer.PublishedGateway.PreviousToken,
 	}).Handler(e)
 
 	return e

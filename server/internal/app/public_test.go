@@ -109,6 +109,146 @@ func TestPublishedAuthMiddleware(t *testing.T) {
 	}
 }
 
+func TestPublishedMetadata(t *testing.T) {
+	tests := []struct {
+		Name          string
+		GatewayToken  string
+		PreviousToken string
+		RequestHeader string
+		WantUsername  string
+		WantPassword  string
+	}{
+		{
+			Name: "no token configured strips credentials",
+		},
+		{
+			Name:         "token configured but request has no header strips credentials",
+			GatewayToken: "secret",
+		},
+		{
+			Name:          "token configured but request has wrong header strips credentials",
+			GatewayToken:  "secret",
+			RequestHeader: "wrong",
+		},
+		{
+			Name:          "token configured and request matches returns credentials",
+			GatewayToken:  "secret",
+			RequestHeader: "secret",
+			WantUsername:  "fooo",
+			WantPassword:  "baar",
+		},
+		{
+			Name:          "during rotation, previous token still returns credentials",
+			GatewayToken:  "new-secret",
+			PreviousToken: "old-secret",
+			RequestHeader: "old-secret",
+			WantUsername:  "fooo",
+			WantPassword:  "baar",
+		},
+		{
+			Name:          "during rotation, a token from neither generation strips credentials",
+			GatewayToken:  "new-secret",
+			PreviousToken: "old-secret",
+			RequestHeader: "some-other-value",
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			assert := assert.New(t)
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			if tc.RequestHeader != "" {
+				req.Header.Set(gatewayTokenHeader, tc.RequestHeader)
+			}
+			res := httptest.NewRecorder()
+			e := echo.New()
+			c := e.NewContext(req, res)
+			c.SetParamNames("name")
+			c.SetParamValues("active")
+			m := mockPublishedUsecaseMiddleware(false)
+
+			err := m(PublishedMetadata(tc.GatewayToken, tc.PreviousToken))(c)
+			assert.NoError(err)
+			assert.Equal(http.StatusOK, res.Code)
+
+			var got interfaces.PublishedMetadata
+			assert.NoError(json.Unmarshal(res.Body.Bytes(), &got))
+			assert.Equal(tc.WantUsername, got.BasicAuthUsername)
+			assert.Equal(tc.WantPassword, got.BasicAuthPassword)
+			assert.True(got.IsBasicAuthActive)
+		})
+	}
+}
+
+func TestRequireGatewayToken(t *testing.T) {
+	tests := []struct {
+		Name          string
+		GatewayToken  string
+		PreviousToken string
+		RequestHeader string
+		Error         error
+	}{
+		{
+			Name: "no token configured allows the request through",
+		},
+		{
+			Name:         "token configured but request has no header is rejected",
+			GatewayToken: "secret",
+			Error:        echo.ErrUnauthorized,
+		},
+		{
+			Name:          "token configured but request has wrong header is rejected",
+			GatewayToken:  "secret",
+			RequestHeader: "wrong",
+			Error:         echo.ErrUnauthorized,
+		},
+		{
+			Name:          "token configured and request matches is allowed through",
+			GatewayToken:  "secret",
+			RequestHeader: "secret",
+		},
+		{
+			Name:          "during rotation, previous token is allowed through",
+			GatewayToken:  "new-secret",
+			PreviousToken: "old-secret",
+			RequestHeader: "old-secret",
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
+			assert := assert.New(t)
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			if tc.RequestHeader != "" {
+				req.Header.Set(gatewayTokenHeader, tc.RequestHeader)
+			}
+			res := httptest.NewRecorder()
+			e := echo.New()
+			c := e.NewContext(req, res)
+
+			err := RequireGatewayToken(tc.GatewayToken, tc.PreviousToken)(func(c echo.Context) error {
+				return c.String(http.StatusOK, "test")
+			})(c)
+
+			if tc.Error == nil {
+				assert.NoError(err)
+				assert.Equal(http.StatusOK, res.Code)
+				assert.Equal("test", res.Body.String())
+			} else {
+				var httpErr *echo.HTTPError
+				assert.ErrorAs(err, &httpErr)
+				assert.Equal(http.StatusUnauthorized, httpErr.Code)
+			}
+		})
+	}
+}
+
 func TestPublishedData(t *testing.T) {
 	tests := []struct {
 		Name          string
