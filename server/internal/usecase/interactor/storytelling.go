@@ -74,6 +74,25 @@ func (i *Storytelling) FetchByScene(ctx context.Context, sid id.SceneID, _ *usec
 }
 
 func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInput, op *usecase.Operator) (*storytelling.Story, error) {
+	// Fetch the scene first: a scene that does not exist must be reported as not
+	// found rather than as a denial, and nothing should be written until the
+	// scene is confirmed and the permission check and policy check have both
+	// passed.
+	sc, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
+		return nil, interfaces.ErrOperationDenied
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by overused seat", errors.New("operation is disabled by overused seat"))
+	}
+
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -86,29 +105,11 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		}
 	}()
 
-	// Fetch the scene first: a scene that does not exist must be reported as not
-	// found rather than as a denial, and nothing should be written until the
-	// scene is confirmed and the permission check has passed (addNewProperty
-	// below persists a property).
-	sc, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
-	if err != nil {
-		return nil, err
-	}
-	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
-		return nil, interfaces.ErrOperationDenied
-	}
 	storySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
 	filter := Filter(inp.SceneID)
 	prop, err := i.addNewProperty(ctx, storySchema.ID(), inp.SceneID, &filter)
 	if err != nil {
 		return nil, err
-	}
-	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
-	if err != nil {
-		return nil, err
-	}
-	if !operationAllowed.Allowed {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by overused seat", errors.New("operation is disabled by overused seat"))
 	}
 
 	builder := storytelling.NewStory().
@@ -139,18 +140,6 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 }
 
 func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInput, op *usecase.Operator) (*storytelling.Story, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, err
@@ -170,6 +159,18 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 	if !operationAllowed.Allowed {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	if inp.Title != nil && *inp.Title != "" {
 		story.Rename(*inp.Title)
@@ -238,18 +239,6 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 }
 
 func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInput, op *usecase.Operator) (*id.StoryID, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, err
@@ -270,6 +259,18 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
 	if err := i.storytellingRepo.Remove(ctx, inp.StoryID); err != nil {
 		return nil, err
 	}
@@ -281,6 +282,7 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 		return nil, err
 	}
 
+	tx.Commit()
 	return &inp.StoryID, nil
 }
 
@@ -514,18 +516,6 @@ func (i *Storytelling) Move(_ context.Context, _ interfaces.MoveStoryInput, _ *u
 }
 
 func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	// A missing scene is not found, not a denial (CanWriteScene only checks the
 	// operator's writable list).
 	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
@@ -553,6 +543,18 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	if !operationAllowed.Allowed {
 		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	storyPageSchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
 	prop, err := i.addNewProperty(ctx, storyPageSchema.ID(), inp.SceneID, &filter)
@@ -600,18 +602,6 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 }
 
 func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	// A missing scene is not found, not a denial (CanWriteScene only checks the
 	// operator's writable list).
 	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
@@ -639,6 +629,18 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 	if !operationAllowed.Allowed {
 		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {
@@ -677,18 +679,6 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 }
 
 func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePageParam, op *usecase.Operator) (*storytelling.Story, *id.PageID, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	// A missing scene is not found, not a denial (CanWriteScene only checks the
 	// operator's writable list).
 	if _, err := i.sceneRepo.FindByID(ctx, inp.SceneID); err != nil {
@@ -717,6 +707,18 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {
 		return nil, nil, interfaces.ErrPageNotFound
@@ -738,18 +740,6 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 }
 
 func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, int, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, 0, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, 0, err
@@ -770,6 +760,18 @@ func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePagePara
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, 0, interfaces.ErrOperationDenied
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, 0, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {
@@ -792,18 +794,6 @@ func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePagePara
 }
 
 func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.DuplicatePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
@@ -824,6 +814,18 @@ func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.Duplica
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {
@@ -847,18 +849,6 @@ func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.Duplica
 }
 
 func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLayerParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
@@ -879,6 +869,18 @@ func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLaye
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {
@@ -909,18 +911,6 @@ func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLaye
 }
 
 func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageLayerParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
@@ -941,6 +931,18 @@ func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageL
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {
@@ -971,18 +973,6 @@ func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageL
 }
 
 func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *storytelling.Block, int, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to begin transaction", err)
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to find story", err)
@@ -1002,6 +992,18 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 	if !operationAllowed.Allowed {
 		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to begin transaction", err)
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	_, extension, err := i.getStoryBlockPlugin(ctx, story.Scene(), inp.PluginID.String(), inp.ExtensionID.String())
 	if err != nil {
@@ -1050,18 +1052,6 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 }
 
 func (i *Storytelling) RemoveBlock(ctx context.Context, inp interfaces.RemoveBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, nil, err
@@ -1081,6 +1071,18 @@ func (i *Storytelling) RemoveBlock(ctx context.Context, inp interfaces.RemoveBlo
 	if !operationAllowed.Allowed {
 		return nil, nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {
@@ -1112,18 +1114,6 @@ func (i *Storytelling) RemoveBlock(ctx context.Context, inp interfaces.RemoveBlo
 }
 
 func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, int, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, nil, inp.Index, err
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, nil, inp.Index, err
@@ -1143,6 +1133,18 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 	if !operationAllowed.Allowed {
 		return nil, nil, nil, inp.Index, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, nil, inp.Index, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {

@@ -1004,18 +1004,6 @@ func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s 
 func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (err error) {
 	log.Warnf("Deleting a project %s", projectID.String())
 
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	prj, err := i.projectRepo.FindByID(ctx, projectID)
 	if err != nil {
 		return err
@@ -1031,6 +1019,18 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	if !operationAllowed.Allowed {
 		return visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	deleter := ProjectDeleter{
 		SceneDeleter: SceneDeleter{
