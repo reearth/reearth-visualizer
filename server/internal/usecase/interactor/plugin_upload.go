@@ -115,18 +115,6 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 		return nil, nil, err
 	}
 
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	var oldPManifest *manifest.Manifest
 	newpid := p.Manifest.Plugin.ID()
 	oldpid := s.Plugins().PluginByName(newpid.Name()).PluginRef()
@@ -153,6 +141,11 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 	// same (oldpid.Equal(newpid)): delete old files -> upload files, save plugin and property schemas -> migrate
 	// diff (!oldpid.Equal(newpid)): upload files, save plugin and property schemas -> migrate -> delete old files
 
+	// The old-file removal (same case) and SavePluginPack's per-file GCS upload
+	// loop both run on the plain context, outside any transaction that also
+	// touches the scene document -- otherwise that transaction stays open for as
+	// long as the upload takes, which risks exceeding MongoDB's 60s transaction
+	// lifetime limit and aborting it while the files are already durable in GCS.
 	if oldpid != nil && oldpid.Equal(newpid) {
 		// same only: delete old files
 		if err := i.file.RemovePlugin(ctx, *oldpid); err != nil {
@@ -163,6 +156,18 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 	if err := i.pluginCommon().SavePluginPack(ctx, p); err != nil {
 		return nil, nil, err
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	if err := i.pluginRepo.Save(ctx, p.Manifest.Plugin); err != nil {
 		return nil, nil, err

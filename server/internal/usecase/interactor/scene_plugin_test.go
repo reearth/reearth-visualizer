@@ -412,3 +412,71 @@ func (g *mockPluginRegistry) FetchPluginPackage(context.Context, id.PluginID) (*
 func (g *mockPluginRegistry) NotifyDownload(context.Context, id.PluginID) error {
 	return nil
 }
+
+// orderTrackingTransaction wraps NopTransaction to record whether Begin has been
+// called yet, so a test can assert something happened before or after it.
+type orderTrackingTransaction struct {
+	usecasex.NopTransaction
+	began bool
+}
+
+func (t *orderTrackingTransaction) Begin(ctx context.Context) (usecasex.Tx, error) {
+	t.began = true
+	return t.NopTransaction.Begin(ctx)
+}
+
+// notifyDownloadOrderCheckRegistry calls back into the test on NotifyDownload,
+// the one gateway call TestScene_InstallPlugin_MarketplaceCallRunsBeforeTransaction
+// can trigger without fabricating a full pluginpack.Package.
+type notifyDownloadOrderCheckRegistry struct {
+	gateway.PluginRegistry
+	onNotifyDownload func()
+}
+
+func (g *notifyDownloadOrderCheckRegistry) NotifyDownload(context.Context, id.PluginID) error {
+	g.onNotifyDownload()
+	return nil
+}
+
+// TestScene_InstallPlugin_MarketplaceCallRunsBeforeTransaction is a regression test
+// for REL-06: GetOrDownloadPlugin's marketplace call (NotifyDownload here) used to run
+// inside the transaction InstallPlugin opened at the very top, holding the scene
+// document locked for as long as that HTTP call took. This confirms the transaction
+// is not yet open when the marketplace call happens -- it only opens once install is
+// confirmed allowed and ready to write.
+func TestScene_InstallPlugin_MarketplaceCallRunsBeforeTransaction(t *testing.T) {
+	ctx := context.Background()
+	sid := id.NewSceneID()
+	pid := id.MustPluginID("plugin~3.0.0") // no scene: a public/marketplace plugin
+
+	tid := accountsID.NewWorkspaceID()
+	sc := scene.New().ID(sid).Workspace(tid).MustBuild()
+	sr := memory.NewSceneWith(sc)
+	pl := plugin.New().ID(pid).MustBuild()
+	pr := memory.NewPluginWith(pl)
+
+	tr := &orderTrackingTransaction{}
+	registry := &notifyDownloadOrderCheckRegistry{
+		onNotifyDownload: func() {
+			assert.False(t, tr.began, "the marketplace call must happen before the transaction opens")
+		},
+	}
+
+	uc := &Scene{
+		sceneRepo:      sr,
+		pluginRepo:     pr,
+		pluginRegistry: registry,
+		propertyRepo:   memory.NewProperty(),
+		transaction:    tr,
+	}
+
+	o := &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{tid},
+		},
+	}
+
+	_, _, err := uc.InstallPlugin(ctx, sid, pid, o)
+	assert.NoError(t, err)
+	assert.True(t, tr.began, "the transaction must still open before the scene/property writes")
+}

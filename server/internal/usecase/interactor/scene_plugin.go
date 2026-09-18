@@ -15,18 +15,6 @@ import (
 )
 
 func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.PluginID, operator *usecase.Operator) (_ *scene.Scene, _ *id.PropertyID, err error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
 	s, err := i.sceneRepo.FindByID(ctx, sid)
 	if err != nil {
 		return nil, nil, err
@@ -39,6 +27,13 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 		return nil, nil, interfaces.ErrPluginAlreadyInstalled
 	}
 
+	// GetOrDownloadPlugin does its own marketplace fetch, GCS upload, and plugin/
+	// property-schema save, so it deliberately runs on the plain context, outside
+	// any transaction that also holds the scene document -- otherwise that
+	// transaction stays open for as long as the marketplace and GCS calls take,
+	// which is enough to exceed MongoDB's 60s transaction lifetime limit and
+	// abort it, rolling back the plugin/property-schema rows while their files
+	// stay durable in GCS.
 	plugin, err := i.pluginCommon().GetOrDownloadPlugin(ctx, pid)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
@@ -60,6 +55,18 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 			return nil, nil, err
 		}
 	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
 
 	if !s.Plugins().Add(scene.NewPlugin(pid, p.IDRef())) {
 		return nil, nil, interfaces.ErrPluginAlreadyInstalled
