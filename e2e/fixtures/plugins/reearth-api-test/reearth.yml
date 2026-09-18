@@ -1,0 +1,8 @@
+id: reearth-api-test-plugin
+name: ReEarth API Test
+version: 1.0.0
+extensions:
+  - id: reearth-api-test
+    type: widget
+    name: ReEarth API Test Widget
+    description: Unified E2E fixture widget for all Plugin API tests
