@@ -21,6 +21,14 @@ const gatewayHeaders = GATEWAY_TOKEN
   ? { "X-Internal-Auth": GATEWAY_TOKEN }
   : undefined;
 
+// TEMPORARY: diagnosing a live 401 in CI. Never logs the token value itself,
+// only whether it was read from the environment and how long it is, to tell
+// apart "secret not wired" (length 0) from "secret wired but wrong value"
+// (some other length than expected). Remove once the 401 is resolved.
+console.log(
+  `[diagnostic] REEARTH_PUBLISHED_GATEWAY_TOKEN present: ${GATEWAY_TOKEN.length > 0}, length: ${GATEWAY_TOKEN.length}`
+);
+
 test.describe.configure({ mode: "serial" });
 
 test.describe("Published project endpoints", () => {
