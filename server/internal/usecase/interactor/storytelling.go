@@ -281,6 +281,7 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 		return nil, err
 	}
 
+	tx.Commit()
 	return &inp.StoryID, nil
 }
 
