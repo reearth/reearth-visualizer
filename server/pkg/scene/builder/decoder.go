@@ -152,6 +152,11 @@ func PropertyUpdate(
 
 	changed := false
 
+	// A field failing UpdateValue only stops processing of the remaining fields;
+	// it must not discard fields that already succeeded in this same call, so the
+	// loop breaks out to the trailing Save (gated on changed) instead of
+	// returning immediately.
+dataLoop:
 	for schemaGroupId, v1 := range data {
 
 		if v1Map, ok := v1.(map[string]interface{}); ok {
@@ -160,7 +165,7 @@ func PropertyUpdate(
 				sg := id.PropertySchemaGroupIDFromRef(&schemaGroupId)
 				pt := property.NewPointer(sg, nil, id.PropertyFieldIDFromRef(&fieldId))
 				if _, _, _, err := p.UpdateValue(ps, pt, pv); err != nil {
-					return
+					break dataLoop
 				}
 				changed = true
 			}

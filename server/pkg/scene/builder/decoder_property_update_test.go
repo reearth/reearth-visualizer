@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/value"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -58,10 +59,31 @@ func TestPropertyUpdate_SavesOnceRegardlessOfFieldCount(t *testing.T) {
 	}
 	require.NotEmpty(t, listGroupID, "test schema must have at least one list group")
 
+	var mapGroupID, mapFieldID string
+	for _, sg := range schema.Groups().Groups() {
+		if sg.IsList() {
+			continue
+		}
+		for _, f := range sg.Fields() {
+			if f.Type() == property.ValueType(value.TypeString) {
+				mapGroupID = sg.ID().String()
+				mapFieldID = f.ID().String()
+				break
+			}
+		}
+		if mapGroupID != "" {
+			break
+		}
+	}
+	require.NotEmpty(t, mapGroupID, "test schema must have at least one non-list group with a string field")
+
 	stringValue := func(v string) map[string]interface{} {
 		return map[string]interface{}{"type": "string", "value": v}
 	}
 	data := propertyJSON{
+		mapGroupID: map[string]interface{}{
+			mapFieldID: stringValue("test-value"),
+		},
 		listGroupID: []interface{}{
 			map[string]interface{}{
 				"id":        "item-0",
@@ -73,13 +95,18 @@ func TestPropertyUpdate_SavesOnceRegardlessOfFieldCount(t *testing.T) {
 
 	PropertyUpdate(ctx, p, propertyRepo, propertySchemaRepo, data)
 
-	assert.LessOrEqual(t, saves, 1, "PropertyUpdate must issue at most one Save regardless of how many fields/list items it touched")
+	assert.Equal(t, 1, saves, "PropertyUpdate must issue exactly one Save regardless of how many fields/list items it touched")
 
 	got, err := propertyRepo.FindByID(ctx, p.ID())
 	require.NoError(t, err)
 	require.NotNil(t, got.GroupListBySchema(id.PropertySchemaGroupID(listGroupID)))
 	assert.Len(t, got.GroupListBySchema(id.PropertySchemaGroupID(listGroupID)).Groups(), 1,
 		"the list item added during the update must actually be persisted")
+
+	mapField, _, _ := got.Field(property.NewPointer(
+		id.PropertySchemaGroupIDFromRef(&mapGroupID), nil, id.PropertyFieldIDFromRef(&mapFieldID)))
+	require.NotNil(t, mapField, "the direct schema-group field update must actually be persisted")
+	assert.Equal(t, "test-value", mapField.Value().Value())
 }
 
 // TestPropertyUpdate_NoChangesSkipsSave confirms an empty update does not issue a Save at all,
