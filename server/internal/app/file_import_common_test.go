@@ -1,9 +1,16 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
+	"strings"
 	"testing"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -112,4 +119,54 @@ func TestMigrateLegacyTileTypes(t *testing.T) {
 		b := []byte(`not valid json`)
 		assert.Error(t, migrateLegacyTileTypes(&b))
 	})
+}
+
+// TestImportProject_RecoversFromPanic is a regression test for REL-07: the
+// zip contents ImportProject parses are caller-controlled and some of the
+// usecases it calls (e.g. plugin/schema parsing) don't fully validate their
+// input, so a malformed import zip can panic partway through. Neither
+// Pub/Sub handler that calls ImportProject has its own recover, so without
+// one here the panic would skip every UpdateImportStatus call, leaving the
+// project stuck at its prior status after its only upload is deleted.
+func TestImportProject_RecoversFromPanic(t *testing.T) {
+	prj, err := project.New().NewID().Build()
+	require.NoError(t, err)
+
+	done := make(chan struct{})
+	var gotStatus project.ProjectImportStatus
+	var gotMessage string
+	fake := &fakeProjectUsecase{
+		importProjectData: func(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
+			panic("simulated parse panic on malformed import data")
+		},
+		updateImportStatus: func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error) {
+			gotStatus = status
+			gotMessage, _ = (*msg)["message"].(string)
+			close(done)
+			return nil, nil
+		},
+	}
+
+	usecases := &interfaces.Container{Project: fake}
+	data := []byte(`{"project": {}}`)
+
+	var ok bool
+	func() {
+		defer func() {
+			if r := recover(); r != nil {
+				t.Fatalf("ImportProject should recover its own panic, not let it propagate: %v", r)
+			}
+		}()
+		ok = ImportProject(context.Background(), usecases, nil, accountsID.WorkspaceID{}, prj.ID(), &data, nil, nil, map[string]any{}, nil)
+	}()
+
+	assert.False(t, ok, "ImportProject should report failure when it recovers a panic")
+
+	select {
+	case <-done:
+	default:
+		t.Fatal("UpdateImportStatus was never called")
+	}
+	assert.Equal(t, project.ProjectImportStatusFailed, gotStatus)
+	assert.True(t, strings.Contains(gotMessage, "panic during import"), "message = %q, want it to mention the panic", gotMessage)
 }

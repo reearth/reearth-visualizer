@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -373,6 +374,14 @@ func migrateLegacyTileTypes(data *[]byte) error {
 	return nil
 }
 
+// ImportProject parses caller-controlled zip contents (project.json,
+// plugin/schema JSON) through several usecases that don't fully validate
+// their input, some of which panic on malformed data (see REL-07). Both
+// Pub/Sub handlers that call this have no recover of their own, so without
+// one here a bad upload would crash past every UpdateImportStatus call —
+// leaving the project stuck PROCESSING with its only upload already
+// deleted. Recovering here guarantees a terminal Failed status gets
+// written no matter what goes wrong inside.
 func ImportProject(
 	ctx context.Context,
 	usecases *interfaces.Container,
@@ -384,7 +393,15 @@ func ImportProject(
 	pluginsZip map[string]*zip.File,
 	result map[string]any,
 	version *string,
-) bool {
+) (ok bool) {
+	defer func() {
+		if r := recover(); r != nil {
+			errMsg := fmt.Sprintf("panic during import: %v", r)
+			log.Errorf("[Import] %s (project %s)\n%s", errMsg, pid.String(), debug.Stack())
+			UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+			ok = false
+		}
+	}()
 
 	if err := migrateLegacyTileTypes(importData); err != nil {
 		log.Warnf("[Import] failed to migrate legacy tile types: %v", err)

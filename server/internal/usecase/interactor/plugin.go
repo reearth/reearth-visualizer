@@ -204,13 +204,18 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 				return result, err
 			}
 
+			singleOnly := false
+			if pluginJSONextension.SingleOnly != nil {
+				singleOnly = *pluginJSONextension.SingleOnly
+			}
+
 			extension, err := plugin.NewExtension().
 				ID(id.PluginExtensionID(pluginJSONextension.ExtensionID)).
 				Type(gqlmodel.FromPluginExtension(pluginJSONextension.Type)).
 				Name(i18n.StringFrom(pluginJSONextension.Name)).
 				Description(i18n.StringFrom(pluginJSONextension.Description)).
 				Icon(pluginJSONextension.Icon).
-				SingleOnly(*pluginJSONextension.SingleOnly).
+				SingleOnly(singleOnly).
 				WidgetLayout(parseWidgetLayout(pluginJSONextension.WidgetLayout)).
 				Schema(psid).
 				Build()
