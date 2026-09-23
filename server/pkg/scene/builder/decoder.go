@@ -152,10 +152,6 @@ func PropertyUpdate(
 
 	changed := false
 
-	// A field failing UpdateValue only stops processing of the remaining fields;
-	// it must not discard fields that already succeeded in this same call, so the
-	// loop breaks out to the trailing Save (gated on changed) instead of
-	// returning immediately.
 dataLoop:
 	for schemaGroupId, v1 := range data {
 
