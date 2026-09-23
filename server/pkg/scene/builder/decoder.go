@@ -150,6 +150,8 @@ func PropertyUpdate(
 		return
 	}
 
+	changed := false
+
 	for schemaGroupId, v1 := range data {
 
 		if v1Map, ok := v1.(map[string]interface{}); ok {
@@ -160,10 +162,7 @@ func PropertyUpdate(
 				if _, _, _, err := p.UpdateValue(ps, pt, pv); err != nil {
 					return
 				}
-
-				if err := propertyRepo.Filtered(Filter(p.Scene())).Save(ctx, p); err != nil {
-					return
-				}
+				changed = true
 			}
 		} else if v1List, ok := v1.([]interface{}); ok {
 
@@ -201,13 +200,18 @@ func PropertyUpdate(
 								Value(ov).
 								Build(),
 						)
-						if err := propertyRepo.Filtered(Filter(p.Scene())).Save(ctx, p); err != nil {
-							return
-						}
+						changed = true
 					}
 				}
 			}
 		}
+	}
+
+	if !changed {
+		return
+	}
+	if err := propertyRepo.Filtered(Filter(p.Scene())).Save(ctx, p); err != nil {
+		return
 	}
 }
 
