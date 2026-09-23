@@ -115,8 +115,13 @@ func FileSizeCheck(sizeMB int, file io.ReadSeeker) (int64, error) {
 	return fileSize, nil
 }
 
+// MaxImportZipSizeMB is the size limit an uploaded project export/import zip
+// is checked against. Shared with the split-upload session validation so the
+// two limits cannot drift apart.
+const MaxImportZipSizeMB = 500
+
 func UncompressExportZip(currentHost string, file ReadSeekerAt) (*[]byte, map[string]*zip.File, map[string]*zip.File, *string, error) {
-	size, err := FileSizeCheck(500, file)
+	size, err := FileSizeCheck(MaxImportZipSizeMB, file)
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}

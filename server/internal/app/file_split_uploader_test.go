@@ -729,33 +729,39 @@ func TestSplitUploadManager_RunImportJob_FastFailureIsNotTreatedAsTimeout(t *tes
 }
 
 func TestValidateChunkRequest(t *testing.T) {
+	const smallChunk = 1024 * 1024 // 1MB, well under the budget at any allowed totalChunks
+
 	tests := []struct {
 		name        string
 		fileID      string
 		chunkNum    int
 		totalChunks int
+		chunkSize   int64
 		wantErr     bool
 	}{
-		{"valid uuid-like id", "550e8400-e29b-41d4-a716-446655440000", 0, 3, false},
-		{"valid alphanumeric id", "upload_123", 2, 3, false},
-		{"path traversal via dotdot", "../../etc/cron.d/evil", 0, 1, true},
-		{"path traversal via slash", "sub/dir/file", 0, 1, true},
-		{"empty file id", "", 0, 1, true},
-		{"negative chunk num", "valid-id", -1, 3, true},
-		{"chunk num equal to total", "valid-id", 3, 3, true},
-		{"chunk num beyond total", "valid-id", 10, 3, true},
-		{"zero total chunks", "valid-id", 0, 0, true},
-		{"negative total chunks", "valid-id", 0, -5, true},
-		{"total chunks over the cap", "valid-id", 0, maxChunkCount + 1, true},
-		{"total chunks at the cap", "valid-id", 0, maxChunkCount, false},
+		{"valid uuid-like id", "550e8400-e29b-41d4-a716-446655440000", 0, 3, smallChunk, false},
+		{"valid alphanumeric id", "upload_123", 2, 3, smallChunk, false},
+		{"path traversal via dotdot", "../../etc/cron.d/evil", 0, 1, smallChunk, true},
+		{"path traversal via slash", "sub/dir/file", 0, 1, smallChunk, true},
+		{"empty file id", "", 0, 1, smallChunk, true},
+		{"negative chunk num", "valid-id", -1, 3, smallChunk, true},
+		{"chunk num equal to total", "valid-id", 3, 3, smallChunk, true},
+		{"chunk num beyond total", "valid-id", 10, 3, smallChunk, true},
+		{"zero total chunks", "valid-id", 0, 0, smallChunk, true},
+		{"negative total chunks", "valid-id", 0, -5, smallChunk, true},
+		{"total chunks over the cap", "valid-id", 0, maxChunkCount + 1, smallChunk, true},
+		{"total chunks at the cap, small chunk size", "valid-id", 0, maxChunkCount, smallChunk, false},
+		{"total chunks at the cap, real chunk size exceeds import size limit", "valid-id", 0, maxChunkCount, 16 * 1024 * 1024, true},
+		{"declared size exactly at the import limit", "valid-id", 0, 1, maxImportSizeBytes, false},
+		{"declared size one byte over the import limit", "valid-id", 0, 1, maxImportSizeBytes + 1, true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validateChunkRequest(tt.fileID, tt.chunkNum, tt.totalChunks)
+			err := validateChunkRequest(tt.fileID, tt.chunkNum, tt.totalChunks, tt.chunkSize)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("validateChunkRequest(%q, %d, %d) error = %v, wantErr %v",
-					tt.fileID, tt.chunkNum, tt.totalChunks, err, tt.wantErr)
+				t.Errorf("validateChunkRequest(%q, %d, %d, %d) error = %v, wantErr %v",
+					tt.fileID, tt.chunkNum, tt.totalChunks, tt.chunkSize, err, tt.wantErr)
 			}
 		})
 	}

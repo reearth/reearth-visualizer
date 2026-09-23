@@ -56,11 +56,17 @@ const importJobTimeout = 5 * time.Minute
 // should be self-healing; this just guarantees the wait can't run forever.
 const dispatchWaitTimeout = 5 * time.Minute
 
-// maxChunkCount bounds total_chunks well above any legitimate upload (the
-// import pipeline already rejects anything over 500MB, which is ~32
-// chunks at the client's 16MB chunk size) while still capping how large a
-// backing file a single request can make the server allocate.
+// maxChunkCount is a coarse backstop on total_chunks. The real budget is
+// maxImportSizeBytes below, checked against the declared chunk size; this
+// constant only guards against a chunkSize of 0 or another degenerate value
+// making that multiplication meaningless.
 const maxChunkCount = 128
+
+// maxImportSizeBytes mirrors the limit UncompressExportZip enforces once the
+// assembled upload is read back, so a chunked upload is rejected for
+// declaring more bytes than that before any of them are written to the
+// backing file, instead of only after all of them already have been.
+var maxImportSizeBytes = int64(file_.MaxImportZipSizeMB) * 1024 * 1024
 
 // maxConcurrentSessions caps how many upload sessions can exist at once.
 // Each session keeps an open file handle and a temporary file on disk
@@ -78,12 +84,15 @@ var safeFileIDPattern = regexp.MustCompile(`^[A-Za-z0-9_-]{1,128}$`)
 // ever reach the filesystem: an unrestricted fileID can path-traverse out
 // of tempDir via filepath.Join, and an unbounded/negative chunkNum can
 // force writes at arbitrary offsets in the backing file.
-func validateChunkRequest(fileID string, chunkNum, totalChunks int) error {
+func validateChunkRequest(fileID string, chunkNum, totalChunks int, chunkSize int64) error {
 	if !safeFileIDPattern.MatchString(fileID) {
 		return errors.New("invalid file id")
 	}
 	if totalChunks <= 0 || totalChunks > maxChunkCount {
 		return errors.New("invalid total chunks")
+	}
+	if int64(totalChunks)*chunkSize > maxImportSizeBytes {
+		return fmt.Errorf("upload of %d chunks exceeds the %dMB import size limit", totalChunks, file_.MaxImportZipSizeMB)
 	}
 	if chunkNum < 0 || chunkNum >= totalChunks {
 		return errors.New("invalid chunk number")
@@ -335,7 +344,7 @@ func servSplitUploadFiles(
 				return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid total chunks")
 			}
 
-			if err := validateChunkRequest(fileID, chunkNum, totalChunks); err != nil {
+			if err := validateChunkRequest(fileID, chunkNum, totalChunks, splitUploadManager.chunkSize); err != nil {
 				return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 			}
 
