@@ -124,11 +124,11 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		if conf.Visualizer.DomainChecker.Endpoint == "" {
 			log.Fatalf("domain checker HTTP endpoint is required")
 		}
-		domainChecker = domain.NewHTTPDomainChecker(
+		domainChecker = domain.NewCachingDomainChecker(domain.NewHTTPDomainChecker(
 			conf.Visualizer.DomainChecker.Endpoint,
 			conf.Visualizer.DomainChecker.Token,
 			conf.Visualizer.DomainChecker.Timeout,
-		)
+		))
 		log.Infof("domain checker: using HTTP checker with endpoint: %s", conf.Visualizer.DomainChecker.Endpoint)
 	default:
 		domainChecker = domain.NewDefaultChecker()

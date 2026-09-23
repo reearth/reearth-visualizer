@@ -62,6 +62,7 @@ require (
 require (
 	cloud.google.com/go/compute/metadata v0.9.0
 	github.com/avast/retry-go/v4 v4.7.0
+	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/reearth/reearth-proto v1.2.0
 	go.mongodb.org/mongo-driver v1.17.6
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.38.0
@@ -153,7 +154,6 @@ require (
 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
-	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
 	github.com/jdx/go-netrc v1.0.0 // indirect
