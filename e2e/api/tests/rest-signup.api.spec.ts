@@ -36,16 +36,15 @@ test.describe("POST /api/signup", () => {
     expect(body.email).toBe(email);
   });
 
-  test("Signup with empty body returns an error", async ({ request }) => {
+  test("Signup with empty body is rejected", async ({ request }) => {
     const res = await request.post(`${API_BASE_URL}/api/signup`, {
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       data: {}
     });
 
-    // A missing payload is the caller's fault. The server answers 500 today
-    // because every accounts error is mapped to Internal Server Error, so this
-    // asserts on the class rather than the code so as not to bless that status.
-    expect(res.status()).toBeGreaterThanOrEqual(400);
+    // A missing payload is the caller's fault, so it is answered as one
+    // rather than as a server error.
+    expect(res.status()).toBe(400);
   });
 
   // The ids are only honoured as a pair: the accounts Signup document is well
