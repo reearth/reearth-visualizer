@@ -98,6 +98,43 @@ func TestWeb_DataJSON_RequiresGatewayToken(t *testing.T) {
 	})
 }
 
+func TestWeb_PublishedMetadata_NotCacheable(t *testing.T) {
+	const alias = "alias"
+
+	prj := project.New().NewID().Workspace(accountsID.NewWorkspaceID()).
+		Alias(alias).
+		PublishmentStatus(project.PublishmentStatusPublic).
+		MustBuild()
+
+	ctx := context.Background()
+	mfs := afero.NewMemMapFs()
+	prjRepo := memory.NewProject()
+	storyRepo := memory.NewStorytelling()
+	lo.Must0(prjRepo.Save(ctx, prj))
+	fileg := lo.Must(fs.NewFile(mfs, ""))
+
+	e := echo.New()
+	e.Use(ContextMiddleware(func(ctx context.Context) context.Context {
+		return adapter.AttachUsecases(ctx, &interfaces.Container{
+			Published: interactor.NewPublished(prjRepo, storyRepo, fileg, ""),
+		})
+	}))
+	(&WebHandler{
+		FS:                   mfs,
+		GatewayToken:         "secret",
+		PreviousGatewayToken: "",
+	}).Handler(e)
+
+	r := httptest.NewRequest(http.MethodGet, "/api/published/"+alias, nil)
+	r.Header.Set("X-Internal-Auth", "secret")
+	w := httptest.NewRecorder()
+	e.ServeHTTP(w, r)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "private, no-store, no-cache, must-revalidate", w.Header().Get(echo.HeaderCacheControl),
+		"a response that can carry basic-auth credentials must never be cacheable by an intermediary")
+}
+
 func TestPublishedEmptyNameDoesNotTriggerAuth(t *testing.T) {
 	authCalled := false
 	e := echo.New()
