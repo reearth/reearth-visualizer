@@ -44,3 +44,55 @@ Reviewed the Projects dashboard: create/import/remove modals, the dashboard-leve
 ### Tests added
 
 ~30 tests across `ProjectCreatorModal`, `Project/hooks`, `useProjectImport`, `ProjectImportErrorModal`, `ProjectRemoveModal`, and the dashboard `hooks.ts`, covering the fixes above.
+
+---
+
+## 2026-08-19 — Dashboard Recycle Bin and Members (web/src/app/features/Dashboard/ContentsContainer/{RecycleBin,Members}/**, services/api/project/useProjectQueries.ts)
+
+Reviewed both remaining dashboard tabs: the Recycle Bin container hook, grid item and delete-confirmation modal, and the Members list with its add / update-role / remove modals.
+
+### Key fixes
+
+- **Failed mutations were treated as successes.** A failed permanent delete still evicted the project from the Apollo cache, so it vanished from the Recycle Bin while it still existed on the server (`deleteProject` resolves with an error status instead of throwing, so the surrounding `try/catch` never fired). The same pattern ran through Members: remove-member closed its modal before the removal was even awaited, update-role closed regardless of outcome, and add-member reported success on a partial failure and would re-add already-added users on retry. All of these now check the mutation result and only close or touch the cache on success — the same rule applied to the Projects tab on 2026-08-16.
+- **The Members tab crashed in development.** Sorting the member list mutated `workspace.members` in place, and Apollo deep-freezes cache results in development — so any workspace with two or more members threw. In production it silently reordered the cache-owned array instead.
+- **The last owner of a workspace could be removed or demoted.** The "last owner" rule was implemented as "the visible list has exactly one row", which was wrong in both directions: an owner alongside other members wasn't protected at all, and narrowing the list with the search box made whoever matched unremovable. It now counts actual owners across the full member list.
+- **Stale UI state.** The Members search silently reset itself after any member mutation (the filtered list was mirrored in state and re-seeded on every workspace refetch, while the search box still showed the query) — it is now derived rather than mirrored. In the Recycle Bin, a `refetch()` on mount bypassed the query's own `skip` and fired a request with an empty workspace id; the query now uses `cache-and-network`, which keeps the list fresh without that.
+- **Missing double-submit guards** on Recycle Bin recover/delete and on all three Members modals, plus a delete confirmation that could be accepted without typing anything when a project had an empty name.
+- **Small correctness/cleanup items**: another dropped `data-testid` prop, a modal-visibility toggle used for both opening and closing, a `.filter(Boolean)` that didn't narrow and left defensive null checks scattered downstream, a ref written during render backing a stale warning, a modal that could render "removing member **undefined**", a misspelled prop (`deleteMemer…`) that had propagated across files, and a couple of dead checks.
+
+One item was reclassified rather than fixed as a bug: `UpdateRoleModal` bound its role select to the member's stored role while writing to separate state. A revert-test showed this was not user-visible (the select keeps its own internal state), so it was corrected as a two-sources-of-truth cleanup, not a bug fix.
+
+### Tests added
+
+33 tests across `RecycleBin/hooks` (extended from 4 to 15), `RecycleBin/ProjectDeleteModal`, `Members/index`, `Members/UpdateRoleModal` and `Members/DeleteMemberWarningModal`, covering the fixes above. The cache-eviction, in-place-sort and last-owner fixes were each verified by reverting them and confirming the targeted tests failed.
+
+---
+
+## 2026-09-15 — Signup through the accounts API (server/internal/app/public.go, e2e/api/tests/rest-signup.api.spec.ts)
+
+Started from a `/check-viz-errors` pass over the dev Cloud Run logs, which showed `POST /api/signup` returning 500 twice on every CI run. Tracing it turned up a client bug that had been live since at least November 2025 and an e2e test written loosely enough to hide it.
+
+### Findings & Fixes
+
+1. **Every non-mock signup returned 500** (server/internal/app/public.go)
+   - Bug: the accounts gqlclient derives its GraphQL variable *declarations* from the variables map, but `signupMutation`'s struct tag always references `$id` and `$workspaceID` while `repo.go` only adds them to the map when the caller supplies both. A signup without ids sent a document using two undeclared variables, so the accounts API rejected it with 422 in ~300µs, before any resolver ran. `public.go` mapped that to a 500. The path had never worked outside mock auth; local dev never caught it because `UseMockAuth()` short-circuits to `signupMockUser` first.
+   - Fix: route to `SignupNoID` (the document that omits both fields, letting the server mint the ids) when either id is empty. The `||` also covers a supplied user id with an empty workspace id, which fails identically — an edge that reearth-flow's otherwise-correct version of this branch still has.
+
+2. **The e2e test asserted whatever happened** (e2e/api/tests/rest-signup.api.spec.ts)
+   - Bug: `if (res.status() === 200) { ...assert body... } else { expect([400, 500]).toContain(res.status()) }`. With no outcome that could fail, a permanently broken endpoint stayed green from the test's first commit (2026-03-24) onward. Dev logs show the paired 500s on every run through log retention.
+   - Fix: removed the branching; the test now asserts 200 and the returned id/name/email.
+
+3. **Randomly flaky password** (e2e/api/tests/rest-signup.api.spec.ts)
+   - Bug: `faker.string.alphanumeric(16)` met the accounts policy (upper + lower + digit) only by chance, so once signup actually worked the test failed intermittently with `password should have numbers`. Surfaced on the first verification run.
+   - Fix: append the three required character classes explicitly.
+
+### Notes
+
+- The empty-body case still asserts only `>= 400`. With the fix it reaches a real resolver error (`invalid email`), but `public.go` maps every accounts error to 500 and `ReturnAccountsError` only special-cases 401, so tightening it means string-matching messages. Left for the `pkg/apperr` classifier (VIZ-DEV-81).
+- `REEARTH_ACCOUNTS_SIGNUP_SECRET` is unset on dev, so `verifySignupSecret` is a no-op there and signup is ungated once this lands. Raised and consciously accepted.
+- No mail is sent by any accounts deployment: `internal/app/repo.go` builds the mailer with an empty config, which falls through to the logger implementation (`mailer: logger is used` in dev logs). So e2e signups cannot bounce today, though that becomes a real constraint if a mailer is ever configured.
+- Other callers checked: reearth-flow branches correctly to `SignupNoID`; reearth-dashboard has its own copy of the same mismatch but escapes it because its id fields are value types that stringify non-empty; LINKS-Veda uses a TypeScript REST client and is structurally unaffected; cms, cloud, marketplace and classic have no signup path.
+
+### Tests added
+
+None this round — the existing e2e test was repaired rather than extended. Verified by running the suite 5× with `--retries=0` against a non-mock server wired to the local accounts API (5/5 green), plus `go build`, `go vet`, and the full `go test ./...` (0 failures).

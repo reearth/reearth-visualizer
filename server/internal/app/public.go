@@ -71,12 +71,28 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 				if inp.Secret != nil {
 					secret = *inp.Secret
 				}
-				u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
-					inp.Email, inp.Password, secret, workspaceID, false)
+				// The two ids are only usable as a pair: Signup needs both to
+				// build a well formed document, and SignupNoID omits them so
+				// the server generates its own.
+				switch {
+				case userID == "" && workspaceID == "":
+					u, err = cfg.AccountsAPIClient.UserRepo.SignupNoID(ctx, inp.Name,
+						inp.Email, inp.Password, secret, false)
+
+				case userID != "" && workspaceID != "":
+					u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
+						inp.Email, inp.Password, secret, workspaceID, false)
+
+				default:
+					return &echo.HTTPError{
+						Code:    http.StatusBadRequest,
+						Message: "userId and workspaceId must be supplied together",
+					}
+				}
 			}
 
 			if err != nil {
-				return &echo.HTTPError{Code: http.StatusInternalServerError, Message: fmt.Sprintf("signup failed: %v", err)}
+				return &echo.HTTPError{Code: signupErrorStatus(err), Message: fmt.Sprintf("signup failed: %v", err)}
 			}
 
 			return c.JSON(http.StatusOK, http1.SignupOutput{
@@ -90,7 +106,49 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 	}
 }
 
-func PublishedMetadata() echo.HandlerFunc {
+const gatewayTokenHeader = "X-Internal-Auth"
+
+func hasValidGatewayToken(c echo.Context, tokens ...string) bool {
+	given := c.Request().Header.Get(gatewayTokenHeader)
+	if given == "" {
+		return false
+	}
+	valid := false
+	for _, t := range tokens {
+		if t == "" {
+			continue
+		}
+		if subtle.ConstantTimeCompare([]byte(given), []byte(t)) == 1 {
+			valid = true
+		}
+	}
+	return valid
+}
+
+func anyGatewayTokenConfigured(tokens []string) bool {
+	for _, t := range tokens {
+		if t != "" {
+			return true
+		}
+	}
+	return false
+}
+
+func RequireGatewayToken(tokens ...string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if !anyGatewayTokenConfigured(tokens) {
+				return next(c)
+			}
+			if !hasValidGatewayToken(c, tokens...) {
+				return echo.NewHTTPError(http.StatusUnauthorized, "missing or invalid gateway token")
+			}
+			return next(c)
+		}
+	}
+}
+
+func PublishedMetadata(gatewayTokens ...string) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		name := c.Param("name")
 		if name == "" {
@@ -105,6 +163,11 @@ func PublishedMetadata() echo.HandlerFunc {
 		res, err := contr.Metadata(c.Request().Context(), name)
 		if err != nil {
 			return err
+		}
+
+		if !hasValidGatewayToken(c, gatewayTokens...) {
+			res.BasicAuthUsername = ""
+			res.BasicAuthPassword = ""
 		}
 
 		return c.JSON(http.StatusOK, res)
