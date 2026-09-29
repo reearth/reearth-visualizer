@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-import { API_BASE_URL } from "../config/env";
+import { API_BASE_URL, GATEWAY_TOKEN } from "../config/env";
 import { test, expect } from "../fixtures/api-test-fixtures";
 import {
   CREATE_PROJECT,
@@ -12,6 +12,14 @@ import {
   UPDATE_PROJECT
 } from "../graphql/mutations";
 import { GET_ME } from "../graphql/queries";
+
+// /api/published_data/:name is gated behind the reearth-cloud gateway's shared
+// token (see server/internal/app/public.go, RequireGatewayToken) once one is
+// configured, so tests hitting it directly -- standing in for the gateway --
+// must present it too.
+const gatewayHeaders = GATEWAY_TOKEN
+  ? { "X-Internal-Auth": GATEWAY_TOKEN }
+  : undefined;
 
 test.describe.configure({ mode: "serial" });
 
@@ -85,7 +93,8 @@ test.describe("Published project endpoints", () => {
     request
   }) => {
     const res = await request.get(
-      `${API_BASE_URL}/api/published_data/${projectAlias}`
+      `${API_BASE_URL}/api/published_data/${projectAlias}`,
+      { headers: gatewayHeaders }
     );
 
     expect(res.status()).toBe(200);
@@ -97,7 +106,8 @@ test.describe("Published project endpoints", () => {
     request
   }) => {
     const res = await request.get(
-      `${API_BASE_URL}/api/published_data/non-existent-${faker.string.alphanumeric(10)}`
+      `${API_BASE_URL}/api/published_data/non-existent-${faker.string.alphanumeric(10)}`,
+      { headers: gatewayHeaders }
     );
 
     expect(res.status()).toBe(404);
@@ -182,7 +192,8 @@ test.describe("Published story endpoints", () => {
     request
   }) => {
     const res = await request.get(
-      `${API_BASE_URL}/api/published_data/${storyAlias}`
+      `${API_BASE_URL}/api/published_data/${storyAlias}`,
+      { headers: gatewayHeaders }
     );
 
     expect(res.status()).toBe(200);
@@ -339,9 +350,11 @@ test.describe("Published endpoint: basic auth", () => {
     request
   }) => {
     // The /api/published_data endpoint does not enforce basic auth
-    // (only /p/:name/data.json does), so it should return 200 regardless
+    // (only /p/:name/data.json does), so it should return 200 regardless --
+    // as long as the gateway token, a separate mechanism, is presented.
     const res = await request.get(
-      `${API_BASE_URL}/api/published_data/${alias}`
+      `${API_BASE_URL}/api/published_data/${alias}`,
+      { headers: gatewayHeaders }
     );
     expect(res.status()).toBe(200);
     const contentType = res.headers()["content-type"];
@@ -429,7 +442,8 @@ test.describe("Published endpoint: LIMITED status", () => {
     request
   }) => {
     const res = await request.get(
-      `${API_BASE_URL}/api/published_data/${alias}`
+      `${API_BASE_URL}/api/published_data/${alias}`,
+      { headers: gatewayHeaders }
     );
 
     expect(res.status()).toBe(200);
