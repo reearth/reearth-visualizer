@@ -99,7 +99,7 @@ export class ProjectsPage {
     this.projectNameInput = this.page.getByTestId("project-name-input");
     this.projectAliasLabel = this.page.getByText("Project Alias *");
     this.projectAliasInput = this.page.getByTestId("project-alias-input");
-    this.descriptionLabel = this.page.getByText("Description");
+    this.descriptionLabel = this.page.getByText("About");
     this.descriptionTextarea = this.page.getByTestId(
       "project-description-input"
     );

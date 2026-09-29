@@ -68,6 +68,9 @@ export const useProjectId = () => useAtom(projectId);
 const addWorkspaceModal = atom<boolean>(false);
 export const useAddWorkspaceModal = () => useAtom(addWorkspaceModal);
 
+const createProjectModal = atom<boolean>(false);
+export const useCreateProjectModal = () => useAtom(createProjectModal);
+
 const userId = atomWithStorage<string | undefined>("userId", undefined);
 export const useUserId = () => useAtom(userId);
 
