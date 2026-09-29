@@ -40,4 +40,6 @@ jobs:
     with:
       from_tag: nightly
       to_tag: rc
-    secrets: inherit
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}

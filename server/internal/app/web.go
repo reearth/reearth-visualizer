@@ -12,14 +12,16 @@ import (
 )
 
 type WebHandler struct {
-	Disabled    bool
-	AppDisabled bool
-	WebConfig   map[string]any
-	AuthConfig  *config.AuthConfig
-	HostPattern string
-	Title       string
-	FaviconURL  string
-	FS          afero.Fs
+	Disabled             bool
+	AppDisabled          bool
+	WebConfig            map[string]any
+	AuthConfig           *config.AuthConfig
+	HostPattern          string
+	Title                string
+	FaviconURL           string
+	FS                   afero.Fs
+	GatewayToken         string
+	PreviousGatewayToken string
 }
 
 func (w *WebHandler) Handler(ec *echo.Echo) {
@@ -30,8 +32,8 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 	}
 
 	ec.GET("/api/published/", func(c echo.Context) error { return echo.ErrNotFound })
-	ec.GET("/api/published/:name", PublishedMetadata())
-	ec.GET("/api/published_data/:name", PublishedData(w.HostPattern, true)) // for oss / localhost
+	ec.GET("/api/published/:name", PublishedMetadata(w.GatewayToken, w.PreviousGatewayToken))
+	ec.GET("/api/published_data/:name", PublishedData(w.HostPattern, true), RequireGatewayToken(w.GatewayToken, w.PreviousGatewayToken)) // for oss / localhost
 
 	// BasicAuth endpoint
 	publishedGroup := ec.Group("/p", PublishedAuthMiddleware()) // for prod / dev
@@ -84,7 +86,7 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
 	ec.GET("/reearth_config.json", WebConfigHandler(w.AuthConfig, w.WebConfig, publishedHost))
-	ec.GET("/data.json", PublishedData(w.HostPattern, false)) // for prod / dev
+	ec.GET("/data.json", PublishedData(w.HostPattern, false), RequireGatewayToken(w.GatewayToken, w.PreviousGatewayToken)) // for prod / dev
 
 	if favicon != nil && faviconPath != "" {
 		ec.GET(faviconPath, func(c echo.Context) error {

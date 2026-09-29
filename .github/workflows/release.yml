@@ -83,7 +83,9 @@ jobs:
     with:
       from_tag: rc
       to_tag: ${{ needs.release.outputs.version }}
-    secrets: inherit
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
   publish-release:
     needs: release
