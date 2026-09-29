@@ -25,27 +25,37 @@ const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
 }) => {
   const t = useT();
 
-  const roleOptions = useMemo(() => {
-    if (!meRole || !t) return [];
-    return PermissionService.getRoleOptions(t, meRole);
-  }, [meRole, t]);
+  const roleOptions = useMemo(
+    () => (meRole ? PermissionService.getRoleOptions(t, meRole) : []),
+    [meRole, t]
+  );
 
   const [localRole, setLocalRole] = useState(member.role);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { updateMemberOfWorkspace } = useWorkspaceMutations();
 
   const handleUpdateRole = useCallback(async () => {
-    if (!workspace?.id || !member.user?.id || !localRole) return;
-    await updateMemberOfWorkspace({
-      workspaceId: workspace.id,
-      userId: member.user.id,
-      role: localRole
-    });
-    onClose();
+    if (!workspace?.id || !member.user?.id || !localRole || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const result = await updateMemberOfWorkspace({
+        workspaceId: workspace.id,
+        userId: member.user.id,
+        role: localRole
+      });
+      // Only close on success, otherwise the modal disappears behind an error
+      // toast and the user loses the role they had picked.
+      if (result.status === "success") onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   }, [
     workspace?.id,
     member.user?.id,
     localRole,
+    isSubmitting,
     updateMemberOfWorkspace,
     onClose
   ]);
@@ -67,6 +77,7 @@ const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
             key="add"
             title={t("Update")}
             appearance="primary"
+            disabled={isSubmitting || localRole === member.role}
             onClick={handleUpdateRole}
           />
         ]}
@@ -80,7 +91,7 @@ const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
         <SelectField
           title={t("Role")}
           options={roleOptions}
-          value={member.role}
+          value={localRole}
           onChange={(r) => setLocalRole(r as Role)}
         />
       </ModalPanel>

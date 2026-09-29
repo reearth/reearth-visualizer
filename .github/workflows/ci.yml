@@ -104,7 +104,10 @@ jobs:
       new_tag_short: ${{ needs.build-prepare.outputs.new_tag_short }}
       name: ${{ needs.build-prepare.outputs.name }}
       sha: ${{ github.sha }}
-    secrets: inherit
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
   build-web-pr:
     needs: [ci-web, build-prepare-pr]
@@ -112,7 +115,10 @@ jobs:
     with:
       sha_short: ${{ needs.build-prepare-pr.outputs.sha_short }}
       name: ${{ needs.build-prepare-pr.outputs.sha_short }}
-    secrets: inherit
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
   build-server:
     needs: [ci-server, build-prepare]
@@ -123,7 +129,10 @@ jobs:
       new_tag_short: ${{ needs.build-prepare.outputs.new_tag_short }}
       name: ${{ needs.build-prepare.outputs.name }}
       sha: ${{ github.sha }}
-    secrets: inherit
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
   # TODO: build_release workflow is broken
   # TODO: Remove build-web-post from needs when we discontinue embedding front-end in the server
@@ -145,7 +154,12 @@ jobs:
       contents: read
       id-token: write
     uses: ./.github/workflows/deploy_web_nightly.yml
-    secrets: inherit
+    secrets:
+      GC_REGION: ${{ secrets.GC_REGION }}
+      GC_SA_EMAIL: ${{ secrets.GC_SA_EMAIL }}
+      GC_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+      WEB_IMAGE: ${{ secrets.WEB_IMAGE }}
+      WEB_IMAGE_GC: ${{ secrets.WEB_IMAGE_GC }}
 
   deploy-web-pr:
     needs: [build-web-pr, build-prepare-pr]
@@ -179,7 +193,13 @@ jobs:
       contents: read
       id-token: write
     uses: ./.github/workflows/deploy_server_nightly.yml
-    secrets: inherit
+    secrets:
+      GC_REGION: ${{ secrets.GC_REGION }}
+      GC_SA_EMAIL: ${{ secrets.GC_SA_EMAIL }}
+      GC_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+      SERVER_IMAGE: ${{ secrets.SERVER_IMAGE }}
+      SERVER_IMAGE_GC: ${{ secrets.SERVER_IMAGE_GC }}
+
   playwright-tests-pr:
     needs: [deploy-web-pr, prepare]
     if: needs.prepare.outputs.version_bump_only != 'true'
@@ -189,7 +209,16 @@ jobs:
     uses: ./.github/workflows/playwright_ui_tests.yml
     with:
       url: ${{ needs.deploy-web-pr.outputs.preview_url }}
-    secrets: inherit
+    secrets:
+      GC_SA_EMAIL: ${{ secrets.GC_SA_EMAIL }}
+      GC_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+      REEARTH_E2E_API_URL: ${{ secrets.REEARTH_E2E_API_URL }}
+      REEARTH_E2E_AUTH0_AUDIENCE: ${{ secrets.REEARTH_E2E_AUTH0_AUDIENCE }}
+      REEARTH_E2E_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_E2E_AUTH0_CLIENT_ID }}
+      REEARTH_E2E_AUTH0_DOMAIN: ${{ secrets.REEARTH_E2E_AUTH0_DOMAIN }}
+      REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
+      REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
+      REEARTH_WEB_E2E_BASEURL: ${{ secrets.REEARTH_WEB_E2E_BASEURL }}
 
   playwright-tests-e2e-only:
     needs: prepare
@@ -198,4 +227,13 @@ jobs:
       contents: read
       id-token: write
     uses: ./.github/workflows/playwright_ui_tests.yml
-    secrets: inherit
+    secrets:
+      GC_SA_EMAIL: ${{ secrets.GC_SA_EMAIL }}
+      GC_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+      REEARTH_E2E_API_URL: ${{ secrets.REEARTH_E2E_API_URL }}
+      REEARTH_E2E_AUTH0_AUDIENCE: ${{ secrets.REEARTH_E2E_AUTH0_AUDIENCE }}
+      REEARTH_E2E_AUTH0_CLIENT_ID: ${{ secrets.REEARTH_E2E_AUTH0_CLIENT_ID }}
+      REEARTH_E2E_AUTH0_DOMAIN: ${{ secrets.REEARTH_E2E_AUTH0_DOMAIN }}
+      REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
+      REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
+      REEARTH_WEB_E2E_BASEURL: ${{ secrets.REEARTH_WEB_E2E_BASEURL }}
