@@ -33,17 +33,13 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   }>();
   const currentTab = useMemo(() => tab ?? "projects", [tab]);
 
-  const { membersManagementOnDashboard } = appFeature();
+  const { membersManagement } = appFeature();
 
   const topTabs = useMemo(
     () =>
       topTabItems
         .filter(
-          (tab) =>
-            !(
-              (isPersonal || !membersManagementOnDashboard) &&
-              tab.id === "members"
-            )
+          (tab) => !((isPersonal || !membersManagement) && tab.id === "members")
         )
         .map((tab) => ({
           ...tab,
@@ -51,13 +47,17 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
             tab.path ||
             `/dashboard/${workspaceId}/${tab.id === "project" ? "" : tab.id}`
         })),
-    [topTabItems, isPersonal, workspaceId, membersManagementOnDashboard]
+    [topTabItems, isPersonal, workspaceId, membersManagement]
   );
 
   const bottomTabs = useMemo(() => bottomTabsItems, [bottomTabsItems]);
 
   useEffect(() => {
-    if (workspace?.id && workspace.id !== currentWorkspace?.id) {
+    if (
+      workspace?.id &&
+      (workspace.id !== currentWorkspace?.id ||
+        currentWorkspace.personal !== isPersonal)
+    ) {
       setCurrentWorkspace({
         ...workspace,
         personal: isPersonal,

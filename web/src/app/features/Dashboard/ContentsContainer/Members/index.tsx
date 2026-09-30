@@ -51,7 +51,9 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) return members;
     return members.filter(({ user }) =>
-      [user?.name, user?.email].some((str) => str?.toLowerCase().includes(query))
+      [user?.name, user?.email].some((str) =>
+        str?.toLowerCase().includes(query)
+      )
     );
   }, [members, searchQuery]);
 
@@ -74,9 +76,10 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
     [members]
   );
 
-  const { membersManagementOnDashboard } = appFeature();
+  const { membersManagement } = appFeature();
 
-  if (!membersManagementOnDashboard) return null;
+  // Hide members management for personal workspaces or when feature is disabled
+  if (!membersManagement || currentWorkspace?.personal) return null;
 
   return (
     <Wrapper>
