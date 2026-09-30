@@ -73,6 +73,10 @@ const maxConcurrentSessions = 256
 // to write outside the intended temp directory.
 var safeFileIDPattern = regexp.MustCompile(`^[A-Za-z0-9_-]{1,128}$`)
 
+// errBadChunk marks a chunk the client sent with the wrong size, so the
+// handler can answer 400 instead of 500.
+var errBadChunk = errors.New("bad chunk")
+
 // validateChunkRequest rejects a chunk request before fileID or chunkNum
 // ever reach the filesystem: an unrestricted fileID can path-traverse out
 // of tempDir via filepath.Join, and an unbounded/negative chunkNum can
@@ -177,14 +181,14 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 	}
 	isFinal := idx == s.totalChunks-1
 	if n == 0 {
-		return false, fmt.Errorf("chunk %d is empty", idx)
+		return false, fmt.Errorf("%w: chunk %d is empty", errBadChunk, idx)
 	}
 	if !isFinal && n != s.chunkSize {
-		return false, fmt.Errorf("chunk %d is %d bytes, want exactly %d", idx, n, s.chunkSize)
+		return false, fmt.Errorf("%w: chunk %d is %d bytes, want exactly %d", errBadChunk, idx, n, s.chunkSize)
 	}
 	var probe [1]byte
 	if extra, _ := r.Read(probe[:]); extra > 0 {
-		return false, fmt.Errorf("chunk %d exceeds max chunk size (%d bytes)", idx, s.chunkSize)
+		return false, fmt.Errorf("%w: chunk %d exceeds max chunk size (%d bytes)", errBadChunk, idx, s.chunkSize)
 	}
 
 	s.received[idx] = struct{}{}
@@ -573,7 +577,11 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 		if pid := session.snapshot().ProjectID; pid != nil {
 			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 		}
-		return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
+		status := http.StatusInternalServerError
+		if errors.Is(err, errBadChunk) {
+			status = http.StatusBadRequest
+		}
+		return nil, echo.NewHTTPError(status, errMsg)
 	}
 
 	snap := session.snapshot()

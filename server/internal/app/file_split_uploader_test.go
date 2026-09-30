@@ -270,6 +270,9 @@ func TestUploadSession_WriteChunk_RejectsShortNonFinalChunk(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected an error for a short non-final chunk")
 	}
+	if !errors.Is(err, errBadChunk) {
+		t.Errorf("expected errBadChunk, got %v", err)
+	}
 	if _, ok := session.received[0]; ok {
 		t.Error("short chunk must not be marked received")
 	}
@@ -289,6 +292,9 @@ func TestUploadSession_WriteChunk_RejectsOversizedChunk(t *testing.T) {
 	_, err = session.writeChunk(0, strings.NewReader("abcde")) // 5 bytes > chunkSize
 	if err == nil {
 		t.Fatal("expected an error for an oversized chunk")
+	}
+	if !errors.Is(err, errBadChunk) {
+		t.Errorf("expected errBadChunk, got %v", err)
 	}
 	if _, ok := session.received[0]; ok {
 		t.Error("oversized chunk must not be marked received")
