@@ -251,7 +251,7 @@ Application feature flags configuration.
 **Example**:
 
 ```bash
-REEARTH_WEB_APP_FEATURE_CONFIG='{"membersManagementOnDashboard":true,"workspaceCreation":false}'
+REEARTH_WEB_APP_FEATURE_CONFIG='{"membersManagement":true,"workspaceCreation":false}'
 ```
 
 **Description**: Control feature availability
