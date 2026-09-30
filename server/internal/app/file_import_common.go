@@ -278,12 +278,27 @@ func UpdateImportStatus(
 	message string,
 	result map[string]any,
 ) {
-	importResultLog := map[string]any{}
-	importResultLog["message"] = message
-	importResultLog["result"] = result
 	if project.ProjectImportStatusFailed == status {
 		log.Errorf("[Import Error] %s", message)
 	}
+	writeImportStatus(ctx, usecases, op, pid, status, message, result)
+}
+
+// writeImportStatus records the import status without logging a failed
+// status at ERROR. Use it directly when the failure was the client's fault
+// and the caller has already logged it at a lower level.
+func writeImportStatus(
+	ctx context.Context,
+	usecases *interfaces.Container,
+	op *usecase.Operator,
+	pid id.ProjectID,
+	status project.ProjectImportStatus,
+	message string,
+	result map[string]any,
+) {
+	importResultLog := map[string]any{}
+	importResultLog["message"] = message
+	importResultLog["result"] = result
 	writeCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), updateImportStatusWriteTimeout)
 	defer cancel()
 	_, err := usecases.Project.UpdateImportStatus(writeCtx, pid, status, &importResultLog, op)

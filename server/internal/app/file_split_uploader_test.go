@@ -16,6 +16,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/apperr"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 )
@@ -270,11 +271,33 @@ func TestUploadSession_WriteChunk_RejectsShortNonFinalChunk(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected an error for a short non-final chunk")
 	}
-	if !errors.Is(err, errBadChunk) {
-		t.Errorf("expected errBadChunk, got %v", err)
+	if !apperr.Expected(err) {
+		t.Errorf("expected an invalid-input error, got %v", err)
 	}
 	if _, ok := session.received[0]; ok {
 		t.Error("short chunk must not be marked received")
+	}
+}
+
+// TestUploadSession_WriteChunk_RejectsEmptyChunk verifies that an empty chunk
+// is rejected as a client error.
+func TestUploadSession_WriteChunk_RejectsEmptyChunk(t *testing.T) {
+	m := newTestManager(t)
+
+	session, err := m.getOrCreateSession("f8", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	_, err = session.writeChunk(0, strings.NewReader(""))
+	if err == nil {
+		t.Fatal("expected an error for an empty chunk")
+	}
+	if !apperr.Expected(err) {
+		t.Errorf("expected an invalid-input error, got %v", err)
+	}
+	if _, ok := session.received[0]; ok {
+		t.Error("empty chunk must not be marked received")
 	}
 }
 
@@ -293,8 +316,8 @@ func TestUploadSession_WriteChunk_RejectsOversizedChunk(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected an error for an oversized chunk")
 	}
-	if !errors.Is(err, errBadChunk) {
-		t.Errorf("expected errBadChunk, got %v", err)
+	if !apperr.Expected(err) {
+		t.Errorf("expected an invalid-input error, got %v", err)
 	}
 	if _, ok := session.received[0]; ok {
 		t.Error("oversized chunk must not be marked received")
