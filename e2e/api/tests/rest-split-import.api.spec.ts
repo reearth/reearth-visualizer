@@ -194,11 +194,10 @@ test.describe("POST /api/split-import — chunked project import", () => {
       });
     };
 
-    // A non-final chunk shorter than CHUNK_SIZE is refused. The server answers
-    // 500 today even though the caller is at fault; asserting on the class
-    // rather than the code so this does not bless that status.
+    // A non-final chunk shorter than CHUNK_SIZE is refused as a client error.
     const short = await post(2, 0, exportedZip);
-    expect(short.status()).toBeGreaterThanOrEqual(400);
+    expect(short.status()).toBe(400);
+    expect(await short.text()).toContain("want exactly");
 
     // A correctly sized non-final chunk opens the session.
     const opened = await post(2, 0, Buffer.alloc(CHUNK_SIZE));
