@@ -108,7 +108,7 @@ The `appFeatureConfig.ts` module controls application features and external inte
 
 **Feature Flags:**
 
-- `membersManagementOnDashboard` - Controls member management UI visibility
+- `membersManagement` - Controls member management UI visibility
 - `workspaceCreation` - Enables/disables workspace creation functionality
 - `workspaceManagement` - Controls workspace management features
 - `accountManagement` - Enables/disables account management UI
@@ -128,7 +128,7 @@ loadAppFeatureConfig();
 
 // Check feature availability
 const features = appFeature();
-if (features.membersManagementOnDashboard) {
+if (features.membersManagement) {
   // Show members management UI
 }
 
@@ -158,8 +158,8 @@ The `appFeature()` function provides access to runtime feature configuration. **
 
    ```typescript
    const Component = () => {
-     const { membersManagementOnDashboard } = appFeature();
-     if (!membersManagementOnDashboard) return null;
+     const { membersManagement } = appFeature();
+     if (!membersManagement) return null;
      return <MembersUI />;
    };
    ```
@@ -205,7 +205,7 @@ The `appFeature()` function provides access to runtime feature configuration. **
 
 **Available Feature Flags:**
 
-- `membersManagementOnDashboard` - Controls member management UI visibility
+- `membersManagement` - Controls member management UI visibility
 - `workspaceCreation` - Enables/disables workspace creation functionality
 - `workspaceManagement` - Controls workspace management features
 - `accountManagement` - Enables/disables account management UI

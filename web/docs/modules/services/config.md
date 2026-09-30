@@ -81,7 +81,7 @@ Controls application features and external integrations.
 ```typescript
 export type AppFeatureConfig = {
   // UI Feature Flags
-  membersManagementOnDashboard?: boolean;
+  membersManagement?: boolean;
   workspaceCreation?: boolean;
   workspaceManagement?: boolean;
   accountManagement?: boolean;
@@ -99,7 +99,7 @@ export type AppFeatureConfig = {
 
 | Flag                            | Type     | Default | Description                           |
 | ------------------------------- | -------- | ------- | ------------------------------------- |
-| `membersManagementOnDashboard`  | boolean  | `true`  | Controls member management UI         |
+| `membersManagement`  | boolean  | `true`  | Controls member management UI         |
 | `workspaceCreation`             | boolean  | `true`  | Enables/disables workspace creation   |
 | `workspaceManagement`           | boolean  | `true`  | Controls workspace management UI      |
 | `accountManagement`             | boolean  | `true`  | Enables/disables account management   |
@@ -144,7 +144,7 @@ import { appFeature } from "@reearth/services/config/appFeatureConfig";
 const Component = () => {
   const features = appFeature();
 
-  if (!features.membersManagementOnDashboard) {
+  if (!features.membersManagement) {
     return null; // Feature disabled
   }
 
@@ -211,9 +211,9 @@ The `appFeature()` function **must only be called after configuration is loaded*
 
 ```typescript
 const Component = () => {
-  const { membersManagementOnDashboard } = appFeature();
+  const { membersManagement } = appFeature();
 
-  if (!membersManagementOnDashboard) return null;
+  if (!membersManagement) return null;
 
   return <MembersUI />;
 };
@@ -304,14 +304,14 @@ Set via `REEARTH_WEB_APP_FEATURE_CONFIG` environment variable:
 
 ```bash
 # .env
-REEARTH_WEB_APP_FEATURE_CONFIG='{"membersManagementOnDashboard":true,"workspaceCreation":false}'
+REEARTH_WEB_APP_FEATURE_CONFIG='{"membersManagement":true,"workspaceCreation":false}'
 ```
 
 ### Default Configuration
 
 ```typescript
 const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
-  membersManagementOnDashboard: true,
+  membersManagement: true,
   workspaceCreation: true,
   workspaceManagement: true,
   accountManagement: true,
@@ -352,7 +352,7 @@ const Dashboard = () => {
   return (
     <div>
       {features.workspaceCreation && <CreateWorkspaceButton />}
-      {features.membersManagementOnDashboard && <MembersPanel />}
+      {features.membersManagement && <MembersPanel />}
     </div>
   );
 };
@@ -422,7 +422,7 @@ describe("appFeatureConfig", () => {
 
   it("should return default configuration", () => {
     const config = appFeature();
-    expect(config.membersManagementOnDashboard).toBe(true);
+    expect(config.membersManagement).toBe(true);
   });
 
   it("should generate external URL with workspace context", () => {

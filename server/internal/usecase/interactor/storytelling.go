@@ -237,7 +237,7 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 	return story, nil
 }
 
-func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInput, op *usecase.Operator) (*id.StoryID, error) {
+func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInput, op *usecase.Operator) (_ *id.StoryID, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -281,6 +281,7 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 		return nil, err
 	}
 
+	tx.Commit()
 	return &inp.StoryID, nil
 }
 
