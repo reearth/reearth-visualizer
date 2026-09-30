@@ -48,6 +48,7 @@ export default defineConfig({
       name: "webkit",
       testDir: "./tests",
       testMatch: /.*\.spec\.ts/,
+      testIgnore: /tests\/plugin-api\/.*/,
       use: {
         ...devices["Desktop Safari"],
         screenshot: "only-on-failure",
@@ -69,6 +70,62 @@ export default defineConfig({
       testMatch: /api\/tests\/.*\.api\.spec\.ts/,
       dependencies: ["api-setup"],
       use: { storageState: undefined }
+    },
+    {
+      name: "plugin-api-setup",
+      testMatch: /tests\/plugin-api\/_setup\.ts/,
+      teardown: "plugin-api-teardown",
+      dependencies: ["api-setup"],
+      use: {
+        ...devices["Desktop Safari"],
+        headless: true,
+        storageState: STORAGE_STATE,
+        viewport: { width: 1920, height: 1080 }
+      }
+    },
+    {
+      name: "plugin-api-teardown",
+      testMatch: /tests\/plugin-api\/_teardown\.ts/,
+      use: { storageState: undefined }
+    },
+    {
+      name: "plugin-api",
+      testDir: "./tests/plugin-api",
+      testMatch: /[^_].*\.semantic\.spec\.ts/,
+      dependencies: ["plugin-api-setup"],
+      use: {
+        ...devices["Desktop Safari"],
+        screenshot: "only-on-failure",
+        video: "on",
+        headless: true,
+        launchOptions: {
+          slowMo: 50
+        },
+        storageState: STORAGE_STATE,
+        viewport: { width: 1920, height: 1080 }
+      }
+    },
+    {
+      name: "chromium-visual",
+      testDir: "./tests/plugin-api",
+      testMatch: /[^_].*\.visual\.spec\.ts/,
+      dependencies: ["plugin-api-setup"],
+      expect: {
+        toMatchSnapshot: {
+          // Cesium renders sub-pixel differences across runs on the same GPU.
+          // 50px absolute tolerance handles antialiasing and tile shimmer
+          // without masking real rendering regressions.
+          maxDiffPixels: 50
+        }
+      },
+      use: {
+        ...devices["Desktop Chrome"],
+        headless: false,
+        screenshot: "only-on-failure",
+        storageState: STORAGE_STATE,
+        viewport: { width: 1920, height: 1080 },
+        deviceScaleFactor: 1
+      }
     }
   ]
 });
