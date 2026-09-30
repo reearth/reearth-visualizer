@@ -50,9 +50,11 @@ import { config } from ".";
 
 export type AppFeatureConfig = {
   membersManagementOnDashboard?: boolean;
+  externalMembersManagementUrl?: string;
   workspaceCreation?: boolean;
   workspaceManagement?: boolean;
   externalWorkspaceManagementUrl?: string;
+  externalWorkspaceCreationUrl?: string;
   accountManagement?: boolean;
   externalAccountManagementUrl?: string;
   projectVisibility?: boolean;
@@ -64,9 +66,11 @@ export type AppFeatureConfig = {
 
 const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
   membersManagementOnDashboard: true,
+  externalMembersManagementUrl: undefined,
   workspaceCreation: true,
   workspaceManagement: true,
   externalWorkspaceManagementUrl: undefined,
+  externalWorkspaceCreationUrl: undefined,
   accountManagement: true,
   projectVisibility: false,
   externalAccountManagementUrl: undefined,

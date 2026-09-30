@@ -1,732 +1,752 @@
-Auto: 自動
-Account: アカウント
-Name: 名前
-Email address: メールアドレス
-Password: パスワード
-Language: 言語
-No whitespace is allowed.: 空白は使用できません。
-Too short.: 短すぎます。
-That is terribly long.: 長すぎます。
-That password is great!: 良いパスワードです！
-That password need more security.: このパスワードはもう少し強化が必要です。
-That password is low security.: セキュリティが低いパスワードです。
-That password confuses me, but might be okay.: 複雑ですが許容範囲内のパスワードです。
-Change password: パスワードを変更
-In order to protect your account, make sure your password is unique and strong.: アカウントを保護するため、ユニークで強力なパスワードを設定してください。
-New password: 新しいパスワード
-New password (for confirmation): 新しいパスワード（確認用）
-'"repeatPassword" Passwords need to match': パスワードが一致している必要があります
-Select Asset: アセットを選択
-Cancel: キャンセル
-Last Uploaded: 最終アップロード日
-First Uploaded: 最初のアップロード日
-A To Z: AからZ順
-Z To A: ZからA順
-Size Small to Large: サイズ（小から大）
-Size Large to Small: サイズ（大から小）
-Assets: アセット
-Upload File: ファイルをアップロード
-Search in all assets library: 全アセットライブラリ内を検索
-Assets selected: 選択されたアセット
-Asset selected: アセットが選択されました
-Uploaded At: アップロード日時
-Size: サイズ
-Path: アセットURL
-No asset has been uploaded yet: まだアセットがアップロードされていません
-Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
-Create new workspace: ワークスペースを作る
-create: 作成する
-Your workspace Name*: ワークスペース名*
-your workspace name: ワークスペース名
-The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
-Add a team member: チームメンバーを追加
-Add: 追加
-Search by user alias: ユーザーエイリアスで検索
-Can't find the user: ユーザーが見つかりません
-User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
-Remove: 削除
-'Your are removing member ': '次のメンバーを削除しています '
-' out of this workspace. Are you sure you want to do that?': ' 削除後このワークスペースに存在しない。本当に削除しますか？'
-Search member by name or email: 名前またはEメールでメンバーを検索
-invite user: ユーザーを招待
-User Name: ユーザー名
-Email: メールアドレス
-Role: 役割
-No Member match your search.: 一致するメンバーが見つかりません'
-Change Role: 役割を変更
-READER: 閲覧者
-WRITER: 作成者
-MAINTAINER: 管理者
-OWNER: 所有者
-Update Member Role: メンバーの役割を更新
-Update: 更新する
-Last Created: 最終作成日
-First Created: 最初の作成日
-Last Updated: 最終更新日
-New Project: 新規プロジェクト
-Import: インポート
-Search project: プロジェクトを検索
-All projects: すべてのプロジェクト
-Search Result for: 検索結果
-Project Name: プロジェクト名
-Visibility: 表示・非表示切り替え
-Updated At: 更新日時
-Created At: 作成日時
-No Project has been created yet: まだプロジェクトが作成されていません
-Rename: 名称変更
-Project Setting: プロジェクト設定
-Project Assets: プロジェクトアセット
-Export: エクスポート
-Move to Recycle Bin: ゴミ箱に移動
-Public: 公開
-Private: 非公開
-Create new project: 新しいプロジェクトを作成
-Apply: 適用
-Project Name *: プロジェクト名 *
-Text: テキスト
-Project Alias *: プロジェクト別名 *
-'Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/': 使用できる文字は、英字・数字・ハイフンのみです。例：https://reearth.io/team-alias/
-Project Visibility *: プロジェクトの公開範囲 *
-For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: オープンおよび公開プロジェクトでは、誰でもプロジェクトを閲覧できます。非公開プロジェクトでは、ワークスペースのメンバーのみが閲覧できます。
-Description: 説明
-Write down your content: 内容を書き込む
-Provide a short summary (within 200 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な特徴を200文字以内で簡潔に説明してください。
-We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator.: 他の人があなたの作品をどのように使用できるかを明確にし、創作者としての権利を保護するために、ライセンスを選択することを強くお勧めします。
-Download Error Log: エラーログをダウンロード
-Ok: 確認
-Import Failed: インポート失敗
-We were unable to import the project.: プロジェクトをインポートできませんでした。
-'Since this file was exported from the system, the structure should be valid. The issue may be caused by:': 'このファイルはシステムからエクスポートされたため、構造は有効であるはずです。問題の原因として考えられるのは以下の通りです:'
-File corruption or incomplete upload: ファイルの破損またはアップロードの不完全
-Version incompatibility: バージョンの互換性の問題
-Permission restrictions: 権限の制限
-A temporary system error: 一時的なシステムエラー
-Please check the issue and try importing again from the start.: 問題を確認し、最初からインポートを再試行してください。
-Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
-This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
-Starred: スター付き
-Successfully imported project!: プロジェクトのインポートに成功しました！
-No Project in Recycle bin.: ゴミ箱にプロジェクトはありません。
-Recover: 復元
-Delete: 削除
-Delete project: プロジェクトを削除
-I am sure I want to delete this project: このプロジェクトを削除することを確認しました
-This action cannot be undone. This will permanently delete the project totally. You will lose all your project data: この操作は元に戻せません。プロジェクトが完全に削除され、すべてのデータが失われます。
-Please type your project name to continue.: 続行するにはプロジェクト名を入力してください。
-Projects: プロジェクト
-Members: メンバー
-Recycle bin: ゴミ箱
-Plugin Playground: プラグインプレイグラウンド
-Documentation: ドキュメント
+Auto: ''
+Account: ''
+Name: ''
+Email address: ''
+Password: ''
+Language: ''
+No whitespace is allowed.: ''
+Too short.: ''
+That is terribly long.: ''
+That password is great!: ''
+That password need more security.: ''
+That password is low security.: ''
+That password confuses me, but might be okay.: ''
+Change password: ''
+In order to protect your account, make sure your password is unique and strong.: ''
+New password: ''
+New password (for confirmation): ''
+'"repeatPassword" Passwords need to match': ''
+Select Asset: ''
+Cancel: ''
+Last Uploaded: ''
+First Uploaded: ''
+A To Z: ''
+Z To A: ''
+Size Small to Large: ''
+Size Large to Small: ''
+Assets: ''
+Upload File: ''
+Search in all assets library: ''
+Assets selected: ''
+Asset selected: ''
+Uploaded At: ''
+Size: ''
+Path: ''
+No asset has been uploaded yet: ''
+Asset URL copied to clipboard: ''
+Public: ''
+Private: ''
+Create new project: ''
+Apply: ''
+Project Name *: ''
+Text: ''
+Project Alias *: ''
+'Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/': ''
+Project Visibility *: ''
+For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: ''
+About: ''
+Write down your content: ''
+Provide a short summary (within 500 characters) describing the purpose or key features of this project.: ''
+Choose a license: ''
+We recommend selecting a license to define how others can use your work and ensure your rights as the creator are protected. You can also create a custom license later in the settings.: ''
+Create new workspace: ''
+create: ''
+Your workspace Name*: ''
+your workspace name: ''
+The name is already in use by another workspace. Please choose a different name.: ''
+Add a team member: ''
+Add: ''
+Search by user alias: ''
+Can't find the user: ''
+User already joined this workspace.: ''
+Remove: ''
+'Your are removing member ': ''
+' out of this workspace. Are you sure you want to do that?': ''
+Search member by name or email: ''
+invite user: ''
+User Name: ''
+Email: ''
+Role: ''
+No Member match your search.: ''
+Change Role: ''
+READER: ''
+WRITER: ''
+MAINTAINER: ''
+OWNER: ''
+Update Member Role: ''
+Update: ''
+Last Created: ''
+First Created: ''
+Last Updated: ''
+New Project: ''
+Import: ''
+Search project: ''
+All projects: ''
+Search Result for: ''
+Project Name: ''
+Visibility: ''
+Updated At: ''
+Created At: ''
+No Project has been created yet: ''
+Rename: ''
+Project Setting: ''
+Project Assets: ''
+Export: ''
+Move to Recycle Bin: ''
+Download Error Log: ''
+Ok: ''
+Import Failed: ''
+We were unable to import the project.: ''
+'Since this file was exported from the system, the structure should be valid. The issue may be caused by:': ''
+File corruption or incomplete upload: ''
+Version incompatibility: ''
+Permission restrictions: ''
+A temporary system error: ''
+Please check the issue and try importing again from the start.: ''
+Your project will be moved to Recycle Bin.: ''
+This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: ''
+Starred: ''
+Successfully imported project!: ''
+No Project in Recycle bin.: ''
+Recover: ''
+Delete: ''
+Delete project: ''
+I am sure I want to delete this project: ''
+This action cannot be undone. This will permanently delete the project totally. You will lose all your project data: ''
+Please type your project name to continue.: ''
+Projects: ''
+Members: ''
+Recycle bin: ''
+Plugin Playground: ''
+Documentation: ''
 Discord: ''
 FAQ: ''
-Switch workspace: ワークスペース切り替え
-Personal: 個人
-Team Workspace: チームワークスペース
-Log out: ログアウト
-Cesium Ion token not configured. Using fallback.: Cesium Ionトークンが設定されていません。フォールバックを使用します。
-Configure token: トークンを設定
-Desktop: デスクトップ
-Mobile: モバイル
-Street View and Google Map Search require a Google Maps tile type to comply with Google Maps policies. Please select Google Satellite or Google Road Map.: >-
-  Street ViewとGoogle マップ検索は、Googleマップのポリシーに準拠するためGoogleマップのタイルタイプが必要です。Google
-  サテライトまたはGoogle ロードマップを選択してください。
-Page: ページ
-From Assets: アセットから
-From Web: ウェブから
-Source Type: ソースタイプ
-Asset: アセット
-Resource URL: リソースURL
-Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ビジュアライザーは現在、CSVポイントデータのみ対応しています。緯度と経度の列名を以下に指定してください。
-Latitude Column Name: 緯度の列名
-Column Name: 列名
-Longitude Column Name: 経度の列名
-Add to Layer: レイヤーに追加
-From Value: 値から
-Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
-  CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
-Input Text: テキストを入力
-Value: 値
-Input data here: ここにデータを入力
-Auto Update Time: 自動時間更新
-'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': >-
-  有効にすると、CZML ファイルが読み込まれた際に、シミュレーションの時計が CZML
-  ファイルで定義された時間範囲に更新されます。警告：このオプションが有効な複数の CZML
-  レイヤーが読み込まれた場合、最終的なシミュレーション時間は最後に読み込まれたレイヤーによって設定されます。
-Invalid GeoJSON format: 不正なGeoJSON形式
-Please enter valid GeoJSON: 有効なGeoJSONを入力してください
-Prioritize Performance: パフォーマンスを優先
-If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
-  パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
-Vector Tile: ベクトルタイル
-3D Tiles: 3Dタイル
-Data Source Manager: データソースマネージャー
-Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
-  KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
-Please provide cesium ion access token on Main settings to use Cesium Ion.: Cesium Ionを使用するには、メイン設定でCesium Ionアクセストークンを提供してください。
-Re:Earth: Re:Earth
-Cesium Ion: Cesium Ion
-Provider: プロバイダー
-Re:Earth Buildings: Re:Earth Buildings
-Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
-Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
-URL: URL
-Choose layer to add: 追加するレイヤーを選択
-layer name: レイヤー名
-Layer name: レイヤー名
-'Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルの不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
-'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルが存在する場合の不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
-'Disabled: Zoom level configuration is not available for system tiles.': '無効: ズームレベルの設定はシステムタイルでは利用できません。'
-Inspector: インスペクター
-Layer: レイヤー
-Layer Name: レイヤー名
-Format: 形式
-Custom property schema: カスタムプロパティスキーマ
-Update data resource URL: リソースURLを更新
-New data resource URL: 新しいリソースURL
-Resource URL copied to clipboard: リソースURLがクリップボードにコピーされました
-Edit: 編集
-Edit Field: フィールド編集
-Delete Field: フィールド削除
-More: その他
-Edit Custom Property: カスタムプロパティ編集
-New Custom Property: 新しいカスタムプロパティ
-Submit: 反映
-Property Title: プロパティタイトル
-Property Type: プロパティタイプ
-Please select one type: タイプを選択してください
-Apply Current Edits?: 現在の編集を適用しますか?
-This save will apply to all features in the current layer. Do you want to proceed?: この変更を保存すると、現在のレイヤーの全てのフィーチャーに適用されます。続行しますか？
-No field has been created yet: フィールドが作成されていません
-New Field: 新しいフィールド
-Delete schema property field?: プロパティのフィールドを削除しますか?
-This action will apply to all features in the current layer. Do you want to proceed?: この操作は、現在のレイヤーのすべてのフィーチャーに適用されます。続行しますか？
-Unsupported custom field: サポートされていないカスタムフィールド
-Custom Properties: カスタムプロパティ
-No custom properties: カスタムプロパティはありません
-Geometry: ジオメトリ
-Properties: プロパティ
-Photo Overlay: フォトオーバーレイ
-Photo Overlay Set: フォトオーバーレイ設定
-Not set: 設定されていません
-Feature: 地物
-Layer Style: レイヤースタイル
-Infobox: インフォボックス
-Enable Infobox: インフォボックスを有効化
-Show infobox when the user clicks on a layer: レイヤーをクリックした際にインフォボックスを表示
-NO STYLE: スタイルなし
-Enable PhotoOverlay: フォトオーバーレイを有効化
-Show photo overlay when the user clicks on a layer: レイヤーをクリックした際にフォトオーバーレイを表示
-Settings: 設定
-Add Layer from Resource: リソースからレイヤーを追加
-Add Sketch Layer: スケッチレイヤーを追加
-Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
-Layers: レイヤー
-New Layer: 新しいレイヤー
-Fly to: 移動
-"Cesium Ion token not configured. Using fallback.\nClick to configure": Cesium Ionトークンが設定されていません。フォールバックを使用します。\nクリックして設定
-Delete this Layer?: このレイヤーを削除しますか？
-Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
-Interface: インターフェース
-Code: コード
-Invalid style: 無効なスタイル
-No style selected: スタイルが選択されていません
-Marker style: マーカースタイル
-Polyline style: ポリラインスタイル
-Polygon style: ポリゴンスタイル
-3dtiles style: 3Dタイルスタイル
-3D model style: 3Dモデルのスタイル
-Condition is incompatible with the current system for this node or value.: 条件は現在のシステムと互換性がありません。
-Expression is incompatible with the current system for this node or value.: 式は現在のシステムと互換性がありません。
-${your property name}: ${プロパティ名}
-font family: フォントファミリー
-font size: フォントサイズ
-font weight: フォントウェイト
-font color: フォントカラー
-italic: イタリック
-New node: 新しいノード
-Assign style: スタイルの割り当て
-New style: 新しいスタイル
-Search Map: マップを検索
-Contain: 収める
-Fixed: 固定
-Photo transparency: フォト透過度
-PhotoOverlay settings: フォトオーバーレイ設定
-Photo: フォト
-Photo size type: フォトサイズタイプ
-Photo size: フォトサイズ
-Photo description: フォト説明
-Camera: カメラ
-Area: 都道府県
-Dataset Type: カテゴリー
-PLATEAU Data Catalog: PLATEAUデータカタログ
-Search by name: 名前で検索
-No results found: 結果が見つかりません
-Loading...: ロード中...
-Main: メイン
-Tiles: タイル
-Terrain: 地形
-Globe: 地球
-Sky: 空
-Unknown scene setting: 不明なシーン設定
-Scene: シーン
-New Sketch Layer: 新しいスケッチレイヤー
-Create: 作成
-' Text': ' テキスト'
-Type Title here: タイトルをここに入力
-Title: タイトル
-Type: タイプ
-The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください
-New Property: 新しいプロパティ
-Click to place the point: クリックでポイントを追加する
-Double click or press Enter key to finish drawing: ダブルクリックするか、Enter キーを押して描画を終了します
-Right click to cancel drawing: 右クリックで描画をキャンセルする
-Press ESC to undo the last step: ESCキーで最後のステップを取り消す
-Marker: マーカー
-Polyline: ポリライン
-Circle: 丸
-Rectangle: 長方形
-Polygon: ポリゴン
-Extruded circle: 円柱
-Extruded rectangle: 立方体
-Extruded polygon: 押し出しポリゴン
-Drag and Drop to adjust the point position: ドラッグ&ドロップでポイントの位置を調整する
-Select a point and press Delete key to remove it: ポイントを選択して Delete キーを押すと削除されます
-Double click or press Enter to save the edits: 編集内容を保存するにはダブルクリックするか、Enter キーを押します
-Right click to cancel editing: 右クリックで編集をキャンセルする
-Edit Geometry: ジオメトリを編集
-Delete Feature: 地物を削除
-Delete this feature?: 地物を削除しますか?
-Are you sure you want to delete this feature? If deleted, you can not recover it again.: 本当にこの地物を削除しますか？削除すると二度と復元できません。
-Story: ストーリー
-Publish: 公開
-Unpublish: 非公開にする
-Publish your story: ストーリーを公開する
-Publish your scene: シーンを公開する
-Update your story: ストーリーを更新する
-Update your scene: シーンを更新する
-Congratulations! 🎊 Your story has been published: 🎊おめでとうございます！あなたのストーリーが公開されました。
-Congratulations! 🎊 Your scene has been published: 🎊おめでとうございます！あなたのシーンが公開されました。
-Congratulations! 🎊 Your story has been updated: 🎊おめでとうございます！あなたのストーリーが更新されました。
-Congratulations! 🎊 Your scene has been updated: 🎊おめでとうございます！あなたのシーンが更新されました。
-Please visit your project by URL below !: 以下のURLからあなたのプロジェクトをご確認ください。
-Embed Code: 埋め込み用コード
-'* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
-'* Please use this code if you want to embed your scene into a webpage': その他のWebサイトでこのシーンを埋め込む場合は、こちらのコードを使用してください
-Want to change public settings?: 公開設定を変更しますか？
-Go to settings: 設定へ
-Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
-Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
-Your story will be published. This means anybody can view this story by default url.: ストーリーが公開されます。デフォルトのURLを知っている人は誰でもこのストーリーを閲覧できるようになります。
-Your scene will be published. This means anybody can view this project by default url.: シーンが公開されます。デフォルトのURLを知っている人は誰でもこのプロジェクトを閲覧できるようになります。
-Search engine indexing: 検索可能にする
-Page will be available as result on search engines: プロジェクトが検索エンジンの検索結果に表示されるようになります
-Your story will be unpublished.: ストーリーを非公開にする
-Your scene will be unpublished.: シーンを非公開にする
-This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.: URLを知っている人でもこのストーリーを見ることができなくなります。このストーリーを埋め込んだWebサイトへ影響を及ぼす可能性があります。
-This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: URLを知っている人でもこのシーンを見ることができなくなります。このシーンを埋め込んだWebサイトへ影響を及ぼす可能性があります。
-Page Settings: ページ設定
-All Layers: 全てのレイヤー
-Pages: ページ
-New Page: 新しいページ
-Untitled: タイトルなし
-Container Settings: コンテナ設定
-Padding top: 上の余白
-Padding right: 右の余白
-Padding bottom: 下の余白
-Padding left: 左の余白
-Gap spacing: 間隔
-Align centered: 中央に配置
-Background color: 背景色
-Align System: アラインシステム
-Add Widget: ウィジェットを追加
-Widget Manager: ウィジェット管理
-Plugin: プラグイン
-Dashboard: ダッシュボード
-Editor: エディタ
-Unknown: 不明
-Map: マップ
-Widgets: ウィジェット
-Re:Earth Visualizer: Re:Earthビジュアライザー
-Oops, Page Not Found!: おっと、ページが見つかりません！
-Go to Dashboard: ダッシュボードへ移動
-Error: エラー
-Warning: 注意
-Notice: 通知
-You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
-HTML Editor: HTML エディター
-Run Code: コードを実行
-No valid schema defined.: 有効なスキーマが定義されていません。
-Chiyoda 3D Tiles: 千代田区 3D Tiles
-Japanese Heritage Sites: 日本の遺産
-Viewer: ビューアー
-Plugins: プラグイン
-Extension Settings: 拡張機能の設定
-Add File: ファイルを追加
-Import Plugin: プラグインをインポート
-Export Plugin: プラグインをエクスポート
-Share Plugin: プラグインを共有
-Shared: 共有
-No plugins: プラグインがありません
-Close: 閉じる
-This plugin is too large to share via URL. Please use the Export function to download the plugin and share the file directly.: このプラグインはURLで共有するには大きすぎます。エクスポート機能を使用してプラグインをダウンロードし、ファイルを直接共有してください。
-Custom: カスタム
-User Interface: ユーザーインターフェース
-Data: データ
-Viewer & Scene Settings: ビューアとシーン設定
-Manage Layer: レイヤーの管理
-Manage Layer Style: レイヤースタイルの管理
-Timeline: タイムライン
-My Plugin: マイプラグイン
-Responsive Panel: レスポンシブ パネル
-Sidebar: サイドバー
-Header: ヘッダー
-Popup: ポップアップ
-Modal Window: モーダルウィンドウ
-Messenger Between Extension and Visualizer: エクステンションとVisualizerとの通信
-Messenger Between Extensions: エクステンション間での通信
-Enable Shadow Style: 影の表示を有効にする
-Enable Terrain: 3D地形を有効にする
-Show Label: ラベルを表示
-Take Screenshot: スクリーンショットを撮る
-Mouse Events: マウスイベント
-Get Current Location: 現在位置を取得
-Add GeoJSON: GeoJSONを追加
-Add Large Geojson: 大容量のGeoJSONを追加
-Add CSV: CSVを追加
-Add KML: KMLを追加
-Add WMS: WMSを追加
-Add CZML: CZMLを追加
-Add 3D Tiles: 3Dタイルを追加
-Add Photogrammetric 3D model: フォトグラメトリ3Dモデルを追加
-Add Point Cloud: 点群データを追加
-Add Google Photorealistic 3D Tiles: Google Photorealistic 3D Tilesを追加
-Add infobox to show all properties: 全てのプロパティを表示するインフォボックスを追加
-Add infobox to show specific properties: 特定のプロパティを表示するインフォボックスを追加
-Add infobox to show rich blocks: リッチブロックを表示するインフォボックスを追加
-Add OSM 3D Tiles: OSM 3D Tilesを追加
-Hide Fly To Delete Layer: カメラ移動とレイヤーの削除
-Override Layer Data: レイヤーデータの上書き
-Show Selected Features Information: 選択された地物情報を表示
-Layer Styling Examples: レイヤースタイリング
-Feature Style 3D Model: フィーチャースタイル 3D モデル
-Feature Style 3D Tiles: フィーチャースタイル 3D タイル
-Filter Features by Style: スタイルでフィーチャーをフィルタリング
-Override Style: スタイルの上書き
-Style With Condition: 条件付きスタイル
-Playback Control: 再生コントロール
-Time Driven Features: 時系列による地物変化
-Time Driven Path: 時系列による線形移動
-Client Storage: クライアントストレージ
-Extension Property: 拡張プロパティ
-Zoom In Out: ズームイン/アウト
-Camera Rotation: カメラ回転
-Camera Position: カメラ位置
-Shared Plugin: 共有プラグイン
-Invalid shared plugin URL: 共有プラグインのURLが無効です
-File not found: ファイルが見つかりません
-Only zip files are supported: zipファイルのみサポートされています
-Zip file is empty: Zipファイルは空です
-Plugin link copied to clipboard: プラグインのリンクがクリップボードにコピーされました
-Show Story Panel: ストーリーパネルを表示
-UI Language: UI言語
-General: 一般
-README: リードミー
-License: ライセンス
-Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
-Basic settings: 基本設定
-Thumbnail: サムネイル画像
-Danger Zone: 重要操作
-Change project visibility: プロジェクトの公開範囲を変更
-You can choose whether your project is Public or Private.: あなたのプロジェクトを公開または非公開にすることができます。
-Public projects are visible to everyone and can be discovered by others.: 公開プロジェクトは誰でも閲覧可能で、他の人に発見されることがあります。
-Private projects are only accessible to members of the workspace and are available only for workspaces on a paid plan.: 非公開プロジェクトはワークスペースのメンバーのみがアクセスでき、有料プランのワークスペースでのみ利用可能です。
-This setting helps you control who can view and collaborate on your project. You can change the visibility at any time.: この設定により、プロジェクトを閲覧および共同作業できる人を制御できます。表示はいつでも変更可能です。
-Change visibility: 表示を変更する
-Remove this project: このプロジェクトを削除
-This process will move this project to Recycle bin.: この操作によりプロジェクトがゴミ箱に移動します。
-Change Visibility: 表示を変更する
-Confirm visibility: 表示を確認する
-Project Visibility: プロジェクトの公開範囲
-Please upgrade your plan to create a private project.: 非公開プロジェクトを作成するには、プランをアップグレードしてください。
-Preview: プレビュー
-Choose a template: テンプレートを選択してください
-Save License: ライセンスを保存
-Write down your license: ライセンスを書き込む
-You can select a license from the following templates to apply to your current project.: 以下のテンプレートからライセンスを選択して、現在のプロジェクトに適用できます。
-Once selected, it will replace the current license setting. Please make sure you understand the implications of the new license.: 選択すると、現在のライセンス設定が置き換えられます。新しいライセンスの影響を十分に理解していることを確認してください。
-Select a license: ライセンスを選択してください
-Plugin Marketplace: プラグインマーケットプレイス
-Public Installed: 公開インストール済み
-Personal Installed: 個人インストール済み
-Zip file from PC: PCからZipファイルをアップロード
-Public GitHub repository: GitHubパブリックレポジトリ
-Installed Plugins: インストール済みプラグイン
-Uninstall: アンインストール
-Installed: インストール済み
-Install: インストール
-You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: 選択中のプラグインをアンインストールします。このプラグインに紐付いたデータも削除されます。よろしいですか？
-Please be sure before uninstalling.: プラグインをアンインストールする前にご確認ください。
-No description.: 説明なし
-Import GitHub repository: GitHubリポジトリをインポート
-Continue: 続行
-'Repository url:': 'リポジトリURL:'
-Edit Alias: エイリアスを編集
-You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ストーリーのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
-You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
-Your Alias: あなたのエイリアス'
-Reset: リセット
-Public Info: 公開情報
-Published page settings: 公開ページ設定
-This section's settings are mainly applied to the Open Graph Protocol settings in the header of the published page.: このセクションの設定は、主に公開ページのヘッダーにあるOpen Graph Protocolの設定に適用されます。
-The Title setting will be applied to the <title> tag and og:title.: タイトルの設定は<title>タグとog:titleに適用されます。
-Write down your text: 文章を書く
-The Description setting will be applied to og:description.: 説明の設定はog:descriptionに適用されます。
-Image url: 画像URL
-The Thumbnail setting will be applied to og:image.: サムネイルの設定はog:imageに適用されます。
-Favicon: ファビコン
-The favicon setting will be applied to the icon shown in the browser tab.: ファビコンの設定は、ブラウザタブに表示されるアイコンに適用されます。
-Alias Setting: エイリアス設定
-Please publish your story before setting up your alias.: エイリアスを設定する前にストーリーを公開してください。
-Please publish your map project before setting up your alias.: エイリアスを設定する前にプロジェクトを公開してください。
-Custom Domain: カスタムドメイン
-Please publish your map story before setting up your custom domain.: カスタムドメインを設定する前に、ストーリーを公開してください
-Please publish your map project before setting up your custom domain.: カスタムドメインを設定する前に、プロジェクトを公開してください。
-Basic Authorization: ベーシック認証
-Enable Basic Authorization: ベーシック認証を有効にする
-Username: ユーザー名
-Google Analytics: Googleアナリティクス
-Enable Google Analytics: Googleアナリティクスを有効にする
-Tracking ID: トラッキングID
-README Editing: READMEの編集
-Save README: READMEを保存
-Left: 左
-Right: 右
-Story Panel settings: ストーリーパネル設定
-Panel Position: パネル位置
-Background Color: 背景色
-Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。
-Could not verify your signup. Please start the process over.: サインアップを確認できませんでした。もう一度やり直してください。
-Save: 保存
-Display title: 表示タイトル
-New Camera: 新しいカメラ
-New Camera Button: 新しいカメラボタン
-Buttons List: ボタンリスト
-New Layers Button: 新しいレイヤーボタン
-New Link Button: 新しいリンクボタン
-Add markdown text here: マークダウンテキストをここに追加
-Color: 色
-Data Attribution: データ帰属
-'Data Provided by:': データ提供元：
-aria-label-compass: コンパス
-aria-label-adjust-angle: 角度調整
-aria-label-zoom-in: ズームイン
-aria-label-Go-to-the-home-position: ホームポジションに移動
-aria-label-zoom-out: ズームアウト
-Street View: ストリートビュー
-Select a location on the map to view Street View: 地図上の場所を選択してストリートビューを表示
-Please provide the API key: APIキーを入力してください
-1sec/sec: 1秒/秒
-0.5min/sec: 0.5分/秒
-1min/sec: 1分/秒
-0.1hr/sec: 0.1時間/秒
-0.5hr/sec: 0.5時間/秒
-1hr/sec: 1時間/秒
-New Channel: 新しいチャンネル
-Default Channel: デフォルトチャンネル
-Spacing settings: 余白設定
-Block: ブロック
-Unsupported field type: サポートされていないフィールドタイプ
-Delete workspace: ワークスペースを削除
-I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
-This action is permanent and cannot be reversed.: この操作は元に戻すことができません。
-This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ワークスペースと、ワークスペースに関連するすべてのプロジェクト、アセット、データセットがチーム全員から完全に削除されます。
-Please type your workspace name to continue.: 続行するにはワークスペース名を入力してください。
-You are going to delete a workspace.: ワークスペースを削除しようとしています。
-Please make sure you don't have any projects in the workspace before continuing.: 続行する前に、ワークスペースにプロジェクトがないことを確認してください。
-Workspace: ワークスペース
-Workspace Name: ワークスペース名
-This process will delete this workspace: この操作により、このワークスペースが削除されます
-Workspace settings: ワークスペース設定
-New workspace: ワークスペース作成
-Account settings: アカウント設定
-Write your story :): ストーリーを書く :)
-Normal: 通常
-Heading 1: 見出し1
-Heading 2: 見出し2
-Heading 3: 見出し3
-Bullet List: 箇条書きリスト
-Numbered List: 番号付きリスト
-Quote: 引用
-Formatting options for font family: フォントファミリーの書式設定オプション
-Formatting options for font size: フォントサイズの書式設定オプション
-Formatting options for line height: 行の高さの書式設定オプション
-Center Align: 中央揃え
-Justify Align: 両端揃え
-Left Align: 左揃え
-Right Align: 右揃え
-Outdent: インデントを減らす
-Indent: インデントを増やす
-Bulleted List: 箇条書きリスト
-Insert Code Block: コードブロックを挿入
-Insert Link: リンクを挿入
-Text Color: テキストカラー
-Strikethrough: 打ち消し線
-Subscript: 下付き文字
-Superscript: 上付き文字
-Clear Formatting: 書式をクリア
-Please select: 選択してください
-This function is currently experimental and remains somewhat unstable.: この機能は試験運用中です。不具合が生じる可能性があることをご了承ください。
-'Sort:': '並び替え:'
-Grid Layout: グリッドレイアウト
-List Layout: リストのレイアウト
-Version: バージョン
-Wrong file format: 誤ったファイル形式
-Choose: 選択
-Upload: アップロード
-Position Capture: 位置キャプチャ
-Latitude: 緯度
-Longitude: 経度
-Height: 高さ
-Current Position: 現在の位置
-Current Rotation: 現在の回転
-Heading: ヘディング
-Pitch: ピッチ
-Roll: ロール
-FOV: 視野角
-Camera Position Editor: カメラ位置エディタ
-Location: 位置
-value: 値
-Rotation: 回転
-Position Set: 位置セット
-Capture: キャプチャ
-New Item: 新規追加
-New Credit: 新しいクレジット
-min: 最小
-max: 最大
-Time Period Settings: 期間設定
-'* Start Time': '* 開始時間'
-Start time for the timeline: タイムラインの開始時間
-'* Current Time': '* 現在の時間'
-Current time should be between start and end time: 現在の時間は開始時間と終了時間の間である必要があります
-'* End Time': '* 終了時間'
-End time for the timeline: タイムラインの終了時間
-Please make sure the Current time must between the Start time and End Time.: 現在の時間は開始時間と終了時間の間である必要があります。
-set: 設定
-Set Time: 時間を設定
-Date: 日付
-Time: 時刻
-Time Zone: タイムゾーン
-Zoom Level Editor: ズームレベルエディター
-Member Limit Exceeded: メンバー上限を超えました
-This workspace has exceeded the member limit for its current plan. Editing is temporarily disabled for all members. Please ask the workspace owner to remove extra members or upgrade the plan to restore access.: >-
-  このワークスペースは、現在のプランのメンバー上限を超えています。すべてのメンバーの編集が一時的に無効になっています。ワークスペースの所有者に、追加のメンバーを削除するか、プランをアップグレードしてアクセスを復元するよう依頼してください。
-Failed to add one or more assets.: アセットの追加に失敗しました。
-Successfully added one or more assets.: アセットの追加に成功しました。
-Failed to delete one or more assets.: アセットの削除に失敗しました。
-One or more assets were successfully deleted.: アセットの削除に成功しました。
-Failed to add layer.: レイヤーの追加に失敗しました。
-Successfully added a new layer: 新しいレイヤーの追加に成功しました
-Failed to update the layer.: レイヤーの更新に失敗しました。
-Successfully updated the layer!: レイヤーの更新に成功しました！
-Failed to delete the feature.: フィーチャーの削除に失敗しました。
-Successfully deleted the feature!: フィーチャーの削除に成功しました！
-Failed to create block.: ブロックの作成に失敗しました。
-Successfully created a block!: ブロックの作成に成功しました！
-Failed to delete block.: ブロックの削除に失敗しました。
-Block was successfully deleted.: ブロックの削除に成功しました。
-Failed to move block.: ブロックの移動に失敗しました。
-Block was successfully moved.: ブロックの移動に成功しました。
-Failed to update the custom property schema.: カスタムプロパティスキーマの更新に失敗しました。
-Successfully updated the custom property schema!: カスタムプロパティスキーマの更新に成功しました！
-Failed to update the custom property title.: カスタムプロパティタイトルの更新に失敗しました
-Successfully updated the custom property title!: カスタムプロパティタイトルの更新に成功しました！
-Failed to remove the custom property.: カスタムプロパティの削除に失敗しました
-Successfully removed the custom property!: カスタムプロパティの削除に成功しました！
-Failed to remove the layer.: レイヤーの削除に失敗しました。
-Successfully removed the layer!: レイヤーの削除に成功しました！
-Failed to add layer style.: レイヤースタイルの追加に失敗しました。
-Successfully added a new layer style!: 新しいレイヤースタイルの追加に成功しました！
-Failed to update the layerStyle.: レイヤースタイルの更新に失敗しました。
-Successfully updated a the layerStyle!: レイヤースタイルの更新に成功しました！
-Failed to delete the layer style.: レイヤースタイルの削除に失敗しました。
-Successfully deleted the layer style!: レイヤースタイルの削除に成功しました！
-Successfully enabled photo overlay: フォトオーバーレイが有効になりました
-Failed to install plugin.: プラグインのインストールに失敗しました。
-Successfully installed plugin!: プラグインがインストールされました。
-Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。
-Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
-Failed to uninstall plugin.: プラグインの削除に失敗しました。
-Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
-Failed to export project.: プロジェクトのエクスポートに失敗しました。
-Successfully exported project!: プロジェクトのエクスポートに成功しました！
-Failed to upload the file.: ファイルのアップロードに失敗しました。
-Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
-Failed to import project.: プロジェクトのインポートに失敗しました。
-Failed to create project.: プロジェクトの作成に失敗しました。
-Default: デフォルト
-Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
-Successfully created project!: 新しいプロジェクトの作成に成功しました！
-Failed to publish project.: プロジェクト公開に失敗しました。
-Successfully published your scene!: シーンの公開に成功しました！
-Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
-Successfully unpublished your scene. Now nobody can access your scene.: シーンは非公開状態です。現在、誰も閲覧することはできません。
-Failed to update project.: プロジェクトのアップデートに失敗しました。
-Successfully updated your scene!: シーンの更新されました！
-Successfully updated your scene with search engine indexing!: 検索エンジンのインデックスを含めてシーンの更新に成功しました！
-Successfully updated your scene. Now nobody can access your scene.: シーンの更新に成功しました。現在、誰も閲覧することはできません。
-Successfully updated project!: プロジェクトのアップデートに成功しました！
-Failed to move to the Recycle bin.: ゴミ箱への移動に失敗しました。
-Failed to recover the project!: プロジェクトの復元に失敗しました。
-Successfully moved to Recycle bin!: ゴミ箱への移動に成功しました！
-Successfully recovered the project!: プロジェクトの復元に成功しました！
-Failed to archive project.: プロジェクトの非編集状態に失敗しました。
-Failed to unarchive project.: プロジェクトの非編集化の解除に失敗しました。
-Successfully archive project!: プロジェクトのアーカイブに成功しました！
-Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
-Failed to delete project.: プロジェクトの削除に失敗しました。
-Successfully delete project!: プロジェクトの削除に成功しました！
-Failed to update project metadata.: プロジェクトのメタデータの更新に失敗しました。
-Successfully updated project metadata!: プロジェクトのメタデータを正常に更新しました！
-Failed to update property.: プロパティのアップデートに失敗しました。
-Successfully updated the property value!: プロパティの値が更新されました！
-Failed to create story.: ストーリーの作成に失敗しました。
-Successfully created a story!: ストーリーの作成に成功しました！
-Failed to update story.: ストーリーの更新に失敗しました。
-Successfully updated a story!: ストーリーの更新に成功しました！
-Failed to publish story.: ストーリーの公開に失敗しました。
-Successfully published your story!: ストーリーの公開に成功しました！
-Successfully published your story with search engine indexing!: 検索エンジンのインデックスを含めてストーリーの公開に成功しました！
-Successfully unpublished your story. Now nobody can access your story.: ストーリーは非公開状態です。現在、誰も閲覧することはできません。
-Successfully updated your story!: ストーリーの更新に成功しました！
-Successfully updated your story with search engine indexing!: 検索エンジンのインデックスを含めてストーリーの更新に成功しました！
-Successfully updated your story. Now nobody can access your story.: ストーリーの更新に成功しました。現在、誰も閲覧することはできません。
-Failed to create page.: ページの作成に失敗しました。
-Successfully created a page!: ページの作成に成功しました！
-Failed to delete page.: ページの削除に失敗しました。
-Page was successfully deleted.: ページの削除に成功しました。
-Failed to move page.: ページの移動に失敗しました。
-Page was successfully moved.: ページの移動に成功しました。
-Failed to update page.: ページの更新に失敗しました。
-Successfully updated a page!: ページの更新に成功しました！
-Failed to update user password.: ユーザーパスワードの更新に失敗しました。
-Successfully updated user password!: ユーザーパスワードの更新に成功しました！
-Failed to change language.: 言語の変更に失敗しました。
-Successfully updated user language!: ユーザーの言語が更新されました！
-Failed to add widget.: ウィジェットの追加に失敗しました。
-Failed to update widget.: ウィジェットの更新に失敗しました。
-Failed to remove widget.: ウィジェットの削除に失敗しました。
-Failed to update widget alignment.: ウィジェットの配置を更新できませんでした。
-Failed to update the widget align system.: ウィジェットの配置システムを更新できませんでした。
-Failed to create workspace.: ワークスペースの作成に失敗しました。
-Successfully created workspace!: ワークスペースの作成に成功しました！
-Failed to delete workspace.: ワークスペースの削除に失敗しました。
-Successfully deleted workspace!: ワークスペースの削除に成功しました！
-Failed to update workspace.: ワークスペースの更新に失敗しました。
-Successfully updated workspace!: ワークスペースの更新に成功しました！
-Failed to add member to workspace.: ワークスペースへのメンバー追加に失敗しました。
-Successfully added member to workspace!: ワークスペースへのメンバー追加に成功しました！
-Failed to remove member from workspace.: ワークスペースからメンバーの削除に失敗しました。
-Successfully removed member from workspace!: ワークスペースからメンバーの削除に成功しました！
-Failed to update member in workspace.: ワークスペースのメンバー更新に失敗しました。
-Successfully updated member in workspace!: ワークスペースのメンバー更新に成功しました！
+Cesium Ion token not configured. Using fallback.: ''
+Configure token: ''
+Desktop: ''
+Mobile: ''
+Street View and Google Map Search require a Google Maps tile type to comply with Google Maps policies. Please select Google Satellite or Google Road Map.: ''
+Page: ''
+From Assets: ''
+From Web: ''
+Source Type: ''
+Asset: ''
+Resource URL: ''
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ''
+Latitude Column Name: ''
+Column Name: ''
+Longitude Column Name: ''
+Add to Layer: ''
+From Value: ''
+Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: ''
+Input Text: ''
+Value: ''
+Input data here: ''
+Auto Update Time: ''
+'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': ''
+Invalid GeoJSON format: ''
+Please enter valid GeoJSON: ''
+Prioritize Performance: ''
+If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: ''
+Vector Tile: ''
+3D Tiles: ''
+Data Source Manager: ''
+Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: ''
+Please provide cesium ion access token on Main settings to use Cesium Ion.: ''
+Re:Earth: ''
+Cesium Ion: ''
+Provider: ''
+Re:Earth Buildings: ''
+Cesium OSM 3D Tiles: ''
+Google Photorealistic 3D Tiles: ''
+URL: ''
+Choose layer to add: ''
+layer name: ''
+Layer name: ''
+'Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies.': ''
+'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': ''
+'Disabled: Zoom level configuration is not available for system tiles.': ''
+Inspector: ''
+Layer: ''
+Layer Name: ''
+Format: ''
+Custom property schema: ''
+Update data resource URL: ''
+New data resource URL: ''
+Resource URL copied to clipboard: ''
+Edit: ''
+Edit Field: ''
+Delete Field: ''
+More: ''
+Edit Custom Property: ''
+New Custom Property: ''
+Submit: ''
+Property Title: ''
+Property Type: ''
+Please select one type: ''
+Apply Current Edits?: ''
+This save will apply to all features in the current layer. Do you want to proceed?: ''
+No field has been created yet: ''
+New Field: ''
+Delete schema property field?: ''
+This action will apply to all features in the current layer. Do you want to proceed?: ''
+Unsupported custom field: ''
+Custom Properties: ''
+No custom properties: ''
+Geometry: ''
+Properties: ''
+Photo Overlay: ''
+Photo Overlay Set: ''
+Not set: ''
+Feature: ''
+Layer Style: ''
+Infobox: ''
+Enable Infobox: ''
+Show infobox when the user clicks on a layer: ''
+NO STYLE: ''
+Enable PhotoOverlay: ''
+Show photo overlay when the user clicks on a layer: ''
+Settings: ''
+Add Layer from Resource: ''
+Add Sketch Layer: ''
+Add Layer from PLATEAU Asset: ''
+Layers: ''
+New Layer: ''
+Fly to: ''
+"Cesium Ion token not configured. Using fallback.\nClick to configure": ''
+Delete this Layer?: ''
+Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: ''
+Interface: ''
+Code: ''
+Invalid style: ''
+No style selected: ''
+Marker style: ''
+Polyline style: ''
+Polygon style: ''
+3dtiles style: ''
+3D model style: ''
+Condition is incompatible with the current system for this node or value.: ''
+Expression is incompatible with the current system for this node or value.: ''
+${your property name}: ''
+font family: ''
+font size: ''
+font weight: ''
+font color: ''
+italic: ''
+New node: ''
+Assign style: ''
+New style: ''
+Search Map: ''
+Contain: ''
+Fixed: ''
+Photo transparency: ''
+PhotoOverlay settings: ''
+Photo: ''
+Photo size type: ''
+Photo size: ''
+Photo description: ''
+Camera: ''
+Area: ''
+Dataset Type: ''
+PLATEAU Data Catalog: ''
+Search by name: ''
+No results found: ''
+Loading...: ''
+Main: ''
+Tiles: ''
+Terrain: ''
+Globe: ''
+Sky: ''
+Unknown scene setting: ''
+Scene: ''
+New Sketch Layer: ''
+Create: ''
+' Text': ''
+Type Title here: ''
+Title: ''
+Type: ''
+The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: ''
+New Property: ''
+Click to place the point: ''
+Double click or press Enter key to finish drawing: ''
+Right click to cancel drawing: ''
+Press ESC to undo the last step: ''
+Marker: ''
+Polyline: ''
+Circle: ''
+Rectangle: ''
+Polygon: ''
+Extruded circle: ''
+Extruded rectangle: ''
+Extruded polygon: ''
+Drag and Drop to adjust the point position: ''
+Select a point and press Delete key to remove it: ''
+Double click or press Enter to save the edits: ''
+Right click to cancel editing: ''
+Edit Geometry: ''
+Delete Feature: ''
+Delete this feature?: ''
+Are you sure you want to delete this feature? If deleted, you can not recover it again.: ''
+Story: ''
+Publish: ''
+Unpublish: ''
+Publish your story: ''
+Publish your scene: ''
+Update your story: ''
+Update your scene: ''
+Congratulations! 🎊 Your story has been published: ''
+Congratulations! 🎊 Your scene has been published: ''
+Congratulations! 🎊 Your story has been updated: ''
+Congratulations! 🎊 Your scene has been updated: ''
+Please visit your project by URL below !: ''
+Embed Code: ''
+'* Please use this code if you want to embed your story into a webpage': ''
+'* Please use this code if you want to embed your scene into a webpage': ''
+Want to change public settings?: ''
+Go to settings: ''
+Your published story will be updated. This means all current changes will overwrite the current published story.: ''
+Your published scene will be updated. This means all current changes will overwrite the current published scene.: ''
+Your story will be published. This means anybody can view this story by default url.: ''
+Your scene will be published. This means anybody can view this project by default url.: ''
+Search engine indexing: ''
+Page will be available as result on search engines: ''
+Your story will be unpublished.: ''
+Your scene will be unpublished.: ''
+This means that anybody with the URL will become unable to view this story. This includes websites where this story is embedded.: ''
+This means that anybody with the URL will become unable to view this scene. This includes websites where this scene is embedded.: ''
+Page Settings: ''
+All Layers: ''
+Pages: ''
+New Page: ''
+Untitled: ''
+Container Settings: ''
+Padding top: ''
+Padding right: ''
+Padding bottom: ''
+Padding left: ''
+Gap spacing: ''
+Align centered: ''
+Background color: ''
+Align System: ''
+Add Widget: ''
+Widget Manager: ''
+Project: ''
+Project Settings: ''
+Plugin: ''
+Dashboard: ''
+Editor: ''
+Map: ''
+Widgets: ''
+Re:Earth Visualizer: ''
+Oops, Page Not Found!: ''
+Go to Dashboard: ''
+Error: ''
+Warning: ''
+Notice: ''
+You have reached a policy limit. Please contact an administrator of your Re:Earth system.: ''
+HTML Editor: ''
+Run Code: ''
+No valid schema defined.: ''
+Chiyoda 3D Tiles: ''
+Japanese Heritage Sites: ''
+Viewer: ''
+Plugins: ''
+Extension Settings: ''
+Add File: ''
+Import Plugin: ''
+Export Plugin: ''
+Share Plugin: ''
+Shared: ''
+No plugins: ''
+Close: ''
+This plugin is too large to share via URL. Please use the Export function to download the plugin and share the file directly.: ''
+Custom: ''
+User Interface: ''
+Data: ''
+Viewer & Scene Settings: ''
+Manage Layer: ''
+Manage Layer Style: ''
+Timeline: ''
+My Plugin: ''
+Responsive Panel: ''
+Sidebar: ''
+Header: ''
+Popup: ''
+Modal Window: ''
+Messenger Between Extension and Visualizer: ''
+Messenger Between Extensions: ''
+Enable Shadow Style: ''
+Enable Terrain: ''
+Show Label: ''
+Take Screenshot: ''
+Mouse Events: ''
+Get Current Location: ''
+Add GeoJSON: ''
+Add Large Geojson: ''
+Add CSV: ''
+Add KML: ''
+Add WMS: ''
+Add CZML: ''
+Add 3D Tiles: ''
+Add Photogrammetric 3D model: ''
+Add Point Cloud: ''
+Add Google Photorealistic 3D Tiles: ''
+Add infobox to show all properties: ''
+Add infobox to show specific properties: ''
+Add infobox to show rich blocks: ''
+Add OSM 3D Tiles: ''
+Hide Fly To Delete Layer: ''
+Override Layer Data: ''
+Show Selected Features Information: ''
+Layer Styling Examples: ''
+Feature Style 3D Model: ''
+Feature Style 3D Tiles: ''
+Filter Features by Style: ''
+Override Style: ''
+Style With Condition: ''
+Playback Control: ''
+Time Driven Features: ''
+Time Driven Path: ''
+Client Storage: ''
+Extension Property: ''
+Zoom In Out: ''
+Camera Rotation: ''
+Camera Position: ''
+Shared Plugin: ''
+Invalid shared plugin URL: ''
+File not found: ''
+Only zip files are supported: ''
+Zip file is empty: ''
+Plugin link copied to clipboard: ''
+Show Story Panel: ''
+UI Language: ''
+Visualizer: ''
+CMS: ''
+Open terrain tiles for 3D globes: ''
+Open 3D buildings tiles for the world: ''
+Open Map Tile Service: ''
+Re:Earth Home: ''
+Community: ''
+Re:Earth products: ''
+Re:Earth data services: ''
+Other: ''
+General: ''
+README: ''
+License: ''
+Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: ''
+Basic settings: ''
+Thumbnail: ''
+Danger Zone: ''
+Change project visibility: ''
+You can choose whether your project is Public or Private.: ''
+Public projects are visible to everyone and can be discovered by others.: ''
+Private projects are only accessible to members of the workspace and are available only for workspaces on a paid plan.: ''
+This setting helps you control who can view and collaborate on your project. You can change the visibility at any time.: ''
+Change visibility: ''
+Remove this project: ''
+This process will move this project to Recycle bin.: ''
+Change Visibility: ''
+Confirm visibility: ''
+Project Visibility: ''
+Please upgrade your plan to create a private project.: ''
+Preview: ''
+License Editing: ''
+Choose a template: ''
+Cancel changes: ''
+Save License: ''
+Write down your license: ''
+Plugin Marketplace: ''
+Public Installed: ''
+Personal Installed: ''
+Zip file from PC: ''
+Public GitHub repository: ''
+Installed Plugins: ''
+Uninstall: ''
+Installed: ''
+Install: ''
+You are uninstalling the selected plugin. The data used by this plugin may also be deleted.: ''
+Please be sure before uninstalling.: ''
+No description.: ''
+Import GitHub repository: ''
+Continue: ''
+'Repository url:': ''
+Edit Alias: ''
+You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ''
+You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: ''
+Your Alias: ''
+Reset: ''
+Public Info: ''
+Published page settings: ''
+This section's settings are mainly applied to the Open Graph Protocol settings in the header of the published page.: ''
+The Title setting will be applied to the <title> tag and og:title.: ''
+Description: ''
+Write down your text: ''
+The Description setting will be applied to og:description.: ''
+Image url: ''
+The Thumbnail setting will be applied to og:image.: ''
+Favicon: ''
+The favicon setting will be applied to the icon shown in the browser tab.: ''
+Alias Setting: ''
+Please publish your story before setting up your alias.: ''
+Please publish your map project before setting up your alias.: ''
+Custom Domain: ''
+Please publish your map story before setting up your custom domain.: ''
+Please publish your map project before setting up your custom domain.: ''
+Basic Authorization: ''
+Enable Basic Authorization: ''
+Username: ''
+Google Analytics: ''
+Enable Google Analytics: ''
+Tracking ID: ''
+README Editing: ''
+Save README: ''
+Left: ''
+Right: ''
+Story Panel settings: ''
+Panel Position: ''
+Background Color: ''
+Your account has been successfully verified! Feel free to login now.: ''
+Could not verify your signup. Please start the process over.: ''
+Personal Account: ''
+Team Workspace: ''
+New workspace: ''
+Workspace: ''
+Save: ''
+Display title: ''
+New Camera: ''
+New Camera Button: ''
+Buttons List: ''
+New Layers Button: ''
+New Link Button: ''
+Add markdown text here: ''
+Color: ''
+Data Attribution: ''
+'Data Provided by:': ''
+aria-label-compass: ''
+aria-label-adjust-angle: ''
+aria-label-zoom-in: ''
+aria-label-Go-to-the-home-position: ''
+aria-label-zoom-out: ''
+Street View: ''
+Select a location on the map to view Street View: ''
+Please provide the API key: ''
+1sec/sec: ''
+0.5min/sec: ''
+1min/sec: ''
+0.1hr/sec: ''
+0.5hr/sec: ''
+1hr/sec: ''
+New Channel: ''
+Default Channel: ''
+Spacing settings: ''
+Block: ''
+Unsupported field type: ''
+Delete workspace: ''
+I am sure I want to delete this workspace.: ''
+This action is permanent and cannot be reversed.: ''
+This will permanently delete the workspace and all related projects, assets and datasets for all team members.: ''
+Please type your workspace name to continue.: ''
+You are going to delete a workspace.: ''
+Please make sure you don't have any projects in the workspace before continuing.: ''
+Workspace Name: ''
+This process will delete this workspace: ''
+Account Settings: ''
+Log out: ''
+Workspace settings: ''
+Write your story :): ''
+Normal: ''
+Heading 1: ''
+Heading 2: ''
+Heading 3: ''
+Bullet List: ''
+Numbered List: ''
+Quote: ''
+Formatting options for font family: ''
+Formatting options for font size: ''
+Formatting options for line height: ''
+Center Align: ''
+Justify Align: ''
+Left Align: ''
+Right Align: ''
+Outdent: ''
+Indent: ''
+Bulleted List: ''
+Insert Code Block: ''
+Insert Link: ''
+Text Color: ''
+Strikethrough: ''
+Subscript: ''
+Superscript: ''
+Clear Formatting: ''
+Open — Free to use: ''
+Share-alike — Derivatives stay open: ''
+Limited use: ''
+No license: ''
+Keep all rights reserved — you can select a license or create your own later.: ''
+Anyone can use, share, and adapt your work for any purpose, including commercially, as long as they credit you.: ''
+Anyone can use, change, and share your work, including in commercial or closed products – they only keep your copyright notice.: ''
+Like MIT, plus an explicit patent grant for extra legal protection. Anyone can use it commercially; they keep notices and mark any changes.: ''
+Anyone can freely use, modify, and share your data for any purpose – they only keep the attribution notice.: ''
+Anyone can use and adapt your database, including commercially, as long as they credit you.: ''
+Anyone can use and adapt your work, including commercially, but must credit you and release their versions under this same license.: ''
+Anyone can use and modify your software, but anything they build on it must also be shared as open source under this license.: ''
+Others can include your code in their own programs, even closed ones. Only changes to your code itself must be shared as open source.: ''
+A European open-source license. Anyone can use and modify your work, but their versions must stay open under a compatible license.: ''
+Anyone can use and adapt your database, including commercially, but must credit you and share any adapted database under this same license.: ''
+Anyone can share your work, including commercially, but must credit you and cannot publish modified versions.: ''
+Please select: ''
+Open in a new tab: ''
+Scroll down: ''
+This function is currently experimental and remains somewhat unstable.: ''
+'Sort:': ''
+Grid Layout: ''
+List Layout: ''
+Version: ''
+Wrong file format: ''
+Choose: ''
+Upload: ''
+Position Capture: ''
+Latitude: ''
+Longitude: ''
+Height: ''
+Current Position: ''
+Current Rotation: ''
+Heading: ''
+Pitch: ''
+Roll: ''
+FOV: ''
+Camera Position Editor: ''
+Location: ''
+value: ''
+Rotation: ''
+Position Set: ''
+Capture: ''
+New Item: ''
+New Credit: ''
+min: ''
+max: ''
+Time Period Settings: ''
+'* Start Time': ''
+Start time for the timeline: ''
+'* Current Time': ''
+Current time should be between start and end time: ''
+'* End Time': ''
+End time for the timeline: ''
+Please make sure the Current time must between the Start time and End Time.: ''
+set: ''
+Set Time: ''
+Date: ''
+Time: ''
+Time Zone: ''
+Zoom Level Editor: ''
+Member Limit Exceeded: ''
+This workspace has exceeded the member limit for its current plan. Editing is temporarily disabled for all members. Please ask the workspace owner to remove extra members or upgrade the plan to restore access.: ''
+Failed to add one or more assets.: ''
+Successfully added one or more assets.: ''
+Failed to delete one or more assets.: ''
+One or more assets were successfully deleted.: ''
+Failed to add layer.: ''
+Successfully added a new layer: ''
+Failed to update the layer.: ''
+Successfully updated the layer!: ''
+Failed to delete the feature.: ''
+Successfully deleted the feature!: ''
+Failed to create block.: ''
+Successfully created a block!: ''
+Failed to delete block.: ''
+Block was successfully deleted.: ''
+Failed to move block.: ''
+Block was successfully moved.: ''
+Failed to update the custom property schema.: ''
+Successfully updated the custom property schema!: ''
+Failed to update the custom property title.: ''
+Successfully updated the custom property title!: ''
+Failed to remove the custom property.: ''
+Successfully removed the custom property!: ''
+Failed to remove the layer.: ''
+Successfully removed the layer!: ''
+Failed to add layer style.: ''
+Successfully added a new layer style!: ''
+Failed to update the layerStyle.: ''
+Successfully updated a the layerStyle!: ''
+Failed to delete the layer style.: ''
+Successfully deleted the layer style!: ''
+Successfully enabled photo overlay: ''
+Failed to install plugin.: ''
+Successfully installed plugin!: ''
+Failed to upgrade plugin.: ''
+Successfully upgraded plugin!: ''
+Failed to uninstall plugin.: ''
+Successfully uninstalled plugin.: ''
+Failed to export project.: ''
+Successfully exported project!: ''
+Failed to upload the file.: ''
+Failed to upload chunk 0.: ''
+Failed to import project.: ''
+Failed to create project.: ''
+Default: ''
+Failed to create story page on project creation.: ''
+Successfully created project!: ''
+Failed to publish project.: ''
+Successfully published your scene!: ''
+Successfully published your project with search engine indexing!: ''
+Successfully unpublished your scene. Now nobody can access your scene.: ''
+Failed to update project.: ''
+Successfully updated your scene!: ''
+Successfully updated your scene with search engine indexing!: ''
+Successfully updated your scene. Now nobody can access your scene.: ''
+Successfully updated project!: ''
+Failed to move to the Recycle bin.: ''
+Failed to recover the project!: ''
+Successfully moved to Recycle bin!: ''
+Successfully recovered the project!: ''
+Failed to archive project.: ''
+Failed to unarchive project.: ''
+Successfully archive project!: ''
+Successfully unarchived the project. You can now edit this project.: ''
+Failed to delete project.: ''
+Successfully delete project!: ''
+Failed to update project metadata.: ''
+Successfully updated project metadata!: ''
+Failed to update property.: ''
+Successfully updated the property value!: ''
+Failed to create story.: ''
+Successfully created a story!: ''
+Failed to update story.: ''
+Successfully updated a story!: ''
+Failed to publish story.: ''
+Successfully published your story!: ''
+Successfully published your story with search engine indexing!: ''
+Successfully unpublished your story. Now nobody can access your story.: ''
+Successfully updated your story!: ''
+Successfully updated your story with search engine indexing!: ''
+Successfully updated your story. Now nobody can access your story.: ''
+Failed to create page.: ''
+Successfully created a page!: ''
+Failed to delete page.: ''
+Page was successfully deleted.: ''
+Failed to move page.: ''
+Page was successfully moved.: ''
+Failed to update page.: ''
+Successfully updated a page!: ''
+Failed to update user password.: ''
+Successfully updated user password!: ''
+Failed to change language.: ''
+Successfully updated user language!: ''
+Failed to add widget.: ''
+Failed to update widget.: ''
+Failed to remove widget.: ''
+Failed to update widget alignment.: ''
+Failed to update the widget align system.: ''
+Failed to create workspace.: ''
+Successfully created workspace!: ''
+Failed to delete workspace.: ''
+Successfully deleted workspace!: ''
+Failed to update workspace.: ''
+Successfully updated workspace!: ''
+Failed to add member to workspace.: ''
+Successfully added member to workspace!: ''
+Failed to remove member from workspace.: ''
+Successfully removed member from workspace!: ''
+Failed to update member in workspace.: ''
+Successfully updated member in workspace!: ''
