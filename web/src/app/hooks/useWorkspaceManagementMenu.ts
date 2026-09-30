@@ -38,7 +38,7 @@ export default ({
     const {
       workspaceManagement,
       externalWorkspaceManagementUrl,
-      membersManagementOnDashboard,
+      membersManagement,
       externalMembersManagementUrl
     } = appFeature();
 
@@ -49,7 +49,7 @@ export default ({
         id: "workspaceSettings",
         dataTestid: "workspace-settings",
         title: t("Workspace settings"),
-        icon: "arrowExternalLink",
+        icon: externalWorkspaceManagementUrl ? "arrowExternalLink" : undefined,
         iconPosition: "right",
         onClick: () =>
           externalWorkspaceManagementUrl
@@ -64,12 +64,12 @@ export default ({
       });
     }
 
-    if (membersManagementOnDashboard || externalMembersManagementUrl) {
+    if (membersManagement || externalMembersManagementUrl) {
       menu.push({
         id: "membersSettings",
         dataTestid: "members-settings",
         title: t("Members"),
-        icon: "arrowExternalLink",
+        icon: externalMembersManagementUrl ? "arrowExternalLink" : undefined,
         iconPosition: "right",
         onClick: () =>
           externalMembersManagementUrl
@@ -80,7 +80,7 @@ export default ({
                 }),
                 "_blank"
               )
-            : navigate(`/settings/workspaces/${workspaceId}`)
+            : navigate(`/dashboard/${workspaceId}/members`)
       });
     }
 
