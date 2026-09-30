@@ -79,6 +79,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   return {
     workspaces,
     currentWorkspace,
+    userInfo: data,
     avatarURL,
     topTabs,
     bottomTabs,
