@@ -46,7 +46,8 @@ const Profile: FC<ProfileProps> = ({
 
   const { workspaceManagementMenu } = useWorkspaceManagementMenu({
     workspaceId: currentWorkspace?.id,
-    workspaceAlias: currentWorkspace?.alias
+    workspaceAlias: currentWorkspace?.alias,
+    isPersonal: currentWorkspace?.personal
   });
 
   const submenuItems: PopupMenuItem[] = useMemo(() => {

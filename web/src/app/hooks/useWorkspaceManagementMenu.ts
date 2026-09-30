@@ -14,12 +14,14 @@ import { useAvatarMenuItems } from "./useAvatarMenuItems";
 export default ({
   workspaceId,
   workspaceAlias,
+  isPersonal,
   userName,
   userEmail,
   onSignOut
 }: {
   workspaceId?: string;
   workspaceAlias?: string;
+  isPersonal?: boolean;
   userName?: string;
   userEmail?: string;
   onSignOut?: () => void;
@@ -64,7 +66,7 @@ export default ({
       });
     }
 
-    if (membersManagement || externalMembersManagementUrl) {
+    if (!isPersonal && (membersManagement || externalMembersManagementUrl)) {
       menu.push({
         id: "membersSettings",
         dataTestid: "members-settings",
@@ -85,7 +87,7 @@ export default ({
     }
 
     return menu;
-  }, [workspaceId, t, navigate, workspaceAlias]);
+  }, [workspaceId, t, navigate, workspaceAlias, isPersonal]);
 
   const accountMenuItems: PopupMenuItem[] = useMemo(
     () => [

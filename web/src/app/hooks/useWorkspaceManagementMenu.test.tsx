@@ -50,7 +50,7 @@ describe("useWorkspaceManagementMenu", () => {
     (appFeature as Mock).mockReturnValue({
       workspaceManagement: true,
       externalWorkspaceManagementUrl: undefined,
-      membersManagementOnDashboard: true,
+      membersManagement: true,
       externalMembersManagementUrl: undefined
     });
   });
@@ -63,7 +63,7 @@ describe("useWorkspaceManagementMenu", () => {
     (appFeature as Mock).mockReturnValue({
       workspaceManagement: false,
       externalWorkspaceManagementUrl: undefined,
-      membersManagementOnDashboard: false,
+      membersManagement: false,
       externalMembersManagementUrl: undefined
     });
 
@@ -76,7 +76,7 @@ describe("useWorkspaceManagementMenu", () => {
     (appFeature as Mock).mockReturnValue({
       workspaceManagement: true,
       externalWorkspaceManagementUrl: undefined,
-      membersManagementOnDashboard: false,
+      membersManagement: false,
       externalMembersManagementUrl: undefined
     });
 
@@ -89,17 +89,17 @@ describe("useWorkspaceManagementMenu", () => {
       id: "workspaceSettings",
       dataTestid: "workspace-settings",
       title: "Workspace settings",
-      icon: "arrowExternalLink",
+      icon: undefined,
       iconPosition: "right",
       onClick: expect.any(Function)
     });
   });
 
-  it("should show membersSettings when membersManagementOnDashboard is enabled", () => {
+  it("should show membersSettings when membersManagement is enabled", () => {
     (appFeature as Mock).mockReturnValue({
       workspaceManagement: false,
       externalWorkspaceManagementUrl: undefined,
-      membersManagementOnDashboard: true,
+      membersManagement: true,
       externalMembersManagementUrl: undefined
     });
 
@@ -112,7 +112,7 @@ describe("useWorkspaceManagementMenu", () => {
       id: "membersSettings",
       dataTestid: "members-settings",
       title: "Members",
-      icon: "arrowExternalLink",
+      icon: undefined,
       iconPosition: "right",
       onClick: expect.any(Function)
     });
@@ -122,7 +122,7 @@ describe("useWorkspaceManagementMenu", () => {
     (appFeature as Mock).mockReturnValue({
       workspaceManagement: true,
       externalWorkspaceManagementUrl: undefined,
-      membersManagementOnDashboard: true,
+      membersManagement: true,
       externalMembersManagementUrl: undefined
     });
 
@@ -141,7 +141,7 @@ describe("useWorkspaceManagementMenu", () => {
     (appFeature as Mock).mockReturnValue({
       workspaceManagement: true,
       externalWorkspaceManagementUrl: undefined,
-      membersManagementOnDashboard: false,
+      membersManagement: false,
       externalMembersManagementUrl: undefined
     });
 
@@ -167,7 +167,7 @@ describe("useWorkspaceManagementMenu", () => {
     (appFeature as Mock).mockReturnValue({
       workspaceManagement: false,
       externalWorkspaceManagementUrl: externalUrl,
-      membersManagementOnDashboard: false,
+      membersManagement: false,
       externalMembersManagementUrl: undefined
     });
 
@@ -190,7 +190,7 @@ describe("useWorkspaceManagementMenu", () => {
     (appFeature as Mock).mockReturnValue({
       workspaceManagement: false,
       externalWorkspaceManagementUrl: undefined,
-      membersManagementOnDashboard: false,
+      membersManagement: false,
       externalMembersManagementUrl: externalUrl
     });
 
@@ -225,5 +225,42 @@ describe("useWorkspaceManagementMenu", () => {
     projects?.onClick?.(projects.id);
 
     expect(mockNavigate).toHaveBeenCalledWith("/dashboard/workspace-1");
+  });
+
+  it("should hide membersSettings for personal workspaces", () => {
+    (appFeature as Mock).mockReturnValue({
+      workspaceManagement: false,
+      externalWorkspaceManagementUrl: undefined,
+      membersManagement: true,
+      externalMembersManagementUrl: undefined
+    });
+
+    const { result } = renderHook(() =>
+      useWorkspaceManagementMenu({
+        workspaceId: "workspace-123",
+        isPersonal: true
+      })
+    );
+
+    expect(result.current.workspaceManagementMenu).toHaveLength(0);
+  });
+
+  it("should show membersSettings for team workspaces when membersManagement is enabled", () => {
+    (appFeature as Mock).mockReturnValue({
+      workspaceManagement: false,
+      externalWorkspaceManagementUrl: undefined,
+      membersManagement: true,
+      externalMembersManagementUrl: undefined
+    });
+
+    const { result } = renderHook(() =>
+      useWorkspaceManagementMenu({
+        workspaceId: "workspace-123",
+        isPersonal: false
+      })
+    );
+
+    expect(result.current.workspaceManagementMenu).toHaveLength(1);
+    expect(result.current.workspaceManagementMenu[0].id).toBe("membersSettings");
   });
 });

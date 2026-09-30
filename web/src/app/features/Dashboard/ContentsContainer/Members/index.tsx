@@ -78,7 +78,8 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
 
   const { membersManagement } = appFeature();
 
-  if (!membersManagement) return null;
+  // Hide members management for personal workspaces or when feature is disabled
+  if (!membersManagement || currentWorkspace?.personal) return null;
 
   return (
     <Wrapper>
