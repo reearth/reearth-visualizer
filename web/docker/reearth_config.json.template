@@ -5,6 +5,7 @@
     "auth0Domain": ${REEARTH_AUTH0_DOMAIN},
     "brand": ${REEARTH_BRAND},
     "cloudApi": ${REEARTH_CLOUD_API},
+    "cmsUrl": ${REEARTH_CMS_URL},
     "currentTos": ${REEARTH_CURRENT_TOS},
     "customProviders": ${REEARTH_CUSTOM_PROVIDERS},
     "documentationUrl": ${REEARTH_DOCUMENTATION_URL},
