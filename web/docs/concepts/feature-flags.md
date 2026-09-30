@@ -58,7 +58,7 @@ All feature flags have sensible defaults that work without configuration:
 
 ```typescript
 const DEFAULT_CONFIG = {
-  membersManagementOnDashboard: true, // Safe, common feature
+  membersManagement: true, // Safe, common feature
   workspaceCreation: true,
   accountManagement: true,
 };
@@ -92,7 +92,7 @@ Set environment variable with JSON configuration:
 ```bash
 # .env or .env.local
 REEARTH_WEB_APP_FEATURE_CONFIG='{
-  "membersManagementOnDashboard": false,
+  "membersManagement": false,
   "workspaceCreation": true,
   "accountManagement": false,
   "externalAccountManagementUrl": "https://platform.example.com/[USER_ALIAS]"
@@ -126,7 +126,7 @@ const Dashboard = () => {
   return (
     <div>
       {features.workspaceCreation && <CreateWorkspaceButton />}
-      {features.membersManagementOnDashboard && <MembersPanel />}
+      {features.membersManagement && <MembersPanel />}
     </div>
   );
 };
@@ -136,7 +136,7 @@ const Dashboard = () => {
 
 ### UI Feature Flags
 
-#### `membersManagementOnDashboard`
+#### `membersManagement`
 
 **Type**: `boolean`
 
@@ -148,11 +148,11 @@ const Dashboard = () => {
 
 ```typescript
 const Dashboard = () => {
-  const { membersManagementOnDashboard } = appFeature();
+  const { membersManagement } = appFeature();
 
   return (
     <div>
-      {membersManagementOnDashboard && (
+      {membersManagement && (
         <Section title="Team Members">
           <MembersList />
           <InviteMemberButton />
@@ -548,7 +548,7 @@ describe("Workspace Management", () => {
 ```bash
 # .env.local - Enable all features for development
 REEARTH_WEB_APP_FEATURE_CONFIG='{
-  "membersManagementOnDashboard": true,
+  "membersManagement": true,
   "workspaceCreation": true,
   "workspaceManagement": true,
   "accountManagement": true
@@ -582,7 +582,7 @@ REEARTH_WEB_APP_FEATURE_CONFIG='{
 REEARTH_WEB_APP_FEATURE_CONFIG='{
   "defaultTileType": "google_satellite",
   "externalAccountManagementUrl": "https://platform.example.com/[WORKSPACE_ALIAS]/users/[USER_ALIAS]",
-  "membersManagementOnDashboard": false
+  "membersManagement": false
 }'
 ```
 

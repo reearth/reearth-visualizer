@@ -51,7 +51,9 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
 
   const platformUrl = c?.platformUrl;
   const cmsUrl = c?.cmsUrl;
-  const homeUrl = c?.homeUrl;
+  const homeUrl = platformUrl
+    ? `${platformUrl.replace(/\/+$/, "")}/home`
+    : undefined;
 
   const goToDashboard = workspaceId
     ? () => navigate(`/dashboard/${workspaceId}`)

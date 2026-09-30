@@ -162,7 +162,7 @@ These are structural constraints, **not bugs**. Do not attempt to "fix" them wit
 - **Scope:** Entire suite `test.skip`
 
 ### 5c. Feature Flag — `members.spec.ts`
-- **Root cause:** `membersManagementOnDashboard` flag controls Members tab visibility
+- **Root cause:** `membersManagement` flag controls Members tab visibility
 - **Pattern:** `test.skip(!membersTabVisible, "Members tab not visible in this environment")`
 - **Do not** remove the conditional skip — it protects non-EE deployments
 

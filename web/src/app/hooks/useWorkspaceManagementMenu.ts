@@ -14,12 +14,14 @@ import { useAvatarMenuItems } from "./useAvatarMenuItems";
 export default ({
   workspaceId,
   workspaceAlias,
+  isPersonal,
   userName,
   userEmail,
   onSignOut
 }: {
   workspaceId?: string;
   workspaceAlias?: string;
+  isPersonal?: boolean;
   userName?: string;
   userEmail?: string;
   onSignOut?: () => void;
@@ -38,7 +40,7 @@ export default ({
     const {
       workspaceManagement,
       externalWorkspaceManagementUrl,
-      membersManagementOnDashboard,
+      membersManagement,
       externalMembersManagementUrl
     } = appFeature();
 
@@ -49,7 +51,7 @@ export default ({
         id: "workspaceSettings",
         dataTestid: "workspace-settings",
         title: t("Workspace settings"),
-        icon: "arrowExternalLink",
+        icon: externalWorkspaceManagementUrl ? "arrowExternalLink" : undefined,
         iconPosition: "right",
         onClick: () =>
           externalWorkspaceManagementUrl
@@ -64,12 +66,12 @@ export default ({
       });
     }
 
-    if (membersManagementOnDashboard || externalMembersManagementUrl) {
+    if (!isPersonal && (membersManagement || externalMembersManagementUrl)) {
       menu.push({
         id: "membersSettings",
         dataTestid: "members-settings",
         title: t("Members"),
-        icon: "arrowExternalLink",
+        icon: externalMembersManagementUrl ? "arrowExternalLink" : undefined,
         iconPosition: "right",
         onClick: () =>
           externalMembersManagementUrl
@@ -80,12 +82,12 @@ export default ({
                 }),
                 "_blank"
               )
-            : navigate(`/settings/workspaces/${workspaceId}`)
+            : navigate(`/dashboard/${workspaceId}/members`)
       });
     }
 
     return menu;
-  }, [workspaceId, t, navigate, workspaceAlias]);
+  }, [workspaceId, t, navigate, workspaceAlias, isPersonal]);
 
   const accountMenuItems: PopupMenuItem[] = useMemo(
     () => [
