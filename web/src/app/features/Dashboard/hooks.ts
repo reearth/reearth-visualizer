@@ -53,7 +53,11 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const bottomTabs = useMemo(() => bottomTabsItems, [bottomTabsItems]);
 
   useEffect(() => {
-    if (workspace?.id && workspace.id !== currentWorkspace?.id) {
+    if (
+      workspace?.id &&
+      (workspace.id !== currentWorkspace?.id ||
+        currentWorkspace.personal !== isPersonal)
+    ) {
       setCurrentWorkspace({
         ...workspace,
         personal: isPersonal,
