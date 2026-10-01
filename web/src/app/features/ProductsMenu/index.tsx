@@ -113,6 +113,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
       title: "Navara",
       description: t("3D map engine, MapLibre family"),
       icon: "navaraLogo",
+      background: "#313F42",
       onNavigate: () => openUrlInNewTab(MAP_ENGINE_URLS.NAVARA)
     }
   ];
@@ -162,7 +163,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
         <IconButton icon="dotsNineVertical" appearance="simple" size="large" />
       }
     >
-      <Panel width={300}>
+      <Panel width={330}>
         <ContentWrapper>
           <Typography size="footnote">{t("Re:Earth products")}</Typography>
           <Grid>
@@ -192,7 +193,9 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
               type="button"
               onClick={handleAction(engine)}
             >
-              <Icon size={56} icon={engine.icon} />
+              <ProductIcon background={engine.background}>
+                <Icon size={32} icon={engine.icon} />
+              </ProductIcon>
               <MapEngineText>
                 <TitleWithArrow>
                   <Typography size="body">{engine.title}</Typography>
@@ -202,7 +205,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
                     color={theme.content.weak}
                   />
                 </TitleWithArrow>
-                <Typography size="body" color="weak">
+                <Typography size="body" color="#B1B1B1">
                   {engine.description}
                 </Typography>
               </MapEngineText>
@@ -221,7 +224,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
                     color={theme.content.weak}
                   />
                 </DataServiceLabel>
-                <Typography size="body" color="weak">
+                <Typography size="body" color="#B1B1B1">
                   {service.description}
                 </Typography>
               </DataServiceRow>
@@ -364,13 +367,14 @@ const PillButton = styled("button")(({ theme }) => ({
   padding: `6px ${theme.spacing.normal}px`,
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: "99px",
-  color: theme.content.weak,
+  color: "#B1B1B1",
   fontSize: theme.fonts.sizes.body,
   cursor: css.cursor.pointer,
   "&:focus-visible": {
     outline: `2px solid ${theme.primary.main}`,
     outlineOffset: "2px"
   },
+  backgroundColor: theme.bg[0],
   "&:hover": {
     backgroundColor: theme.select.main,
     border: `1px solid ${theme.select.main}`,
