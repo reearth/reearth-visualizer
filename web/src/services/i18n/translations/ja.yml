@@ -771,3 +771,14 @@ Failed to remove member from workspace.: ワークスペースからメンバー
 Successfully removed member from workspace!: ワークスペースからメンバーの削除に成功しました！
 Failed to update member in workspace.: ワークスペースのメンバー更新に失敗しました。
 Successfully updated member in workspace!: ワークスペースのメンバー更新に成功しました！
+Enter the URL of a plugin server to load a plugin.: プラグインを配信しているサーバーの URL を入力すると、プラグインを読み込みます。
+Load: 読み込む
+The URL must serve reearth.yml and <extension-id>.js. A change event on <url>/events reloads the plugin.: >-
+  URL からは reearth.yml と <extension-id>.js を取得します。<url>/events の change
+  イベントでプラグインを再読み込みします。
+'To serve a plugin, run this in its directory:': プラグインを配信するには、そのディレクトリで次を実行します：
+Or open this page with ?{{param}}=<url>.: '?{{param}}=<url> を付けてこのページを開くこともできます。'
+Watching for changes: 変更を監視中
+Not connected: 未接続
+No plugin: プラグインがありません
+Reload: 再読み込み
