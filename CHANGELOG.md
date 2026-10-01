@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.25 - 2026-10-01
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Correct members link config and menu icon ([#2434](https://github.com/reearth/reearth-visualizer/pull/2434)) [`c278fc`](https://github.com/reearth/reearth-visualizer/commit/c278fc)
+- Make the CMS and Re:Earth Home links in the products menu work ([#2432](https://github.com/reearth/reearth-visualizer/pull/2432)) [`66a26c`](https://github.com/reearth/reearth-visualizer/commit/66a26c)
+- Improve navigation UI&#x2F;UX across the application ([#2334](https://github.com/reearth/reearth-visualizer/pull/2334)) [`9efbb0`](https://github.com/reearth/reearth-visualizer/commit/9efbb0)
+
+#### ✨ Refactor
+
+- Improve common navigation ui&#x2F;ux ([#2436](https://github.com/reearth/reearth-visualizer/pull/2436)) [`e46a41`](https://github.com/reearth/reearth-visualizer/commit/e46a41)
+- Re-revert align licence  content with the design ([#2428](https://github.com/reearth/reearth-visualizer/pull/2428)) [`ba5615`](https://github.com/reearth/reearth-visualizer/commit/ba5615)
+- Re-revert improve license UI&#x2F;UX for the for ecosystem consistency [VIZ-DEV-224] ([#2426](https://github.com/reearth/reearth-visualizer/pull/2426)) [`509bb5`](https://github.com/reearth/reearth-visualizer/commit/509bb5)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.25 ([#2433](https://github.com/reearth/reearth-visualizer/pull/2433)) [`338cdb`](https://github.com/reearth/reearth-visualizer/commit/338cdb)
+
+### Server
+
+#### 🚀 Features
+
+- Log expected accounts failures at WARN ([#2417](https://github.com/reearth/reearth-visualizer/pull/2417)) [`4b4039`](https://github.com/reearth/reearth-visualizer/commit/4b4039)
+
+#### 🔧 Bug Fixes
+
+- Batch property-import field writes into a single Save (SCA-06) ([#2430](https://github.com/reearth/reearth-visualizer/pull/2430)) [`7f60cc`](https://github.com/reearth/reearth-visualizer/commit/7f60cc)
+- Commit the transaction in Storytelling.Remove ([#2431](https://github.com/reearth/reearth-visualizer/pull/2431)) [`70ea94`](https://github.com/reearth/reearth-visualizer/commit/70ea94)
+- Answer a wrongly sized split-import chunk with 400 ([#2435](https://github.com/reearth/reearth-visualizer/pull/2435)) [`208d92`](https://github.com/reearth/reearth-visualizer/commit/208d92)
+- Answer a signup rejection with the status it deserves ([#2416](https://github.com/reearth/reearth-visualizer/pull/2416)) [`35b421`](https://github.com/reearth/reearth-visualizer/commit/35b421)
+- Tighten access control on published-project endpoints ([#2413](https://github.com/reearth/reearth-visualizer/pull/2413)) [`85ca93`](https://github.com/reearth/reearth-visualizer/commit/85ca93)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Make the release job safe to re-run ([#2397](https://github.com/reearth/reearth-visualizer/pull/2397)) [`3dd2ae`](https://github.com/reearth/reearth-visualizer/commit/3dd2ae)
+
+### e2e
+
+#### 🔧 Bug Fixes
+
+- Send the gateway token when testing published_data directly ([#2427](https://github.com/reearth/reearth-visualizer/pull/2427)) [`324e96`](https://github.com/reearth/reearth-visualizer/commit/324e96)
+
+#### 🧪 Testing
+
+- Add shared plugin zip setup for plugin API e2e tests ([#2398](https://github.com/reearth/reearth-visualizer/pull/2398)) [`50dde1`](https://github.com/reearth/reearth-visualizer/commit/50dde1)
+
 ## 1.0.0-beta.16.24 - 2026-09-16
 
 ### Web
