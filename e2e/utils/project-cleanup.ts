@@ -443,7 +443,7 @@ function getBrowserEnvToken(sp: string): { token: string } | null {
  * Returns a GraphQLClient pointing to the OSS API when running against a
  * Cloud Run PR preview URL, otherwise returns null (caller uses dev client).
  */
-async function getOSSClient(
+export async function getOSSClient(
   request: APIRequestContext
 ): Promise<GraphQLClient | null> {
   const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL ?? "";
