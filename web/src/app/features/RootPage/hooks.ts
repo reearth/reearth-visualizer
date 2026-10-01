@@ -79,7 +79,15 @@ export default () => {
     } else {
       if (!data?.me) return;
       setCurrentUserId(data?.me?.id);
-      setCurrentWorkspace(data.me?.myWorkspace ?? undefined);
+
+      // myWorkspace is always the user's personal workspace
+      if (data.me?.myWorkspace) {
+        setCurrentWorkspace({
+          ...data.me.myWorkspace,
+          personal: true
+        });
+      }
+
       navigate(`/dashboard${workspaceId ? "/" + workspaceId : ""}`);
     }
   }, [

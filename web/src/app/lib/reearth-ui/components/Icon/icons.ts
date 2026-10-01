@@ -5,12 +5,14 @@ import AddStyle from "./Icons/AddStyle.svg?react";
 import AlertCircle from "./Icons/AlertCircle.svg?react";
 import Appearance from "./Icons/Apperance.svg?react";
 import ArrowCounterClockWise from "./Icons/ArrowCounterClockWise.svg?react";
+import ArrowExternalLink from "./Icons/ArrowExternalLink.svg?react";
 import ArrowLeftRight from "./Icons/ArrowLeftRight.svg?react";
 import ArrowLongLeft from "./Icons/ArrowLongLeft.svg?react";
 import ArrowLongRight from "./Icons/ArrowLongRight.svg?react";
 import ArrowsHorizontalIn from "./Icons/ArrowsHorizontalIn.svg?react";
 import ArrowsHorizontalOut from "./Icons/ArrowsHorizontalOut.svg?react";
 import ArrowSquareOut from "./Icons/ArrowSquareOut.svg?react";
+import ArrowUpRightBadge from "./Icons/ArrowUpRightBadge.svg?react";
 import Article from "./Icons/Article.svg?react";
 import AToZ from "./Icons/AToZ.svg?react";
 import Book from "./Icons/Book.svg?react";
@@ -39,6 +41,7 @@ import ClockAfternoon from "./Icons/ClockAfternoon.svg?react";
 import ClockClockwise from "./Icons/ClockClockwise.svg?react";
 import ClockFilled from "./Icons/ClockFilled.svg?react";
 import Close from "./Icons/Close.svg?react";
+import CmsLogo from "./Icons/CmsLogo.svg?react";
 import Compass from "./Icons/Compass.svg?react";
 import CompassFocus from "./Icons/CompassFocus.svg?react";
 import Copy from "./Icons/Copy.svg?react";
@@ -52,6 +55,7 @@ import Data from "./Icons/Data.svg?react";
 import Desktop from "./Icons/Desktop.svg?react";
 import DeviceMobile from "./Icons/DeviceMobile.svg?react";
 import Discord from "./Icons/Discord.svg?react";
+import DotsNineVertical from "./Icons/DotsNineVertical.svg?react";
 import DotsSixVertical from "./Icons/DotsSixVertical.svg?react";
 import DotsThreeVertical from "./Icons/DotsThreeVertical.svg?react";
 import DownloadSimple from "./Icons/DownloadSimple.svg?react";
@@ -76,6 +80,7 @@ import FileMDFilled from "./Icons/FileMDFilled.svg?react";
 import Flask from "./Icons/Flask.svg?react";
 import Float from "./Icons/Float.svg?react";
 import FloppyDisk from "./Icons/FloppyDisk.svg?react";
+import FlowLogo from "./Icons/FlowLogo.svg?react";
 import FolderFilled from "./Icons/FolderFilled.svg?react";
 import FolderNotchOpen from "./Icons/FolderNotchOpen.svg?react";
 import FolderSimple from "./Icons/FolderSimple.svg?react";
@@ -112,6 +117,7 @@ import MemberAdd from "./Icons/MemberAdd.svg?react";
 import Minus from "./Icons/Minus.svg?react";
 import Mobile from "./Icons/Mobile.svg?react";
 import More from "./Icons/More.svg?react";
+import NavaraLogo from "./Icons/NavaraLogo.svg?react";
 import NavigatorAngle from "./Icons/NavigatorAngle.svg?react";
 import NewWorkspace from "./Icons/NewWorkspace.svg?react";
 import Notebook from "./Icons/Notebook.svg?react";
@@ -213,12 +219,14 @@ export default {
   alertCircle: AlertCircle,
   appearance: Appearance,
   arrowCounterClockWise: ArrowCounterClockWise,
+  arrowExternalLink: ArrowExternalLink,
   arrowLeftRight: ArrowLeftRight,
   arrowLongLeft: ArrowLongLeft,
   arrowLongRight: ArrowLongRight,
   arrowsHorizontalIn: ArrowsHorizontalIn,
   arrowsHorizontalOut: ArrowsHorizontalOut,
   arrowSquareOut: ArrowSquareOut,
+  arrowUpRightBadge: ArrowUpRightBadge,
   article: Article,
   aToZ: AToZ,
   book: Book,
@@ -248,6 +256,7 @@ export default {
   clockClockwise: ClockClockwise,
   close: Close,
   compass: Compass,
+  cmsLogo: CmsLogo,
   compassFocus: CompassFocus,
   copy: Copy,
   copyright: Copyright,
@@ -260,6 +269,7 @@ export default {
   desktop: Desktop,
   deviceMobile: DeviceMobile,
   discord: Discord,
+  dotsNineVertical: DotsNineVertical,
   dotsSixVertical: DotsSixVertical,
   dotsThreeVertical: DotsThreeVertical,
   downloadSimple: DownloadSimple,
@@ -284,6 +294,7 @@ export default {
   flask: Flask,
   float: Float,
   floppyDisk: FloppyDisk,
+  flowLogo: FlowLogo,
   folderFilled: FolderFilled,
   folderNotchOpen: FolderNotchOpen,
   folderSimple: FolderSimple,
@@ -320,6 +331,7 @@ export default {
   minus: Minus,
   mobile: Mobile,
   more: More,
+  navaraLogo: NavaraLogo,
   navigatorAngle: NavigatorAngle,
   newWorkspace: NewWorkspace,
   notebook: Notebook,

@@ -22,6 +22,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/apperr"
 	file_ "github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -177,14 +178,14 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 	}
 	isFinal := idx == s.totalChunks-1
 	if n == 0 {
-		return false, fmt.Errorf("chunk %d is empty", idx)
+		return false, apperr.InvalidInput(fmt.Sprintf("chunk %d is empty", idx), nil)
 	}
 	if !isFinal && n != s.chunkSize {
-		return false, fmt.Errorf("chunk %d is %d bytes, want exactly %d", idx, n, s.chunkSize)
+		return false, apperr.InvalidInput(fmt.Sprintf("chunk %d is %d bytes, want exactly %d", idx, n, s.chunkSize), nil)
 	}
 	var probe [1]byte
 	if extra, _ := r.Read(probe[:]); extra > 0 {
-		return false, fmt.Errorf("chunk %d exceeds max chunk size (%d bytes)", idx, s.chunkSize)
+		return false, apperr.InvalidInput(fmt.Sprintf("chunk %d exceeds max chunk size (%d bytes)", idx, s.chunkSize), nil)
 	}
 
 	s.received[idx] = struct{}{}
@@ -570,6 +571,16 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 	completed, err := session.writeChunk(chunkNum, file)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to write chunk: %v", err)
+		// A wrongly sized chunk is the client's fault: answer 400 and keep it
+		// out of ERROR logs. The project is still marked failed so it does not
+		// stay stuck in UPLOADING.
+		if apperr.Expected(err) {
+			if pid := session.snapshot().ProjectID; pid != nil {
+				log.Warnfc(ctx, "[Import] rejected chunk: %s", errMsg)
+				writeImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
+			}
+			return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
+		}
 		if pid := session.snapshot().ProjectID; pid != nil {
 			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 		}

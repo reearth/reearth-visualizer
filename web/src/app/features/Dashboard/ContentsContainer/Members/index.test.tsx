@@ -7,7 +7,7 @@ import Members from ".";
 const mocks = vi.hoisted(() => ({
   workspace: undefined as { id: string; members: WorkspaceMember[] } | undefined,
   me: { id: "me" } as { id: string } | undefined,
-  membersManagementOnDashboard: true
+  membersManagement: true
 }));
 
 vi.mock("@reearth/services/api/workspace", () => ({
@@ -20,7 +20,7 @@ vi.mock("@reearth/services/api/user", () => ({
 
 vi.mock("@reearth/services/config/appFeatureConfig", () => ({
   appFeature: () => ({
-    membersManagementOnDashboard: mocks.membersManagementOnDashboard
+    membersManagement: mocks.membersManagement
   })
 }));
 
@@ -70,7 +70,7 @@ const rowNames = () =>
 describe("Members", () => {
   beforeEach(() => {
     mocks.me = { id: "me" };
-    mocks.membersManagementOnDashboard = true;
+    mocks.membersManagement = true;
     mocks.workspace = frozenWorkspace([
       member("w1", "Zoe", Role.Writer),
       member("me", "Owner One", Role.Owner),
@@ -217,10 +217,19 @@ describe("Members", () => {
   });
 
   it("renders nothing when member management is disabled", () => {
-    mocks.membersManagementOnDashboard = false;
+    mocks.membersManagement = false;
 
     const { container } = render(
       <Members currentWorkspace={{ id: "workspace-1", name: "WS" }} />
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders nothing for personal workspaces", () => {
+    mocks.membersManagement = true;
+
+    const { container } = render(
+      <Members currentWorkspace={{ id: "workspace-1", name: "WS", personal: true }} />
     );
     expect(container).toBeEmptyDOMElement();
   });
