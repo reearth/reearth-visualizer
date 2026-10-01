@@ -270,6 +270,10 @@ const ProductButton = styled("button")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: theme.radius.normal,
   cursor: css.cursor.pointer,
+  "&:focus-visible": {
+    outline: `2px solid ${theme.primary.main}`,
+    outlineOffset: "2px"
+  },
   "&:hover": {
     backgroundColor: theme.bg[2]
   }
@@ -291,6 +295,10 @@ const MapEngineButton = styled("button")(({ theme }) => ({
   borderRadius: theme.radius.normal,
   textAlign: "left",
   cursor: css.cursor.pointer,
+  "&:focus-visible": {
+    outline: `2px solid ${theme.primary.main}`,
+    outlineOffset: "2px"
+  },
   "&:hover": {
     backgroundColor: theme.bg[2]
   }
@@ -330,6 +338,10 @@ const DataServiceLabel = styled("button")(({ theme }) => ({
   margin: `-${theme.spacing.micro}px -${theme.spacing.smallest}px`,
   borderRadius: theme.radius.small,
   cursor: css.cursor.pointer,
+  "&:focus-visible": {
+    outline: `2px solid ${theme.primary.main}`,
+    outlineOffset: "2px"
+  },
   "&:hover": {
     backgroundColor: theme.bg[2]
   }
@@ -355,6 +367,10 @@ const PillButton = styled("button")(({ theme }) => ({
   color: theme.content.weak,
   fontSize: theme.fonts.sizes.body,
   cursor: css.cursor.pointer,
+  "&:focus-visible": {
+    outline: `2px solid ${theme.primary.main}`,
+    outlineOffset: "2px"
+  },
   "&:hover": {
     backgroundColor: theme.select.main,
     border: `1px solid ${theme.select.main}`,
