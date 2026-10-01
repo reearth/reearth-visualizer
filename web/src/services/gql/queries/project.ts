@@ -25,6 +25,10 @@ export const GET_PROJECTS = gql(`
           scene {
             id
             alias
+            stories {
+              id
+              publishmentStatus
+            }
           }
         }
       }

@@ -87,6 +87,7 @@ export default (workspaceId?: string) => {
               isArchived: project.isArchived,
               status: toPublishmentStatus(project.publishmentStatus),
               sceneId: project.scene?.id,
+              stories: project.scene?.stories,
               updatedAt: new Date(project.updatedAt),
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
