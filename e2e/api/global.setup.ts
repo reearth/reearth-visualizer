@@ -3,7 +3,7 @@ import path from "path";
 
 import { test as setup } from "@playwright/test";
 
-import { AUTH_MODE } from "./config/env";
+import { AUTH0_CLIENT_ID, AUTH0_DOMAIN, AUTH_MODE } from "./config/env";
 import { getAuthToken } from "./tests/auth-utils";
 
 const tokenPath = path.join(__dirname, "../.auth/api-token.json");
@@ -12,7 +12,11 @@ const storagePath = path.join(__dirname, "../.auth/user.json");
 setup("acquire API auth token", async ({ request }) => {
   fs.mkdirSync(path.dirname(tokenPath), { recursive: true });
 
-  if (AUTH_MODE === "auth0" && fs.existsSync(storagePath)) {
+  // The web SPA token in user.json may be issued for a different API than
+  // REEARTH_E2E_API_URL (e.g. a PR preview), so only fall back to it when the
+  // password grant isn't configured.
+  const hasAuth0Config = !!AUTH0_DOMAIN && !!AUTH0_CLIENT_ID;
+  if (AUTH_MODE === "auth0" && !hasAuth0Config && fs.existsSync(storagePath)) {
     const token = extractTokenFromStorage(storagePath);
     if (token) {
       fs.writeFileSync(
