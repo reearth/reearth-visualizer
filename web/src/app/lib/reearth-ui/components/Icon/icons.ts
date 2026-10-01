@@ -41,8 +41,8 @@ import ClockAfternoon from "./Icons/ClockAfternoon.svg?react";
 import ClockClockwise from "./Icons/ClockClockwise.svg?react";
 import ClockFilled from "./Icons/ClockFilled.svg?react";
 import Close from "./Icons/Close.svg?react";
-import Compass from "./Icons/Compass.svg?react";
 import CmsLogo from "./Icons/CmsLogo.svg?react";
+import Compass from "./Icons/Compass.svg?react";
 import CompassFocus from "./Icons/CompassFocus.svg?react";
 import Copy from "./Icons/Copy.svg?react";
 import Copyright from "./Icons/Copyright.svg?react";
@@ -117,6 +117,7 @@ import MemberAdd from "./Icons/MemberAdd.svg?react";
 import Minus from "./Icons/Minus.svg?react";
 import Mobile from "./Icons/Mobile.svg?react";
 import More from "./Icons/More.svg?react";
+import NavaraLogo from "./Icons/NavaraLogo.svg?react";
 import NavigatorAngle from "./Icons/NavigatorAngle.svg?react";
 import NewWorkspace from "./Icons/NewWorkspace.svg?react";
 import Notebook from "./Icons/Notebook.svg?react";
@@ -330,6 +331,7 @@ export default {
   minus: Minus,
   mobile: Mobile,
   more: More,
+  navaraLogo: NavaraLogo,
   navigatorAngle: NavigatorAngle,
   newWorkspace: NewWorkspace,
   notebook: Notebook,

@@ -8,7 +8,10 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import { openUrlInNewTab } from "@reearth/app/utils/url";
 import { config } from "@reearth/services/config";
-import { DATA_SERVICE_URLS } from "@reearth/services/config/constants";
+import {
+  DATA_SERVICE_URLS,
+  MAP_ENGINE_URLS
+} from "@reearth/services/config/constants";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
@@ -17,6 +20,7 @@ import { FC, useCallback } from "react";
 import { useNavigate } from "react-router";
 
 export type ProductId = "dashboard" | "visualizer" | "cms";
+export type MapEngineId = "navara";
 export type DataServiceId = "terrain" | "buildings" | "paper";
 export type OtherLinkId = "home" | "community";
 
@@ -30,6 +34,15 @@ type MenuItem = {
   onNavigate?: () => void;
 };
 
+type MapEngineItem = {
+  id: MapEngineId;
+  title: string;
+  description: string;
+  icon: IconName;
+  background?: string;
+  onNavigate?: () => void;
+};
+
 type DataServiceItem = {
   id: DataServiceId;
   title: string;
@@ -40,7 +53,9 @@ type DataServiceItem = {
 
 export type ProductsMenuProps = {
   workspaceId?: string;
-  onSelect?: (id: ProductId | DataServiceId | OtherLinkId) => void;
+  onSelect?: (
+    id: ProductId | MapEngineId | DataServiceId | OtherLinkId
+  ) => void;
 };
 
 const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
@@ -60,7 +75,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
     : undefined;
 
   const handleAction = useCallback(
-    (item: MenuItem | DataServiceItem) => () => {
+    (item: MenuItem | MapEngineItem | DataServiceItem) => () => {
       item.onNavigate?.();
       onSelect?.(item.id);
     },
@@ -92,6 +107,17 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
     }
   ];
 
+  const mapEngines: MapEngineItem[] = [
+    {
+      id: "navara",
+      title: "Navara",
+      description: t("3D map engine, MapLibre family"),
+      icon: "navaraLogo",
+      background: "#313F42",
+      onNavigate: () => openUrlInNewTab(MAP_ENGINE_URLS.NAVARA)
+    }
+  ];
+
   const dataServices: DataServiceItem[] = [
     {
       id: "terrain",
@@ -107,7 +133,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
     },
     {
       id: "paper",
-      title: "Paper",
+      title: "Papers",
       description: t("Open Map Tile Service"),
       onNavigate: () => openUrlInNewTab(DATA_SERVICE_URLS.PAPER)
     }
@@ -137,7 +163,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
         <IconButton icon="dotsNineVertical" appearance="simple" size="large" />
       }
     >
-      <Panel width={300}>
+      <Panel width={330}>
         <ContentWrapper>
           <Typography size="footnote">{t("Re:Earth products")}</Typography>
           <Grid>
@@ -160,25 +186,47 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
             ))}
           </Grid>
           <Divider />
+          <Typography size="footnote">{t("Map engine")}</Typography>
+          {mapEngines.map((engine) => (
+            <MapEngineButton
+              key={engine.id}
+              type="button"
+              onClick={handleAction(engine)}
+            >
+              <ProductIcon background={engine.background}>
+                <Icon size={32} icon={engine.icon} />
+              </ProductIcon>
+              <MapEngineText>
+                <TitleWithArrow>
+                  <Typography size="body">{engine.title}</Typography>
+                  <Icon
+                    icon="arrowExternalLink"
+                    size="small"
+                    color={theme.content.weak}
+                  />
+                </TitleWithArrow>
+                <Typography size="body" color="#B1B1B1">
+                  {engine.description}
+                </Typography>
+              </MapEngineText>
+            </MapEngineButton>
+          ))}
+          <Divider />
           <Typography size="footnote">{t("Re:Earth data services")}</Typography>
           <DataServiceList>
             {dataServices.map((service) => (
               <DataServiceRow key={service.id}>
-                <DataServiceLabel onClick={handleAction(service)}>
-                  <DataServiceName>
-                    <Typography size="body">{service.title}</Typography>
-                  </DataServiceName>
+                <DataServiceLabel type="button" onClick={handleAction(service)}>
+                  <Typography size="body">{service.title}</Typography>
                   <Icon
-                    icon="arrowUpRightBadge"
+                    icon="arrowExternalLink"
                     size="small"
-                    color={theme.select.main}
+                    color={theme.content.weak}
                   />
                 </DataServiceLabel>
-                <DataServiceDescription>
-                  <Typography size="footnote" color="weak">
-                    {service.description}
-                  </Typography>
-                </DataServiceDescription>
+                <Typography size="body" color="#B1B1B1">
+                  {service.description}
+                </Typography>
               </DataServiceRow>
             ))}
           </DataServiceList>
@@ -225,6 +273,10 @@ const ProductButton = styled("button")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: theme.radius.normal,
   cursor: css.cursor.pointer,
+  "&:focus-visible": {
+    outline: `2px solid ${theme.primary.main}`,
+    outlineOffset: "2px"
+  },
   "&:hover": {
     backgroundColor: theme.bg[2]
   }
@@ -238,44 +290,64 @@ const ProductIcon = styled("div")<{ background?: string }>(
   })
 );
 
-// One grid for the whole list, so every description starts at the same x no
-// matter how wide its title is. Each row joins that shared track via subgrid.
+const MapEngineButton = styled("button")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.normal,
+  padding: theme.spacing.small,
+  borderRadius: theme.radius.normal,
+  textAlign: "left",
+  cursor: css.cursor.pointer,
+  "&:focus-visible": {
+    outline: `2px solid ${theme.primary.main}`,
+    outlineOffset: "2px"
+  },
+  "&:hover": {
+    backgroundColor: theme.bg[2]
+  }
+}));
+
+const MapEngineText = styled("div")(() => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  minWidth: 0
+}));
+
+const TitleWithArrow = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.smallest
+}));
+
 const DataServiceList = styled("div")(({ theme }) => ({
-  display: "grid",
-  gridTemplateColumns: "max-content 1fr",
-  columnGap: theme.spacing.small,
-  rowGap: theme.spacing.normal
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  gap: theme.spacing.normal
 }));
 
 const DataServiceRow = styled("div")(() => ({
-  display: "grid",
-  gridTemplateColumns: "subgrid",
-  gridColumn: "1 / -1",
-  alignItems: css.alignItems.center
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.flexStart
 }));
 
 // The negative margin cancels the padding, so the hover background can breathe
 // around the title without shifting the text when a row is hovered.
-const DataServiceLabel = styled("div")(({ theme }) => ({
+const DataServiceLabel = styled("button")(({ theme }) => ({
   display: css.display.flex,
-  justifySelf: css.justifyContent.start,
-  alignItems: css.alignItems.flexStart,
-  cursor: css.cursor.pointer,
-  gap: theme.spacing.micro,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.smallest,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   margin: `-${theme.spacing.micro}px -${theme.spacing.smallest}px`,
+  borderRadius: theme.radius.small,
+  cursor: css.cursor.pointer,
+  "&:focus-visible": {
+    outline: `2px solid ${theme.primary.main}`,
+    outlineOffset: "2px"
+  },
   "&:hover": {
-    backgroundColor: theme.bg[2],
-    borderRadius: theme.radius.small
+    backgroundColor: theme.bg[2]
   }
-}));
-
-const DataServiceName = styled("div")(() => ({
-  flexShrink: 0
-}));
-
-const DataServiceDescription = styled("div")(() => ({
-  minWidth: 0
 }));
 
 const Divider = styled("div")(({ theme }) => ({
@@ -295,9 +367,14 @@ const PillButton = styled("button")(({ theme }) => ({
   padding: `6px ${theme.spacing.normal}px`,
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: "99px",
-  color: theme.content.weak,
+  color: "#B1B1B1",
   fontSize: theme.fonts.sizes.body,
   cursor: css.cursor.pointer,
+  "&:focus-visible": {
+    outline: `2px solid ${theme.primary.main}`,
+    outlineOffset: "2px"
+  },
+  backgroundColor: theme.bg[0],
   "&:hover": {
     backgroundColor: theme.select.main,
     border: `1px solid ${theme.select.main}`,
