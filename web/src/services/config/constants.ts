@@ -12,3 +12,7 @@ export const DATA_SERVICE_URLS = {
   BUILDINGS: "https://buildings.reearth.land/",
   PAPER: "https://papers.reearth.land/"
 } as const;
+
+export const MAP_ENGINE_URLS = {
+  NAVARA: "https://navara.world/"
+} as const;
