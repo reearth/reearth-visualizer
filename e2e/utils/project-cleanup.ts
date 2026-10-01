@@ -440,14 +440,18 @@ function getBrowserEnvToken(sp: string): { token: string } | null {
 }
 
 /**
- * Returns a GraphQLClient pointing to the OSS API when running against a
- * Cloud Run PR preview URL, otherwise returns null (caller uses dev client).
+ * Returns a GraphQLClient pointing to the API the web under test actually uses
+ * (e.g. the OSS API behind a Cloud Run PR preview or a local dev server) when
+ * it differs from REEARTH_E2E_API_URL, otherwise returns null (caller uses dev client).
  */
 export async function getOSSClient(
   request: APIRequestContext
 ): Promise<GraphQLClient | null> {
-  const baseUrl = process.env.REEARTH_WEB_E2E_BASEURL ?? "";
-  if (!baseUrl.includes(".run.app")) return null;
+  const baseUrl = (process.env.REEARTH_WEB_E2E_BASEURL ?? "").replace(
+    /\/$/,
+    ""
+  );
+  if (!baseUrl) return null;
 
   const browserEnv = getBrowserEnvToken(storagePath);
   if (!browserEnv) return null;
@@ -457,6 +461,8 @@ export async function getOSSClient(
     const config = await configRes.json();
     const apiUrl = config?.api?.replace(/\/$/, "");
     if (!apiUrl) return null;
+    const e2eApiUrl = process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "");
+    if (e2eApiUrl && apiUrl === `${e2eApiUrl}/api`) return null;
     return new GraphQLClient(
       request,
       browserEnv.token,
@@ -467,4 +473,3 @@ export async function getOSSClient(
     return null;
   }
 }
-
