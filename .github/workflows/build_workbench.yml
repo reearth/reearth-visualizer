@@ -1,14 +1,15 @@
 name: Build Workbench
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Main release tag (e.g., v1.0.0). The Workbench is published as the separate release workbench-<tag>."
+      version:
+        description: "Workbench version, e.g. 1.2.3 or v1.2.3 (a tag workbench-v<version> is created for the release)"
         required: true
+      ref:
+        description: "Git ref to build from (default: the branch selected above)"
+        required: false
+        default: ""
 
 jobs:
   build-workbench:
@@ -25,31 +26,36 @@ jobs:
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
-      # Resolve the tag and the ref to build from before checkout. On
-      # workflow_dispatch, actions/checkout would otherwise use the branch
-      # selected in the Actions UI, not the requested tag.
-      - name: Determine tag and ref
-        id: tag
+      # The Workbench is released manually: the operator types a version and the
+      # workflow derives the release tag (`workbench-v<version>`). No tag has to
+      # be created by hand.
+      - name: Resolve version and tag
+        id: meta
         working-directory: .
         env:
-          INPUT_TAG: ${{ github.event.inputs.tag }}
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+          INPUT_REF: ${{ github.event.inputs.ref }}
         run: |
-          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            TAG="$INPUT_TAG"
-          else
-            TAG="${GITHUB_REF#refs/tags/}"
-          fi
-          if [[ ! "$TAG" =~ ^v[0-9A-Za-z][0-9A-Za-z._-]*$ ]]; then
-            echo "Invalid tag: '$TAG'"
+          V="${INPUT_VERSION#v}"
+          if [[ ! "$V" =~ ^[0-9][0-9A-Za-z._-]*$ ]]; then
+            echo "::error::Invalid version: '$INPUT_VERSION'"
             exit 1
           fi
-          echo "name=$TAG" >> "$GITHUB_OUTPUT"
-          echo "ref=refs/tags/$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=v$V" >> "$GITHUB_OUTPUT"
+          echo "tag=workbench-v$V" >> "$GITHUB_OUTPUT"
+          echo "ref=${INPUT_REF}" >> "$GITHUB_OUTPUT"
       - name: Checkout
         id: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ steps.tag.outputs.ref }}
+          ref: ${{ steps.meta.outputs.ref }}
+      - name: Verify Workbench exists in the checked out ref
+        working-directory: .
+        run: |
+          if ! node -e "const s = require('./web/package.json').scripts || {}; process.exit(s['build:workbench'] ? 0 : 1)"; then
+            echo "::error::'build:workbench' is missing in the checked out ref."
+            exit 1
+          fi
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: lts/*
@@ -73,43 +79,42 @@ jobs:
         run: yarn build:workbench
         env:
           NODE_ENV: production
-          REEARTH_WORKBENCH_VERSION: ${{ steps.tag.outputs.name }}
+          REEARTH_WORKBENCH_VERSION: ${{ steps.meta.outputs.version }}
           REEARTH_WORKBENCH_COMMIT: ${{ steps.checkout.outputs.commit }}
       - name: Verify manifest
         run: cat dist-workbench/workbench-manifest.json
       - name: Create release archive
         env:
-          TAG: ${{ steps.tag.outputs.name }}
+          VERSION: ${{ steps.meta.outputs.version }}
         run: |
           cd dist-workbench
-          tar -czf "../reearth-viz-workbench_${TAG}.tar.gz" .
+          tar -czf "../reearth-viz-workbench_${VERSION}.tar.gz" .
           cd ..
-          sha256sum "reearth-viz-workbench_${TAG}.tar.gz" > "reearth-viz-workbench_${TAG}.tar.gz.sha256"
+          sha256sum "reearth-viz-workbench_${VERSION}.tar.gz" > "reearth-viz-workbench_${VERSION}.tar.gz.sha256"
       - name: Release
         uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
           allowUpdates: true
-          # Publish to a separate release (its own tag `workbench-<version>`)
-          # so the main app release (`v<version>`) is never touched, and do not
-          # mark it as the repository's "latest" release.
+          # Creates the tag `workbench-v<version>` at the checked out commit if
+          # it does not exist yet. Never mark it as the repository's "latest".
           makeLatest: false
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
           omitPrereleaseDuringUpdate: true
           omitDraftDuringUpdate: true
-          name: workbench-${{ steps.tag.outputs.name }}
+          name: ${{ steps.meta.outputs.tag }}
           commit: ${{ steps.checkout.outputs.commit }}
-          tag: workbench-${{ steps.tag.outputs.name }}
+          tag: ${{ steps.meta.outputs.tag }}
           artifacts: |
-            web/reearth-viz-workbench_${{ steps.tag.outputs.name }}.tar.gz
-            web/reearth-viz-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+            web/reearth-viz-workbench_${{ steps.meta.outputs.version }}.tar.gz
+            web/reearth-viz-workbench_${{ steps.meta.outputs.version }}.tar.gz.sha256
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Archive build artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: workbench-${{ steps.tag.outputs.name }}
+          name: workbench-${{ steps.meta.outputs.version }}
           path: |
-            web/reearth-viz-workbench_${{ steps.tag.outputs.name }}.tar.gz
-            web/reearth-viz-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+            web/reearth-viz-workbench_${{ steps.meta.outputs.version }}.tar.gz
+            web/reearth-viz-workbench_${{ steps.meta.outputs.version }}.tar.gz.sha256
             web/dist-workbench/workbench-manifest.json
           retention-days: 90
