@@ -20,6 +20,26 @@ const isLocalhost = (hostname: string) =>
   hostname === "::1" ||
   hostname === "[::1]";
 
+const isPluginExtension = (value: unknown): value is PluginExtension =>
+  typeof value === "object" &&
+  value !== null &&
+  typeof (value as PluginExtension).id === "string" &&
+  typeof (value as PluginExtension).type === "string";
+
+const parseManifest = (raw: unknown): ReearthYML | undefined => {
+  if (typeof raw !== "object" || raw === null) return;
+  const data = raw as Record<string, unknown>;
+  if (typeof data.id !== "string") return;
+  if (
+    data.extensions !== undefined &&
+    (!Array.isArray(data.extensions) ||
+      !data.extensions.every(isPluginExtension))
+  ) {
+    return;
+  }
+  return data as unknown as ReearthYML;
+};
+
 const buildWidgets = (
   pluginId: string,
   extensions: PluginExtension[]
@@ -140,7 +160,8 @@ export default () => {
       try {
         const response = await fetch(`${devPluginUrl}/reearth.yml`);
         if (!response.ok) return;
-        const data = yaml.load(await response.text()) as ReearthYML;
+        const data = parseManifest(yaml.load(await response.text()));
+        if (!data) return;
         setManifest(data);
         const extensions =
           data.extensions?.map((e) => ({
