@@ -1,3 +1,4 @@
+import { PublishmentStatus } from "@reearth/services/gql";
 import { renderHook, act } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -9,7 +10,7 @@ const mockPublishProject = vi.fn();
 const mockPublishStory = vi.fn();
 const mockExportProject = vi.fn();
 
-let mockStories: { id: string; publishmentStatus: string }[] = [];
+let mockStories: NonNullable<Project["stories"]> = [];
 
 vi.mock("@reearth/services/api/project", () => ({
   useProjectMutations: () => ({ publishProject: mockPublishProject }),
@@ -19,9 +20,11 @@ vi.mock("@reearth/services/api/project", () => ({
 }));
 
 vi.mock("@reearth/services/api/storytelling", () => ({
-  useStoryMutations: () => ({ publishStory: mockPublishStory }),
-  useStories: () => ({ stories: mockStories })
+  useStoryMutations: () => ({ publishStory: mockPublishStory })
 }));
+
+const useHooksWithStories = (props: Parameters<typeof useHooks>[0]) =>
+  useHooks({ ...props, project: { ...props.project, stories: mockStories } });
 
 const baseProject: Project = {
   id: "project-1",
@@ -59,7 +62,7 @@ describe("Project hooks - handleProjectRemove", () => {
     });
 
     const { result } = renderHook(() =>
-      useHooks({ project: baseProject, onProjectRemove })
+      useHooksWithStories({ project: baseProject, onProjectRemove })
     );
 
     await act(async () => {
@@ -74,8 +77,8 @@ describe("Project hooks - handleProjectRemove", () => {
 
   it("waits for every published story to be unpublished before archiving", async () => {
     mockStories = [
-      { id: "story-1", publishmentStatus: "PUBLIC" },
-      { id: "story-2", publishmentStatus: "LIMITED" }
+      { id: "story-1", publishmentStatus: PublishmentStatus.Public },
+      { id: "story-2", publishmentStatus: PublishmentStatus.Limited }
     ];
     const callOrder: string[] = [];
     mockPublishStory.mockImplementation(async (_status, storyId) => {
@@ -89,7 +92,7 @@ describe("Project hooks - handleProjectRemove", () => {
     });
 
     const { result } = renderHook(() =>
-      useHooks({
+      useHooksWithStories({
         project: { ...baseProject, status: "unpublished", isPublished: false },
         onProjectRemove
       })
@@ -110,7 +113,7 @@ describe("Project hooks - handleProjectRemove", () => {
     const onProjectRemove = vi.fn();
 
     const { result } = renderHook(() =>
-      useHooks({
+      useHooksWithStories({
         project: {
           ...baseProject,
           status: "unpublished",
@@ -131,7 +134,7 @@ describe("Project hooks - handleProjectRemove", () => {
 
   it("closes the remove modal only after archiving completes", async () => {
     const { result } = renderHook(() =>
-      useHooks({
+      useHooksWithStories({
         project: { ...baseProject, status: "unpublished", isPublished: false },
         onProjectRemove: vi.fn().mockResolvedValue(true)
       })
@@ -151,7 +154,7 @@ describe("Project hooks - handleProjectRemove", () => {
 
   it("keeps the remove modal open when archiving fails", async () => {
     const { result } = renderHook(() =>
-      useHooks({
+      useHooksWithStories({
         project: { ...baseProject, status: "unpublished", isPublished: false },
         onProjectRemove: vi.fn().mockResolvedValue(false)
       })
@@ -173,7 +176,7 @@ describe("Project hooks - handleProjectRemove", () => {
   it("does nothing when called with an empty projectId", async () => {
     const onProjectRemove = vi.fn();
     const { result } = renderHook(() =>
-      useHooks({ project: baseProject, onProjectRemove })
+      useHooksWithStories({ project: baseProject, onProjectRemove })
     );
 
     await act(async () => {

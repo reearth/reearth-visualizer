@@ -80,8 +80,14 @@ export default () => {
       if (!data?.me) return;
       setCurrentUserId(data?.me?.id);
 
-      // myWorkspace is always the user's personal workspace
-      if (data.me?.myWorkspace) {
+      // myWorkspace is always the user's personal workspace. Only write when it
+      // changes: a fresh object every run re-triggers this effect (it depends on
+      // currentWorkspace) and loops setState + navigate.
+      if (
+        data.me?.myWorkspace &&
+        (currentWorkspace?.id !== data.me.myWorkspace.id ||
+          !currentWorkspace?.personal)
+      ) {
         setCurrentWorkspace({
           ...data.me.myWorkspace,
           personal: true
