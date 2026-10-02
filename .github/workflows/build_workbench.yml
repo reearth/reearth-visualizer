@@ -1,0 +1,86 @@
+name: Build Workbench
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (e.g., v1.0.0)"
+        required: true
+
+jobs:
+  build-workbench:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    env:
+      NODE_OPTIONS: "--max-old-space-size=8192"
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: lts/*
+      - name: Install Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.3.1 --activate
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Determine tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build workbench
+        run: yarn build:workbench
+        env:
+          NODE_ENV: production
+          REEARTH_WORKBENCH_VERSION: ${{ steps.tag.outputs.name }}
+      - name: Verify manifest
+        run: cat dist-workbench/workbench-manifest.json
+      - name: Create release archive
+        run: |
+          cd dist-workbench
+          tar -czf ../reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz .
+          cd ..
+          sha256sum reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz > reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+      - name: Release
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
+        with:
+          allowUpdates: true
+          name: ${{ steps.tag.outputs.name }}
+          commit: ${{ github.sha }}
+          tag: ${{ steps.tag.outputs.name }}
+          artifacts: |
+            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz
+            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: workbench-${{ steps.tag.outputs.name }}
+          path: |
+            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz
+            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+            web/dist-workbench/workbench-manifest.json
+          retention-days: 90

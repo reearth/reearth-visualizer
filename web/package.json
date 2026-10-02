@@ -8,11 +8,13 @@
   "private": true,
   "scripts": {
     "start": "yarn && vite",
+    "start:workbench": "yarn && vite --config vite.workbench.config.ts",
     "start:op": "op run --env-file=.env.op -- yarn start",
     "test": "vitest",
     "coverage": "vitest --coverage",
     "prepare": "cd .. && husky install web/.husky",
     "build": "vite build",
+    "build:workbench": "vite build --config vite.workbench.config.ts && node bin/generate-workbench-manifest.js",
     "build:preview": "run-s build storybook:build",
     "clean": "del coverage dist node_modules/.cache",
     "check": "run-p type lint coverage",

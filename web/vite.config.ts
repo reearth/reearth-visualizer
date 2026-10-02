@@ -1,7 +1,6 @@
 /// <reference types="vite/client" />
 /// <reference types="vitest" />
 
-import { execSync } from "child_process";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 
@@ -9,33 +8,14 @@ import yaml from "@rollup/plugin-yaml";
 import react from "@vitejs/plugin-react-swc";
 import { readEnv } from "read-env";
 import { defineConfig, loadEnv, PluginOption, type Plugin } from "vite";
-import cesium from "vite-plugin-cesium";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-import pkg from "./package.json";
+import { createSharedConfig } from "./vite.config.shared";
 
 const NO_MINIFY = !!process.env.NO_MINIFY;
 
-let commitHash = "";
-try {
-  commitHash = execSync("git rev-parse HEAD").toString().trimEnd();
-} catch {
-  // noop
-}
-
-let cesiumVersion = "";
-try {
-  const cesiumPackageJson = JSON.parse(
-    readFileSync(
-      resolve(__dirname, "node_modules", "cesium", "package.json"),
-      "utf-8"
-    )
-  );
-  cesiumVersion = cesiumPackageJson.version;
-} catch {
-  // noop
-}
+const sharedConfig = createSharedConfig();
 
 export default defineConfig({
   envPrefix: "REEARTH_WEB_",
@@ -43,23 +23,14 @@ export default defineConfig({
     svgr(),
     react(),
     yaml() as PluginOption,
-    cesium({
-      cesiumBaseUrl: cesiumVersion ? `cesium-${cesiumVersion}/` : undefined
-    }),
+    sharedConfig.cesiumPlugin,
     serverHeaders(),
     config(),
     tsconfigPaths()
   ],
   // https://github.com/storybookjs/storybook/issues/25256
   assetsInclude: ["/sb-preview/runtime.js"],
-  define: {
-    "process.env.QTS_DEBUG": "false", // quickjs-emscripten
-    __APP_VERSION__: JSON.stringify(pkg.version),
-    __REEARTH_COMMIT_HASH__: JSON.stringify(
-      process.env.GITHUB_SHA || commitHash
-    ),
-    global: "globalThis"
-  },
+  define: sharedConfig.define,
   mode: NO_MINIFY ? "development" : undefined,
   server: {
     port: 3000
@@ -75,29 +46,8 @@ export default defineConfig({
     },
     minify: NO_MINIFY ? false : "esbuild"
   },
-  optimizeDeps: {
-    exclude: ["quickjs-emscripten"]
-  },
-  resolve: {
-    alias: [
-      { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
-      { find: "path", replacement: "path-browserify" }, // Browser polyfill for path
-      {
-        find: "quickjs-emscripten-sync",
-        replacement: resolve(
-          __dirname,
-          "node_modules/quickjs-emscripten-sync/dist/quickjs-emscripten-sync.mjs"
-        )
-      },
-      {
-        find: "react-align",
-        replacement: resolve(
-          __dirname,
-          "node_modules/react-align/dist/react-align.mjs"
-        )
-      }
-    ]
-  }
+  optimizeDeps: sharedConfig.optimizeDeps,
+  resolve: sharedConfig.resolve
 });
 
 function serverHeaders(): Plugin {
