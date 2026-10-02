@@ -71,7 +71,8 @@ export default (workspaceId?: string) => {
       first: pagination(sortValue).first
     },
     sort: pagination(sortValue).sortBy,
-    keyword: searchTerm
+    keyword: searchTerm,
+    withStories: true
   });
 
   const filtedProjects = useMemo(() => {
