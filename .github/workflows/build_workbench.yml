@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag (e.g., v1.0.0)"
+        description: "Main release tag (e.g., v1.0.0). The Workbench is published as the separate release workbench-<tag>."
         required: true
 
 jobs:
@@ -82,26 +82,34 @@ jobs:
           TAG: ${{ steps.tag.outputs.name }}
         run: |
           cd dist-workbench
-          tar -czf "../reearth-workbench_${TAG}.tar.gz" .
+          tar -czf "../reearth-viz-workbench_${TAG}.tar.gz" .
           cd ..
-          sha256sum "reearth-workbench_${TAG}.tar.gz" > "reearth-workbench_${TAG}.tar.gz.sha256"
+          sha256sum "reearth-viz-workbench_${TAG}.tar.gz" > "reearth-viz-workbench_${TAG}.tar.gz.sha256"
       - name: Release
         uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
           allowUpdates: true
-          name: ${{ steps.tag.outputs.name }}
+          # Publish to a separate release (its own tag `workbench-<version>`)
+          # so the main app release (`v<version>`) is never touched, and do not
+          # mark it as the repository's "latest" release.
+          makeLatest: false
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          omitDraftDuringUpdate: true
+          name: workbench-${{ steps.tag.outputs.name }}
           commit: ${{ steps.checkout.outputs.commit }}
-          tag: ${{ steps.tag.outputs.name }}
+          tag: workbench-${{ steps.tag.outputs.name }}
           artifacts: |
-            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz
-            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+            web/reearth-viz-workbench_${{ steps.tag.outputs.name }}.tar.gz
+            web/reearth-viz-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Archive build artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: workbench-${{ steps.tag.outputs.name }}
           path: |
-            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz
-            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+            web/reearth-viz-workbench_${{ steps.tag.outputs.name }}.tar.gz
+            web/reearth-viz-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
             web/dist-workbench/workbench-manifest.json
           retention-days: 90
