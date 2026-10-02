@@ -29,11 +29,17 @@ jobs:
       - name: Determine tag and ref
         id: tag
         working-directory: .
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            TAG="${{ github.event.inputs.tag }}"
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG="$INPUT_TAG"
           else
             TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          if [[ ! "$TAG" =~ ^v[0-9A-Za-z][0-9A-Za-z._-]*$ ]]; then
+            echo "Invalid tag: '$TAG'"
+            exit 1
           fi
           echo "name=$TAG" >> "$GITHUB_OUTPUT"
           echo "ref=refs/tags/$TAG" >> "$GITHUB_OUTPUT"
@@ -70,11 +76,13 @@ jobs:
       - name: Verify manifest
         run: cat dist-workbench/workbench-manifest.json
       - name: Create release archive
+        env:
+          TAG: ${{ steps.tag.outputs.name }}
         run: |
           cd dist-workbench
-          tar -czf ../reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz .
+          tar -czf "../reearth-workbench_${TAG}.tar.gz" .
           cd ..
-          sha256sum reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz > reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+          sha256sum "reearth-workbench_${TAG}.tar.gz" > "reearth-workbench_${TAG}.tar.gz.sha256"
       - name: Release
         uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
