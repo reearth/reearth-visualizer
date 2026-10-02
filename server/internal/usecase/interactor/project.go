@@ -39,6 +39,16 @@ import (
 	"github.com/spf13/afero"
 )
 
+// operatorUserID returns the acting user's ID as a string, or "" when there is
+// no authenticated user (for example internal calls). Used to stamp createdBy /
+// updatedBy on a project.
+func operatorUserID(operator *usecase.Operator) string {
+	if operator == nil || operator.AcOperator == nil || operator.AcOperator.User == nil {
+		return ""
+	}
+	return operator.AcOperator.User.String()
+}
+
 type Project struct {
 	common
 	commonSceneLock
@@ -471,6 +481,7 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 		Readme:       input.Readme,
 		License:      input.License,
 		Topics:       input.Topics,
+		Actor:        operatorUserID(operator),
 	}, operator)
 }
 
@@ -624,6 +635,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
+	prj.SetUpdatedBy(operatorUserID(operator))
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
@@ -666,6 +678,7 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
+	prj.SetUpdatedBy(operatorUserID(operator))
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
@@ -923,6 +936,11 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		}
 		prj.SetPublishedAt(time.Now())
 	}
+
+	// A publishment status change counts as an update, whether the project is
+	// being published or unpublished, so stamp it in both cases.
+	prj.SetUpdatedAt(time.Now().UTC())
+	prj.SetUpdatedBy(operatorUserID(op))
 
 	// Phase 3: short transaction containing only the two DB saves, with retry
 	// on TransientTransactionError. Each attempt gets a fresh session.
@@ -1367,6 +1385,13 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Project) error {
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
+	// Child edits (scene, storytelling, NLS layer, style) advance the project's
+	// updatedAt through this helper, so keep updatedBy in step by reading the
+	// acting user from the request context. Left unchanged when there is no
+	// operator (e.g. import, which writes directly and does not pass here).
+	if actor := operatorUserID(adapter.Operator(ctx)); actor != "" {
+		prj.SetUpdatedBy(actor)
+	}
 
 	if err := r.Save(ctx, prj); err != nil {
 		return err
@@ -1409,6 +1434,11 @@ type createProjectInput struct {
 	CoreSupport     *bool
 	Visibility      *project.Visibility
 	ProjectAlias    *string
+
+	// Actor is the user ID recorded as createdBy/updatedBy. The import path
+	// leaves it empty on purpose, so an imported project is not attributed to
+	// whoever ran the import.
+	Actor string
 
 	// metadata
 	Readme  *string
@@ -1484,6 +1514,8 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		ID(prjID).
 		Workspace(input.WorkspaceID).
 		Visualizer(input.Visualizer).
+		CreatedBy(input.Actor).
+		UpdatedBy(input.Actor).
 		Metadata(metadata)
 
 	newProjectAlias := alias.ReservedReearthPrefixProject + prjID.String()

@@ -8,6 +8,17 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 )
 
+// userIDPtr converts a stored user-ID string into a nullable GraphQL ID,
+// returning nil when the project has no recorded actor (e.g. legacy projects
+// created before createdBy/updatedBy existed).
+func userIDPtr(s string) *ID {
+	if s == "" {
+		return nil
+	}
+	id := ID(s)
+	return &id
+}
+
 func FromPublishmentStatus(v PublishmentStatus) project.PublishmentStatus {
 	switch v {
 	case PublishmentStatusPublic:
@@ -113,6 +124,8 @@ func ToProject(p *project.Project) *Project {
 		ImageURL:     p.ImageURL(),
 		CreatedAt:    p.CreatedAt(),
 		UpdatedAt:    p.UpdatedAt(),
+		CreatedByID:  userIDPtr(p.CreatedBy()),
+		UpdatedByID:  userIDPtr(p.UpdatedBy()),
 		Visualizer:   Visualizer(p.Visualizer()),
 		IsArchived:   p.IsArchived(),
 		CoreSupport:  p.CoreSupport(),
