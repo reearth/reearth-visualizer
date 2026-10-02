@@ -38,7 +38,8 @@ const pluginApiVersion = pluginApiVersionMatch
   ? pluginApiVersionMatch[1]
   : "unknown";
 
-let commit = process.env.GITHUB_SHA || "";
+let commit =
+  process.env.REEARTH_WORKBENCH_COMMIT || process.env.GITHUB_SHA || "";
 if (!commit) {
   try {
     commit = execSync("git rev-parse HEAD").toString().trim();

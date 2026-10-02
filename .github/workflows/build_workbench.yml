@@ -23,7 +23,25 @@ jobs:
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Resolve the tag and the ref to build from before checkout. On
+      # workflow_dispatch, actions/checkout would otherwise use the branch
+      # selected in the Actions UI, not the requested tag.
+      - name: Determine tag and ref
+        id: tag
+        working-directory: .
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ github.event.inputs.tag }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "name=$TAG" >> "$GITHUB_OUTPUT"
+          echo "ref=refs/tags/$TAG" >> "$GITHUB_OUTPUT"
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.tag.outputs.ref }}
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: lts/*
@@ -41,14 +59,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Determine tag
-        id: tag
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "name=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
-          else
-            echo "name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-          fi
       - name: Install dependencies
         run: yarn install --immutable
       - name: Build workbench
@@ -56,6 +66,7 @@ jobs:
         env:
           NODE_ENV: production
           REEARTH_WORKBENCH_VERSION: ${{ steps.tag.outputs.name }}
+          REEARTH_WORKBENCH_COMMIT: ${{ steps.checkout.outputs.commit }}
       - name: Verify manifest
         run: cat dist-workbench/workbench-manifest.json
       - name: Create release archive
@@ -69,7 +80,7 @@ jobs:
         with:
           allowUpdates: true
           name: ${{ steps.tag.outputs.name }}
-          commit: ${{ github.sha }}
+          commit: ${{ steps.checkout.outputs.commit }}
           tag: ${{ steps.tag.outputs.name }}
           artifacts: |
             web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz
