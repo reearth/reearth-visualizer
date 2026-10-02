@@ -15,7 +15,10 @@ import type {
 } from "./types";
 
 const isLocalhost = (hostname: string) =>
-  hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+  hostname === "localhost" ||
+  hostname === "127.0.0.1" ||
+  hostname === "::1" ||
+  hostname === "[::1]";
 
 const buildWidgets = (
   pluginId: string,
