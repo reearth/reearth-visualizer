@@ -1,0 +1,137 @@
+name: Build Workbench
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Workbench version, e.g. 1.2.3 or v1.2.3 (a tag workbench-v<version> is created for the release)"
+        required: true
+      ref:
+        description: "Git ref to build from (default: the branch selected above)"
+        required: false
+        default: ""
+
+jobs:
+  build-workbench:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: web
+    env:
+      NODE_OPTIONS: "--max-old-space-size=8192"
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+      # The Workbench is released manually: the operator types a version and the
+      # workflow derives the release tag (`workbench-v<version>`). No tag has to
+      # be created by hand.
+      - name: Resolve version and tag
+        id: meta
+        working-directory: .
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+          INPUT_REF: ${{ github.event.inputs.ref }}
+        run: |
+          V="${INPUT_VERSION#v}"
+          if [[ ! "$V" =~ ^[0-9][0-9A-Za-z._-]*$ ]] || ! git check-ref-format "refs/tags/workbench-v$V" >/dev/null 2>&1; then
+            echo "::error::Invalid version: '$INPUT_VERSION'"
+            exit 1
+          fi
+          echo "version=v$V" >> "$GITHUB_OUTPUT"
+          echo "tag=workbench-v$V" >> "$GITHUB_OUTPUT"
+          echo "ref=${INPUT_REF}" >> "$GITHUB_OUTPUT"
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.meta.outputs.ref }}
+      - name: Verify Workbench exists in the checked out ref
+        working-directory: .
+        run: |
+          if ! node -e "const s = require('./web/package.json').scripts || {}; process.exit(s['build:workbench'] ? 0 : 1)"; then
+            echo "::error::'build:workbench' is missing in the checked out ref."
+            exit 1
+          fi
+      # A released version is immutable: the tag must not be reused for a
+      # different commit. release-action creates a missing tag but never moves an
+      # existing one, so publishing from a different commit would make the
+      # manifest's `commit` disagree with the tag.
+      - name: Reject version reuse with a different commit
+        working-directory: .
+        env:
+          TAG: ${{ steps.meta.outputs.tag }}
+          SHA: ${{ steps.checkout.outputs.commit }}
+        run: |
+          REMOTE_TAG=$(git ls-remote origin "refs/tags/$TAG" | awk '{print $1}')
+          REMOTE_PEELED=$(git ls-remote origin "refs/tags/$TAG^{}" | awk '{print $1}')
+          EXISTING="${REMOTE_PEELED:-$REMOTE_TAG}"
+          if [ -n "$EXISTING" ] && [ "$EXISTING" != "$SHA" ]; then
+            echo "::error::$TAG already points to $EXISTING, but this run builds $SHA. Bump the version, or build from the tag's commit."
+            exit 1
+          fi
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: lts/*
+      - name: Install Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.3.1 --activate
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build workbench
+        run: yarn build:workbench
+        env:
+          NODE_ENV: production
+          REEARTH_WORKBENCH_VERSION: ${{ steps.meta.outputs.version }}
+          REEARTH_WORKBENCH_COMMIT: ${{ steps.checkout.outputs.commit }}
+      - name: Verify manifest
+        run: cat dist-workbench/workbench-manifest.json
+      - name: Create release archive
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          cd dist-workbench
+          tar -czf "../reearth-viz-workbench_${VERSION}.tar.gz" .
+          cd ..
+          sha256sum "reearth-viz-workbench_${VERSION}.tar.gz" > "reearth-viz-workbench_${VERSION}.tar.gz.sha256"
+      - name: Release
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
+        with:
+          allowUpdates: true
+          # Creates the tag `workbench-v<version>` at the checked out commit if
+          # it does not exist yet. Never mark it as the repository's "latest".
+          makeLatest: false
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          omitDraftDuringUpdate: true
+          name: ${{ steps.meta.outputs.tag }}
+          commit: ${{ steps.checkout.outputs.commit }}
+          tag: ${{ steps.meta.outputs.tag }}
+          artifacts: |
+            web/reearth-viz-workbench_${{ steps.meta.outputs.version }}.tar.gz
+            web/reearth-viz-workbench_${{ steps.meta.outputs.version }}.tar.gz.sha256
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: workbench-${{ steps.meta.outputs.version }}
+          path: |
+            web/reearth-viz-workbench_${{ steps.meta.outputs.version }}.tar.gz
+            web/reearth-viz-workbench_${{ steps.meta.outputs.version }}.tar.gz.sha256
+            web/dist-workbench/workbench-manifest.json
+          retention-days: 90
