@@ -15,6 +15,10 @@ on:
         required: false
         default: 'main'
 
+concurrency:
+  group: workbench-nightly
+  cancel-in-progress: true
+
 jobs:
   build-nightly:
     runs-on: ubuntu-latest
@@ -84,7 +88,6 @@ jobs:
           allowUpdates: true
           makeLatest: false
           prerelease: true
-          omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
           name: "Workbench Nightly"
           tag: workbench-nightly

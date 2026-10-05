@@ -2,8 +2,8 @@
 title: "Workbench Release Strategy"
 last_updated: "2026-10-05"
 related:
-  - architecture/overview.md
-  - reference/commands.md
+  - ../architecture/overview.md
+  - ../reference/commands.md
 maintainer: "Platform Team"
 ---
 
@@ -61,7 +61,7 @@ The Workbench shares critical dependencies with the main application:
 - Tag: `workbench-nightly` (updated in place)
 - Release: Marked as `prerelease: true`
 - Artifact: `reearth-viz-workbench_nightly.tar.gz`
-- Frequency: Every commit to main
+- Frequency: On changes to `web/**` (excluding docs) pushed to main
 
 **Use Case**:
 
@@ -236,7 +236,7 @@ export const REEATH_PLUGIN_API_VERSION = "2.1.0";
 ```text
 GET https://api.github.com/repos/reearth/reearth-visualizer/releases/latest
 
-Filter assets: name includes "workbench"
+Filter assets: name matches "reearth-viz-workbench_*.tar.gz"
 Download: asset.browser_download_url
 ```
 
@@ -245,7 +245,8 @@ Download: asset.browser_download_url
 ```text
 GET https://api.github.com/repos/reearth/reearth-visualizer/releases/tags/workbench-nightly
 
-Download: assets[0].browser_download_url
+Filter assets: name is "reearth-viz-workbench_nightly.tar.gz"
+Download: asset.browser_download_url
 ```
 
 #### Specific Version
@@ -301,11 +302,11 @@ async function selectWorkbenchVersion(options) {
 
 ```bash
 # Download checksum file
-wget https://github.com/.../workbench_v1.0.0.tar.gz.sha256
+wget https://github.com/reearth/reearth-visualizer/releases/download/v1.0.0/reearth-viz-workbench_v1.0.0.tar.gz.sha256
 
 # Verify
-sha256sum -c workbench_v1.0.0.tar.gz.sha256
-# Expected output: workbench_v1.0.0.tar.gz: OK
+sha256sum -c reearth-viz-workbench_v1.0.0.tar.gz.sha256
+# Expected output: reearth-viz-workbench_v1.0.0.tar.gz: OK
 ```
 
 ## Release Checklist
@@ -386,7 +387,7 @@ reearth-cli workbench --update
 
 **Recovery**:
 
-Can manually trigger workbench build for a specific version if needed (though should be rare).
+Re-run the failed `build-workbench` job from the release workflow in GitHub Actions UI. The nightly workflow only publishes to `workbench-nightly` and cannot create stable releases.
 
 ## Migration from Old Approach
 
