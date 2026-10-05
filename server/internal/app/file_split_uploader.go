@@ -91,7 +91,14 @@ func validateChunkRequest(fileID string, chunkNum, totalChunks int, chunkSize in
 	if totalChunks <= 0 || totalChunks > maxChunkCount {
 		return errors.New("invalid total chunks")
 	}
-	if int64(totalChunks)*chunkSize > maxImportSizeBytes {
+	// The client sends a shorter final chunk (totalChunks = ceil(size/chunkSize)),
+	// so totalChunks*chunkSize overstates the real upload size by up to
+	// chunkSize-1 bytes. Compare against the minimum guaranteed size instead
+	// -- every chunk but the last is exactly chunkSize, and the last is at
+	// least 1 byte -- so a declaration is only rejected here when it cannot
+	// possibly fit regardless of how short the final chunk turns out to be.
+	// The authoritative, byte-accurate check is in writeChunk.
+	if int64(totalChunks-1)*chunkSize >= maxImportSizeBytes {
 		return fmt.Errorf("upload of %d chunks exceeds the %dMB import size limit", totalChunks, file_.MaxImportZipSizeMB)
 	}
 	if chunkNum < 0 || chunkNum >= totalChunks {
@@ -106,16 +113,17 @@ func validateChunkRequest(fileID string, chunkNum, totalChunks int, chunkSize in
 // prevents the class of bug that produced REL-02: a goroutine or handler
 // touching session state without holding its lock.
 type uploadSession struct {
-	mu          sync.Mutex
-	fileID      string
-	filePath    string
-	file        *os.File
-	chunkSize   int64
-	totalChunks int
-	received    map[int]struct{}
-	project     *project.Project
-	dispatched  bool
-	updatedAt   time.Time
+	mu            sync.Mutex
+	fileID        string
+	filePath      string
+	file          *os.File
+	chunkSize     int64
+	totalChunks   int
+	received      map[int]struct{}
+	receivedBytes int64
+	project       *project.Project
+	dispatched    bool
+	updatedAt     time.Time
 }
 
 // sessionInfo is an immutable snapshot of the fields callers need after
@@ -195,6 +203,19 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 	var probe [1]byte
 	if extra, _ := r.Read(probe[:]); extra > 0 {
 		return false, apperr.InvalidInput(fmt.Sprintf("chunk %d exceeds max chunk size (%d bytes)", idx, s.chunkSize), nil)
+	}
+
+	// Authoritative byte budget: validateChunkRequest's upfront check only
+	// bounds the declared totalChunks/chunkSize combo, not what the client
+	// actually sends, so a declaration that passes it could still deliver a
+	// full-sized final chunk and push the real total over the limit. Only
+	// count a chunk once -- a client retry of an already-received index
+	// rewrites the same offset, not additional bytes.
+	if _, alreadyReceived := s.received[idx]; !alreadyReceived {
+		if s.receivedBytes+n > maxImportSizeBytes {
+			return false, apperr.InvalidInput(fmt.Sprintf("upload exceeds the %dMB import size limit", file_.MaxImportZipSizeMB), nil)
+		}
+		s.receivedBytes += n
 	}
 
 	s.received[idx] = struct{}{}
