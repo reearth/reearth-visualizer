@@ -73,6 +73,26 @@ func (i *Storytelling) FetchByScene(ctx context.Context, sid id.SceneID, _ *usec
 	return i.storytellingRepo.FindByScene(ctx, sid)
 }
 
+// Create, and ~12 sibling methods in this file (Update, Remove, CreatePage,
+// UpdatePage, RemovePage, MovePage, DuplicatePage, AddPageLayer,
+// RemovePageLayer, CreateBlock, RemoveBlock, MoveBlock -- Publish and
+// ImportStory are NOT affected, they call CheckPolicy before opening a
+// transaction or without one at all), open a Mongo transaction, write a
+// property, then call policyChecker.CheckPolicy -- a blocking HTTP call with
+// a 30s default timeout -- before committing (compliance scan REL-03/REL-05).
+// A slow policy-checker response holds the transaction's document locks for
+// up to 30s, during which a concurrent editor on the same scene gets
+// WriteConflict.
+//
+// Accepted tradeoff for now: unlike Storytelling.Publish (hardened after a
+// prior WriteConflict incident, see its own comment), these sites are not
+// using runWithTxRetry. We checked prod log evidence over 90-180 days before
+// deciding: zero policy-checker timeouts at these specific call sites in 90
+// days, and the one policy-checker error found in 180 days came from an
+// unrelated read-only path, not a mutation site. WriteConflict does happen in
+// prod (~2.3/day) but nothing in the evidence ties it to this cause. Revisit
+// if that log evidence changes -- the fix (move CheckPolicy before Begin,
+// matching Publish) is straightforward when it's actually warranted.
 func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInput, op *usecase.Operator) (*storytelling.Story, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -138,6 +158,7 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 	return story, nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInput, op *usecase.Operator) (*storytelling.Story, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -237,6 +258,7 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 	return story, nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInput, op *usecase.Operator) (_ *id.StoryID, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -514,6 +536,7 @@ func (i *Storytelling) Move(_ context.Context, _ interfaces.MoveStoryInput, _ *u
 	return nil, 0, rerror.ErrNotImplemented
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -600,6 +623,7 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	return story, page, nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -677,6 +701,7 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 	return story, page, nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePageParam, op *usecase.Operator) (*storytelling.Story, *id.PageID, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -738,6 +763,7 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 	return story, page.Id().Ref(), nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, int, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -792,6 +818,7 @@ func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePagePara
 	return story, page, inp.Index, nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.DuplicatePageParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -847,6 +874,7 @@ func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.Duplica
 	return story, dupPage, nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLayerParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -909,6 +937,7 @@ func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLaye
 	return story, page, nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageLayerParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -971,6 +1000,7 @@ func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageL
 	return story, page, nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *storytelling.Block, int, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -1050,6 +1080,7 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 	return story, page, block, 1, err
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) RemoveBlock(ctx context.Context, inp interfaces.RemoveBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -1112,6 +1143,7 @@ func (i *Storytelling) RemoveBlock(ctx context.Context, inp interfaces.RemoveBlo
 	return story, page, &inp.BlockID, nil
 }
 
+// Same accepted tradeoff as Storytelling.Create (see its comment) -- REL-03/REL-05.
 func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, int, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
