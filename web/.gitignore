@@ -4,6 +4,7 @@ node_modules
 *.log
 /coverage
 /dist
+/dist-workbench
 /vendor
 /storybook-static
 /Users
