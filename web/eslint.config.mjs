@@ -39,5 +39,18 @@ export default [
       "no-console": "off"
     }
   },
+  // Configuration for build scripts
+  {
+    files: ["bin/**/*.js"],
+    languageOptions: {
+      globals: {
+        console: "readonly",
+        process: "readonly"
+      }
+    },
+    rules: {
+      "no-console": "off"
+    }
+  },
   ...storybook.configs["flat/recommended"]
 ];
