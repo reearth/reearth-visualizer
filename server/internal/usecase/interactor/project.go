@@ -616,8 +616,9 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdateProjectAlias(*p.ProjectAlias)
 	}
 
-	// Only GraphQL requests collect field errors; GetErrors panics outside one.
-	if !adapter.IsInternal(ctx) && graphql.HasOperationContext(ctx) {
+	// Only GraphQL requests collect field errors; GetErrors panics outside one
+	// (gRPC internal API, REST API).
+	if graphql.HasOperationContext(ctx) {
 		if errs := graphql.GetErrors(ctx); len(errs) > 0 {
 			return prj, nil
 		}
