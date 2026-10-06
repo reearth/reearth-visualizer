@@ -324,12 +324,6 @@ func TestUploadSession_WriteChunk_RejectsOversizedChunk(t *testing.T) {
 	}
 }
 
-// TestUploadSession_WriteChunk_RejectsWhenCumulativeBytesExceedBudget is a
-// regression test: validateChunkRequest's upfront check only bounds the
-// declared totalChunks/chunkSize combo, not what the client actually sends,
-// so a declaration that passes it could still deliver a full-sized final
-// chunk and push the real total over the limit. writeChunk must catch that
-// with its own running byte count.
 func TestUploadSession_WriteChunk_RejectsWhenCumulativeBytesExceedBudget(t *testing.T) {
 	original := maxImportSizeBytes
 	maxImportSizeBytes = 10
@@ -347,8 +341,6 @@ func TestUploadSession_WriteChunk_RejectsWhenCumulativeBytesExceedBudget(t *test
 	if _, err := session.writeChunk(1, strings.NewReader("bbbb")); err != nil {
 		t.Fatalf("writeChunk(1): %v", err)
 	}
-	// 8 bytes received so far; a full 4-byte final chunk would make 12, over
-	// the 10-byte budget.
 	_, err = session.writeChunk(2, strings.NewReader("cccc"))
 	if err == nil {
 		t.Fatal("expected an error for a chunk that pushes the upload over budget")
@@ -361,10 +353,6 @@ func TestUploadSession_WriteChunk_RejectsWhenCumulativeBytesExceedBudget(t *test
 	}
 }
 
-// TestUploadSession_WriteChunk_AllowsPartialFinalChunkWithinBudget confirms
-// the fix doesn't overcorrect: a short final chunk that keeps the real total
-// within budget must succeed, even though totalChunks*chunkSize alone would
-// overstate the upload as exceeding it.
 func TestUploadSession_WriteChunk_AllowsPartialFinalChunkWithinBudget(t *testing.T) {
 	original := maxImportSizeBytes
 	maxImportSizeBytes = 10
@@ -382,7 +370,6 @@ func TestUploadSession_WriteChunk_AllowsPartialFinalChunkWithinBudget(t *testing
 	if _, err := session.writeChunk(1, strings.NewReader("bbbb")); err != nil {
 		t.Fatalf("writeChunk(1): %v", err)
 	}
-	// Short final chunk: 8 + 2 = 10, exactly at budget.
 	if _, err := session.writeChunk(2, strings.NewReader("cc")); err != nil {
 		t.Fatalf("writeChunk(2): %v", err)
 	}
@@ -823,15 +810,7 @@ func TestValidateChunkRequest(t *testing.T) {
 		{"total chunks at the cap, small chunk size", "valid-id", 0, maxChunkCount, smallChunk, false},
 		{"total chunks at the cap, real chunk size exceeds import size limit", "valid-id", 0, maxChunkCount, 16 * 1024 * 1024, true},
 		{"declared size exactly at the import limit", "valid-id", 0, 1, maxImportSizeBytes, false},
-		// A single chunk's declared size alone can't be rejected here: totalChunks=1
-		// means there is no "every chunk but the last" to hold to chunkSize, so the
-		// minimum guaranteed size is always 0. writeChunk's LimitReader and byte
-		// budget are what actually bound a single-chunk upload.
 		{"two chunks, second one byte would push the minimum over the limit", "valid-id", 0, 2, maxImportSizeBytes, true},
-		// Regression for the false-positive Copilot flagged: 32 chunks of 16MiB
-		// is how the client declares anything from 496MiB+1 up to 500MiB (the
-		// final chunk is shorter than 16MiB), and must not be rejected upfront
-		// even though 32*16MiB=512MiB would exceed the 500MiB limit.
 		{"32 chunks of 16MiB is a valid declaration for a sub-500MiB upload with a partial final chunk", "valid-id", 0, 32, 16 * 1024 * 1024, false},
 	}
 
