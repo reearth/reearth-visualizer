@@ -14,6 +14,7 @@ import (
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/testutil/factory"
@@ -174,6 +175,80 @@ func TestProject_createProject(t *testing.T) {
 			assert.Nil(t, got)
 		})
 	})
+}
+
+func TestProject_createProject_StampsActor(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	us := factory.NewUser()
+	_ = uc.userRepo.Save(ctx, us)
+
+	ws := factory.NewWorkspace()
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	creatorID := accountsID.NewUserID()
+	op := &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
+			User:               &creatorID,
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
+		},
+	}
+
+	t.Run("with an actor, both fields are stamped", func(t *testing.T) {
+		got, err := uc.createProject(ctx, createProjectInput{
+			WorkspaceID: ws.ID(),
+			Visualizer:  visualizer.VisualizerCesium,
+			Name:        lo.ToPtr("stamped"),
+			Actor:       creatorID.String(),
+		}, op)
+		assert.NoError(t, err)
+		// On create both the creator and the last editor are the acting user.
+		assert.Equal(t, creatorID.String(), got.CreatedBy())
+		assert.Equal(t, creatorID.String(), got.UpdatedBy())
+	})
+
+	t.Run("without an actor (import path), neither field is stamped", func(t *testing.T) {
+		got, err := uc.createProject(ctx, createProjectInput{
+			WorkspaceID: ws.ID(),
+			Visualizer:  visualizer.VisualizerCesium,
+			Name:        lo.ToPtr("imported"),
+			// Actor left empty, as ImportProjectData does, so the import runner
+			// is not recorded as the creator or updater.
+		}, op)
+		assert.NoError(t, err)
+		assert.Empty(t, got.CreatedBy())
+		assert.Empty(t, got.UpdatedBy())
+	})
+}
+
+func TestProject_updateProjectUpdatedAt_StampsUpdatedByFromContext(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	// A project created by one user, not yet edited by anyone else.
+	creator := accountsID.NewUserID()
+	prj := project.New().NewID().Workspace(accountsID.NewWorkspaceID()).
+		CreatedBy(creator.String()).UpdatedBy(creator.String()).MustBuild()
+	require.NoError(t, uc.projectRepo.Save(ctx, prj))
+
+	// A different user performs a child edit (scene, story, layer, style),
+	// which advances the project's updatedAt through this helper. The operator
+	// is on the request context, so updatedBy should follow.
+	editor := accountsID.NewUserID()
+	ctx = adapter.AttachOperator(ctx, &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{User: &editor},
+	})
+	require.NoError(t, updateProjectUpdatedAt(ctx, prj, uc.projectRepo))
+
+	assert.Equal(t, creator.String(), prj.CreatedBy(), "createdBy must not change")
+	assert.Equal(t, editor.String(), prj.UpdatedBy(), "updatedBy must reflect the child editor")
 }
 
 func TestProject_CheckAlias(t *testing.T) {

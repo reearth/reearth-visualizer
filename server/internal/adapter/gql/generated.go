@@ -530,6 +530,7 @@ type ComplexityRoot struct {
 		BasicAuthUsername func(childComplexity int) int
 		CoreSupport       func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
+		CreatedByID       func(childComplexity int) int
 		Description       func(childComplexity int) int
 		EnableGa          func(childComplexity int) int
 		ID                func(childComplexity int) int
@@ -551,6 +552,7 @@ type ComplexityRoot struct {
 		Starred           func(childComplexity int) int
 		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
+		UpdatedByID       func(childComplexity int) int
 		Visibility        func(childComplexity int) int
 		Visualizer        func(childComplexity int) int
 		Workspace         func(childComplexity int) int
@@ -3508,6 +3510,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Project.CreatedAt(childComplexity), true
+	case "Project.createdById":
+		if e.complexity.Project.CreatedByID == nil {
+			break
+		}
+
+		return e.complexity.Project.CreatedByID(childComplexity), true
 	case "Project.description":
 		if e.complexity.Project.Description == nil {
 			break
@@ -3634,6 +3642,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Project.UpdatedAt(childComplexity), true
+	case "Project.updatedById":
+		if e.complexity.Project.UpdatedByID == nil {
+			break
+		}
+
+		return e.complexity.Project.UpdatedByID(childComplexity), true
 	case "Project.visibility":
 		if e.complexity.Project.Visibility == nil {
 			break
@@ -6479,6 +6493,8 @@ extend type Mutation {
   imageUrl: URL
   createdAt: DateTime!
   updatedAt: DateTime!
+  createdById: ID
+  updatedById: ID
   visualizer: Visualizer!
   isArchived: Boolean!
   coreSupport: Boolean!
@@ -20489,6 +20505,64 @@ func (ec *executionContext) fieldContext_Project_updatedAt(_ context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_createdById(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Project_createdById,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedByID, nil
+		},
+		nil,
+		ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Project_createdById(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_updatedById(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Project_updatedById,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedByID, nil
+		},
+		nil,
+		ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Project_updatedById(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Project_visualizer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -21255,6 +21329,10 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdById":
+				return ec.fieldContext_Project_createdById(ctx, field)
+			case "updatedById":
+				return ec.fieldContext_Project_updatedById(ctx, field)
 			case "visualizer":
 				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
@@ -21443,6 +21521,10 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdById":
+				return ec.fieldContext_Project_createdById(ctx, field)
+			case "updatedById":
+				return ec.fieldContext_Project_updatedById(ctx, field)
 			case "visualizer":
 				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
@@ -21875,6 +21957,10 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdById":
+				return ec.fieldContext_Project_createdById(ctx, field)
+			case "updatedById":
+				return ec.fieldContext_Project_updatedById(ctx, field)
 			case "visualizer":
 				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
@@ -26697,6 +26783,10 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdById":
+				return ec.fieldContext_Project_createdById(ctx, field)
+			case "updatedById":
+				return ec.fieldContext_Project_updatedById(ctx, field)
 			case "visualizer":
 				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
@@ -41681,6 +41771,10 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "createdById":
+			out.Values[i] = ec._Project_createdById(ctx, field, obj)
+		case "updatedById":
+			out.Values[i] = ec._Project_updatedById(ctx, field, obj)
 		case "visualizer":
 			out.Values[i] = ec._Project_visualizer(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
