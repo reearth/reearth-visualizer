@@ -192,8 +192,9 @@ paths:
         `{"url": "..."}` to have the server download it. The zip must have
         `reearth.yml` at its root and a `<extension-id>.js` per extension.
 
-        Uploading the same plugin ID and version again replaces it; a new
-        version is installed as a separate plugin.
+        Uploading the same plugin ID and version again replaces it. A new
+        version upgrades the installed one: the project switches to it and the
+        old version is removed, so its plugin ID stops existing.
       tags: [Plugins]
       requestBody:
         required: true

@@ -99,6 +99,30 @@ None this round — the existing e2e test was repaired rather than extended. Ver
 
 ---
 
+## 2026-10-07 — REST API v1 for the CLI (server/internal/adapter/apiv1, interactor/project.go, interactor/scene.go)
+
+### Findings & Fixes
+
+1. **`Project.Update` panicked outside GraphQL** (server/internal/usecase/interactor/project.go)
+   - Bug: before saving, it called `graphql.GetErrors(ctx)`, which panics with "missing response context" unless a gqlgen request is running. Only the internal gRPC API was excluded (`IsInternal`), so the first non-GraphQL caller, `PATCH /api/v1/projects/{id}`, returned 500 on every call.
+   - Fix: read the field errors only when `graphql.HasOperationContext(ctx)`. That is false for gRPC as well, so the `IsInternal` check was dropped. GraphQL behaviour is unchanged.
+
+2. **Unreadable workspaces leaked through list filters** (server/internal/adapter/apiv1/project.go)
+   - Bug: listing a workspace the user cannot read returned an empty list, but with `starred=true` or `deleted=true` it returned 403, because those repo lookups answer `ErrOperationDenied` instead of an empty page. That revealed which workspace IDs exist. Found by Copilot review on #2452.
+   - Fix: answer an empty list before any lookup when the operator cannot read the workspace.
+
+3. **The plugin upload contract described the wrong behaviour** (server/schemas/api/v1.yml)
+   - Bug: the spec said a new version is installed next to the old one. The usecase upgrades instead: it migrates the scene to the new version and deletes the old plugin. Found by Copilot review on #2452.
+   - Fix: the spec now documents the upgrade.
+
+4. **Project lists loaded every story to find scene IDs** (server/internal/adapter/apiv1/project.go, interactor/scene.go)
+   - Bug: `FindByProjectsWithStory` was used only for scene IDs, so each list also read and decoded all stories and their pages for up to 100 scenes. Found by Copilot review on #2452.
+   - Fix: added `Scene.FindByProjects`, a scene-only batch lookup.
+
+### Tests added
+
+- e2e/api_v1_project_test.go (9 tests): the API end to end, including regression checks for unreadable workspaces with `starred`/`deleted` and for plugin upgrades removing the old ID.
+
 ## 2026-10-08 — Layer style Interface tab loses style data on save (web/src/app/features/Editor/Map/LayerStylePanel/Editor/StyleInterface/**)
 
 Fix for review finding H1. After every edit, the Interface tab rebuilds the whole style from its UI nodes (`StyleInterface/index.tsx`, `handleStyleNodesUpdate`), so any loss in the style → UI conversion gets written back on the next edit, even to properties the user never touched.
