@@ -635,7 +635,9 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
-	prj.SetUpdatedBy(operatorUserID(operator))
+	if actor := operatorUserID(operator); actor != "" {
+		prj.SetUpdatedBy(actor)
+	}
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
@@ -678,7 +680,9 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
-	prj.SetUpdatedBy(operatorUserID(operator))
+	if actor := operatorUserID(operator); actor != "" {
+		prj.SetUpdatedBy(actor)
+	}
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
@@ -940,7 +944,9 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	// A publishment status change counts as an update, whether the project is
 	// being published or unpublished, so stamp it in both cases.
 	prj.SetUpdatedAt(time.Now().UTC())
-	prj.SetUpdatedBy(operatorUserID(op))
+	if actor := operatorUserID(op); actor != "" {
+		prj.SetUpdatedBy(actor)
+	}
 
 	// Phase 3: short transaction containing only the two DB saves, with retry
 	// on TransientTransactionError. Each attempt gets a fresh session.

@@ -600,3 +600,37 @@ func TestProject_Publish_StampsUpdatedByOnPublishAndUnpublish(t *testing.T) {
 	assert.Equal(t, project.PublishmentStatusPrivate, unpublished.PublishmentStatus())
 	assert.Equal(t, unpublisher.String(), unpublished.UpdatedBy())
 }
+
+func TestProject_Publish_PreservesUpdatedByWhenOperatorHasNoUser(t *testing.T) {
+	ctx := context.Background()
+	env := setupProjectTestEnv(ctx, t)
+	env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+		Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).Maybe()
+
+	prj := project.New().NewID().Workspace(env.wsID).Name("Publishable").MustBuild()
+	_ = env.db.Project.Save(ctx, prj)
+	sc := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+	_ = env.db.Scene.Save(ctx, sc)
+
+	ctx = adapter.AttachInternal(ctx, true)
+
+	publisher := accountsID.NewUserID()
+	env.operator.AcOperator.User = &publisher
+	published, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
+		ID:     prj.ID(),
+		Status: project.PublishmentStatusPublic,
+	}, env.operator)
+	assert.NoError(t, err)
+	assert.Equal(t, publisher.String(), published.UpdatedBy())
+
+	// An internal call with no user on the operator must not wipe the
+	// previously recorded updatedBy to empty.
+	env.operator.AcOperator.User = nil
+	unpublished, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
+		ID:     prj.ID(),
+		Status: project.PublishmentStatusPrivate,
+	}, env.operator)
+	assert.NoError(t, err)
+	assert.Equal(t, project.PublishmentStatusPrivate, unpublished.PublishmentStatus())
+	assert.Equal(t, publisher.String(), unpublished.UpdatedBy())
+}
