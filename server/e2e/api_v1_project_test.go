@@ -90,9 +90,14 @@ func TestAPIV1ListProjects(t *testing.T) {
 	list.Value("items").Array().Value(0).Object().HasValue("id", pID.String())
 	list.NotContainsKey("nextCursor")
 
-	// Another user's workspace looks empty.
-	apiV1(e, http.MethodGet, path, uID2).Expect().Status(http.StatusOK).
-		JSON().Object().Value("items").Array().IsEmpty()
+	// Another user's workspace looks empty, with any filter.
+	for _, q := range []string{"", "starred", "deleted"} {
+		req := apiV1(e, http.MethodGet, path, uID2)
+		if q != "" {
+			req = req.WithQuery(q, true)
+		}
+		req.Expect().Status(http.StatusOK).JSON().Object().Value("items").Array().IsEmpty()
+	}
 
 	expectAPIError(t, apiV1(e, http.MethodGet, path, uID).WithQuery("limit", 0).Expect(),
 		http.StatusBadRequest, "invalid_input")
@@ -251,6 +256,18 @@ func TestAPIV1Plugins(t *testing.T) {
 		return res
 	}
 	assert.ElementsMatch(t, []string{"reearth", pluginID}, ids())
+
+	// A new version upgrades the plugin: the old ID goes away.
+	zip2, err := os.ReadFile(buildTestPluginZip(t, "testplugin", "1.0.1"))
+	require.NoError(t, err)
+	p2 := upload(uID, zip2).Status(http.StatusCreated).JSON().Object()
+	p2.HasValue("version", "1.0.1")
+	upgradedID := p2.Value("id").String().Raw()
+	assert.NotEqual(t, pluginID, upgradedID)
+	assert.ElementsMatch(t, []string{"reearth", upgradedID}, ids())
+	expectAPIError(t, apiV1(e, http.MethodDelete, path+"/"+pluginID, uID).Expect(),
+		http.StatusNotFound, "not_found")
+	pluginID = upgradedID
 
 	expectAPIError(t, upload(uID, []byte("not a zip")), http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"url": "file:///etc/passwd"}).Expect(),

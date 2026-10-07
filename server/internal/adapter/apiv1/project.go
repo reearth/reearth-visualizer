@@ -44,13 +44,19 @@ func (Server) ListProjects(ctx context.Context, req ListProjectsRequestObject) (
 	}.Wrap()
 
 	starred, deleted := lo.FromPtr(p.Starred), lo.FromPtr(p.Deleted)
+	if starred && deleted {
+		return nil, invalidInput("starred and deleted cannot be combined")
+	}
+	// A workspace the user cannot read looks empty, whatever the filter: the
+	// starred and deleted lookups would otherwise answer 403 and reveal it.
+	if !op.IsReadableWorkspace(wid) {
+		return ListProjects200JSONResponse(ProjectList{Items: []Project{}}), nil
+	}
 	var (
 		res []*project.Project
 		pi  *usecasex.PageInfo
 	)
 	switch {
-	case starred && deleted:
-		return nil, invalidInput("starred and deleted cannot be combined")
 	case starred:
 		res, pi, err = uc.Project.FindStarredByWorkspace(ctx, wid, pagination, op)
 	case deleted:
@@ -267,7 +273,7 @@ func toProjectWithScene(ctx context.Context, uc *interfaces.Container, p *projec
 func toProjectsWithScenes(ctx context.Context, uc *interfaces.Container, ps []*project.Project) ([]Project, error) {
 	_, op := usecases(ctx)
 	ps = lo.Compact(ps)
-	scenes, _, err := uc.Scene.FindByProjectsWithStory(ctx, lo.Map(ps, func(p *project.Project, _ int) id.ProjectID {
+	scenes, err := uc.Scene.FindByProjects(ctx, lo.Map(ps, func(p *project.Project, _ int) id.ProjectID {
 		return p.ID()
 	}), op)
 	if err != nil {
