@@ -186,4 +186,78 @@ describe("Project hooks - handleProjectRemove", () => {
     expect(onProjectRemove).not.toHaveBeenCalled();
     expect(mockPublishProject).not.toHaveBeenCalled();
   });
+
+  it("handles project.stories being undefined without crashing", async () => {
+    // project.stories is optional — when the query runs without withStories:true
+    // the field is absent. The hook must not crash and must still archive.
+    const onProjectRemove = vi.fn().mockResolvedValue(true);
+    const { result } = renderHook(() =>
+      useHooks({
+        project: { ...baseProject, status: "unpublished", isPublished: false },
+        onProjectRemove
+      })
+    );
+
+    await act(async () => {
+      await result.current.handleProjectRemove(baseProject.id);
+    });
+
+    expect(mockPublishStory).not.toHaveBeenCalled();
+    expect(onProjectRemove).toHaveBeenCalledWith(baseProject.id);
+  });
+
+  it("does not unpublish stories whose status is Private", async () => {
+    mockStories = [
+      { id: "story-priv", publishmentStatus: PublishmentStatus.Private }
+    ];
+    const onProjectRemove = vi.fn().mockResolvedValue(true);
+
+    const { result } = renderHook(() =>
+      useHooksWithStories({
+        project: { ...baseProject, status: "unpublished", isPublished: false },
+        onProjectRemove
+      })
+    );
+
+    await act(async () => {
+      await result.current.handleProjectRemove(baseProject.id);
+    });
+
+    expect(mockPublishStory).not.toHaveBeenCalled();
+    expect(onProjectRemove).toHaveBeenCalledWith(baseProject.id);
+  });
+
+  it("unpublishes both the project and published stories before archiving", async () => {
+    mockStories = [
+      { id: "story-pub", publishmentStatus: PublishmentStatus.Public }
+    ];
+    const callOrder: string[] = [];
+    mockPublishProject.mockImplementation(async () => {
+      await Promise.resolve();
+      callOrder.push("unpublish-project");
+    });
+    mockPublishStory.mockImplementation(async (_status, storyId) => {
+      await Promise.resolve();
+      callOrder.push(`unpublish-story-${storyId}`);
+    });
+    const onProjectRemove = vi.fn(() => {
+      callOrder.push("archive");
+      return Promise.resolve(true);
+    });
+
+    const { result } = renderHook(() =>
+      useHooksWithStories({ project: baseProject, onProjectRemove })
+    );
+
+    await act(async () => {
+      await result.current.handleProjectRemove(baseProject.id);
+    });
+
+    expect(callOrder.indexOf("archive")).toBeGreaterThan(
+      callOrder.indexOf("unpublish-project")
+    );
+    expect(callOrder.indexOf("archive")).toBeGreaterThan(
+      callOrder.indexOf("unpublish-story-story-pub")
+    );
+  });
 });
