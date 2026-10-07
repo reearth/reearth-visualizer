@@ -56,11 +56,17 @@ const importJobTimeout = 5 * time.Minute
 // should be self-healing; this just guarantees the wait can't run forever.
 const dispatchWaitTimeout = 5 * time.Minute
 
-// maxChunkCount bounds total_chunks well above any legitimate upload (the
-// import pipeline already rejects anything over 500MB, which is ~32
-// chunks at the client's 16MB chunk size) while still capping how large a
-// backing file a single request can make the server allocate.
+// maxChunkCount is a coarse backstop on total_chunks. The real budget is
+// maxImportSizeBytes below, checked against the declared chunk size; this
+// constant only guards against a chunkSize of 0 or another degenerate value
+// making that multiplication meaningless.
 const maxChunkCount = 128
+
+// maxImportSizeBytes mirrors the limit UncompressExportZip enforces once the
+// assembled upload is read back, so a chunked upload is rejected for
+// declaring more bytes than that before any of them are written to the
+// backing file, instead of only after all of them already have been.
+var maxImportSizeBytes = int64(file_.MaxImportZipSizeMB) * 1024 * 1024
 
 // maxConcurrentSessions caps how many upload sessions can exist at once.
 // Each session keeps an open file handle and a temporary file on disk
@@ -78,12 +84,22 @@ var safeFileIDPattern = regexp.MustCompile(`^[A-Za-z0-9_-]{1,128}$`)
 // ever reach the filesystem: an unrestricted fileID can path-traverse out
 // of tempDir via filepath.Join, and an unbounded/negative chunkNum can
 // force writes at arbitrary offsets in the backing file.
-func validateChunkRequest(fileID string, chunkNum, totalChunks int) error {
+func validateChunkRequest(fileID string, chunkNum, totalChunks int, chunkSize int64) error {
 	if !safeFileIDPattern.MatchString(fileID) {
 		return errors.New("invalid file id")
 	}
 	if totalChunks <= 0 || totalChunks > maxChunkCount {
 		return errors.New("invalid total chunks")
+	}
+	// The client sends a shorter final chunk (totalChunks = ceil(size/chunkSize)),
+	// so totalChunks*chunkSize overstates the real upload size by up to
+	// chunkSize-1 bytes. Compare against the minimum guaranteed size instead
+	// -- every chunk but the last is exactly chunkSize, and the last is at
+	// least 1 byte -- so a declaration is only rejected here when it cannot
+	// possibly fit regardless of how short the final chunk turns out to be.
+	// The authoritative, byte-accurate check is in writeChunk.
+	if int64(totalChunks-1)*chunkSize >= maxImportSizeBytes {
+		return fmt.Errorf("upload of %d chunks exceeds the %dMB import size limit", totalChunks, file_.MaxImportZipSizeMB)
 	}
 	if chunkNum < 0 || chunkNum >= totalChunks {
 		return errors.New("invalid chunk number")
@@ -97,16 +113,17 @@ func validateChunkRequest(fileID string, chunkNum, totalChunks int) error {
 // prevents the class of bug that produced REL-02: a goroutine or handler
 // touching session state without holding its lock.
 type uploadSession struct {
-	mu          sync.Mutex
-	fileID      string
-	filePath    string
-	file        *os.File
-	chunkSize   int64
-	totalChunks int
-	received    map[int]struct{}
-	project     *project.Project
-	dispatched  bool
-	updatedAt   time.Time
+	mu            sync.Mutex
+	fileID        string
+	filePath      string
+	file          *os.File
+	chunkSize     int64
+	totalChunks   int
+	received      map[int]struct{}
+	receivedBytes int64
+	project       *project.Project
+	dispatched    bool
+	updatedAt     time.Time
 }
 
 // sessionInfo is an immutable snapshot of the fields callers need after
@@ -167,12 +184,26 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 		return false, nil
 	}
 
-	// Cap the write at chunkSize bytes so an oversized chunk can never
-	// spill into the next chunk's offset. Any chunk but the last must be
-	// exactly chunkSize; a short or oversized chunk is rejected (and not
-	// marked received) rather than silently corrupting the assembled file.
+	// Cap the write at chunkSize bytes so an oversized chunk can never spill
+	// into the next chunk's offset, and additionally at the remaining import
+	// budget for a chunk not already received -- capping the read instead of
+	// writing first and rejecting after means an over-budget chunk is never
+	// written to disk, so a client retry at the same offset can't leave
+	// leftover bytes from the earlier, larger write past the retry's shorter
+	// content.
+	_, alreadyReceived := s.received[idx]
+	readCap := s.chunkSize
+	if !alreadyReceived {
+		if remaining := maxImportSizeBytes - s.receivedBytes; remaining < readCap {
+			readCap = remaining
+		}
+	}
+	if readCap <= 0 {
+		return false, apperr.InvalidInput(fmt.Sprintf("upload exceeds the %dMB import size limit", file_.MaxImportZipSizeMB), nil)
+	}
+
 	offset := int64(idx) * s.chunkSize
-	n, err := io.Copy(io.NewOffsetWriter(s.file, offset), io.LimitReader(r, s.chunkSize))
+	n, err := io.Copy(io.NewOffsetWriter(s.file, offset), io.LimitReader(r, readCap))
 	if err != nil {
 		return false, fmt.Errorf("failed to write chunk %d: %w", idx, err)
 	}
@@ -185,7 +216,14 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 	}
 	var probe [1]byte
 	if extra, _ := r.Read(probe[:]); extra > 0 {
+		if readCap < s.chunkSize {
+			return false, apperr.InvalidInput(fmt.Sprintf("upload exceeds the %dMB import size limit", file_.MaxImportZipSizeMB), nil)
+		}
 		return false, apperr.InvalidInput(fmt.Sprintf("chunk %d exceeds max chunk size (%d bytes)", idx, s.chunkSize), nil)
+	}
+
+	if !alreadyReceived {
+		s.receivedBytes += n
 	}
 
 	s.received[idx] = struct{}{}
@@ -335,7 +373,7 @@ func servSplitUploadFiles(
 				return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid total chunks")
 			}
 
-			if err := validateChunkRequest(fileID, chunkNum, totalChunks); err != nil {
+			if err := validateChunkRequest(fileID, chunkNum, totalChunks, splitUploadManager.chunkSize); err != nil {
 				return nil, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 			}
 
