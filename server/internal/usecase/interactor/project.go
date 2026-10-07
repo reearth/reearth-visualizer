@@ -1025,6 +1025,11 @@ func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s 
 	return nil
 }
 
+// Delete opens a transaction and calls policyChecker.CheckPolicy -- a
+// blocking HTTP call with a 30s default timeout -- before committing. Same
+// accepted tradeoff as Storytelling.Create's comment (compliance scan
+// REL-03/REL-05): checked prod log evidence before deciding to leave this
+// as-is rather than adding retry/reordering, revisit if that evidence changes.
 func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (err error) {
 	log.Warnf("Deleting a project %s", projectID.String())
 
