@@ -381,6 +381,47 @@ func TestUploadSession_WriteChunk_AllowsPartialFinalChunkWithinBudget(t *testing
 	}
 }
 
+func TestUploadSession_WriteChunk_RetryAfterBudgetRejectionLeavesNoGarbage(t *testing.T) {
+	original := maxImportSizeBytes
+	maxImportSizeBytes = 10
+	defer func() { maxImportSizeBytes = original }()
+
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, err := m.getOrCreateSession("f11", 3)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	if _, err := session.writeChunk(0, strings.NewReader("aaaa")); err != nil {
+		t.Fatalf("writeChunk(0): %v", err)
+	}
+	if _, err := session.writeChunk(1, strings.NewReader("bbbb")); err != nil {
+		t.Fatalf("writeChunk(1): %v", err)
+	}
+
+	if _, err := session.writeChunk(2, strings.NewReader("cccc")); err == nil {
+		t.Fatal("expected an error for a chunk that pushes the upload over budget")
+	}
+
+	if _, err := session.writeChunk(2, strings.NewReader("cc")); err != nil {
+		t.Fatalf("writeChunk(2) retry: %v", err)
+	}
+
+	f, err := os.Open(session.snapshot().FilePath)
+	if err != nil {
+		t.Fatalf("failed to open file: %v", err)
+	}
+	defer func() { _ = f.Close() }()
+
+	data, err := io.ReadAll(f)
+	if err != nil {
+		t.Fatalf("failed to read file: %v", err)
+	}
+	if want := "aaaabbbbcc"; string(data) != want {
+		t.Errorf("file content = %q, want %q (no leftover bytes from the rejected write)", string(data), want)
+	}
+}
+
 // TestSplitUploadManager_CleanupSession verifies that cleanupSession removes
 // the session from the map and deletes its backing file on disk.
 func TestSplitUploadManager_CleanupSession(t *testing.T) {

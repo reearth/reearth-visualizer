@@ -184,12 +184,26 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 		return false, nil
 	}
 
-	// Cap the write at chunkSize bytes so an oversized chunk can never
-	// spill into the next chunk's offset. Any chunk but the last must be
-	// exactly chunkSize; a short or oversized chunk is rejected (and not
-	// marked received) rather than silently corrupting the assembled file.
+	// Cap the write at chunkSize bytes so an oversized chunk can never spill
+	// into the next chunk's offset, and additionally at the remaining import
+	// budget for a chunk not already received -- capping the read instead of
+	// writing first and rejecting after means an over-budget chunk is never
+	// written to disk, so a client retry at the same offset can't leave
+	// leftover bytes from the earlier, larger write past the retry's shorter
+	// content.
+	_, alreadyReceived := s.received[idx]
+	readCap := s.chunkSize
+	if !alreadyReceived {
+		if remaining := maxImportSizeBytes - s.receivedBytes; remaining < readCap {
+			readCap = remaining
+		}
+	}
+	if readCap <= 0 {
+		return false, apperr.InvalidInput(fmt.Sprintf("upload exceeds the %dMB import size limit", file_.MaxImportZipSizeMB), nil)
+	}
+
 	offset := int64(idx) * s.chunkSize
-	n, err := io.Copy(io.NewOffsetWriter(s.file, offset), io.LimitReader(r, s.chunkSize))
+	n, err := io.Copy(io.NewOffsetWriter(s.file, offset), io.LimitReader(r, readCap))
 	if err != nil {
 		return false, fmt.Errorf("failed to write chunk %d: %w", idx, err)
 	}
@@ -202,19 +216,13 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 	}
 	var probe [1]byte
 	if extra, _ := r.Read(probe[:]); extra > 0 {
+		if readCap < s.chunkSize {
+			return false, apperr.InvalidInput(fmt.Sprintf("upload exceeds the %dMB import size limit", file_.MaxImportZipSizeMB), nil)
+		}
 		return false, apperr.InvalidInput(fmt.Sprintf("chunk %d exceeds max chunk size (%d bytes)", idx, s.chunkSize), nil)
 	}
 
-	// Authoritative byte budget: validateChunkRequest's upfront check only
-	// bounds the declared totalChunks/chunkSize combo, not what the client
-	// actually sends, so a declaration that passes it could still deliver a
-	// full-sized final chunk and push the real total over the limit. Only
-	// count a chunk once -- a client retry of an already-received index
-	// rewrites the same offset, not additional bytes.
-	if _, alreadyReceived := s.received[idx]; !alreadyReceived {
-		if s.receivedBytes+n > maxImportSizeBytes {
-			return false, apperr.InvalidInput(fmt.Sprintf("upload exceeds the %dMB import size limit", file_.MaxImportZipSizeMB), nil)
-		}
+	if !alreadyReceived {
 		s.receivedBytes += n
 	}
 
