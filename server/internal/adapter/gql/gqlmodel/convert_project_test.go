@@ -111,6 +111,28 @@ func TestToProject(t *testing.T) {
 	}
 }
 
+func TestToProject_ActorIDs(t *testing.T) {
+	creator := accountsID.NewUserID().String()
+	editor := accountsID.NewUserID().String()
+
+	t.Run("actors are exposed as non-null IDs", func(t *testing.T) {
+		got := ToProject(project.New().NewID().Workspace(accountsID.NewWorkspaceID()).
+			CreatedBy(creator).UpdatedBy(editor).MustBuild())
+		if assert.NotNil(t, got.CreatedByID) {
+			assert.Equal(t, creator, string(*got.CreatedByID))
+		}
+		if assert.NotNil(t, got.UpdatedByID) {
+			assert.Equal(t, editor, string(*got.UpdatedByID))
+		}
+	})
+
+	t.Run("legacy project with no actors resolves to nil", func(t *testing.T) {
+		got := ToProject(project.New().NewID().Workspace(accountsID.NewWorkspaceID()).MustBuild())
+		assert.Nil(t, got.CreatedByID)
+		assert.Nil(t, got.UpdatedByID)
+	})
+}
+
 func TestToPublishmentStatus(t *testing.T) {
 	tests := []struct {
 		name string

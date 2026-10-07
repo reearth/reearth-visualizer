@@ -8,6 +8,8 @@ type Project implements Node {
   imageUrl: URL
   createdAt: DateTime!
   updatedAt: DateTime!
+  createdById: ID
+  updatedById: ID
   visualizer: Visualizer!
   isArchived: Boolean!
   coreSupport: Boolean!
