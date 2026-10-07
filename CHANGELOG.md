@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.26 - 2026-10-07
+
+### Web
+
+#### 🚀 Features
+
+- Add plugin development workbench ([#2439](https://github.com/reearth/reearth-visualizer/pull/2439)) [`f2f6ee`](https://github.com/reearth/reearth-visualizer/commit/f2f6ee)
+
+#### 🔧 Bug Fixes
+
+- Fix YAML syntax error in i18n and restore Japanese translations ([#2451](https://github.com/reearth/reearth-visualizer/pull/2451)) [`f347db`](https://github.com/reearth/reearth-visualizer/commit/f347db)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.26 ([#2453](https://github.com/reearth/reearth-visualizer/pull/2453)) [`62444c`](https://github.com/reearth/reearth-visualizer/commit/62444c)
+
+### Server
+
+#### 🚀 Features
+
+- Record createdBy and updatedBy on projects ([#2412](https://github.com/reearth/reearth-visualizer/pull/2412)) [`092e6c`](https://github.com/reearth/reearth-visualizer/commit/092e6c)
+
+#### 🔧 Bug Fixes
+
+- Reject split uploads that would exceed the import size limit before writing chunks ([#2449](https://github.com/reearth/reearth-visualizer/pull/2449)) [`b8fbb1`](https://github.com/reearth/reearth-visualizer/commit/b8fbb1)
+
+#### 📖 Documentation
+
+- Record the accepted-tradeoff decision for REL-03&#x2F;REL-05 in source ([#2450](https://github.com/reearth/reearth-visualizer/pull/2450)) [`6da152`](https://github.com/reearth/reearth-visualizer/commit/6da152)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Release workbench independently from a manually entered version ([#2440](https://github.com/reearth/reearth-visualizer/pull/2440)) [`68ca1d`](https://github.com/reearth/reearth-visualizer/commit/68ca1d)
+
+#### Miscellaneous Tasks
+
+- Update workbench release strategy and CI workflows ([#2448](https://github.com/reearth/reearth-visualizer/pull/2448)) [`a5cbe8`](https://github.com/reearth/reearth-visualizer/commit/a5cbe8)
+
+### e2e
+
+#### 🔧 Bug Fixes
+
+- Pass Auth0 secrets to plugin-api test step ([#2437](https://github.com/reearth/reearth-visualizer/pull/2437)) [`db5a33`](https://github.com/reearth/reearth-visualizer/commit/db5a33)
+
 ## 1.0.0-beta.16.25 - 2026-10-01
 
 ### Web
