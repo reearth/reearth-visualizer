@@ -41,6 +41,7 @@ type OtelServiceName string
 const (
 	OtelVisualizerServiceName            OtelServiceName = "reearth-visualizer-api"
 	OtelVisualizerInternalApiServiceName OtelServiceName = "reearth-visualizer-internal-api"
+	OtelVisualizerPublicApiServiceName   OtelServiceName = "reearth-visualizer-public-api"
 )
 
 type Config struct {

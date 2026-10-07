@@ -104,6 +104,17 @@ func (i *Scene) FindByProject(ctx context.Context, id id.ProjectID, operator *us
 	return s, nil
 }
 
+func (i *Scene) FindByProjects(ctx context.Context, ids []id.ProjectID, operator *usecase.Operator) ([]*scene.Scene, error) {
+	scenes, err := i.sceneRepo.FindByProjects(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for _, s := range scenes {
+		injectExtensionsToScene(s, i.extensions)
+	}
+	return scenes, nil
+}
+
 func (i *Scene) FindByProjectsWithStory(ctx context.Context, ids []id.ProjectID, operator *usecase.Operator) ([]*scene.Scene, *storytelling.StoryList, error) {
 	scenes, err := i.sceneRepo.FindByProjects(ctx, ids)
 	if err != nil {

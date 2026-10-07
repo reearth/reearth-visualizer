@@ -1,0 +1,9 @@
+package: apiv1
+generate:
+  echo-server: true
+  strict-server: true
+  models: true
+compatibility:
+  # Keep constant names stable as enums are added (ProjectSortName, not Name).
+  always-prefix-enum-values: true
+output: server.gen.go
