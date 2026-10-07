@@ -44,9 +44,9 @@ Project Alias *: プロジェクト別名 *
 'Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/': 使用できる文字は、英字・数字・ハイフンのみです。例：https://reearth.io/team-alias/
 Project Visibility *: プロジェクトの公開範囲 *
 For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: オープンおよび公開プロジェクトでは、誰でもプロジェクトを閲覧できます。非公開プロジェクトでは、ワークスペースのメンバーのみが閲覧できます。
-About: ''
+About: 概要
 Write down your content: 内容を書き込む
-Provide a short summary (within 500 characters) describing the purpose or key features of this project.: ''
+Provide a short summary (within 500 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な特徴を500文字以内で簡潔に説明してください。
 Choose a license: ライセンス選択
 We recommend selecting a license to define how others can use your work and ensure your rights as the creator are protected. You can also create a custom license later in the settings.: >-
   ライセンスを選択して、他のユーザーが作品をどのように利用できるかを明確にし、制作者としての権利を保護することをおすすめします。カスタムライセンスは後から設定で作成することもできます。
@@ -339,8 +339,8 @@ Background color: 背景色
 Align System: アラインシステム
 Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
-Project: ''
-Project Settings: ''
+Project: プロジェクト
+Project Settings: プロジェクト設定
 Plugin: プラグイン
 Dashboard: ダッシュボード
 Editor: エディタ
@@ -518,7 +518,7 @@ Panel Position: パネル位置
 Background Color: 背景色
 Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。
 Could not verify your signup. Please start the process over.: サインアップを確認できませんでした。もう一度やり直してください。
-Personal Account: ''
+Personal Account: 個人アカウント
 Team Workspace: チームワークスペース
 New workspace: ワークスペース作成
 Workspace: ワークスペース
@@ -561,7 +561,7 @@ You are going to delete a workspace.: ワークスペースを削除しようと
 Please make sure you don't have any projects in the workspace before continuing.: 続行する前に、ワークスペースにプロジェクトがないことを確認してください。
 Workspace Name: ワークスペース名
 This process will delete this workspace: この操作により、このワークスペースが削除されます
-Account Settings: ''
+Account Settings: アカウント設定
 Log out: ログアウト
 Workspace settings: ワークスペース設定
 Write your story :): ストーリーを書く :)
