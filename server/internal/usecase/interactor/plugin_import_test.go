@@ -18,11 +18,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestImportPlugins_MissingSingleOnlyDoesNotPanic is a regression test for
-// REL-07: an export whose plugin extension omits "singleOnly" (matching
-// omitempty on that field) used to panic on the unchecked pointer
-// dereference at plugin.go's SingleOnly(*pluginJSONextension.SingleOnly)
-// call. It should import cleanly instead, defaulting to not single-only.
 func TestImportPlugins_MissingSingleOnlyDoesNotPanic(t *testing.T) {
 	ctx := context.Background()
 

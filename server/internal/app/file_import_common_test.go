@@ -121,13 +121,6 @@ func TestMigrateLegacyTileTypes(t *testing.T) {
 	})
 }
 
-// TestImportProject_RecoversFromPanic is a regression test for REL-07: the
-// zip contents ImportProject parses are caller-controlled and some of the
-// usecases it calls (e.g. plugin/schema parsing) don't fully validate their
-// input, so a malformed import zip can panic partway through. Neither
-// Pub/Sub handler that calls ImportProject has its own recover, so without
-// one here the panic would skip every UpdateImportStatus call, leaving the
-// project stuck at its prior status after its only upload is deleted.
 func TestImportProject_RecoversFromPanic(t *testing.T) {
 	prj, err := project.New().NewID().Build()
 	require.NoError(t, err)

@@ -374,14 +374,6 @@ func migrateLegacyTileTypes(data *[]byte) error {
 	return nil
 }
 
-// ImportProject parses caller-controlled zip contents (project.json,
-// plugin/schema JSON) through several usecases that don't fully validate
-// their input, some of which panic on malformed data (see REL-07). Both
-// Pub/Sub handlers that call this have no recover of their own, so without
-// one here a bad upload would crash past every UpdateImportStatus call —
-// leaving the project stuck PROCESSING with its only upload already
-// deleted. Recovering here guarantees a terminal Failed status gets
-// written no matter what goes wrong inside.
 func ImportProject(
 	ctx context.Context,
 	usecases *interfaces.Container,
