@@ -89,6 +89,16 @@ func (b *Builder) UpdatedAt(updatedAt time.Time) *Builder {
 	return b
 }
 
+func (b *Builder) CreatedBy(createdBy string) *Builder {
+	b.p.createdBy = createdBy
+	return b
+}
+
+func (b *Builder) UpdatedBy(updatedBy string) *Builder {
+	b.p.updatedBy = updatedBy
+	return b
+}
+
 func (b *Builder) Visualizer(visualizer visualizer.Visualizer) *Builder {
 	b.p.visualizer = visualizer
 	return b
