@@ -431,16 +431,16 @@ Show Story Panel: ストーリーパネルを表示
 UI Language: UI言語
 Visualizer: ''
 CMS: ''
-3D map engine, MapLibre family: 3Dマップエンジン（MapLibreファミリー）
-Open terrain tiles for 3D globes: ''
-Open 3D buildings tiles for the world: ''
-Open Map Tile Service: ''
-Re:Earth Home: ''
-Community: ''
-Re:Earth products: ''
+3D map engine, MapLibre family: MapLibreファミリーの3Dマップエンジン
+Open terrain tiles for 3D globes: 3Dグローブ向けのオープンな地形タイル
+Open 3D buildings tiles for the world: 世界のオープンな3D建物タイル
+Open Map Tile Service: オープンな地図タイルサービス
+Re:Earth Home: Re:Earth ホーム
+Community: コミュニティ
+Re:Earth products: Re:Earth プロダクト
 Map engine: マップエンジン
-Re:Earth data services: ''
-Other: ''
+Re:Earth data services: Re:Earth データサービス
+Other: その他
 General: 一般
 README: リードミー
 License: ライセンス
