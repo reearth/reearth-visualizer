@@ -163,6 +163,21 @@ func TestAPIV1CreateProject(t *testing.T) {
 	created := p.Value("id").String().Raw()
 	apiV1(e, http.MethodGet, "/projects/"+created, uID).Expect().Status(http.StatusOK).
 		JSON().Object().HasValue("sceneId", p.Value("sceneId").String().Raw())
+	// Without an alias, the project gets "p-<id>".
+	p.HasValue("alias", "p-"+created)
+
+	apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "aliased", "alias": "cli-alias-test"}).
+		Expect().Status(http.StatusCreated).JSON().Object().HasValue("alias", "cli-alias-test")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "x", "alias": "cli-alias-test"}).Expect(),
+		http.StatusConflict, "conflict")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "x", "alias": "Bad Alias!"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "x", "alias": "ab"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
 
 	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"name": ""}).Expect(),
 		http.StatusBadRequest, "invalid_input")
