@@ -463,6 +463,10 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountsID.WorkspaceID
 		filter = bson.M{"$and": []bson.M{filter, keywordFilter}}
 	}
 
+	if uFilter.CreatedBy != nil {
+		filter = bson.M{"$and": []bson.M{filter, {"createdby": *uFilter.CreatedBy}}}
+	}
+
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 

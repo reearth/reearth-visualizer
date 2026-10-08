@@ -302,6 +302,63 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 	})
 }
 
+func TestProject_FindByWorkspace_CreatedBy(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountsID.NewWorkspaceID()
+	uid1 := accountsID.NewUserID().String()
+	uid2 := accountsID.NewUserID().String()
+
+	pid1 := id.NewProjectID()
+	pid2 := id.NewProjectID()
+	pid3 := id.NewProjectID()
+	pid4 := id.NewProjectID()
+
+	now := time.Now()
+	_, _ = c.Collection("project").InsertMany(ctx, []any{
+		bson.M{"id": pid1.String(), "workspace": wid.String(), "name": "Alpha", "createdby": uid1, "coresupport": true, "updatedat": now},
+		bson.M{"id": pid2.String(), "workspace": wid.String(), "name": "Beta", "createdby": uid1, "coresupport": true, "updatedat": now},
+		bson.M{"id": pid3.String(), "workspace": wid.String(), "name": "Alpha 2", "createdby": uid2, "coresupport": true, "updatedat": now},
+		// created before createdBy was recorded
+		bson.M{"id": pid4.String(), "workspace": wid.String(), "name": "Legacy", "coresupport": true, "updatedat": now},
+	})
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+	first := int64(10)
+	page := usecasex.CursorPagination{First: &first}.Wrap()
+
+	t.Run("no filter returns all projects", func(t *testing.T) {
+		got, pi, err := r.FindByWorkspace(ctx, wid, repo.ProjectFilter{Pagination: page})
+		require.NoError(t, err)
+		assert.Equal(t, int64(4), pi.TotalCount)
+		assert.Len(t, got, 4)
+	})
+
+	t.Run("filters by creator", func(t *testing.T) {
+		got, pi, err := r.FindByWorkspace(ctx, wid, repo.ProjectFilter{Pagination: page, CreatedBy: &uid1})
+		require.NoError(t, err)
+		assert.Equal(t, int64(2), pi.TotalCount)
+		assert.ElementsMatch(t, []id.ProjectID{pid1, pid2}, []id.ProjectID{got[0].ID(), got[1].ID()})
+	})
+
+	t.Run("combines with keyword", func(t *testing.T) {
+		keyword := "alpha"
+		got, _, err := r.FindByWorkspace(ctx, wid, repo.ProjectFilter{Pagination: page, CreatedBy: &uid1, Keyword: &keyword})
+		require.NoError(t, err)
+		require.Len(t, got, 1)
+		assert.Equal(t, pid1, got[0].ID())
+	})
+
+	t.Run("unknown creator returns nothing", func(t *testing.T) {
+		other := accountsID.NewUserID().String()
+		got, pi, err := r.FindByWorkspace(ctx, wid, repo.ProjectFilter{Pagination: page, CreatedBy: &other})
+		require.NoError(t, err)
+		assert.Equal(t, int64(0), pi.TotalCount)
+		assert.Empty(t, got)
+	})
+}
+
 func TestProject_FindDeletedByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()

@@ -573,7 +573,7 @@ func TestProject_FindByWorkspace_NilImportStatus(t *testing.T) {
 	assert.Nil(t, meta.ImportStatus())
 
 	pagination := usecasex.OffsetPagination{Offset: 0, Limit: 10}.Wrap()
-	result, pInfo, err := uc.FindByWorkspace(ctx, ws.ID(), nil, nil, pagination, &usecase.Operator{
+	result, pInfo, err := uc.FindByWorkspace(ctx, ws.ID(), nil, nil, pagination, nil, &usecase.Operator{
 		AcOperator: &accountsWorkspace.Operator{
 			ReadableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},

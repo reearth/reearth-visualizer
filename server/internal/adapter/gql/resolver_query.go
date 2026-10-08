@@ -179,8 +179,8 @@ func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlm
 	return loaders(ctx).Scene.FindByProject(ctx, projectID)
 }
 
-func (r *queryResolver) Projects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindByWorkspace(ctx, workspaceID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination)
+func (r *queryResolver) Projects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.ProjectSort, createdBy *gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindByWorkspace(ctx, workspaceID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination, createdBy)
 }
 
 func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {

@@ -32,7 +32,7 @@ func (r *workspaceResolver) Projects(ctx context.Context, obj *gqlmodel.Workspac
 		Last:   last,
 		After:  after,
 		Before: before,
-	})
+	}, nil)
 }
 
 type workspaceMemberResolver struct{ *Resolver }
