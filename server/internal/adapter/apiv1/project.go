@@ -241,6 +241,34 @@ func (Server) DeleteProject(ctx context.Context, req DeleteProjectRequestObject)
 
 // fetchProject returns the project, or a not found error when it does not
 // exist or the user cannot read its workspace.
+// RestoreProject moves a project out of the trash. A project that is not in
+// the trash is returned unchanged, so retrying is safe.
+func (Server) RestoreProject(ctx context.Context, req RestoreProjectRequestObject) (RestoreProjectResponseObject, error) {
+	uc, op := usecases(ctx)
+	pid, err := id.ProjectIDFrom(req.ProjectId)
+	if err != nil {
+		return nil, invalidInput("invalid project ID %q", req.ProjectId)
+	}
+	prj, err := fetchProject(ctx, uc, pid)
+	if err != nil {
+		return nil, err
+	}
+
+	if prj.IsDeleted() {
+		if prj, err = uc.Project.Update(ctx, interfaces.UpdateProjectParam{
+			ID:      pid,
+			Deleted: lo.ToPtr(false),
+		}, op); err != nil {
+			return nil, err
+		}
+	}
+	res, err := toProjectWithScene(ctx, uc, prj)
+	if err != nil {
+		return nil, err
+	}
+	return RestoreProject200JSONResponse(res), nil
+}
+
 func fetchProject(ctx context.Context, uc *interfaces.Container, pid id.ProjectID) (*project.Project, error) {
 	_, op := usecases(ctx)
 	res, err := uc.Project.Fetch(ctx, []id.ProjectID{pid}, op)

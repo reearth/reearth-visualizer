@@ -239,6 +239,35 @@ func TestAPIV1DeleteProject(t *testing.T) {
 	expectAPIError(t, apiV1(e, http.MethodGet, path, uID).Expect(), http.StatusNotFound, "not_found")
 }
 
+func TestAPIV1RestoreProject(t *testing.T) {
+	e := startPublicAPI(t)
+	path := "/projects/" + pID.String()
+	restore := path + "/restore"
+	list := "/workspaces/" + wID.String() + "/projects"
+
+	apiV1(e, http.MethodDelete, path, uID).Expect().Status(http.StatusNoContent)
+
+	// A reader cannot restore it.
+	expectAPIError(t, apiV1(e, http.MethodPost, restore, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
+
+	apiV1(e, http.MethodPost, restore, uID).Expect().Status(http.StatusOK).
+		JSON().Object().HasValue("id", pID.String()).HasValue("deleted", false)
+	apiV1(e, http.MethodGet, list, uID).Expect().Status(http.StatusOK).
+		JSON().Object().Value("items").Array().Length().IsEqual(1)
+	apiV1(e, http.MethodGet, list, uID).WithQuery("deleted", true).Expect().Status(http.StatusOK).
+		JSON().Object().Value("items").Array().IsEmpty()
+
+	// Restoring a project that is not in the trash is a no-op.
+	apiV1(e, http.MethodPost, restore, uID).Expect().Status(http.StatusOK).
+		JSON().Object().HasValue("deleted", false)
+
+	expectAPIError(t, apiV1(e, http.MethodPost, "/projects/nope/restore", uID).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, "/projects/01m4dn2d8ksnekewhejqa5bbzz/restore", uID).Expect(),
+		http.StatusNotFound, "not_found")
+}
+
 func TestAPIV1Plugins(t *testing.T) {
 	e := startPublicAPI(t)
 	prj := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
