@@ -1,13 +1,19 @@
 package apiv1
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/apperr"
+	"github.com/reearth/reearth/server/pkg/i18n/message"
+	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearthx/log"
+	"golang.org/x/text/language"
 )
 
 // apiError is an error with an HTTP status and a code from the Error schema.
@@ -52,22 +58,39 @@ func ErrorHandler(err error, c echo.Context) {
 	if c.Response().Committed {
 		return
 	}
-	status, code, message := toResponse(err)
+	status, code, msg := toResponse(c.Request().Context(), err)
 	if status == http.StatusInternalServerError {
 		log.Errorfc(c.Request().Context(), "api v1: %s %s: %+v", c.Request().Method, c.Path(), err)
 	}
 	var body Error
 	body.Error.Code = code
-	body.Error.Message = message
+	body.Error.Message = msg
 	if err := c.JSON(status, body); err != nil {
 		log.Errorfc(c.Request().Context(), "api v1: write error response: %v", err)
 	}
 }
 
-func toResponse(err error) (int, ErrorErrorCode, string) {
+func toResponse(ctx context.Context, err error) (int, ErrorErrorCode, string) {
 	var ae *apiError
 	if errors.As(err, &ae) {
 		return ae.status, ae.code, ae.message
+	}
+
+	// Validation errors from the usecases, such as an invalid or taken
+	// project alias. Their messages are written for users.
+	var ve *verror.VError
+	if errors.As(err, &ve) && ve.Err == nil {
+		msg := ve.Error()
+		if m, ok := ve.ErrMsg[language.English]; ok {
+			msg = message.ApplyTemplate(ctx, m.Message, ve.TemplateData, language.English)
+		}
+		switch {
+		case ve.Key == repo.ErrResourceNotFound.Key:
+			return http.StatusNotFound, ErrorErrorCodeNotFound, msg
+		case strings.HasSuffix(string(ve.Key), "already_exists"), strings.HasSuffix(string(ve.Key), "already_used"):
+			return http.StatusConflict, ErrorErrorCodeConflict, msg
+		}
+		return http.StatusBadRequest, ErrorErrorCodeInvalidInput, msg
 	}
 
 	// Errors from echo itself: bad JSON, bad parameters, unknown routes.

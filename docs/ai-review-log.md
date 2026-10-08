@@ -120,3 +120,13 @@ None this round — the existing e2e test was repaired rather than extended. Ver
 ### Tests added
 
 - e2e/api_v1_project_test.go (9 tests): the API end to end, including regression checks for unreadable workspaces with `starred`/`deleted` and for plugin upgrades removing the old ID.
+
+## 2026-10-08 — REST API v1 alias errors (server/internal/adapter/apiv1/errors.go)
+
+### Findings & Fixes
+1. **Alias validation errors returned 500** (server/internal/adapter/apiv1/errors.go)
+   - Bug: `POST /api/v1/workspaces/{id}/projects` with an invalid alias (`Bad Alias!`, too short) or one already used in the workspace answered 500 "internal server error". The usecase returns these as `verror.VError` values, which `apperr.Classify` does not know, so the error handler treated them as unexpected and logged them as errors.
+   - Fix: the handler now maps a `VError` to 409 when its key ends in `already_exists` or `already_used`, to 404 for `repo.ErrResourceNotFound`, and to 400 otherwise, with the English message rendered from its template (e.g. "Invalid alias name: bad alias!").
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1CreateProject` now checks the default `p-<id>` alias, a custom alias, a duplicate alias (409) and two invalid aliases (400)
