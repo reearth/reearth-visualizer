@@ -291,6 +291,9 @@ type ServerInterface interface {
 	// Uninstall a plugin from a project
 	// (DELETE /projects/{projectId}/plugins/{pluginId})
 	UninstallPlugin(ctx echo.Context, projectId ProjectId, pluginId string) error
+	// Restore a project from the trash
+	// (POST /projects/{projectId}/restore)
+	RestoreProject(ctx echo.Context, projectId ProjectId) error
 	// List the projects of a workspace
 	// (GET /workspaces/{workspaceId}/projects)
 	ListProjects(ctx echo.Context, workspaceId WorkspaceId, params ListProjectsParams) error
@@ -429,6 +432,24 @@ func (w *ServerInterfaceWrapper) UninstallPlugin(ctx echo.Context) error {
 	return err
 }
 
+// RestoreProject converts echo context to params.
+func (w *ServerInterfaceWrapper) RestoreProject(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "projectId" -------------
+	var projectId ProjectId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "projectId", ctx.Param("projectId"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter projectId: %s", err))
+	}
+
+	ctx.Set(string(BearerAuthScopes), []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.RestoreProject(ctx, projectId)
+	return err
+}
+
 // ListProjects converts echo context to params.
 func (w *ServerInterfaceWrapper) ListProjects(ctx echo.Context) error {
 	var err error
@@ -562,6 +583,7 @@ func RegisterHandlersWithOptions(router EchoRouter, si ServerInterface, options 
 	router.GET(options.BaseURL+"/projects/:projectId/plugins", wrapper.ListPlugins, options.OperationMiddlewares["listPlugins"]...)
 	router.POST(options.BaseURL+"/projects/:projectId/plugins", wrapper.UploadPlugin, options.OperationMiddlewares["uploadPlugin"]...)
 	router.DELETE(options.BaseURL+"/projects/:projectId/plugins/:pluginId", wrapper.UninstallPlugin, options.OperationMiddlewares["uninstallPlugin"]...)
+	router.POST(options.BaseURL+"/projects/:projectId/restore", wrapper.RestoreProject, options.OperationMiddlewares["restoreProject"]...)
 	router.GET(options.BaseURL+"/workspaces/:workspaceId/projects", wrapper.ListProjects, options.OperationMiddlewares["listProjects"]...)
 	router.POST(options.BaseURL+"/workspaces/:workspaceId/projects", wrapper.CreateProject, options.OperationMiddlewares["createProject"]...)
 
@@ -1016,6 +1038,84 @@ func (response UninstallPlugin404JSONResponse) VisitUninstallPluginResponse(w ht
 	return err
 }
 
+type RestoreProjectRequestObject struct {
+	ProjectId ProjectId `json:"projectId"`
+}
+
+type RestoreProjectResponseObject interface {
+	VisitRestoreProjectResponse(w http.ResponseWriter) error
+}
+
+type RestoreProject200JSONResponse Project
+
+func (response RestoreProject200JSONResponse) VisitRestoreProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RestoreProject400JSONResponse struct{ ErrorJSONResponse }
+
+func (response RestoreProject400JSONResponse) VisitRestoreProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RestoreProject401JSONResponse Error
+
+func (response RestoreProject401JSONResponse) VisitRestoreProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RestoreProject403JSONResponse Error
+
+func (response RestoreProject403JSONResponse) VisitRestoreProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type RestoreProject404JSONResponse Error
+
+func (response RestoreProject404JSONResponse) VisitRestoreProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type ListProjectsRequestObject struct {
 	WorkspaceId WorkspaceId `json:"workspaceId"`
 	Params      ListProjectsParams
@@ -1152,6 +1252,9 @@ type StrictServerInterface interface {
 	// Uninstall a plugin from a project
 	// (DELETE /projects/{projectId}/plugins/{pluginId})
 	UninstallPlugin(ctx context.Context, request UninstallPluginRequestObject) (UninstallPluginResponseObject, error)
+	// Restore a project from the trash
+	// (POST /projects/{projectId}/restore)
+	RestoreProject(ctx context.Context, request RestoreProjectRequestObject) (RestoreProjectResponseObject, error)
 	// List the projects of a workspace
 	// (GET /workspaces/{workspaceId}/projects)
 	ListProjects(ctx context.Context, request ListProjectsRequestObject) (ListProjectsResponseObject, error)
@@ -1335,6 +1438,31 @@ func (sh *strictHandler) UninstallPlugin(ctx echo.Context, projectId ProjectId, 
 		return err
 	} else if validResponse, ok := response.(UninstallPluginResponseObject); ok {
 		return validResponse.VisitUninstallPluginResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// RestoreProject operation middleware
+func (sh *strictHandler) RestoreProject(ctx echo.Context, projectId ProjectId) error {
+	var request RestoreProjectRequestObject
+
+	request.ProjectId = projectId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.RestoreProject(ctx.Request().Context(), request.(RestoreProjectRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "RestoreProject")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(RestoreProjectResponseObject); ok {
+		return validResponse.VisitRestoreProjectResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}

@@ -163,6 +163,31 @@ paths:
           $ref: "#/components/responses/Error"
         "409":
           $ref: "#/components/responses/Error"
+  /projects/{projectId}/restore:
+    parameters:
+      - $ref: "#/components/parameters/projectId"
+    post:
+      operationId: restoreProject
+      summary: Restore a project from the trash
+      description: |
+        Moves a project out of the trash, as the web app does. Restoring a
+        project that is not in the trash changes nothing.
+      tags: [Projects]
+      responses:
+        "200":
+          description: The restored project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
   /projects/{projectId}/plugins:
     parameters:
       - $ref: "#/components/parameters/projectId"
