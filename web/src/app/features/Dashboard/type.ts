@@ -35,6 +35,8 @@ export type Project = {
   metadata?: ProjectMetadata | null;
   visibility?: string;
   projectAlias?: string;
+  createdById?: string | null;
+  updatedById?: string | null;
 };
 
 export type DeletedProject = {

@@ -93,6 +93,8 @@ export default (workspaceId?: string) => {
               starred: project.starred,
               isDeleted: project.isDeleted,
               visibility: project.visibility,
+              createdById: project.createdById,
+              updatedById: project.updatedById,
               isPublished:
                 project.publishmentStatus === "PUBLIC" ||
                 project.publishmentStatus === "LIMITED",
@@ -267,10 +269,7 @@ export default (workspaceId?: string) => {
       // fully published project can never reach the Recycle Bin while still
       // publicly accessible.
       if (project?.status === "published" || project?.status === "limited") {
-        const publishResult = await publishProject(
-          "unpublished",
-          project.id
-        );
+        const publishResult = await publishProject("unpublished", project.id);
         if (publishResult?.status !== "success") return false;
       }
 

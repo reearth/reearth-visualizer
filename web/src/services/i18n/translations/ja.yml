@@ -84,16 +84,18 @@ Import: インポート
 Search project: プロジェクトを検索
 All projects: すべてのプロジェクト
 Search Result for: 検索結果
-Project Name: プロジェクト名
-Visibility: 表示・非表示切り替え
-Updated At: 更新日時
-Created At: 作成日時
+Last updated by: 最終更新者
+Last updated: 最終更新日時
+Created by: 作成者
+Created: 作成日
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
 Project Setting: プロジェクト設定
 Project Assets: プロジェクトアセット
 Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
+Updated: 更新
+Unknown user: 不明なユーザー
 Download Error Log: エラーログをダウンロード
 Ok: 確認
 Import Failed: インポート失敗
@@ -222,6 +224,7 @@ Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
+Visibility: 表示・非表示切り替え
 "Cesium Ion token not configured. Using fallback.\nClick to configure": Cesium Ionトークンが設定されていません。フォールバックを使用します。\nクリックして設定
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
@@ -446,6 +449,7 @@ README: リードミー
 License: ライセンス
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Basic settings: 基本設定
+Project Name: プロジェクト名
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
 Change project visibility: プロジェクトの公開範囲を変更
