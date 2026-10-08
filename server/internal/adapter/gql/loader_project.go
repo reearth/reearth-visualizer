@@ -46,14 +46,13 @@ func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, k
 		return nil, err
 	}
 
-	var createdByID *string
+	var createdByID *accountsID.UserID
 	if createdBy != nil {
 		uid, err := gqlmodel.ToID[accountsID.User](*createdBy)
 		if err != nil {
 			return nil, err
 		}
-		s := uid.String()
-		createdByID = &s
+		createdByID = &uid
 	}
 
 	res, pi, err := c.usecase.FindByWorkspace(ctx, tid, keyword, sort, gqlmodel.ToPagination(pagination), createdByID, getOperator(ctx))

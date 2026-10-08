@@ -307,8 +307,8 @@ func TestProject_FindByWorkspace_CreatedBy(t *testing.T) {
 	ctx := context.Background()
 
 	wid := accountsID.NewWorkspaceID()
-	uid1 := accountsID.NewUserID().String()
-	uid2 := accountsID.NewUserID().String()
+	uid1 := accountsID.NewUserID()
+	uid2 := accountsID.NewUserID()
 
 	pid1 := id.NewProjectID()
 	pid2 := id.NewProjectID()
@@ -316,13 +316,14 @@ func TestProject_FindByWorkspace_CreatedBy(t *testing.T) {
 	pid4 := id.NewProjectID()
 
 	now := time.Now()
-	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": pid1.String(), "workspace": wid.String(), "name": "Alpha", "createdby": uid1, "coresupport": true, "updatedat": now},
-		bson.M{"id": pid2.String(), "workspace": wid.String(), "name": "Beta", "createdby": uid1, "coresupport": true, "updatedat": now},
-		bson.M{"id": pid3.String(), "workspace": wid.String(), "name": "Alpha 2", "createdby": uid2, "coresupport": true, "updatedat": now},
+	_, err := c.Collection("project").InsertMany(ctx, []any{
+		bson.M{"id": pid1.String(), "workspace": wid.String(), "name": "Alpha", "createdby": uid1.String(), "coresupport": true, "updatedat": now},
+		bson.M{"id": pid2.String(), "workspace": wid.String(), "name": "Beta", "createdby": uid1.String(), "coresupport": true, "updatedat": now},
+		bson.M{"id": pid3.String(), "workspace": wid.String(), "name": "Alpha 2", "createdby": uid2.String(), "coresupport": true, "updatedat": now},
 		// created before createdBy was recorded
 		bson.M{"id": pid4.String(), "workspace": wid.String(), "name": "Legacy", "coresupport": true, "updatedat": now},
 	})
+	require.NoError(t, err)
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
 	first := int64(10)
@@ -338,6 +339,7 @@ func TestProject_FindByWorkspace_CreatedBy(t *testing.T) {
 	t.Run("filters by creator", func(t *testing.T) {
 		got, pi, err := r.FindByWorkspace(ctx, wid, repo.ProjectFilter{Pagination: page, CreatedBy: &uid1})
 		require.NoError(t, err)
+		require.Len(t, got, 2)
 		assert.Equal(t, int64(2), pi.TotalCount)
 		assert.ElementsMatch(t, []id.ProjectID{pid1, pid2}, []id.ProjectID{got[0].ID(), got[1].ID()})
 	})
@@ -351,7 +353,7 @@ func TestProject_FindByWorkspace_CreatedBy(t *testing.T) {
 	})
 
 	t.Run("unknown creator returns nothing", func(t *testing.T) {
-		other := accountsID.NewUserID().String()
+		other := accountsID.NewUserID()
 		got, pi, err := r.FindByWorkspace(ctx, wid, repo.ProjectFilter{Pagination: page, CreatedBy: &other})
 		require.NoError(t, err)
 		assert.Equal(t, int64(0), pi.TotalCount)

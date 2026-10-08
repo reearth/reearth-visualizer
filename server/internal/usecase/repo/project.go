@@ -19,7 +19,7 @@ type ProjectFilter struct {
 	SearchField *string
 	Visibility  *string
 	Topics      []string
-	CreatedBy   *string
+	CreatedBy   *accountsID.UserID
 }
 
 type Project interface {
