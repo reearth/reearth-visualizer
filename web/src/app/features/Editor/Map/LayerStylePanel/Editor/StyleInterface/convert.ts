@@ -4,6 +4,7 @@ import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import { appearanceNodes, appearanceTypes } from "./appearanceNodes";
 import { styleConditionOperators } from "./StyleNode/ConditionsTab";
 import {
+  AppearanceType,
   StyleConditionOperator,
   StyleCondition,
   StyleNode,
@@ -24,10 +25,8 @@ export const convertToStyleNodes = (
       [cur]: Object.entries(layerStyle?.value?.[cur] || {})
         .map(([k, v]: [string, unknown]) => {
           const nodeRef = appearanceNodes[cur].find((n) => n.id === k);
-          const { valueType, value, expression, conditions } = parseStyleValue(
-            nodeRef?.field,
-            v as StyleValue
-          );
+          const { valueType, value, expression, conditions, rawValue } =
+            parseStyleValue(nodeRef?.field, v as StyleValue);
           return {
             id: k,
             type: cur,
@@ -37,6 +36,7 @@ export const convertToStyleNodes = (
             value,
             expression,
             conditions,
+            rawValue,
             notSupported: !nodeRef,
             disableExpression: nodeRef?.disableExpression,
             disableConditions: nodeRef?.disableConditions
@@ -123,13 +123,29 @@ export const parseStyleValue = (
             field,
             (v as ExpressionCondition).expression.conditions
           )
+        : undefined,
+    rawValue:
+      valueType === "deepExpression" || valueType === "deepConditions"
+        ? v
         : undefined
   };
 };
 
+// `base` is the style value being edited. Top-level keys the UI doesn't model
+// (e.g. `raster`, `resource`, `ellipsoid`) are carried over from it as-is, the
+// same way unknown keys inside a known appearance type are kept as
+// `notSupported` nodes. Known appearance types are always rebuilt from
+// `styleNodes`, so removing every node of a type still removes the type.
 export const convertToLayerStyleValue = (
-  styleNodes: StyleNodes
+  styleNodes: StyleNodes,
+  base?: Partial<LayerAppearanceTypes>
 ): Partial<LayerAppearanceTypes> => {
+  const preserved = Object.fromEntries(
+    Object.entries(base ?? {}).filter(
+      ([k]) => !appearanceTypes.includes(k as AppearanceType)
+    )
+  ) as Partial<LayerAppearanceTypes>;
+
   return appearanceTypes.reduce((acc, cur) => {
     return styleNodes[cur].length > 0
       ? {
@@ -142,7 +158,7 @@ export const convertToLayerStyleValue = (
           }, {})
         }
       : acc;
-  }, {});
+  }, preserved);
 };
 
 export const generateStyleValue = (node: StyleNode) => {
@@ -158,6 +174,12 @@ export const generateStyleValue = (node: StyleNode) => {
         conditions: generateConditions(node.field, node.conditions)
       }
     };
+  }
+  if (
+    node.valueType === "deepExpression" ||
+    node.valueType === "deepConditions"
+  ) {
+    return node.rawValue;
   }
   return undefined;
 };
@@ -177,38 +199,63 @@ export const parseConditions = (
       .join("|")})`
   );
 
-  return conditions
-    .map(([condition, applyValue]) => {
-      if (condition.startsWith("startsWith(")) {
-        const match = condition.match(/^startsWith\((.+),\s*(.+)\)$/);
-        if (match) {
-          return {
-            variable: match[1].trim(),
-            operator: "startsWith" as StyleConditionOperator,
-            value: match[2].trim(),
-            applyValue: unwrapConditionAppliedValue(field, applyValue)
-          };
-        }
-      }
+  return conditions.map(([condition, applyValue]) => {
+    const parsed = parseSimpleCondition(condition, operatorRegex);
+    if (parsed) {
+      return {
+        ...parsed,
+        applyValue: unwrapConditionAppliedValue(field, applyValue)
+      };
+    }
+    // Keep anything we can't represent as `variable operator value` verbatim,
+    // so rebuilding the style from the UI doesn't drop or corrupt it.
+    return {
+      variable: "",
+      operator: "===" as StyleConditionOperator,
+      value: "",
+      rawCondition: condition,
+      applyValue: unwrapConditionAppliedValue(field, applyValue)
+    };
+  });
+};
 
-      const match = condition.match(operatorRegex);
+// Logical / ternary operators mean the condition is compound and can't be
+// split into a single `variable operator value` triple without losing parts.
+const COMPOUND_CONDITION_REGEX = /&&|\|\||\?/;
 
-      if (match) {
-        const operator = match[0] as StyleConditionOperator;
-        const [variable, value] = condition
-          .split(operator)
-          .map((part) => part.trim());
+const parseSimpleCondition = (
+  condition: string,
+  operatorRegex: RegExp
+): Omit<StyleCondition, "applyValue"> | null => {
+  const toSimple = (
+    variable: string,
+    operator: StyleConditionOperator,
+    value: string
+  ) =>
+    variable &&
+    value &&
+    !COMPOUND_CONDITION_REGEX.test(variable) &&
+    !COMPOUND_CONDITION_REGEX.test(value)
+      ? { variable, operator, value }
+      : null;
 
-        return {
-          variable,
-          operator,
-          value,
-          applyValue: unwrapConditionAppliedValue(field, applyValue)
-        };
-      }
-      return null;
-    })
-    .filter((c) => c !== null);
+  if (condition.startsWith("startsWith(")) {
+    const match = condition.match(/^startsWith\((.+),\s*(.+)\)$/);
+    if (match) {
+      return toSimple(match[1].trim(), "startsWith", match[2].trim());
+    }
+  }
+
+  const match = condition.match(operatorRegex);
+  if (!match) return null;
+
+  const operator = match[0] as StyleConditionOperator;
+  const parts = condition.split(operator).map((part) => part.trim());
+  // More than two parts means the operator appears more than once, e.g. a
+  // compound condition; splitting it would silently drop the remainder.
+  if (parts.length !== 2) return null;
+
+  return toSimple(parts[0], operator, parts[1]);
 };
 
 export const generateConditions = (
@@ -218,7 +265,9 @@ export const generateConditions = (
   if (!conditions) return [];
   return conditions.map((c) => {
     let conditionExpression: string;
-    if (c.operator === "startsWith") {
+    if (c.rawCondition !== undefined) {
+      conditionExpression = c.rawCondition;
+    } else if (c.operator === "startsWith") {
       conditionExpression = `startsWith(${c.variable}, ${c.value})`;
     } else {
       conditionExpression = `${c.variable} ${c.operator} ${c.value}`;

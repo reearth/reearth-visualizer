@@ -96,3 +96,31 @@ Started from a `/check-viz-errors` pass over the dev Cloud Run logs, which showe
 ### Tests added
 
 None this round — the existing e2e test was repaired rather than extended. Verified by running the suite 5× with `--retries=0` against a non-mock server wired to the local accounts API (5/5 green), plus `go build`, `go vet`, and the full `go test ./...` (0 failures).
+
+---
+
+## 2026-10-08 — Layer style Interface tab loses style data on save (web/src/app/features/Editor/Map/LayerStylePanel/Editor/StyleInterface/**)
+
+Fix for review finding H1. After every edit, the Interface tab rebuilds the whole style from its UI nodes (`StyleInterface/index.tsx`, `handleStyleNodesUpdate`), so any loss in the style → UI conversion gets written back on the next edit, even to properties the user never touched.
+
+### Findings & Fixes
+
+1. **Lossy condition parsing** (StyleInterface/convert.ts, `parseConditions`)
+   - Bug: a condition was split on the first comparison operator it matched, and only the first two pieces were kept. Conditions with no supported operator (the `"true"` fallback, `${a} == 1`) became `null` and were filtered out. Compound conditions (`a && b`, or any condition where the operator shows up more than once) were cut off after the second piece. Examples: `plateauBuildingColorByHeight` went from 48 conditions to 47 because it lost its white fallback, and the Landslide `show` condition was rewritten as the invalid `… === '1' && (${attributes['urf:areaType_code']}`.
+   - Fix: a condition is only split into `variable / operator / value` when that is lossless: the operator appears exactly once, both sides are non-empty, and there is no `&&`, `||` or `?`. Anything else keeps its original text in a new `StyleCondition.rawCondition` field, and `generateConditions` writes that text back unchanged.
+
+2. **No UI for unparsed conditions** (StyleInterface/StyleNode/ConditionsTab.tsx)
+   - Fix: a condition that has `rawCondition` set is shown as one editable expression input instead of the variable / operator / value inputs. Its apply-value, reordering and delete work the same as before.
+
+3. **Nested style values deleted on save** (StyleInterface/convert.ts, `generateStyleValue`)
+   - Bug: the UI shows `deepExpression` / `deepConditions` nodes as disabled ("not supported yet"), which suggests they're kept, but `generateStyleValue` had no branch for them and returned `undefined`, so the next edit removed them. Example: `{marker:{labelTypography:{color:{expression:"${c}"}},show:true}}` was saved as `{marker:{show:true}}`.
+   - Fix: `parseStyleValue` stores the original value in a new `StyleNode.rawValue` field for these types, and `generateStyleValue` writes it back unchanged. If the user switches the node to value, expression or conditions, `valueType` changes and `rawValue` is no longer used.
+
+4. **Unknown appearance types deleted on save** (StyleInterface/convert.ts, `convertToLayerStyleValue`; StyleInterface/index.tsx)
+   - Bug: the style was rebuilt from the 5 appearance types the UI knows, so top-level keys such as `raster`, `resource` or `ellipsoid` were dropped. Unknown keys *inside* a known type were already kept (as `notSupported` nodes), so unknown data was handled two different ways.
+   - Fix: `convertToLayerStyleValue` takes the value being edited as an optional `base` and carries over its top-level keys that aren't known appearance types. Known types are still rebuilt from the UI nodes, so deleting every node of a type still removes that type. `index.tsx` passes `prev.value`.
+
+### Tests added
+
+- convert.test.tsx (3 tests): nested expression/conditions are kept, unknown appearance types are kept, and a known type is still removed once all its nodes are deleted.
+- convert.test.tsx (4 tests): round trip of the `true` fallback, compound `&&`/`||` and `startsWith(...) && startsWith(...)` conditions, the unsupported `==` operator, and an operator that appears more than once.
