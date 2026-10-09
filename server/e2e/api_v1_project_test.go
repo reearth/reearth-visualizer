@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gavv/httpexpect/v2"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -455,4 +456,59 @@ func TestAPIV1ExportProject(t *testing.T) {
 
 	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
 	expectAPIError(t, apiV1(e, http.MethodGet, export, uID).Expect(), http.StatusConflict, "conflict")
+}
+
+func TestAPIV1ImportProject(t *testing.T) {
+	e := startPublicAPI(t)
+	projects := "/workspaces/" + wID.String() + "/projects"
+	importPath := projects + "/import"
+
+	// Export a project, then import the zip back.
+	src := apiV1(e, http.MethodPost, projects, uID).
+		WithJSON(map[string]any{"name": "round trip", "description": "exported then imported"}).
+		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
+	zipData := []byte(apiV1(e, http.MethodGet, "/projects/"+src+"/export", uID).Expect().Status(http.StatusOK).Body().Raw())
+
+	chunk := func(user accountsID.UserID, fileID string, num, total int, data []byte) *httpexpect.Response {
+		return apiV1(e, http.MethodPost, importPath, user).WithMultipart().
+			WithFormField("file_id", fileID).
+			WithFormField("chunk_num", num).
+			WithFormField("total_chunks", total).
+			WithFileBytes("file", "project.zip", data).
+			Expect()
+	}
+
+	res := chunk(uID, "apiv1-import-test", 0, 1, zipData).Status(http.StatusOK).JSON().Object()
+	res.HasValue("received", 1).HasValue("total", 1).HasValue("completed", true)
+	pid := res.Value("projectId").String().NotEmpty().Raw()
+
+	// The import runs in the background; poll the project until it ends.
+	var status string
+	deadline := time.Now().Add(30 * time.Second)
+	for time.Now().Before(deadline) {
+		p := apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().Status(http.StatusOK).JSON().Object()
+		status, _ = p.Raw()["importStatus"].(string)
+		if status == "SUCCESS" || status == "FAILED" {
+			break
+		}
+		time.Sleep(200 * time.Millisecond)
+	}
+	if status != "SUCCESS" {
+		t.Logf("import result: %v", apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().JSON().Object().Raw())
+	}
+	require.Equal(t, "SUCCESS", status)
+	imported := apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().Status(http.StatusOK).JSON().Object()
+	imported.HasValue("name", "round trip").HasValue("description", "exported then imported")
+	imported.Value("sceneId").String().NotEmpty()
+	imported.NotContainsKey("importError")
+
+	// A chunk for an upload that never started.
+	expectAPIError(t, chunk(uID, "apiv1-never-started", 1, 2, []byte("x")), http.StatusBadRequest, "invalid_input")
+	// Missing fields.
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).WithMultipart().
+		WithFormField("file_id", "x").Expect(), http.StatusBadRequest, "invalid_input")
+	// A path-unsafe file ID.
+	expectAPIError(t, chunk(uID, "../escape", 0, 1, zipData), http.StatusBadRequest, "invalid_input")
+	// A reader cannot import into the workspace.
+	expectAPIError(t, chunk(uID3, "apiv1-import-reader", 0, 1, zipData), http.StatusForbidden, "permission_denied")
 }

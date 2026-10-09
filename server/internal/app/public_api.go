@@ -1,8 +1,13 @@
 package app
 
 import (
+	"bytes"
 	"context"
+	"fmt"
 	"net/http"
+	"os"
+	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -42,7 +47,9 @@ func initPublicAPIEcho(ctx context.Context, cfg *ServerConfig, otelServiceName o
 		echo.WrapMiddleware(appx.RequestIDMiddleware()),
 		logger.AccessLogger(),
 		middleware.Gzip(),
-		middleware.BodyLimit("10M"),
+		// Import chunks are 16MiB, so only the import route takes more than 10MB.
+		middleware.BodyLimitWithConfig(middleware.BodyLimitConfig{Limit: "10M", Skipper: isImportRoute}),
+		middleware.BodyLimitWithConfig(middleware.BodyLimitConfig{Limit: "17M", Skipper: func(c echo.Context) bool { return !isImportRoute(c) }}),
 	)
 	if origins := allowedOrigins(cfg); len(origins) > 0 {
 		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{AllowOrigins: origins}))
@@ -76,6 +83,7 @@ func initPublicAPIEcho(ctx context.Context, cfg *ServerConfig, otelServiceName o
 	apiv1.RegisterHandlers(v1, apiv1.NewHandler(apiv1.Config{
 		PublishedHost: cfg.Config.Published.Host,
 		File:          cfg.Gateways.File,
+		Importer:      newAPIImporter(),
 	}))
 
 	e.Any("/*", func(c echo.Context) error { return echo.NewHTTPError(http.StatusNotFound) })
@@ -83,3 +91,42 @@ func initPublicAPIEcho(ctx context.Context, cfg *ServerConfig, otelServiceName o
 	log.Infofc(ctx, "server: public API mode: serving /api/v1 only")
 	return e
 }
+
+func isImportRoute(c echo.Context) bool {
+	return c.Request().Method == http.MethodPost && strings.HasSuffix(c.Request().URL.Path, "/projects/import")
+}
+
+// newAPIImporter imports through the same chunked upload as the web app's
+// /api/split-import, with its own upload sessions and import workers in this
+// process.
+func newAPIImporter() apiv1.Importer {
+	m := newSplitUploadManager(os.TempDir(), apiv1.ImportChunkSize)
+	m.StartCleanupRoutine(1 * time.Hour)
+
+	return func(ctx context.Context, chunk apiv1.ImportChunk) (apiv1.ImportChunkResult, error) {
+		if err := validateChunkRequest(chunk.FileID, chunk.ChunkNum, chunk.TotalChunks); err != nil {
+			return apiv1.ImportChunkResult{}, echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+		res, err := m.handleChunkedUpload(ctx, adapter.Usecases(ctx), adapter.Operator(ctx),
+			chunk.WorkspaceID, chunk.FileID, chunk.ChunkNum, chunk.TotalChunks, chunkFile{bytes.NewReader(chunk.Data)})
+		if err != nil {
+			return apiv1.ImportChunkResult{}, err
+		}
+		r, ok := res.(map[string]interface{})
+		if !ok {
+			return apiv1.ImportChunkResult{}, fmt.Errorf("unexpected upload result %T", res)
+		}
+		out := apiv1.ImportChunkResult{}
+		out.ProjectID, _ = r["project_id"].(string)
+		out.Received, _ = r["received"].(int)
+		out.Total, _ = r["total"].(int)
+		out.Completed, _ = r["completed"].(bool)
+		return out, nil
+	}
+}
+
+// chunkFile adapts a chunk held in memory to the multipart.File that the
+// chunked upload takes.
+type chunkFile struct{ *bytes.Reader }
+
+func (chunkFile) Close() error { return nil }
