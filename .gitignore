@@ -1,5 +1,6 @@
 .DS_Store
 node_modules
+visualizer-plugin-api/dist/
 /.env
 /.env.*
 accounts/.env.docker
