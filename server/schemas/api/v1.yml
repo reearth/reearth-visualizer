@@ -92,6 +92,55 @@ paths:
           $ref: "#/components/responses/Error"
         "403":
           $ref: "#/components/responses/Error"
+  /workspaces/{workspaceId}/projects/import:
+    parameters:
+      - $ref: "#/components/parameters/workspaceId"
+    post:
+      operationId: importProject
+      summary: Upload a project zip to import, one chunk per request
+      description: |
+        Imports a project export zip into the workspace, using the web app's
+        chunked upload. Split the zip into chunks of exactly 16 MiB (the last
+        one may be shorter) and send them in order, all with the same
+        `file_id`. The first chunk creates the project, with `importStatus`
+        `UPLOADING`, and every response returns its ID. After the last chunk
+        the import runs in the background: poll `GET /projects/{projectId}`
+        until `importStatus` is `SUCCESS` or `FAILED`.
+      tags: [Projects]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file_id, chunk_num, total_chunks, file]
+              properties:
+                file_id:
+                  description: Identifies the upload; letters, digits, '_' and '-', up to 128 characters.
+                  type: string
+                chunk_num:
+                  description: Zero-based chunk index.
+                  type: integer
+                total_chunks:
+                  type: integer
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: The chunk was stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportChunkResponse"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
   /projects/{projectId}:
     parameters:
       - $ref: "#/components/parameters/projectId"
@@ -471,6 +520,13 @@ components:
         publishedAlias:
           description: The alias in the published URL. Set once the project has been published.
           type: string
+        importStatus:
+          description: Set on a project created by an import.
+          type: string
+          enum: [UPLOADING, PROCESSING, SUCCESS, FAILED]
+        importError:
+          description: Why the import failed, when importStatus is FAILED.
+          type: string
         visibility:
           $ref: "#/components/schemas/Visibility"
         starred:
@@ -607,6 +663,21 @@ components:
           description: |
             The published URL. Absent when the story is private or the server
             has no published host configured.
+    ImportChunkResponse:
+      type: object
+      required: [projectId, received, total, completed]
+      properties:
+        projectId:
+          description: The project the import creates.
+          type: string
+        received:
+          description: Chunks received so far.
+          type: integer
+        total:
+          type: integer
+        completed:
+          description: True once every chunk has arrived and the import has started.
+          type: boolean
     PluginExtension:
       type: object
       required: [id, type, name]

@@ -23,19 +23,22 @@ type Config struct {
 	PublishedHost string
 	// File is the file storage, where project exports are written.
 	File gateway.File
+	// Importer runs project imports.
+	Importer Importer
 }
 
 // Server implements StrictServerInterface.
 type Server struct {
 	publishedHost string
 	file          gateway.File
+	importer      Importer
 }
 
 var _ StrictServerInterface = Server{}
 
 // NewHandler returns the API's handler, ready for RegisterHandlers.
 func NewHandler(cfg Config) ServerInterface {
-	return NewStrictHandler(Server{publishedHost: cfg.PublishedHost, file: cfg.File}, nil)
+	return NewStrictHandler(Server{publishedHost: cfg.PublishedHost, file: cfg.File, importer: cfg.Importer}, nil)
 }
 
 func usecases(ctx context.Context) (*interfaces.Container, *usecase.Operator) {
