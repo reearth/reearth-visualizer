@@ -38,14 +38,6 @@ jobs:
           node-version: "22.14.0"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install dependencies
-        working-directory: visualizer-plugin-api
-        run: npm ci
-
-      - name: Build
-        working-directory: visualizer-plugin-api
-        run: npm run build
-
       - name: Verify tag matches package.json version
         working-directory: visualizer-plugin-api
         run: |
@@ -57,6 +49,10 @@ jobs:
             echo "::error::Tag version ($TAG_VERSION) does not match package.json version ($PKG_VERSION)"
             exit 1
           fi
+
+      - name: Install dependencies
+        working-directory: visualizer-plugin-api
+        run: npm ci
 
       - name: Activate npm via corepack
         # Node 22 ships npm 10.x; Trusted Publishing needs >=11.5.1

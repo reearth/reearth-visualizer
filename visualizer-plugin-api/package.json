@@ -13,8 +13,7 @@
     }
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -22,7 +21,7 @@
     "prepack": "npm run build"
   },
   "peerDependencies": {
-    "@reearth/core": "0.0.7-alpha.81"
+    "@reearth/core": ">=0.0.7-alpha.81"
   },
   "devDependencies": {
     "@reearth/core": "0.0.7-alpha.81",

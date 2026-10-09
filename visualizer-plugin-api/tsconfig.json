@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
-    "moduleResolution": "node10",
+    "moduleResolution": "bundler",
     "declaration": true,
     "outDir": "dist",
     "rootDir": "src",
