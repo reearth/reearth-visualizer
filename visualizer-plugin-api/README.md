@@ -5,10 +5,12 @@ TypeScript type definitions for the [Re:Earth Visualizer](https://github.com/ree
 ## Installation
 
 ```bash
-npm install --save-dev @reearth/visualizer-plugin-api
+npm install --save-dev @reearth/visualizer-plugin-api @reearth/core
 # or
-yarn add -D @reearth/visualizer-plugin-api
+yarn add -D @reearth/visualizer-plugin-api @reearth/core
 ```
+
+`@reearth/core` is a peer dependency. Install it alongside this package so TypeScript can resolve the layer and feature types used in the declarations.
 
 ## Usage
 
