@@ -29,6 +29,9 @@ func toProject(p *project.Project, sceneID *id.SceneID) Project {
 	if a := p.ProjectAlias(); a != "" {
 		res.Alias = &a
 	}
+	if a := p.Alias(); a != "" {
+		res.PublishedAlias = &a
+	}
 	if u := p.ImageURL(); u != nil {
 		res.ImageUrl = lo.ToPtr(u.String())
 	}
@@ -37,6 +40,18 @@ func toProject(p *project.Project, sceneID *id.SceneID) Project {
 		res.PublishedAt = &t
 	}
 	return res
+}
+
+func fromPublishmentStatus(s PublishmentStatus) (project.PublishmentStatus, bool) {
+	switch s {
+	case PublishmentStatusPublic:
+		return project.PublishmentStatusPublic, true
+	case PublishmentStatusLimited:
+		return project.PublishmentStatusLimited, true
+	case PublishmentStatusPrivate:
+		return project.PublishmentStatusPrivate, true
+	}
+	return "", false
 }
 
 func toPublishmentStatus(s project.PublishmentStatus) PublishmentStatus {

@@ -3,6 +3,7 @@ package apiv1
 import (
 	"context"
 	"errors"
+	"strings"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -267,6 +268,57 @@ func (Server) RestoreProject(ctx context.Context, req RestoreProjectRequestObjec
 		return nil, err
 	}
 	return RestoreProject200JSONResponse(res), nil
+}
+
+// PublishProject sets the publishment status. Publishing uploads the
+// project's current state, so publishing again updates the published site.
+func (s Server) PublishProject(ctx context.Context, req PublishProjectRequestObject) (PublishProjectResponseObject, error) {
+	uc, op := usecases(ctx)
+	pid, err := id.ProjectIDFrom(req.ProjectId)
+	if err != nil {
+		return nil, invalidInput("invalid project ID %q", req.ProjectId)
+	}
+	status, ok := fromPublishmentStatus(req.Body.Status)
+	if !ok {
+		return nil, invalidInput("invalid status %q (want public, limited or private)", req.Body.Status)
+	}
+	prj, err := fetchProject(ctx, uc, pid)
+	if err != nil {
+		return nil, err
+	}
+	if prj.IsDeleted() {
+		return nil, conflict("project %s is in the trash; restore it first", pid)
+	}
+
+	if prj, err = uc.Project.Publish(ctx, interfaces.PublishProjectParam{
+		ID:     pid,
+		Alias:  req.Body.Alias,
+		Status: status,
+	}, op); err != nil {
+		return nil, err
+	}
+	res, err := toProjectWithScene(ctx, uc, prj)
+	if err != nil {
+		return nil, err
+	}
+	out := PublishProjectResponse{Project: res}
+	if status != project.PublishmentStatusPrivate {
+		out.Url = publishedURL(s.publishedHost, prj.Alias())
+	}
+	return PublishProject200JSONResponse(out), nil
+}
+
+// publishedURL fills the alias into the published host pattern, as the web
+// app does with its "published" setting. It returns nil when either is unknown.
+func publishedURL(hostPattern, alias string) *string {
+	if hostPattern == "" || alias == "" || !strings.Contains(hostPattern, "{}") {
+		return nil
+	}
+	u := strings.Replace(hostPattern, "{}", alias, 1)
+	if !strings.HasPrefix(u, "http://") && !strings.HasPrefix(u, "https://") {
+		u = "https://" + u
+	}
+	return &u
 }
 
 func fetchProject(ctx context.Context, uc *interfaces.Container, pid id.ProjectID) (*project.Project, error) {
