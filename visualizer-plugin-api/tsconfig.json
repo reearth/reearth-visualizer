@@ -4,7 +4,6 @@
     "module": "ESNext",
     "moduleResolution": "node10",
     "declaration": true,
-    "emitDeclarationOnly": true,
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,

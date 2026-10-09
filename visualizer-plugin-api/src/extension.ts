@@ -34,8 +34,9 @@ export type PluginStoryBlock = {
   extensionId: string;
   extensionType?: "storyBlock";
   propertyId?: string;
+  // Inlined from StoryBlockProperty = Record<string, Record<string, any>>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  property?: any;
+  property?: Record<string, Record<string, any>>;
 };
 
 export declare type Extension = {

@@ -18,13 +18,11 @@ Create a `reearth.d.ts` file in your plugin project:
 import type { Reearth } from "@reearth/visualizer-plugin-api";
 
 declare global {
-  interface Window {
-    reearth: Reearth;
-  }
+  const reearth: Reearth;
 }
 ```
 
-Then use `window.reearth` with full TypeScript IntelliSense:
+Then use `reearth` with full TypeScript IntelliSense:
 
 ```typescript
 reearth.camera.flyTo({ lat: 35.68, lng: 139.76, height: 1000 });
@@ -38,7 +36,7 @@ reearth.camera.on("move", (pos) => console.log(pos.lat, pos.lng));
 | Namespace | Description |
 |-----------|-------------|
 | `reearth.camera` | Camera control: flyTo, lookAt, zoom, rotate, events |
-| `reearth.layers` | Layer management: add, remove, find, select, override |
+| `reearth.layers` | Layer management: add, delete, find, select, override |
 | `reearth.viewer` | Viewport, tools, coordinate conversion, interaction mode |
 | `reearth.timeline` | Playback control: play, pause, setTime, setSpeed |
 | `reearth.sketch` | Drawing tools: marker, polyline, polygon, rectangle |
