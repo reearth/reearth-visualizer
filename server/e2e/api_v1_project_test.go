@@ -1,6 +1,8 @@
 package e2e
 
 import (
+	"archive/zip"
+	"bytes"
 	"net/http"
 	"os"
 	"testing"
@@ -419,4 +421,38 @@ func TestAPIV1PublishStory(t *testing.T) {
 	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
 	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "public"}).Expect(),
 		http.StatusConflict, "conflict")
+}
+
+func TestAPIV1ExportProject(t *testing.T) {
+	e := startPublicAPI(t)
+	pid := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "to export"}).
+		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
+	export := "/projects/" + pid + "/export"
+
+	resp := apiV1(e, http.MethodGet, export, uID).Expect().Status(http.StatusOK)
+	resp.Header("Content-Type").IsEqual("application/zip")
+	b := []byte(resp.Body().Raw())
+	zr, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
+	require.NoError(t, err)
+	var names []string
+	for _, f := range zr.File {
+		names = append(names, f.Name)
+	}
+	assert.Contains(t, names, "project.json")
+
+	// The stored zip is removed after the download, and a second export
+	// builds a new one.
+	apiV1(e, http.MethodGet, export, uID).Expect().Status(http.StatusOK)
+
+	// Readers can export, as in the web app.
+	apiV1(e, http.MethodGet, export, uID3).Expect().Status(http.StatusOK)
+
+	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/nope/export", uID).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/01m4dn2d8ksnekewhejqa5bbzz/export", uID).Expect(),
+		http.StatusNotFound, "not_found")
+
+	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodGet, export, uID).Expect(), http.StatusConflict, "conflict")
 }

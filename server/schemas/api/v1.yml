@@ -262,6 +262,35 @@ paths:
           $ref: "#/components/responses/Error"
         "409":
           $ref: "#/components/responses/Error"
+  /projects/{projectId}/export:
+    parameters:
+      - $ref: "#/components/parameters/projectId"
+    get:
+      operationId: exportProject
+      summary: Download a project as a zip
+      description: |
+        Builds the project's export zip, the same file the web app exports,
+        and returns it. It holds the project, its scene, plugins and assets,
+        and can be imported again. Large projects take a while to build.
+      tags: [Projects]
+      responses:
+        "200":
+          description: The export zip
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
   /projects/{projectId}/plugins:
     parameters:
       - $ref: "#/components/parameters/projectId"

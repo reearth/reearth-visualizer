@@ -12,21 +12,30 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 )
 
+// Config is what the handlers need beyond the per-request usecases.
+type Config struct {
+	// PublishedHost is the published site's host pattern (Published.Host),
+	// with "{}" standing for the published alias. Empty when not configured.
+	PublishedHost string
+	// File is the file storage, where project exports are written.
+	File gateway.File
+}
+
 // Server implements StrictServerInterface.
 type Server struct {
-	// publishedHost is the published site's host pattern (Published.Host),
-	// with "{}" standing for the published alias. Empty when not configured.
 	publishedHost string
+	file          gateway.File
 }
 
 var _ StrictServerInterface = Server{}
 
 // NewHandler returns the API's handler, ready for RegisterHandlers.
-func NewHandler(publishedHost string) ServerInterface {
-	return NewStrictHandler(Server{publishedHost: publishedHost}, nil)
+func NewHandler(cfg Config) ServerInterface {
+	return NewStrictHandler(Server{publishedHost: cfg.PublishedHost, file: cfg.File}, nil)
 }
 
 func usecases(ctx context.Context) (*interfaces.Container, *usecase.Operator) {
