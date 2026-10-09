@@ -22,7 +22,8 @@ export type PluginInfoboxBlock = {
   extensionId?: string;
   extensionType?: "infoboxBlock";
   propertyId?: string;
-  property?: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  property?: any;
 };
 
 // Inlined from web/src/app/features/Visualizer/Crust/StoryPanel/types.ts (PluginStoryBlock)
@@ -33,7 +34,8 @@ export type PluginStoryBlock = {
   extensionId: string;
   extensionType?: "storyBlock";
   propertyId?: string;
-  property?: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  property?: any;
 };
 
 export declare type Extension = {

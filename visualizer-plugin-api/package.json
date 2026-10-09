@@ -19,10 +19,11 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@reearth/core": "0.0.7-alpha.81"
   },
   "devDependencies": {
+    "@reearth/core": "0.0.7-alpha.81",
     "typescript": "^5.0.0"
   },
   "publishConfig": {

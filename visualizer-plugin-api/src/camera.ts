@@ -76,26 +76,26 @@ export declare type CameraMoveOptions = {
   easing?: (time: number) => number;
 };
 
-export declare type OverideCameraEventType =
+export declare type OverrideCameraEventType =
   | "left_drag"
   | "right_drag"
   | "middle_drag"
   | "wheel"
   | "pinch";
 
-export declare type OverideKeyboardEventModifier = "ctrl" | "shift" | "alt";
+export declare type OverrideKeyboardEventModifier = "ctrl" | "shift" | "alt";
 
 export declare type ModifiedCameraEventType = {
-  eventType: OverideCameraEventType;
-  modifier: OverideKeyboardEventModifier;
+  eventType: OverrideCameraEventType;
+  modifier: OverrideKeyboardEventModifier;
 };
 
 export declare type ScreenSpaceCameraControllerOptions = {
-  zoomEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
-  rotateEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
-  tiltEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
-  lookEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
-  translateEventTypes?: (OverideCameraEventType | ModifiedCameraEventType)[];
+  zoomEventTypes?: (OverrideCameraEventType | ModifiedCameraEventType)[];
+  rotateEventTypes?: (OverrideCameraEventType | ModifiedCameraEventType)[];
+  tiltEventTypes?: (OverrideCameraEventType | ModifiedCameraEventType)[];
+  lookEventTypes?: (OverrideCameraEventType | ModifiedCameraEventType)[];
+  translateEventTypes?: (OverrideCameraEventType | ModifiedCameraEventType)[];
   minimumZoomDistance?: number;
   maximumZoomDistance?: number;
   enableCollisionDetection?: boolean;

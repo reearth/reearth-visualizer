@@ -1,6 +1,6 @@
 export type { Reearth } from "./reearth";
 
-export type { Camera, CameraPosition, CameraMoveOptions, LookAtDestination, CameraEventType, CameraEvents, ScreenSpaceCameraControllerOptions, OverideCameraEventType, OverideKeyboardEventModifier, ModifiedCameraEventType } from "./camera";
+export type { Camera, CameraPosition, CameraMoveOptions, LookAtDestination, CameraEventType, CameraEvents, ScreenSpaceCameraControllerOptions, OverrideCameraEventType, OverrideKeyboardEventModifier, ModifiedCameraEventType } from "./camera";
 export type { LatLngHeight, GeoRect, GeoidServer } from "./common";
 export type { Data, ClientStorage } from "./data";
 export type { Engine } from "./engine";
