@@ -150,6 +150,11 @@ type InternalApiConfig struct {
 // PublicApiConfig runs the process as the REST API service (/api/v1) only,
 // without GraphQL or the web app, so that its traffic is served by its own
 // deployment. Set with REEARTH_VISUALIZER_PUBLICAPI_ACTIVE.
+//
+// That deployment must share the main server's storage and set REEARTH_HOST
+// to the main server's host, not its own: project export includes only the
+// assets served from the current host, so with its own host every export
+// would leave the project's assets out.
 type PublicApiConfig struct {
 	Active bool `default:"false" pp:",omitempty"`
 }

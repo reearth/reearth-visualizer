@@ -329,6 +329,9 @@ type ServerInterface interface {
 	// Update a project
 	// (PATCH /projects/{projectId})
 	UpdateProject(ctx echo.Context, projectId ProjectId) error
+	// Download a project as a zip
+	// (GET /projects/{projectId}/export)
+	ExportProject(ctx echo.Context, projectId ProjectId) error
 	// List the plugins installed in a project
 	// (GET /projects/{projectId}/plugins)
 	ListPlugins(ctx echo.Context, projectId ProjectId) error
@@ -420,6 +423,24 @@ func (w *ServerInterfaceWrapper) UpdateProject(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.UpdateProject(ctx, projectId)
+	return err
+}
+
+// ExportProject converts echo context to params.
+func (w *ServerInterfaceWrapper) ExportProject(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "projectId" -------------
+	var projectId ProjectId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "projectId", ctx.Param("projectId"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter projectId: %s", err))
+	}
+
+	ctx.Set(string(BearerAuthScopes), []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.ExportProject(ctx, projectId)
 	return err
 }
 
@@ -669,6 +690,7 @@ func RegisterHandlersWithOptions(router EchoRouter, si ServerInterface, options 
 	router.DELETE(options.BaseURL+"/projects/:projectId", wrapper.DeleteProject, options.OperationMiddlewares["deleteProject"]...)
 	router.GET(options.BaseURL+"/projects/:projectId", wrapper.GetProject, options.OperationMiddlewares["getProject"]...)
 	router.PATCH(options.BaseURL+"/projects/:projectId", wrapper.UpdateProject, options.OperationMiddlewares["updateProject"]...)
+	router.GET(options.BaseURL+"/projects/:projectId/export", wrapper.ExportProject, options.OperationMiddlewares["exportProject"]...)
 	router.GET(options.BaseURL+"/projects/:projectId/plugins", wrapper.ListPlugins, options.OperationMiddlewares["listPlugins"]...)
 	router.POST(options.BaseURL+"/projects/:projectId/plugins", wrapper.UploadPlugin, options.OperationMiddlewares["uploadPlugin"]...)
 	router.DELETE(options.BaseURL+"/projects/:projectId/plugins/:pluginId", wrapper.UninstallPlugin, options.OperationMiddlewares["uninstallPlugin"]...)
@@ -908,6 +930,104 @@ func (response UpdateProject404JSONResponse) VisitUpdateProjectResponse(w http.R
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExportProjectRequestObject struct {
+	ProjectId ProjectId `json:"projectId"`
+}
+
+type ExportProjectResponseObject interface {
+	VisitExportProjectResponse(w http.ResponseWriter) error
+}
+
+type ExportProject200ApplicationzipResponse struct {
+	Body          io.Reader
+	ContentLength int64
+}
+
+func (response ExportProject200ApplicationzipResponse) VisitExportProjectResponse(w http.ResponseWriter) error {
+
+	w.Header().Set("Content-Type", "application/zip")
+	if response.ContentLength != 0 {
+		w.Header().Set("Content-Length", fmt.Sprint(response.ContentLength))
+	}
+	w.WriteHeader(200)
+
+	if closer, ok := response.Body.(io.ReadCloser); ok {
+		defer closer.Close()
+	}
+	_, err := io.Copy(w, response.Body)
+	return err
+}
+
+type ExportProject400JSONResponse struct{ ErrorJSONResponse }
+
+func (response ExportProject400JSONResponse) VisitExportProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExportProject401JSONResponse Error
+
+func (response ExportProject401JSONResponse) VisitExportProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExportProject403JSONResponse Error
+
+func (response ExportProject403JSONResponse) VisitExportProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExportProject404JSONResponse Error
+
+func (response ExportProject404JSONResponse) VisitExportProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ExportProject409JSONResponse Error
+
+func (response ExportProject409JSONResponse) VisitExportProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
 	_, err := buf.WriteTo(w)
 	return err
 }
@@ -1520,6 +1640,9 @@ type StrictServerInterface interface {
 	// Update a project
 	// (PATCH /projects/{projectId})
 	UpdateProject(ctx context.Context, request UpdateProjectRequestObject) (UpdateProjectResponseObject, error)
+	// Download a project as a zip
+	// (GET /projects/{projectId}/export)
+	ExportProject(ctx context.Context, request ExportProjectRequestObject) (ExportProjectResponseObject, error)
 	// List the plugins installed in a project
 	// (GET /projects/{projectId}/plugins)
 	ListPlugins(ctx context.Context, request ListPluginsRequestObject) (ListPluginsResponseObject, error)
@@ -1634,6 +1757,31 @@ func (sh *strictHandler) UpdateProject(ctx echo.Context, projectId ProjectId) er
 		return err
 	} else if validResponse, ok := response.(UpdateProjectResponseObject); ok {
 		return validResponse.VisitUpdateProjectResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ExportProject operation middleware
+func (sh *strictHandler) ExportProject(ctx echo.Context, projectId ProjectId) error {
+	var request ExportProjectRequestObject
+
+	request.ProjectId = projectId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ExportProject(ctx.Request().Context(), request.(ExportProjectRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ExportProject")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(ExportProjectResponseObject); ok {
+		return validResponse.VisitExportProjectResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
