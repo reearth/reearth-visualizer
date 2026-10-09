@@ -130,3 +130,16 @@ None this round — the existing e2e test was repaired rather than extended. Ver
 
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1CreateProject` now checks the default `p-<id>` alias, a custom alias, a duplicate alias (409) and two invalid aliases (400)
+
+## 2026-10-09 — REST API v1 project create (server/internal/adapter/apiv1/project.go)
+
+### Findings & Fixes
+1. **API-created projects could not be imported again after an export** (server/internal/adapter/apiv1/project.go)
+   - Bug: `POST /api/v1/workspaces/{id}/projects` stored the visualizer as `visualizer.VisualizerCesium` ("cesium"), while GraphQL passes its enum value through and the web app's projects store "CESIUM". Export writes the stored value as is, and import parses it into the GraphQL enum, which rejects "cesium", so importing the export of an API-created project always failed with "project data parse error".
+   - Fix: the API stores "CESIUM", as the web app does. Projects stored as "cesium" by other paths (the internal API, older imports) have the same export problem; that is left for a separate fix.
+2. **A reader got 400 instead of 403 when importing** (server/internal/adapter/apiv1/import.go)
+   - Bug: the shared chunked upload answers every failure to start an import, including a missing write permission, with 400.
+   - Fix: the import endpoint checks write access to the workspace first and answers 403.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1ImportProject` exports a project, imports the zip back, polls until SUCCESS and compares the copy; it also covers an unstarted upload, missing fields, an unsafe file ID and a reader (403)
