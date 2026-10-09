@@ -1,0 +1,33 @@
+{
+  "name": "@reearth/visualizer-plugin-api",
+  "version": "0.1.0",
+  "description": "TypeScript type definitions for the Re:Earth Visualizer plugin API",
+  "reearthApiVersion": "2.1.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepack": "npm run build"
+  },
+  "peerDependencies": {
+    "@reearth/core": ">=0.0.7-alpha.81"
+  },
+  "devDependencies": {
+    "@reearth/core": "0.0.7-alpha.81",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

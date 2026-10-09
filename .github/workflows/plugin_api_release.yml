@@ -1,0 +1,71 @@
+# Publishes @reearth/visualizer-plugin-api to npm when a tag matching
+# `visualizer-plugin-api-v*` is pushed.
+#
+# Publishing uses npm OIDC Trusted Publishing — no NPM_TOKEN needed.
+# One-time setup on npmjs.com:
+#   @reearth/visualizer-plugin-api -> repo reearth/reearth-visualizer,
+#   workflow plugin_api_release.yml, environment npm-publish.
+# Keep this file named plugin_api_release.yml so that stays valid.
+#
+# The `npm-publish` environment gate requires a reviewer to approve before
+# the publish step runs, preventing accidental releases.
+#
+# First publish must be done by hand (npm publish from local) to claim the
+# package name on the registry before Trusted Publishing can take over.
+
+name: Publish @reearth/visualizer-plugin-api
+
+on:
+  push:
+    tags:
+      - "visualizer-plugin-api-v*"
+
+permissions:
+  contents: read
+  id-token: write  # OIDC token for npm Trusted Publishing + provenance
+
+jobs:
+  publish:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          # Trusted Publishing requires Node >=22.14 and npm >=11.5.1
+          node-version: "22.14.0"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Verify tag matches package.json version
+        working-directory: visualizer-plugin-api
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG_VERSION="${GITHUB_REF_NAME#visualizer-plugin-api-v}"
+          echo "package.json version: $PKG_VERSION"
+          echo "tag version: $TAG_VERSION"
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            echo "::error::Tag version ($TAG_VERSION) does not match package.json version ($PKG_VERSION)"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        working-directory: visualizer-plugin-api
+        run: npm ci
+
+      - name: Activate npm via corepack
+        # Node 22 ships npm 10.x; Trusted Publishing needs >=11.5.1
+        # COREPACK_ENABLE_STRICT=0: lets npm run alongside declared pnpm packageManager field
+        env:
+          COREPACK_ENABLE_STRICT: "0"
+        run: |
+          corepack enable npm
+          corepack prepare npm@11.5.1 --activate
+          npm --version
+
+      - name: Publish to npm (OIDC Trusted Publishing)
+        working-directory: visualizer-plugin-api
+        env:
+          COREPACK_ENABLE_STRICT: "0"
+        run: npm publish --provenance --access public
