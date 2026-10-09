@@ -50,8 +50,17 @@ reearth.camera.on("move", (pos) => console.log(pos.lat, pos.lng));
 
 ## Versioning
 
-This package is independently versioned. When the Re:Earth Visualizer plugin API changes,
-a new version of this package will be released. See [CHANGELOG.md](./CHANGELOG.md).
+This package follows its own semver, independent of the Re:Earth Visualizer release cycle.
+
+The `reearthApiVersion` field in `package.json` records which Visualizer plugin API version
+the types correspond to. When the API changes, a new version of this package is released
+and `reearthApiVersion` is updated accordingly.
+
+| Package version | Re:Earth plugin API version |
+|-----------------|-----------------------------|
+| 0.1.0           | 2.1.0                       |
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full history.
 
 ## License
 
