@@ -220,8 +220,30 @@ type PublishProjectResponse struct {
 	Url *string `json:"url,omitempty"`
 }
 
+// PublishStoryResponse defines model for PublishStoryResponse.
+type PublishStoryResponse struct {
+	Story Story `json:"story"`
+
+	// Url The published URL. Absent when the story is private or the server
+	// has no published host configured.
+	Url *string `json:"url,omitempty"`
+}
+
 // PublishmentStatus defines model for PublishmentStatus.
 type PublishmentStatus string
+
+// Story defines model for Story.
+type Story struct {
+	Id        string `json:"id"`
+	ProjectId string `json:"projectId"`
+
+	// PublishedAlias The alias in the story's published URL. Set once it has been published.
+	PublishedAlias    *string           `json:"publishedAlias,omitempty"`
+	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
+	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
+	Title             string            `json:"title"`
+	UpdatedAt         time.Time         `json:"updatedAt"`
+}
 
 // UpdateProjectRequest defines model for UpdateProjectRequest.
 type UpdateProjectRequest struct {
@@ -290,6 +312,9 @@ type UploadPluginJSONRequestBody = UploadPluginRequest
 // PublishProjectJSONRequestBody defines body for PublishProject for application/json ContentType.
 type PublishProjectJSONRequestBody = PublishProjectRequest
 
+// PublishStoryJSONRequestBody defines body for PublishStory for application/json ContentType.
+type PublishStoryJSONRequestBody = PublishProjectRequest
+
 // CreateProjectJSONRequestBody defines body for CreateProject for application/json ContentType.
 type CreateProjectJSONRequestBody = CreateProjectRequest
 
@@ -319,6 +344,9 @@ type ServerInterface interface {
 	// Restore a project from the trash
 	// (POST /projects/{projectId}/restore)
 	RestoreProject(ctx echo.Context, projectId ProjectId) error
+	// Publish or unpublish a project's story
+	// (POST /projects/{projectId}/story/publish)
+	PublishStory(ctx echo.Context, projectId ProjectId) error
 	// List the projects of a workspace
 	// (GET /workspaces/{workspaceId}/projects)
 	ListProjects(ctx echo.Context, workspaceId WorkspaceId, params ListProjectsParams) error
@@ -493,6 +521,24 @@ func (w *ServerInterfaceWrapper) RestoreProject(ctx echo.Context) error {
 	return err
 }
 
+// PublishStory converts echo context to params.
+func (w *ServerInterfaceWrapper) PublishStory(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "projectId" -------------
+	var projectId ProjectId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "projectId", ctx.Param("projectId"), &projectId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter projectId: %s", err))
+	}
+
+	ctx.Set(string(BearerAuthScopes), []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PublishStory(ctx, projectId)
+	return err
+}
+
 // ListProjects converts echo context to params.
 func (w *ServerInterfaceWrapper) ListProjects(ctx echo.Context) error {
 	var err error
@@ -628,6 +674,7 @@ func RegisterHandlersWithOptions(router EchoRouter, si ServerInterface, options 
 	router.DELETE(options.BaseURL+"/projects/:projectId/plugins/:pluginId", wrapper.UninstallPlugin, options.OperationMiddlewares["uninstallPlugin"]...)
 	router.POST(options.BaseURL+"/projects/:projectId/publish", wrapper.PublishProject, options.OperationMiddlewares["publishProject"]...)
 	router.POST(options.BaseURL+"/projects/:projectId/restore", wrapper.RestoreProject, options.OperationMiddlewares["restoreProject"]...)
+	router.POST(options.BaseURL+"/projects/:projectId/story/publish", wrapper.PublishStory, options.OperationMiddlewares["publishStory"]...)
 	router.GET(options.BaseURL+"/workspaces/:workspaceId/projects", wrapper.ListProjects, options.OperationMiddlewares["listProjects"]...)
 	router.POST(options.BaseURL+"/workspaces/:workspaceId/projects", wrapper.CreateProject, options.OperationMiddlewares["createProject"]...)
 
@@ -1253,6 +1300,99 @@ func (response RestoreProject404JSONResponse) VisitRestoreProjectResponse(w http
 	return err
 }
 
+type PublishStoryRequestObject struct {
+	ProjectId ProjectId `json:"projectId"`
+	Body      *PublishStoryJSONRequestBody
+}
+
+type PublishStoryResponseObject interface {
+	VisitPublishStoryResponse(w http.ResponseWriter) error
+}
+
+type PublishStory200JSONResponse PublishStoryResponse
+
+func (response PublishStory200JSONResponse) VisitPublishStoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishStory400JSONResponse struct{ ErrorJSONResponse }
+
+func (response PublishStory400JSONResponse) VisitPublishStoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishStory401JSONResponse Error
+
+func (response PublishStory401JSONResponse) VisitPublishStoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishStory403JSONResponse Error
+
+func (response PublishStory403JSONResponse) VisitPublishStoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishStory404JSONResponse Error
+
+func (response PublishStory404JSONResponse) VisitPublishStoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type PublishStory409JSONResponse Error
+
+func (response PublishStory409JSONResponse) VisitPublishStoryResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type ListProjectsRequestObject struct {
 	WorkspaceId WorkspaceId `json:"workspaceId"`
 	Params      ListProjectsParams
@@ -1395,6 +1535,9 @@ type StrictServerInterface interface {
 	// Restore a project from the trash
 	// (POST /projects/{projectId}/restore)
 	RestoreProject(ctx context.Context, request RestoreProjectRequestObject) (RestoreProjectResponseObject, error)
+	// Publish or unpublish a project's story
+	// (POST /projects/{projectId}/story/publish)
+	PublishStory(ctx context.Context, request PublishStoryRequestObject) (PublishStoryResponseObject, error)
 	// List the projects of a workspace
 	// (GET /workspaces/{workspaceId}/projects)
 	ListProjects(ctx context.Context, request ListProjectsRequestObject) (ListProjectsResponseObject, error)
@@ -1634,6 +1777,37 @@ func (sh *strictHandler) RestoreProject(ctx echo.Context, projectId ProjectId) e
 		return err
 	} else if validResponse, ok := response.(RestoreProjectResponseObject); ok {
 		return validResponse.VisitRestoreProjectResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// PublishStory operation middleware
+func (sh *strictHandler) PublishStory(ctx echo.Context, projectId ProjectId) error {
+	var request PublishStoryRequestObject
+
+	request.ProjectId = projectId
+
+	var body PublishStoryJSONRequestBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+	request.Body = &body
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.PublishStory(ctx.Request().Context(), request.(PublishStoryRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PublishStory")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(PublishStoryResponseObject); ok {
+		return validResponse.VisitPublishStoryResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}

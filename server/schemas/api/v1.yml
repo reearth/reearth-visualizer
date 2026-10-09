@@ -21,6 +21,7 @@ security:
 tags:
   - name: Projects
   - name: Plugins
+  - name: Stories
 paths:
   /workspaces/{workspaceId}/projects:
     parameters:
@@ -216,6 +217,41 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PublishProjectResponse"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+  /projects/{projectId}/story/publish:
+    parameters:
+      - $ref: "#/components/parameters/projectId"
+    post:
+      operationId: publishStory
+      summary: Publish or unpublish a project's story
+      description: |
+        Publishes the project's story separately from the project, with its
+        own alias and URL. A project has one story; a project with several
+        answers 409. The status and alias work as for publishProject, and a
+        story published for the first time gets `s-<story ID>`.
+      tags: [Stories]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PublishProjectRequest"
+      responses:
+        "200":
+          description: The story, with its published URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublishStoryResponse"
         "400":
           $ref: "#/components/responses/Error"
         "401":
@@ -510,6 +546,38 @@ components:
           description: |
             The published URL. Absent when the project is private or the
             server has no published host configured.
+    Story:
+      type: object
+      required: [id, projectId, title, publishmentStatus, updatedAt]
+      properties:
+        id:
+          type: string
+        projectId:
+          type: string
+        title:
+          type: string
+        publishedAlias:
+          description: The alias in the story's published URL. Set once it has been published.
+          type: string
+        publishmentStatus:
+          $ref: "#/components/schemas/PublishmentStatus"
+        publishedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    PublishStoryResponse:
+      type: object
+      required: [story]
+      properties:
+        story:
+          $ref: "#/components/schemas/Story"
+        url:
+          type: string
+          description: |
+            The published URL. Absent when the story is private or the server
+            has no published host configured.
     PluginExtension:
       type: object
       required: [id, type, name]
