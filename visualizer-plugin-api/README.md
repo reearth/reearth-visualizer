@@ -48,6 +48,12 @@ reearth.camera.on("move", (pos) => console.log(pos.lat, pos.lng));
 | `reearth.spatialId` | PLATEAU spatial ID picking |
 | `reearth.engine` | Rendering engine metadata |
 
+## TypeScript configuration
+
+Add `"skipLibCheck": true` to your `tsconfig.json`. This package depends on `@reearth/core`,
+which references React and Cesium types internally. Without `skipLibCheck`, those transitive
+declarations cause errors in projects that do not install React or Cesium types directly.
+
 ## Versioning
 
 This package follows its own semver, independent of the Re:Earth Visualizer release cycle.
