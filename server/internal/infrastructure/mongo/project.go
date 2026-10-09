@@ -451,6 +451,10 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountsID.WorkspaceID
 		"coresupport": true,
 	}
 
+	if uFilter.CreatedBy != nil {
+		filter["createdby"] = uFilter.CreatedBy.String()
+	}
+
 	if uFilter.Keyword != nil {
 		keywordFilter := bson.M{
 			"name": bson.M{

@@ -193,6 +193,7 @@ extend type Query {
     pagination: Pagination
     keyword: String
     sort: ProjectSort
+    createdBy: ID
   ): ProjectConnection! # not included deleted projects
   checkProjectAlias(
     alias: String!

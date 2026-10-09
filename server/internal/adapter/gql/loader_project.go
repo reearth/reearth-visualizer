@@ -40,13 +40,22 @@ func (c *ProjectLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmod
 	return projects, nil
 }
 
-func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, keyword *string, sort *project.SortType, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error) {
+func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, keyword *string, sort *project.SortType, pagination *gqlmodel.Pagination, createdBy *gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
 	tid, err := gqlmodel.ToID[accountsID.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, pi, err := c.usecase.FindByWorkspace(ctx, tid, keyword, sort, gqlmodel.ToPagination(pagination), getOperator(ctx))
+	var createdByID *accountsID.UserID
+	if createdBy != nil {
+		uid, err := gqlmodel.ToID[accountsID.User](*createdBy)
+		if err != nil {
+			return nil, err
+		}
+		createdByID = &uid
+	}
+
+	res, pi, err := c.usecase.FindByWorkspace(ctx, tid, keyword, sort, gqlmodel.ToPagination(pagination), createdByID, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
