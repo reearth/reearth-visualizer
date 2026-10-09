@@ -188,6 +188,44 @@ paths:
           $ref: "#/components/responses/Error"
         "404":
           $ref: "#/components/responses/Error"
+  /projects/{projectId}/publish:
+    parameters:
+      - $ref: "#/components/parameters/projectId"
+    post:
+      operationId: publishProject
+      summary: Publish or unpublish a project
+      description: |
+        Sets the publishment status, as the web app's publish dialog does.
+        `public` and `limited` both publish the project and upload its latest
+        state; `limited` asks search engines not to index the page.
+        `private` unpublishes it.
+
+        `alias` sets the published alias, which names the published URL. It
+        is kept when omitted, and a new project gets `c-<scene ID>`.
+      tags: [Projects]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PublishProjectRequest"
+      responses:
+        "200":
+          description: The project, with its published URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublishProjectResponse"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
   /projects/{projectId}/plugins:
     parameters:
       - $ref: "#/components/parameters/projectId"
@@ -365,6 +403,9 @@ components:
         alias:
           description: The project alias used in the editor URL.
           type: string
+        publishedAlias:
+          description: The alias in the published URL. Set once the project has been published.
+          type: string
         visibility:
           $ref: "#/components/schemas/Visibility"
         starred:
@@ -449,6 +490,26 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/PluginExtension"
+    PublishProjectRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          $ref: "#/components/schemas/PublishmentStatus"
+        alias:
+          type: string
+          description: Published alias. Kept when omitted.
+    PublishProjectResponse:
+      type: object
+      required: [project]
+      properties:
+        project:
+          $ref: "#/components/schemas/Project"
+        url:
+          type: string
+          description: |
+            The published URL. Absent when the project is private or the
+            server has no published host configured.
     PluginExtension:
       type: object
       required: [id, type, name]
