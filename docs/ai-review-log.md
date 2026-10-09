@@ -124,3 +124,13 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 - convert.test.tsx (3 tests): nested expression/conditions are kept, unknown appearance types are kept, and a known type is still removed once all its nodes are deleted.
 - convert.test.tsx (4 tests): round trip of the `true` fallback, compound `&&`/`||` and `startsWith(...) && startsWith(...)` conditions, the unsupported `==` operator, and an operator that appears more than once.
+
+## 2026-10-09 — Condition parser misreads operators inside quotes/arguments (web/src/app/features/Editor/Map/LayerStylePanel/Editor/StyleInterface/convert.ts)
+
+### Findings & Fixes
+1. **Operator detection not quote/paren-aware** (convert.ts)
+   - Bug: `parseSimpleCondition` found the operator with a plain regex, so comparison characters inside string literals or function arguments were treated as the condition's operator. `endsWith(${name}, '>')` was split at `>` and regenerated as `endsWith(${name}, ' > ')`, silently changing the literal whenever any style field was saved. The `startsWith(a, b)` regex was greedy, so `startsWith(${name}, 'a,b')` split at the comma inside the quoted value.
+   - Fix: added `findTopLevelTokens`, a scanner that only matches operators / commas outside quotes, parentheses, brackets and `${...}`, and requires word operators (`startsWith`) to be standalone. A condition is parsed only when it has exactly one top-level operator (or a `startsWith(...)` call with exactly one top-level comma). Anything else is kept verbatim in `rawCondition`.
+
+### Tests added
+- convert.test.tsx (3 tests): quoted/nested operator characters round-trip unchanged, a quoted operator inside a simple value still parses, and `startsWith` args split only on the top-level comma.

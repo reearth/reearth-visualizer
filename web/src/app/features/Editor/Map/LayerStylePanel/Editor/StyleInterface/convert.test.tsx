@@ -363,6 +363,39 @@ describe("parseConditions lossless round trip", () => {
 
     expect(roundTrip("number", input)).toEqual(input);
   });
+
+  it("ignores operator characters inside quoted or nested arguments", () => {
+    const input: [string, string][] = [
+      ["endsWith(${name}, '>')", "'a'"],
+      ["startsWith(${a}, 'x') === startsWith(${b}, 'y')", "'c'"]
+    ];
+    const parsed = parseConditions("text", input);
+
+    expect(parsed.every((c) => c.rawCondition !== undefined)).toBe(true);
+    expect(roundTrip("text", input)).toEqual(input);
+  });
+
+  it("parses a simple condition whose value contains operator characters", () => {
+    const [parsed] = parseConditions("number", [["${a} === '>='", "5"]]);
+
+    expect(parsed).toEqual({
+      variable: "${a}",
+      operator: "===",
+      value: "'>='",
+      applyValue: "5"
+    });
+  });
+
+  it("splits startsWith args only on the top-level comma", () => {
+    const input: [string, string][] = [["startsWith(${name}, 'a,b')", "5"]];
+
+    expect(parseConditions("number", input)[0]).toMatchObject({
+      variable: "${name}",
+      operator: "startsWith",
+      value: "'a,b'"
+    });
+    expect(roundTrip("number", input)).toEqual(input);
+  });
 });
 
 describe("generateStyleValue", () => {

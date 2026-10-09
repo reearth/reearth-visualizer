@@ -187,20 +187,9 @@ export const generateStyleValue = (node: StyleNode) => {
 export const parseConditions = (
   field: AppearanceField | undefined,
   conditions: [string, string][]
-): StyleCondition[] => {
-  const operatorRegex = new RegExp(
-    `(${styleConditionOperators
-      .map((op) => {
-        if (op === "startsWith") {
-          return "startsWith";
-        }
-        return op.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      })
-      .join("|")})`
-  );
-
-  return conditions.map(([condition, applyValue]) => {
-    const parsed = parseSimpleCondition(condition, operatorRegex);
+): StyleCondition[] =>
+  conditions.map(([condition, applyValue]) => {
+    const parsed = parseSimpleCondition(condition);
     if (parsed) {
       return {
         ...parsed,
@@ -217,15 +206,65 @@ export const parseConditions = (
       applyValue: unwrapConditionAppliedValue(field, applyValue)
     };
   });
-};
 
 // Logical / ternary operators mean the condition is compound and can't be
 // split into a single `variable operator value` triple without losing parts.
 const COMPOUND_CONDITION_REGEX = /&&|\|\||\?/;
 
+const IDENTIFIER_CHAR_REGEX = /[\w$]/;
+
+// Finds the positions of `tokens` that sit outside string literals,
+// parentheses, brackets and `${...}`, so e.g. the `>` in `'>'` or in
+// `fn(${a} > 1)` isn't mistaken for the condition's own operator.
+// Returns null when quotes or brackets are unbalanced.
+const findTopLevelTokens = (
+  input: string,
+  tokens: readonly string[]
+): { token: string; index: number }[] | null => {
+  const found: { token: string; index: number }[] = [];
+  let quote: string | null = null;
+  let depth = 0;
+
+  for (let i = 0; i < input.length; i++) {
+    const ch = input[i];
+    if (quote) {
+      if (ch === "\\") i++;
+      else if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === "`") {
+      quote = ch;
+      continue;
+    }
+    if ("([{".includes(ch)) {
+      depth++;
+      continue;
+    }
+    if (")]}".includes(ch)) {
+      if (--depth < 0) return null;
+      continue;
+    }
+    if (depth !== 0) continue;
+
+    const token = tokens.find(
+      (t) =>
+        input.startsWith(t, i) &&
+        // Word operators like `startsWith` must not match inside identifiers.
+        (!IDENTIFIER_CHAR_REGEX.test(t) ||
+          (!IDENTIFIER_CHAR_REGEX.test(input[i - 1] ?? "") &&
+            !IDENTIFIER_CHAR_REGEX.test(input[i + t.length] ?? "")))
+    );
+    if (token) {
+      found.push({ token, index: i });
+      i += token.length - 1;
+    }
+  }
+
+  return quote || depth !== 0 ? null : found;
+};
+
 const parseSimpleCondition = (
-  condition: string,
-  operatorRegex: RegExp
+  condition: string
 ): Omit<StyleCondition, "applyValue"> | null => {
   const toSimple = (
     variable: string,
@@ -239,23 +278,34 @@ const parseSimpleCondition = (
       ? { variable, operator, value }
       : null;
 
-  if (condition.startsWith("startsWith(")) {
-    const match = condition.match(/^startsWith\((.+),\s*(.+)\)$/);
-    if (match) {
-      return toSimple(match[1].trim(), "startsWith", match[2].trim());
-    }
+  const trimmed = condition.trim();
+
+  const call = trimmed.match(/^startsWith\s*\(([\s\S]*)\)$/);
+  if (call) {
+    // Unbalanced args (null) mean the closing paren isn't this call's, e.g.
+    // `startsWith(${a}, 'x') === startsWith(${b}, 'y')`.
+    const args = call[1];
+    const commas = findTopLevelTokens(args, [","]);
+    if (!commas || commas.length !== 1) return null;
+    const { index } = commas[0];
+    return toSimple(
+      args.slice(0, index).trim(),
+      "startsWith",
+      args.slice(index + 1).trim()
+    );
   }
 
-  const match = condition.match(operatorRegex);
-  if (!match) return null;
+  const operators = findTopLevelTokens(trimmed, styleConditionOperators);
+  // Exactly one top-level operator; more means a compound or otherwise
+  // unsupported expression that splitting would corrupt.
+  if (!operators || operators.length !== 1) return null;
 
-  const operator = match[0] as StyleConditionOperator;
-  const parts = condition.split(operator).map((part) => part.trim());
-  // More than two parts means the operator appears more than once, e.g. a
-  // compound condition; splitting it would silently drop the remainder.
-  if (parts.length !== 2) return null;
-
-  return toSimple(parts[0], operator, parts[1]);
+  const { token, index } = operators[0];
+  return toSimple(
+    trimmed.slice(0, index).trim(),
+    token as StyleConditionOperator,
+    trimmed.slice(index + token.length).trim()
+  );
 };
 
 export const generateConditions = (
