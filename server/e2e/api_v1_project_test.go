@@ -373,3 +373,50 @@ func TestAPIV1PublishProject(t *testing.T) {
 	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "public"}).Expect(),
 		http.StatusConflict, "conflict")
 }
+
+func TestAPIV1PublishStory(t *testing.T) {
+	cfg := *publicApiConfig
+	cfg.Published.Host = "https://{}.example.com"
+	e, _, _ := startServer(t, &cfg, true, baseSeeder)
+
+	// Creating a project also creates its story.
+	pid := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "with story"}).
+		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
+	publish := "/projects/" + pid + "/story/publish"
+
+	// Limited, with the default alias s-<story ID>.
+	res := apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "limited"}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	story := res.Value("story").Object()
+	sid := story.Value("id").String().Raw()
+	story.HasValue("projectId", pid).HasValue("publishmentStatus", "limited").HasValue("publishedAlias", "s-"+sid)
+	story.Value("publishedAt").String().NotEmpty()
+	res.HasValue("url", "https://s-"+sid+".example.com")
+
+	// The project itself stays unpublished.
+	apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().Status(http.StatusOK).
+		JSON().Object().HasValue("publishmentStatus", "private")
+
+	// Public with a custom alias, then private keeps the alias without a URL.
+	res = apiV1(e, http.MethodPost, publish, uID).
+		WithJSON(map[string]any{"status": "public", "alias": "cli-story"}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	res.Value("story").Object().HasValue("publishmentStatus", "public").HasValue("publishedAlias", "cli-story")
+	res.HasValue("url", "https://cli-story.example.com")
+	res = apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "private"}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	res.Value("story").Object().HasValue("publishmentStatus", "private").HasValue("publishedAlias", "cli-story")
+	res.NotContainsKey("url")
+
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "secret"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID3).WithJSON(map[string]any{"status": "public"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+	expectAPIError(t, apiV1(e, http.MethodPost, "/projects/01m4dn2d8ksnekewhejqa5bbzz/story/publish", uID).
+		WithJSON(map[string]any{"status": "public"}).Expect(), http.StatusNotFound, "not_found")
+
+	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "public"}).Expect(),
+		http.StatusConflict, "conflict")
+}
