@@ -17,15 +17,12 @@ import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
-// Same rule as the server and reearth-accounts: 5-32 characters, letters,
-// numbers and single hyphens, starting and ending with a letter or number.
 const WORKSPACE_ALIAS_PATTERN = /^[a-z0-9][a-z0-9-]{3,30}[a-z0-9]$/;
 const WORKSPACE_ALIAS_MAX_LENGTH = 32;
 
 const isValidWorkspaceAlias = (alias: string) =>
   WORKSPACE_ALIAS_PATTERN.test(alias) && !alias.includes("--");
 
-// Suggests an alias from the workspace name, e.g. "My Team" -> "my-team".
 const toWorkspaceAlias = (name: string) =>
   name
     .toLowerCase()
@@ -44,7 +41,6 @@ const AddWorkspaceModal: FC = () => {
 
   const [workspaceNameConfirm, setWorkspaceNameConfirm] = useState<string>("");
   const [workspaceAlias, setWorkspaceAlias] = useState<string>("");
-  // Once the user edits the alias, stop overwriting it from the name.
   const [aliasEdited, setAliasEdited] = useState(false);
   const [aliasServerError, setAliasServerError] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,7 +78,6 @@ const AddWorkspaceModal: FC = () => {
         name: workspaceNameConfirm.trim(),
         alias: workspaceAlias
       });
-      // Keep the modal open on failure so the user can fix the input.
       if (status === "error") {
         if (aliasError) setAliasServerError(aliasError);
         return;
@@ -107,6 +102,12 @@ const AddWorkspaceModal: FC = () => {
     const allWorkspaceNames = workspaces?.map((workspace) => workspace.name);
     return allWorkspaceNames?.includes(name);
   }, [workspaceNameConfirm, workspaces]);
+
+  const canCreate =
+    !!workspaceNameConfirm.trim() &&
+    !isDuplicatedName &&
+    isAliasValid &&
+    !isSubmitting;
 
   useEffect(() => {
     if (!addWorkspaceModal) {
@@ -139,12 +140,7 @@ const AddWorkspaceModal: FC = () => {
             key="create"
             title={t("create")}
             appearance="primary"
-            disabled={
-              !workspaceNameConfirm.trim() ||
-              isDuplicatedName ||
-              !isAliasValid ||
-              isSubmitting
-            }
+            disabled={!canCreate}
             onClick={handleAddWorkspace}
             data-testid="addworkspace-create-btn"
           />

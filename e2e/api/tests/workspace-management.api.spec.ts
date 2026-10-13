@@ -19,7 +19,6 @@ import {
 
 import { generateFakeId } from "./test-helpers";
 
-// Workspace aliases must be unique and 5-32 lowercase letters, numbers or hyphens.
 const uniqueWorkspaceAlias = () =>
   `e2e-${faker.string.alphanumeric({ length: 10, casing: "lower" })}`;
 

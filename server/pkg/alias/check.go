@@ -163,9 +163,7 @@ var (
 	ErrInvalidWorkspaceAlias = verror.NewVError(
 		errmsg.ErrKeyPkgWorkspaceInvalidAlias,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgWorkspaceInvalidAlias],
-		message.MultiLocaleTemplateData(map[string]interface{}{
-			"aliasName": "",
-		}),
+		nil,
 		nil,
 	)
 
@@ -197,8 +195,6 @@ func CheckAliasPatternStorytelling(alias string) error {
 	return nil
 }
 
-// CheckAliasPatternWorkspace uses the same rule as reearth-accounts, so an alias
-// that passes here is not rejected when the workspace is created there.
 func CheckAliasPatternWorkspace(alias string) error {
 	if !util.IsSafePathName(alias) {
 		return ErrInvalidWorkspaceAlias.AddTemplateData("aliasName", alias)

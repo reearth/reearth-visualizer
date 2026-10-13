@@ -88,7 +88,7 @@ func TestCheckAliasPatternWorkspace(t *testing.T) {
 		{name: "valid alias", alias: "my-team", wantErr: false},
 		{name: "minimum length (5)", alias: "abcde", wantErr: false},
 		{name: "maximum length (32)", alias: "abcdefghijklmnopqrstuvwxyz012345", wantErr: false},
-		{name: "empty string", alias: "", wantErr: true}, // reearth-accounts rejects an empty alias
+		{name: "empty string", alias: "", wantErr: true},
 		{name: "too short (4 chars)", alias: "abcd", wantErr: true},
 		{name: "too long (33 chars)", alias: "abcdefghijklmnopqrstuvwxyz0123456", wantErr: true},
 		{name: "starts with hyphen", alias: "-myteam", wantErr: true},

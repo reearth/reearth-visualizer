@@ -25,7 +25,6 @@ import { MutationReturn } from "../types";
 
 import { Workspace } from "./types";
 
-// Error codes the server returns for an invalid or already used workspace alias.
 const WORKSPACE_ALIAS_ERROR_CODES = ["invalid_alias", "alias_already_exists"];
 
 export const useWorkspaceMutations = () => {
@@ -41,8 +40,6 @@ export const useWorkspaceMutations = () => {
     ): Promise<
       MutationReturn<Partial<Workspace>> & { aliasError?: string }
     > => {
-      // errorPolicy "all" returns GraphQL errors instead of throwing, so the
-      // alias error can be read below. Network errors still throw.
       const { data, error } = await createWorkspaceMutation({
         variables: props,
         errorPolicy: "all",
@@ -51,7 +48,6 @@ export const useWorkspaceMutations = () => {
         }
       }).catch((e: Error) => ({ data: undefined, error: e }));
       if (error || !data?.createWorkspace) {
-        // Alias problems are shown next to the alias field instead of as a notification.
         const aliasError = CombinedGraphQLErrors.is(error)
           ? error.errors.find((e) =>
               WORKSPACE_ALIAS_ERROR_CODES.includes(e.extensions?.code as string)

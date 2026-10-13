@@ -18,9 +18,11 @@ func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.C
 		if err := alias.CheckAliasPatternWorkspace(wsAlias); err != nil {
 			return nil, err
 		}
-		// Gives a clear error for a taken alias. A concurrent create is still
-		// rejected by the unique alias constraint in reearth-accounts.
-		if existing, err := r.AccountsAPIClient.WorkspaceRepo.FindByAlias(ctx, wsAlias); err == nil && existing != nil {
+		existing, err := r.AccountsAPIClient.WorkspaceRepo.FindByAlias(ctx, wsAlias)
+		if err != nil && !gqlclientWorkspace.ErrWorkspaceNotFound(err) {
+			return nil, err
+		}
+		if err == nil && existing != nil {
 			return nil, alias.ErrExistsWorkspaceAlias
 		}
 		res, err := r.AccountsAPIClient.WorkspaceRepo.CreateWorkspace(ctx, gqlclientWorkspace.CreateWorkspaceInput{
