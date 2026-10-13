@@ -4,10 +4,17 @@ import (
 	"context"
 	"testing"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/infrastructure/memory"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type recordingSceneLockRepo struct {
@@ -122,4 +129,46 @@ func TestReplaceIDsInPlace(t *testing.T) {
 			replaceIDsInPlace(&data, []string{"a"})
 		})
 	})
+}
+
+type missingProjectMetadataRepo struct {
+	repo.ProjectMetadata
+}
+
+func (missingProjectMetadataRepo) Remove(context.Context, id.ProjectID) error {
+	return rerror.ErrNotFound
+}
+
+func TestProjectDeleter_Delete_ProjectWithoutMetadata(t *testing.T) {
+	ctx := context.Background()
+	r := memory.New()
+
+	prj := project.New().
+		NewID().
+		Workspace(accountsID.NewWorkspaceID()).
+		PublishmentStatus(project.PublishmentStatusPrivate).
+		Visualizer(visualizer.VisualizerCesium).
+		MustBuild()
+	require.NoError(t, r.Project.Save(ctx, prj))
+
+	deleter := ProjectDeleter{
+		SceneDeleter: SceneDeleter{
+			Scene:          r.Scene,
+			SceneLock:      r.SceneLock,
+			Property:       r.Property,
+			PropertySchema: r.PropertySchema,
+			NLSLayer:       r.NLSLayer,
+			Plugin:         r.Plugin,
+			Storytelling:   r.Storytelling,
+			Style:          r.Style,
+		},
+		Project:         r.Project,
+		ProjectMetadata: missingProjectMetadataRepo{r.ProjectMetadata},
+		Asset:           r.Asset,
+	}
+
+	require.NoError(t, deleter.Delete(ctx, prj, true, nil))
+
+	_, err := r.Project.FindByID(ctx, prj.ID())
+	assert.ErrorIs(t, err, rerror.ErrNotFound)
 }

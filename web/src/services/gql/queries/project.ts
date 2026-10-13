@@ -16,7 +16,7 @@ export const GET_PROJECT = gql(`
 `);
 
 export const GET_PROJECTS = gql(`
-  query GetProjects($workspaceId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
+  query GetProjects($workspaceId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort, $withStories: Boolean = false) {
     projects(workspaceId: $workspaceId, pagination: $pagination, keyword: $keyword, sort: $sort) {
       edges {
         node {
@@ -25,6 +25,10 @@ export const GET_PROJECTS = gql(`
           scene {
             id
             alias
+            stories @include(if: $withStories) {
+              id
+              publishmentStatus
+            }
           }
         }
       }

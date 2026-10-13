@@ -114,7 +114,7 @@ func TestUsecaseMiddleware_WorkspaceScoping(t *testing.T) {
 	t.Run("no operator on context (mirrors the global, pre-auth registration): unfiltered", func(t *testing.T) {
 		uc := runMiddleware(context.Background())
 
-		got, _, err := uc.Project.FindByWorkspace(context.Background(), otherWorkspace, nil, nil, nil, nil)
+		got, _, err := uc.Project.FindByWorkspace(context.Background(), otherWorkspace, nil, nil, nil, nil, nil)
 		assert.NoError(t, err)
 		require.Len(t, got, 1)
 		assert.Equal(t, otherProject.ID(), got[0].ID())
@@ -130,13 +130,13 @@ func TestUsecaseMiddleware_WorkspaceScoping(t *testing.T) {
 		uc := runMiddleware(ctx)
 
 		t.Run("cross-tenant read of another workspace's private project is denied", func(t *testing.T) {
-			got, _, err := uc.Project.FindByWorkspace(context.Background(), otherWorkspace, nil, nil, nil, op)
+			got, _, err := uc.Project.FindByWorkspace(context.Background(), otherWorkspace, nil, nil, nil, nil, op)
 			assert.NoError(t, err)
 			assert.Empty(t, got, "SEC-01 regression: an authenticated user must not be able to read another workspace's projects")
 		})
 
 		t.Run("read of the operator's own workspace still works", func(t *testing.T) {
-			got, _, err := uc.Project.FindByWorkspace(context.Background(), myWorkspace, nil, nil, nil, op)
+			got, _, err := uc.Project.FindByWorkspace(context.Background(), myWorkspace, nil, nil, nil, nil, op)
 			assert.NoError(t, err)
 			require.Len(t, got, 1)
 			assert.Equal(t, myProject.ID(), got[0].ID())

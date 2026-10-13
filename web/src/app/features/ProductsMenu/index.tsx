@@ -85,7 +85,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
   const products: MenuItem[] = [
     {
       id: "dashboard",
-      title: t("Dashboard"),
+      title: "Dashboard",
       icon: "logoFullColor",
       background: "#494735",
       onNavigate: platformUrl ? () => openUrlInNewTab(platformUrl) : undefined
@@ -149,7 +149,7 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
     {
       id: "community",
       title: t("Community"),
-      icon: "discord",
+      icon: "usersThree",
       onNavigate: () => openUrlInNewTab("https://discord.com/invite/XJhYkQQDAu")
     }
   ];

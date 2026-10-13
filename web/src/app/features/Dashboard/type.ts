@@ -1,6 +1,10 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
 import { PublishStatus } from "@reearth/services/api/utils";
-import { ProjectImportStatus, WorkspaceMember } from "@reearth/services/gql";
+import {
+  ProjectImportStatus,
+  PublishmentStatus,
+  WorkspaceMember
+} from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 import { ReactNode } from "react";
 
@@ -26,6 +30,7 @@ export type Project = {
   isArchived?: boolean;
   description?: string;
   sceneId?: string;
+  stories?: { id: string; publishmentStatus: PublishmentStatus }[];
   updatedAt?: Date;
   createdAt?: Date;
   projectType?: ProjectType;
