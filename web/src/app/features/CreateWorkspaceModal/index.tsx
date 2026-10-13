@@ -153,7 +153,7 @@ const AddWorkspaceModal: FC = () => {
       >
         <ModalContentWrapper data-testid="addworkspace-modal-content">
           <Typography size="body" data-testid="addworkspace-title">
-            {t("Your workspace Name*")}
+            {t("Your workspace name*")}
           </Typography>
           <TextInput
             value={workspaceNameConfirm}
