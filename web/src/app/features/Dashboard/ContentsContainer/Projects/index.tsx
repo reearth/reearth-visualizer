@@ -15,6 +15,7 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo, Fragment } from "react";
 
+import CreatorFilter from "./CreatorFilter";
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
@@ -32,6 +33,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     layout,
     searchTerm,
     sortValue,
+    createdBy,
+    creatorOptions,
     importStatus,
     fileInputRef,
     projectVisibility,
@@ -42,6 +45,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
+    handleCreatorChange,
     handleProjectImport,
     handleProjectRemove,
     handleProjectImportErrorDownload,
@@ -111,6 +115,13 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         showSearch
         searchPlaceholder={t("Search project")}
         onSearch={handleSearch}
+        filters={
+          <CreatorFilter
+            creators={creatorOptions}
+            value={createdBy}
+            onChange={handleCreatorChange}
+          />
+        }
       />
       {filtedProjects?.length || hasImportingProject ? (
         <ManagerContent data-testid="projects-manager-content">
@@ -240,7 +251,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       ) : (
         <ManagerEmptyContent data-testid="projects-empty-content">
           <Typography size="h5" color={theme.content.weak}>
-            {t("No Project has been created yet")}
+            {searchTerm || createdBy
+              ? t("No projects match your search")
+              : t("No Project has been created yet")}
           </Typography>
         </ManagerEmptyContent>
       )}

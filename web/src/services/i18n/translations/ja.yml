@@ -76,6 +76,10 @@ MAINTAINER: 管理者
 OWNER: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
+'Created by:': '作成者:'
+Anyone: すべてのユーザー
+Created by: 作成者
+No members found: メンバーが見つかりません
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
@@ -86,8 +90,8 @@ All projects: すべてのプロジェクト
 Search Result for: 検索結果
 Last updated by: 最終更新者
 Last updated: 最終更新日時
-Created by: 作成者
 Created: 作成日
+No projects match your search: 条件に一致するプロジェクトはありません
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
 Project Setting: プロジェクト設定
