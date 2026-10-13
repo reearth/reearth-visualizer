@@ -56,7 +56,7 @@ Your workspace name*: ワークスペース名*
 your workspace name: ワークスペース名
 The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
 Workspace alias*: ワークスペースエイリアス*
-your-workspace-alias: your-workspace-alias
+your-workspace-alias: ワークスペースエイリアス
 Use 5-32 lowercase letters, numbers, or single hyphens, starting and ending with a letter or number.: 5〜32文字の英小文字、数字、単独のハイフンを使用し、先頭と末尾は英小文字または数字にしてください。
 Used in workspace URLs and must be unique.: ワークスペースのURLに使用され、一意である必要があります。
 Add a team member: チームメンバーを追加
