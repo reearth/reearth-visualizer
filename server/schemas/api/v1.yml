@@ -100,7 +100,8 @@ paths:
       summary: Upload a project zip to import, one chunk per request
       description: |
         Imports a project export zip into the workspace, using the web app's
-        chunked upload. Split the zip into chunks of exactly 16 MiB (the last
+        chunked upload. Servers that import through GCS instead (as the hosted
+        service does) answer 501 `unsupported`; use importProjectUploadUrl there. Split the zip into chunks of exactly 16 MiB (the last
         one may be shorter) and send them in order, all with the same
         `file_id`. The first chunk creates the project, with `importStatus`
         `UPLOADING`, and every response returns its ID. After the last chunk
@@ -140,6 +141,38 @@ paths:
         "403":
           $ref: "#/components/responses/Error"
         "429":
+          $ref: "#/components/responses/Error"
+        "501":
+          $ref: "#/components/responses/Error"
+  /workspaces/{workspaceId}/projects/import-url:
+    parameters:
+      - $ref: "#/components/parameters/workspaceId"
+    post:
+      operationId: importProjectUploadUrl
+      summary: Get a URL to upload a project zip to import
+      description: |
+        Starts an import the way the hosted web app does: creates the project,
+        with `importStatus` `UPLOADING`, and returns a signed storage URL. PUT
+        the zip to `uploadUrl` with the given `contentType` before `expiresAt`;
+        the upload starts the import in the background. Poll
+        `GET /projects/{projectId}` until `importStatus` is `SUCCESS` or
+        `FAILED`. Servers that use chunked upload instead answer 501
+        `unsupported`; use importProject there.
+      tags: [Projects]
+      responses:
+        "201":
+          description: The project and where to upload the zip
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportUploadResponse"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "501":
           $ref: "#/components/responses/Error"
   /projects/{projectId}:
     parameters:
@@ -474,7 +507,7 @@ components:
             code:
               description: A stable, machine-readable code.
               type: string
-              enum: [invalid_input, unauthorized, permission_denied, not_found, conflict, internal]
+              enum: [invalid_input, unauthorized, permission_denied, not_found, conflict, unsupported, internal]
             message:
               type: string
     ProjectSort:
@@ -663,6 +696,22 @@ components:
           description: |
             The published URL. Absent when the story is private or the server
             has no published host configured.
+    ImportUploadResponse:
+      type: object
+      required: [projectId, uploadUrl, contentType, expiresAt]
+      properties:
+        projectId:
+          description: The project the import creates.
+          type: string
+        uploadUrl:
+          description: Where to PUT the zip.
+          type: string
+        contentType:
+          description: The Content-Type header the upload must send.
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
     ImportChunkResponse:
       type: object
       required: [projectId, received, total, completed]

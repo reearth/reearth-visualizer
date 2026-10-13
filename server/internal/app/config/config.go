@@ -157,6 +157,13 @@ type InternalApiConfig struct {
 // would leave the project's assets out.
 type PublicApiConfig struct {
 	Active bool `default:"false" pp:",omitempty"`
+	// SplitImport picks how project imports are uploaded, as the web app's
+	// useProjectSplitImport does: in chunks through this service (true, the
+	// default, for a single server) or straight to GCS through a signed URL,
+	// whose storage event runs the import on the main service (false, as the
+	// hosted service does). Chunked uploads keep their session on one
+	// instance, so they must be off behind a multi-instance deployment.
+	SplitImport bool `default:"true" pp:",omitempty"`
 }
 
 type PublishedGatewayConfig struct {
