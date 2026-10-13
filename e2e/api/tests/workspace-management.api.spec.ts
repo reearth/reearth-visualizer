@@ -19,6 +19,10 @@ import {
 
 import { generateFakeId } from "./test-helpers";
 
+// Workspace aliases must be unique and 5-32 lowercase letters, numbers or hyphens.
+const uniqueWorkspaceAlias = () =>
+  `e2e-${faker.string.alphanumeric({ length: 10, casing: "lower" })}`;
+
 test.describe.configure({ mode: "serial" });
 
 test.describe("Workspace CRUD lifecycle via API", () => {
@@ -54,7 +58,9 @@ test.describe("Workspace CRUD lifecycle via API", () => {
           personal: boolean;
         };
       };
-    }>(CREATE_WORKSPACE, { input: { name: workspaceName } });
+    }>(CREATE_WORKSPACE, {
+      input: { name: workspaceName, alias: uniqueWorkspaceAlias() }
+    });
 
     expect(status).toBe(200);
     const ws = data.createWorkspace.workspace;
@@ -182,7 +188,10 @@ test.describe("Workspace negative scenarios via API", () => {
     const { data: wsData } = await gqlClient.mutate<{
       createWorkspace: { workspace: { id: string } };
     }>(CREATE_WORKSPACE, {
-      input: { name: `Neg Test ${faker.string.alphanumeric(6)}` }
+      input: {
+        name: `Neg Test ${faker.string.alphanumeric(6)}`,
+        alias: uniqueWorkspaceAlias()
+      }
     });
     const wsId = wsData.createWorkspace.workspace.id;
     tempWorkspaceIds.push(wsId);
@@ -220,7 +229,10 @@ test.describe("Workspace negative scenarios via API", () => {
     const { data: wsData } = await gqlClient.mutate<{
       createWorkspace: { workspace: { id: string } };
     }>(CREATE_WORKSPACE, {
-      input: { name: `Neg Owner ${faker.string.alphanumeric(6)}` }
+      input: {
+        name: `Neg Owner ${faker.string.alphanumeric(6)}`,
+        alias: uniqueWorkspaceAlias()
+      }
     });
     const wsId = wsData.createWorkspace.workspace.id;
     tempWorkspaceIds.push(wsId);
@@ -284,7 +296,10 @@ test.describe("Workspace member management via API", () => {
     const { status: wsStatus, data: wsData } = await gqlClient.mutate<{
       createWorkspace: { workspace: { id: string } };
     }>(CREATE_WORKSPACE, {
-      input: { name: `Member Test ${faker.string.alphanumeric(6)}` }
+      input: {
+        name: `Member Test ${faker.string.alphanumeric(6)}`,
+        alias: uniqueWorkspaceAlias()
+      }
     });
     expect(wsStatus).toBe(200);
     workspaceId = wsData.createWorkspace.workspace.id;

@@ -1,8 +1,8 @@
 import { gql } from "@reearth/services/gql/__gen__";
 
 export const CREATE_WORKSPACE = gql(`
-  mutation CreateWorkspace($name: String!) {
-    createWorkspace(input: { name: $name }) {
+  mutation CreateWorkspace($name: String!, $alias: String!) {
+    createWorkspace(input: { name: $name, alias: $alias }) {
       workspace {
         id
         name

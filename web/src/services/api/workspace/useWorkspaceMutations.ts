@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from "@apollo/client/errors";
 import { useMutation } from "@apollo/client/react";
 import {
   AddMemberToWorkspaceMutationVariables,
@@ -19,9 +20,13 @@ import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 
+import { HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION } from "../../gql";
 import { MutationReturn } from "../types";
 
 import { Workspace } from "./types";
+
+// Error codes the server returns for an invalid or already used workspace alias.
+const WORKSPACE_ALIAS_ERROR_CODES = ["invalid_alias", "alias_already_exists"];
 
 export const useWorkspaceMutations = () => {
   const t = useT();
@@ -33,11 +38,26 @@ export const useWorkspaceMutations = () => {
   const createWorkspace = useCallback(
     async (
       props: CreateWorkspaceMutationVariables
-    ): Promise<MutationReturn<Partial<Workspace>>> => {
+    ): Promise<
+      MutationReturn<Partial<Workspace>> & { aliasError?: string }
+    > => {
       const { data, error } = await createWorkspaceMutation({
-        variables: props
+        variables: props,
+        context: {
+          headers: { [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true" }
+        }
       });
       if (error || !data?.createWorkspace) {
+        // Alias problems are shown next to the alias field instead of as a notification.
+        const aliasError = CombinedGraphQLErrors.is(error)
+          ? error.errors.find((e) =>
+              WORKSPACE_ALIAS_ERROR_CODES.includes(e.extensions?.code as string)
+            )
+          : undefined;
+        if (aliasError) {
+          return { status: "error", aliasError: aliasError.message };
+        }
+
         console.log("GraphQL: Failed to create workspace", error);
         setNotification({
           type: "error",

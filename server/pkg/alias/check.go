@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/i18n/message/entitymsg"
 	"github.com/reearth/reearth/server/pkg/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/pkg/verror"
+	"github.com/reearth/reearthx/util"
 	"golang.org/x/text/language"
 )
 
@@ -158,6 +159,22 @@ var (
 		nil,
 		nil,
 	)
+
+	ErrInvalidWorkspaceAlias = verror.NewVError(
+		errmsg.ErrKeyPkgWorkspaceInvalidAlias,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgWorkspaceInvalidAlias],
+		message.MultiLocaleTemplateData(map[string]interface{}{
+			"aliasName": "",
+		}),
+		nil,
+	)
+
+	ErrExistsWorkspaceAlias = verror.NewVError(
+		errmsg.ErrKeyPkgWorkspaceAliasAlreadyExists,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgWorkspaceAliasAlreadyExists],
+		nil,
+		nil,
+	)
 )
 
 func CheckAliasPatternScene(alias string) error {
@@ -176,6 +193,15 @@ func CheckAliasPatternStorytelling(alias string) error {
 	}
 	if _, found := reservedSubdomains[strings.ToLower(alias)]; found {
 		return ErrInvalidReservedStorytellingAlias.AddTemplateData("aliasName", alias)
+	}
+	return nil
+}
+
+// CheckAliasPatternWorkspace uses the same rule as reearth-accounts, so an alias
+// that passes here is not rejected when the workspace is created there.
+func CheckAliasPatternWorkspace(alias string) error {
+	if !util.IsSafePathName(alias) {
+		return ErrInvalidWorkspaceAlias.AddTemplateData("aliasName", alias)
 	}
 	return nil
 }
