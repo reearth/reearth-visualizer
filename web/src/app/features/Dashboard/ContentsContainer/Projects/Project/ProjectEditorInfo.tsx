@@ -24,6 +24,9 @@ const ProjectEditorInfo: FC<Props> = ({ project }) => {
     e.stopPropagation();
   }, []);
 
+  // Opens on hover (via the Popup) and also on keyboard focus.
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
   return (
     <Wrapper data-testid={`project-editor-info-${project.name}`}>
       {lastEditor && (
@@ -41,7 +44,14 @@ const ProjectEditorInfo: FC<Props> = ({ project }) => {
       <Popup
         trigger={
           <InfoIconWrapper
-            onClick={stopPropagation}
+            type="button"
+            aria-label={t("Show project editors")}
+            onClick={(e) => {
+              stopPropagation(e);
+              setDetailsOpen(true);
+            }}
+            onFocus={() => setDetailsOpen(true)}
+            onBlur={() => setDetailsOpen(false)}
             data-testid={`project-editor-info-trigger-${project.name}`}
           >
             <Icon
@@ -54,8 +64,11 @@ const ProjectEditorInfo: FC<Props> = ({ project }) => {
         placement="bottom"
         offset={16}
         triggerOnHover
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
       >
         <TipPanel
+          role="tooltip"
           onClick={stopPropagation}
           data-testid={`project-editor-info-tooltip-${project.name}`}
         >
@@ -183,9 +196,12 @@ const AvatarInitial = styled("span")(({ theme }) => ({
   lineHeight: 1
 }));
 
-const InfoIconWrapper = styled("div")(() => ({
+const InfoIconWrapper = styled("button")(() => ({
   display: css.display.flex,
   alignItems: css.alignItems.center,
+  padding: 0,
+  border: "none",
+  background: "none",
   cursor: css.cursor.pointer
 }));
 

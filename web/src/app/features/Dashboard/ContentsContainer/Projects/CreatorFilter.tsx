@@ -9,6 +9,7 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
+  KeyboardEvent,
   MouseEvent,
   useCallback,
   useEffect,
@@ -42,6 +43,8 @@ const CreatorFilter: FC<Props> = ({ creators, value, onChange }) => {
   const [query, setQuery] = useState(selected?.name ?? "");
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
+  // Option highlighted by the arrow keys; Enter picks it.
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   useEffect(() => {
     setQuery(selected?.name ?? "");
@@ -54,6 +57,10 @@ const CreatorFilter: FC<Props> = ({ creators, value, onChange }) => {
     if (!keyword) return creators;
     return creators.filter((c) => c.name.toLowerCase().includes(keyword));
   }, [creators, query, selected?.name]);
+
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [open, filteredCreators]);
 
   const handleOpenChange = useCallback(
     (nextOpen: boolean) => {
@@ -81,6 +88,29 @@ const CreatorFilter: FC<Props> = ({ creators, value, onChange }) => {
       if (creator.id !== value) onChange?.(creator.id);
     },
     [value, onChange]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      const count = filteredCreators.length;
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!open) {
+          setOpen(true);
+          return;
+        }
+        if (count === 0) return;
+        const step = e.key === "ArrowDown" ? 1 : -1;
+        setActiveIndex((i) =>
+          i < 0 ? (step > 0 ? 0 : count - 1) : (i + step + count) % count
+        );
+      } else if (e.key === "Enter" && open && filteredCreators[activeIndex]) {
+        handleSelect(filteredCreators[activeIndex]);
+      } else if (e.key === "Tab" && open) {
+        handleOpenChange(false);
+      }
+    },
+    [filteredCreators, open, activeIndex, handleSelect, handleOpenChange]
   );
 
   const handleClear = useCallback(
@@ -133,6 +163,7 @@ const CreatorFilter: FC<Props> = ({ creators, value, onChange }) => {
               placeholder={t("Anyone")}
               value={query}
               onChange={handleQueryChange}
+              onKeyDown={handleKeyDown}
               ariaLabel={t("Created by")}
               dataTestid="projects-creator-filter-input"
             />
@@ -144,7 +175,10 @@ const CreatorFilter: FC<Props> = ({ creators, value, onChange }) => {
           extendTriggerWidth
           extendContentWidth
         >
-          <DropDownList data-testid="projects-creator-filter-options">
+          <DropDownList
+            role="listbox"
+            data-testid="projects-creator-filter-options"
+          >
             {filteredCreators.length === 0 ? (
               <DropDownItem>
                 <Typography size="body" color={theme.content.weaker}>
@@ -152,12 +186,13 @@ const CreatorFilter: FC<Props> = ({ creators, value, onChange }) => {
                 </Typography>
               </DropDownItem>
             ) : (
-              filteredCreators.map((creator) => (
+              filteredCreators.map((creator, index) => (
                 <DropDownItem
                   key={creator.id}
                   role="option"
                   aria-selected={creator.id === value}
                   isSelected={creator.id === value}
+                  isActive={index === activeIndex}
                   onClick={() => handleSelect(creator)}
                   data-testid={`projects-creator-filter-option-${creator.id}`}
                 >
@@ -205,16 +240,21 @@ const DropDownList = styled("div")(({ theme }) => ({
   ...theme.scrollBar
 }));
 
-const DropDownItem = styled("div")<{ isSelected?: boolean }>(
-  ({ isSelected, theme }) => ({
-    display: css.display.flex,
-    alignItems: css.alignItems.center,
-    padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
-    borderRadius: theme.radius.smallest,
-    backgroundColor: isSelected ? theme.select.weak : theme.bg[1],
-    cursor: css.cursor.pointer,
-    ["&:hover"]: {
-      backgroundColor: theme.bg[2]
-    }
-  })
-);
+const DropDownItem = styled("div")<{
+  isSelected?: boolean;
+  isActive?: boolean;
+}>(({ isSelected, isActive, theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
+  borderRadius: theme.radius.smallest,
+  backgroundColor: isActive
+    ? theme.bg[2]
+    : isSelected
+      ? theme.select.weak
+      : theme.bg[1],
+  cursor: css.cursor.pointer,
+  ["&:hover"]: {
+    backgroundColor: theme.bg[2]
+  }
+}));
