@@ -195,6 +195,7 @@
   },
   "resolutions": {
     "@cesium/engine": "26.3.0",
+    "@cesium/widgets": "16.2.0",
     "@types/node-fetch": "2.6.13",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",

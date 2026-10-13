@@ -1665,13 +1665,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cesium/core@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@cesium/core@npm:0.1.0"
-  checksum: 10c0/046ea39058bf7c7be21eee9955cae5840f47d18050e8870912a0dc28cd05ed26cbc96a81e2c22cee0e5ea9931e6c8effb3bde5bee72158745b088bb089473ed4
-  languageName: node
-  linkType: hard
-
 "@cesium/engine@npm:26.3.0":
   version: 26.3.0
   resolution: "@cesium/engine@npm:26.3.0"
@@ -1708,14 +1701,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cesium/widgets@npm:^16.2.0":
-  version: 16.3.0
-  resolution: "@cesium/widgets@npm:16.3.0"
+"@cesium/widgets@npm:16.2.0":
+  version: 16.2.0
+  resolution: "@cesium/widgets@npm:16.2.0"
   dependencies:
-    "@cesium/core": "npm:^0.1.0"
-    "@cesium/engine": "npm:^26.4.0"
+    "@cesium/engine": "npm:^26.3.0"
     nosleep.js: "npm:^0.12.0"
-  checksum: 10c0/19eb7ad4c7cd470f20e4be852b15dcdbeb94fc9b51577c2b10c1614665263903dd344cf7775addac400bdcfb23ac46f0870bca7c62726db2ee607ec65ca0b072
+  checksum: 10c0/3b587c157f815c74eae74de4e102903eea8ecb77452ac294b3cb45dbfddbb117bdefabcdc0f6ccc081ab6206668bdaff22a7d55ee1acc1efa4b0704cde87a6e1
   languageName: node
   linkType: hard
 
