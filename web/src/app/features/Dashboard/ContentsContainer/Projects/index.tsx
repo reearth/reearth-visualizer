@@ -166,7 +166,11 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                 data-testid="projects-list-header"
               >
                 <ThumbnailCol data-testid="projects-list-thumbnail-col" />
-                <ProjectNameCol data-testid="projects-list-name-col" />
+                <ProjectNameCol data-testid="projects-list-name-col">
+                  <Typography size="footnote" color={theme.content.weak}>
+                    {t("Project Name")}
+                  </Typography>
+                </ProjectNameCol>
                 <DataCol data-testid="projects-list-last-updated-by-col">
                   <Typography size="footnote" color={theme.content.weak}>
                     {t("Last updated by")}
