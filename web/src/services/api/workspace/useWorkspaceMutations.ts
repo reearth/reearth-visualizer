@@ -41,12 +41,15 @@ export const useWorkspaceMutations = () => {
     ): Promise<
       MutationReturn<Partial<Workspace>> & { aliasError?: string }
     > => {
+      // errorPolicy "all" returns GraphQL errors instead of throwing, so the
+      // alias error can be read below. Network errors still throw.
       const { data, error } = await createWorkspaceMutation({
         variables: props,
+        errorPolicy: "all",
         context: {
           headers: { [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true" }
         }
-      });
+      }).catch((e: Error) => ({ data: undefined, error: e }));
       if (error || !data?.createWorkspace) {
         // Alias problems are shown next to the alias field instead of as a notification.
         const aliasError = CombinedGraphQLErrors.is(error)
