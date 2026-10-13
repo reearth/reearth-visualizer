@@ -1,115 +1,182 @@
-import { Tabs } from "@reearth/app/lib/reearth-ui";
-import { Area, AreaRef, Panel, Window } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n/hooks";
-import { FC, useRef } from "react";
+import { Area, Window } from "@reearth/app/ui/layout";
+import { styled } from "@reearth/services/theme";
+import { FC } from "react";
+
+import LayerList from "../LayerList";
+import Viewer from "../Viewer";
 
 import useHooks from "./hooks";
 import {
-  BlocksPanel,
-  InspectorPanel,
-  PluginUrlPanel,
-  WidgetManagerPanel
-} from "./PluginPanel";
+  ConnectCard,
+  LoadErrorCard,
+  MapLoading,
+  ProblemBanner
+} from "./MapStates";
+import { ExtensionPanels, InspectorPanel } from "./Sidebar";
+import TopBar, { LanguageSetting } from "./TopBar";
 
 /**
- * The Plugin Playground viewer without the code editor or file list: it runs a
- * plugin served by a local dev server (`?dev-plugin=<url>`). Built on its own
- * as playground.html (`yarn build:playground`), with no auth or GraphQL. The
- * right-hand side is laid out like the editor's Widgets tab.
+ * Visualizer workbench: runs a plugin served by a local dev server
+ * (`?dev-plugin=<url>`) on the Visualizer map, without the online
+ * playground's code editor. Built on its own as playground.html
+ * (`yarn build:playground`), with no auth or GraphQL.
+ *
+ * A top bar for the plugin and the map's layers and settings, the map, and a
+ * sidebar with the plugin's extensions and the selected one's properties.
  */
 const PluginPlaygroundDevViewer: FC = () => {
   const {
-    LayersPanel,
-    MainAreaTabs,
-    SettingsPanel,
+    visualizerRef,
     devPluginUrl,
     plugin,
-    errors,
+    manifest,
+    error,
+    extensionErrors,
     live,
     loading,
+    loadedAt,
     reload,
-    widgetExtensions,
-    blockExtensions,
-    installedWidgetIds,
+    extensions,
+    hiddenIds,
+    toggleHidden,
     selectedExtension,
     selectedFile,
+    setSelectedId,
     fieldValues,
     setFieldValues,
-    setSelectedId,
-    handleWidgetAdd,
-    handleWidgetRemove
+    resetFieldValues,
+    hasFieldValues,
+    enabledVisualizer,
+    mapLoading,
+    handleMapMount,
+    layers,
+    toggleLayer,
+    flyToLayer,
+    story,
+    widgets,
+    showStoryPanel,
+    infoboxOpen,
+    openInfobox,
+    handleLayerSelect,
+    lang,
+    changeLanguage,
+    sidebarOpen,
+    toggleSidebar
   } = useHooks();
-  const t = useT();
-  const rightAreaRef = useRef<AreaRef>(null);
 
   return (
     <Window>
-      <Area extend asWrapper>
-        <Area direction="column" extend asWrapper>
+      <Area direction="column" extend asWrapper>
+        <Area initialHeight={42}>
+          <TopBar
+            url={devPluginUrl}
+            name={manifest?.name ?? plugin?.id}
+            version={manifest?.version}
+            loaded={!!plugin}
+            live={live}
+            loading={loading}
+            loadedAt={loadedAt}
+            error={error}
+            sidebarOpen={sidebarOpen}
+            onReload={reload}
+            onSidebarToggle={toggleSidebar}
+            layers={
+              <LayerList
+                layers={layers}
+                selectedLayerId=""
+                setSelectedLayerId={flyToLayer}
+                handleLayerVisibilityUpdate={toggleLayer}
+                visualizerRef={visualizerRef}
+              />
+            }
+            settings={<LanguageSetting lang={lang} onChange={changeLanguage} />}
+          />
+        </Area>
+        <Area extend asWrapper>
           <Area extend>
-            <Tabs position="top" tabs={MainAreaTabs} />
+            <MapArea>
+              <Viewer
+                enabledVisualizer={enabledVisualizer}
+                keepCamera
+                layers={layers}
+                story={story}
+                showStoryPanel={showStoryPanel}
+                visualizerRef={visualizerRef}
+                widgets={widgets}
+                onMount={handleMapMount}
+                onLayerSelect={handleLayerSelect}
+              />
+              {!devPluginUrl ? (
+                <ConnectCard />
+              ) : !plugin && error ? (
+                <LoadErrorCard
+                  url={devPluginUrl}
+                  error={error}
+                  loading={loading}
+                  onRetry={reload}
+                />
+              ) : (
+                <ProblemBanner
+                  error={error}
+                  extensionErrors={extensionErrors}
+                />
+              )}
+              {mapLoading && <MapLoading />}
+            </MapArea>
           </Area>
           <Area
-            resizableEdge="top"
-            initialHeight={100}
-            storageId="plugin-playground-dev-bottom-area"
+            direction="column"
+            resizableEdge="left"
+            initialWidth={300}
+            storageId="plugin-playground-dev-sidebar"
+            hidden={!plugin || !sidebarOpen}
           >
-            <Panel noPadding alwaysOpen extend title={t("Layers")}>
-              <LayersPanel />
-            </Panel>
-            <Panel noPadding alwaysOpen extend title={t("Settings")}>
-              <SettingsPanel />
-            </Panel>
+            <ExtensionPanels
+              extensions={extensions}
+              selectedId={selectedExtension?.id}
+              hiddenIds={hiddenIds}
+              extensionErrors={extensionErrors}
+              onSelect={setSelectedId}
+              onToggleHidden={toggleHidden}
+            />
+            <InspectorPanel
+              plugin={plugin}
+              extension={selectedExtension}
+              file={selectedFile}
+              fieldValues={fieldValues}
+              hasStoredValues={
+                !!selectedExtension && hasFieldValues(selectedExtension)
+              }
+              hidden={
+                !!selectedExtension && hiddenIds.includes(selectedExtension.id)
+              }
+              infoboxOpen={infoboxOpen}
+              setFieldValues={setFieldValues}
+              onReset={() =>
+                selectedExtension && resetFieldValues(selectedExtension)
+              }
+              onShow={() =>
+                selectedExtension && toggleHidden(selectedExtension.id)
+              }
+              onOpenInfobox={openInfobox}
+            />
           </Area>
-        </Area>
-        <Area
-          direction="column"
-          resizableEdge="left"
-          initialWidth={320}
-          storageId="plugin-playground-dev-right-area"
-          ref={rightAreaRef}
-        >
-          {!devPluginUrl ? (
-            <PluginUrlPanel showCollapseArea areaRef={rightAreaRef} />
-          ) : (
-            <>
-              <WidgetManagerPanel
-                showCollapseArea
-                areaRef={rightAreaRef}
-                url={devPluginUrl}
-                plugin={plugin}
-                widgets={widgetExtensions}
-                installedWidgetIds={installedWidgetIds}
-                selectedId={selectedExtension?.id}
-                errors={errors}
-                live={live}
-                loading={loading}
-                onReload={reload}
-                onWidgetAdd={handleWidgetAdd}
-                onWidgetRemove={handleWidgetRemove}
-                onSelect={setSelectedId}
-              />
-              {blockExtensions.length > 0 && (
-                <BlocksPanel
-                  blocks={blockExtensions}
-                  selectedId={selectedExtension?.id}
-                  onSelect={setSelectedId}
-                />
-              )}
-              {plugin && selectedExtension && (
-                <InspectorPanel
-                  plugin={plugin}
-                  selectedFile={selectedFile}
-                  fieldValues={fieldValues}
-                  setFieldValues={setFieldValues}
-                />
-              )}
-            </>
-          )}
         </Area>
       </Area>
     </Window>
   );
 };
+
+const MapArea = styled("div")({
+  position: "relative",
+  flex: 1,
+  minWidth: 0,
+  overflow: "hidden",
+  // The viewer's minimum width would cut off the map's right edge, and the
+  // widgets there, next to the sidebar on a narrow window.
+  ["& > div:first-of-type"]: {
+    minWidth: 0
+  }
+});
 
 export default PluginPlaygroundDevViewer;

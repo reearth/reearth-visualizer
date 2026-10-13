@@ -81,7 +81,9 @@ describe("useDevPlugin", () => {
       "a.js",
       "b.js"
     ]);
-    expect(result.current.errors).toEqual([]);
+    expect(result.current.error).toBeUndefined();
+    expect(result.current.extensionErrors).toEqual({});
+    expect(result.current.loadedAt).toBeInstanceOf(Date);
     expect(FakeEventSource.last?.url).toBe(`${BASE}/events`);
   });
 
@@ -94,7 +96,37 @@ describe("useDevPlugin", () => {
       "reearth.yml",
       "a.js"
     ]);
-    expect(result.current.errors).toEqual(["b.js: 404 Not Found"]);
+    expect(result.current.extensionErrors).toEqual({
+      b: "b.js: 404 Not Found"
+    });
+    expect(result.current.error).toBeUndefined();
+  });
+
+  it("reports an unreachable server", async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError("Failed to fetch"));
+    const { result } = renderHook(() => useDevPlugin(BASE));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.plugin).toBeUndefined();
+    expect(result.current.error).toEqual({
+      kind: "unreachable",
+      message: "Failed to fetch"
+    });
+  });
+
+  it("keeps the last plugin when reearth.yml breaks", async () => {
+    const { result } = renderHook(() => useDevPlugin(BASE));
+    await waitFor(() => expect(result.current.plugin?.id).toBe("demo"));
+
+    served["reearth.yml"] = "id: demo\nextensions: [";
+    await act(async () => {
+      await result.current.reload();
+    });
+
+    expect(result.current.error?.kind).toBe("manifest");
+
+    expect(result.current.error?.message).toMatch(/^reearth\.yml: /);
+    expect(result.current.plugin?.id).toBe("demo");
   });
 
   it("reloads on a change event and tracks the connection", async () => {
@@ -114,6 +146,15 @@ describe("useDevPlugin", () => {
 
     act(() => FakeEventSource.last?.emit("error"));
     expect(result.current.live).toBe(false);
+
+    // The server comes back, maybe with changes made meanwhile.
+    served["a.js"] = "reearth.ui.show('a3')";
+    act(() => FakeEventSource.last?.emit("open"));
+    await waitFor(() =>
+      expect(
+        result.current.plugin?.files.find((f) => f.title === "a.js")?.sourceCode
+      ).toBe("reearth.ui.show('a3')")
+    );
   });
 
   it("does nothing without a URL", () => {

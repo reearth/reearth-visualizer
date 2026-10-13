@@ -40,13 +40,29 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
     [field.type, field.ui]
   );
 
+  // false, 0 and "" are values too: they turn a switch off or clear a field.
   const handleChange = useCallback(
     (newValue?: FieldValue): void => {
-      if (newValue) {
+      if (newValue !== undefined) {
         onUpdate(id, newValue);
       }
     },
     [id, onUpdate]
+  );
+
+  // Fields without a placeholder show the value the plugin gets while none is
+  // set: its default.
+  const shown = value ?? field.defaultValue;
+
+  // Shows what the plugin gets while the field is empty.
+  const placeholder = useMemo(
+    () =>
+      field.placeholder ??
+      (typeof field.defaultValue === "string" ||
+      typeof field.defaultValue === "number"
+        ? String(field.defaultValue)
+        : undefined),
+    [field.placeholder, field.defaultValue]
   );
 
   return (
@@ -64,7 +80,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
           <SelectField
             key={field.id}
             title={field.title}
-            value={(value as string) ?? ""}
+            value={(shown as string) ?? ""}
             description={field.description}
             options={
               field?.choices?.map(
@@ -80,7 +96,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
           <ColorField
             key={field.id}
             title={field.title}
-            value={value as string}
+            value={shown as string}
             description={field.description}
             onChange={handleChange}
           />
@@ -91,6 +107,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
             resizable="height"
             description={field.description}
             value={(value as string) ?? ""}
+            placeholder={placeholder}
             onChangeComplete={handleChange}
           />
         ) : (
@@ -99,6 +116,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
             title={field.title}
             value={value as string}
             description={field.description}
+            placeholder={placeholder}
             onChangeComplete={handleChange}
           />
         )
@@ -130,7 +148,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
           key={field.id}
           title={field.title}
           description={field.description}
-          value={!!value}
+          value={!!shown}
           onChange={handleChange}
         />
       ) : field.type === "number" ? (
@@ -138,7 +156,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
           <SliderField
             key={field.id}
             title={field.title}
-            value={value as number}
+            value={shown as number}
             description={field.description}
             min={field.min}
             max={field.max}
@@ -153,6 +171,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
             description={field.description}
             min={field.min}
             max={field.max}
+            placeholder={placeholder}
             onChangeComplete={handleChange}
           />
         )

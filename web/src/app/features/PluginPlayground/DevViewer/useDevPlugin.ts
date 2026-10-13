@@ -11,15 +11,28 @@ export const getDevPluginUrl = (): string | undefined => {
   return url ? url.replace(/\/+$/, "") : undefined;
 };
 
+/** Why the plugin couldn't be loaded. */
+export type DevPluginError = {
+  /** `unreachable`: no response from the server; `manifest`: a bad reearth.yml. */
+  kind: "unreachable" | "manifest";
+  message: string;
+};
+
 export type DevPluginState = {
+  /** The last plugin that loaded. It stays when a later load fails. */
   plugin?: PluginType;
-  /** Problems found while loading, e.g. a missing `<extension>.js`. */
-  errors: string[];
+  error?: DevPluginError;
+  /** Problems with single extensions, e.g. a missing `<extension>.js`. */
+  extensionErrors: Record<string, string>;
   /** Whether the change stream (`<url>/events`) is connected. */
   live: boolean;
   loading: boolean;
-  reload: () => void;
+  /** When the plugin last loaded. */
+  loadedAt?: Date;
+  reload: () => Promise<void>;
 };
+
+class HttpError extends Error {}
 
 /**
  * Loads a plugin from a local dev server such as `reearth visualizer plugin dev`:
@@ -33,9 +46,13 @@ export type DevPluginState = {
  */
 export default (url: string | undefined): DevPluginState => {
   const [plugin, setPlugin] = useState<PluginType>();
-  const [errors, setErrors] = useState<string[]>([]);
+  const [error, setError] = useState<DevPluginError>();
+  const [extensionErrors, setExtensionErrors] = useState<
+    Record<string, string>
+  >({});
   const [live, setLive] = useState(false);
   const [loading, setLoading] = useState(!!url);
+  const [loadedAt, setLoadedAt] = useState<Date>();
   const generation = useRef(0);
 
   const load = useCallback(async () => {
@@ -45,12 +62,14 @@ export default (url: string | undefined): DevPluginState => {
 
     const fetchText = async (name: string) => {
       const res = await fetch(`${url}/${name}`, { cache: "no-store" });
-      if (!res.ok) throw new Error(`${name}: ${res.status} ${res.statusText}`);
+      if (!res.ok)
+        throw new HttpError(`${name}: ${res.status} ${res.statusText}`);
       return res.text();
     };
 
-    const problems: string[] = [];
     let next: PluginType | undefined;
+    let nextError: DevPluginError | undefined;
+    const nextExtensionErrors: Record<string, string> = {};
     try {
       const manifest: FileType = {
         id: "reearth.yml",
@@ -58,7 +77,7 @@ export default (url: string | undefined): DevPluginState => {
         sourceCode: await fetchText("reearth.yml")
       };
       const yml = getYmlJson(manifest);
-      if (!yml.success) throw new Error(`reearth.yml: ${yml.message}`);
+      if (!yml.success) throw new HttpError(`reearth.yml: ${yml.message}`);
 
       const files = await Promise.all(
         (yml.data.extensions ?? []).map(async (ext) => {
@@ -66,7 +85,8 @@ export default (url: string | undefined): DevPluginState => {
           try {
             return { id: title, title, sourceCode: await fetchText(title) };
           } catch (err) {
-            problems.push(err instanceof Error ? err.message : String(err));
+            nextExtensionErrors[ext.id] =
+              err instanceof Error ? err.message : String(err);
             return undefined;
           }
         })
@@ -76,13 +96,24 @@ export default (url: string | undefined): DevPluginState => {
         files: [manifest, ...files.filter((f): f is FileType => !!f)]
       };
     } catch (err) {
-      problems.push(err instanceof Error ? err.message : String(err));
+      // fetch rejects (rather than returning a response) when nothing answers.
+      nextError =
+        err instanceof HttpError
+          ? { kind: "manifest", message: err.message }
+          : {
+              kind: "unreachable",
+              message: err instanceof Error ? err.message : String(err)
+            };
     }
 
     // A newer load started meanwhile; drop this result.
     if (current !== generation.current) return;
-    if (next) setPlugin(next);
-    setErrors(problems);
+    if (next) {
+      setPlugin(next);
+      setExtensionErrors(nextExtensionErrors);
+      setLoadedAt(new Date());
+    }
+    setError(nextError);
     setLoading(false);
   }, [url]);
 
@@ -93,11 +124,26 @@ export default (url: string | undefined): DevPluginState => {
   useEffect(() => {
     if (!url) return;
     const events = new EventSource(`${url}/events`);
-    events.addEventListener("open", () => setLive(true));
+    // EventSource reconnects by itself; a reconnect means the server is back,
+    // possibly with changes made while it was down.
+    let opened = false;
+    events.addEventListener("open", () => {
+      setLive(true);
+      if (opened) load();
+      opened = true;
+    });
     events.addEventListener("error", () => setLive(false));
     events.addEventListener("change", () => load());
     return () => events.close();
   }, [url, load]);
 
-  return { plugin, errors, live, loading, reload: load };
+  return {
+    plugin,
+    error,
+    extensionErrors,
+    live,
+    loading,
+    loadedAt,
+    reload: load
+  };
 };
