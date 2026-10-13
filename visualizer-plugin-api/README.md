@@ -70,6 +70,39 @@ and `reearthApiVersion` is updated accordingly.
 
 See [CHANGELOG.md](./CHANGELOG.md) for the full history.
 
+## Releasing
+
+Publishing uses [npm OIDC Trusted Publishing](https://docs.npmjs.com/generating-provenance-statements) — no `NPM_TOKEN` needed.
+
+### One-time SRE setup
+
+1. Create the `npm-publish` environment on this GitHub repo with a required reviewer (Settings → Environments → New environment). Restrict deployment refs to tags matching `visualizer-plugin-api-v*`.
+2. Configure OIDC Trusted Publishing on npmjs.com for `@reearth/visualizer-plugin-api`:
+   - Repository: `reearth/reearth-visualizer`
+   - Workflow filename: `plugin_api_release.yml`
+   - Environment: `npm-publish`
+
+### First publish (manual — one time only)
+
+The package name must be claimed on the registry before Trusted Publishing can take over:
+
+```bash
+cd visualizer-plugin-api
+npm publish --access public
+```
+
+### Subsequent releases
+
+1. Bump the version in `visualizer-plugin-api/package.json` and update `CHANGELOG.md`.
+2. Push a tag — the workflow triggers automatically:
+
+```bash
+git tag visualizer-plugin-api-v0.2.0
+git push origin visualizer-plugin-api-v0.2.0
+```
+
+3. Approve the manual gate in the `npm-publish` environment on GitHub Actions.
+
 ## License
 
 Apache-2.0
