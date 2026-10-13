@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"strconv"
+	"time"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
@@ -36,18 +37,28 @@ type ImportChunkResult struct {
 // same way.
 type Importer func(ctx context.Context, chunk ImportChunk) (ImportChunkResult, error)
 
+// ImportUpload is where to upload a project zip to import.
+type ImportUpload struct {
+	ProjectID   string
+	UploadURL   string
+	ContentType string
+	ExpiresAt   time.Time
+}
+
+// UploadURLImporter creates the project and a signed URL to upload its zip
+// to. The upload itself starts the import, as for the hosted web app.
+type UploadURLImporter func(ctx context.Context, workspace accountsID.WorkspaceID) (ImportUpload, error)
+
+// ImportProject and ImportProjectUploadUrl are the two ways the web app
+// imports; the server is configured for one of them (PublicApi.SplitImport),
+// as the web app is built for one, and the other answers 501.
 func (s Server) ImportProject(ctx context.Context, req ImportProjectRequestObject) (ImportProjectResponseObject, error) {
 	if s.importer == nil {
-		return nil, errors.New("api v1: no importer")
+		return nil, unsupported("this server imports through signed upload URLs: use POST /workspaces/{workspaceId}/projects/import-url")
 	}
-	wid, err := accountsID.WorkspaceIDFrom(req.WorkspaceId)
+	wid, err := writableWorkspace(ctx, req.WorkspaceId)
 	if err != nil {
-		return nil, invalidInput("invalid workspace ID %q", req.WorkspaceId)
-	}
-	// Checked here because the shared upload answers every failure to start
-	// an import with 400.
-	if _, op := usecases(ctx); !op.IsWritableWorkspace(wid) {
-		return nil, permissionDenied("you cannot create projects in workspace %s", wid)
+		return nil, err
 	}
 	chunk, err := readImportChunk(req)
 	if err != nil {
@@ -65,6 +76,40 @@ func (s Server) ImportProject(ctx context.Context, req ImportProjectRequestObjec
 		Total:     res.Total,
 		Completed: res.Completed,
 	}), nil
+}
+
+func (s Server) ImportProjectUploadUrl(ctx context.Context, req ImportProjectUploadUrlRequestObject) (ImportProjectUploadUrlResponseObject, error) {
+	if s.urlImporter == nil {
+		return nil, unsupported("this server imports through chunked upload: use POST /workspaces/{workspaceId}/projects/import")
+	}
+	wid, err := writableWorkspace(ctx, req.WorkspaceId)
+	if err != nil {
+		return nil, err
+	}
+	res, err := s.urlImporter(ctx, wid)
+	if err != nil {
+		return nil, err
+	}
+	return ImportProjectUploadUrl201JSONResponse(ImportUploadResponse{
+		ProjectId:   res.ProjectID,
+		UploadUrl:   res.UploadURL,
+		ContentType: res.ContentType,
+		ExpiresAt:   res.ExpiresAt.UTC(),
+	}), nil
+}
+
+// writableWorkspace parses the workspace ID and checks that the user can
+// create projects in it. Checked here because the shared import code answers
+// every failure to start an import with 400.
+func writableWorkspace(ctx context.Context, raw string) (accountsID.WorkspaceID, error) {
+	wid, err := accountsID.WorkspaceIDFrom(raw)
+	if err != nil {
+		return wid, invalidInput("invalid workspace ID %q", raw)
+	}
+	if _, op := usecases(ctx); !op.IsWritableWorkspace(wid) {
+		return wid, permissionDenied("you cannot create projects in workspace %s", wid)
+	}
+	return wid, nil
 }
 
 func readImportChunk(req ImportProjectRequestObject) (ImportChunk, error) {

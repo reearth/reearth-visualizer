@@ -3,6 +3,7 @@ package e2e
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"net/http"
 	"os"
 	"testing"
@@ -19,7 +20,8 @@ var publicApiConfig = &config.Config{
 	Dev:      true,
 	MockAuth: true,
 	Visualizer: config.VisualizerConfig{
-		PublicApi: config.PublicApiConfig{Active: true},
+		// SplitImport defaults to true when read from the environment.
+		PublicApi: config.PublicApiConfig{Active: true, SplitImport: true},
 	},
 }
 
@@ -511,4 +513,37 @@ func TestAPIV1ImportProject(t *testing.T) {
 	expectAPIError(t, chunk(uID, "../escape", 0, 1, zipData), http.StatusBadRequest, "invalid_input")
 	// A reader cannot import into the workspace.
 	expectAPIError(t, chunk(uID3, "apiv1-import-reader", 0, 1, zipData), http.StatusForbidden, "permission_denied")
+}
+
+// TestAPIV1ImportModes: the server offers one of the web app's two ways to
+// import, and the other answers 501, so clients can tell which to use.
+func TestAPIV1ImportModes(t *testing.T) {
+	importPath := "/workspaces/" + wID.String() + "/projects/import"
+	urlPath := importPath + "-url"
+
+	// Chunked upload, the default.
+	e := startPublicAPI(t)
+	expectAPIError(t, apiV1(e, http.MethodPost, urlPath, uID).Expect(), http.StatusNotImplemented, "unsupported")
+
+	// Signed upload URLs, as the hosted service uses.
+	cfg := *publicApiConfig
+	cfg.Visualizer.PublicApi.SplitImport = false
+	e, repos, _ := startServer(t, &cfg, true, baseSeeder)
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).WithMultipart().
+		WithFormField("file_id", "x").WithFormField("chunk_num", 0).WithFormField("total_chunks", 1).
+		WithFileBytes("file", "p.zip", []byte("PK")).Expect(), http.StatusNotImplemented, "unsupported")
+	expectAPIError(t, apiV1(e, http.MethodPost, urlPath, uID3).Expect(), http.StatusForbidden, "permission_denied")
+	// The test server's file storage cannot sign URLs, so this fails, and the
+	// project it started is marked failed instead of staying UPLOADING.
+	expectAPIError(t, apiV1(e, http.MethodPost, urlPath, uID).Expect(), http.StatusInternalServerError, "internal")
+	ctx := context.Background()
+	trashed, _, err := repos.Project.FindDeletedByWorkspace(ctx, wID, nil)
+	require.NoError(t, err)
+	var statuses []string
+	for _, p := range trashed {
+		if m, err := repos.ProjectMetadata.FindByProjectID(ctx, p.ID()); err == nil && m.ImportStatus() != nil {
+			statuses = append(statuses, string(*m.ImportStatus()))
+		}
+	}
+	assert.Equal(t, []string{"FAILED"}, statuses)
 }

@@ -31,6 +31,7 @@ const (
 	ErrorErrorCodeNotFound         ErrorErrorCode = "not_found"
 	ErrorErrorCodePermissionDenied ErrorErrorCode = "permission_denied"
 	ErrorErrorCodeUnauthorized     ErrorErrorCode = "unauthorized"
+	ErrorErrorCodeUnsupported      ErrorErrorCode = "unsupported"
 )
 
 // Valid indicates whether the value is a known member of the ErrorErrorCode enum.
@@ -47,6 +48,8 @@ func (e ErrorErrorCode) Valid() bool {
 	case ErrorErrorCodePermissionDenied:
 		return true
 	case ErrorErrorCodeUnauthorized:
+		return true
+	case ErrorErrorCodeUnsupported:
 		return true
 	default:
 		return false
@@ -171,6 +174,19 @@ type ImportChunkResponse struct {
 	// Received Chunks received so far.
 	Received int `json:"received"`
 	Total    int `json:"total"`
+}
+
+// ImportUploadResponse defines model for ImportUploadResponse.
+type ImportUploadResponse struct {
+	// ContentType The Content-Type header the upload must send.
+	ContentType string    `json:"contentType"`
+	ExpiresAt   time.Time `json:"expiresAt"`
+
+	// ProjectId The project the import creates.
+	ProjectId string `json:"projectId"`
+
+	// UploadUrl Where to PUT the zip.
+	UploadUrl string `json:"uploadUrl"`
 }
 
 // Plugin defines model for Plugin.
@@ -421,6 +437,9 @@ type ServerInterface interface {
 	// Upload a project zip to import, one chunk per request
 	// (POST /workspaces/{workspaceId}/projects/import)
 	ImportProject(ctx echo.Context, workspaceId WorkspaceId) error
+	// Get a URL to upload a project zip to import
+	// (POST /workspaces/{workspaceId}/projects/import-url)
+	ImportProjectUploadUrl(ctx echo.Context, workspaceId WorkspaceId) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -723,6 +742,24 @@ func (w *ServerInterfaceWrapper) ImportProject(ctx echo.Context) error {
 	return err
 }
 
+// ImportProjectUploadUrl converts echo context to params.
+func (w *ServerInterfaceWrapper) ImportProjectUploadUrl(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "workspaceId" -------------
+	var workspaceId WorkspaceId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "workspaceId", ctx.Param("workspaceId"), &workspaceId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspaceId: %s", err))
+	}
+
+	ctx.Set(string(BearerAuthScopes), []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.ImportProjectUploadUrl(ctx, workspaceId)
+	return err
+}
+
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
 // either of them for path registration
@@ -783,6 +820,7 @@ func RegisterHandlersWithOptions(router EchoRouter, si ServerInterface, options 
 	router.GET(options.BaseURL+"/workspaces/:workspaceId/projects", wrapper.ListProjects, options.OperationMiddlewares["listProjects"]...)
 	router.POST(options.BaseURL+"/workspaces/:workspaceId/projects", wrapper.CreateProject, options.OperationMiddlewares["createProject"]...)
 	router.POST(options.BaseURL+"/workspaces/:workspaceId/projects/import", wrapper.ImportProject, options.OperationMiddlewares["importProject"]...)
+	router.POST(options.BaseURL+"/workspaces/:workspaceId/projects/import-url", wrapper.ImportProjectUploadUrl, options.OperationMiddlewares["importProjectUploadUrl"]...)
 
 }
 
@@ -1792,6 +1830,98 @@ func (response ImportProject429JSONResponse) VisitImportProjectResponse(w http.R
 	return err
 }
 
+type ImportProject501JSONResponse Error
+
+func (response ImportProject501JSONResponse) VisitImportProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(501)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ImportProjectUploadUrlRequestObject struct {
+	WorkspaceId WorkspaceId `json:"workspaceId"`
+}
+
+type ImportProjectUploadUrlResponseObject interface {
+	VisitImportProjectUploadUrlResponse(w http.ResponseWriter) error
+}
+
+type ImportProjectUploadUrl201JSONResponse ImportUploadResponse
+
+func (response ImportProjectUploadUrl201JSONResponse) VisitImportProjectUploadUrlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ImportProjectUploadUrl400JSONResponse struct{ ErrorJSONResponse }
+
+func (response ImportProjectUploadUrl400JSONResponse) VisitImportProjectUploadUrlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ImportProjectUploadUrl401JSONResponse Error
+
+func (response ImportProjectUploadUrl401JSONResponse) VisitImportProjectUploadUrlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(401)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ImportProjectUploadUrl403JSONResponse Error
+
+func (response ImportProjectUploadUrl403JSONResponse) VisitImportProjectUploadUrlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ImportProjectUploadUrl501JSONResponse Error
+
+func (response ImportProjectUploadUrl501JSONResponse) VisitImportProjectUploadUrlResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(501)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// Move a project to the trash, or delete it permanently
@@ -1833,6 +1963,9 @@ type StrictServerInterface interface {
 	// Upload a project zip to import, one chunk per request
 	// (POST /workspaces/{workspaceId}/projects/import)
 	ImportProject(ctx context.Context, request ImportProjectRequestObject) (ImportProjectResponseObject, error)
+	// Get a URL to upload a project zip to import
+	// (POST /workspaces/{workspaceId}/projects/import-url)
+	ImportProjectUploadUrl(ctx context.Context, request ImportProjectUploadUrlRequestObject) (ImportProjectUploadUrlResponseObject, error)
 }
 
 type StrictHandlerFunc func(ctx echo.Context, request any) (any, error)
@@ -2210,6 +2343,31 @@ func (sh *strictHandler) ImportProject(ctx echo.Context, workspaceId WorkspaceId
 		return err
 	} else if validResponse, ok := response.(ImportProjectResponseObject); ok {
 		return validResponse.VisitImportProjectResponse(ctx.Response())
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ImportProjectUploadUrl operation middleware
+func (sh *strictHandler) ImportProjectUploadUrl(ctx echo.Context, workspaceId WorkspaceId) error {
+	var request ImportProjectUploadUrlRequestObject
+
+	request.WorkspaceId = workspaceId
+
+	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.ImportProjectUploadUrl(ctx.Request().Context(), request.(ImportProjectUploadUrlRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ImportProjectUploadUrl")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return err
+	} else if validResponse, ok := response.(ImportProjectUploadUrlResponseObject); ok {
+		return validResponse.VisitImportProjectUploadUrlResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
