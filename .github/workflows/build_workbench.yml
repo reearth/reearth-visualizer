@@ -1,17 +1,26 @@
-name: Build Workbench
+name: Build Workbench Nightly
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
+    paths:
+      - 'web/**'
+      - '!web/docs/**'
+      - '.github/workflows/build_workbench.yml'
   workflow_dispatch:
     inputs:
-      tag:
-        description: "Release tag (e.g., v1.0.0)"
-        required: true
+      ref:
+        description: 'Git ref to build from (branch, tag, or commit)'
+        required: false
+        default: 'main'
+
+concurrency:
+  group: workbench-nightly
+  cancel-in-progress: true
 
 jobs:
-  build-workbench:
+  build-nightly:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -25,41 +34,26 @@ jobs:
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
-      # Resolve the tag and the ref to build from before checkout. On
-      # workflow_dispatch, actions/checkout would otherwise use the branch
-      # selected in the Actions UI, not the requested tag.
-      - name: Determine tag and ref
-        id: tag
-        working-directory: .
-        env:
-          INPUT_TAG: ${{ github.event.inputs.tag }}
-        run: |
-          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            TAG="$INPUT_TAG"
-          else
-            TAG="${GITHUB_REF#refs/tags/}"
-          fi
-          if [[ ! "$TAG" =~ ^v[0-9A-Za-z][0-9A-Za-z._-]*$ ]]; then
-            echo "Invalid tag: '$TAG'"
-            exit 1
-          fi
-          echo "name=$TAG" >> "$GITHUB_OUTPUT"
-          echo "ref=refs/tags/$TAG" >> "$GITHUB_OUTPUT"
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ steps.tag.outputs.ref }}
+          ref: ${{ github.event.inputs.ref || github.ref }}
+
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: lts/*
+
       - name: Install Yarn
         run: |
           corepack enable
           corepack prepare yarn@4.3.1 --activate
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: yarn-cache
         with:
@@ -67,41 +61,56 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+
       - name: Install dependencies
         run: yarn install --immutable
+
       - name: Build workbench
         run: yarn build:workbench
         env:
           NODE_ENV: production
-          REEARTH_WORKBENCH_VERSION: ${{ steps.tag.outputs.name }}
+          REEARTH_WORKBENCH_VERSION: nightly
           REEARTH_WORKBENCH_COMMIT: ${{ steps.checkout.outputs.commit }}
+
       - name: Verify manifest
         run: cat dist-workbench/workbench-manifest.json
+
       - name: Create release archive
-        env:
-          TAG: ${{ steps.tag.outputs.name }}
         run: |
           cd dist-workbench
-          tar -czf "../reearth-workbench_${TAG}.tar.gz" .
+          tar -czf ../reearth-viz-workbench_nightly.tar.gz .
           cd ..
-          sha256sum "reearth-workbench_${TAG}.tar.gz" > "reearth-workbench_${TAG}.tar.gz.sha256"
-      - name: Release
+          sha256sum reearth-viz-workbench_nightly.tar.gz > reearth-viz-workbench_nightly.tar.gz.sha256
+
+      - name: Release nightly
         uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
           allowUpdates: true
-          name: ${{ steps.tag.outputs.name }}
+          makeLatest: false
+          prerelease: true
+          omitNameDuringUpdate: true
+          name: "Workbench Nightly"
+          tag: workbench-nightly
           commit: ${{ steps.checkout.outputs.commit }}
-          tag: ${{ steps.tag.outputs.name }}
           artifacts: |
-            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz
-            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+            web/reearth-viz-workbench_nightly.tar.gz
+            web/reearth-viz-workbench_nightly.tar.gz.sha256
+          body: |
+            Nightly build of Re:Earth Visualizer Workbench for plugin development.
+
+            **⚠️ Development Build**: This is an automatically generated nightly build. Use stable releases for production.
+
+            **Usage**: Download and extract to serve locally with your plugin development CLI.
+
+            **Version**: `nightly` (built from commit ${{ steps.checkout.outputs.commit }})
           token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Archive build artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: workbench-${{ steps.tag.outputs.name }}
+          name: workbench-nightly
           path: |
-            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz
-            web/reearth-workbench_${{ steps.tag.outputs.name }}.tar.gz.sha256
+            web/reearth-viz-workbench_nightly.tar.gz
+            web/reearth-viz-workbench_nightly.tar.gz.sha256
             web/dist-workbench/workbench-manifest.json
-          retention-days: 90
+          retention-days: 30

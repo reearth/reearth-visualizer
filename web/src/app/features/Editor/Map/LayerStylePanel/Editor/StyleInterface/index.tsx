@@ -75,10 +75,13 @@ const StyleInterface: FC<LayerStyleProps> = ({
           ? {
               id: prev.id,
               name: prev.name,
-              value: convertToLayerStyleValue({
-                ...styleNodes,
-                [type]: nodes
-              })
+              value: convertToLayerStyleValue(
+                {
+                  ...styleNodes,
+                  [type]: nodes
+                },
+                prev.value
+              )
             }
           : undefined
       );

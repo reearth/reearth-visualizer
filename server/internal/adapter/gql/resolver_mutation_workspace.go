@@ -2,21 +2,26 @@ package gql
 
 import (
 	"context"
+	"strings"
 
 	gqlclientWorkspace "github.com/reearth/reearth-accounts/server/pkg/gqlclient/workspace"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/pkg/alias"
+	"github.com/samber/lo"
 )
 
 func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.CreateWorkspaceInput) (*gqlmodel.CreateWorkspacePayload, error) {
 	if r.AccountsAPIClient != nil {
-		alias := ""
-		if input.Alias != nil {
-			alias = *input.Alias
+		wsAlias := strings.TrimSpace(lo.FromPtr(input.Alias))
+		if wsAlias == "" {
+			wsAlias = "w-" + accountsID.NewWorkspaceID().String()
+		} else if err := r.checkNewWorkspaceAlias(ctx, wsAlias); err != nil {
+			return nil, err
 		}
 		res, err := r.AccountsAPIClient.WorkspaceRepo.CreateWorkspace(ctx, gqlclientWorkspace.CreateWorkspaceInput{
-			Alias: alias,
+			Alias: wsAlias,
 			Name:  input.Name,
 		})
 		if err != nil {
@@ -31,6 +36,20 @@ func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.C
 		return nil, err
 	}
 	return &gqlmodel.CreateWorkspacePayload{Workspace: gqlmodel.ToWorkspace(res)}, nil
+}
+
+func (r *mutationResolver) checkNewWorkspaceAlias(ctx context.Context, wsAlias string) error {
+	if err := alias.CheckAliasPatternWorkspace(wsAlias); err != nil {
+		return err
+	}
+	existing, err := r.AccountsAPIClient.WorkspaceRepo.FindByAlias(ctx, wsAlias)
+	if err != nil && !gqlclientWorkspace.ErrWorkspaceNotFound(err) {
+		return err
+	}
+	if err == nil && existing != nil {
+		return alias.ErrExistsWorkspaceAlias
+	}
+	return nil
 }
 
 func (r *mutationResolver) DeleteWorkspace(ctx context.Context, input gqlmodel.DeleteWorkspaceInput) (*gqlmodel.DeleteWorkspacePayload, error) {

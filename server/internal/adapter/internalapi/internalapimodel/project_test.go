@@ -3,7 +3,9 @@ package internalapimodel
 import (
 	"context"
 	"testing"
+	"time"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	pb "github.com/reearth/reearth-proto/gen/go/visualizer/v1"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -230,6 +232,41 @@ func TestToInternalProject(t *testing.T) {
 	t.Run("nil project returns nil", func(t *testing.T) {
 		result := ToInternalProject(ctx, nil, nil)
 		assert.Nil(t, result)
+	})
+
+	t.Run("timestamps and actors are mapped", func(t *testing.T) {
+		creator := "01krw9gg7b34bshtb8sxw6ajzf"
+		editor := "01krw9gg7b34bshtb8sxw6ajzg"
+		updatedAt := time.Date(2026, 9, 14, 13, 5, 4, 0, time.UTC)
+
+		p := project.New().
+			NewID().
+			Workspace(accountsID.NewWorkspaceID()).
+			Scene(id.NewSceneID()).
+			UpdatedAt(updatedAt).
+			CreatedBy(creator).
+			UpdatedBy(editor).
+			MustBuild()
+
+		got := ToInternalProject(ctx, p, nil)
+		require.NotNil(t, got)
+		assert.Equal(t, creator, got.CreatedBy)
+		assert.Equal(t, editor, got.UpdatedBy)
+		assert.Equal(t, updatedAt, got.UpdatedAt.AsTime())
+		assert.Equal(t, p.CreatedAt().UTC(), got.CreatedAt.AsTime())
+	})
+
+	t.Run("legacy project with no actors maps to empty strings", func(t *testing.T) {
+		p := project.New().
+			NewID().
+			Workspace(accountsID.NewWorkspaceID()).
+			Scene(id.NewSceneID()).
+			MustBuild()
+
+		got := ToInternalProject(ctx, p, nil)
+		require.NotNil(t, got)
+		assert.Empty(t, got.CreatedBy)
+		assert.Empty(t, got.UpdatedBy)
 	})
 }
 

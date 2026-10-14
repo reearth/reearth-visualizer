@@ -530,6 +530,7 @@ type ComplexityRoot struct {
 		BasicAuthUsername func(childComplexity int) int
 		CoreSupport       func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
+		CreatedByID       func(childComplexity int) int
 		Description       func(childComplexity int) int
 		EnableGa          func(childComplexity int) int
 		ID                func(childComplexity int) int
@@ -551,6 +552,7 @@ type ComplexityRoot struct {
 		Starred           func(childComplexity int) int
 		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
+		UpdatedByID       func(childComplexity int) int
 		Visibility        func(childComplexity int) int
 		Visualizer        func(childComplexity int) int
 		Workspace         func(childComplexity int) int
@@ -720,7 +722,7 @@ type ComplexityRoot struct {
 		Nodes                func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Plugin               func(childComplexity int, id gqlmodel.ID) int
 		Plugins              func(childComplexity int, id []gqlmodel.ID) int
-		Projects             func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
+		Projects             func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort, createdBy *gqlmodel.ID) int
 		PropertySchema       func(childComplexity int, id gqlmodel.ID) int
 		PropertySchemas      func(childComplexity int, id []gqlmodel.ID) int
 		Scene                func(childComplexity int, projectID gqlmodel.ID) int
@@ -1238,7 +1240,7 @@ type QueryResolver interface {
 	Assets(ctx context.Context, workspaceID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error)
 	Plugin(ctx context.Context, id gqlmodel.ID) (*gqlmodel.Plugin, error)
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
-	Projects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
+	Projects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort, createdBy *gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	CheckProjectAlias(ctx context.Context, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error)
 	CheckSceneAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.SceneAliasAvailability, error)
 	StarredProjects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error)
@@ -3508,6 +3510,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Project.CreatedAt(childComplexity), true
+	case "Project.createdById":
+		if e.complexity.Project.CreatedByID == nil {
+			break
+		}
+
+		return e.complexity.Project.CreatedByID(childComplexity), true
 	case "Project.description":
 		if e.complexity.Project.Description == nil {
 			break
@@ -3634,6 +3642,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Project.UpdatedAt(childComplexity), true
+	case "Project.updatedById":
+		if e.complexity.Project.UpdatedByID == nil {
+			break
+		}
+
+		return e.complexity.Project.UpdatedByID(childComplexity), true
 	case "Project.visibility":
 		if e.complexity.Project.Visibility == nil {
 			break
@@ -4405,7 +4419,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Projects(childComplexity, args["workspaceId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.ProjectSort)), true
+		return e.complexity.Query.Projects(childComplexity, args["workspaceId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.ProjectSort), args["createdBy"].(*gqlmodel.ID)), true
 	case "Query.propertySchema":
 		if e.complexity.Query.PropertySchema == nil {
 			break
@@ -6479,6 +6493,8 @@ extend type Mutation {
   imageUrl: URL
   createdAt: DateTime!
   updatedAt: DateTime!
+  createdById: ID
+  updatedById: ID
   visualizer: Visualizer!
   isArchived: Boolean!
   coreSupport: Boolean!
@@ -6662,6 +6678,7 @@ extend type Query {
     pagination: Pagination
     keyword: String
     sort: ProjectSort
+    createdBy: ID
   ): ProjectConnection! # not included deleted projects
   checkProjectAlias(
     alias: String!
@@ -8799,6 +8816,11 @@ func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawAr
 		return nil, err
 	}
 	args["sort"] = arg3
+	arg4, err := graphql.ProcessArgField(ctx, rawArgs, "createdBy", ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID)
+	if err != nil {
+		return nil, err
+	}
+	args["createdBy"] = arg4
 	return args, nil
 }
 
@@ -20489,6 +20511,64 @@ func (ec *executionContext) fieldContext_Project_updatedAt(_ context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_createdById(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Project_createdById,
+		func(ctx context.Context) (any, error) {
+			return obj.CreatedByID, nil
+		},
+		nil,
+		ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Project_createdById(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_updatedById(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Project_updatedById,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdatedByID, nil
+		},
+		nil,
+		ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Project_updatedById(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Project_visualizer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -21255,6 +21335,10 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdById":
+				return ec.fieldContext_Project_createdById(ctx, field)
+			case "updatedById":
+				return ec.fieldContext_Project_updatedById(ctx, field)
 			case "visualizer":
 				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
@@ -21443,6 +21527,10 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdById":
+				return ec.fieldContext_Project_createdById(ctx, field)
+			case "updatedById":
+				return ec.fieldContext_Project_updatedById(ctx, field)
 			case "visualizer":
 				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
@@ -21875,6 +21963,10 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdById":
+				return ec.fieldContext_Project_createdById(ctx, field)
+			case "updatedById":
+				return ec.fieldContext_Project_updatedById(ctx, field)
 			case "visualizer":
 				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
@@ -25011,7 +25103,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 		ec.fieldContext_Query_projects,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().Projects(ctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.ProjectSort))
+			return ec.resolvers.Query().Projects(ctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.ProjectSort), fc.Args["createdBy"].(*gqlmodel.ID))
 		},
 		nil,
 		ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection,
@@ -26697,6 +26789,10 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "createdById":
+				return ec.fieldContext_Project_createdById(ctx, field)
+			case "updatedById":
+				return ec.fieldContext_Project_updatedById(ctx, field)
 			case "visualizer":
 				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
@@ -41681,6 +41777,10 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "createdById":
+			out.Values[i] = ec._Project_createdById(ctx, field, obj)
+		case "updatedById":
+			out.Values[i] = ec._Project_updatedById(ctx, field, obj)
 		case "visualizer":
 			out.Values[i] = ec._Project_visualizer(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
