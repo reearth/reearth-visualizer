@@ -1,4 +1,4 @@
-FROM node:24.18.0-slim AS builder
+FROM node:24.21.0-slim AS builder
 WORKDIR /app
 
 ARG NODE_OPTIONS="--max-old-space-size=4096"
