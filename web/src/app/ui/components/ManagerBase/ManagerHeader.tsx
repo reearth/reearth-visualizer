@@ -31,6 +31,8 @@ export type ManagerHeaderProps = {
   showSearch?: boolean;
   searchPlaceholder?: string;
   onSearch?: (value?: string) => void;
+  // Extra filter controls, shown between the search box and the sort selector.
+  filters?: ReactNode;
   enableDelete?: boolean;
   deleteText?: string;
   selectedIds?: string[];
@@ -49,6 +51,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
   showSearch = true,
   searchPlaceholder,
   onSearch,
+  filters,
   enableDelete,
   deleteText,
   selectedIds,
@@ -169,6 +172,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
             />
           </Search>
         )}
+        {!showDelete && filters}
         {!showDelete && sortOptions && (
           <Sort>
             <Typography size="body" otherProperties={{ flexShrink: 0 }}>
