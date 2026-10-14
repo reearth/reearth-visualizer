@@ -58,15 +58,9 @@ declarations cause errors in projects that do not install React or Cesium types 
 
 ## Versioning
 
-This package follows its own semver, independent of the Re:Earth Visualizer release cycle.
-
-The `reearthApiVersion` field in `package.json` records which Visualizer plugin API version
-the types correspond to. When the API changes, a new version of this package is released
-and `reearthApiVersion` is updated accordingly.
-
-| Package version | Re:Earth plugin API version |
-|-----------------|-----------------------------|
-| 0.1.0           | 2.1.0                       |
+This package version tracks the Re:Earth plugin API version directly.
+`@reearth/visualizer-plugin-api@2.1.0` corresponds to plugin API version 2.1.0.
+When the plugin API version bumps, a new version of this package is released with the same version number.
 
 See [CHANGELOG.md](./CHANGELOG.md) for the full history.
 
