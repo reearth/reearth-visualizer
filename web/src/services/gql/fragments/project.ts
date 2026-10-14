@@ -26,6 +26,8 @@ export const projectFragment = gql`
     coreSupport
     starred
     isDeleted
+    createdById
+    updatedById
     metadata {
       id
       ...ProjectMetadataFragment
