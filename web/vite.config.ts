@@ -14,6 +14,8 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import { createSharedConfig } from "./vite.config.shared";
 
 const NO_MINIFY = !!process.env.NO_MINIFY;
+// `yarn build:playground` builds only the standalone Plugin Playground viewer.
+const PLAYGROUND = !!process.env.PLAYGROUND;
 
 const sharedConfig = createSharedConfig();
 
@@ -39,10 +41,12 @@ export default defineConfig({
     target: "esnext",
     assetsDir: "static", // avoid conflicts with backend asset endpoints
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, "index.html"),
-        published: resolve(__dirname, "published.html")
-      }
+      input: PLAYGROUND
+        ? { playground: resolve(__dirname, "playground.html") }
+        : {
+            main: resolve(__dirname, "index.html"),
+            published: resolve(__dirname, "published.html")
+          }
     },
     minify: NO_MINIFY ? false : "esbuild"
   },
@@ -82,11 +86,7 @@ function config(): Plugin {
         }
       }
 
-      const envs = loadEnv(
-        server.config.mode,
-        envDir,
-        server.config.envPrefix
-      );
+      const envs = loadEnv(server.config.mode, envDir, server.config.envPrefix);
 
       // Restore process.env
       Object.assign(process.env, savedEnvs);

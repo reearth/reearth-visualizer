@@ -138,6 +138,7 @@ jobs:
     env:
       TAG: v${{ needs.release.outputs.version }}
       ARTIFACT: reearth-web_v${{ needs.release.outputs.version }}.tar.gz
+      PLAYGROUND_ARTIFACT: reearth-visualizer-playground_v${{ needs.release.outputs.version }}.tar.gz
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -149,8 +150,16 @@ jobs:
           version: tags/nightly
           file: reearth-web_nightly.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch Plugin Playground release
+        uses: dsaltares/fetch-gh-release-asset@aa2ab1243d6e0d5b405b973c89fa4d06a2d0fff7 # 1.1.2
+        with:
+          version: tags/nightly
+          file: reearth-visualizer-playground_nightly.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Rename artifact
-        run: mv reearth-web_nightly.tar.gz "$ARTIFACT"
+        run: |
+          mv reearth-web_nightly.tar.gz "$ARTIFACT"
+          mv reearth-visualizer-playground_nightly.tar.gz "$PLAYGROUND_ARTIFACT"
       - name: Download latest changelog
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
@@ -159,7 +168,7 @@ jobs:
         uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
           allowUpdates: true
-          artifacts: ${{ env.ARTIFACT }}
+          artifacts: ${{ env.ARTIFACT }},${{ env.PLAYGROUND_ARTIFACT }}
           artifactContentType: application/gzip
           commit: ${{ needs.release.outputs.sha }}
           name: ${{ env.TAG }}
