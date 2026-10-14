@@ -78,3 +78,34 @@ func TestCheckAliasPatternStorytelling(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckAliasPatternWorkspace(t *testing.T) {
+	tests := []struct {
+		name    string
+		alias   string
+		wantErr bool
+	}{
+		{name: "valid alias", alias: "my-team", wantErr: false},
+		{name: "minimum length (5)", alias: "abcde", wantErr: false},
+		{name: "maximum length (32)", alias: "abcdefghijklmnopqrstuvwxyz012345", wantErr: false},
+		{name: "empty string", alias: "", wantErr: true},
+		{name: "too short (4 chars)", alias: "abcd", wantErr: true},
+		{name: "too long (33 chars)", alias: "abcdefghijklmnopqrstuvwxyz0123456", wantErr: true},
+		{name: "starts with hyphen", alias: "-myteam", wantErr: true},
+		{name: "ends with hyphen", alias: "myteam-", wantErr: true},
+		{name: "consecutive hyphens", alias: "my--team", wantErr: true},
+		{name: "contains space", alias: "my team", wantErr: true},
+		{name: "contains underscore", alias: "my_team", wantErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := CheckAliasPatternWorkspace(tt.alias)
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
