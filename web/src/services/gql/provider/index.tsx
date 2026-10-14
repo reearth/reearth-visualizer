@@ -49,6 +49,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
               "workspaceId",
               "keyword",
               "sort",
+              "createdBy",
               "pagination",
               ["first", "last"]
             ],

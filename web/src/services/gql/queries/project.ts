@@ -16,8 +16,8 @@ export const GET_PROJECT = gql(`
 `);
 
 export const GET_PROJECTS = gql(`
-  query GetProjects($workspaceId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort, $withStories: Boolean = false) {
-    projects(workspaceId: $workspaceId, pagination: $pagination, keyword: $keyword, sort: $sort) {
+  query GetProjects($workspaceId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort, $createdBy: ID, $withStories: Boolean = false) {
+    projects(workspaceId: $workspaceId, pagination: $pagination, keyword: $keyword, sort: $sort, createdBy: $createdBy) {
       edges {
         node {
           id
