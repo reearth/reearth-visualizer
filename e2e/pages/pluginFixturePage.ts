@@ -12,6 +12,7 @@ import {
   UPDATE_PROJECT
 } from "../api/graphql/mutations";
 import { GET_ME, GET_SCENE_WIDGETS } from "../api/graphql/queries";
+import { getOSSClient } from "../utils/project-cleanup";
 
 const PLUGIN_ZIP = path.join(
   __dirname,
@@ -302,12 +303,16 @@ export class PluginFixturePage {
 
 /**
  * Creates a GraphQLClient for use in _setup.ts and _teardown.ts.
- * Reads auth token from .auth/api-token.json (written by api-setup project)
- * or falls back to extracting the Auth0 access_token from .auth/user.json.
+ * On a Cloud Run PR preview the UI talks to a different backend than
+ * REEARTH_E2E_API_URL, so use that backend; otherwise read the token from
+ * .auth/api-token.json or fall back to the Auth0 access_token in .auth/user.json.
  */
-export function createPluginClient(
+export async function createPluginClient(
   request: import("@playwright/test").APIRequestContext
-): GraphQLClient {
+): Promise<GraphQLClient> {
+  const ossClient = await getOSSClient(request);
+  if (ossClient) return ossClient;
+
   const apiTokenPath = path.join(__dirname, "../.auth/api-token.json");
   const storagePath = path.join(__dirname, "../.auth/user.json");
   const apiUrl = process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "");

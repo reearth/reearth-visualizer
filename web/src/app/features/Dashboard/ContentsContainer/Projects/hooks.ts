@@ -6,7 +6,9 @@ import {
   useProjects,
   useStarredProjects
 } from "@reearth/services/api/project";
+import { useMe } from "@reearth/services/api/user";
 import { toPublishmentStatus } from "@reearth/services/api/utils";
+import { useWorkspace } from "@reearth/services/api/workspace";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { ProjectSortField, SortDirection } from "@reearth/services/gql";
 import { useCreateProjectModal } from "@reearth/services/state";
@@ -22,6 +24,7 @@ import { useNavigate } from "react-router";
 
 import { Project } from "../../type";
 
+import { CreatorOption } from "./CreatorFilter";
 import useProjectImport from "./useProjectImport";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
@@ -46,6 +49,32 @@ export default (workspaceId?: string) => {
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
+  const [createdBy, setCreatedBy] = useState<string>();
+
+  const { me } = useMe();
+  const { workspace } = useWorkspace(workspaceId);
+
+  // Only the signed-in user's photo is available on the client, so other
+  // members fall back to their initial.
+  const creatorOptions = useMemo<CreatorOption[]>(
+    () =>
+      (workspace?.members ?? [])
+        .filter((m) => !!m.user)
+        .map((m) => ({
+          id: m.userId,
+          name: m.user?.name ?? "",
+          avatarURL:
+            m.userId === me.id
+              ? (me.metadata?.photoURL ?? undefined)
+              : undefined
+        })),
+    [workspace?.members, me.id, me.metadata?.photoURL]
+  );
+
+  // A creator picked in one workspace means nothing in another.
+  useEffect(() => {
+    setCreatedBy(undefined);
+  }, [workspaceId]);
 
   const {
     starredProjects,
@@ -71,7 +100,9 @@ export default (workspaceId?: string) => {
       first: pagination(sortValue).first
     },
     sort: pagination(sortValue).sortBy,
-    keyword: searchTerm
+    keyword: searchTerm,
+    createdBy,
+    withStories: true
   });
 
   const filtedProjects = useMemo(() => {
@@ -87,12 +118,15 @@ export default (workspaceId?: string) => {
               isArchived: project.isArchived,
               status: toPublishmentStatus(project.publishmentStatus),
               sceneId: project.scene?.id,
+              stories: project.scene?.stories,
               updatedAt: new Date(project.updatedAt),
               createdAt: new Date(project.createdAt),
               coreSupport: project.coreSupport,
               starred: project.starred,
               isDeleted: project.isDeleted,
               visibility: project.visibility,
+              createdById: project.createdById,
+              updatedById: project.updatedById,
               isPublished:
                 project.publishmentStatus === "PUBLIC" ||
                 project.publishmentStatus === "LIMITED",
@@ -147,6 +181,10 @@ export default (workspaceId?: string) => {
     } else {
       setSearchTerm(value);
     }
+  }, []);
+
+  const handleCreatorChange = useCallback((creatorId?: string) => {
+    setCreatedBy(creatorId);
   }, []);
 
   // project create
@@ -267,10 +305,7 @@ export default (workspaceId?: string) => {
       // fully published project can never reach the Recycle Bin while still
       // publicly accessible.
       if (project?.status === "published" || project?.status === "limited") {
-        const publishResult = await publishProject(
-          "unpublished",
-          project.id
-        );
+        const publishResult = await publishProject("unpublished", project.id);
         if (publishResult?.status !== "success") return false;
       }
 
@@ -332,6 +367,8 @@ export default (workspaceId?: string) => {
     projectCreatorVisible,
     searchTerm,
     sortValue,
+    createdBy,
+    creatorOptions,
     contentWidth,
     starredProjects,
     starredWrapperRef,
@@ -346,6 +383,7 @@ export default (workspaceId?: string) => {
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
+    handleCreatorChange,
     handleProjectImport,
     handleProjectRemove,
     handleProjectImportErrorDownload,

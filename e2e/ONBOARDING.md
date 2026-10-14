@@ -22,7 +22,7 @@ They are both run via `npx playwright test`, just with different `--project` fla
 - **Node.js 24** (matches the CI image; see `.github/workflows/playwright_*.yml`).
 - **npm** (lockfile is committed).
 - **Google Cloud SDK / `gcloud` CLI** — only needed when the target environment is behind Google IAP and you authenticate with Application Default Credentials. Run `gcloud auth application-default login` once.
-- The Playwright WebKit browser binary. Install via `npx playwright install webkit` after `npm install` (the CI image ships browsers preinstalled at `mcr.microsoft.com/playwright:v1.58.2-noble`).
+- The Playwright WebKit browser binary. Install via `npx playwright install webkit` after `npm install` (the CI image ships browsers preinstalled at `mcr.microsoft.com/playwright:v1.64.0-noble`).
 
 ⚠ Note: `package.json` does not include a `postinstall` step, so `npm install` does **not** automatically download browser binaries — you must run `npx playwright install webkit` yourself on a fresh checkout.
 
@@ -403,7 +403,7 @@ Two workflows in `.github/workflows/`:
 
 ### `playwright_ui_tests.yml`
 - Triggers: `workflow_dispatch` and `workflow_call`. **No automatic trigger** on push or PR — it must be invoked manually or by another workflow.
-- Container: `mcr.microsoft.com/playwright:v1.58.2-noble`.
+- Container: `mcr.microsoft.com/playwright:v1.64.0-noble`.
 - Runs `npm run test:ui` against `inputs.url || secrets.REEARTH_WEB_E2E_BASEURL`.
 - Forces `USE_IAP_AUTH=false` (CI runs against an environment that does not require IAP, or behind a tunnel that handles it).
 - Authenticates to GCS via Workload Identity Federation, uploads the Allure report and updates `index.json`.

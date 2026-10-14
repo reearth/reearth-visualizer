@@ -32,7 +32,7 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 	}
 
 	ec.GET("/api/published/", func(c echo.Context) error { return echo.ErrNotFound })
-	ec.GET("/api/published/:name", PublishedMetadata(w.GatewayToken, w.PreviousGatewayToken))
+	ec.GET("/api/published/:name", PublishedMetadata(w.GatewayToken, w.PreviousGatewayToken), privateCache)
 	ec.GET("/api/published_data/:name", PublishedData(w.HostPattern, true), RequireGatewayToken(w.GatewayToken, w.PreviousGatewayToken)) // for oss / localhost
 
 	// BasicAuth endpoint
