@@ -46,8 +46,12 @@ async function globalSetup(_config: FullConfig) {
       const loginPage = new LoginPage(page);
       await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
 
-      // Wait for navigation to complete and verify login was successful
-      await page.waitForLoadState("networkidle");
+      // Wait for the full Auth0 redirect + React Router navigation chain to
+      // settle on the dashboard URL before checking for DOM elements.
+      // waitForLoadState("networkidle") fires too early — it can return during
+      // a brief gap in the auth redirect, leaving React Router still navigating
+      // when waitForSelector runs (causing "57× waiting for navigation").
+      await page.waitForURL(/\/dashboard\//, { timeout: 60000 });
 
       // Wait for the projects manager wrapper to appear, confirming successful login
       await page.waitForSelector('[data-testid="projects-manager-wrapper"]', {

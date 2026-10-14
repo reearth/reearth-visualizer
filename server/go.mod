@@ -62,7 +62,7 @@ require (
 require (
 	cloud.google.com/go/compute/metadata v0.9.0
 	github.com/avast/retry-go/v4 v4.7.0
-	github.com/reearth/reearth-proto v1.1.0
+	github.com/reearth/reearth-proto v1.2.0
 	go.mongodb.org/mongo-driver v1.17.6
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.38.0
 	golang.org/x/image v0.36.0

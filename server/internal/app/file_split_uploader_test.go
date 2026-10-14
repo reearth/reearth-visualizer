@@ -324,6 +324,104 @@ func TestUploadSession_WriteChunk_RejectsOversizedChunk(t *testing.T) {
 	}
 }
 
+func TestUploadSession_WriteChunk_RejectsWhenCumulativeBytesExceedBudget(t *testing.T) {
+	original := maxImportSizeBytes
+	maxImportSizeBytes = 10
+	defer func() { maxImportSizeBytes = original }()
+
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, err := m.getOrCreateSession("f9", 3)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	if _, err := session.writeChunk(0, strings.NewReader("aaaa")); err != nil {
+		t.Fatalf("writeChunk(0): %v", err)
+	}
+	if _, err := session.writeChunk(1, strings.NewReader("bbbb")); err != nil {
+		t.Fatalf("writeChunk(1): %v", err)
+	}
+	_, err = session.writeChunk(2, strings.NewReader("cccc"))
+	if err == nil {
+		t.Fatal("expected an error for a chunk that pushes the upload over budget")
+	}
+	if !apperr.Expected(err) {
+		t.Errorf("expected an invalid-input error, got %v", err)
+	}
+	if _, ok := session.received[2]; ok {
+		t.Error("chunk that exceeds the budget must not be marked received")
+	}
+}
+
+func TestUploadSession_WriteChunk_AllowsPartialFinalChunkWithinBudget(t *testing.T) {
+	original := maxImportSizeBytes
+	maxImportSizeBytes = 10
+	defer func() { maxImportSizeBytes = original }()
+
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, err := m.getOrCreateSession("f10", 3)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	if _, err := session.writeChunk(0, strings.NewReader("aaaa")); err != nil {
+		t.Fatalf("writeChunk(0): %v", err)
+	}
+	if _, err := session.writeChunk(1, strings.NewReader("bbbb")); err != nil {
+		t.Fatalf("writeChunk(1): %v", err)
+	}
+	if _, err := session.writeChunk(2, strings.NewReader("cc")); err != nil {
+		t.Fatalf("writeChunk(2): %v", err)
+	}
+	if session.receivedBytes != 10 {
+		t.Errorf("receivedBytes = %d, want 10", session.receivedBytes)
+	}
+	if _, ok := session.received[2]; !ok {
+		t.Error("chunk within budget must be marked received")
+	}
+}
+
+func TestUploadSession_WriteChunk_RetryAfterBudgetRejectionLeavesNoGarbage(t *testing.T) {
+	original := maxImportSizeBytes
+	maxImportSizeBytes = 10
+	defer func() { maxImportSizeBytes = original }()
+
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, err := m.getOrCreateSession("f11", 3)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	if _, err := session.writeChunk(0, strings.NewReader("aaaa")); err != nil {
+		t.Fatalf("writeChunk(0): %v", err)
+	}
+	if _, err := session.writeChunk(1, strings.NewReader("bbbb")); err != nil {
+		t.Fatalf("writeChunk(1): %v", err)
+	}
+
+	if _, err := session.writeChunk(2, strings.NewReader("cccc")); err == nil {
+		t.Fatal("expected an error for a chunk that pushes the upload over budget")
+	}
+
+	if _, err := session.writeChunk(2, strings.NewReader("cc")); err != nil {
+		t.Fatalf("writeChunk(2) retry: %v", err)
+	}
+
+	f, err := os.Open(session.snapshot().FilePath)
+	if err != nil {
+		t.Fatalf("failed to open file: %v", err)
+	}
+	defer func() { _ = f.Close() }()
+
+	data, err := io.ReadAll(f)
+	if err != nil {
+		t.Fatalf("failed to read file: %v", err)
+	}
+	if want := "aaaabbbbcc"; string(data) != want {
+		t.Errorf("file content = %q, want %q (no leftover bytes from the rejected write)", string(data), want)
+	}
+}
+
 // TestSplitUploadManager_CleanupSession verifies that cleanupSession removes
 // the session from the map and deletes its backing file on disk.
 func TestSplitUploadManager_CleanupSession(t *testing.T) {
@@ -729,33 +827,40 @@ func TestSplitUploadManager_RunImportJob_FastFailureIsNotTreatedAsTimeout(t *tes
 }
 
 func TestValidateChunkRequest(t *testing.T) {
+	const smallChunk = 1024 * 1024 // 1MB, well under the budget at any allowed totalChunks
+
 	tests := []struct {
 		name        string
 		fileID      string
 		chunkNum    int
 		totalChunks int
+		chunkSize   int64
 		wantErr     bool
 	}{
-		{"valid uuid-like id", "550e8400-e29b-41d4-a716-446655440000", 0, 3, false},
-		{"valid alphanumeric id", "upload_123", 2, 3, false},
-		{"path traversal via dotdot", "../../etc/cron.d/evil", 0, 1, true},
-		{"path traversal via slash", "sub/dir/file", 0, 1, true},
-		{"empty file id", "", 0, 1, true},
-		{"negative chunk num", "valid-id", -1, 3, true},
-		{"chunk num equal to total", "valid-id", 3, 3, true},
-		{"chunk num beyond total", "valid-id", 10, 3, true},
-		{"zero total chunks", "valid-id", 0, 0, true},
-		{"negative total chunks", "valid-id", 0, -5, true},
-		{"total chunks over the cap", "valid-id", 0, maxChunkCount + 1, true},
-		{"total chunks at the cap", "valid-id", 0, maxChunkCount, false},
+		{"valid uuid-like id", "550e8400-e29b-41d4-a716-446655440000", 0, 3, smallChunk, false},
+		{"valid alphanumeric id", "upload_123", 2, 3, smallChunk, false},
+		{"path traversal via dotdot", "../../etc/cron.d/evil", 0, 1, smallChunk, true},
+		{"path traversal via slash", "sub/dir/file", 0, 1, smallChunk, true},
+		{"empty file id", "", 0, 1, smallChunk, true},
+		{"negative chunk num", "valid-id", -1, 3, smallChunk, true},
+		{"chunk num equal to total", "valid-id", 3, 3, smallChunk, true},
+		{"chunk num beyond total", "valid-id", 10, 3, smallChunk, true},
+		{"zero total chunks", "valid-id", 0, 0, smallChunk, true},
+		{"negative total chunks", "valid-id", 0, -5, smallChunk, true},
+		{"total chunks over the cap", "valid-id", 0, maxChunkCount + 1, smallChunk, true},
+		{"total chunks at the cap, small chunk size", "valid-id", 0, maxChunkCount, smallChunk, false},
+		{"total chunks at the cap, real chunk size exceeds import size limit", "valid-id", 0, maxChunkCount, 16 * 1024 * 1024, true},
+		{"declared size exactly at the import limit", "valid-id", 0, 1, maxImportSizeBytes, false},
+		{"two chunks, second one byte would push the minimum over the limit", "valid-id", 0, 2, maxImportSizeBytes, true},
+		{"32 chunks of 16MiB is a valid declaration for a sub-500MiB upload with a partial final chunk", "valid-id", 0, 32, 16 * 1024 * 1024, false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := validateChunkRequest(tt.fileID, tt.chunkNum, tt.totalChunks)
+			err := validateChunkRequest(tt.fileID, tt.chunkNum, tt.totalChunks, tt.chunkSize)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("validateChunkRequest(%q, %d, %d) error = %v, wantErr %v",
-					tt.fileID, tt.chunkNum, tt.totalChunks, err, tt.wantErr)
+				t.Errorf("validateChunkRequest(%q, %d, %d, %d) error = %v, wantErr %v",
+					tt.fileID, tt.chunkNum, tt.totalChunks, tt.chunkSize, err, tt.wantErr)
 			}
 		})
 	}

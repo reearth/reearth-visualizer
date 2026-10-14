@@ -107,7 +107,11 @@ const ConditionsTab: FC<Props> = ({
   }, [conditions, onUpdate]);
 
   const updateCondition = useCallback(
-    (idx: number, key: "variable" | "operator" | "value", value: string) => {
+    (
+      idx: number,
+      key: "variable" | "operator" | "value" | "rawCondition",
+      value: string
+    ) => {
       const newConditions = conditions ? [...conditions] : [];
       newConditions[idx] = {
         ...newConditions[idx],
@@ -157,36 +161,54 @@ const ConditionsTab: FC<Props> = ({
               <ConditionWrapper>
                 <ConditionStatement>
                   <Typography size="body">if</Typography>
-                  <InputWrapper>
-                    <TextInput
-                      value={condition.variable || ""}
-                      placeholder={"${property}"}
-                      disabled={!editMode}
-                      appearance={!editMode ? "readonly" : undefined}
-                      onBlur={(val) => updateCondition(idx, "variable", val)}
-                    />
-                  </InputWrapper>
-                  <OperatorWrapper>
-                    <Selector
-                      value={condition.operator}
-                      placeholder=""
-                      options={OPERATION_OPTIONS}
-                      disabled={!editMode}
-                      appearance={!editMode ? "readonly" : undefined}
-                      onChange={(val) =>
-                        updateCondition(idx, "operator", val as string)
-                      }
-                    />
-                  </OperatorWrapper>
-                  <InputWrapper>
-                    <TextInput
-                      value={condition.value || ""}
-                      placeholder={"value or 'string'"}
-                      disabled={!editMode}
-                      appearance={!editMode ? "readonly" : undefined}
-                      onBlur={(val) => updateCondition(idx, "value", val)}
-                    />
-                  </InputWrapper>
+                  {condition.rawCondition !== undefined ? (
+                    <InputWrapper>
+                      <TextInput
+                        value={condition.rawCondition}
+                        placeholder={"${property} === value"}
+                        disabled={!editMode}
+                        appearance={!editMode ? "readonly" : undefined}
+                        onBlur={(val) =>
+                          updateCondition(idx, "rawCondition", val)
+                        }
+                      />
+                    </InputWrapper>
+                  ) : (
+                    <>
+                      <InputWrapper>
+                        <TextInput
+                          value={condition.variable || ""}
+                          placeholder={"${property}"}
+                          disabled={!editMode}
+                          appearance={!editMode ? "readonly" : undefined}
+                          onBlur={(val) =>
+                            updateCondition(idx, "variable", val)
+                          }
+                        />
+                      </InputWrapper>
+                      <OperatorWrapper>
+                        <Selector
+                          value={condition.operator}
+                          placeholder=""
+                          options={OPERATION_OPTIONS}
+                          disabled={!editMode}
+                          appearance={!editMode ? "readonly" : undefined}
+                          onChange={(val) =>
+                            updateCondition(idx, "operator", val as string)
+                          }
+                        />
+                      </OperatorWrapper>
+                      <InputWrapper>
+                        <TextInput
+                          value={condition.value || ""}
+                          placeholder={"value or 'string'"}
+                          disabled={!editMode}
+                          appearance={!editMode ? "readonly" : undefined}
+                          onBlur={(val) => updateCondition(idx, "value", val)}
+                        />
+                      </InputWrapper>
+                    </>
+                  )}
                 </ConditionStatement>
                 <ConditionValue>
                   <Field

@@ -11,7 +11,7 @@ const NotFound: FC = () => {
   return (
     <Wrapper>
       <Typography size="body" weight="bold" color={theme.dangerous.strong}>
-        {t("Re:Earth Visualizer")}
+        {t("ReEarth Visualizer")}
       </Typography>
       <EmptyContent>
         <Typography size="h1" color={theme.content.main}>

@@ -6,10 +6,7 @@ import {
   useProjectImportExportMutations,
   useProjectMutations
 } from "@reearth/services/api/project";
-import {
-  useStories,
-  useStoryMutations
-} from "@reearth/services/api/storytelling";
+import { useStoryMutations } from "@reearth/services/api/storytelling";
 import { toPublishmentStatus } from "@reearth/services/api/utils";
 import { useT } from "@reearth/services/i18n/hooks";
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
@@ -33,13 +30,9 @@ export default ({
   const { publishStory } = useStoryMutations();
   const { publishProject } = useProjectMutations();
   const { exportProject } = useProjectImportExportMutations();
-  const { stories } = useStories(
-    {
-      sceneId: project?.sceneId
-    },
-    // We fetch stories only for check publish status, we can skip fetching stories if project is published already since the indicator shows when project OR any story is published
-    { skip: project?.isPublished }
-  );
+  // Comes with the projects list query; fetching the scene per card flooded
+  // the API with one GetScene per unpublished project.
+  const stories = project.stories;
 
   const [isEditing, setIsEditing] = useState(false);
   const [projectName, setProjectName] = useState(project.name);
