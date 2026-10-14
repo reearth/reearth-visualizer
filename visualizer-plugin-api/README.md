@@ -88,14 +88,9 @@ npm publish --access public
 ### Subsequent releases
 
 1. Bump the version in `visualizer-plugin-api/package.json` and update `CHANGELOG.md`.
-2. Push a tag — the workflow triggers automatically:
-
-```bash
-git tag visualizer-plugin-api-v0.2.0
-git push origin visualizer-plugin-api-v0.2.0
-```
-
-3. Approve the manual gate in the `npm-publish` environment on GitHub Actions.
+2. Go to GitHub Actions → **Publish @reearth/visualizer-plugin-api** → **Run workflow**.
+3. Enter the version number (must match `package.json`) and confirm.
+4. Approve the manual gate in the `npm-publish` environment.
 
 ## License
 
