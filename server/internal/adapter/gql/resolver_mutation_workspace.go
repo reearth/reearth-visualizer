@@ -15,15 +15,10 @@ import (
 func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.CreateWorkspaceInput) (*gqlmodel.CreateWorkspacePayload, error) {
 	if r.AccountsAPIClient != nil {
 		wsAlias := strings.TrimSpace(lo.FromPtr(input.Alias))
-		if err := alias.CheckAliasPatternWorkspace(wsAlias); err != nil {
+		if wsAlias == "" {
+			wsAlias = "w-" + accountsID.NewWorkspaceID().String()
+		} else if err := r.checkNewWorkspaceAlias(ctx, wsAlias); err != nil {
 			return nil, err
-		}
-		existing, err := r.AccountsAPIClient.WorkspaceRepo.FindByAlias(ctx, wsAlias)
-		if err != nil && !gqlclientWorkspace.ErrWorkspaceNotFound(err) {
-			return nil, err
-		}
-		if err == nil && existing != nil {
-			return nil, alias.ErrExistsWorkspaceAlias
 		}
 		res, err := r.AccountsAPIClient.WorkspaceRepo.CreateWorkspace(ctx, gqlclientWorkspace.CreateWorkspaceInput{
 			Alias: wsAlias,
@@ -41,6 +36,20 @@ func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.C
 		return nil, err
 	}
 	return &gqlmodel.CreateWorkspacePayload{Workspace: gqlmodel.ToWorkspace(res)}, nil
+}
+
+func (r *mutationResolver) checkNewWorkspaceAlias(ctx context.Context, wsAlias string) error {
+	if err := alias.CheckAliasPatternWorkspace(wsAlias); err != nil {
+		return err
+	}
+	existing, err := r.AccountsAPIClient.WorkspaceRepo.FindByAlias(ctx, wsAlias)
+	if err != nil && !gqlclientWorkspace.ErrWorkspaceNotFound(err) {
+		return err
+	}
+	if err == nil && existing != nil {
+		return alias.ErrExistsWorkspaceAlias
+	}
+	return nil
 }
 
 func (r *mutationResolver) DeleteWorkspace(ctx context.Context, input gqlmodel.DeleteWorkspaceInput) (*gqlmodel.DeleteWorkspacePayload, error) {
