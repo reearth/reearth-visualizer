@@ -162,9 +162,6 @@ func (s *Story) PublishedAt() *time.Time {
 	return s.publishedAt
 }
 
-// FirstPublishedAt is when the story was first published. Unlike PublishedAt
-// it is never overwritten by a republish. Nil for stories never published, or
-// last published before this field was recorded.
 func (s *Story) FirstPublishedAt() *time.Time {
 	return s.firstPublishedAt
 }
