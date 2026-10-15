@@ -9,23 +9,30 @@ import useHooks from "./hooks";
 
 type Props = {
   enabledVisualizer: boolean;
+  /** Keeps the camera where it was when the map is remounted. */
+  keepCamera?: boolean;
   layers: Layer[];
   showStoryPanel: boolean;
   story: Story | undefined;
   visualizerRef: MutableRefObject<MapRef | null>;
   widgets: ComponentProps<typeof Visualizer>["widgets"];
+  onMount?: () => void;
+  onLayerSelect?: ComponentProps<typeof Visualizer>["onCoreLayerSelect"];
 };
 
 const Viewer: FC<Props> = ({
   enabledVisualizer,
+  keepCamera,
   layers,
   showStoryPanel,
   story,
   visualizerRef,
-  widgets
+  widgets,
+  onMount,
+  onLayerSelect
 }) => {
   const { currentCamera, engineMeta, ready, setCurrentCamera, viewerProperty } =
-    useHooks({ visualizerRef, enabledVisualizer });
+    useHooks({ visualizerRef, enabledVisualizer, keepCamera });
 
   return (
     enabledVisualizer && (
@@ -42,6 +49,8 @@ const Viewer: FC<Props> = ({
           widgets={widgets}
           story={story}
           showStoryPanel={showStoryPanel}
+          handleMount={onMount}
+          onCoreLayerSelect={onLayerSelect}
         />
       </VisualizerWrapper>
     )

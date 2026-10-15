@@ -1,6 +1,6 @@
+import { MapRef } from "@reearth/core";
 import { useNotification } from "@reearth/services/state";
-import { merge } from "lodash-es";
-import { useCallback, useState } from "react";
+import { RefObject, useCallback, useRef, useState } from "react";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel/types";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "../LayerList/constants";
@@ -19,6 +19,8 @@ type Props = {
   files: FileType[];
   fieldValues: Record<string, FieldValue>;
   resetVisualizer: () => void;
+  /** Lets a run that only changes property values keep the map. */
+  visualizerRef?: RefObject<MapRef | null>;
 };
 
 type HookReturnType = {
@@ -48,6 +50,11 @@ const defaultWidgets = {
   floating: [],
   ownBuiltinWidgets: []
 };
+
+// A plugin reruns when its source changes, so marking the source with the run
+// count reruns every plugin on the map as it is.
+const markRun = (sourceCode: string, run: number) =>
+  run ? `${sourceCode}\n//# reearth-playground-run=${run}` : sourceCode;
 
 function generateProperty(
   schema:
@@ -98,16 +105,38 @@ function generateProperty(
 export default ({
   files,
   fieldValues,
-  resetVisualizer
+  resetVisualizer,
+  visualizerRef
 }: Props): HookReturnType => {
   const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
   const [story, setStory] = useState<Story>();
   const [widgets, setWidgets] = useState<Widgets>(defaultWidgets);
 
   const [, setNotification] = useNotification();
+  const lastRun = useRef<{ source: string; count: number }>(undefined);
 
   const executeCode = useCallback(() => {
-    resetVisualizer();
+    // Remounting the map blanks it while the globe loads again, so it's done
+    // only when the code changed. The first run, or a run with the same code
+    // (e.g. after editing a property), reruns the plugins on the map as it is,
+    // without what earlier runs added to it.
+    const source = files.map((f) => `${f.title}\0${f.sourceCode}`).join("\0");
+    const map = visualizerRef?.current;
+    const keepMap =
+      !!map && (!lastRun.current || lastRun.current.source === source);
+    if (keepMap) {
+      const layers = map?.layers;
+      const added = layers
+        ?.layers?.()
+        ?.filter((l) => layers.isTempLayer?.(l.id))
+        .map((l) => l.id);
+      if (added?.length) layers?.deleteLayer?.(...added);
+    } else {
+      resetVisualizer();
+    }
+    const run = keepMap && lastRun.current ? lastRun.current.count + 1 : 0;
+    lastRun.current = { source, count: run };
+
     const ymlFile = files.find((file) => file.title.endsWith(".yml"));
 
     if (!ymlFile) return;
@@ -168,7 +197,7 @@ export default ({
                         ymlJson.id,
                         cur.id
                       ),
-                      __REEARTH_SOURCECODE: file.sourceCode,
+                      __REEARTH_SOURCECODE: markRun(file.sourceCode, run),
                       extended
                     }
                   ]
@@ -185,9 +214,28 @@ export default ({
       }
     );
 
-    merge(widgets, defaultWidgets);
-
-    setWidgets(widgets);
+    // The built-in widgets go after the plugin's own in the same area. lodash's
+    // merge would combine the lists by index and replace the plugin's first
+    // widget there.
+    setWidgets({
+      ...widgets,
+      alignSystem: {
+        ...widgets.alignSystem,
+        outer: {
+          ...widgets.alignSystem?.outer,
+          left: {
+            ...widgets.alignSystem?.outer?.left,
+            bottom: {
+              ...widgets.alignSystem?.outer?.left?.bottom,
+              widgets: [
+                ...(widgets.alignSystem?.outer?.left?.bottom?.widgets ?? []),
+                ...defaultWidgets.alignSystem.outer.left.bottom.widgets
+              ]
+            }
+          }
+        }
+      }
+    });
 
     const infoboxBlockFromExtension = ymlJson.extensions.reduce<
       CustomInfoboxBlock[]
@@ -206,7 +254,7 @@ export default ({
           id: `${ymlJson.id}-${cur.id}`,
           name: cur.name,
           description: cur.description,
-          __REEARTH_SOURCECODE: file.sourceCode,
+          __REEARTH_SOURCECODE: markRun(file.sourceCode, run),
           extensionId: cur.id,
           pluginId: ymlJson.id,
           extensionType: "infoboxBlock",
@@ -243,16 +291,11 @@ export default ({
         id: `${ymlJson.id}-${cur.id}`,
         name: cur.name,
         description: cur.description,
-        __REEARTH_SOURCECODE: file.sourceCode,
+        __REEARTH_SOURCECODE: markRun(file.sourceCode, run),
         extensionId: cur.id,
         pluginId: ymlJson.id,
         extensionType: "storyBlock",
-        property: generateProperty(
-          cur.schema,
-          fieldValues,
-          ymlJson.id,
-          cur.id
-        ),
+        property: generateProperty(cur.schema, fieldValues, ymlJson.id, cur.id),
         propertyForPluginAPI: generateProperty(
           cur.schema,
           fieldValues,
@@ -276,7 +319,7 @@ export default ({
         }
       ]
     });
-  }, [files, fieldValues, resetVisualizer, setNotification]);
+  }, [files, fieldValues, resetVisualizer, setNotification, visualizerRef]);
 
   return {
     executeCode,

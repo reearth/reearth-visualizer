@@ -5,6 +5,7 @@ node_modules
 /coverage
 /dist
 /dist-workbench
+/dist-playground
 /vendor
 /storybook-static
 /Users

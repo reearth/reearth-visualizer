@@ -363,9 +363,67 @@ Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 HTML Editor: HTML エディター
 Run Code: コードを実行
-No valid schema defined.: 有効なスキーマが定義されていません。
 Chiyoda 3D Tiles: 千代田区 3D Tiles
 Japanese Heritage Sites: 日本の遺産
+Plugin URL: プラグインの URL
+Load: 読み込む
+Copied: コピーしました
+Copy: コピー
+Copy command: コマンドをコピー
+Connect a plugin: プラグインを接続
+Run this in your plugin's folder. It serves the plugin and opens it here, and reloads it when you save.: プラグインのフォルダで次を実行すると、プラグインを配信してここで開き、保存するたびに再読み込みします。
+'Or load a plugin from a server:': またはサーバーからプラグインを読み込みます：
+The server must serve reearth.yml and a .js file for each extension. A change event on <url>/events reloads the plugin.: >-
+  サーバーは reearth.yml と、拡張機能ごとの .js を配信する必要があります。<url>/events の change
+  イベントでプラグインを再読み込みします。
+Can't reach the plugin server: プラグインのサーバーに接続できません
+Can't read reearth.yml: reearth.yml を読み込めません
+Nothing answered at {{url}}. Is this still running?: '{{url}} から応答がありません。次のコマンドが実行中か確認してください。'
+Retrying…: 再試行中…
+Retry: 再試行
+Change URL: URL を変更
+Can't reach the plugin server.: プラグインのサーバーに接続できません。
+Showing the last version that loaded: 最後に読み込めたバージョンを表示しています
+Loading map…: 地図を読み込み中…
+Widget: ウィジェット
+Hide on map: 地図から隠す
+Show on map: 地図に表示
+Hidden on the map.: 地図では非表示です。
+Story blocks: ストーリーブロック
+Story block: ストーリーブロック
+Hide from story panel: ストーリーパネルから隠す
+Show in story panel: ストーリーパネルに表示
+Hidden from the story panel.: ストーリーパネルでは非表示です。
+Infobox blocks: インフォボックスブロック
+Infobox block: インフォボックスブロック
+Hide from infobox: インフォボックスから隠す
+Show in infobox: インフォボックスに表示
+Hidden from the infobox.: インフォボックスでは非表示です。
+Widgets and blocks: ウィジェットとブロック
+reearth.yml has no widgets or blocks yet.: reearth.yml にはまだウィジェットもブロックもありません。
+Select a widget or block to see its properties.: ウィジェットかブロックを選ぶと、プロパティが表示されます。
+Reset to defaults: 既定値に戻す
+Show: 表示
+Shows in the story panel.: ストーリーパネルに表示されます。
+Shows in the infobox.: インフォボックスに表示されます。
+Shows in the infobox, which opens when you click a feature on the map.: インフォボックスに表示されます。地図上の地物をクリックすると開きます。
+Open infobox: インフォボックスを開く
+No properties. Add a schema to this extension in reearth.yml to edit them here.: プロパティがありません。reearth.yml でこの拡張機能に schema を追加すると、ここで編集できます。
+Visualizer workbench: Visualizer ワークベンチ
+Offline: オフライン
+Live: ライブ
+Reloads when you save a file.: ファイルを保存すると再読み込みします。
+Connecting…: 接続中…
+Not watching: 変更を監視していません
+This server doesn't send change events. Use Reload after you save.: このサーバーは変更イベントを送信しません。保存後に再読み込みしてください。
+Change plugin URL: プラグインの URL を変更
+Reload: 再読み込み
+Loading…: 読み込み中…
+Reloaded {{time}}: '{{time}} に再読み込み'
+Hide sidebar: サイドバーを隠す
+Show sidebar: サイドバーを表示
+UI Language: UI言語
+No valid schema defined.: 有効なスキーマが定義されていません。
 Viewer: ビューアー
 Plugins: プラグイン
 Extension Settings: 拡張機能の設定
@@ -436,7 +494,6 @@ Only zip files are supported: zipファイルのみサポートされていま�
 Zip file is empty: Zipファイルは空です
 Plugin link copied to clipboard: プラグインのリンクがクリップボードにコピーされました
 Show Story Panel: ストーリーパネルを表示
-UI Language: UI言語
 Visualizer: ''
 CMS: ''
 3D map engine, MapLibre family: MapLibreファミリーの3Dマップエンジン
