@@ -32,6 +32,7 @@ type Story struct {
 	alias             string
 	status            PublishmentStatus
 	publishedAt       *time.Time
+	firstPublishedAt  *time.Time
 	publicTitle       string
 	publicDescription string
 	publicImage       string
@@ -161,6 +162,10 @@ func (s *Story) PublishedAt() *time.Time {
 	return s.publishedAt
 }
 
+func (s *Story) FirstPublishedAt() *time.Time {
+	return s.firstPublishedAt
+}
+
 func (s *Story) IsBasicAuthActive() bool {
 	return s.isBasicAuthActive
 }
@@ -217,6 +222,9 @@ func (s *Story) UpdatePublishmentStatus(status PublishmentStatus) {
 
 func (s *Story) SetPublishedAt(now time.Time) {
 	s.publishedAt = &now
+	if s.firstPublishedAt == nil {
+		s.firstPublishedAt = &now
+	}
 }
 
 func (s *Story) SetPublicTitle(publicTitle string) {

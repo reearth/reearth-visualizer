@@ -105,3 +105,20 @@ func TestStory_SettersGetters(t *testing.T) {
 
 func TestStory_ValidateProperties(t *testing.T) {
 }
+
+func TestStory_SetPublishedAt_KeepsFirstPublishedAt(t *testing.T) {
+	first := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	second := time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC)
+
+	s := &Story{}
+	assert.Nil(t, s.FirstPublishedAt())
+
+	s.SetPublishedAt(first)
+	assert.Equal(t, first, *s.PublishedAt())
+	assert.Equal(t, first, *s.FirstPublishedAt())
+
+	// A republish moves PublishedAt but keeps the first publish time.
+	s.SetPublishedAt(second)
+	assert.Equal(t, second, *s.PublishedAt())
+	assert.Equal(t, first, *s.FirstPublishedAt())
+}

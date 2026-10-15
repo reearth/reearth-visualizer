@@ -33,6 +33,7 @@ type Project struct {
 	alias             string
 	publishmentStatus PublishmentStatus
 	publishedAt       time.Time
+	firstPublishedAt  *time.Time
 	publicTitle       string
 	publicDescription string
 	publicImage       string
@@ -227,6 +228,10 @@ func (p *Project) PublishedAt() time.Time {
 	return p.publishedAt
 }
 
+func (p *Project) FirstPublishedAt() *time.Time {
+	return p.firstPublishedAt
+}
+
 func (p *Project) PublicTitle() string {
 	return p.publicTitle
 }
@@ -277,6 +282,9 @@ func (p *Project) UpdatePublishmentStatus(publishmentStatus PublishmentStatus) {
 
 func (p *Project) SetPublishedAt(publishedAt time.Time) {
 	p.publishedAt = publishedAt
+	if p.firstPublishedAt == nil {
+		p.firstPublishedAt = &publishedAt
+	}
 }
 
 func (p *Project) UpdatePublicTitle(publicTitle string) {

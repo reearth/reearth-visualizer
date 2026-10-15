@@ -25,6 +25,7 @@ type StorytellingDocument struct {
 	Alias             string
 	Status            string
 	PublishedAt       *time.Time
+	FirstPublishedAt  *time.Time
 	PublicTitle       string
 	PublicDescription string
 	PublicImage       string
@@ -80,6 +81,7 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 		Alias:             s.Alias(),
 		Status:            string(s.PublishmentStatus()),
 		PublishedAt:       s.PublishedAt(),
+		FirstPublishedAt:  s.FirstPublishedAt(),
 		PublicTitle:       s.PublicTitle(),
 		PublicDescription: s.PublicDescription(),
 		PublicImage:       s.PublicImage(),
@@ -195,6 +197,7 @@ func (d *StorytellingDocument) Model() (*storytelling.Story, error) {
 		Alias(d.Alias).
 		Status(storytelling.PublishmentStatus(d.Status)).
 		PublishedAt(d.PublishedAt).
+		FirstPublishedAt(d.FirstPublishedAt).
 		PublicBasicAuth(
 			d.IsBasicAuthActive,
 			d.BasicAuthUsername,
