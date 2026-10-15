@@ -23,13 +23,15 @@ export type ExtensionSettingsProps = {
   selectedFile: FileType;
   fieldValues: Record<string, FieldValue>;
   setFieldValues: (fieldValues: Record<string, FieldValue>) => void;
+  disableAssets?: boolean;
 };
 
 const ExtensionSettings: FC<ExtensionSettingsProps> = ({
   selectedPlugin,
   selectedFile,
   fieldValues,
-  setFieldValues
+  setFieldValues,
+  disableAssets
 }): ReactNode => {
   const t = useT();
   const {
@@ -93,6 +95,7 @@ const ExtensionSettings: FC<ExtensionSettingsProps> = ({
                     field={field}
                     value={fieldValues[id]}
                     onUpdate={handleFieldValueChange}
+                    disableAssets={disableAssets}
                   />
                 );
               })}

@@ -25,9 +25,18 @@ type Props = {
   value: FieldValue;
   field: SchemaField;
   onUpdate: (id: string, value: FieldValue) => void;
+  // The asset picker needs Apollo, which the standalone viewer doesn't have.
+  // With this set, url fields are plain text inputs.
+  disableAssets?: boolean;
 };
 
-const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
+const PropertyItem: FC<Props> = ({
+  id,
+  value,
+  field,
+  onUpdate,
+  disableAssets
+}) => {
   const assetTypes: "image"[] | "file"[] | undefined = useMemo(
     () =>
       field.type === "url"
@@ -120,6 +129,15 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
             onChangeComplete={handleChange}
           />
         )
+      ) : field.type === "url" && disableAssets ? (
+        <InputField
+          key={field.id}
+          title={field.title}
+          value={(value as string) ?? ""}
+          description={field.description}
+          placeholder={field.placeholder}
+          onChangeComplete={handleChange}
+        />
       ) : field.type === "url" ? (
         <AssetField
           key={field.id}

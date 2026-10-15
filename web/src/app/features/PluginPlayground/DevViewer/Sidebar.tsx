@@ -289,6 +289,7 @@ export const InspectorPanel: FC<InspectorProps> = ({
               selectedFile={file}
               fieldValues={fieldValues}
               setFieldValues={setFieldValues}
+              disableAssets
             />
           ) : (
             <Hint>
