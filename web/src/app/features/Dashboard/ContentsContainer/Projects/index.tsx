@@ -35,6 +35,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     sortValue,
     createdBy,
     creatorOptions,
+    isPersonalWorkspace,
     importStatus,
     fileInputRef,
     projectVisibility,
@@ -116,11 +117,13 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         searchPlaceholder={t("Search project")}
         onSearch={handleSearch}
         filters={
-          <CreatorFilter
-            creators={creatorOptions}
-            value={createdBy}
-            onChange={handleCreatorChange}
-          />
+          isPersonalWorkspace ? undefined : (
+            <CreatorFilter
+              creators={creatorOptions}
+              value={createdBy}
+              onChange={handleCreatorChange}
+            />
+          )
         }
       />
       {filtedProjects?.length || hasImportingProject ? (
