@@ -228,9 +228,6 @@ func (p *Project) PublishedAt() time.Time {
 	return p.publishedAt
 }
 
-// FirstPublishedAt is when the project was first published. Unlike
-// PublishedAt it is never overwritten by a republish. Nil for projects never
-// published, or last published before this field was recorded.
 func (p *Project) FirstPublishedAt() *time.Time {
 	return p.firstPublishedAt
 }
