@@ -65,6 +65,9 @@ func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *gqlclient.Client, 
 
 	// tracing with detailed operation tracking
 	srv.AroundOperations(detailedOperationTracer())
+	if conf.AccessLog {
+		srv.AroundOperations(accessLogger())
+	}
 	srv.AroundResponses(responseTracer())
 	// srv.AroundFields(fieldTracer())
 
