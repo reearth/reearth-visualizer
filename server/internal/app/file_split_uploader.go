@@ -74,12 +74,6 @@ var maxImportSizeBytes = int64(file_.MaxImportZipSizeMB) * 1024 * 1024
 // for an authorized caller that abandons a lot of uploads.
 const maxConcurrentSessions = 256
 
-// maxAggregateBytes bounds the total bytes resident across all upload
-// sessions at once. maxConcurrentSessions alone left this unbounded: on
-// Cloud Run the backing files live on tmpfs and count against instance
-// memory, so many sessions each near the per-session budget could still
-// far exceed a small instance's memory (compliance scan SCA-04). A var,
-// not a const, so tests can shrink it instead of allocating gigabytes.
 var maxAggregateBytes int64 = 1 * 1024 * 1024 * 1024 // 1GB
 
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
@@ -213,14 +207,6 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 		return false, apperr.InvalidInput(fmt.Sprintf("upload exceeds the %dMB import size limit", file_.MaxImportZipSizeMB), nil)
 	}
 
-	// Reserve this chunk's worst-case size against the cross-session
-	// aggregate budget before writing a single byte, and give back whatever
-	// turns out unused (see the `keep`-adjusted release below): reserving
-	// first means the aggregate can never transiently exceed the budget,
-	// not just end up under it on average. Bytes actually counted into
-	// receivedBytes (`keep`) stay reserved until cleanupSession/
-	// cleanupStaleSessions releases them, since the file on disk still
-	// holds them until then.
 	var reserved, keep int64
 	if !alreadyReceived && s.mgr != nil {
 		if !s.mgr.tryReserveBytes(readCap) {
@@ -458,11 +444,6 @@ func (m *SplitUploadManager) atCapacity() bool {
 	return len(m.sessions) >= maxConcurrentSessions
 }
 
-// tryReserveBytes atomically admits n bytes against the aggregate budget
-// shared by every session on this manager, refusing if that would push the
-// total over maxAggregateBytes. Callers must reserve before writing any of
-// those bytes to disk, not after, so the aggregate can never transiently
-// exceed the budget.
 func (m *SplitUploadManager) tryReserveBytes(n int64) bool {
 	if n <= 0 {
 		return true
@@ -476,9 +457,6 @@ func (m *SplitUploadManager) tryReserveBytes(n int64) bool {
 	return true
 }
 
-// releaseBytes gives back a reservation made by tryReserveBytes, either
-// because the bytes turned out unused (short final chunk, rejected chunk)
-// or because the session holding them has been cleaned up.
 func (m *SplitUploadManager) releaseBytes(n int64) {
 	if n <= 0 {
 		return

@@ -422,16 +422,12 @@ func TestUploadSession_WriteChunk_RetryAfterBudgetRejectionLeavesNoGarbage(t *te
 	}
 }
 
-// TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded
-// verifies the SCA-04 fix: a chunk that would push the total bytes resident
-// across ALL sessions on this manager over maxAggregateBytes is rejected,
-// even though it fits well within its own session's per-session budget.
 func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *testing.T) {
 	originalAggregate := maxAggregateBytes
 	maxAggregateBytes = 6
 	defer func() { maxAggregateBytes = originalAggregate }()
 
-	m := newTestManager(t) // chunkSize is 4 bytes
+	m := newTestManager(t)
 	t.Cleanup(func() {
 		for _, s := range m.sessions {
 			s.close()
@@ -453,8 +449,6 @@ func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *tes
 	if err != nil {
 		t.Fatalf("getOrCreateSession(agg-2): %v", err)
 	}
-	// Fits this session's own budget (default maxImportSizeBytes), but
-	// 4 (already resident) + 4 (this chunk) = 8 > maxAggregateBytes (6).
 	_, err = second.writeChunk(0, strings.NewReader("bbbb"))
 	if err == nil {
 		t.Fatal("expected an error: this chunk would push the aggregate over maxAggregateBytes")
@@ -466,7 +460,6 @@ func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *tes
 		t.Errorf("totalBytes = %d, want 4 (rejected chunk must not be counted)", m.totalBytes)
 	}
 
-	// Freeing the first session's bytes must make room for the second.
 	m.cleanupSession("agg-1")
 	if m.totalBytes != 0 {
 		t.Fatalf("totalBytes = %d, want 0 after cleaning up the only session holding bytes", m.totalBytes)
@@ -479,12 +472,8 @@ func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *tes
 	}
 }
 
-// TestSplitUploadManager_WriteChunk_ReleasesUnusedReservationOnShortFinalChunk
-// verifies a short final chunk only keeps its real size reserved against the
-// aggregate budget, not the full chunk size it was conservatively reserved
-// at before the actual size was known.
 func TestSplitUploadManager_WriteChunk_ReleasesUnusedReservationOnShortFinalChunk(t *testing.T) {
-	m := newTestManager(t) // chunkSize is 4 bytes
+	m := newTestManager(t)
 	t.Cleanup(func() {
 		for _, s := range m.sessions {
 			s.close()
@@ -495,8 +484,6 @@ func TestSplitUploadManager_WriteChunk_ReleasesUnusedReservationOnShortFinalChun
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
-	// Single-chunk upload (totalChunks=1), so chunk 0 is also final; only 2
-	// of the 4-byte chunk size is actually sent.
 	if _, err := session.writeChunk(0, strings.NewReader("cc")); err != nil {
 		t.Fatalf("writeChunk: %v", err)
 	}
