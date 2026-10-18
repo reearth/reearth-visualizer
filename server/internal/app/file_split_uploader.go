@@ -726,11 +726,23 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 	cutoff := time.Now().Add(-24 * time.Hour)
 
 	m.mgrMu.Lock()
+	candidates := make([]*uploadSession, 0, len(m.sessions))
+	for _, s := range m.sessions {
+		candidates = append(candidates, s)
+	}
+	m.mgrMu.Unlock()
+
 	var stale []*uploadSession
-	for fileID, s := range m.sessions {
+	for _, s := range candidates {
 		if s.isStale(cutoff) {
 			stale = append(stale, s)
-			delete(m.sessions, fileID)
+		}
+	}
+
+	m.mgrMu.Lock()
+	for _, s := range stale {
+		if cur, ok := m.sessions[s.fileID]; ok && cur == s {
+			delete(m.sessions, s.fileID)
 		}
 	}
 	m.mgrMu.Unlock()
