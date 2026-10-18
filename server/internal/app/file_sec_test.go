@@ -62,7 +62,7 @@ func (f fakeFileGateway) ReadStoryFile(ctx context.Context, name string) (io.Rea
 	return io.NopCloser(strings.NewReader(f.content)), nil
 }
 func (f fakeFileGateway) MoveStory(ctx context.Context, from, to string) error { return nil }
-func (f fakeFileGateway) RemoveStory(ctx context.Context, name string) error  { return nil }
+func (f fakeFileGateway) RemoveStory(ctx context.Context, name string) error   { return nil }
 
 func (f fakeFileGateway) ReadExportProjectZip(ctx context.Context, name string) (io.ReadCloser, error) {
 	return io.NopCloser(strings.NewReader(f.content)), nil
