@@ -74,6 +74,14 @@ var maxImportSizeBytes = int64(file_.MaxImportZipSizeMB) * 1024 * 1024
 // for an authorized caller that abandons a lot of uploads.
 const maxConcurrentSessions = 256
 
+// maxAggregateBytes bounds the total bytes resident across all upload
+// sessions at once. maxConcurrentSessions alone left this unbounded: on
+// Cloud Run the backing files live on tmpfs and count against instance
+// memory, so many sessions each near the per-session budget could still
+// far exceed a small instance's memory (compliance scan SCA-04). A var,
+// not a const, so tests can shrink it instead of allocating gigabytes.
+var maxAggregateBytes int64 = 1 * 1024 * 1024 * 1024 // 1GB
+
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
 // fileID flows directly into filepath.Join(tempDir, fileID); without this,
 // a client could send a path-traversal value (e.g. "../../etc/cron.d/x")
@@ -124,6 +132,7 @@ type uploadSession struct {
 	project       *project.Project
 	dispatched    bool
 	updatedAt     time.Time
+	mgr           *SplitUploadManager
 }
 
 // sessionInfo is an immutable snapshot of the fields callers need after
@@ -131,15 +140,16 @@ type uploadSession struct {
 // session's lock scope — the HTTP response and the background import job
 // both consume this value type, never the live *uploadSession.
 type sessionInfo struct {
-	FileID      string
-	FilePath    string
-	ProjectID   *id.ProjectID
-	TotalChunks int
-	Received    int
-	UpdatedAt   time.Time
+	FileID        string
+	FilePath      string
+	ProjectID     *id.ProjectID
+	TotalChunks   int
+	Received      int
+	ReceivedBytes int64
+	UpdatedAt     time.Time
 }
 
-func newUploadSession(tempDir, fileID string, totalChunks int, chunkSize int64) (*uploadSession, error) {
+func newUploadSession(tempDir, fileID string, totalChunks int, chunkSize int64, mgr *SplitUploadManager) (*uploadSession, error) {
 	filePath := filepath.Join(tempDir, fileID)
 	// O_TRUNC guards against a stale file left behind at the same path
 	// (e.g. from a crashed previous session with a reused fileID): without
@@ -159,6 +169,7 @@ func newUploadSession(tempDir, fileID string, totalChunks int, chunkSize int64) 
 		totalChunks: totalChunks,
 		received:    make(map[int]struct{}),
 		updatedAt:   time.Now(),
+		mgr:         mgr,
 	}, nil
 }
 
@@ -202,6 +213,27 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 		return false, apperr.InvalidInput(fmt.Sprintf("upload exceeds the %dMB import size limit", file_.MaxImportZipSizeMB), nil)
 	}
 
+	// Reserve this chunk's worst-case size against the cross-session
+	// aggregate budget before writing a single byte, and give back whatever
+	// turns out unused (see the `keep`-adjusted release below): reserving
+	// first means the aggregate can never transiently exceed the budget,
+	// not just end up under it on average. Bytes actually counted into
+	// receivedBytes (`keep`) stay reserved until cleanupSession/
+	// cleanupStaleSessions releases them, since the file on disk still
+	// holds them until then.
+	var reserved, keep int64
+	if !alreadyReceived && s.mgr != nil {
+		if !s.mgr.tryReserveBytes(readCap) {
+			return false, apperr.InvalidInput("too many bytes being uploaded across all sessions right now, try again later", nil)
+		}
+		reserved = readCap
+	}
+	defer func() {
+		if reserved > keep {
+			s.mgr.releaseBytes(reserved - keep)
+		}
+	}()
+
 	offset := int64(idx) * s.chunkSize
 	n, err := io.Copy(io.NewOffsetWriter(s.file, offset), io.LimitReader(r, readCap))
 	if err != nil {
@@ -224,6 +256,7 @@ func (s *uploadSession) writeChunk(idx int, r io.Reader) (bool, error) {
 
 	if !alreadyReceived {
 		s.receivedBytes += n
+		keep = n
 	}
 
 	s.received[idx] = struct{}{}
@@ -259,11 +292,12 @@ func (s *uploadSession) snapshot() sessionInfo {
 	defer s.mu.Unlock()
 
 	info := sessionInfo{
-		FileID:      s.fileID,
-		FilePath:    s.filePath,
-		TotalChunks: s.totalChunks,
-		Received:    len(s.received),
-		UpdatedAt:   s.updatedAt,
+		FileID:        s.fileID,
+		FilePath:      s.filePath,
+		TotalChunks:   s.totalChunks,
+		Received:      len(s.received),
+		ReceivedBytes: s.receivedBytes,
+		UpdatedAt:     s.updatedAt,
 	}
 	if s.project != nil {
 		pid := s.project.ID()
@@ -309,11 +343,12 @@ type importJob struct {
 // there is no seam left for code to accidentally read/write session state
 // without going through uploadSession's own lock.
 type SplitUploadManager struct {
-	mgrMu     sync.Mutex
-	sessions  map[string]*uploadSession
-	tempDir   string
-	chunkSize int64
-	jobs      chan importJob
+	mgrMu      sync.Mutex
+	sessions   map[string]*uploadSession
+	tempDir    string
+	chunkSize  int64
+	jobs       chan importJob
+	totalBytes int64
 
 	// importJobTimeout and dispatchWaitTimeout default to the package
 	// constants in production (see newSplitUploadManager) and are only
@@ -406,7 +441,7 @@ func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) 
 	if len(m.sessions) >= maxConcurrentSessions {
 		return nil, errors.New("too many upload sessions in progress, try again later")
 	}
-	s, err := newUploadSession(m.tempDir, fileID, totalChunks, m.chunkSize)
+	s, err := newUploadSession(m.tempDir, fileID, totalChunks, m.chunkSize, m)
 	if err != nil {
 		return nil, err
 	}
@@ -421,6 +456,36 @@ func (m *SplitUploadManager) atCapacity() bool {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
 	return len(m.sessions) >= maxConcurrentSessions
+}
+
+// tryReserveBytes atomically admits n bytes against the aggregate budget
+// shared by every session on this manager, refusing if that would push the
+// total over maxAggregateBytes. Callers must reserve before writing any of
+// those bytes to disk, not after, so the aggregate can never transiently
+// exceed the budget.
+func (m *SplitUploadManager) tryReserveBytes(n int64) bool {
+	if n <= 0 {
+		return true
+	}
+	m.mgrMu.Lock()
+	defer m.mgrMu.Unlock()
+	if m.totalBytes+n > maxAggregateBytes {
+		return false
+	}
+	m.totalBytes += n
+	return true
+}
+
+// releaseBytes gives back a reservation made by tryReserveBytes, either
+// because the bytes turned out unused (short final chunk, rejected chunk)
+// or because the session holding them has been cleaned up.
+func (m *SplitUploadManager) releaseBytes(n int64) {
+	if n <= 0 {
+		return
+	}
+	m.mgrMu.Lock()
+	defer m.mgrMu.Unlock()
+	m.totalBytes -= n
 }
 
 // getSession looks up a session without creating one, so a non-zero chunk
@@ -665,6 +730,7 @@ func (m *SplitUploadManager) cleanupSession(fileID string) {
 	m.mgrMu.Unlock()
 
 	if ok {
+		m.releaseBytes(s.snapshot().ReceivedBytes)
 		s.close()
 	}
 }
@@ -692,6 +758,7 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 	m.mgrMu.Unlock()
 
 	for _, s := range stale {
+		m.releaseBytes(s.snapshot().ReceivedBytes)
 		s.close()
 	}
 }
