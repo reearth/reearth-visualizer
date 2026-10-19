@@ -32,9 +32,10 @@ const AddWorkspaceModal: FC = () => {
   }, [setAddWorkspaceModal]);
 
   const handleAddWorkspace = useCallback(async () => {
-    const { data } = await createWorkspace({
+    const { data, status } = await createWorkspace({
       name: workspaceNameConfirm
     });
+    if (status === "error") return;
     setAddWorkspaceModal(false);
     navigate(`/dashboard/${data?.id}`);
   }, [createWorkspace, workspaceNameConfirm, setAddWorkspaceModal, navigate]);
@@ -84,7 +85,7 @@ const AddWorkspaceModal: FC = () => {
       >
         <ModalContentWrapper data-testid="addworkspace-modal-content">
           <Typography size="body" data-testid="addworkspace-title">
-            {t("Your workspace Name*")}
+            {t("Your workspace name*")}
           </Typography>
           <TextInput
             placeholder={t("your workspace name")}

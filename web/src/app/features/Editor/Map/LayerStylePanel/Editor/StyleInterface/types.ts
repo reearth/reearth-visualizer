@@ -38,6 +38,9 @@ export type StyleNode = {
   value: StyleValue;
   expression?: string;
   conditions?: StyleCondition[];
+  // Original value for nested types the UI can't edit yet (`deepExpression`,
+  // `deepConditions`). Written back unchanged so saving doesn't drop it.
+  rawValue?: unknown;
   notSupported?: boolean;
   disableExpression?: boolean;
   disableConditions?: boolean;
@@ -99,4 +102,8 @@ export type StyleCondition = {
   operator: StyleConditionOperator;
   value: string;
   applyValue: StyleSimpleValue | undefined;
+  // Set when the condition can't be represented as `variable operator value`
+  // (e.g. the `"true"` fallback, `a && b`, `==`). It is kept and written back
+  // verbatim so that round-tripping through the UI never loses or breaks it.
+  rawCondition?: string;
 };
