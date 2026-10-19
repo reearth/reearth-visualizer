@@ -1,0 +1,2 @@
+# Collapse generated code in GitHub diffs and leave it out of language stats.
+server/internal/adapter/apiv1/server.gen.go linguist-generated=true
