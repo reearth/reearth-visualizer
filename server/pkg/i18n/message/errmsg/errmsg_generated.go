@@ -17,6 +17,8 @@ const (
 	ErrKeyPkgStorytellingInvalidAlias message.ErrKey = "pkg.storytelling.invalid_alias"
 	ErrKeyPkgStorytellingInvalidPrefixAlias message.ErrKey = "pkg.storytelling.invalid_prefix_alias"
 	ErrKeyPkgStorytellingInvalidReservedAlias message.ErrKey = "pkg.storytelling.invalid_reserved_alias"
+	ErrKeyPkgWorkspaceAliasAlreadyExists message.ErrKey = "pkg.workspace.alias_already_exists"
+	ErrKeyPkgWorkspaceInvalidAlias message.ErrKey = "pkg.workspace.invalid_alias"
 )
 
 var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
@@ -118,6 +120,26 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 		language.Japanese: {
 			Message:     "予約済みのエイリアス名は使用できません: {{.aliasName}}",
 			Description: "次のようなエイリアス名は予約されており、使用できません: administrator,development",
+		},
+	},
+	ErrKeyPkgWorkspaceAliasAlreadyExists: {
+		language.English: {
+			Message:     "This workspace alias is already in use. Please try another one.",
+			Description: "Each workspace alias must be unique.",
+		},
+		language.Japanese: {
+			Message:     "そのワークスペースエイリアスは既に使用されています。別の値を試してください",
+			Description: "ワークスペースのエイリアスは一意である必要があります。",
+		},
+	},
+	ErrKeyPkgWorkspaceInvalidAlias: {
+		language.English: {
+			Message:     "Invalid workspace alias: {{.aliasName}}",
+			Description: "The alias must be 5-32 characters long, start and end with a letter or number, and can only contain letters, numbers, and single hyphens.",
+		},
+		language.Japanese: {
+			Message:     "不正なワークスペースエイリアスです: {{.aliasName}}",
+			Description: "エイリアスは5〜32文字で、先頭と末尾は英数字でなければならず、英数字と単独のハイフンのみ使用できます。",
 		},
 	},
 }

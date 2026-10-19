@@ -207,6 +207,7 @@ import UploadZipPlugin from "./Icons/UploadZipPlugin.svg?react";
 import User from "./Icons/User.svg?react";
 import Users from "./Icons/Users.svg?react";
 import UsersFour from "./Icons/UsersFour.svg?react";
+import UsersThree from "./Icons/UsersThree.svg?react";
 import VideoCamers from "./Icons/Video_Camera.svg?react";
 import VideoFilled from "./Icons/VideoFilled.svg?react";
 import Warning from "./Icons/Warning.svg?react";
@@ -421,6 +422,7 @@ export default {
   user: User,
   users: Users,
   usersFour: UsersFour,
+  usersThree: UsersThree,
   videoFilled: VideoFilled,
   videoCamera: VideoCamers,
   warning: Warning,

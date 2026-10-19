@@ -18,6 +18,8 @@ type Project struct {
 	description  string
 	imageURL     *url.URL
 	updatedAt    time.Time
+	createdBy    string
+	updatedBy    string
 	visualizer   visualizer.Visualizer
 	isArchived   bool
 	coreSupport  bool
@@ -82,6 +84,14 @@ func (p *Project) UpdatedAt() time.Time {
 	return p.updatedAt
 }
 
+func (p *Project) CreatedBy() string {
+	return p.createdBy
+}
+
+func (p *Project) UpdatedBy() string {
+	return p.updatedBy
+}
+
 func (p *Project) Visualizer() visualizer.Visualizer {
 	return p.visualizer
 }
@@ -144,6 +154,14 @@ func (p *Project) SetImageURL(imageURL *url.URL) {
 
 func (p *Project) SetUpdatedAt(updatedAt time.Time) {
 	p.updatedAt = updatedAt
+}
+
+func (p *Project) SetCreatedBy(createdBy string) {
+	p.createdBy = createdBy
+}
+
+func (p *Project) SetUpdatedBy(updatedBy string) {
+	p.updatedBy = updatedBy
 }
 
 func (p *Project) UpdateVisualizer(visualizer visualizer.Visualizer) {

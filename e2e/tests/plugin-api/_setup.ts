@@ -39,7 +39,7 @@ setup("install shared plugin zip and widget", async ({ browser, request }) => {
   const page = await context.newPage();
 
   try {
-    const client = createPluginClient(request);
+    const client = await createPluginClient(request);
     const fixture = new PluginFixturePage(page, client);
 
     // Step 1: create the shared project and scene

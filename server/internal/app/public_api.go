@@ -112,7 +112,7 @@ func newAPIImporter() apiv1.Importer {
 	m.StartCleanupRoutine(1 * time.Hour)
 
 	return func(ctx context.Context, chunk apiv1.ImportChunk) (apiv1.ImportChunkResult, error) {
-		if err := validateChunkRequest(chunk.FileID, chunk.ChunkNum, chunk.TotalChunks); err != nil {
+		if err := validateChunkRequest(chunk.FileID, chunk.ChunkNum, chunk.TotalChunks, m.chunkSize); err != nil {
 			return apiv1.ImportChunkResult{}, echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 		res, err := m.handleChunkedUpload(ctx, adapter.Usecases(ctx), adapter.Operator(ctx),
