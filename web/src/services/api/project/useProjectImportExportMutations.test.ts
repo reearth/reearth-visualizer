@@ -55,6 +55,23 @@ describe("useProjectImportExportMutations.exportProject debounce", () => {
     });
   });
 
+  test("releases the guard when the mutation throws", async () => {
+    mutate.mockRejectedValueOnce(new Error("network error"));
+
+    const { result } = renderHook(() => useProjectImportExportMutations());
+
+    await act(async () => {
+      await result.current.exportProject("project-1");
+    });
+
+    mutate.mockResolvedValueOnce({ data: null, error: new Error("boom") });
+    await act(async () => {
+      await result.current.exportProject("project-1");
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(2);
+  });
+
   test("allows a new export of the same project once the previous one finishes", async () => {
     mutate.mockResolvedValue({ data: null, error: new Error("boom") });
 
