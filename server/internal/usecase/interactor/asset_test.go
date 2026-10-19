@@ -1,8 +1,10 @@
 package interactor
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
+	"encoding/json"
 	"image"
 	"image/color"
 	"image/png"
@@ -23,6 +25,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	pkgimage "github.com/reearth/reearth/server/pkg/image"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -224,6 +227,73 @@ func TestAsset_CreateIconAsset(t *testing.T) {
 
 		assert.ErrorIs(t, err, interfaces.ErrIconImageTooLarge)
 	})
+}
+
+func TestAsset_ImportAssetFiles_MultipleAssets(t *testing.T) {
+	ctx := context.Background()
+
+	ws := accountsWorkspace.New().NewID().MustBuild()
+	wsRepo := accountsInfra.NewMemoryWorkspace()
+	require.NoError(t, wsRepo.Save(ctx, ws))
+
+	prj := project.New().NewID().Workspace(ws.ID()).MustBuild()
+
+	gFile, err := fs.NewFile(afero.NewMemMapFs(), "")
+	require.NoError(t, err)
+
+	uContainer := &Asset{
+		repos: &repo.Container{
+			Asset:     memory.NewAsset(),
+			Workspace: wsRepo,
+		},
+		gateways: &gateway.Container{
+			File: gFile,
+		},
+	}
+
+	assetFiles := map[string]string{
+		"a.txt": "one",
+		"b.txt": "two",
+		"c.txt": "three",
+	}
+
+	var zbuf bytes.Buffer
+	zw := zip.NewWriter(&zbuf)
+	for name, content := range assetFiles {
+		w, err := zw.Create(name)
+		require.NoError(t, err)
+		_, err = w.Write([]byte(content))
+		require.NoError(t, err)
+	}
+	require.NoError(t, zw.Close())
+
+	zr, err := zip.NewReader(bytes.NewReader(zbuf.Bytes()), int64(zbuf.Len()))
+	require.NoError(t, err)
+
+	assets := map[string]*zip.File{}
+	assetNames := map[string]any{}
+	payload := map[string]any{}
+	for _, f := range zr.File {
+		assets[f.Name] = f
+		assetNames[f.Name] = f.Name
+		payload["/assets/"+f.Name] = true
+	}
+	payload["assets"] = assetNames
+
+	bodyBytes, err := json.Marshal(payload)
+	require.NoError(t, err)
+
+	resultData, result, err := uContainer.ImportAssetFiles(ctx, assets, &bodyBytes, prj, &usecase.Operator{})
+	require.NoError(t, err)
+	assert.Len(t, result, len(assetFiles))
+
+	saved, _, err := uContainer.repos.Asset.FindByWorkspaceProject(ctx, ws.ID(), prj.ID().Ref(), repo.AssetFilter{})
+	require.NoError(t, err)
+	assert.Len(t, saved, len(assetFiles))
+
+	for before := range assetFiles {
+		assert.NotContains(t, string(*resultData), "/assets/"+before+"\"")
+	}
 }
 
 func createTestPNGImage(width, height int) []byte {
