@@ -66,7 +66,7 @@ func (Server) ListProjects(ctx context.Context, req ListProjectsRequestObject) (
 		if serr != nil {
 			return nil, serr
 		}
-		res, pi, err = uc.Project.FindByWorkspace(ctx, wid, p.Keyword, sort, pagination, op)
+		res, pi, err = uc.Project.FindByWorkspace(ctx, wid, p.Keyword, sort, pagination, nil, op)
 	}
 	if err != nil {
 		return nil, err
