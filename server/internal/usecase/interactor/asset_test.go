@@ -9,6 +9,7 @@ import (
 	"image/color"
 	"image/png"
 	"io"
+	"path"
 	"strings"
 	"testing"
 
@@ -289,7 +290,22 @@ func TestAsset_ImportAssetFiles_MultipleAssets(t *testing.T) {
 
 	saved, _, err := uContainer.repos.Asset.FindByWorkspaceProject(ctx, ws.ID(), prj.ID().Ref(), repo.AssetFilter{})
 	require.NoError(t, err)
-	assert.Len(t, saved, len(assetFiles))
+	require.Len(t, saved, len(assetFiles))
+
+	wantContents := map[string]bool{}
+	for _, content := range assetFiles {
+		wantContents[content] = true
+	}
+	gotContents := map[string]bool{}
+	for _, a := range saved {
+		r, err := gFile.ReadAsset(ctx, path.Base(a.URL()))
+		require.NoError(t, err)
+		b, err := io.ReadAll(r)
+		require.NoError(t, err)
+		require.NoError(t, r.Close())
+		gotContents[string(b)] = true
+	}
+	assert.Equal(t, wantContents, gotContents)
 
 	for before := range assetFiles {
 		assert.NotContains(t, string(*resultData), "/assets/"+before+"\"")
