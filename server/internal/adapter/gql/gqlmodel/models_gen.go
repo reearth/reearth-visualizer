@@ -697,6 +697,8 @@ type Project struct {
 	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
 	CreatedAt         time.Time         `json:"createdAt"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
+	CreatedByID       *ID               `json:"createdById,omitempty"`
+	UpdatedByID       *ID               `json:"updatedById,omitempty"`
 	Visualizer        Visualizer        `json:"visualizer"`
 	IsArchived        bool              `json:"isArchived"`
 	CoreSupport       bool              `json:"coreSupport"`

@@ -21,10 +21,12 @@ const __dirname = dirname(__filename);
 const packageJson = JSON.parse(
   readFileSync(resolve(__dirname, "../package.json"), "utf-8")
 );
+const refName = process.env.GITHUB_REF_NAME || "";
+const refVersion = refName.startsWith("workbench-")
+  ? refName.slice("workbench-".length)
+  : refName;
 const version =
-  process.env.REEARTH_WORKBENCH_VERSION ||
-  process.env.GITHUB_REF_NAME ||
-  packageJson.version;
+  process.env.REEARTH_WORKBENCH_VERSION || refVersion || packageJson.version;
 
 const constaintPath = resolve(
   __dirname,
