@@ -12,6 +12,7 @@ import { FC } from "react";
 import ProjectRemoveModal from "../ProjectModals/ProjectRemoveModal";
 
 import useHooks from "./hooks";
+import ProjectEditorInfo from "./ProjectEditorInfo";
 import { ProjectProps } from "./types";
 
 const ProjectGridViewItem: FC<ProjectProps> = ({
@@ -92,46 +93,49 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
             )}
           </ButtonWrapper>
         </CardImage>
-        <CardFooter data-testid={`project-grid-item-footer-${project.name}`}>
-          {hasMapOrStoryPublished && (
-            <PublishStatus
-              data-testid={`project-grid-item-publish-status-${project.name}`}
-            />
-          )}
-          <CardTitleWrapper
-            data-testid={`project-grid-item-title-wrapper-${project.name}`}
-          >
-            {!isEditing ? (
-              <CardTitle
-                onDoubleClick={handleProjectNameDoubleClick}
-                data-testid={`project-grid-item-title-${project.name}`}
-              >
-                {projectName}
-              </CardTitle>
-            ) : (
-              <TextInput
-                onChange={handleProjectNameChange}
-                onBlur={handleProjectNameBlur}
-                value={projectName}
-                autoFocus={isEditing}
-                appearance="present"
-                data-testid={`project-grid-item-title-input-${project.name}`}
+        <CardInfo>
+          <CardFooter data-testid={`project-grid-item-footer-${project.name}`}>
+            {hasMapOrStoryPublished && (
+              <PublishStatus
+                data-testid={`project-grid-item-publish-status-${project.name}`}
               />
             )}
-          </CardTitleWrapper>
-          <PopupMenu
-            menu={popupMenu}
-            label={
-              <Button
-                icon="dotsThreeVertical"
-                iconButton
-                appearance="simple"
-                data-testid={`project-grid-item-menu-btn-${project.name}`}
-              />
-            }
-            data-testid={`project-grid-item-menu-${project.name}`}
-          />
-        </CardFooter>
+            <CardTitleWrapper
+              data-testid={`project-grid-item-title-wrapper-${project.name}`}
+            >
+              {!isEditing ? (
+                <CardTitle
+                  onDoubleClick={handleProjectNameDoubleClick}
+                  data-testid={`project-grid-item-title-${project.name}`}
+                >
+                  {projectName}
+                </CardTitle>
+              ) : (
+                <TextInput
+                  onChange={handleProjectNameChange}
+                  onBlur={handleProjectNameBlur}
+                  value={projectName}
+                  autoFocus={isEditing}
+                  appearance="present"
+                  data-testid={`project-grid-item-title-input-${project.name}`}
+                />
+              )}
+            </CardTitleWrapper>
+            <PopupMenu
+              menu={popupMenu}
+              label={
+                <Button
+                  icon="dotsThreeVertical"
+                  iconButton
+                  appearance="simple"
+                  data-testid={`project-grid-item-menu-btn-${project.name}`}
+                />
+              }
+              data-testid={`project-grid-item-menu-${project.name}`}
+            />
+          </CardFooter>
+          <ProjectEditorInfo project={project} />
+        </CardInfo>
       </Card>
       {projectRemoveModalVisible && (
         <ProjectRemoveModal
@@ -148,12 +152,14 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
 
 export default ProjectGridViewItem;
 
-const Card = styled("div")(() => ({
+const Card = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
-  height: "220px",
+  background: theme.bg[1],
+  borderRadius: theme.radius.normal,
+  height: "240px",
   "@media (max-width: 567px)": {
-    height: "171px"
+    height: "191px"
   }
 }));
 
@@ -166,7 +172,7 @@ const CardImage = styled("div")<{
   position: css.position.relative,
   background: backgroundImage ? `url(${backgroundImage}) center/cover` : "",
   backgroundColor: theme.bg[1],
-  borderRadius: theme.radius.normal,
+  borderRadius: `${theme.radius.normal}px ${theme.radius.normal}px 0 0`,
   boxSizing: css.boxSizing.borderBox,
   cursor: css.cursor.pointer,
   boxShadow: `inset 0 0 0 1px ${isHovered ? theme.outline.weak : "transparent"}`
@@ -204,11 +210,18 @@ const StarButtonWrapper = styled("div")<{
   boxShadow: isStarred ? theme.shadow.button : "none"
 }));
 
+const CardInfo = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  gap: theme.spacing.small,
+  padding: theme.spacing.small
+}));
+
 const CardFooter = styled("div")(({ theme }) => ({
   display: css.display.flex,
   alignItems: css.alignItems.center,
   gap: theme.spacing.smallest,
-  padding: `0 ${theme.spacing.smallest}`
+  height: "16px"
 }));
 
 const PublishStatus = styled("div")(({ theme }) => ({
@@ -224,9 +237,9 @@ const CardTitleWrapper = styled("div")(() => ({
 
 const CardTitle = styled("div")(({ theme }) => ({
   flex: "1",
-  padding: `0 ${theme.spacing.smallest + 1}px`,
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
+  lineHeight: "16px",
   fontWeight: theme.fonts.weight.regular,
   display: "-webkit-box",
   WebkitBoxOrient: css.webkitBoxOrient.vertical,

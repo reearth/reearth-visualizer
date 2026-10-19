@@ -2,6 +2,102 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.27 - 2026-10-14
+
+### Web
+
+#### 🚀 Features
+
+- Display create by and update by ui [VIZ-DEV-268] ([#2462](https://github.com/reearth/reearth-visualizer/pull/2462)) [`2c0f6d`](https://github.com/reearth/reearth-visualizer/commit/2c0f6d)
+
+#### 🔧 Bug Fixes
+
+- Temporarily remove Created by filter from dashboard projects header ([#2472](https://github.com/reearth/reearth-visualizer/pull/2472)) [`1ceb29`](https://github.com/reearth/reearth-visualizer/commit/1ceb29)
+
+#### ✨ Refactor
+
+- Fix layer style Interface tab losing conditions and unsupported data on save ([#2461](https://github.com/reearth/reearth-visualizer/pull/2461)) [`01ca09`](https://github.com/reearth/reearth-visualizer/commit/01ca09)
+- Improve common nav ui to match design  ([#2465](https://github.com/reearth/reearth-visualizer/pull/2465)) [`a18da7`](https://github.com/reearth/reearth-visualizer/commit/a18da7)
+- Downgrade the core version ([#2469](https://github.com/reearth/reearth-visualizer/pull/2469)) [`79a276`](https://github.com/reearth/reearth-visualizer/commit/79a276)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.27 ([#2473](https://github.com/reearth/reearth-visualizer/pull/2473)) [`35b8f0`](https://github.com/reearth/reearth-visualizer/commit/35b8f0)
+- Update @reearth&#x2F;core to 0.0.7-alpha.81 ([#2458](https://github.com/reearth/reearth-visualizer/pull/2458)) [`defa3c`](https://github.com/reearth/reearth-visualizer/commit/defa3c)
+
+### Server
+
+#### 🚀 Features
+
+- Filter the projects query by creator ([#2460](https://github.com/reearth/reearth-visualizer/pull/2460)) [`d9d7cf`](https://github.com/reearth/reearth-visualizer/commit/d9d7cf)
+
+#### 🔧 Bug Fixes
+
+- Generate a workspace alias when none is given ([#2470](https://github.com/reearth/reearth-visualizer/pull/2470)) [`206e38`](https://github.com/reearth/reearth-visualizer/commit/206e38)
+- Mark &#x2F;api&#x2F;published&#x2F;:name responses as not cacheable [SEC-01] [MEDIUM] ([#2454](https://github.com/reearth/reearth-visualizer/pull/2454)) [`929828`](https://github.com/reearth/reearth-visualizer/commit/929828)
+
+### e2e
+
+#### 🔧 Bug Fixes
+
+- Wait for dashboard URL instead of networkidle in global setup ([#2459](https://github.com/reearth/reearth-visualizer/pull/2459)) [`b7b0c2`](https://github.com/reearth/reearth-visualizer/commit/b7b0c2)
+
+#### Miscellaneous Tasks
+
+- Bump Playwright to 1.64.0 ([#2463](https://github.com/reearth/reearth-visualizer/pull/2463)) [`670cda`](https://github.com/reearth/reearth-visualizer/commit/670cda)
+
+### web,server
+
+#### 🔧 Bug Fixes
+
+- Dashboard loop&#x2F;request flood, project delete, and E2E setup ([#2438](https://github.com/reearth/reearth-visualizer/pull/2438)) [`acae86`](https://github.com/reearth/reearth-visualizer/commit/acae86)
+
+## 1.0.0-beta.16.26 - 2026-10-07
+
+### Web
+
+#### 🚀 Features
+
+- Add plugin development workbench ([#2439](https://github.com/reearth/reearth-visualizer/pull/2439)) [`f2f6ee`](https://github.com/reearth/reearth-visualizer/commit/f2f6ee)
+
+#### 🔧 Bug Fixes
+
+- Fix YAML syntax error in i18n and restore Japanese translations ([#2451](https://github.com/reearth/reearth-visualizer/pull/2451)) [`f347db`](https://github.com/reearth/reearth-visualizer/commit/f347db)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.26 ([#2453](https://github.com/reearth/reearth-visualizer/pull/2453)) [`62444c`](https://github.com/reearth/reearth-visualizer/commit/62444c)
+
+### Server
+
+#### 🚀 Features
+
+- Record createdBy and updatedBy on projects ([#2412](https://github.com/reearth/reearth-visualizer/pull/2412)) [`092e6c`](https://github.com/reearth/reearth-visualizer/commit/092e6c)
+
+#### 🔧 Bug Fixes
+
+- Reject split uploads that would exceed the import size limit before writing chunks ([#2449](https://github.com/reearth/reearth-visualizer/pull/2449)) [`b8fbb1`](https://github.com/reearth/reearth-visualizer/commit/b8fbb1)
+
+#### 📖 Documentation
+
+- Record the accepted-tradeoff decision for REL-03&#x2F;REL-05 in source ([#2450](https://github.com/reearth/reearth-visualizer/pull/2450)) [`6da152`](https://github.com/reearth/reearth-visualizer/commit/6da152)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Release workbench independently from a manually entered version ([#2440](https://github.com/reearth/reearth-visualizer/pull/2440)) [`68ca1d`](https://github.com/reearth/reearth-visualizer/commit/68ca1d)
+
+#### Miscellaneous Tasks
+
+- Update workbench release strategy and CI workflows ([#2448](https://github.com/reearth/reearth-visualizer/pull/2448)) [`a5cbe8`](https://github.com/reearth/reearth-visualizer/commit/a5cbe8)
+
+### e2e
+
+#### 🔧 Bug Fixes
+
+- Pass Auth0 secrets to plugin-api test step ([#2437](https://github.com/reearth/reearth-visualizer/pull/2437)) [`db5a33`](https://github.com/reearth/reearth-visualizer/commit/db5a33)
+
 ## 1.0.0-beta.16.25 - 2026-10-01
 
 ### Web

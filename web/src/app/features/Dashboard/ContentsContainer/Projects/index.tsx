@@ -32,6 +32,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     layout,
     searchTerm,
     sortValue,
+    createdBy,
     importStatus,
     fileInputRef,
     projectVisibility,
@@ -156,27 +157,30 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               >
                 <ThumbnailCol data-testid="projects-list-thumbnail-col" />
                 <ProjectNameCol data-testid="projects-list-name-col">
-                  <Typography size="body" color={theme.content.weak}>
+                  <Typography size="footnote" color={theme.content.weak}>
                     {t("Project Name")}
                   </Typography>
                 </ProjectNameCol>
-                {projectVisibility && (
-                  <VisibilityCol>
-                    <Typography size="body" color={theme.content.weak}>
-                      {t("Visibility")}
-                    </Typography>
-                  </VisibilityCol>
-                )}
-                <TimeCol data-testid="projects-list-updated-col">
-                  <Typography size="body" color={theme.content.weak}>
-                    {t("Updated At")}
+                <DataCol data-testid="projects-list-last-updated-by-col">
+                  <Typography size="footnote" color={theme.content.weak}>
+                    {t("Last updated by")}
                   </Typography>
-                </TimeCol>
-                <TimeCol data-testid="projects-list-created-col">
-                  <Typography size="body" color={theme.content.weak}>
-                    {t("Created At")}
+                </DataCol>
+                <DataCol data-testid="projects-list-updated-col">
+                  <Typography size="footnote" color={theme.content.weak}>
+                    {t("Last updated")}
                   </Typography>
-                </TimeCol>
+                </DataCol>
+                <DataCol data-testid="projects-list-created-by-col">
+                  <Typography size="footnote" color={theme.content.weak}>
+                    {t("Created by")}
+                  </Typography>
+                </DataCol>
+                <DataCol data-testid="projects-list-created-col">
+                  <Typography size="footnote" color={theme.content.weak}>
+                    {t("Created")}
+                  </Typography>
+                </DataCol>
                 <ActionCol data-testid="projects-list-action-col" />
               </ListHeader>
             )}
@@ -241,7 +245,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
       ) : (
         <ManagerEmptyContent data-testid="projects-empty-content">
           <Typography size="h5" color={theme.content.weak}>
-            {t("No Project has been created yet")}
+            {searchTerm || createdBy
+              ? t("No projects match your search")
+              : t("No Project has been created yet")}
           </Typography>
         </ManagerEmptyContent>
       )}
@@ -326,28 +332,25 @@ const ListHeader = styled("div")<{ width: number }>(({ width, theme }) => ({
 }));
 
 const ThumbnailCol = styled("div")(() => ({
-  width: 120,
+  width: 96,
   flexShrink: 0
 }));
 
 const ProjectNameCol = styled("div")(() => ({
   flex: 1,
-  flexShrink: 0
+  minWidth: 0
 }));
 
-const TimeCol = styled("div")(() => ({
-  flex: "0 0 15%",
-  flexShrink: 0
-}));
-
-const VisibilityCol = styled("div")(() => ({
-  flex: "0 0 15%",
-  flexShrink: 0
+// Column widths must stay in sync with ProjectListViewItem.
+const DataCol = styled("div")(({ theme }) => ({
+  flex: "0 0 12%",
+  minWidth: 0,
+  paddingRight: theme.spacing.small,
+  boxSizing: css.boxSizing.borderBox
 }));
 
 const ActionCol = styled("div")(() => ({
-  flex: "0 0 10%",
-  flexShrink: 0
+  flex: "0 0 40px"
 }));
 
 const LoadingWrapper = styled("div")(() => ({

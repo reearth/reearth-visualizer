@@ -3,3 +3,6 @@
 
 yarn --cwd web run type
 yarn --cwd web run lint-staged
+
+# Check i18n translation coverage
+cd web && ./scripts/check-i18n-coverage.sh

@@ -365,8 +365,9 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 		return err
 	}
 
-	// Delete project metadata
-	if err := d.ProjectMetadata.Remove(ctx, prj.ID()); err != nil {
+	// Delete project metadata. Projects created before metadata existed have
+	// none; failing here would roll back the whole delete.
+	if err := d.ProjectMetadata.Remove(ctx, prj.ID()); err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return err
 	}
 
