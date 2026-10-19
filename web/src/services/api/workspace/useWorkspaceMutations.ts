@@ -35,8 +35,9 @@ export const useWorkspaceMutations = () => {
       props: CreateWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Workspace>>> => {
       const { data, error } = await createWorkspaceMutation({
-        variables: props
-      });
+        variables: props,
+        errorPolicy: "all"
+      }).catch((e: Error) => ({ data: undefined, error: e }));
       if (error || !data?.createWorkspace) {
         console.log("GraphQL: Failed to create workspace", error);
         setNotification({

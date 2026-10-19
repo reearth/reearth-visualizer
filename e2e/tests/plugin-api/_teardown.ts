@@ -36,7 +36,7 @@ teardown("delete shared plugin project", async ({ request }) => {
   }
 
   try {
-    const client = createPluginClient(request);
+    const client = await createPluginClient(request);
     // page is not needed for teardown (only client.mutate is called)
     const fixture = new PluginFixturePage(null, client);
     await fixture.teardown(projectId);

@@ -90,7 +90,7 @@ type ProjectListParam struct {
 
 type Project interface {
 	Fetch(context.Context, []id.ProjectID, *usecase.Operator) ([]*project.Project, error)
-	FindByWorkspace(context.Context, accountsID.WorkspaceID, *string, *project.SortType, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
+	FindByWorkspace(context.Context, accountsID.WorkspaceID, *string, *project.SortType, *usecasex.Pagination, *accountsID.UserID, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
 	FindStarredByWorkspace(context.Context, accountsID.WorkspaceID, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
 	FindDeletedByWorkspace(context.Context, accountsID.WorkspaceID, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
 
