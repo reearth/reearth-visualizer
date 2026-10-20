@@ -221,10 +221,10 @@ func (s *Story) UpdatePublishmentStatus(status PublishmentStatus) {
 }
 
 func (s *Story) SetPublishedAt(now time.Time) {
-	s.publishedAt = &now
-	if s.firstPublishedAt == nil {
+	if s.firstPublishedAt == nil && s.publishedAt == nil {
 		s.firstPublishedAt = &now
 	}
+	s.publishedAt = &now
 }
 
 func (s *Story) SetPublicTitle(publicTitle string) {

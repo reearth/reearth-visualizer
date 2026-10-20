@@ -281,10 +281,10 @@ func (p *Project) UpdatePublishmentStatus(publishmentStatus PublishmentStatus) {
 }
 
 func (p *Project) SetPublishedAt(publishedAt time.Time) {
-	p.publishedAt = publishedAt
-	if p.firstPublishedAt == nil {
+	if p.firstPublishedAt == nil && p.publishedAt.IsZero() {
 		p.firstPublishedAt = &publishedAt
 	}
+	p.publishedAt = publishedAt
 }
 
 func (p *Project) UpdatePublicTitle(publicTitle string) {

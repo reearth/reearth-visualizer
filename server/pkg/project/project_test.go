@@ -390,3 +390,15 @@ func TestProject_SetPublishedAt_KeepsLoadedFirstPublishedAt(t *testing.T) {
 	p.SetPublishedAt(later)
 	assert.Equal(t, &first, p.FirstPublishedAt())
 }
+
+func TestProject_SetPublishedAt_DoesNotBackfillFirstPublishedAtForLegacyProject(t *testing.T) {
+	legacyPublishedAt := time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC)
+	republishedAt := time.Date(2026, 3, 1, 0, 0, 0, 0, time.UTC)
+
+	p := New().NewID().Workspace(accountsID.NewWorkspaceID()).PublishedAt(legacyPublishedAt).MustBuild()
+	assert.Nil(t, p.FirstPublishedAt())
+
+	p.SetPublishedAt(republishedAt)
+	assert.Equal(t, republishedAt, p.PublishedAt())
+	assert.Nil(t, p.FirstPublishedAt(), "a republish of a project published before firstPublishedAt existed must not fabricate a first-publish time")
+}
