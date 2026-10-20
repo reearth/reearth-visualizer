@@ -102,6 +102,7 @@ vi.mock("@reearth/services/api/workspace", () => ({
   useWorkspace: () => ({
     workspace: {
       members: [
+        { userId: "user-4", user: { id: "user-4", name: "Bob" } },
         { userId: "user-me", user: { id: "user-me", name: "Me" } },
         { userId: "user-2", user: { id: "user-2", name: "Alice" } },
         // A member whose user record could not be resolved has no name to
@@ -419,7 +420,7 @@ describe("dashboard project creator filter", () => {
     localStorage.clear();
   });
 
-  it("lists workspace members as creators, with a photo only for the signed-in user", () => {
+  it("lists workspace members as creators, signed-in user first, then by name", () => {
     const { result } = renderHook(() => useHooks("workspace-id"));
 
     expect(result.current.creatorOptions).toEqual([
@@ -428,8 +429,15 @@ describe("dashboard project creator filter", () => {
         name: "Me",
         avatarURL: "https://example.com/me.png"
       },
-      { id: "user-2", name: "Alice", avatarURL: undefined }
+      { id: "user-2", name: "Alice", avatarURL: undefined },
+      { id: "user-4", name: "Bob", avatarURL: undefined }
     ]);
+  });
+
+  it("reports a team workspace as not personal", () => {
+    const { result } = renderHook(() => useHooks("workspace-id"));
+
+    expect(result.current.isPersonalWorkspace).toBe(false);
   });
 
   it("queries projects by the selected creator and clears it again", () => {
