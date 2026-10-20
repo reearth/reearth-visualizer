@@ -31,6 +31,7 @@ var (
 
 type Container struct {
 	Asset           Asset
+	CMS             CMS
 	NLSLayer        NLSLayer
 	Plugin          Plugin
 	Policy          Policy

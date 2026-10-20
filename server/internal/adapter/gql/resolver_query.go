@@ -5,6 +5,7 @@ import (
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -228,4 +229,43 @@ func (r *queryResolver) WorkspacePolicyCheck(ctx context.Context, input gqlmodel
 		OverCustomDomainCount:          policy.OverCustomDomainCount,
 		DisableOperationByOverUsedSeat: policy.DisableOperationByOverUsedSeat,
 	}, nil
+}
+
+func (r *queryResolver) CmsProjects(ctx context.Context, workspaceID gqlmodel.ID, keyword *string, page *int, pageSize *int) (*gqlmodel.CMSProjectConnection, error) {
+	wid, err := gqlmodel.ToID[accountsID.Workspace](workspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).CMS.FindProjects(ctx, wid, keyword, interfaces.CMSPageParam{Page: page, PageSize: pageSize}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+	return gqlmodel.ToCMSProjectConnection(res), nil
+}
+
+func (r *queryResolver) CmsModels(ctx context.Context, workspaceID gqlmodel.ID, projectID gqlmodel.ID, page *int, pageSize *int) (*gqlmodel.CMSModelConnection, error) {
+	wid, err := gqlmodel.ToID[accountsID.Workspace](workspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).CMS.FindModels(ctx, wid, string(projectID), interfaces.CMSPageParam{Page: page, PageSize: pageSize}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+	return gqlmodel.ToCMSModelConnection(res), nil
+}
+
+func (r *queryResolver) CmsAssets(ctx context.Context, workspaceID gqlmodel.ID, projectID gqlmodel.ID, page *int, pageSize *int) (*gqlmodel.CMSAssetConnection, error) {
+	wid, err := gqlmodel.ToID[accountsID.Workspace](workspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).CMS.FindAssets(ctx, wid, string(projectID), interfaces.CMSPageParam{Page: page, PageSize: pageSize}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+	return gqlmodel.ToCMSAssetConnection(res), nil
 }
