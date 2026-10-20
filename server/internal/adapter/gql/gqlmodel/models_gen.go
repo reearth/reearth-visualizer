@@ -152,6 +152,56 @@ type AssetSort struct {
 	Direction SortDirection  `json:"direction"`
 }
 
+type CMSAsset struct {
+	ID                      ID        `json:"id"`
+	ProjectID               ID        `json:"projectId"`
+	Filename                string    `json:"filename"`
+	Size                    int64     `json:"size"`
+	PreviewType             *string   `json:"previewType,omitempty"`
+	URL                     string    `json:"url"`
+	ArchiveExtractionStatus *string   `json:"archiveExtractionStatus,omitempty"`
+	Public                  bool      `json:"public"`
+	CreatedAt               time.Time `json:"createdAt"`
+}
+
+type CMSAssetConnection struct {
+	Nodes      []*CMSAsset `json:"nodes"`
+	TotalCount int         `json:"totalCount"`
+}
+
+type CMSModel struct {
+	ID          ID        `json:"id"`
+	ProjectID   ID        `json:"projectId"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Key         string    `json:"key"`
+	PublicAPIEp string    `json:"publicApiEp"`
+	EditorURL   string    `json:"editorUrl"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+}
+
+type CMSModelConnection struct {
+	Nodes      []*CMSModel `json:"nodes"`
+	TotalCount int         `json:"totalCount"`
+}
+
+type CMSProject struct {
+	ID          ID        `json:"id"`
+	Name        string    `json:"name"`
+	Alias       string    `json:"alias"`
+	Description string    `json:"description"`
+	WorkspaceID ID        `json:"workspaceId"`
+	Public      bool      `json:"public"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+}
+
+type CMSProjectConnection struct {
+	Nodes      []*CMSProject `json:"nodes"`
+	TotalCount int           `json:"totalCount"`
+}
+
 type Camera struct {
 	Lat      float64 `json:"lat"`
 	Lng      float64 `json:"lng"`

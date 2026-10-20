@@ -120,6 +120,17 @@ type VisualizerConfig struct {
 	// Policy Checker Configuration
 	Policy        Policy              `pp:",omitempty"`
 	DomainChecker DomainCheckerConfig `pp:",omitempty"`
+
+	CMS CMSConfig `pp:",omitempty"`
+}
+
+// CMSConfig points at the Re:Earth CMS internal gRPC API. Leaving Endpoint
+// empty disables the CMS queries.
+type CMSConfig struct {
+	Endpoint string `pp:",omitempty"`
+	Token    string `pp:",omitempty"`
+	UseTLS   bool   `pp:",omitempty"`
+	Timeout  int    `default:"10" pp:",omitempty"`
 }
 
 type Policy struct {
@@ -199,7 +210,7 @@ func (c *Config) UseMockAuth() bool {
 }
 
 func (c *Config) secrets() []string {
-	s := []string{c.DB, c.Auth0.ClientSecret, c.Visualizer.PublishedGateway.Token, c.Visualizer.PublishedGateway.PreviousToken}
+	s := []string{c.DB, c.Auth0.ClientSecret, c.Visualizer.PublishedGateway.Token, c.Visualizer.PublishedGateway.PreviousToken, c.Visualizer.CMS.Token}
 	for _, ac := range c.DB_Users {
 		s = append(s, ac.URI)
 	}

@@ -60,6 +60,29 @@ func TestConfig_Print_MasksPublishedGatewayTokens(t *testing.T) {
 	assert.NotContains(t, s, "SENTINEL_PREVIOUS_TOKEN")
 }
 
+func TestReadConfig_CMS(t *testing.T) {
+	t.Setenv("SKIP_DOTENV", "true")
+
+	cfg, err := ReadConfig(false)
+	assert.NoError(t, err)
+	assert.Equal(t, CMSConfig{Timeout: 10}, cfg.Visualizer.CMS)
+
+	t.Setenv("REEARTH_VISUALIZER_CMS_ENDPOINT", "cms:50052")
+	t.Setenv("REEARTH_VISUALIZER_CMS_TOKEN", "token")
+	t.Setenv("REEARTH_VISUALIZER_CMS_USETLS", "true")
+	t.Setenv("REEARTH_VISUALIZER_CMS_TIMEOUT", "5")
+	cfg, err = ReadConfig(false)
+	assert.NoError(t, err)
+	assert.Equal(t, CMSConfig{Endpoint: "cms:50052", Token: "token", UseTLS: true, Timeout: 5}, cfg.Visualizer.CMS)
+}
+
+func TestConfig_Print_MasksCMSToken(t *testing.T) {
+	c := &Config{}
+	c.Visualizer.CMS.Token = "SENTINEL_CMS_TOKEN"
+
+	assert.NotContains(t, c.Print(), "SENTINEL_CMS_TOKEN")
+}
+
 func Test_AddHTTPScheme(t *testing.T) {
 	assert.Equal(t, "http://a", addHTTPScheme("a"))
 	assert.Equal(t, "http://a", addHTTPScheme("http://a"))

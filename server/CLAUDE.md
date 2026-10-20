@@ -193,6 +193,16 @@ The Internal API authentication is controlled by environment variables:
 - `REEARTH_VISUALIZER_INTERNALAPI_PORT`: Port for the gRPC server (default: 50051)  
 - `REEARTH_VISUALIZER_INTERNALAPI_TOKEN`: Authentication token for write operations
 
+### CMS Internal API Client
+
+The server can browse a workspace's Re:Earth CMS projects, models and assets (GraphQL `cmsProjects`, `cmsModels`, `cmsAssets`) through the CMS internal gRPC API (`internal/infrastructure/cms`). It is optional and configured with:
+- `REEARTH_VISUALIZER_CMS_ENDPOINT`: CMS internal gRPC address (`host:port`, e.g. `localhost:50052` locally). Empty disables the CMS queries, which then return `cms integration is not configured`
+- `REEARTH_VISUALIZER_CMS_TOKEN`: Service token sent as `authorization: Bearer <token>`; must match the CMS internal API token
+- `REEARTH_VISUALIZER_CMS_USETLS`: Use TLS for the connection (default: false)
+- `REEARTH_VISUALIZER_CMS_TIMEOUT`: Per-call timeout in seconds (default: 10)
+
+The acting user's ID is forwarded as `user-id` metadata so CMS applies that user's read access. When running CMS locally, serve its internal API on 50052; 50051 is used by the Visualizer internal API.
+
 ### Development Notes
 
 #### Method Name Format
