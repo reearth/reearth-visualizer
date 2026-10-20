@@ -422,6 +422,76 @@ func TestUploadSession_WriteChunk_RetryAfterBudgetRejectionLeavesNoGarbage(t *te
 	}
 }
 
+func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *testing.T) {
+	originalAggregate := maxAggregateBytes
+	maxAggregateBytes = 6
+	defer func() { maxAggregateBytes = originalAggregate }()
+
+	m := newTestManager(t)
+	t.Cleanup(func() {
+		for _, s := range m.sessions {
+			s.close()
+		}
+	})
+
+	first, err := m.getOrCreateSession("agg-1", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession(agg-1): %v", err)
+	}
+	if _, err := first.writeChunk(0, strings.NewReader("aaaa")); err != nil {
+		t.Fatalf("writeChunk on first session: %v", err)
+	}
+	if m.totalBytes != 4 {
+		t.Fatalf("totalBytes = %d, want 4 after first session's chunk", m.totalBytes)
+	}
+
+	second, err := m.getOrCreateSession("agg-2", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession(agg-2): %v", err)
+	}
+	_, err = second.writeChunk(0, strings.NewReader("bbbb"))
+	if err == nil {
+		t.Fatal("expected an error: this chunk would push the aggregate over maxAggregateBytes")
+	}
+	if !apperr.Expected(err) {
+		t.Errorf("expected an invalid-input error, got %v", err)
+	}
+	if m.totalBytes != 4 {
+		t.Errorf("totalBytes = %d, want 4 (rejected chunk must not be counted)", m.totalBytes)
+	}
+
+	m.cleanupSession("agg-1")
+	if m.totalBytes != 0 {
+		t.Fatalf("totalBytes = %d, want 0 after cleaning up the only session holding bytes", m.totalBytes)
+	}
+	if _, err := second.writeChunk(0, strings.NewReader("bbbb")); err != nil {
+		t.Fatalf("writeChunk on second session after budget freed: %v", err)
+	}
+	if m.totalBytes != 4 {
+		t.Errorf("totalBytes = %d, want 4 after second session's chunk succeeds", m.totalBytes)
+	}
+}
+
+func TestSplitUploadManager_WriteChunk_ReleasesUnusedReservationOnShortFinalChunk(t *testing.T) {
+	m := newTestManager(t)
+	t.Cleanup(func() {
+		for _, s := range m.sessions {
+			s.close()
+		}
+	})
+
+	session, err := m.getOrCreateSession("agg-short", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := session.writeChunk(0, strings.NewReader("cc")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+	if m.totalBytes != 2 {
+		t.Errorf("totalBytes = %d, want 2 (only the real bytes written, not the full chunk size reserved upfront)", m.totalBytes)
+	}
+}
+
 // TestSplitUploadManager_CleanupSession verifies that cleanupSession removes
 // the session from the map and deletes its backing file on disk.
 func TestSplitUploadManager_CleanupSession(t *testing.T) {
