@@ -43,7 +43,12 @@ export const useProjectImportExportMutations = () => {
     async (projectId: string) => {
       if (!projectId) return { status: "error" };
       if (exportingProjectIds.current.has(projectId)) {
-        return { status: "error" };
+        setNotification({
+          type: "info",
+          text: t("Export already in progress."),
+          duration: 5000
+        });
+        return { status: "in_progress" };
       }
       exportingProjectIds.current.add(projectId);
 

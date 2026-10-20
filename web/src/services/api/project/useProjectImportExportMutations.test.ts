@@ -4,6 +4,7 @@ import { expect, test, vi, beforeEach, describe } from "vitest";
 import { useProjectImportExportMutations } from "./useProjectImportExportMutations";
 
 const mutate = vi.fn();
+const setNotification = vi.fn();
 
 vi.mock("@apollo/client/react", () => ({
   useMutation: () => [mutate]
@@ -18,7 +19,7 @@ vi.mock("@reearth/services/i18n/hooks", () => ({
 }));
 
 vi.mock("@reearth/services/state", () => ({
-  useNotification: () => [undefined, vi.fn()]
+  useNotification: () => [undefined, setNotification]
 }));
 
 vi.mock("@reearth/services/restful/useRestful", () => ({
@@ -28,9 +29,10 @@ vi.mock("@reearth/services/restful/useRestful", () => ({
 describe("useProjectImportExportMutations.exportProject debounce", () => {
   beforeEach(() => {
     mutate.mockReset();
+    setNotification.mockReset();
   });
 
-  test("ignores a second export of the same project while the first is in flight", async () => {
+  test("ignores a second export of the same project while the first is in flight, and tells the user why", async () => {
     let resolveFirst: (value: unknown) => void = () => {};
     mutate.mockReturnValueOnce(
       new Promise((resolve) => {
@@ -41,13 +43,21 @@ describe("useProjectImportExportMutations.exportProject debounce", () => {
     const { result } = renderHook(() => useProjectImportExportMutations());
 
     let firstCall: Promise<unknown> = Promise.resolve();
+    let secondResult: { status: string } | undefined;
     await act(async () => {
       firstCall = result.current.exportProject("project-1");
       await Promise.resolve();
-      await result.current.exportProject("project-1");
+      secondResult = await result.current.exportProject("project-1");
     });
 
     expect(mutate).toHaveBeenCalledTimes(1);
+    expect(secondResult).toEqual({ status: "in_progress" });
+    expect(setNotification).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "info",
+        text: "Export already in progress."
+      })
+    );
 
     await act(async () => {
       resolveFirst({ data: null, error: new Error("boom") });
