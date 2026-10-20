@@ -88,6 +88,7 @@ Import: インポート
 Search project: プロジェクトを検索
 All projects: すべてのプロジェクト
 Search Result for: 検索結果
+Project Name: プロジェクト名
 Last updated by: 最終更新者
 Last updated: 最終更新日時
 Created: 作成日
@@ -454,7 +455,6 @@ README: リードミー
 License: ライセンス
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Basic settings: 基本設定
-Project Name: プロジェクト名
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
 Change project visibility: プロジェクトの公開範囲を変更
@@ -699,6 +699,7 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
+Export already in progress.: エクスポートは既に進行中です。
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
 Failed to upload the file.: ファイルのアップロードに失敗しました。
