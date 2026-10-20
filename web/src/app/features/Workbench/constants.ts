@@ -1,9 +1,12 @@
 import type { Layer } from "@reearth/core";
 
+/** The layer with features to click, so that infobox blocks can be seen. */
+export const INFOBOX_LAYER_ID = "workbench-sample-points";
+
 export const DEFAULT_WORKBENCH_LAYERS: Layer[] = [
   {
     type: "simple",
-    id: "workbench-sample-points",
+    id: INFOBOX_LAYER_ID,
     title: "Sample Points",
     visible: true,
     data: {
@@ -32,3 +35,5 @@ export const DEFAULT_WORKBENCH_LAYERS: Layer[] = [
     }
   }
 ];
+
+export const STORAGE_PREFIX = "reearth-workbench";

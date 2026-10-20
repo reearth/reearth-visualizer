@@ -4,10 +4,17 @@ import type {
 } from "@reearth/app/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
 import type { NLSLayer } from "@reearth/services/api/layer";
-import { useCallback, type ComponentType, type ReactNode, type JSX } from "react";
+import {
+  useCallback,
+  type ComponentType,
+  type ReactNode,
+  type JSX
+} from "react";
 
 import BlockWrapper from "../../../shared/components/BlockWrapper";
 import { StoryBlock } from "../types";
+
+import { HideableExtension } from "../../hiddenExtensions";
 
 import builtin, { isBuiltinStoryBlock } from "./builtin";
 
@@ -37,25 +44,30 @@ export default function StoryBlockComponent({
   return Builtin ? (
     <Builtin {...props} onRemove={onRemove ? handleRemove : undefined} />
   ) : props.block ? (
-    <BlockWrapper
-      {...props}
-      isPluginBlock
-      icon={props.block.extensionId}
-      name={props.block.name}
-      isEditable={props.isEditable}
-      isSelected={props.isSelected}
-      property={props.block.property}
-      propertyId={props.block.propertyId}
-      dragHandleClassName={props.dragHandleClassName}
-      propertyItemsForPluginBlock={props.block.propertyItemsForPluginBlock}
-      onRemove={onRemove ? handleRemove : undefined}
+    <HideableExtension
+      pluginId={props.block.pluginId}
+      extensionId={props.block.extensionId}
     >
-      {renderBlock?.({
-        block: props.block,
-        layer: props.layer,
-        onClick: props.onClick,
-        nlsLayers: props.nlsLayers
-      })}
-    </BlockWrapper>
+      <BlockWrapper
+        {...props}
+        isPluginBlock
+        icon={props.block.extensionId}
+        name={props.block.name}
+        isEditable={props.isEditable}
+        isSelected={props.isSelected}
+        property={props.block.property}
+        propertyId={props.block.propertyId}
+        dragHandleClassName={props.dragHandleClassName}
+        propertyItemsForPluginBlock={props.block.propertyItemsForPluginBlock}
+        onRemove={onRemove ? handleRemove : undefined}
+      >
+        {renderBlock?.({
+          block: props.block,
+          layer: props.layer,
+          onClick: props.onClick,
+          nlsLayers: props.nlsLayers
+        })}
+      </BlockWrapper>
+    </HideableExtension>
   ) : null;
 }

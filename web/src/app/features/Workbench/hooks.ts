@@ -1,231 +1,233 @@
 import type { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
-import type { Camera, MapRef } from "@reearth/app/features/Visualizer/Crust/types";
-import type { Layer } from "@reearth/core";
-import { useDevPluginExtensions } from "@reearth/services/state/devPlugins";
-import * as yaml from "js-yaml";
-import { useEffect, useMemo, useRef, useState } from "react";
-
-import { DEFAULT_WORKBENCH_LAYERS } from "./constants";
+import { hiddenExtensionKey } from "@reearth/app/features/Visualizer/Crust/hiddenExtensionKey";
 import type {
-  PluginExtension,
-  ReearthYML,
-  WorkbenchBlock,
-  WorkbenchStory,
-  WorkbenchWidgets
-} from "./types";
+  Camera,
+  MapRef
+} from "@reearth/app/features/Visualizer/Crust/types";
+import { useChangeLanguage, useLang } from "@reearth/services/i18n/hooks";
+import { useDevPluginExtensions } from "@reearth/services/state/devPlugins";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const isLocalhost = (hostname: string) =>
-  hostname === "localhost" ||
-  hostname === "127.0.0.1" ||
-  hostname === "::1" ||
-  hostname === "[::1]";
+import { buildBlocks, buildLayers, buildStory, buildWidgets } from "./build";
+import { DEFAULT_WORKBENCH_LAYERS, INFOBOX_LAYER_ID } from "./constants";
+import {
+  clearStoredValues,
+  hasStoredValues as hasStored,
+  setFieldValue
+} from "./properties";
+import { loadJson, saveJson } from "./storage";
+import type { FieldValue, FieldValues, PluginExtension } from "./types";
+import useDevPlugin, { getDevPluginUrl } from "./useDevPlugin";
 
-const isPluginExtension = (value: unknown): value is PluginExtension =>
-  typeof value === "object" &&
-  value !== null &&
-  typeof (value as PluginExtension).id === "string" &&
-  typeof (value as PluginExtension).type === "string";
-
-const parseManifest = (raw: unknown): ReearthYML | undefined => {
-  if (typeof raw !== "object" || raw === null) return;
-  const data = raw as Record<string, unknown>;
-  if (typeof data.id !== "string") return;
-  if (
-    data.extensions !== undefined &&
-    (!Array.isArray(data.extensions) ||
-      !data.extensions.every(isPluginExtension))
-  ) {
-    return;
-  }
-  return data as unknown as ReearthYML;
-};
-
-const buildWidgets = (
-  pluginId: string,
-  extensions: PluginExtension[]
-): NonNullable<WorkbenchWidgets> =>
-  extensions.reduce<NonNullable<WorkbenchWidgets>>(
-    (prv, cur) => {
-      if (cur.type !== "widget") return prv;
-      const { zone = "outer", section = "left", area = "top" } =
-        cur.widgetLayout?.defaultLocation ?? {};
-      const zoneAlignSystem = prv.alignSystem?.[zone] ?? {};
-      const sectionAlignSystem = zoneAlignSystem[section] ?? {};
-      const areaAlignSystem = sectionAlignSystem[area] ?? { widgets: [] };
-      return {
-        ...prv,
-        alignSystem: {
-          ...prv.alignSystem,
-          [zone]: {
-            ...zoneAlignSystem,
-            [section]: {
-              ...sectionAlignSystem,
-              [area]: {
-                ...areaAlignSystem,
-                widgets: [
-                  ...(areaAlignSystem.widgets ?? []),
-                  {
-                    id: `${pluginId}-${cur.id}`,
-                    name: cur.name,
-                    extensionId: cur.id,
-                    pluginId,
-                    property: {},
-                    extended: cur.widgetLayout?.extended ?? false
-                  }
-                ]
-              }
-            }
-          }
-        }
-      };
-    },
-    { alignSystem: {}, floating: [], ownBuiltinWidgets: [] }
-  );
-
-const buildBlocks = (
-  pluginId: string,
-  extensions: PluginExtension[],
-  type: "infoboxBlock" | "storyBlock"
-) =>
-  extensions
-    .filter((e) => e.type === type)
-    .map<WorkbenchBlock & { extensionType: typeof type }>((e) => ({
-      id: `${pluginId}-${e.id}`,
-      name: e.name ?? e.id,
-      description: e.description,
-      extensionId: e.id,
-      pluginId,
-      extensionType: type,
-      property: {},
-      propertyForPluginAPI: {}
-    }));
-
-const buildLayers = (infoboxBlocks: WorkbenchBlock[]): Layer[] =>
-  DEFAULT_WORKBENCH_LAYERS.map((layer) =>
-    infoboxBlocks.length > 0
-      ? {
-          ...layer,
-          infobox: {
-            id: layer.id,
-            blocks: infoboxBlocks,
-            property: { default: { enabled: { value: true } } }
-          }
-        }
-      : layer
-  ) as Layer[];
-
-const buildStory = (
-  pluginId: string,
-  extensions: PluginExtension[]
-): WorkbenchStory | undefined => {
-  const blocks = buildBlocks(pluginId, extensions, "storyBlock");
-  if (blocks.length === 0) return undefined;
-  return {
-    id: "story",
-    title: "Story",
-    position: "left",
-    bgColor: "#f0f0f0",
-    pages: [
-      {
-        id: "page",
-        blocks,
-        layerIds: DEFAULT_WORKBENCH_LAYERS.map((l) => l.id)
-      }
-    ]
-  } as WorkbenchStory;
-};
+const NO_EXTENSIONS: PluginExtension[] = [];
+const SIDEBAR_KEY = "sidebar";
 
 export default () => {
   const visualizerRef = useRef<MapRef>(null);
-  const [ready, setReady] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<Camera | undefined>();
-  const [manifest, setManifest] = useState<ReearthYML | undefined>();
+  const lang = useLang();
+  const changeLanguage = useChangeLanguage();
+
+  const devPluginUrl = useMemo(getDevPluginUrl, []);
+  const { manifest, error, extensionErrors, live, loading, loadedAt, reload } =
+    useDevPlugin(devPluginUrl);
+  const pluginId = manifest?.id;
+  const extensions = manifest?.extensions ?? NO_EXTENSIONS;
+
+  // Visualizer fetches each extension's .js from the URL it is given here. A
+  // new `v` on every load keeps the browser from serving an old copy, and makes
+  // Visualizer run the plugin again.
   const [, setDevPluginExtensions] = useDevPluginExtensions();
-
   useEffect(() => {
-    const devPluginUrl = new URLSearchParams(window.location.search).get(
-      "dev-plugin"
+    if (!devPluginUrl || !manifest || !loadedAt) return;
+    setDevPluginExtensions(
+      extensions.map((e) => ({
+        id: e.id,
+        url: `${devPluginUrl}/${e.id}.js?v=${loadedAt.getTime()}`
+      }))
     );
-    if (!devPluginUrl) return;
+  }, [devPluginUrl, manifest, extensions, loadedAt, setDevPluginExtensions]);
 
-    let url: URL;
-    try {
-      url = new URL(devPluginUrl);
-    } catch {
-      return;
-    }
-    if (!isLocalhost(url.hostname)) return;
+  // Property values, edited in the inspector and kept per plugin.
+  const [fieldValues, setFieldValues] = useState<FieldValues>({});
+  const valuesLoadedFor = useRef<string>(undefined);
+  useEffect(() => {
+    if (!pluginId) return;
+    setFieldValues(loadJson<FieldValues>(`values:${pluginId}`, {}));
+    valuesLoadedFor.current = pluginId;
+  }, [pluginId]);
+  useEffect(() => {
+    // Wait until the stored values are in, or they would be overwritten.
+    if (!pluginId || valuesLoadedFor.current !== pluginId) return;
+    saveJson(`values:${pluginId}`, fieldValues);
+  }, [pluginId, fieldValues]);
+  const updateFieldValue = useCallback(
+    (key: string, value: FieldValue) =>
+      setFieldValues((prev) => setFieldValue(prev, key, value)),
+    []
+  );
 
-    const load = async () => {
-      try {
-        const response = await fetch(`${devPluginUrl}/reearth.yml`);
-        if (!response.ok) return;
-        const data = parseManifest(yaml.load(await response.text()));
-        if (!data) return;
-        setManifest(data);
-        const extensions =
-          data.extensions?.map((e) => ({
-            id: e.id,
-            url: `${devPluginUrl}/${e.id}.js`
-          })) ?? [];
-        if (extensions.length > 0) setDevPluginExtensions(extensions);
-      } catch {
-        // Ignore load failures; the viewer still renders with default layers.
-      }
-    };
-    void load();
-  }, [setDevPluginExtensions]);
-
-  const extensions = useMemo(() => manifest?.extensions ?? [], [manifest]);
+  // Widgets and blocks hidden with their eye toggle. Hiding doesn't unmount
+  // them (that would dispose their plugin), it only styles them away.
+  const [hiddenIds, setHiddenIds] = useState<string[]>([]);
+  useEffect(() => setHiddenIds([]), [pluginId]);
+  const toggleHidden = useCallback((id: string) => {
+    setHiddenIds((prev) =>
+      prev.includes(id) ? prev.filter((h) => h !== id) : [...prev, id]
+    );
+  }, []);
+  const hiddenKeys = useMemo(
+    () => hiddenIds.map((id) => hiddenExtensionKey(pluginId, id)),
+    [hiddenIds, pluginId]
+  );
 
   const widgets = useMemo(
-    () => buildWidgets(manifest?.id ?? "", extensions),
-    [manifest, extensions]
+    () => buildWidgets(pluginId ?? "", extensions, fieldValues),
+    [pluginId, extensions, fieldValues]
   );
-
   const infoboxBlocks = useMemo(
-    () => buildBlocks(manifest?.id ?? "", extensions, "infoboxBlock"),
-    [manifest, extensions]
+    () => buildBlocks(pluginId ?? "", extensions, "infoboxBlock", fieldValues),
+    [pluginId, extensions, fieldValues]
   );
-
   const story = useMemo(
-    () => buildStory(manifest?.id ?? "", extensions),
-    [manifest, extensions]
+    () => buildStory(pluginId ?? "", extensions, fieldValues),
+    [pluginId, extensions, fieldValues]
   );
 
-  const layers = useMemo(() => buildLayers(infoboxBlocks), [infoboxBlocks]);
-
-  const engineMeta = useMemo(
-    () => ({
-      cesiumIonAccessToken: undefined
-    }),
-    []
-  );
-
-  const viewerProperty: ViewerProperty = useMemo(
-    () => ({
-      tiles: [
-        {
-          id: "default",
-          type: "open_street_map"
-        }
-      ]
-    }),
-    []
-  );
-
+  // The extension in the inspector; the first one when nothing is selected.
+  const [selectedId, setSelectedId] = useState<string>();
   useEffect(() => {
-    setReady(true);
+    if (!extensions.some((e) => e.id === selectedId)) {
+      setSelectedId(extensions[0]?.id);
+    }
+  }, [extensions, selectedId]);
+  const selectedExtension = extensions.find((e) => e.id === selectedId);
+
+  const resetFieldValues = useCallback(
+    (extension: PluginExtension) => {
+      if (!pluginId) return;
+      setFieldValues((prev) => clearStoredValues(extension, pluginId, prev));
+    },
+    [pluginId]
+  );
+  const hasFieldValues = useCallback(
+    (extension: PluginExtension) =>
+      !!pluginId && hasStored(extension, pluginId, fieldValues),
+    [pluginId, fieldValues]
+  );
+
+  const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
+    DEFAULT_WORKBENCH_LAYERS.filter((l) => l.visible).map((l) => l.id)
+  );
+  const layers = useMemo(
+    () => buildLayers(infoboxBlocks, visibleLayerIds),
+    [infoboxBlocks, visibleLayerIds]
+  );
+  const toggleLayer = useCallback(
+    (layerId: string) =>
+      setVisibleLayerIds((prev) =>
+        prev.includes(layerId)
+          ? prev.filter((id) => id !== layerId)
+          : [...prev, layerId]
+      ),
+    []
+  );
+  const flyToLayer = useCallback(
+    (layerId: string) => {
+      if (visibleLayerIds.includes(layerId)) {
+        visualizerRef.current?.engine.flyTo?.(layerId, { duration: 0 });
+      }
+    },
+    [visibleLayerIds]
+  );
+
+  // The infobox is open while a layer is selected (the API reports no feature
+  // for a selection it makes): by a click on the map, or from the inspector,
+  // which opens it on the first feature.
+  const [infoboxOpen, setInfoboxOpen] = useState(false);
+  const handleLayerSelect = useCallback(
+    (layerId: string | undefined) => setInfoboxOpen(!!layerId),
+    []
+  );
+  const openInfobox = useCallback(() => {
+    setVisibleLayerIds((prev) =>
+      prev.includes(INFOBOX_LAYER_ID) ? prev : [...prev, INFOBOX_LAYER_ID]
+    );
+    // A layer just turned on has no features until it loads.
+    const select = (tries: number) => {
+      const map = visualizerRef.current?.layers;
+      const featureId =
+        map?.findById?.(INFOBOX_LAYER_ID)?.computed?.features?.[0]?.id;
+      if (featureId) {
+        map?.selectFeature?.(INFOBOX_LAYER_ID, featureId);
+        setInfoboxOpen(true);
+      } else if (tries > 0) {
+        setTimeout(() => select(tries - 1), 200);
+      }
+    };
+    select(15);
   }, []);
 
+  const [sidebarOpen, setSidebarOpen] = useState(() =>
+    loadJson<boolean>(SIDEBAR_KEY, true)
+  );
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen((prev) => {
+      saveJson(SIDEBAR_KEY, !prev);
+      return !prev;
+    });
+  }, []);
+
+  const [mapLoading, setMapLoading] = useState(true);
+  const handleMapMount = useCallback(() => setMapLoading(false), []);
+
+  const engineMeta = useMemo(() => ({ cesiumIonAccessToken: undefined }), []);
+  const viewerProperty: ViewerProperty = useMemo(
+    () => ({ tiles: [{ id: "default", type: "open_street_map" }] }),
+    []
+  );
+
+  // The story panel shows while the plugin has story blocks. Hiding all of
+  // them leaves it empty rather than unmounting the blocks' plugins.
+  const showStoryPanel = !!story;
+
   return {
+    changeLanguage,
     currentCamera,
+    devPluginUrl,
     engineMeta,
+    error,
+    extensionErrors,
+    extensions,
+    fieldValues,
+    flyToLayer,
+    handleLayerSelect,
+    handleMapMount,
+    hasFieldValues,
+    hiddenIds,
+    hiddenKeys,
+    infoboxOpen,
+    lang,
     layers,
-    ready,
+    live,
+    loadedAt,
+    loading,
+    manifest,
+    mapLoading,
+    openInfobox,
+    reload,
+    resetFieldValues,
+    selectedExtension,
     setCurrentCamera,
-    showStoryPanel: !!story,
+    setSelectedId,
+    showStoryPanel,
+    sidebarOpen,
     story,
+    toggleHidden,
+    toggleLayer,
+    toggleSidebar,
+    updateFieldValue,
+    setFieldValues,
     viewerProperty,
     visualizerRef,
     widgets

@@ -4,9 +4,16 @@ import type {
   BlockProps
 } from "@reearth/app/features/Visualizer/shared/types";
 import type { ComputedFeature, Layer } from "@reearth/core";
-import { useCallback, type ComponentType, type ReactNode, memo, type JSX } from "react";
+import {
+  useCallback,
+  type ComponentType,
+  type ReactNode,
+  memo,
+  type JSX
+} from "react";
 // import { styled } from "@reearth/services/theme";
 
+import { HideableExtension } from "../../hiddenExtensions";
 import { InfoboxBlock } from "../types";
 
 import builtin, { isBuiltinInfoboxBlock } from "./builtin";
@@ -43,24 +50,29 @@ const InfoboxBlockComponent = ({
       selectedFeature={selectedFeature}
     />
   ) : props.block ? (
-    <BlockWrapper
-      {...props}
-      minHeight={120}
-      isPluginBlock
-      name={props.block.name}
-      isEditable={props.isEditable}
-      isSelected={props.isSelected}
-      property={props.block.property}
-      propertyId={props.block.propertyId}
-      propertyItemsForPluginBlock={props.block.propertyItemsForPluginBlock}
-      onRemove={onRemove ? handleRemove : undefined}
+    <HideableExtension
+      pluginId={props.block.pluginId}
+      extensionId={props.block.extensionId}
     >
-      {renderBlock?.({
-        block: props.block,
-        layer: props.layer,
-        onClick: props.onClick
-      })}
-    </BlockWrapper>
+      <BlockWrapper
+        {...props}
+        minHeight={120}
+        isPluginBlock
+        name={props.block.name}
+        isEditable={props.isEditable}
+        isSelected={props.isSelected}
+        property={props.block.property}
+        propertyId={props.block.propertyId}
+        propertyItemsForPluginBlock={props.block.propertyItemsForPluginBlock}
+        onRemove={onRemove ? handleRemove : undefined}
+      >
+        {renderBlock?.({
+          block: props.block,
+          layer: props.layer,
+          onClick: props.onClick
+        })}
+      </BlockWrapper>
+    </HideableExtension>
   ) : null;
 };
 

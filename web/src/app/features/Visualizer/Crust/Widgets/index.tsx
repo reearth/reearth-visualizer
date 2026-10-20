@@ -1,5 +1,7 @@
 import { Fragment, ReactNode, useCallback, type JSX } from "react";
 
+import { HideableExtension } from "../hiddenExtensions";
+
 import type {
   InternalWidget,
   Theme,
@@ -102,29 +104,34 @@ export default function Widgets({
 
   const renderWidgetInternal = useCallback(
     ({ editing, extended, layout, widget, onExtend }: WasWidgetProps) => (
-      <WidgetComponent
-        widget={widget}
-        editing={editing}
-        extended={extended}
-        layout={layout}
-        theme={theme}
-        isEditable={isEditable}
-        inEditor={inEditor}
-        isBuilt={isBuilt}
-        isMobile={isMobile}
-        context={context}
-        renderWidget={(widget2) =>
-          renderWidget?.({
-            widget: widget2,
-            editing,
-            extended,
-            layout,
-            onExtend,
-            onVisibilityChange: onPluginWidgetVisibilityChange
-          })
-        }
-        onExtend={onExtend}
-      />
+      <HideableExtension
+        pluginId={widget.pluginId}
+        extensionId={widget.extensionId}
+      >
+        <WidgetComponent
+          widget={widget}
+          editing={editing}
+          extended={extended}
+          layout={layout}
+          theme={theme}
+          isEditable={isEditable}
+          inEditor={inEditor}
+          isBuilt={isBuilt}
+          isMobile={isMobile}
+          context={context}
+          renderWidget={(widget2) =>
+            renderWidget?.({
+              widget: widget2,
+              editing,
+              extended,
+              layout,
+              onExtend,
+              onVisibilityChange: onPluginWidgetVisibilityChange
+            })
+          }
+          onExtend={onExtend}
+        />
+      </HideableExtension>
     ),
     [
       theme,
