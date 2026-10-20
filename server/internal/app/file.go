@@ -107,7 +107,8 @@ func shouldForceAttachment(contentType string) bool {
 		mediaType = contentType
 	}
 	switch mediaType {
-	case "text/html", "text/xml", "application/xml", "image/svg+xml", "application/xhtml+xml", "application/octet-stream":
+	case "text/html", "text/xml", "application/xml", "image/svg+xml", "application/xhtml+xml", "application/octet-stream",
+		"application/javascript", "text/javascript", "application/x-javascript", "application/pdf":
 		return true
 	default:
 		return false

@@ -122,6 +122,26 @@ func TestServeFiles_AssetHardening(t *testing.T) {
 		assert.Equal(t, "attachment", rec.Header().Get("Content-Disposition"))
 	})
 
+	t.Run("js asset gets nosniff and attachment", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/assets/x.js", nil)
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "nosniff", rec.Header().Get("X-Content-Type-Options"))
+		assert.Equal(t, "attachment", rec.Header().Get("Content-Disposition"))
+	})
+
+	t.Run("pdf asset gets nosniff and attachment", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/assets/x.pdf", nil)
+		rec := httptest.NewRecorder()
+		e.ServeHTTP(rec, req)
+
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "nosniff", rec.Header().Get("X-Content-Type-Options"))
+		assert.Equal(t, "attachment", rec.Header().Get("Content-Disposition"))
+	})
+
 	t.Run("image asset gets nosniff but not forced attachment", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/assets/x.png", nil)
 		rec := httptest.NewRecorder()
