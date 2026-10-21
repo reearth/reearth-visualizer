@@ -152,6 +152,15 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 	// new (oldpid == nil): upload files, save plugin and properties -> install
 	// same (oldpid.Equal(newpid)): delete old files -> upload files, save plugin and property schemas -> migrate
 	// diff (!oldpid.Equal(newpid)): upload files, save plugin and property schemas -> migrate -> delete old files
+	//
+	// Known issue (REL-07, eukarya-inc/compliance#176): the same-version delete below isn't
+	// covered by the Mongo transaction, so if the upload that follows fails partway, the old
+	// files are already gone and the plugin ends up with none. We're not fixing this with a
+	// simple reorder because uploading new files first (same plugin ID = same storage prefix)
+	// would leave old and new files mixed on a failure instead, which isn't acceptable either.
+	// The real fix needs a staged-prefix-plus-pointer-flip design (write new files under a
+	// fresh revisioned path, flip over once upload succeeds, then clean up the old path) and
+	// is planned as a follow-up rather than done here.
 
 	if oldpid != nil && oldpid.Equal(newpid) {
 		// same only: delete old files

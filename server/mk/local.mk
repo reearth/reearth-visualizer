@@ -22,7 +22,7 @@ dev-install:
 			echo "$$bin is not installed. Installing..."; \
 			case $$bin in \
 				air) go install github.com/air-verse/air@v1.61.5 ;; \
-				stringer) go install golang.org/x/tools/cmd/stringer@v0.39.0 ;; \
+				stringer) go install golang.org/x/tools/cmd/stringer@v0.52.0 ;; \
 				schematyper) go install github.com/idubinskiy/schematyper ;; \
 				deep-copy) go install github.com/globusdigital/deep-copy@v0.5.5-0.20251122193020-7cda106f7b4b ;; \
 			esac; \
