@@ -5,7 +5,10 @@ import type {
   MapRef
 } from "@reearth/app/features/Visualizer/Crust/types";
 import { useChangeLanguage, useLang } from "@reearth/services/i18n/hooks";
-import { useDevPluginExtensions } from "@reearth/services/state/devPlugins";
+import {
+  useDevPluginExtensionRenderKey,
+  useDevPluginExtensions
+} from "@reearth/services/state/devPlugins";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { buildBlocks, buildLayers, buildStory, buildWidgets } from "./build";
@@ -29,24 +32,44 @@ export default () => {
   const changeLanguage = useChangeLanguage();
 
   const devPluginUrl = useMemo(getDevPluginUrl, []);
-  const { manifest, error, extensionErrors, live, loading, loadedAt, reload } =
-    useDevPlugin(devPluginUrl);
+  const {
+    manifest,
+    error,
+    extensionErrors,
+    live,
+    loading,
+    loadedAt,
+    loadRevision,
+    reload
+  } = useDevPlugin(devPluginUrl);
   const pluginId = manifest?.id;
   const extensions = manifest?.extensions ?? NO_EXTENSIONS;
 
-  // Visualizer fetches each extension's .js from the URL it is given here. A
-  // new `v` on every load keeps the browser from serving an old copy, and makes
-  // Visualizer run the plugin again.
+  // Visualizer fetches each extension's .js from the URL it is given here.
+  // The load time keeps URLs fresh across page visits, and the revision also
+  // distinguishes reloads within one millisecond. The render key restarts
+  // Zushi even when a manual reload fetches identical code.
   const [, setDevPluginExtensions] = useDevPluginExtensions();
+  const [, updateDevPluginExtensionRenderKey] =
+    useDevPluginExtensionRenderKey();
   useEffect(() => {
-    if (!devPluginUrl || !manifest || !loadedAt) return;
+    if (!devPluginUrl || !manifest || !loadedAt || !loadRevision) return;
     setDevPluginExtensions(
       extensions.map((e) => ({
         id: e.id,
-        url: `${devPluginUrl}/${e.id}.js?v=${loadedAt.getTime()}`
+        url: `${devPluginUrl}/${e.id}.js?v=${loadedAt.getTime()}-${loadRevision}`
       }))
     );
-  }, [devPluginUrl, manifest, extensions, loadedAt, setDevPluginExtensions]);
+    updateDevPluginExtensionRenderKey((previous) => previous + 1);
+  }, [
+    devPluginUrl,
+    manifest,
+    extensions,
+    loadedAt,
+    loadRevision,
+    setDevPluginExtensions,
+    updateDevPluginExtensionRenderKey
+  ]);
 
   // Property values, edited in the inspector and kept per plugin.
   const [fieldValues, setFieldValues] = useState<FieldValues>({});
@@ -67,8 +90,8 @@ export default () => {
     []
   );
 
-  // Widgets and blocks hidden with their eye toggle. Hiding doesn't unmount
-  // them (that would dispose their plugin), it only styles them away.
+  // Widgets and blocks hidden with their eye toggle. Individual hidden
+  // extensions stay mounted while their parent panel remains visible.
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
   useEffect(() => setHiddenIds([]), [pluginId]);
   const toggleHidden = useCallback((id: string) => {
@@ -187,9 +210,11 @@ export default () => {
     []
   );
 
-  // The story panel shows while the plugin has story blocks. Hiding all of
-  // them leaves it empty rather than unmounting the blocks' plugins.
-  const showStoryPanel = !!story;
+  // Follow the visibility of story blocks, including when the last one is hidden.
+  const showStoryPanel = extensions.some(
+    (extension) =>
+      extension.type === "storyBlock" && !hiddenIds.includes(extension.id)
+  );
 
   return {
     changeLanguage,

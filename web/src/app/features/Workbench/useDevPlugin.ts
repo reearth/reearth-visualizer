@@ -43,6 +43,8 @@ export type DevPluginState = {
   loading: boolean;
   /** When the plugin last loaded; changes with every successful load. */
   loadedAt?: Date;
+  /** Increases on every successful load, including two loads in one millisecond. */
+  loadRevision: number;
   reload: () => Promise<void>;
 };
 
@@ -50,7 +52,7 @@ class HttpError extends Error {}
 
 /**
  * Checks a plugin served by a local dev server such as
- * `reearth visualizer plugin dev`:
+ * `reearth vis plugin dev`:
  *
  * - `GET <url>/reearth.yml`: the manifest
  * - `GET <url>/<extensionId>.js`: one per extension, checked here and run by
@@ -68,7 +70,9 @@ export default (url: string | undefined): DevPluginState => {
   const [live, setLive] = useState(false);
   const [loading, setLoading] = useState(!!url);
   const [loadedAt, setLoadedAt] = useState<Date>();
+  const [loadRevision, setLoadRevision] = useState(0);
   const generation = useRef(0);
+  const lastLoadFailed = useRef(false);
 
   const load = useCallback(async () => {
     if (!url) return;
@@ -115,33 +119,50 @@ export default (url: string | undefined): DevPluginState => {
 
     // A newer load started meanwhile; drop this result.
     if (current !== generation.current) return;
+    lastLoadFailed.current = !!nextError;
     if (next) {
       setManifest(next);
       setExtensionErrors(nextExtensionErrors);
       setLoadedAt(new Date());
+      setLoadRevision((previous) => previous + 1);
     }
     setError(nextError);
     setLoading(false);
   }, [url]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
-
-  useEffect(() => {
     if (!url) return;
+    let active = true;
+    let connected = false;
+    let initialLoadSettled = false;
+    lastLoadFailed.current = false;
+    void load().then(() => {
+      initialLoadSettled = true;
+      // The stream may have opened while the first manifest request failed.
+      if (active && connected && lastLoadFailed.current) void load();
+    });
+
     const events = new EventSource(`${url}/events`);
     // EventSource reconnects by itself; a reconnect means the server is back,
     // possibly with changes made while it was down.
     let opened = false;
     events.addEventListener("open", () => {
+      connected = true;
       setLive(true);
-      if (opened) void load();
+      if (opened || (initialLoadSettled && lastLoadFailed.current)) {
+        void load();
+      }
       opened = true;
     });
-    events.addEventListener("error", () => setLive(false));
+    events.addEventListener("error", () => {
+      connected = false;
+      setLive(false);
+    });
     events.addEventListener("change", () => void load());
-    return () => events.close();
+    return () => {
+      active = false;
+      events.close();
+    };
   }, [url, load]);
 
   return {
@@ -151,6 +172,7 @@ export default (url: string | undefined): DevPluginState => {
     live,
     loading,
     loadedAt,
+    loadRevision,
     reload: load
   };
 };

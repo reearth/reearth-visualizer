@@ -15,9 +15,9 @@ import { DEV_PLUGIN_PARAM, DevPluginError } from "./useDevPlugin";
 // What the map area shows instead of, or on top of, the map: how to connect a
 // plugin, why it couldn't load, problems with the running plugin, and loading.
 
-// `reearth visualizer plugin dev` serves the plugin here by default.
+// `reearth vis plugin dev` serves the plugin here by default.
 const DEFAULT_PLUGIN_URL = "http://localhost:5180/plugin";
-const DEV_COMMAND = "reearth visualizer plugin dev";
+const DEV_COMMAND = "reearth vis plugin dev";
 
 const openWithPlugin = (url: string) => {
   const params = new URLSearchParams(window.location.search);

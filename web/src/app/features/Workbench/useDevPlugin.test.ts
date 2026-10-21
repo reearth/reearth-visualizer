@@ -84,7 +84,20 @@ describe("useDevPlugin", () => {
     expect(result.current.error).toBeUndefined();
     expect(result.current.extensionErrors).toEqual({});
     expect(result.current.loadedAt).toBeInstanceOf(Date);
+    expect(result.current.loadRevision).toBe(1);
     expect(FakeEventSource.last?.url).toBe(`${BASE}/events`);
+  });
+
+  it("assigns a new revision to every successful manual reload", async () => {
+    const { result } = renderHook(() => useDevPlugin(BASE));
+    await waitFor(() => expect(result.current.loadRevision).toBe(1));
+
+    await act(async () => {
+      await result.current.reload();
+      await result.current.reload();
+    });
+
+    expect(result.current.loadRevision).toBe(3);
   });
 
   it("reports a missing .js and keeps the rest", async () => {
@@ -111,6 +124,32 @@ describe("useDevPlugin", () => {
     });
   });
 
+  it("retries when the stream first connects after the initial load failed", async () => {
+    vi.mocked(fetch).mockRejectedValueOnce(new TypeError("Failed to fetch"));
+    const { result } = renderHook(() => useDevPlugin(BASE));
+    await waitFor(() => expect(result.current.error?.kind).toBe("unreachable"));
+
+    act(() => FakeEventSource.last?.emit("open"));
+    await waitFor(() => expect(result.current.manifest?.id).toBe("demo"));
+    expect(result.current.error).toBeUndefined();
+  });
+
+  it("retries when the stream opens before the initial load fails", async () => {
+    let rejectFirst: (reason?: unknown) => void = () => {};
+    vi.mocked(fetch).mockImplementationOnce(
+      () =>
+        new Promise<Response>((_, reject) => {
+          rejectFirst = reject;
+        })
+    );
+    const { result } = renderHook(() => useDevPlugin(BASE));
+
+    act(() => FakeEventSource.last?.emit("open"));
+    await act(async () => rejectFirst(new TypeError("Failed to fetch")));
+    await waitFor(() => expect(result.current.manifest?.id).toBe("demo"));
+    expect(result.current.error).toBeUndefined();
+  });
+
   it("keeps the last manifest when reearth.yml breaks", async () => {
     const { result } = renderHook(() => useDevPlugin(BASE));
     await waitFor(() => expect(result.current.manifest?.id).toBe("demo"));
@@ -129,8 +168,10 @@ describe("useDevPlugin", () => {
     const { result } = renderHook(() => useDevPlugin(BASE));
     await waitFor(() => expect(result.current.loading).toBe(false));
 
+    const initialRequests = vi.mocked(fetch).mock.calls.length;
     act(() => FakeEventSource.last?.emit("open"));
     expect(result.current.live).toBe(true);
+    expect(fetch).toHaveBeenCalledTimes(initialRequests);
 
     const first = result.current.loadedAt;
     await new Promise((r) => setTimeout(r, 5));

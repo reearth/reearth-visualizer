@@ -43,7 +43,7 @@ const LayersPopover: FC<Props> = ({ layers, onToggle, onFlyTo }) => {
                   onClick={() => onToggle(layer.id)}
                 />
               ),
-              keepVisible: !layer.visible
+              keepVisible: true
             }
           ]}
         />

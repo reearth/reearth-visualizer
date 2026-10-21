@@ -32,7 +32,8 @@ export const DEFAULT_WORKBENCH_LAYERS: Layer[] = [
           }
         ]
       }
-    }
+    },
+    marker: { heightReference: "clamp" }
   }
 ];
 

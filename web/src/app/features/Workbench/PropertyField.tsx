@@ -140,7 +140,7 @@ const PropertyField: FC<Props> = ({ field, value, onChange }) => {
         <TwinInputField
           {...common}
           values={[v?.lat ?? 0, v?.lng ?? 0]}
-          onBlur={handleChange}
+          onBlur={([lat, lng]) => handleChange({ lat, lng })}
         />
       );
     }
