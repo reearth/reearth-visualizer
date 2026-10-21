@@ -78,4 +78,52 @@ describe("Popup Component", () => {
 
     expect(screen.getByText("Action")).toBeInTheDocument();
   });
+
+  test("keeps a focused parent popup accessible when a child popup opens", () => {
+    render(
+      <Popup trigger={<button>Settings</button>}>
+        <Popup trigger={<button>Language</button>}>
+          <button>English</button>
+        </Popup>
+      </Popup>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+    const language = screen.getByRole("button", { name: "Language" });
+    language.focus();
+    fireEvent.click(language);
+
+    expect(screen.getByRole("button", { name: "English" })).toBeInTheDocument();
+    expect(language).toHaveFocus();
+    expect(language.closest('[role="menu"]')).not.toHaveAttribute(
+      "aria-hidden",
+      "true"
+    );
+  });
+
+  test("keeps a focused button accessible while its tooltip is open", () => {
+    render(
+      <Popup trigger={<button>Layers</button>}>
+        <Popup
+          trigger={<button>Hide layer</button>}
+          triggerOnHover
+          tooltip
+          open
+        >
+          Hide layer
+        </Popup>
+      </Popup>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Layers" }));
+    const eye = screen.getByRole("button", { name: "Hide layer" });
+    eye.focus();
+
+    expect(screen.getByRole("tooltip")).toBeInTheDocument();
+    expect(eye).toHaveFocus();
+    expect(eye.closest('[role="menu"]')).not.toHaveAttribute(
+      "aria-hidden",
+      "true"
+    );
+  });
 });
