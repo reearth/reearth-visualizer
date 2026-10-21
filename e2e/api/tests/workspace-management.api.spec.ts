@@ -19,9 +19,6 @@ import {
 
 import { generateFakeId } from "./test-helpers";
 
-const uniqueWorkspaceAlias = () =>
-  `e2e-${faker.string.alphanumeric({ length: 10, casing: "lower" })}`;
-
 test.describe.configure({ mode: "serial" });
 
 test.describe("Workspace CRUD lifecycle via API", () => {
@@ -58,7 +55,7 @@ test.describe("Workspace CRUD lifecycle via API", () => {
         };
       };
     }>(CREATE_WORKSPACE, {
-      input: { name: workspaceName, alias: uniqueWorkspaceAlias() }
+      input: { name: workspaceName }
     });
 
     expect(status).toBe(200);
@@ -188,8 +185,7 @@ test.describe("Workspace negative scenarios via API", () => {
       createWorkspace: { workspace: { id: string } };
     }>(CREATE_WORKSPACE, {
       input: {
-        name: `Neg Test ${faker.string.alphanumeric(6)}`,
-        alias: uniqueWorkspaceAlias()
+        name: `Neg Test ${faker.string.alphanumeric(6)}`
       }
     });
     const wsId = wsData.createWorkspace.workspace.id;
@@ -229,8 +225,7 @@ test.describe("Workspace negative scenarios via API", () => {
       createWorkspace: { workspace: { id: string } };
     }>(CREATE_WORKSPACE, {
       input: {
-        name: `Neg Owner ${faker.string.alphanumeric(6)}`,
-        alias: uniqueWorkspaceAlias()
+        name: `Neg Owner ${faker.string.alphanumeric(6)}`
       }
     });
     const wsId = wsData.createWorkspace.workspace.id;
@@ -296,8 +291,7 @@ test.describe("Workspace member management via API", () => {
       createWorkspace: { workspace: { id: string } };
     }>(CREATE_WORKSPACE, {
       input: {
-        name: `Member Test ${faker.string.alphanumeric(6)}`,
-        alias: uniqueWorkspaceAlias()
+        name: `Member Test ${faker.string.alphanumeric(6)}`
       }
     });
     expect(wsStatus).toBe(200);
