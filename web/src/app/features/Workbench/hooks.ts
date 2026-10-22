@@ -25,6 +25,33 @@ import useDevPlugin, { getDevPluginUrl } from "./useDevPlugin";
 const NO_EXTENSIONS: PluginExtension[] = [];
 const SIDEBAR_KEY = "sidebar";
 
+type BBox = [number, number, number, number];
+
+const collectPositions = (coords: unknown, out: number[][]) => {
+  if (!Array.isArray(coords)) return;
+  if (typeof coords[0] === "number") out.push(coords as number[]);
+  else coords.forEach((c) => collectPositions(c, out));
+};
+
+/** [west, south, east, north] of the features' geometries. */
+const layerBBox = (
+  features: { geometry?: { coordinates?: unknown } }[] | undefined
+): BBox | undefined => {
+  const positions: number[][] = [];
+  features?.forEach((f) =>
+    collectPositions(f.geometry?.coordinates, positions)
+  );
+  if (positions.length === 0) return undefined;
+  const lngs = positions.map((p) => p[0]);
+  const lats = positions.map((p) => p[1]);
+  return [
+    Math.min(...lngs),
+    Math.min(...lats),
+    Math.max(...lngs),
+    Math.max(...lats)
+  ];
+};
+
 export default () => {
   const visualizerRef = useRef<MapRef>(null);
   const [currentCamera, setCurrentCamera] = useState<Camera | undefined>();
@@ -158,7 +185,14 @@ export default () => {
   const flyToLayer = useCallback(
     (layerId: string) => {
       if (visibleLayerIds.includes(layerId)) {
-        visualizerRef.current?.engine.flyTo?.(layerId, { duration: 0 });
+        const map = visualizerRef.current;
+        const bbox = layerBBox(
+          map?.layers.findById?.(layerId)?.computed?.features
+        );
+        // The engine can't resolve a GeoJSON layer id on its own, so fly to
+        // the bounds of its features.
+        if (bbox) map?.engine.flyToBBox?.(bbox, { duration: 0 });
+        else map?.engine.flyTo?.(layerId, { duration: 0 });
       }
     },
     [visibleLayerIds]
