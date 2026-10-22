@@ -51,7 +51,10 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongo:
-        image: mongo:8
+        # Matches prod Atlas (terraform/reearth/prod: mongo_db_major_version 7.0).
+        # MongoDB 8.x refuses to start on the runners' Linux 6.19-7.0.13 kernel
+        # (SERVER-121912, SERVER-125742), so move CI to 8 together with prod.
+        image: mongo:7.0
         ports:
           - 27017:27017
     steps:
@@ -74,7 +77,9 @@ jobs:
           go-version-file: server/go.mod
           cache-dependency-path: server/go.sum
       - name: test
-        run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+        # -count=1: these tests use the Mongo service, so never take their
+        # results from the restored Go test cache.
+        run: go test ./... -count=1 -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
         env:
           REEARTH_DB: mongodb://localhost
         working-directory: server

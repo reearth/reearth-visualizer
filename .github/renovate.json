@@ -16,6 +16,14 @@
       "matchUpdateTypes": ["major"],
       "groupName": "{{depName}} (major)",
       "groupSlug": "{{depNameSanitized}}-major"
+    },
+    {
+      "description": "CI's Mongo matches prod Atlas; upgrade its major version together with prod",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["mongo"],
+      "matchFileNames": [".github/workflows/**"],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
     }
   ]
 }
