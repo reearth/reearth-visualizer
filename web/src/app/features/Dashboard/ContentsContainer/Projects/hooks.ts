@@ -54,8 +54,13 @@ export default (workspaceId?: string) => {
   const { me } = useMe();
   const { workspace } = useWorkspace(workspaceId);
 
+  // A personal workspace only has its owner as a member, so filtering by
+  // creator there would always match the unfiltered list.
+  const isPersonalWorkspace = !!workspace?.personal;
+
   // Only the signed-in user's photo is available on the client, so other
-  // members fall back to their initial.
+  // members fall back to their initial. The signed-in user comes first and
+  // everyone else follows by name.
   const creatorOptions = useMemo<CreatorOption[]>(
     () =>
       (workspace?.members ?? [])
@@ -67,7 +72,12 @@ export default (workspaceId?: string) => {
             m.userId === me.id
               ? (me.metadata?.photoURL ?? undefined)
               : undefined
-        })),
+        }))
+        .sort((a, b) => {
+          if (a.id === me.id) return -1;
+          if (b.id === me.id) return 1;
+          return a.name.localeCompare(b.name);
+        }),
     [workspace?.members, me.id, me.metadata?.photoURL]
   );
 
@@ -369,6 +379,7 @@ export default (workspaceId?: string) => {
     sortValue,
     createdBy,
     creatorOptions,
+    isPersonalWorkspace,
     contentWidth,
     starredProjects,
     starredWrapperRef,
