@@ -11,6 +11,7 @@ import {
 } from "@reearth/services/state/devPlugins";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { layerBBox } from "./bbox";
 import { buildBlocks, buildLayers, buildStory, buildWidgets } from "./build";
 import { DEFAULT_WORKBENCH_LAYERS, INFOBOX_LAYER_ID } from "./constants";
 import {
@@ -24,30 +25,6 @@ import useDevPlugin, { getDevPluginUrl } from "./useDevPlugin";
 
 const NO_EXTENSIONS: PluginExtension[] = [];
 const SIDEBAR_KEY = "sidebar";
-
-type BBox = [number, number, number, number];
-
-/** Widens the bounds with every position found in a GeoJSON coordinates tree. */
-const extendBBox = (coords: unknown, bbox: BBox): void => {
-  if (!Array.isArray(coords)) return;
-  if (typeof coords[0] === "number" && typeof coords[1] === "number") {
-    bbox[0] = Math.min(bbox[0], coords[0]);
-    bbox[1] = Math.min(bbox[1], coords[1]);
-    bbox[2] = Math.max(bbox[2], coords[0]);
-    bbox[3] = Math.max(bbox[3], coords[1]);
-    return;
-  }
-  coords.forEach((c) => extendBBox(c, bbox));
-};
-
-/** [west, south, east, north] of the features' geometries. */
-const layerBBox = (
-  features: { geometry?: { coordinates?: unknown } }[] | undefined
-): BBox | undefined => {
-  const bbox: BBox = [Infinity, Infinity, -Infinity, -Infinity];
-  features?.forEach((f) => extendBBox(f.geometry?.coordinates, bbox));
-  return Number.isFinite(bbox[0]) ? bbox : undefined;
-};
 
 export default () => {
   const visualizerRef = useRef<MapRef>(null);
