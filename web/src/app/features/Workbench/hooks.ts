@@ -27,29 +27,26 @@ const SIDEBAR_KEY = "sidebar";
 
 type BBox = [number, number, number, number];
 
-const collectPositions = (coords: unknown, out: number[][]) => {
+/** Widens the bounds with every position found in a GeoJSON coordinates tree. */
+const extendBBox = (coords: unknown, bbox: BBox): void => {
   if (!Array.isArray(coords)) return;
-  if (typeof coords[0] === "number") out.push(coords as number[]);
-  else coords.forEach((c) => collectPositions(c, out));
+  if (typeof coords[0] === "number" && typeof coords[1] === "number") {
+    bbox[0] = Math.min(bbox[0], coords[0]);
+    bbox[1] = Math.min(bbox[1], coords[1]);
+    bbox[2] = Math.max(bbox[2], coords[0]);
+    bbox[3] = Math.max(bbox[3], coords[1]);
+    return;
+  }
+  coords.forEach((c) => extendBBox(c, bbox));
 };
 
 /** [west, south, east, north] of the features' geometries. */
 const layerBBox = (
   features: { geometry?: { coordinates?: unknown } }[] | undefined
 ): BBox | undefined => {
-  const positions: number[][] = [];
-  features?.forEach((f) =>
-    collectPositions(f.geometry?.coordinates, positions)
-  );
-  if (positions.length === 0) return undefined;
-  const lngs = positions.map((p) => p[0]);
-  const lats = positions.map((p) => p[1]);
-  return [
-    Math.min(...lngs),
-    Math.min(...lats),
-    Math.max(...lngs),
-    Math.max(...lats)
-  ];
+  const bbox: BBox = [Infinity, Infinity, -Infinity, -Infinity];
+  features?.forEach((f) => extendBBox(f.geometry?.coordinates, bbox));
+  return Number.isFinite(bbox[0]) ? bbox : undefined;
 };
 
 export default () => {
