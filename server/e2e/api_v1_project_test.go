@@ -1,9 +1,13 @@
 package e2e
 
 import (
+	"archive/zip"
+	"bytes"
+	"context"
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gavv/httpexpect/v2"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -16,7 +20,8 @@ var publicApiConfig = &config.Config{
 	Dev:      true,
 	MockAuth: true,
 	Visualizer: config.VisualizerConfig{
-		PublicApi: config.PublicApiConfig{Active: true},
+		// SplitImport defaults to true when read from the environment.
+		PublicApi: config.PublicApiConfig{Active: true, SplitImport: true},
 	},
 }
 
@@ -434,4 +439,126 @@ func TestAPIV1PublishStory(t *testing.T) {
 	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
 	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "public"}).Expect(),
 		http.StatusConflict, "conflict")
+}
+
+func TestAPIV1ExportProject(t *testing.T) {
+	e := startPublicAPI(t)
+	pid := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "to export"}).
+		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
+	export := "/projects/" + pid + "/export"
+
+	resp := apiV1(e, http.MethodGet, export, uID).Expect().Status(http.StatusOK)
+	resp.Header("Content-Type").IsEqual("application/zip")
+	b := []byte(resp.Body().Raw())
+	zr, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
+	require.NoError(t, err)
+	var names []string
+	for _, f := range zr.File {
+		names = append(names, f.Name)
+	}
+	assert.Contains(t, names, "project.json")
+
+	// The stored zip is removed after the download, and a second export
+	// builds a new one.
+	apiV1(e, http.MethodGet, export, uID).Expect().Status(http.StatusOK)
+
+	// Readers can export, as in the web app.
+	apiV1(e, http.MethodGet, export, uID3).Expect().Status(http.StatusOK)
+
+	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/nope/export", uID).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/01m4dn2d8ksnekewhejqa5bbzz/export", uID).Expect(),
+		http.StatusNotFound, "not_found")
+
+	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodGet, export, uID).Expect(), http.StatusConflict, "conflict")
+}
+
+func TestAPIV1ImportProject(t *testing.T) {
+	e := startPublicAPI(t)
+	projects := "/workspaces/" + wID.String() + "/projects"
+	importPath := projects + "/import"
+
+	// Export a project, then import the zip back.
+	src := apiV1(e, http.MethodPost, projects, uID).
+		WithJSON(map[string]any{"name": "round trip", "description": "exported then imported"}).
+		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
+	zipData := []byte(apiV1(e, http.MethodGet, "/projects/"+src+"/export", uID).Expect().Status(http.StatusOK).Body().Raw())
+
+	chunk := func(user accountsID.UserID, fileID string, num, total int, data []byte) *httpexpect.Response {
+		return apiV1(e, http.MethodPost, importPath, user).WithMultipart().
+			WithFormField("file_id", fileID).
+			WithFormField("chunk_num", num).
+			WithFormField("total_chunks", total).
+			WithFileBytes("file", "project.zip", data).
+			Expect()
+	}
+
+	res := chunk(uID, "apiv1-import-test", 0, 1, zipData).Status(http.StatusOK).JSON().Object()
+	res.HasValue("received", 1).HasValue("total", 1).HasValue("completed", true)
+	pid := res.Value("projectId").String().NotEmpty().Raw()
+
+	// The import runs in the background; poll the project until it ends.
+	var status string
+	deadline := time.Now().Add(30 * time.Second)
+	for time.Now().Before(deadline) {
+		p := apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().Status(http.StatusOK).JSON().Object()
+		status, _ = p.Raw()["importStatus"].(string)
+		if status == "SUCCESS" || status == "FAILED" {
+			break
+		}
+		time.Sleep(200 * time.Millisecond)
+	}
+	if status != "SUCCESS" {
+		t.Logf("import result: %v", apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().JSON().Object().Raw())
+	}
+	require.Equal(t, "SUCCESS", status)
+	imported := apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().Status(http.StatusOK).JSON().Object()
+	imported.HasValue("name", "round trip").HasValue("description", "exported then imported")
+	imported.Value("sceneId").String().NotEmpty()
+	imported.NotContainsKey("importError")
+
+	// A chunk for an upload that never started.
+	expectAPIError(t, chunk(uID, "apiv1-never-started", 1, 2, []byte("x")), http.StatusBadRequest, "invalid_input")
+	// Missing fields.
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).WithMultipart().
+		WithFormField("file_id", "x").Expect(), http.StatusBadRequest, "invalid_input")
+	// A path-unsafe file ID.
+	expectAPIError(t, chunk(uID, "../escape", 0, 1, zipData), http.StatusBadRequest, "invalid_input")
+	// A reader cannot import into the workspace.
+	expectAPIError(t, chunk(uID3, "apiv1-import-reader", 0, 1, zipData), http.StatusForbidden, "permission_denied")
+}
+
+// TestAPIV1ImportModes: the server offers one of the web app's two ways to
+// import, and the other answers 501, so clients can tell which to use.
+func TestAPIV1ImportModes(t *testing.T) {
+	importPath := "/workspaces/" + wID.String() + "/projects/import"
+	urlPath := importPath + "-url"
+
+	// Chunked upload, the default.
+	e := startPublicAPI(t)
+	expectAPIError(t, apiV1(e, http.MethodPost, urlPath, uID).Expect(), http.StatusNotImplemented, "unsupported")
+
+	// Signed upload URLs, as the hosted service uses.
+	cfg := *publicApiConfig
+	cfg.Visualizer.PublicApi.SplitImport = false
+	e, repos, _ := startServer(t, &cfg, true, baseSeeder)
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).WithMultipart().
+		WithFormField("file_id", "x").WithFormField("chunk_num", 0).WithFormField("total_chunks", 1).
+		WithFileBytes("file", "p.zip", []byte("PK")).Expect(), http.StatusNotImplemented, "unsupported")
+	expectAPIError(t, apiV1(e, http.MethodPost, urlPath, uID3).Expect(), http.StatusForbidden, "permission_denied")
+	// The test server's file storage cannot sign URLs, so this fails, and the
+	// project it started is marked failed instead of staying UPLOADING.
+	expectAPIError(t, apiV1(e, http.MethodPost, urlPath, uID).Expect(), http.StatusInternalServerError, "internal")
+	ctx := context.Background()
+	trashed, _, err := repos.Project.FindDeletedByWorkspace(ctx, wID, nil)
+	require.NoError(t, err)
+	var statuses []string
+	for _, p := range trashed {
+		if m, err := repos.ProjectMetadata.FindByProjectID(ctx, p.ID()); err == nil && m.ImportStatus() != nil {
+			statuses = append(statuses, string(*m.ImportStatus()))
+		}
+	}
+	assert.Equal(t, []string{"FAILED"}, statuses)
 }

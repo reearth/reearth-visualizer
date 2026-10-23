@@ -92,6 +92,88 @@ paths:
           $ref: "#/components/responses/Error"
         "403":
           $ref: "#/components/responses/Error"
+  /workspaces/{workspaceId}/projects/import:
+    parameters:
+      - $ref: "#/components/parameters/workspaceId"
+    post:
+      operationId: importProject
+      summary: Upload a project zip to import, one chunk per request
+      description: |
+        Imports a project export zip into the workspace, using the web app's
+        chunked upload. Servers that import through GCS instead (as the hosted
+        service does) answer 501 `unsupported`; use importProjectUploadUrl there. Split the zip into chunks of exactly 16 MiB (the last
+        one may be shorter) and send them in order, all with the same
+        `file_id`. The first chunk creates the project, with `importStatus`
+        `UPLOADING`, and every response returns its ID. After the last chunk
+        the import runs in the background: poll `GET /projects/{projectId}`
+        until `importStatus` is `SUCCESS` or `FAILED`.
+      tags: [Projects]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file_id, chunk_num, total_chunks, file]
+              properties:
+                file_id:
+                  description: Identifies the upload; letters, digits, '_' and '-', up to 128 characters.
+                  type: string
+                chunk_num:
+                  description: Zero-based chunk index.
+                  type: integer
+                total_chunks:
+                  type: integer
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: The chunk was stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportChunkResponse"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "429":
+          $ref: "#/components/responses/Error"
+        "501":
+          $ref: "#/components/responses/Error"
+  /workspaces/{workspaceId}/projects/import-url:
+    parameters:
+      - $ref: "#/components/parameters/workspaceId"
+    post:
+      operationId: importProjectUploadUrl
+      summary: Get a URL to upload a project zip to import
+      description: |
+        Starts an import the way the hosted web app does: creates the project,
+        with `importStatus` `UPLOADING`, and returns a signed storage URL. PUT
+        the zip to `uploadUrl` with the given `contentType` before `expiresAt`;
+        the upload starts the import in the background. Poll
+        `GET /projects/{projectId}` until `importStatus` is `SUCCESS` or
+        `FAILED`. Servers that use chunked upload instead answer 501
+        `unsupported`; use importProject there.
+      tags: [Projects]
+      responses:
+        "201":
+          description: The project and where to upload the zip
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportUploadResponse"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "501":
+          $ref: "#/components/responses/Error"
   /projects/{projectId}:
     parameters:
       - $ref: "#/components/parameters/projectId"
@@ -262,6 +344,35 @@ paths:
           $ref: "#/components/responses/Error"
         "409":
           $ref: "#/components/responses/Error"
+  /projects/{projectId}/export:
+    parameters:
+      - $ref: "#/components/parameters/projectId"
+    get:
+      operationId: exportProject
+      summary: Download a project as a zip
+      description: |
+        Builds the project's export zip, the same file the web app exports,
+        and returns it. It holds the project, its scene, plugins and assets,
+        and can be imported again. Large projects take a while to build.
+      tags: [Projects]
+      responses:
+        "200":
+          description: The export zip
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
   /projects/{projectId}/plugins:
     parameters:
       - $ref: "#/components/parameters/projectId"
@@ -396,7 +507,7 @@ components:
             code:
               description: A stable, machine-readable code.
               type: string
-              enum: [invalid_input, unauthorized, permission_denied, not_found, conflict, internal]
+              enum: [invalid_input, unauthorized, permission_denied, not_found, conflict, unsupported, internal]
             message:
               type: string
     ProjectSort:
@@ -441,6 +552,13 @@ components:
           type: string
         publishedAlias:
           description: The alias in the published URL. Set once the project has been published.
+          type: string
+        importStatus:
+          description: Set on a project created by an import.
+          type: string
+          enum: [UPLOADING, PROCESSING, SUCCESS, FAILED]
+        importError:
+          description: Why the import failed, when importStatus is FAILED.
           type: string
         visibility:
           $ref: "#/components/schemas/Visibility"
@@ -578,6 +696,37 @@ components:
           description: |
             The published URL. Absent when the story is private or the server
             has no published host configured.
+    ImportUploadResponse:
+      type: object
+      required: [projectId, uploadUrl, contentType, expiresAt]
+      properties:
+        projectId:
+          description: The project the import creates.
+          type: string
+        uploadUrl:
+          description: Where to PUT the zip.
+          type: string
+        contentType:
+          description: The Content-Type header the upload must send.
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+    ImportChunkResponse:
+      type: object
+      required: [projectId, received, total, completed]
+      properties:
+        projectId:
+          description: The project the import creates.
+          type: string
+        received:
+          description: Chunks received so far.
+          type: integer
+        total:
+          type: integer
+        completed:
+          description: True once every chunk has arrived and the import has started.
+          type: boolean
     PluginExtension:
       type: object
       required: [id, type, name]
