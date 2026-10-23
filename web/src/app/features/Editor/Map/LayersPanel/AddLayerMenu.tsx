@@ -3,6 +3,7 @@ import { useT } from "@reearth/services/i18n/hooks";
 import { useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
 
+import { useMapPage } from "../context";
 import {
   showDataSourceLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
@@ -13,6 +14,27 @@ import {
 
 const AddLayerMenu = () => {
   const t = useT();
+  const { sceneId, handleLayerAdd } = useMapPage();
+
+  // Presets need no input, so they are added straight from the menu. Google
+  // Photorealistic always uses the Re:Earth provider (no Cesium Ion token).
+  const addPreset = useCallback(
+    (type: "reearth-buildings" | "google-photorealistic") => {
+      if (!sceneId) return;
+      const isGoogle = type === "google-photorealistic";
+      handleLayerAdd({
+        layerType: "simple",
+        sceneId,
+        title: isGoogle
+          ? t("Google Photorealistic 3D Tiles")
+          : t("Re:Earth Buildings"),
+        visible: true,
+        config: { data: { type, ...(isGoogle && { provider: "reearth" }) } }
+      });
+    },
+    [handleLayerAdd, sceneId, t]
+  );
+
   const setShowDataSourceLayerCreator = useSetAtom(
     showDataSourceLayerCreatorAtom
   );
@@ -42,8 +64,8 @@ const AddLayerMenu = () => {
     setShowValueLayerCreator(true);
   }, [setShowValueLayerCreator]);
 
-  // TODO: "Add from Assets/Value" and the 3D Tiles presets currently all
-  // open the data source manager; point them at their dedicated flows once built.
+  // TODO: "Add from Assets" still opens the data source manager; point it at
+  // its dedicated flow once built.
   const newLayerMenu: PopupMenuItem[] = useMemo(
     () => [
       {
@@ -90,18 +112,19 @@ const AddLayerMenu = () => {
             id: "preset-reearth-buildings",
             title: t("Re:Earth Buildings"),
             description: t("Open 3D buildings worldwide"),
-            onClick: openDataSourceLayerCreator
+            onClick: () => addPreset("reearth-buildings")
           },
           {
             id: "preset-google-photorealistic",
             title: t("Google Photorealistic 3D Tiles"),
             description: t("Photorealistic 3D mesh of the world"),
-            onClick: openDataSourceLayerCreator
+            onClick: () => addPreset("google-photorealistic")
           }
         ]
       }
     ],
     [
+      addPreset,
       openDataSourceLayerCreator,
       openUrlLayerCreator,
       openValueLayerCreator,

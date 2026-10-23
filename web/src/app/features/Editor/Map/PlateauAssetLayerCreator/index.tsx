@@ -73,6 +73,7 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
       <ModalPanel
         title={t("PLATEAU Data Catalog")}
         onCancel={onClose}
+        withBackground
         data-testid="plateau-asset-layer-modal-panel"
         actions={
           <>
