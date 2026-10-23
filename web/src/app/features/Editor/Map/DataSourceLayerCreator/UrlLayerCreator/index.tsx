@@ -11,16 +11,15 @@ import {
   Modal,
   ModalPanel,
   Selector,
-  Switcher,
-  TextInput,
-  Typography
+  TextInput
 } from "@reearth/app/lib/reearth-ui";
-import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 import { ClipLoader } from "react-spinners";
+
+import FooterToggle from "../FooterToggle";
 
 import useHooks from "./hooks";
 
@@ -50,6 +49,8 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
     setLatColumn,
     setLngColumn,
     setPrioritizePerformance,
+    autoUpdateTime,
+    setAutoUpdateTime,
     handleUrlChange,
     handleUrlBlur,
     handleFormatChange,
@@ -85,26 +86,26 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
         actions={
           <ActionWrapper>
             {format === "geojson" && (
-              <>
-                <PrioritizeLabel>
-                  <Tooltip
-                    type="custom"
-                    icon="informationCircle"
-                    placement="bottom"
-                    text={t(
-                      "If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified."
-                    )}
-                  />
-                  <Typography size="body">
-                    {t("Prioritize Performance")}
-                  </Typography>
-                </PrioritizeLabel>
-                <Switcher
-                  value={prioritizePerformance}
-                  onChange={(v) => setPrioritizePerformance(v)}
-                  data-testid="geojson-prioritize-switcher"
-                />
-              </>
+              <FooterToggle
+                label={t("Prioritize Performance")}
+                description={t(
+                  "If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified."
+                )}
+                value={prioritizePerformance}
+                onChange={setPrioritizePerformance}
+                data-testid="url-layer-creator-prioritize"
+              />
+            )}
+            {format === "czml" && (
+              <FooterToggle
+                label={t("Auto Update Time")}
+                description={t(
+                  "When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer."
+                )}
+                value={autoUpdateTime}
+                onChange={setAutoUpdateTime}
+                data-testid="url-layer-creator-auto-update-time"
+              />
             )}
             <Button
               title={t("Cancel")}
@@ -312,12 +313,6 @@ const ActionWrapper = styled("div")(({ theme }) => ({
   flexDirection: css.flexDirection.row,
   gap: theme.spacing.large,
   alignItems: css.alignItems.center
-}));
-
-const PrioritizeLabel = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  gap: theme.spacing.smallest
 }));
 
 export default UrlLayerCreator;

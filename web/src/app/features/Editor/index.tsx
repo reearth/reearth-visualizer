@@ -12,13 +12,15 @@ import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
 import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
 import UrlLayerCreator from "./Map/DataSourceLayerCreator/UrlLayerCreator";
+import ValueLayerCreator from "./Map/DataSourceLayerCreator/ValueLayerCreator";
 import PlateauAssetLayerCreator from "./Map/PlateauAssetLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
 import {
   showDataSourceLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
   showSketchLayerCreatorAtom,
-  showUrlLayerCreatorAtom
+  showUrlLayerCreatorAtom,
+  showValueLayerCreatorAtom
 } from "./Map/state";
 import Publish from "./Publish";
 import { PublishPageProvider } from "./Publish/context";
@@ -85,6 +87,13 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   );
   const closeUrlLayerCreator = () => {
     setShowUrlLayerCreator(false);
+  };
+
+  const [showValueLayerCreator, setShowValueLayerCreator] = useAtom(
+    showValueLayerCreatorAtom
+  );
+  const closeValueLayerCreator = () => {
+    setShowValueLayerCreator(false);
   };
 
   const [showPlateauAssetLayerCreator, setShowPlateauAssetLayerCreator] =
@@ -173,6 +182,13 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
         <UrlLayerCreator
           sceneId={sceneId}
           onClose={closeUrlLayerCreator}
+          onSubmit={handleLayerAdd}
+        />
+      )}
+      {showValueLayerCreator && (
+        <ValueLayerCreator
+          sceneId={sceneId}
+          onClose={closeValueLayerCreator}
           onSubmit={handleLayerAdd}
         />
       )}

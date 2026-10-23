@@ -32,6 +32,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
   const [layerName, setLayerName] = useState("");
   const [layerNameList, setLayerNameList] = useState<string[]>([]);
   const [prioritizePerformance, setPrioritizePerformance] = useState(false);
+  const [autoUpdateTime, setAutoUpdateTime] = useState(true);
 
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState<string>();
@@ -211,7 +212,9 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
           ...(needsLayers && {
             layers: layers.length === 1 ? layers[0] : layers
           }),
-          ...(format === "czml" && { time: { updateClockOnLoad: true } }),
+          ...(format === "czml" && {
+            time: { updateClockOnLoad: autoUpdateTime }
+          }),
           ...(format === "geojson" && {
             geojson: { useAsResource: prioritizePerformance }
           })
@@ -229,6 +232,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     onClose,
     onSubmit,
     prioritizePerformance,
+    autoUpdateTime,
     sceneId,
     trimmedUrl
   ]);
@@ -249,6 +253,8 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     setLatColumn,
     setLngColumn,
     setPrioritizePerformance,
+    autoUpdateTime,
+    setAutoUpdateTime,
     handleUrlChange,
     handleUrlBlur,
     handleFormatChange,

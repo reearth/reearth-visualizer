@@ -21,3 +21,4 @@ export const showDataSourceLayerCreatorAtom = atomWithReset<boolean>(false);
 export const showPlateauAssetLayerCreatorAtom = atomWithReset<boolean>(false);
 export const showSketchLayerCreatorAtom = atomWithReset<boolean>(false);
 export const showUrlLayerCreatorAtom = atomWithReset<boolean>(false);
+export const showValueLayerCreatorAtom = atomWithReset<boolean>(false);

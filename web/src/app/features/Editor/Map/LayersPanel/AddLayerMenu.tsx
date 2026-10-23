@@ -7,7 +7,8 @@ import {
   showDataSourceLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
   showSketchLayerCreatorAtom,
-  showUrlLayerCreatorAtom
+  showUrlLayerCreatorAtom,
+  showValueLayerCreatorAtom
 } from "../state";
 
 const AddLayerMenu = () => {
@@ -36,6 +37,11 @@ const AddLayerMenu = () => {
     setShowUrlLayerCreator(true);
   }, [setShowUrlLayerCreator]);
 
+  const setShowValueLayerCreator = useSetAtom(showValueLayerCreatorAtom);
+  const openValueLayerCreator = useCallback(() => {
+    setShowValueLayerCreator(true);
+  }, [setShowValueLayerCreator]);
+
   // TODO: "Add from Assets/Value" and the 3D Tiles presets currently all
   // open the data source manager; point them at their dedicated flows once built.
   const newLayerMenu: PopupMenuItem[] = useMemo(
@@ -59,7 +65,7 @@ const AddLayerMenu = () => {
         title: t("Add from Value"),
         description: t("Enter data or coordinates manually"),
         icon: "pencilSimple",
-        onClick: openDataSourceLayerCreator
+        onClick: openValueLayerCreator
       },
       {
         id: "add-plateau-asset-layer",
@@ -98,6 +104,7 @@ const AddLayerMenu = () => {
     [
       openDataSourceLayerCreator,
       openUrlLayerCreator,
+      openValueLayerCreator,
       openSketchLayerCreator,
       openPlateauAssetLayerCreator,
       t
