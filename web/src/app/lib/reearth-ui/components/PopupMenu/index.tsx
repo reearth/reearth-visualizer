@@ -8,10 +8,13 @@ const MULTILEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;
 const DEFAULT_MIN_WIDTH = 140;
 const DEFAULT_MAX_WIDTH = 280;
+const DEFAULT_MAX_HEIGHT = 250;
 
 export type PopupMenuItem = {
   id: string;
   title?: string;
+  /** Secondary line rendered under the title. */
+  description?: string;
   icon?: IconName;
   iconColor?: string;
   color?: string;
@@ -41,6 +44,7 @@ export type PopupMenuProps = {
   width?: number;
   minWidth?: number;
   maxWidth?: number;
+  maxHeight?: number;
   extendTriggerWidth?: boolean;
   extendContentWidth?: boolean;
   size?: "small" | "normal";
@@ -59,6 +63,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   width,
   minWidth,
   maxWidth,
+  maxHeight,
   extendTriggerWidth,
   extendContentWidth,
   placement,
@@ -112,13 +117,21 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       selected,
       subItem,
       title,
+      description,
       disabled,
       dataTestid: itemTestid,
       tileComponent
     } = item;
 
     const resolvedIconColor = itemIconColor ?? iconColor ?? theme.content.weak;
-    const titleContent = (
+    const titleContent = description ? (
+      <TextWrapper>
+        <TitleWrapper disabled={disabled} itemColor={itemColor}>
+          {title}
+        </TitleWrapper>
+        <Description>{description}</Description>
+      </TextWrapper>
+    ) : (
       <TitleWrapper
         disabled={disabled}
         flex={!!tileComponent}
@@ -135,6 +148,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         key={id}
         size={size}
         disabled={disabled}
+        alignTop={!!description}
         onClick={() => {
           if (disabled) return;
           onClick?.(id);
@@ -158,6 +172,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
               width={width}
               minWidth={minWidth}
               maxWidth={maxWidth}
+              maxHeight={maxHeight}
               nested
               dataTestid={itemTestid ? `${itemTestid}-submenu-${index}` : undefined}
               ariaLabelledby={ariaLabelledby}
@@ -190,6 +205,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     return (
       <PopupMenuWrapper
         width={width}
+        maxHeight={maxHeight}
         nested={nested}
         extendContentWidth={extendContentWidth}
         hasFooter={hasFooter}
@@ -273,10 +289,11 @@ const PopupMenuWrapper = styled("div", {
   width?: number;
   minWidth?: number;
   maxWidth?: number;
+  maxHeight?: number;
   nested?: boolean;
   extendContentWidth?: boolean;
   hasFooter?: boolean;
-}>(({ width, minWidth, maxWidth, nested, extendContentWidth, hasFooter, theme }) => ({
+}>(({ width, minWidth, maxWidth, maxHeight, nested, extendContentWidth, hasFooter, theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   gap: `${theme.spacing.micro}px`,
@@ -296,21 +313,24 @@ const PopupMenuWrapper = styled("div", {
     : !nested && width
       ? undefined
       : `${DEFAULT_MAX_WIDTH}px`,
-  maxHeight: "250px",
+  maxHeight: `${maxHeight ?? DEFAULT_MAX_HEIGHT}px`,
   overflowY: hasFooter ? css.overflow.hidden : css.overflow.auto,
   boxSizing: css.boxSizing.borderBox,
   margin: nested ? "-7px 0 0 2px" : "inherit",
   ...theme.scrollBar
 }));
 
-const Item = styled("div")<{
+const Item = styled("div", {
+  shouldForwardProp: (prop) => prop !== "alignTop"
+})<{
   hasBorderBottom: boolean;
   size?: "small" | "normal";
   disabled?: boolean;
-}>(({ hasBorderBottom, size, disabled, theme }) => ({
+  alignTop?: boolean;
+}>(({ hasBorderBottom, size, disabled, alignTop, theme }) => ({
   display: css.display.flex,
   gap: theme.spacing.small,
-  alignItems: css.alignItems.center,
+  alignItems: alignTop ? css.alignItems.flexStart : css.alignItems.center,
   padding:
     size === "small"
       ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
@@ -416,3 +436,18 @@ const TitleWrapper = styled("div", {
       : {})
   })
 );
+
+const TextWrapper = styled("div")(() => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  flex: 1,
+  overflow: css.overflow.hidden
+}));
+
+const Description = styled("div")(({ theme }) => ({
+  fontSize: theme.fonts.sizes.footnote,
+  color: theme.content.weak,
+  whiteSpace: css.whiteSpace.nowrap,
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis
+}));

@@ -11,12 +11,14 @@ import useHooks from "./hooks";
 import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
 import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
+import UrlLayerCreator from "./Map/DataSourceLayerCreator/UrlLayerCreator";
 import PlateauAssetLayerCreator from "./Map/PlateauAssetLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
 import {
   showDataSourceLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
-  showSketchLayerCreatorAtom
+  showSketchLayerCreatorAtom,
+  showUrlLayerCreatorAtom
 } from "./Map/state";
 import Publish from "./Publish";
 import { PublishPageProvider } from "./Publish/context";
@@ -76,6 +78,13 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   );
   const closeSketchLayerCreator = () => {
     setShowSketchLayerCreator(false);
+  };
+
+  const [showUrlLayerCreator, setShowUrlLayerCreator] = useAtom(
+    showUrlLayerCreatorAtom
+  );
+  const closeUrlLayerCreator = () => {
+    setShowUrlLayerCreator(false);
   };
 
   const [showPlateauAssetLayerCreator, setShowPlateauAssetLayerCreator] =
@@ -158,6 +167,13 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           onClose={closeDataSourceLayerCreator}
           onSubmit={handleLayerAdd}
           data-testid="editor-datasource-layer-creator"
+        />
+      )}
+      {showUrlLayerCreator && (
+        <UrlLayerCreator
+          sceneId={sceneId}
+          onClose={closeUrlLayerCreator}
+          onSubmit={handleLayerAdd}
         />
       )}
       {showSketchLayerCreator && (

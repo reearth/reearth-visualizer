@@ -177,9 +177,28 @@ Re:Earth Buildings: Re:Earth Buildings
 Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
 Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
 URL: URL
+Vector Tiles (MVT): ベクトルタイル（MVT）
+Enter a valid URL starting with http:// or https://.: http:// または https:// で始まる有効なURLを入力してください。
+This URL looks like {{detected}} data, not {{selected}}. Change the format or check the URL.: このURLは{{selected}}ではなく{{detected}}のデータのようです。形式を変更するか、URLを確認してください。
+'{{selected}} URLs must end with {{extensions}}. Check the URL or change the format.': '{{selected}}のURLは{{extensions}}で終わる必要があります。URLを確認するか、形式を変更してください。'
+3D Tiles URLs must point to the tileset entry point (e.g. tileset.json), not a folder.: '3DタイルのURLは、フォルダではなくタイルセットのエントリーポイント（例: tileset.json）を指定する必要があります。'
+Vector tile URLs must be a template containing {z}, {x} and {y}.: ベクトルタイルのURLは、{z}、{x}、{y} を含むテンプレートである必要があります。
+The URL could not be reached. Check the link or your network connection.: URLにアクセスできませんでした。リンクまたはネットワーク接続を確認してください。
+The URL returned empty or unreadable data. Check that it points to a valid {{format}} file.: URLから空または読み取れないデータが返されました。有効な{{format}}ファイルを指定しているか確認してください。
+WMS URLs need at least one layer name. Add a layer below or include LAYERS= in the URL.: WMSのURLには少なくとも1つのレイヤー名が必要です。下でレイヤーを追加するか、URLにLAYERS=を含めてください。
+The development of the CZML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: CZML形式の開発はまだ試験段階で、あまり安定していません。また、一部の機能はまだ完全にはサポートされていないため、注意してご利用ください。
+The development of the KML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: KML形式の開発はまだ試験段階で、あまり安定していません。また、一部の機能はまだ完全にはサポートされていないため、注意してご利用ください。
+Add from URL: URLから追加
+Add a layer from data hosted on the web. The URL must be publicly accessible and allow cross-origin requests.: Web上でホストされているデータからレイヤーを追加します。URLは公開されており、クロスオリジンリクエストを許可している必要があります。
+Supports GeoJSON, CSV, CZML, KML, 3D Tiles, MVT and WMS.: GeoJSON、CSV、CZML、KML、3Dタイル、MVT、WMSに対応しています。
+Select format: 形式を選択
+Latitude column name: 緯度の列名
+Column name: 列名
+Longitude column name: 経度の列名
 Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
+Checking the URL...: URLを確認しています...
 'Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルの不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルが存在する場合の不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 'Disabled: Zoom level configuration is not available for system tiles.': '無効: ズームレベルの設定はシステムタイルでは利用できません。'
@@ -224,11 +243,20 @@ NO STYLE: スタイルなし
 Enable PhotoOverlay: フォトオーバーレイを有効化
 Show photo overlay when the user clicks on a layer: レイヤーをクリックした際にフォトオーバーレイを表示
 Settings: 設定
-Add Layer from Resource: リソースからレイヤーを追加
-Add Sketch Layer: スケッチレイヤーを追加
-Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
-Layers: レイヤー
+Add from Assets: アセットから追加
+Upload new files or pick existing ones: 新しいファイルをアップロード、または既存のファイルを選択
+Link to externally hosted data: 外部でホストされているデータにリンク
+Add from Value: 値から追加
+Enter data or coordinates manually: データや座標を手動で入力
+Add layer from PLATEAU: PLATEAUからレイヤーを追加
+Browse PLATEAU open data: PLATEAUのオープンデータを閲覧
+Create Sketch Layer: スケッチレイヤーを作成
+Draw shapes and markers on the map: 地図上に図形やマーカーを描画
+Preset 3D Tiles: プリセット3Dタイル
+Open 3D buildings worldwide: 世界中のオープンな3D建物データ
+Photorealistic 3D mesh of the world: 世界のフォトリアリスティックな3Dメッシュ
 New Layer: 新しいレイヤー
+Layers: レイヤー
 Fly to: 移動
 Visibility: 表示・非表示切り替え
 "Cesium Ion token not configured. Using fallback.\nClick to configure": Cesium Ionトークンが設定されていません。フォールバックを使用します。\nクリックして設定
@@ -571,7 +599,9 @@ Copy command: コマンドをコピー
 Connect a plugin: プラグインを接続
 Run this in your plugin's folder. It serves the plugin and opens it here, and reloads it when you save.: プラグインのフォルダでこのコマンドを実行します。プラグインを配信してここで開き、保存すると再読み込みします。
 'Or load a plugin from a server:': 'またはサーバーからプラグインを読み込む:'
-The server must serve reearth.yml and a .js file for each extension. A change event on <url>/events reloads the plugin.: サーバーは reearth.yml と、各拡張機能の .js ファイルを配信する必要があります。<url>/events の change イベントでプラグインを再読み込みします。
+The server must serve reearth.yml and a .js file for each extension. A change event on <url>/events reloads the plugin.: >-
+  サーバーは reearth.yml と、各拡張機能の .js ファイルを配信する必要があります。<url>/events の change
+  イベントでプラグインを再読み込みします。
 Can't reach the plugin server: プラグインのサーバーに接続できません
 Can't read reearth.yml: reearth.yml を読み取れません
 Nothing answered at {{url}}. Is this still running?: '{{url}} から応答がありません。まだ起動していますか？'
