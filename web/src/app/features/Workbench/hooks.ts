@@ -11,6 +11,7 @@ import {
 } from "@reearth/services/state/devPlugins";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { layerBBox } from "./bbox";
 import { buildBlocks, buildLayers, buildStory, buildWidgets } from "./build";
 import { DEFAULT_WORKBENCH_LAYERS, INFOBOX_LAYER_ID } from "./constants";
 import {
@@ -158,7 +159,14 @@ export default () => {
   const flyToLayer = useCallback(
     (layerId: string) => {
       if (visibleLayerIds.includes(layerId)) {
-        visualizerRef.current?.engine.flyTo?.(layerId, { duration: 0 });
+        const map = visualizerRef.current;
+        const bbox = layerBBox(
+          map?.layers.findById?.(layerId)?.computed?.features
+        );
+        // The engine can't resolve a GeoJSON layer id on its own, so fly to
+        // the bounds of its features.
+        if (bbox) map?.engine.flyToBBox?.(bbox, { duration: 0 });
+        else map?.engine.flyTo?.(layerId, { duration: 0 });
       }
     },
     [visibleLayerIds]
