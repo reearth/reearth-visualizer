@@ -5,15 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/apperr"
-	"github.com/reearth/reearth/server/pkg/i18n/message"
-	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearthx/log"
-	"golang.org/x/text/language"
 )
 
 // apiError is an error with an HTTP status and a code from the Error schema.
@@ -27,14 +22,6 @@ func (e *apiError) Error() string { return e.message }
 
 func invalidInput(format string, args ...any) error {
 	return &apiError{status: http.StatusBadRequest, code: ErrorErrorCodeInvalidInput, message: fmt.Sprintf(format, args...)}
-}
-
-func notFound(what string) error {
-	return &apiError{status: http.StatusNotFound, code: ErrorErrorCodeNotFound, message: what + " not found"}
-}
-
-func conflict(format string, args ...any) error {
-	return &apiError{status: http.StatusConflict, code: ErrorErrorCodeConflict, message: fmt.Sprintf(format, args...)}
 }
 
 var errUnauthorized = &apiError{status: http.StatusUnauthorized, code: ErrorErrorCodeUnauthorized, message: "unauthorized"}
@@ -74,23 +61,6 @@ func toResponse(ctx context.Context, err error) (int, ErrorErrorCode, string) {
 	var ae *apiError
 	if errors.As(err, &ae) {
 		return ae.status, ae.code, ae.message
-	}
-
-	// Validation errors from the usecases, such as an invalid or taken
-	// project alias. Their messages are written for users.
-	var ve *verror.VError
-	if errors.As(err, &ve) && ve.Err == nil {
-		msg := ve.Error()
-		if m, ok := ve.ErrMsg[language.English]; ok {
-			msg = message.ApplyTemplate(ctx, m.Message, ve.TemplateData, language.English)
-		}
-		switch {
-		case ve.Key == repo.ErrResourceNotFound.Key:
-			return http.StatusNotFound, ErrorErrorCodeNotFound, msg
-		case strings.HasSuffix(string(ve.Key), "already_exists"), strings.HasSuffix(string(ve.Key), "already_used"):
-			return http.StatusConflict, ErrorErrorCodeConflict, msg
-		}
-		return http.StatusBadRequest, ErrorErrorCodeInvalidInput, msg
 	}
 
 	// Errors from echo itself: bad JSON, bad parameters, unknown routes.
