@@ -1,9 +1,33 @@
-import { ComputedFeature } from "@reearth/core";
+import {
+  AssetsCesiumProperty as CoreAssetsCesiumProperty,
+  AssetsProperty as CoreAssetsProperty,
+  ComputedFeature,
+  SceneProperty as CoreSceneProperty,
+  ViewerProperty as CoreViewerProperty
+} from "@reearth/core";
 
 import { LatLngHeight } from "./common";
 
-// Inlined as opaque record; the full viewer property schema lives in visualizer internals.
-export type ViewerProperty = Record<string, unknown>;
+// SYNC: web/src/app/features/Editor/Visualizer/type.ts (ViewerProperty) and
+// web/src/app/types/sceneProperty.ts (SceneMode). Inlined because those modules
+// are internal to the app.
+type SceneMode = "3d";
+
+export declare type ViewerProperty = Omit<
+  CoreViewerProperty,
+  "scene" | "assets"
+> & {
+  scene?: Omit<CoreSceneProperty, "mode"> & {
+    mode?: SceneMode;
+  };
+  assets?: Omit<CoreAssetsProperty, "cesium"> & {
+    cesium?: CoreAssetsCesiumProperty & {
+      global?: {
+        ionAccessToken?: string;
+      };
+    };
+  };
+};
 
 export declare type MouseEventProps = {
   x?: number;
@@ -141,20 +165,20 @@ export declare type Tools = {
 };
 
 export declare type ViewerEventType = {
-  click: [e: MouseEvent];
-  doubleClick: [e: MouseEvent];
-  mouseDown: [e: MouseEvent];
-  mouseUp: [e: MouseEvent];
-  rightClick: [e: MouseEvent];
-  rightDown: [e: MouseEvent];
-  rightUp: [e: MouseEvent];
-  middleClick: [e: MouseEvent];
-  middleDown: [e: MouseEvent];
-  middleUp: [e: MouseEvent];
-  mouseMove: [e: MouseEvent];
-  mouseEnter: [e: MouseEvent];
-  mouseLeave: [e: MouseEvent];
-  wheel: [e: MouseEvent];
+  click: [e: MouseEventProps];
+  doubleClick: [e: MouseEventProps];
+  mouseDown: [e: MouseEventProps];
+  mouseUp: [e: MouseEventProps];
+  rightClick: [e: MouseEventProps];
+  rightDown: [e: MouseEventProps];
+  rightUp: [e: MouseEventProps];
+  middleClick: [e: MouseEventProps];
+  middleDown: [e: MouseEventProps];
+  middleUp: [e: MouseEventProps];
+  mouseMove: [e: MouseEventProps];
+  mouseEnter: [e: MouseEventProps];
+  mouseLeave: [e: MouseEventProps];
+  wheel: [e: MouseEventProps];
   resize: [e: ViewportSize];
 };
 

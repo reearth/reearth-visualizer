@@ -53,7 +53,23 @@ void layers;
 // viewer
 const viewer: Viewer = reearth.viewer;
 void viewer.viewport;
-void reearth.viewer.on;
+// Mouse events carry the engine's position payload, not a DOM MouseEvent.
+reearth.viewer.on("click", (e) => {
+  const lat: number | undefined = e.lat;
+  const layerId: string | undefined = e.layerId;
+  void [lat, layerId];
+  // @ts-expect-error not a DOM MouseEvent
+  void e.clientX;
+});
+reearth.viewer.on("wheel", (e) => void e.delta);
+// The viewer property is typed, so values read from it complete and validate.
+const lightType = reearth.viewer.property?.scene?.light?.type;
+void lightType;
+reearth.viewer.overrideProperty({ scene: { mode: "3d" } });
+// @ts-expect-error only "3d" is a scene mode
+reearth.viewer.overrideProperty({ scene: { mode: "2d" } });
+// @ts-expect-error unknown property group
+reearth.viewer.overrideProperty({ nope: 1 });
 
 // timeline
 reearth.timeline.on("tick", (t: Date) => void t);
