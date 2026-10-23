@@ -12,7 +12,7 @@ import {
   unwrapColor,
   wrapColor
 } from "./convert";
-import { StyleNodes } from "./types";
+import { AppearanceField, StyleNodes } from "./types";
 
 const mockLayerStyle: LayerStyle = {
   id: "layer_style_01",
@@ -278,6 +278,124 @@ it("should parse conditions with URL values correctly", () => {
       applyValue: "https://example.com/model.glb"
     }
   ]);
+});
+
+describe("convertToLayerStyleValue preserves data the UI can't edit", () => {
+  it("keeps deeply nested expressions and conditions", () => {
+    const value = {
+      marker: {
+        labelTypography: { color: { expression: "${c}" } },
+        imageColor: {
+          nested: { expression: { conditions: [["true", "color('red')"]] } }
+        },
+        show: true
+      }
+    } as unknown as LayerStyle["value"];
+    const styleNodes = convertToStyleNodes({ id: "1", name: "s", value });
+
+    expect(convertToLayerStyleValue(styleNodes, value)).toEqual(value);
+  });
+
+  it("keeps unknown appearance types from the base value", () => {
+    const value = {
+      marker: { show: true },
+      raster: { minimumLevel: 1 }
+    } as LayerStyle["value"];
+    const styleNodes = convertToStyleNodes({ id: "1", name: "s", value });
+
+    expect(convertToLayerStyleValue(styleNodes, value)).toEqual(value);
+  });
+
+  it("still removes a known appearance type once all its nodes are deleted", () => {
+    const value = {
+      marker: { show: true },
+      raster: { minimumLevel: 1 }
+    } as LayerStyle["value"];
+    const styleNodes = convertToStyleNodes({ id: "1", name: "s", value });
+
+    expect(
+      convertToLayerStyleValue({ ...styleNodes, marker: [] }, value)
+    ).toEqual({ raster: { minimumLevel: 1 } });
+  });
+});
+
+describe("parseConditions lossless round trip", () => {
+  const roundTrip = (field: AppearanceField, conditions: [string, string][]) =>
+    generateConditions(field, parseConditions(field, conditions));
+
+  it("keeps the operator-less `true` fallback", () => {
+    const input: [string, string][] = [
+      ["${height} >= 10", "color('#FF0000')"],
+      ["true", "color('#FFFFFF')"]
+    ];
+    const parsed = parseConditions("color", input);
+
+    expect(parsed).toHaveLength(2);
+    expect(parsed[1]).toEqual({
+      variable: "",
+      operator: "===",
+      value: "",
+      rawCondition: "true",
+      applyValue: "#FFFFFF"
+    });
+    expect(roundTrip("color", input)).toEqual(input);
+  });
+
+  it("keeps compound conditions intact", () => {
+    const compound =
+      "${attributes['urf:areaType_code']} === '1' && (${attributes['urf:areaType_code']} === '2' || ${a} > 3)";
+    const input: [string, string][] = [
+      [compound, "true"],
+      ["startsWith(${a}, 'x') && startsWith(${b}, 'y')", "false"]
+    ];
+
+    expect(roundTrip("switch", input)).toEqual(input);
+  });
+
+  it("keeps conditions with unsupported operators", () => {
+    const input: [string, string][] = [["${a} == 1", "5"]];
+
+    expect(roundTrip("number", input)).toEqual(input);
+  });
+
+  it("keeps conditions where the operator appears more than once", () => {
+    const input: [string, string][] = [["${a} < '<'", "5"]];
+
+    expect(roundTrip("number", input)).toEqual(input);
+  });
+
+  it("ignores operator characters inside quoted or nested arguments", () => {
+    const input: [string, string][] = [
+      ["endsWith(${name}, '>')", "'a'"],
+      ["startsWith(${a}, 'x') === startsWith(${b}, 'y')", "'c'"]
+    ];
+    const parsed = parseConditions("text", input);
+
+    expect(parsed.every((c) => c.rawCondition !== undefined)).toBe(true);
+    expect(roundTrip("text", input)).toEqual(input);
+  });
+
+  it("parses a simple condition whose value contains operator characters", () => {
+    const [parsed] = parseConditions("number", [["${a} === '>='", "5"]]);
+
+    expect(parsed).toEqual({
+      variable: "${a}",
+      operator: "===",
+      value: "'>='",
+      applyValue: "5"
+    });
+  });
+
+  it("splits startsWith args only on the top-level comma", () => {
+    const input: [string, string][] = [["startsWith(${name}, 'a,b')", "5"]];
+
+    expect(parseConditions("number", input)[0]).toMatchObject({
+      variable: "${name}",
+      operator: "startsWith",
+      value: "'a,b'"
+    });
+    expect(roundTrip("number", input)).toEqual(input);
+  });
 });
 
 describe("generateStyleValue", () => {

@@ -12,6 +12,7 @@ const publishProject = vi.fn();
 const cacheIdentify = vi.fn(() => "Project:project-1");
 const cacheEvict = vi.fn();
 const cacheGc = vi.fn();
+const useProjectsMock = vi.fn();
 
 let capturedLoadMoreHandlers: (() => Promise<void> | void)[] = [];
 
@@ -69,7 +70,8 @@ vi.mock("@reearth/services/api/project", () => ({
     updateProjectRecycleBin,
     publishProject
   }),
-  useProjects: () => ({
+  useProjects: (input: unknown) => ({
+    ...useProjectsMock(input),
     projects: [],
     loading: false,
     isRefetching: false,
@@ -83,6 +85,31 @@ vi.mock("@reearth/services/api/project", () => ({
     hasMoreStarredProjects: true,
     endCursor: "starred-end-cursor",
     fetchMore: fetchMoreStarred
+  })
+}));
+
+vi.mock("@reearth/services/api/user", () => ({
+  useMe: () => ({
+    me: {
+      id: "user-me",
+      name: "Me",
+      metadata: { photoURL: "https://example.com/me.png" }
+    }
+  })
+}));
+
+vi.mock("@reearth/services/api/workspace", () => ({
+  useWorkspace: () => ({
+    workspace: {
+      members: [
+        { userId: "user-4", user: { id: "user-4", name: "Bob" } },
+        { userId: "user-me", user: { id: "user-me", name: "Me" } },
+        { userId: "user-2", user: { id: "user-2", name: "Alice" } },
+        // A member whose user record could not be resolved has no name to
+        // show or search by, so it is left out of the creator list.
+        { userId: "user-3", user: null }
+      ]
+    }
   })
 }));
 
@@ -151,11 +178,8 @@ describe("dashboard project hook", () => {
     await firstCall;
   });
 
-  
   it("resets the fetching guard after fetchMore succeeds so a subsequent call can run", async () => {
-    fetchMore
-      .mockResolvedValueOnce({})
-      .mockResolvedValueOnce({});
+    fetchMore.mockResolvedValueOnce({}).mockResolvedValueOnce({});
 
     renderHook(() => useHooks("workspace-id"));
     const loadMoreProjects = capturedLoadMoreHandlers[0];
@@ -258,9 +282,7 @@ describe("dashboard starred projects hook", () => {
   });
 
   it("resets the fetching guard after fetchMoreStarred succeeds so a subsequent call can run", async () => {
-    fetchMoreStarred
-      .mockResolvedValueOnce({})
-      .mockResolvedValueOnce({});
+    fetchMoreStarred.mockResolvedValueOnce({}).mockResolvedValueOnce({});
 
     renderHook(() => useHooks("workspace-id"));
     const loadMoreStarred = capturedLoadMoreHandlers[1];
@@ -362,7 +384,10 @@ describe("dashboard project remove", () => {
     const { result } = renderHook(() => useHooks("workspace-id"));
 
     const removed = await act(async () =>
-      result.current.handleProjectRemove({ ...baseProject, status: "published" })
+      result.current.handleProjectRemove({
+        ...baseProject,
+        status: "published"
+      })
     );
 
     expect(updateProjectRecycleBin).not.toHaveBeenCalled();
@@ -385,5 +410,74 @@ describe("dashboard project remove", () => {
     expect(cacheEvict).not.toHaveBeenCalled();
     expect(cacheGc).not.toHaveBeenCalled();
     expect(removed).toBe(false);
+  });
+});
+
+describe("dashboard project creator filter", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    capturedLoadMoreHandlers = [];
+    localStorage.clear();
+  });
+
+  it("lists workspace members as creators, signed-in user first, then by name", () => {
+    const { result } = renderHook(() => useHooks("workspace-id"));
+
+    expect(result.current.creatorOptions).toEqual([
+      {
+        id: "user-me",
+        name: "Me",
+        avatarURL: "https://example.com/me.png"
+      },
+      { id: "user-2", name: "Alice", avatarURL: undefined },
+      { id: "user-4", name: "Bob", avatarURL: undefined }
+    ]);
+  });
+
+  it("reports a team workspace as not personal", () => {
+    const { result } = renderHook(() => useHooks("workspace-id"));
+
+    expect(result.current.isPersonalWorkspace).toBe(false);
+  });
+
+  it("queries projects by the selected creator and clears it again", () => {
+    const { result } = renderHook(() => useHooks("workspace-id"));
+
+    expect(useProjectsMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ createdBy: undefined })
+    );
+
+    act(() => {
+      result.current.handleCreatorChange("user-2");
+    });
+
+    expect(result.current.createdBy).toBe("user-2");
+    expect(useProjectsMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ createdBy: "user-2" })
+    );
+
+    act(() => {
+      result.current.handleCreatorChange(undefined);
+    });
+
+    expect(useProjectsMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({ createdBy: undefined })
+    );
+  });
+
+  it("resets the creator when switching workspaces", () => {
+    const { result, rerender } = renderHook(
+      ({ workspaceId }) => useHooks(workspaceId),
+      { initialProps: { workspaceId: "workspace-id" } }
+    );
+
+    act(() => {
+      result.current.handleCreatorChange("user-2");
+    });
+    expect(result.current.createdBy).toBe("user-2");
+
+    rerender({ workspaceId: "other-workspace-id" });
+
+    expect(result.current.createdBy).toBeUndefined();
   });
 });

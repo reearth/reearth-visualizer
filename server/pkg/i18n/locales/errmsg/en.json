@@ -43,6 +43,16 @@
         "message": "Aliases starting with 'c-' or 's-' are not allowed: {{.aliasName}}",
         "description": "Aliases that start with 'c-' or 's-' are reserved and cannot be used."
       }
+    },
+    "workspace": {
+      "invalid_alias": {
+        "message": "Invalid workspace alias: {{.aliasName}}",
+        "description": "The alias must be 5-32 characters long, start and end with a letter or number, and can only contain letters, numbers, and single hyphens."
+      },
+      "alias_already_exists": {
+        "message": "This workspace alias is already in use. Please try another one.",
+        "description": "Each workspace alias must be unique."
+      }
     }
   }
 }

@@ -52,7 +52,7 @@ We recommend selecting a license to define how others can use your work and ensu
   ライセンスを選択して、他のユーザーが作品をどのように利用できるかを明確にし、制作者としての権利を保護することをおすすめします。カスタムライセンスは後から設定で作成することもできます。
 Create new workspace: ワークスペースを作る
 create: 作成する
-Your workspace Name*: ワークスペース名*
+Your workspace name*: ワークスペース名*
 your workspace name: ワークスペース名
 The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
 Add a team member: チームメンバーを追加
@@ -76,6 +76,10 @@ MAINTAINER: 管理者
 OWNER: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
+'Created by:': '作成者:'
+Anyone: すべてのユーザー
+Created by: 作成者
+No members found: メンバーが見つかりません
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
@@ -85,15 +89,19 @@ Search project: プロジェクトを検索
 All projects: すべてのプロジェクト
 Search Result for: 検索結果
 Project Name: プロジェクト名
-Visibility: 表示・非表示切り替え
-Updated At: 更新日時
-Created At: 作成日時
+Last updated by: 最終更新者
+Last updated: 最終更新日時
+Created: 作成日
+No projects match your search: 条件に一致するプロジェクトはありません
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
 Project Setting: プロジェクト設定
 Project Assets: プロジェクトアセット
 Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
+Updated: 更新
+Show project editors: プロジェクトの編集者を表示
+Unknown user: 不明なユーザー
 Download Error Log: エラーログをダウンロード
 Ok: 確認
 Import Failed: インポート失敗
@@ -222,6 +230,7 @@ Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
+Visibility: 表示・非表示切り替え
 "Cesium Ion token not configured. Using fallback.\nClick to configure": Cesium Ionトークンが設定されていません。フォールバックを使用します。\nクリックして設定
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
@@ -552,6 +561,63 @@ Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
+Hide layer: レイヤーを非表示
+Show layer: レイヤーを表示
+Plugin URL: プラグインURL
+Load: 読み込む
+Copied: コピーしました
+Copy: コピー
+Copy command: コマンドをコピー
+Connect a plugin: プラグインを接続
+Run this in your plugin's folder. It serves the plugin and opens it here, and reloads it when you save.: プラグインのフォルダでこのコマンドを実行します。プラグインを配信してここで開き、保存すると再読み込みします。
+'Or load a plugin from a server:': 'またはサーバーからプラグインを読み込む:'
+The server must serve reearth.yml and a .js file for each extension. A change event on <url>/events reloads the plugin.: サーバーは reearth.yml と、各拡張機能の .js ファイルを配信する必要があります。<url>/events の change イベントでプラグインを再読み込みします。
+Can't reach the plugin server: プラグインのサーバーに接続できません
+Can't read reearth.yml: reearth.yml を読み取れません
+Nothing answered at {{url}}. Is this still running?: '{{url}} から応答がありません。まだ起動していますか？'
+Retrying…: 再試行中…
+Retry: 再試行
+Change URL: URLを変更
+Can't reach the plugin server.: プラグインのサーバーに接続できません。
+Showing the last version that loaded: 最後に読み込めたバージョンを表示しています
+Loading map…: マップを読み込み中…
+Widget: ウィジェット
+Hide on map: マップ上で非表示
+Show on map: マップ上で表示
+Hidden on the map.: マップ上で非表示になっています。
+Story blocks: ストーリーブロック
+Story block: ストーリーブロック
+Hide from story panel: ストーリーパネルから非表示
+Show in story panel: ストーリーパネルに表示
+Hidden from the story panel.: ストーリーパネルから非表示になっています。
+Infobox blocks: インフォボックスブロック
+Infobox block: インフォボックスブロック
+Hide from infobox: インフォボックスから非表示
+Show in infobox: インフォボックスに表示
+Hidden from the infobox.: インフォボックスから非表示になっています。
+Widgets and blocks: ウィジェットとブロック
+reearth.yml has no widgets or blocks yet.: reearth.yml にはまだウィジェットやブロックがありません。
+Select a widget or block to see its properties.: ウィジェットまたはブロックを選択するとプロパティが表示されます。
+Reset to defaults: デフォルトに戻す
+Show: 表示
+Shows in the story panel.: ストーリーパネルに表示されます。
+Shows in the infobox.: インフォボックスに表示されます。
+Shows in the infobox, which opens when you click a feature on the map.: マップ上のフィーチャーをクリックすると開くインフォボックスに表示されます。
+Open infobox: インフォボックスを開く
+No properties. Add a schema to this extension in reearth.yml to edit them here.: プロパティがありません。reearth.yml でこの拡張機能にスキーマを追加すると、ここで編集できます。
+Visualizer workbench: Visualizer ワークベンチ
+Offline: オフライン
+Live: ライブ
+Reloads when you save a file.: ファイルを保存すると再読み込みします。
+Connecting…: 接続中…
+Not watching: 監視していません
+This server doesn't send change events. Use Reload after you save.: このサーバーは変更イベントを送信しません。保存後に再読み込みしてください。
+Change plugin URL: プラグインURLを変更
+Reload: 再読み込み
+Loading…: 読み込み中…
+Reloaded {{time}}: '{{time}} に再読み込み'
+Hide sidebar: サイドバーを隠す
+Show sidebar: サイドバーを表示
 Delete workspace: ワークスペースを削除
 I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
 This action is permanent and cannot be reversed.: この操作は元に戻すことができません。
