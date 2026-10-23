@@ -47,6 +47,9 @@ func (Server) ListProjects(ctx context.Context, req ListProjectsRequestObject) (
 	if starred && deleted {
 		return nil, invalidInput("starred and deleted cannot be combined")
 	}
+	if (starred || deleted) && (p.Keyword != nil || p.Sort != nil) {
+		return nil, invalidInput("keyword and sort cannot be combined with starred or deleted")
+	}
 	// A workspace the user cannot read looks empty, whatever the filter: the
 	// starred and deleted lookups would otherwise answer 403 and reveal it.
 	if !op.IsReadableWorkspace(wid) {

@@ -36,12 +36,12 @@ paths:
       parameters:
         - name: keyword
           in: query
-          description: Only projects whose name contains this text. Ignored with `starred` or `deleted`.
+          description: Only projects whose name contains this text. Cannot be combined with `starred` or `deleted`.
           schema:
             type: string
         - name: sort
           in: query
-          description: Sort order. Ignored with `starred` or `deleted`.
+          description: Sort order. Cannot be combined with `starred` or `deleted`.
           schema:
             $ref: "#/components/schemas/ProjectSort"
         - name: starred

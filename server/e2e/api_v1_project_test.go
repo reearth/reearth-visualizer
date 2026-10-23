@@ -108,6 +108,14 @@ func TestAPIV1ListProjects(t *testing.T) {
 	expectAPIError(t, apiV1(e, http.MethodGet, path, uID).
 		WithQuery("starred", true).WithQuery("deleted", true).Expect(),
 		http.StatusBadRequest, "invalid_input")
+	for _, filter := range []string{"starred", "deleted"} {
+		expectAPIError(t, apiV1(e, http.MethodGet, path, uID).
+			WithQuery(filter, true).WithQuery("keyword", "map").Expect(),
+			http.StatusBadRequest, "invalid_input")
+		expectAPIError(t, apiV1(e, http.MethodGet, path, uID).
+			WithQuery(filter, true).WithQuery("sort", "name").Expect(),
+			http.StatusBadRequest, "invalid_input")
+	}
 }
 
 func TestAPIV1ListProjectsPagination(t *testing.T) {
@@ -224,6 +232,8 @@ func TestAPIV1DeleteProject(t *testing.T) {
 
 	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).Expect(),
 		http.StatusForbidden, "permission_denied")
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID2).Expect(),
+		http.StatusNotFound, "not_found")
 
 	apiV1(e, http.MethodDelete, path, uID).Expect().Status(http.StatusNoContent)
 	apiV1(e, http.MethodGet, path, uID).Expect().Status(http.StatusOK).JSON().Object().HasValue("deleted", true)
@@ -234,6 +244,11 @@ func TestAPIV1DeleteProject(t *testing.T) {
 
 	// Moving it to the trash again is a no-op.
 	apiV1(e, http.MethodDelete, path, uID).Expect().Status(http.StatusNoContent)
+
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).WithQuery("permanent", true).Expect(),
+		http.StatusForbidden, "permission_denied")
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID2).WithQuery("permanent", true).Expect(),
+		http.StatusNotFound, "not_found")
 
 	apiV1(e, http.MethodDelete, path, uID).WithQuery("permanent", true).Expect().Status(http.StatusNoContent)
 	expectAPIError(t, apiV1(e, http.MethodGet, path, uID).Expect(), http.StatusNotFound, "not_found")

@@ -243,10 +243,10 @@ type DeleteProjectParams struct {
 
 // ListProjectsParams defines parameters for ListProjects.
 type ListProjectsParams struct {
-	// Keyword Only projects whose name contains this text. Ignored with `starred` or `deleted`.
+	// Keyword Only projects whose name contains this text. Cannot be combined with `starred` or `deleted`.
 	Keyword *string `form:"keyword,omitempty" json:"keyword,omitempty"`
 
-	// Sort Sort order. Ignored with `starred` or `deleted`.
+	// Sort Sort order. Cannot be combined with `starred` or `deleted`.
 	Sort *ProjectSort `form:"sort,omitempty" json:"sort,omitempty"`
 
 	// Starred Only starred projects.
