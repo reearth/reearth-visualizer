@@ -364,3 +364,41 @@ func TestProject_SetBasicAuthPassword(t *testing.T) {
 	p.SetBasicAuthPassword("password")
 	assert.Equal(t, "password", p.basicAuthPassword)
 }
+
+func TestProject_SetPublishedAt_KeepsFirstPublishedAt(t *testing.T) {
+	first := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	second := time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC)
+
+	p := &Project{}
+	assert.Nil(t, p.FirstPublishedAt())
+
+	p.SetPublishedAt(first)
+	assert.Equal(t, first, p.PublishedAt())
+	assert.Equal(t, &first, p.FirstPublishedAt())
+
+	// A republish moves PublishedAt but keeps the first publish time.
+	p.SetPublishedAt(second)
+	assert.Equal(t, second, p.PublishedAt())
+	assert.Equal(t, &first, p.FirstPublishedAt())
+}
+
+func TestProject_SetPublishedAt_KeepsLoadedFirstPublishedAt(t *testing.T) {
+	first := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	later := time.Date(2026, 3, 1, 0, 0, 0, 0, time.UTC)
+
+	p := New().NewID().Workspace(accountsID.NewWorkspaceID()).FirstPublishedAt(&first).MustBuild()
+	p.SetPublishedAt(later)
+	assert.Equal(t, &first, p.FirstPublishedAt())
+}
+
+func TestProject_SetPublishedAt_DoesNotBackfillFirstPublishedAtForLegacyProject(t *testing.T) {
+	legacyPublishedAt := time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC)
+	republishedAt := time.Date(2026, 3, 1, 0, 0, 0, 0, time.UTC)
+
+	p := New().NewID().Workspace(accountsID.NewWorkspaceID()).PublishedAt(legacyPublishedAt).MustBuild()
+	assert.Nil(t, p.FirstPublishedAt())
+
+	p.SetPublishedAt(republishedAt)
+	assert.Equal(t, republishedAt, p.PublishedAt())
+	assert.Nil(t, p.FirstPublishedAt(), "a republish of a project published before firstPublishedAt existed must not fabricate a first-publish time")
+}
