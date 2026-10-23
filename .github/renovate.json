@@ -16,6 +16,13 @@
       "matchUpdateTypes": ["major"],
       "groupName": "{{depName}} (major)",
       "groupSlug": "{{depNameSanitized}}-major"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["mongo"],
+      "matchFileNames": [".github/workflows/**"],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
     }
   ]
 }
