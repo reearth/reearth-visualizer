@@ -55,9 +55,32 @@ describe("layerBBox", () => {
   });
 
   test("handles a layer with a very large number of vertices", () => {
-    const line = Array.from({ length: 500_000 }, (_, i) => [i % 360, i % 90]);
+    const line = Array.from({ length: 500_000 }, (_, i) => [i % 180, i % 90]);
     expect(layerBBox([{ geometry: { coordinates: line } }])).toEqual([
-      0, 0, 359, 89
+      0, 0, 179, 89
+    ]);
+  });
+
+  test("takes the short way across the antimeridian", () => {
+    // Fiji: from 177E to 178W (-178).
+    const bbox = layerBBox([
+      point(177, -17),
+      point(-178, -16),
+      point(179.5, -18)
+    ]);
+    expect(bbox).toEqual([177, -18, -178, -16]);
+  });
+
+  test("keeps a box that does not cross the antimeridian as it is", () => {
+    expect(layerBBox([point(-170, 0), point(170, 1)])).not.toEqual([
+      -170, 0, 170, 1
+    ]);
+    expect(layerBBox([point(-10, 0), point(10, 1)])).toEqual([-10, 0, 10, 1]);
+  });
+
+  test("treats longitudes outside [-180, 180] as the same place", () => {
+    expect(layerBBox([point(190, 0), point(200, 1)])).toEqual([
+      -170, 0, -160, 1
     ]);
   });
 
