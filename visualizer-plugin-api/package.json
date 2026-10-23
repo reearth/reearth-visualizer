@@ -3,7 +3,6 @@
   "version": "2.1.0",
   "description": "TypeScript type definitions for the Re:Earth Visualizer plugin API",
   "license": "Apache-2.0",
-  "type": "module",
   "main": "dist/index.d.ts",
   "types": "dist/index.d.ts",
   "exports": {
@@ -17,6 +16,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
+    "test": "npm run build && node scripts/consumer-test.mjs",
     "prepack": "npm run build"
   },
   "peerDependencies": {
