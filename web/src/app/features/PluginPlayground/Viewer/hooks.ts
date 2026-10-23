@@ -12,10 +12,12 @@ import {
 
 export default ({
   visualizerRef,
-  enabledVisualizer
+  enabledVisualizer,
+  keepCamera
 }: {
   visualizerRef: MutableRefObject<MapRef | null>;
   enabledVisualizer: boolean;
+  keepCamera?: boolean;
 }) => {
   const [ready, setReady] = useState(false);
   const [currentCamera, setCurrentCamera] = useState<Camera | undefined>(
@@ -23,10 +25,10 @@ export default ({
   );
 
   useEffect(() => {
-    if (!enabledVisualizer) {
+    if (!enabledVisualizer && !keepCamera) {
       setCurrentCamera(undefined);
     }
-  }, [enabledVisualizer]);
+  }, [enabledVisualizer, keepCamera]);
 
   const handleIsVisualizerUpdate = useCallback(
     (value: boolean) => setReady(value),

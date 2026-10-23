@@ -68,7 +68,8 @@ export default () => {
   const { executeCode, infoboxBlocks, story, widgets } = useCode({
     files: selectedPlugin.files,
     fieldValues,
-    resetVisualizer
+    resetVisualizer,
+    visualizerRef
   });
 
   const [infoboxEnabled, setInfoboxEnabled] = useState(true);
