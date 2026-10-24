@@ -10,7 +10,6 @@ import { useWidgetsViewDevice, usePublishViewDevice } from "./atoms";
 import useHooks from "./hooks";
 import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
-import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
 import AssetLayerCreator from "./Map/DataSourceLayerCreator/AssetLayerCreator";
 import UrlLayerCreator from "./Map/DataSourceLayerCreator/UrlLayerCreator";
 import ValueLayerCreator from "./Map/DataSourceLayerCreator/ValueLayerCreator";
@@ -18,7 +17,6 @@ import PlateauAssetLayerCreator from "./Map/PlateauAssetLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
 import {
   showAssetLayerCreatorAtom,
-  showDataSourceLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
   showSketchLayerCreatorAtom,
   showUrlLayerCreatorAtom,
@@ -69,13 +67,6 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
 
   const [widgetsViewDevice] = useWidgetsViewDevice();
   const [publishViewDevice] = usePublishViewDevice();
-
-  const [showDataSourceLayerCreator, setShowDataSourceLayerCreator] = useAtom(
-    showDataSourceLayerCreatorAtom
-  );
-  const closeDataSourceLayerCreator = () => {
-    setShowDataSourceLayerCreator(false);
-  };
 
   const [showSketchLayerCreator, setShowSketchLayerCreator] = useAtom(
     showSketchLayerCreatorAtom
@@ -179,14 +170,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           )}
         </Workbench>
       </Content>
-      {showDataSourceLayerCreator && (
-        <DataSourceLayerCreator
-          sceneId={sceneId}
-          onClose={closeDataSourceLayerCreator}
-          onSubmit={handleLayerAdd}
-          data-testid="editor-datasource-layer-creator"
-        />
-      )}
+     
       {showUrlLayerCreator && (
         <UrlLayerCreator
           sceneId={sceneId}

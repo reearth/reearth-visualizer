@@ -6,8 +6,8 @@ import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { useMapPage } from "../context";
+import DataSourceLayerCreator from "../DataSourceLayerCreator";
 
-import AddLayerMenu from "./AddLayerMenu";
 import LayerItem from "./LayerItem";
 
 const LAYERS_DRAG_HANDLE_CLASS_NAME =
@@ -61,7 +61,7 @@ const LayersPanel: FC = () => {
       extend
     >
       <Wrapper data-testid="layers-panel-wrapper">
-        <AddLayerMenu />
+        <DataSourceLayerCreator />
         <LayersContainer data-testid="layers-container">
           <DragAndDropList
             items={DraggableLayerItems}
