@@ -5,7 +5,7 @@ import { useCallback, useMemo } from "react";
 
 import { useMapPage } from "../context";
 import {
-  showDataSourceLayerCreatorAtom,
+  showAssetLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
   showSketchLayerCreatorAtom,
   showUrlLayerCreatorAtom,
@@ -35,12 +35,10 @@ const AddLayerMenu = () => {
     [handleLayerAdd, sceneId, t]
   );
 
-  const setShowDataSourceLayerCreator = useSetAtom(
-    showDataSourceLayerCreatorAtom
-  );
-  const openDataSourceLayerCreator = useCallback(() => {
-    setShowDataSourceLayerCreator(true);
-  }, [setShowDataSourceLayerCreator]);
+  const setShowAssetLayerCreator = useSetAtom(showAssetLayerCreatorAtom);
+  const openAssetLayerCreator = useCallback(() => {
+    setShowAssetLayerCreator(true);
+  }, [setShowAssetLayerCreator]);
 
   const setShowSketchLayerCreator = useSetAtom(showSketchLayerCreatorAtom);
   const openSketchLayerCreator = useCallback(() => {
@@ -64,8 +62,6 @@ const AddLayerMenu = () => {
     setShowValueLayerCreator(true);
   }, [setShowValueLayerCreator]);
 
-  // TODO: "Add from Assets" still opens the data source manager; point it at
-  // its dedicated flow once built.
   const newLayerMenu: PopupMenuItem[] = useMemo(
     () => [
       {
@@ -73,7 +69,7 @@ const AddLayerMenu = () => {
         title: t("Add from Assets"),
         description: t("Upload new files or pick existing ones"),
         icon: "floppyDisk",
-        onClick: openDataSourceLayerCreator
+        onClick: openAssetLayerCreator
       },
       {
         id: "add-from-url",
@@ -125,7 +121,7 @@ const AddLayerMenu = () => {
     ],
     [
       addPreset,
-      openDataSourceLayerCreator,
+      openAssetLayerCreator,
       openUrlLayerCreator,
       openValueLayerCreator,
       openSketchLayerCreator,

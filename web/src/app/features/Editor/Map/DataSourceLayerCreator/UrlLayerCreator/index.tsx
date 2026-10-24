@@ -19,7 +19,9 @@ import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 import { ClipLoader } from "react-spinners";
 
-import FooterToggle from "../FooterToggle";
+import CsvColumnInputs from "../CsvColumnInputs";
+import InfoLayerTips from "../InfoLayerTips";
+
 
 import useHooks from "./hooks";
 
@@ -61,20 +63,17 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
     handleSubmit
   } = useHooks({ sceneId, onClose, onSubmit });
 
+  // CSV's note comes with its column inputs (CsvColumnInputs).
   const warning =
-    format === "csv"
+    format === "czml"
       ? t(
-          "Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below."
+          "The development of the CZML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution."
         )
-      : format === "czml"
+      : format === "kml"
         ? t(
-            "The development of the CZML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution."
+            "The development of the KML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution."
           )
-        : format === "kml"
-          ? t(
-              "The development of the KML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution."
-            )
-          : undefined;
+        : undefined;
 
   return (
     <Modal size="medium" visible dataTestid="url-layer-creator-modal">
@@ -86,7 +85,7 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
         actions={
           <ActionWrapper>
             {format === "geojson" && (
-              <FooterToggle
+              <InfoLayerTips
                 label={t("Prioritize Performance")}
                 description={t(
                   "If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified."
@@ -94,10 +93,11 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
                 value={prioritizePerformance}
                 onChange={setPrioritizePerformance}
                 data-testid="url-layer-creator-prioritize"
+                width={250}
               />
             )}
             {format === "czml" && (
-              <FooterToggle
+              <InfoLayerTips
                 label={t("Auto Update Time")}
                 description={t(
                   "When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer."
@@ -105,6 +105,7 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
                 value={autoUpdateTime}
                 onChange={setAutoUpdateTime}
                 data-testid="url-layer-creator-auto-update-time"
+                width={250}
               />
             )}
             <Button
@@ -160,26 +161,13 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
           />
 
           {format === "csv" && (
-            <>
-              <InputGroup label={t("Latitude column name")}>
-                <TextInput
-                  value={latColumn}
-                  placeholder={t("Column name")}
-                  onChange={setLatColumn}
-                  dataTestid="url-layer-creator-lat"
-                  extendWidth
-                />
-              </InputGroup>
-              <InputGroup label={t("Longitude column name")}>
-                <TextInput
-                  extendWidth
-                  value={lngColumn}
-                  placeholder={t("Column name")}
-                  onChange={setLngColumn}
-                  dataTestid="url-layer-creator-lng"
-                />
-              </InputGroup>
-            </>
+            <CsvColumnInputs
+              latColumn={latColumn}
+              lngColumn={lngColumn}
+              onLatColumnChange={setLatColumn}
+              onLngColumnChange={setLngColumn}
+              testIdPrefix="url-layer-creator"
+            />
           )}
 
           {(format === "mvt" || format === "wms") && (

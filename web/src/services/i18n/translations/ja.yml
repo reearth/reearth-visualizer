@@ -138,6 +138,24 @@ Street View and Google Map Search require a Google Maps tile type to comply with
   Street ViewとGoogle マップ検索は、Googleマップのポリシーに準拠するためGoogleマップのタイルタイプが必要です。Google
   サテライトまたはGoogle ロードマップを選択してください。
 Page: ページ
+Upload: アップロード
+Search by the name: 名前で検索
+No assets found: アセットが見つかりません
+Uploaded at: アップロード日時
+Visualizer Project Assets: Visualizerプロジェクトアセット
+CMS Assets: CMSアセット
+CMS Models: CMSモデル
+Edits to the model in CMS will update added layer automatically: CMSでモデルを編集すると、追加したレイヤーも自動的に更新されます
+All formats: すべての形式
+Back: 戻る
+Prioritize Performance: パフォーマンスを優先
+If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
+  パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
+Auto Update Time: 自動時間更新
+'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': >-
+  有効にすると、CZML ファイルが読み込まれた際に、シミュレーションの時計が CZML
+  ファイルで定義された時間範囲に更新されます。警告：このオプションが有効な複数の CZML
+  レイヤーが読み込まれた場合、最終的なシミュレーション時間は最後に読み込まれたレイヤーによって設定されます。
 From Assets: アセットから
 From Web: ウェブから
 Source Type: ソースタイプ
@@ -148,36 +166,21 @@ Latitude Column Name: 緯度の列名
 Column Name: 列名
 Longitude Column Name: 経度の列名
 Add to Layer: レイヤーに追加
+Column name: 列名
 From Value: 値から
 Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
   CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 Input Text: テキストを入力
 Value: 値
 Input data here: ここにデータを入力
-Auto Update Time: 自動時間更新
-'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': >-
-  有効にすると、CZML ファイルが読み込まれた際に、シミュレーションの時計が CZML
-  ファイルで定義された時間範囲に更新されます。警告：このオプションが有効な複数の CZML
-  レイヤーが読み込まれた場合、最終的なシミュレーション時間は最後に読み込まれたレイヤーによって設定されます。
 Invalid GeoJSON format: 不正なGeoJSON形式
 Please enter valid GeoJSON: 有効なGeoJSONを入力してください
-Prioritize Performance: パフォーマンスを優先
-If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
-  パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
 Vector Tile: ベクトルタイル
-3D Tiles: 3Dタイル
 Data Source Manager: データソースマネージャー
 Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
   KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
-Please provide cesium ion access token on Main settings to use Cesium Ion.: Cesium Ionを使用するには、メイン設定でCesium Ionアクセストークンを提供してください。
-Re:Earth: Re:Earth
-Cesium Ion: Cesium Ion
-Provider: プロバイダー
-Re:Earth Buildings: Re:Earth Buildings
-Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
-Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
-URL: URL
 Vector Tiles (MVT): ベクトルタイル（MVT）
+3D Tiles: 3Dタイル
 Enter a valid URL starting with http:// or https://.: http:// または https:// で始まる有効なURLを入力してください。
 This URL looks like {{detected}} data, not {{selected}}. Change the format or check the URL.: このURLは{{selected}}ではなく{{detected}}のデータのようです。形式を変更するか、URLを確認してください。
 '{{selected}} URLs must end with {{extensions}}. Check the URL or change the format.': '{{selected}}のURLは{{extensions}}で終わる必要があります。URLを確認するか、形式を変更してください。'
@@ -190,11 +193,9 @@ The development of the CZML format is still in the experimental stage and not ve
 The development of the KML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: KML形式の開発はまだ試験段階で、あまり安定していません。また、一部の機能はまだ完全にはサポートされていないため、注意してご利用ください。
 Add from URL: URLから追加
 Add a layer from data hosted on the web. The URL must be publicly accessible and allow cross-origin requests.: Web上でホストされているデータからレイヤーを追加します。URLは公開されており、クロスオリジンリクエストを許可している必要があります。
+URL: URL
 Supports GeoJSON, CSV, CZML, KML, 3D Tiles, MVT and WMS.: GeoJSON、CSV、CZML、KML、3Dタイル、MVT、WMSに対応しています。
 Select format: 形式を選択
-Latitude column name: 緯度の列名
-Column name: 列名
-Longitude column name: 経度の列名
 Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
@@ -211,9 +212,11 @@ Paste data here: ここにデータを貼り付け
 'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルが存在する場合の不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 'Disabled: Zoom level configuration is not available for system tiles.': '無効: ズームレベルの設定はシステムタイルでは利用できません。'
 Inspector: インスペクター
+Re:Earth: Re:Earth
 Layer: レイヤー
 Layer Name: レイヤー名
 Format: 形式
+Provider: プロバイダー
 Custom property schema: カスタムプロパティスキーマ
 Update data resource URL: リソースURLを更新
 New data resource URL: 新しいリソースURL
@@ -251,6 +254,8 @@ NO STYLE: スタイルなし
 Enable PhotoOverlay: フォトオーバーレイを有効化
 Show photo overlay when the user clicks on a layer: レイヤーをクリックした際にフォトオーバーレイを表示
 Settings: 設定
+Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
+Re:Earth Buildings: Re:Earth Buildings
 Add from Assets: アセットから追加
 Upload new files or pick existing ones: 新しいファイルをアップロード、または既存のファイルを選択
 Link to externally hosted data: 外部でホストされているデータにリンク
@@ -718,7 +723,6 @@ List Layout: リストのレイアウト
 Version: バージョン
 Wrong file format: 誤ったファイル形式
 Choose: 選択
-Upload: アップロード
 Position Capture: 位置キャプチャ
 Latitude: 緯度
 Longitude: 経度

@@ -9,7 +9,6 @@ import CSV from "./CSV";
 import CZML from "./CZML";
 import GeoJSON from "./GeoJSON";
 import KML from "./KML";
-import ThreeDTiles from "./ThreeDTiles";
 import VectorTiles from "./VectorTiles";
 import WmsTiles from "./WmsTiles";
 
@@ -59,13 +58,6 @@ const DataSourceLayerCreator: FC<DataProps> = ({
       name: t("Vector Tile"),
       children: (
         <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-      )
-    },
-    {
-      id: "threeDTiles",
-      name: t("3D Tiles"),
-      children: (
-        <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
       )
     },
     {

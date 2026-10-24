@@ -8,16 +8,16 @@ type Props = {
   label: string;
   description: string;
   value: boolean;
+  width?: number;
   onChange: (value: boolean) => void;
   "data-testid"?: string;
 };
 
-// A labelled switch for a layer creator modal's footer, with its description
-// shown in a tooltip on the info icon.
-const FooterToggle: FC<Props> = ({
+const InfoLayerTips: FC<Props> = ({
   label,
   description,
   value,
+  width,
   onChange,
   "data-testid": dataTestid
 }) => (
@@ -28,6 +28,8 @@ const FooterToggle: FC<Props> = ({
         icon="informationCircle"
         placement="bottom"
         text={description}
+        width={width}
+        darkBackground
       />
       <Typography size="body">{label}</Typography>
     </Label>
@@ -35,10 +37,10 @@ const FooterToggle: FC<Props> = ({
   </Wrapper>
 );
 
-const Wrapper = styled("div")(({ theme }) => ({
+const Wrapper = styled("div")<{ width?: number }>(({ theme }) => ({
   display: css.display.flex,
   alignItems: css.alignItems.center,
-  gap: theme.spacing.large
+  gap: theme.spacing.large,
 }));
 
 const Label = styled("div")(({ theme }) => ({
@@ -47,4 +49,4 @@ const Label = styled("div")(({ theme }) => ({
   gap: theme.spacing.smallest
 }));
 
-export default FooterToggle;
+export default InfoLayerTips;

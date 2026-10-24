@@ -13,7 +13,7 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
-import FooterToggle from "../FooterToggle";
+import InfoLayerTips from "../InfoLayerTips";
 
 import useHooks from "./hooks";
 
@@ -64,7 +64,7 @@ const ValueLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
         actions={
           <ActionWrapper>
             {format === "geojson" && (
-              <FooterToggle
+              <InfoLayerTips
                 label={t("Prioritize Performance")}
                 description={t(
                   "If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified."
@@ -72,10 +72,11 @@ const ValueLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
                 value={prioritizePerformance}
                 onChange={setPrioritizePerformance}
                 data-testid="value-layer-creator-prioritize"
+                width={250}
               />
             )}
             {format === "czml" && (
-              <FooterToggle
+              <InfoLayerTips
                 label={t("Auto Update Time")}
                 description={t(
                   "When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer."
@@ -83,6 +84,7 @@ const ValueLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
                 value={autoUpdateTime}
                 onChange={setAutoUpdateTime}
                 data-testid="value-layer-creator-auto-update-time"
+                width={250}
               />
             )}
             <Button

@@ -11,11 +11,13 @@ import useHooks from "./hooks";
 import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
 import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
+import AssetLayerCreator from "./Map/DataSourceLayerCreator/AssetLayerCreator";
 import UrlLayerCreator from "./Map/DataSourceLayerCreator/UrlLayerCreator";
 import ValueLayerCreator from "./Map/DataSourceLayerCreator/ValueLayerCreator";
 import PlateauAssetLayerCreator from "./Map/PlateauAssetLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
 import {
+  showAssetLayerCreatorAtom,
   showDataSourceLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
   showSketchLayerCreatorAtom,
@@ -87,6 +89,13 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   );
   const closeUrlLayerCreator = () => {
     setShowUrlLayerCreator(false);
+  };
+
+  const [showAssetLayerCreator, setShowAssetLayerCreator] = useAtom(
+    showAssetLayerCreatorAtom
+  );
+  const closeAssetLayerCreator = () => {
+    setShowAssetLayerCreator(false);
   };
 
   const [showValueLayerCreator, setShowValueLayerCreator] = useAtom(
@@ -182,6 +191,13 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
         <UrlLayerCreator
           sceneId={sceneId}
           onClose={closeUrlLayerCreator}
+          onSubmit={handleLayerAdd}
+        />
+      )}
+      {showAssetLayerCreator && (
+        <AssetLayerCreator
+          sceneId={sceneId}
+          onClose={closeAssetLayerCreator}
           onSubmit={handleLayerAdd}
         />
       )}

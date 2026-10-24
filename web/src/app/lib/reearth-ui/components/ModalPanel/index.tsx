@@ -6,6 +6,8 @@ import { FC, ReactNode } from "react";
 export type ModalPanelProps = {
   icon?: IconName;
   title?: string;
+  /** Replaces the icon and title in the header bar, e.g. with tabs. */
+  header?: ReactNode;
   children: ReactNode;
   actions?: ReactNode;
   layout?: "common";
@@ -20,6 +22,7 @@ export type ModalPanelProps = {
 export const ModalPanel: FC<ModalPanelProps> = ({
   title,
   icon,
+  header,
   children,
   actions,
   layout,
@@ -40,8 +43,12 @@ export const ModalPanel: FC<ModalPanelProps> = ({
     >
       {appearance !== "simple" && (
         <HeaderWrapper withBackground={withBackground}>
-          {icon && <Icon icon={icon} size="normal" />}
-          <Title>{title}</Title>
+          {header ?? (
+            <>
+              {icon && <Icon icon={icon} size="normal" />}
+              <Title>{title}</Title>
+            </>
+          )}
           <Button
             iconButton
             icon="close"
