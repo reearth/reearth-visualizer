@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -384,7 +385,15 @@ func ImportProject(
 	pluginsZip map[string]*zip.File,
 	result map[string]any,
 	version *string,
-) bool {
+) (ok bool) {
+	defer func() {
+		if r := recover(); r != nil {
+			errMsg := fmt.Sprintf("panic during import: %v", r)
+			log.Errorf("[Import] %s (project %s)\n%s", errMsg, pid.String(), debug.Stack())
+			UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+			ok = false
+		}
+	}()
 
 	if err := migrateLegacyTileTypes(importData); err != nil {
 		log.Warnf("[Import] failed to migrate legacy tile types: %v", err)
