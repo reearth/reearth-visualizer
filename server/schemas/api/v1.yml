@@ -1,0 +1,195 @@
+openapi: 3.0.3
+info:
+  title: Re:Earth Visualizer API
+  version: 1.0.0
+  description: |
+    A REST API for clients outside the web app, such as the Re:Earth CLI.
+
+    It runs as its own service (`REEARTH_VISUALIZER_PUBLICAPI_ACTIVE=true`), so
+    its traffic never reaches the main Visualizer server, but it uses the same
+    usecases and database.
+
+    Every request needs a Re:Earth access token in `Authorization: Bearer`.
+    The token is verified by reearth-accounts, and each request runs with the
+    permissions of that user in each workspace.
+
+    Field names are part of the contract: rename nothing, only add.
+servers:
+  - url: /api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: Projects
+paths:
+  /workspaces/{workspaceId}/projects:
+    parameters:
+      - $ref: "#/components/parameters/workspaceId"
+    get:
+      operationId: listProjects
+      summary: List the projects of a workspace
+      description: |
+        Lists the projects of a workspace, most recently updated first by default. Projects in the trash
+        are left out unless `deleted=true`. A workspace you cannot read returns
+        an empty list.
+      tags: [Projects]
+      parameters:
+        - name: keyword
+          in: query
+          description: Only projects whose name contains this text. Cannot be combined with `starred` or `deleted`.
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sort order. Cannot be combined with `starred` or `deleted`.
+          schema:
+            $ref: "#/components/schemas/ProjectSort"
+        - name: starred
+          in: query
+          description: Only starred projects.
+          schema:
+            type: boolean
+        - name: deleted
+          in: query
+          description: Only projects in the trash.
+          schema:
+            type: boolean
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/cursor"
+      responses:
+        "200":
+          description: A page of projects
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectList"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    workspaceId:
+      name: workspaceId
+      in: path
+      required: true
+      schema:
+        type: string
+    limit:
+      name: limit
+      in: query
+      description: Page size.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    cursor:
+      name: cursor
+      in: query
+      description: The `nextCursor` of the previous page.
+      schema:
+        type: string
+  responses:
+    Error:
+      description: The request failed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              description: A stable, machine-readable code.
+              type: string
+              enum: [invalid_input, unauthorized, permission_denied, not_found, conflict, internal]
+            message:
+              type: string
+    ProjectSort:
+      type: string
+      enum: [updatedAt, -updatedAt, name, -name]
+      default: -updatedAt
+      description: The field to sort by; a leading `-` sorts in descending order.
+    Visibility:
+      type: string
+      enum: [public, private]
+    PublishmentStatus:
+      type: string
+      enum: [public, limited, private]
+    Project:
+      type: object
+      required:
+        - id
+        - workspaceId
+        - name
+        - description
+        - visibility
+        - starred
+        - archived
+        - deleted
+        - publishmentStatus
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        workspaceId:
+          type: string
+        sceneId:
+          description: The scene of the project. Plugins are installed into it.
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        alias:
+          description: The project alias used in the editor URL.
+          type: string
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+        starred:
+          type: boolean
+        archived:
+          type: boolean
+        deleted:
+          description: Whether the project is in the trash.
+          type: boolean
+        imageUrl:
+          type: string
+        publishmentStatus:
+          $ref: "#/components/schemas/PublishmentStatus"
+        publishedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ProjectList:
+      type: object
+      required: [items, totalCount]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Project"
+        totalCount:
+          description: The number of matching projects from this page on, so the full count on the first page.
+          type: integer
+          format: int64
+        nextCursor:
+          description: Pass as `cursor` to get the next page. Absent on the last page.
+          type: string
