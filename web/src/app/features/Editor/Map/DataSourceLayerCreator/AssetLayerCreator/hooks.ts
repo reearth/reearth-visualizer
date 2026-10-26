@@ -2,10 +2,12 @@ import { LayerAddProps } from "@reearth/app/features/Editor/hooks/useLayers";
 import useLoadMore from "@reearth/app/hooks/useLoadMore";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useMemo, useState } from "react";
+import useFileInput from "use-file-input";
 
 import { AssetLayout, AssetSource, AssetTab, SortKey } from "./types";
+import useUploads from "./useUploads";
 import useVisualizerAssets from "./useVisualizerAssets";
-import { ASSET_FORMATS, AssetFormat, formatOf } from "./utils";
+import { ACCEPT_STRING, ASSET_FORMATS, AssetFormat, formatOf } from "./utils";
 
 const ALL_FORMATS = "all";
 
@@ -39,12 +41,24 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
   const [prioritizePerformance, setPrioritizePerformance] = useState(false);
   const [autoUpdateTime, setAutoUpdateTime] = useState(true);
 
-  const visualizer = useVisualizerAssets({
-    sort,
-    keyword,
-    onUploaded: setSelectedId
-  });
+  const visualizer = useVisualizerAssets({ sort, keyword });
   const source = tab === "visualizer" ? visualizer : EMPTY_SOURCE;
+
+  // Files dropped onto the asset area or picked with Upload share one queue.
+  const { uploads, uploading, enqueue, remove, clear } = useUploads({
+    uploadFile: source.uploadFile
+  });
+  const openFilePicker = useFileInput(
+    (files) => enqueue(Array.from(files ?? [])),
+    { accept: ACCEPT_STRING, multiple: true }
+  );
+
+  // Back to the assets, with the (last) uploaded one selected.
+  const handleUploadSubmit = useCallback(() => {
+    const lastDone = [...uploads].reverse().find((u) => u.assetId);
+    if (lastDone?.assetId) setSelectedId(lastDone.assetId);
+    clear();
+  }, [clear, uploads]);
 
   // Only assets that can become a layer, narrowed by the format filter.
   const assets = useMemo(
@@ -63,11 +77,15 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     onLoadMore: source.loadMore
   });
 
-  const handleTabChange = useCallback((newTab: AssetTab) => {
-    setTab(newTab);
-    setSelectedId(undefined);
-    setStep("select");
-  }, []);
+  const handleTabChange = useCallback(
+    (newTab: AssetTab) => {
+      setTab(newTab);
+      setSelectedId(undefined);
+      setStep("select");
+      clear();
+    },
+    [clear]
+  );
 
   const formatOptions = useMemo(
     () => [
@@ -167,7 +185,12 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     tab,
     assets,
     loading: source.loading && !assets.length,
-    upload: source.upload,
+    upload: source.uploadFile ? openFilePicker : undefined,
+    uploads,
+    uploading,
+    handleDropFiles: source.uploadFile ? enqueue : undefined,
+    handleUploadRemove: remove,
+    handleUploadSubmit,
     wrapperRef,
     contentRef,
     layout,

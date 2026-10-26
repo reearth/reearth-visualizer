@@ -20,6 +20,7 @@ export type AssetSource = {
   assets: Asset[];
   loading: boolean;
   loadMore: () => void;
-  // Omitted for sources that can't be uploaded to (hides the Upload button).
-  upload?: () => void;
+  // Uploads one file and resolves to the new asset's id. Omitted for sources
+  // that can't be uploaded to (hides Upload and disables drag and drop).
+  uploadFile?: (file: File) => Promise<string | undefined>;
 };

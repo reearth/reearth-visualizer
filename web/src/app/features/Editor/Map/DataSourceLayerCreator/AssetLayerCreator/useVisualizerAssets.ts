@@ -2,22 +2,18 @@ import { Asset } from "@reearth/app/features/AssetsManager/types";
 import { useAssetMutations, useAssets } from "@reearth/services/api/asset";
 import { useProjectId, useWorkspace } from "@reearth/services/state";
 import { useCallback, useRef } from "react";
-import useFileInput from "use-file-input";
 
 import { AssetSource, SORTS, SortKey } from "./types";
-import { ACCEPT_STRING } from "./utils";
 
 const ASSETS_PER_PAGE = 20;
 
 // Assets uploaded to the current Visualizer project.
 export default ({
   sort,
-  keyword,
-  onUploaded
+  keyword
 }: {
   sort: SortKey;
   keyword?: string;
-  onUploaded: (assetId: string) => void;
 }): AssetSource => {
   const [currentWorkspace] = useWorkspace();
   const [projectId] = useProjectId();
@@ -42,26 +38,25 @@ export default ({
     loadingMoreRef.current = false;
   }, [endCursor, fetchMore, hasMoreAssets, isRefetching]);
 
-  // Upload, then report the new asset so it can be selected straight away.
   const { createAssets } = useAssetMutations();
-  const upload = useFileInput(
-    async (files) => {
+  const uploadFile = useCallback(
+    async (file: File) => {
+      // createAssets takes a FileList-like collection.
       const res = await createAssets({
         workspaceId,
         projectId,
-        file: files,
+        file: [file] as unknown as FileList,
         coreSupport: true
       });
-      const uploadedId = res?.data[0]?.data?.createAsset?.asset.id;
-      if (uploadedId) onUploaded(uploadedId);
+      return res?.data[0]?.data?.createAsset?.asset.id;
     },
-    { accept: ACCEPT_STRING, multiple: false }
+    [createAssets, projectId, workspaceId]
   );
 
   return {
     assets: (assets ?? []) as Asset[],
     loading,
     loadMore,
-    upload
+    uploadFile
   };
 };

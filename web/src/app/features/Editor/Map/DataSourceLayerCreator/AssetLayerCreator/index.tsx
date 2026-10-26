@@ -17,6 +17,8 @@ import InfoLayerTips from "../InfoLayerTips";
 import AssetContents from "./AssetContents";
 import AssetTabs from "./AssetTabs";
 import useHooks from "./hooks";
+import UploadDropzone from "./UploadDropzone";
+import UploadList from "./UploadList";
 
 type Props = {
   sceneId: string;
@@ -32,6 +34,11 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
     assets,
     loading,
     upload,
+    uploads,
+    uploading,
+    handleDropFiles,
+    handleUploadRemove,
+    handleUploadSubmit,
     wrapperRef,
     contentRef,
     layout,
@@ -148,24 +155,37 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
               />
             </CsvStep>
           ) : (
-            <AssetContents
-              assets={assets}
-              loading={loading}
-              wrapperRef={wrapperRef}
-              contentRef={contentRef}
-              layout={layout}
-              formatFilter={formatFilter}
-              formatOptions={formatOptions}
-              sort={sort}
-              sortOptions={sortOptions}
-              selectedId={selectedId}
-              onUpload={upload}
-              onLayoutChange={setLayout}
-              onSearch={handleSearch}
-              onFormatFilterChange={handleFormatFilterChange}
-              onSortChange={handleSortChange}
-              onSelect={handleSelect}
-            />
+            <UploadDropzone
+              active={uploads.length > 0}
+              onDrop={handleDropFiles}
+              content={
+                <UploadList
+                  uploads={uploads}
+                  uploading={uploading}
+                  onRemove={handleUploadRemove}
+                  onSubmit={handleUploadSubmit}
+                />
+              }
+            >
+              <AssetContents
+                assets={assets}
+                loading={loading}
+                wrapperRef={wrapperRef}
+                contentRef={contentRef}
+                layout={layout}
+                formatFilter={formatFilter}
+                formatOptions={formatOptions}
+                sort={sort}
+                sortOptions={sortOptions}
+                selectedId={selectedId}
+                onUpload={upload}
+                onLayoutChange={setLayout}
+                onSearch={handleSearch}
+                onFormatFilterChange={handleFormatFilterChange}
+                onSortChange={handleSortChange}
+                onSelect={handleSelect}
+              />
+            </UploadDropzone>
           )}
         </Wrapper>
       </ModalPanel>
