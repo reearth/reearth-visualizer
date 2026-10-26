@@ -1665,6 +1665,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cesium/core@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@cesium/core@npm:0.1.0"
+  checksum: 10c0/046ea39058bf7c7be21eee9955cae5840f47d18050e8870912a0dc28cd05ed26cbc96a81e2c22cee0e5ea9931e6c8effb3bde5bee72158745b088bb089473ed4
+  languageName: node
+  linkType: hard
+
 "@cesium/engine@npm:26.3.0":
   version: 26.3.0
   resolution: "@cesium/engine@npm:26.3.0"
@@ -6047,7 +6054,7 @@ __metadata:
     aws-amplify: "npm:6.15.8"
     axios: "npm:1.13.2"
     bowser: "npm:2.13.0"
-    cesium: "npm:1.145.0"
+    cesium: "npm:1.146.0"
     class-variance-authority: "npm:0.7.1"
     clsx: "npm:2.1.1"
     core-js: "npm:3.47.0"
@@ -12887,14 +12894,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cesium@npm:1.145.0":
-  version: 1.145.0
-  resolution: "cesium@npm:1.145.0"
+"cesium@npm:1.146.0":
+  version: 1.146.0
+  resolution: "cesium@npm:1.146.0"
   dependencies:
-    "@cesium/engine": "npm:^26.3.0"
-    "@cesium/widgets": "npm:^16.2.0"
+    "@cesium/core": "npm:^0.1.0"
+    "@cesium/engine": "npm:^26.4.0"
+    "@cesium/widgets": "npm:^16.3.0"
     protobufjs: "npm:^8.8.0"
-  checksum: 10c0/961a336eeb367b017bd413a2764d7357b5afa370a2e80e99fcb4228e441274e4ef6229da1273e1ebbde17f1ad9b1eb0ca3dec9f15075d87dbce6606c3dff47ec
+  checksum: 10c0/0c5d5e885be2140e1a17298d6224f1b9a61dee4198bbeae6eea685e922a238550333476d9cba91de85ed399b7ad221c1ccb475996273c6916ed46853f2f42a5d
   languageName: node
   linkType: hard
 
