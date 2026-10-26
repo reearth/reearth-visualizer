@@ -42,7 +42,7 @@ if (requested.length > 0) {
 } else {
   fragmentFiles = fs
     .readdirSync(dir)
-    .filter(f => f.endsWith("-test.js"))
+    .filter(f => f.endsWith("-test.js") && f !== "reearth-api-test.js")
     .sort();
 }
 
