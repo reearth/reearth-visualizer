@@ -2,13 +2,18 @@ package app
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/99designs/gqlgen/graphql"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearthx/log"
 )
 
-const accessLogMessage = "visualizer_access"
+const (
+	accessLogMessage = "visualizer_access"
+	workspaceHeader  = "X-Workspace-Id"
+)
 
 func accessLogger() graphql.OperationMiddleware {
 	return func(ctx context.Context, next graphql.OperationHandler) graphql.ResponseHandler {
@@ -34,7 +39,11 @@ func accessLogFields(ctx context.Context) []any {
 		"operation_name", opCtx.OperationName,
 		"operation_type", string(opCtx.Operation.Operation),
 	}
-	if ws := workspaceIDFromVariables(opCtx.Variables); ws != "" {
+	ws := workspaceIDFromVariables(opCtx.Variables)
+	if ws == "" {
+		ws = workspaceIDFromHeader(ctx, opCtx.Headers)
+	}
+	if ws != "" {
 		fields = append(fields, "workspace_id", ws)
 	}
 	return fields
@@ -52,4 +61,18 @@ func workspaceIDFromVariables(vars map[string]any) string {
 		}
 	}
 	return ""
+}
+
+func workspaceIDFromHeader(ctx context.Context, h http.Header) string {
+	if h == nil {
+		return ""
+	}
+	wid, err := accountsID.WorkspaceIDFrom(h.Get(workspaceHeader))
+	if err != nil {
+		return ""
+	}
+	if op := adapter.Operator(ctx); op == nil || op.AcOperator == nil || !op.IsReadableWorkspace(wid) {
+		return ""
+	}
+	return wid.String()
 }
