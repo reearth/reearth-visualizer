@@ -24,6 +24,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 )
 
 type Plugin struct {
@@ -204,13 +205,15 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 				return result, err
 			}
 
+			singleOnly := lo.FromPtr(pluginJSONextension.SingleOnly)
+
 			extension, err := plugin.NewExtension().
 				ID(id.PluginExtensionID(pluginJSONextension.ExtensionID)).
 				Type(gqlmodel.FromPluginExtension(pluginJSONextension.Type)).
 				Name(i18n.StringFrom(pluginJSONextension.Name)).
 				Description(i18n.StringFrom(pluginJSONextension.Description)).
 				Icon(pluginJSONextension.Icon).
-				SingleOnly(*pluginJSONextension.SingleOnly).
+				SingleOnly(singleOnly).
 				WidgetLayout(parseWidgetLayout(pluginJSONextension.WidgetLayout)).
 				Schema(psid).
 				Build()

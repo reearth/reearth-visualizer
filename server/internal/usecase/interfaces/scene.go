@@ -21,6 +21,7 @@ var (
 type Scene interface {
 	Fetch(context.Context, []id.SceneID, *usecase.Operator) ([]*scene.Scene, error)
 	FindByProject(context.Context, id.ProjectID, *usecase.Operator) (*scene.Scene, error)
+	FindByProjects(context.Context, []id.ProjectID, *usecase.Operator) ([]*scene.Scene, error)
 	FindByProjectsWithStory(context.Context, []id.ProjectID, *usecase.Operator) ([]*scene.Scene, *storytelling.StoryList, error)
 	Create(context.Context, id.ProjectID, bool, *usecase.Operator) (*scene.Scene, error)
 	AddWidget(context.Context, scene.WidgetAlignSystemType, id.SceneID, id.PluginID, id.PluginExtensionID, *usecase.Operator) (*scene.Scene, *scene.Widget, error)

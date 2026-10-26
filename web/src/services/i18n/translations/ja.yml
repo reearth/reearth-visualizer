@@ -88,6 +88,7 @@ Import: インポート
 Search project: プロジェクトを検索
 All projects: すべてのプロジェクト
 Search Result for: 検索結果
+Project Name: プロジェクト名
 Last updated by: 最終更新者
 Last updated: 最終更新日時
 Created: 作成日
@@ -454,7 +455,6 @@ README: リードミー
 License: ライセンス
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Basic settings: 基本設定
-Project Name: プロジェクト名
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
 Change project visibility: プロジェクトの公開範囲を変更
@@ -561,6 +561,63 @@ Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
+Hide layer: レイヤーを非表示
+Show layer: レイヤーを表示
+Plugin URL: プラグインURL
+Load: 読み込む
+Copied: コピーしました
+Copy: コピー
+Copy command: コマンドをコピー
+Connect a plugin: プラグインを接続
+Run this in your plugin's folder. It serves the plugin and opens it here, and reloads it when you save.: プラグインのフォルダでこのコマンドを実行します。プラグインを配信してここで開き、保存すると再読み込みします。
+'Or load a plugin from a server:': 'またはサーバーからプラグインを読み込む:'
+The server must serve reearth.yml and a .js file for each extension. A change event on <url>/events reloads the plugin.: サーバーは reearth.yml と、各拡張機能の .js ファイルを配信する必要があります。<url>/events の change イベントでプラグインを再読み込みします。
+Can't reach the plugin server: プラグインのサーバーに接続できません
+Can't read reearth.yml: reearth.yml を読み取れません
+Nothing answered at {{url}}. Is this still running?: '{{url}} から応答がありません。まだ起動していますか？'
+Retrying…: 再試行中…
+Retry: 再試行
+Change URL: URLを変更
+Can't reach the plugin server.: プラグインのサーバーに接続できません。
+Showing the last version that loaded: 最後に読み込めたバージョンを表示しています
+Loading map…: マップを読み込み中…
+Widget: ウィジェット
+Hide on map: マップ上で非表示
+Show on map: マップ上で表示
+Hidden on the map.: マップ上で非表示になっています。
+Story blocks: ストーリーブロック
+Story block: ストーリーブロック
+Hide from story panel: ストーリーパネルから非表示
+Show in story panel: ストーリーパネルに表示
+Hidden from the story panel.: ストーリーパネルから非表示になっています。
+Infobox blocks: インフォボックスブロック
+Infobox block: インフォボックスブロック
+Hide from infobox: インフォボックスから非表示
+Show in infobox: インフォボックスに表示
+Hidden from the infobox.: インフォボックスから非表示になっています。
+Widgets and blocks: ウィジェットとブロック
+reearth.yml has no widgets or blocks yet.: reearth.yml にはまだウィジェットやブロックがありません。
+Select a widget or block to see its properties.: ウィジェットまたはブロックを選択するとプロパティが表示されます。
+Reset to defaults: デフォルトに戻す
+Show: 表示
+Shows in the story panel.: ストーリーパネルに表示されます。
+Shows in the infobox.: インフォボックスに表示されます。
+Shows in the infobox, which opens when you click a feature on the map.: マップ上のフィーチャーをクリックすると開くインフォボックスに表示されます。
+Open infobox: インフォボックスを開く
+No properties. Add a schema to this extension in reearth.yml to edit them here.: プロパティがありません。reearth.yml でこの拡張機能にスキーマを追加すると、ここで編集できます。
+Visualizer workbench: Visualizer ワークベンチ
+Offline: オフライン
+Live: ライブ
+Reloads when you save a file.: ファイルを保存すると再読み込みします。
+Connecting…: 接続中…
+Not watching: 監視していません
+This server doesn't send change events. Use Reload after you save.: このサーバーは変更イベントを送信しません。保存後に再読み込みしてください。
+Change plugin URL: プラグインURLを変更
+Reload: 再読み込み
+Loading…: 読み込み中…
+Reloaded {{time}}: '{{time}} に再読み込み'
+Hide sidebar: サイドバーを隠す
+Show sidebar: サイドバーを表示
 Delete workspace: ワークスペースを削除
 I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
 This action is permanent and cannot be reversed.: この操作は元に戻すことができません。
@@ -699,6 +756,7 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
+Export already in progress.: エクスポートは既に進行中です。
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
 Failed to upload the file.: ファイルのアップロードに失敗しました。

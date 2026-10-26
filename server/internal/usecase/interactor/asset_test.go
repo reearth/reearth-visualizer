@@ -16,6 +16,7 @@ import (
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -309,6 +310,85 @@ func TestAsset_ImportAssetFiles_MultipleAssets(t *testing.T) {
 
 	for before := range assetFiles {
 		assert.NotContains(t, string(*resultData), "/assets/"+before+"\"")
+	}
+}
+
+func TestAsset_ImportAssetFiles_RewritesAllURLs(t *testing.T) {
+	ctx := adapter.AttachCurrentHost(context.Background(), "https://visualizer.example.com")
+
+	ws := accountsWorkspace.New().NewID().MustBuild()
+	prj := project.New().NewID().Workspace(ws.ID()).MustBuild()
+
+	gFile, err := fs.NewFile(afero.NewMemMapFs(), "")
+	require.NoError(t, err)
+
+	wsRepo := accountsInfra.NewMemoryWorkspace()
+	require.NoError(t, wsRepo.Save(ctx, ws))
+
+	uContainer := &Asset{
+		repos: &repo.Container{
+			Asset:     memory.NewAsset(),
+			Workspace: wsRepo,
+		},
+		gateways: &gateway.Container{
+			File: gFile,
+		},
+	}
+
+	operator := &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
+		},
+	}
+
+	beforeNames := []string{"before1.png", "before2.png", "before3.png"}
+
+	buf := &bytes.Buffer{}
+	zipWriter := zip.NewWriter(buf)
+	for _, name := range beforeNames {
+		w, err := zipWriter.Create(name)
+		require.NoError(t, err)
+		_, err = w.Write([]byte("asset-bytes-" + name))
+		require.NoError(t, err)
+	}
+	require.NoError(t, zipWriter.Close())
+
+	zr, err := zip.NewReader(bytes.NewReader(buf.Bytes()), int64(buf.Len()))
+	require.NoError(t, err)
+
+	assets := make(map[string]*zip.File, len(zr.File))
+	assetNamesJSON := make(map[string]string, len(zr.File))
+	dataStr := `{"assets":{`
+	for i, f := range zr.File {
+		assets[f.Name] = f
+		assetNamesJSON[f.Name] = f.Name
+		if i > 0 {
+			dataStr += ","
+		}
+		dataStr += `"` + f.Name + `":"` + f.Name + `"`
+	}
+	dataStr += `},"refs":[`
+	for i, name := range beforeNames {
+		if i > 0 {
+			dataStr += ","
+		}
+		dataStr += `"https://visualizer.example.com/assets/` + name + `"`
+	}
+	dataStr += `]}`
+	data := []byte(dataStr)
+
+	resultData, result, err := uContainer.ImportAssetFiles(ctx, assets, &data, prj, operator)
+	require.NoError(t, err)
+	require.Len(t, result, len(beforeNames), "every asset should produce a result entry")
+
+	got := string(*resultData)
+	for _, name := range beforeNames {
+		assert.NotContains(t, got, "https://visualizer.example.com/assets/"+name,
+			"the pre-import URL for %s must not survive the batched replacement", name)
+	}
+
+	for afterName := range result {
+		assert.Contains(t, got, "https://visualizer.example.com/assets/"+afterName)
 	}
 }
 
