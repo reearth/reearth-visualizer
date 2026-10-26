@@ -160,7 +160,7 @@ Auto Update Time: 自動時間更新
 The development of the KML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: KML形式の開発はまだ試験段階で、あまり安定していません。また、一部の機能はまだ完全にはサポートされていないため、注意してご利用ください。
 Submit: 反映
 This file format is not supported. Please use GeoJSON, CSV, KML or CZML.: このファイル形式には対応していません。GeoJSON、CSV、KML、CZMLのいずれかを使用してください。
-The file cannot be greater than {{size}} MB. Please use a smaller file.: 'ファイルサイズは{{size}}MB以下にしてください。より小さいファイルを使用してください。'
+The file cannot be greater than {{size}} MB. Please use a smaller file.: ファイルサイズは{{size}}MB以下にしてください。より小さいファイルを使用してください。
 Failed to upload the file.: ファイルのアップロードに失敗しました。
 Latitude Column Name: 緯度の列名
 Column name: 列名

@@ -19,8 +19,8 @@ const AssetTabs: FC<Props> = ({ value, onChange }) => {
   const tabs: { id: AssetTab; name: string; icon: IconName }[] = useMemo(
     () => [
       { id: "visualizer", name: t("Visualizer Project Assets"), icon: "logo" },
-      { id: "cmsAssets", name: t("CMS Assets"), icon: "cmsLogo" },
-      { id: "cmsModels", name: t("CMS Models"), icon: "cmsLogo" }
+      // { id: "cmsAssets", name: t("CMS Assets"), icon: "cmsLogo" },
+      // { id: "cmsModels", name: t("CMS Models"), icon: "cmsLogo" }
     ],
     [t]
   );

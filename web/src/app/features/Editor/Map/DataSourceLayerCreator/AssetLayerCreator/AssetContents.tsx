@@ -99,46 +99,58 @@ const AssetContents: FC<Props> = ({
         }
       />
 
-      <AssetsContentWrapper ref={wrapperRef}>
-        {loading ? (
-          <Loading relative />
-        ) : !assets.length ? (
-          <NotFound>
-            <Icon icon="searchNotFound" size={50} color={theme.content.weak} />
-            <Typography size="h5">{t("No assets found")}</Typography>
-            <Typography size="body" color={theme.content.weak}>
-              {t("Try adjusting your search or filters")}
-            </Typography>
-          </NotFound>
-        ) : layout === "grid" ? (
-          <Grid ref={contentRef}>
-            {assets.map((asset) => (
-              <AssetCard
-                key={asset.id}
-                asset={asset}
-                selected={asset.id === selectedId}
-                onSelect={onSelect}
-              />
-            ))}
-          </Grid>
-        ) : (
-          <List ref={contentRef}>
+      <AssetsArea>
+        {/* Like the dashboard asset list: the header sits outside the scroll
+            area, so only the rows scroll and nothing shows behind it. */}
+        {layout === "list" && !loading && !!assets.length && (
+          <ListHeaderWrapper>
             <ListHeader>
               <span>{t("Name")}</span>
               <span>{t("Size")}</span>
               <span>{t("Uploaded at")}</span>
             </ListHeader>
-            {assets.map((asset) => (
-              <AssetRow
-                key={asset.id}
-                asset={asset}
-                selected={asset.id === selectedId}
-                onSelect={onSelect}
-              />
-            ))}
-          </List>
+          </ListHeaderWrapper>
         )}
-      </AssetsContentWrapper>
+        <AssetsContentWrapper ref={wrapperRef}>
+          {loading ? (
+            <Loading relative />
+          ) : !assets.length ? (
+            <NotFound>
+              <Icon
+                icon="searchNotFound"
+                size={50}
+                color={theme.content.weak}
+              />
+              <Typography size="h5">{t("No assets found")}</Typography>
+              <Typography size="body" color={theme.content.weak}>
+                {t("Try adjusting your search or filters")}
+              </Typography>
+            </NotFound>
+          ) : layout === "grid" ? (
+            <Grid ref={contentRef}>
+              {assets.map((asset) => (
+                <AssetCard
+                  key={asset.id}
+                  asset={asset}
+                  selected={asset.id === selectedId}
+                  onSelect={onSelect}
+                />
+              ))}
+            </Grid>
+          ) : (
+            <List ref={contentRef}>
+              {assets.map((asset) => (
+                <AssetRow
+                  key={asset.id}
+                  asset={asset}
+                  selected={asset.id === selectedId}
+                  onSelect={onSelect}
+                />
+              ))}
+            </List>
+          )}
+        </AssetsContentWrapper>
+      </AssetsArea>
     </>
   );
 };
@@ -148,12 +160,32 @@ const FormatFilter = styled("div")(() => ({
   flexShrink: 0
 }));
 
+const AssetsArea = styled("div")(() => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  height: 440
+}));
+
+// Only the assets scroll. The gutter keeps the scrollbar's space reserved, so
+// cards don't shift or touch it, and the padding leaves room for the cards'
+// shadow.
 const AssetsContentWrapper = styled("div")(({ theme }) => ({
-  height: 440,
+  flex: 1,
+  minHeight: 0,
   overflowY: css.overflow.auto,
   scrollbarGutter: "stable",
   padding: `${theme.spacing.micro}px ${theme.spacing.small}px ${theme.spacing.micro}px ${theme.spacing.micro}px`,
   boxSizing: css.boxSizing.borderBox,
+  ...theme.scrollBar
+}));
+
+// Same horizontal padding and reserved scrollbar gutter as the scroll area,
+// so the header's columns line up with the rows below.
+const ListHeaderWrapper = styled("div")(({ theme }) => ({
+  overflowY: css.overflow.hidden,
+  scrollbarGutter: "stable",
+  padding: `0 ${theme.spacing.small}px 0 ${theme.spacing.micro}px`,
+  flexShrink: 0,
   ...theme.scrollBar
 }));
 
@@ -170,10 +202,6 @@ const List = styled("div")(({ theme }) => ({
 }));
 
 const ListHeader = styled("div")(({ theme }) => ({
-  position: "sticky",
-  top: 0,
-  zIndex: 1,
-  background: theme.bg[1],
   display: "grid",
   gridTemplateColumns: LIST_COLUMNS,
   gap: theme.spacing.normal,
