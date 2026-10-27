@@ -56,6 +56,17 @@ const findParams = (params: URLSearchParams, name: string) =>
 const matchesExtension = (pathname: string, format: UrlFormat) =>
   FORMATS[format].extensions.some((ext) => pathname.endsWith(ext));
 
+// ".json" is shared by GeoJSON and 3D Tiles; tileset.json means 3D Tiles.
+const detectFormat = (pathname: string): UrlFormat | undefined =>
+  pathname.endsWith("tileset.json")
+    ? "3dtiles"
+    : (Object.keys(FORMATS) as UrlFormat[]).find((f) =>
+        matchesExtension(pathname, f)
+      );
+
+// Whether the last path segment has a file extension.
+const hasExtension = (pathname: string) => /\.[^/.]+$/.test(pathname);
+
 // Checks the URL's syntax and extension against the selected format, without
 // any request.
 export const validateUrl = (
@@ -70,19 +81,19 @@ export const validateUrl = (
     return { reason: "tileTemplate" };
 
   const pathname = safeDecode(parsed.pathname).toLowerCase();
-  if (matchesExtension(pathname, format)) return undefined;
+  const detected = detectFormat(pathname);
+  if (detected === format) return undefined;
 
-  // ".json" is shared by GeoJSON and 3D Tiles; tileset.json means 3D Tiles.
-  const detected = pathname.endsWith("tileset.json")
-    ? "3dtiles"
-    : (Object.keys(FORMATS) as UrlFormat[]).find((f) =>
-        matchesExtension(pathname, f)
-      );
-  if (detected && detected !== format)
-    return { reason: "wrongFormat", detected };
+  // Entry points are not always named tileset.json, so any .json may be 3D
+  // Tiles; checkResponse then requires the tileset's "asset" property.
+  if (format === "3dtiles" && pathname.endsWith(".json")) return undefined;
+  if (detected) return { reason: "wrongFormat", detected };
 
   if (format === "wms") return undefined;
   if (format === "3dtiles") return { reason: "missingEntryPoint" };
+  // Data served from an API endpoint may have no extension; checkResponse
+  // inspects the body instead. MVT is excluded as its body isn't inspected.
+  if (format !== "mvt" && !hasExtension(pathname)) return undefined;
   return { reason: "extension" };
 };
 
@@ -157,8 +168,14 @@ const looksValid = (
   switch (format) {
     case "geojson":
     case "czml":
-    case "3dtiles":
       return /^[[{]/.test(body) && (!complete || isJson(body));
+    case "3dtiles":
+      // "asset" is required at the top of every tileset.
+      return (
+        body.startsWith("{") &&
+        /"asset"\s*:/.test(body) &&
+        (!complete || isJson(body))
+      );
     case "kml":
       // KMZ is a zip archive ("PK" signature).
       return body.startsWith("PK") || /<kml[\s>]/i.test(body);

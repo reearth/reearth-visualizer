@@ -17,6 +17,8 @@ import InfoLayerTips from "../InfoLayerTips";
 
 import useHooks from "./hooks";
 
+const ERROR_ID = "value-layer-creator-error";
+
 type Props = {
   sceneId: string;
   onClose: () => void;
@@ -125,7 +127,11 @@ const ValueLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
               />
             </FullWidth>
             {error && (
-              <ErrorText data-testid="value-layer-creator-error">
+              <ErrorText
+                id={ERROR_ID}
+                role="alert"
+                data-testid="value-layer-creator-error"
+              >
                 {error}
               </ErrorText>
             )}
@@ -135,6 +141,7 @@ const ValueLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
             options={formatOptions}
             placeholder={t("Select format")}
             onChange={handleFormatChange}
+            ariaLabel={t("Format")}
             dataTestid="value-layer-creator-format"
           />
           {warning && (

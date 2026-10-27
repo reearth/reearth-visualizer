@@ -33,14 +33,19 @@ const InfoLayerTips: FC<Props> = ({
       />
       <Typography size="body">{label}</Typography>
     </Label>
-    <Switcher value={value} onChange={onChange} data-testid={dataTestid} />
+    <Switcher
+      value={value}
+      onChange={onChange}
+      ariaLabel={label}
+      data-testid={dataTestid}
+    />
   </Wrapper>
 );
 
 const Wrapper = styled("div")<{ width?: number }>(({ theme }) => ({
   display: css.display.flex,
   alignItems: css.alignItems.center,
-  gap: theme.spacing.large,
+  gap: theme.spacing.large
 }));
 
 const Label = styled("div")(({ theme }) => ({

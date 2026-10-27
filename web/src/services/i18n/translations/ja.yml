@@ -195,7 +195,9 @@ Add a layer from data hosted on the web. The URL must be publicly accessible and
 URL: URL
 Supports GeoJSON, CSV, CZML, KML, 3D Tiles, MVT and WMS.: GeoJSON、CSV、CZML、KML、3Dタイル、MVT、WMSに対応しています。
 Select format: 形式を選択
+Format: 形式
 Choose layer to add: 追加するレイヤーを選択
+Delete layer name: レイヤー名を削除
 layer name: レイヤー名
 Layer name: レイヤー名
 Checking the URL...: URLを確認しています...
@@ -214,7 +216,6 @@ Inspector: インスペクター
 Re:Earth: Re:Earth
 Layer: レイヤー
 Layer Name: レイヤー名
-Format: 形式
 Provider: プロバイダー
 Resource URL: リソースURL
 Custom property schema: カスタムプロパティスキーマ

@@ -32,10 +32,13 @@ export default ({
   const loadMore = useCallback(async () => {
     if (!hasMoreAssets || isRefetching || loadingMoreRef.current) return;
     loadingMoreRef.current = true;
-    await fetchMore({
-      variables: { pagination: { first: ASSETS_PER_PAGE, after: endCursor } }
-    });
-    loadingMoreRef.current = false;
+    try {
+      await fetchMore({
+        variables: { pagination: { first: ASSETS_PER_PAGE, after: endCursor } }
+      });
+    } finally {
+      loadingMoreRef.current = false;
+    }
   }, [endCursor, fetchMore, hasMoreAssets, isRefetching]);
 
   const { createAssets } = useAssetMutations();

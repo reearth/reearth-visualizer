@@ -22,8 +22,9 @@ import { ClipLoader } from "react-spinners";
 import CsvColumnInputs from "../CsvColumnInputs";
 import InfoLayerTips from "../InfoLayerTips";
 
-
 import useHooks from "./hooks";
+
+const ERROR_ID = "url-layer-creator-error";
 
 type Props = {
   sceneId: string;
@@ -147,7 +148,11 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
               dataTestid="url-layer-creator-url"
             />
             {error && (
-              <ErrorText data-testid="url-layer-creator-error">
+              <ErrorText
+                id={ERROR_ID}
+                role="alert"
+                data-testid="url-layer-creator-error"
+              >
                 {error}
               </ErrorText>
             )}
@@ -157,6 +162,7 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
             options={formatOptions}
             placeholder={t("Select format")}
             onChange={handleFormatChange}
+            ariaLabel={t("Format")}
             dataTestid="url-layer-creator-format"
           />
 
@@ -193,6 +199,7 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
                         appearance="simple"
                         size="small"
                         iconColor={theme.content.main}
+                        ariaLabel={t("Delete layer name")}
                         onClick={() => handleLayerNameDelete(index)}
                         data-testid={`vectortiles-layer-delete-button-${index}`}
                       />
