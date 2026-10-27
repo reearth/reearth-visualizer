@@ -208,6 +208,7 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 	}
 
 	result := map[string]any{}
+	idReplacements := make([]string, 0, len(assets)*2)
 
 	for beforeName, zipFile := range assets {
 		if zipFile.UncompressedSize64 == 0 {
@@ -250,11 +251,13 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		// Replace new asset file name
 		beforeUrl := fmt.Sprintf("%s/assets/%s", currentHost, beforeName)
 		afterUrl := fmt.Sprintf("%s/assets/%s", currentHost, afterName)
-		*data = bytes.Replace(*data, []byte(beforeUrl), []byte(afterUrl), -1)
+		idReplacements = append(idReplacements, beforeUrl, afterUrl)
 
 		result[afterName] = fmt.Sprintf("name: %s ", realName)
 		fmt.Println("[Import Asset] ", afterName, " name: ", realName)
 	}
+
+	replaceIDsInPlace(data, idReplacements)
 
 	return data, result, nil
 }
