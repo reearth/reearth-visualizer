@@ -1,105 +1,68 @@
 import { Locator, Page, expect } from "@playwright/test";
 
+// The "Add from URL" and "Add from Value" modals opened from the New Layer
+// menu (see ProjectScreenPage for the menu itself).
 export class DataSourceManagerPage {
-  modalTitle: Locator;
-  geojsonTab: Locator;
-  csvTab: Locator;
-  wmsTab: Locator;
-  vectorTileTab: Locator;
-  threeDTilesTab: Locator;
-  czmlTab: Locator;
-  kmlTab: Locator;
-  addToLayerButton: Locator;
-  fromWebRadio: Locator;
-  fromValueRadio: Locator;
-  geojsonUrlInput: Locator;
-  geojsonValueInput: Locator;
-  threeDTilesUrlRadio: Locator;
-  threeDTilesUrlInput: Locator;
-  cesiumOsmRadio: Locator;
-  googlePhotorealisticRadio: Locator;
+  urlModal: Locator;
+  urlInput: Locator;
+  urlFormatSelect: Locator;
+  urlError: Locator;
+  urlSubmitButton: Locator;
+  urlCancelButton: Locator;
+  valueModal: Locator;
+  valueInput: Locator;
+  valueFormatSelect: Locator;
+  valueError: Locator;
+  valueSubmitButton: Locator;
+  valueCancelButton: Locator;
 
   constructor(private page: Page) {
-    this.modalTitle = this.page.getByText("Data Source Manager");
-    this.geojsonTab = this.page.getByRole("tab", { name: "GeoJSON" });
-    this.csvTab = this.page.getByRole("tab", { name: "CSV" });
-    this.wmsTab = this.page.getByRole("tab", { name: "WMS" });
-    this.vectorTileTab = this.page.getByRole("tab", { name: /Vector Tile/i });
-    this.threeDTilesTab = this.page.getByRole("tab", { name: "3D Tiles" });
-    this.czmlTab = this.page.getByRole("tab", { name: "CZML" });
-    this.kmlTab = this.page.getByRole("tab", { name: "KML" });
-    this.addToLayerButton = this.page.getByRole("button", {
-      name: "Add to Layer"
-    });
-    this.fromWebRadio = this.page.getByText("From Web", { exact: true });
-    this.fromValueRadio = this.page.getByText("From Value", { exact: true });
-    this.geojsonUrlInput = this.page.getByPlaceholder("Input Text");
-    this.geojsonValueInput = this.page.getByPlaceholder("Input data here");
-    this.threeDTilesUrlRadio = this.page.getByText("URL", { exact: true });
-    this.threeDTilesUrlInput = this.page.getByPlaceholder("https://");
-    this.cesiumOsmRadio = this.page.getByText("Cesium OSM 3D Tiles");
-    this.googlePhotorealisticRadio = this.page.getByText(
-      "Google Photorealistic 3D Tiles"
+    this.urlModal = this.page.getByTestId("url-layer-creator-modal");
+    this.urlInput = this.page.getByTestId("url-layer-creator-url");
+    this.urlFormatSelect = this.page.getByTestId("url-layer-creator-format");
+    this.urlError = this.page.getByTestId("url-layer-creator-error");
+    this.urlSubmitButton = this.page.getByTestId("url-layer-creator-submit");
+    this.urlCancelButton = this.page.getByTestId("url-layer-creator-cancel");
+    this.valueModal = this.page.getByTestId("value-layer-creator-modal");
+    this.valueInput = this.page.getByTestId("value-layer-creator-value");
+    this.valueFormatSelect = this.page.getByTestId(
+      "value-layer-creator-format"
+    );
+    this.valueError = this.page.getByTestId("value-layer-creator-error");
+    this.valueSubmitButton = this.page.getByTestId(
+      "value-layer-creator-submit"
+    );
+    this.valueCancelButton = this.page.getByTestId(
+      "value-layer-creator-cancel"
     );
   }
 
-  async waitForOpen() {
-    await expect(this.modalTitle).toBeVisible({ timeout: 10_000 });
+  private async selectFormat(select: Locator, format: string) {
+    await select.click();
+    await this.page.getByRole("option", { name: format, exact: true }).click();
   }
 
-  async waitForClosed() {
-    await expect(this.modalTitle).not.toBeVisible({ timeout: 10_000 });
+  // Selecting the format validates the URL (client checks, then a fetch from
+  // the browser); Add is enabled only once that passes.
+  async addFromUrl(url: string, format: string) {
+    await expect(this.urlModal).toBeVisible();
+    await this.urlInput.fill(url);
+    await this.selectFormat(this.urlFormatSelect, format);
+    await expect(this.urlSubmitButton).toBeEnabled();
+    await this.urlSubmitButton.click();
   }
 
-  async verifyAllTabs() {
-    await expect(this.geojsonTab).toBeVisible();
-    await expect(this.csvTab).toBeVisible();
-    await expect(this.wmsTab).toBeVisible();
-    await expect(this.vectorTileTab).toBeVisible();
-    await expect(this.threeDTilesTab).toBeVisible();
-    await expect(this.czmlTab).toBeVisible();
-    await expect(this.kmlTab).toBeVisible();
+  // Leaving the field detects the format from the value and validates it.
+  async addFromValue(value: string) {
+    await expect(this.valueModal).toBeVisible();
+    await this.valueInput.fill(value);
+    await this.valueInput.blur();
+    await expect(this.valueSubmitButton).toBeEnabled();
+    await this.valueSubmitButton.click();
   }
 
-  async addGeoJsonFromUrl(url: string) {
-    await this.geojsonTab.click();
-    await this.page.waitForTimeout(300);
-    await this.fromWebRadio.click();
-    await this.page.waitForTimeout(300);
-    await expect(this.geojsonUrlInput).toBeVisible();
-    await this.geojsonUrlInput.fill(url);
-    await this.addToLayerButton.click();
-  }
-
-  async addGeoJsonFromValue(json: string) {
-    await this.geojsonTab.click();
-    await this.page.waitForTimeout(300);
-    await this.fromValueRadio.click();
-    await this.page.waitForTimeout(300);
-    await expect(this.geojsonValueInput).toBeVisible();
-    await this.geojsonValueInput.fill(json);
-    await this.addToLayerButton.click();
-  }
-
-  async addThreeDTilesCesiumOsm() {
-    await this.threeDTilesTab.click();
-    await this.page.waitForTimeout(300);
-    await this.addToLayerButton.click();
-  }
-
-  async addThreeDTilesFromUrl(url: string) {
-    await this.threeDTilesTab.click();
-    await this.page.waitForTimeout(300);
-    await this.threeDTilesUrlRadio.click();
-    await this.page.waitForTimeout(300);
-    await expect(this.threeDTilesUrlInput).toBeVisible();
-    await this.threeDTilesUrlInput.fill(url);
-    await this.addToLayerButton.click();
-  }
-
-  async close() {
-    const modalHeader = this.modalTitle.locator("..");
-    await modalHeader.locator("button").first().click();
-    await this.waitForClosed();
+  async cancelUrl() {
+    await this.urlCancelButton.click();
+    await expect(this.urlModal).not.toBeVisible({ timeout: 10_000 });
   }
 }

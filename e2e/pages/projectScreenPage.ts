@@ -6,7 +6,13 @@ export class ProjectScreenPage {
   layersPanel: Locator;
   newLayerButton: Locator;
   addSketchLayerButton: Locator;
-  addLayerFromResourceButton: Locator;
+  addFromAssetsButton: Locator;
+  addFromUrlButton: Locator;
+  addFromValueButton: Locator;
+  addFromPlateauButton: Locator;
+  preset3dTilesMenu: Locator;
+  reearthBuildingsPresetButton: Locator;
+  googlePhotorealisticPresetButton: Locator;
   layerNameInput: Locator;
   newCustomPropertyButton: Locator;
   customPropertyTitleInput: Locator;
@@ -60,11 +66,32 @@ export class ProjectScreenPage {
     );
     this.layersPanel = this.page.getByText("Layers");
     this.newLayerButton = this.page.getByTestId("new-layer-button");
+    // New Layer menu items also show a description, so names match on the
+    // title as a substring.
     this.addSketchLayerButton = this.page.getByRole("menuitem", {
-      name: "Add Sketch Layer"
+      name: "Create Sketch Layer"
     });
-    this.addLayerFromResourceButton = this.page.getByRole("menuitem", {
-      name: "Add Layer from Resource"
+    this.addFromAssetsButton = this.page.getByRole("menuitem", {
+      name: "Add from Assets"
+    });
+    this.addFromUrlButton = this.page.getByRole("menuitem", {
+      name: "Add from URL"
+    });
+    this.addFromValueButton = this.page.getByRole("menuitem", {
+      name: "Add from Value"
+    });
+    this.addFromPlateauButton = this.page.getByRole("menuitem", {
+      name: "Add layer from PLATEAU"
+    });
+    // Submenu trigger; it opens on hover.
+    this.preset3dTilesMenu = this.page.getByText("Preset 3D Tiles", {
+      exact: true
+    });
+    this.reearthBuildingsPresetButton = this.page.getByRole("menuitem", {
+      name: "Re:Earth Buildings"
+    });
+    this.googlePhotorealisticPresetButton = this.page.getByRole("menuitem", {
+      name: "Google Photorealistic 3D Tiles"
     });
     this.layerNameInput = this.page
       .getByTestId("sketch-layer-creator-name-input")
