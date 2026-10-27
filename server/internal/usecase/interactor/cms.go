@@ -4,6 +4,7 @@ import (
 	"context"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	cmspb "github.com/reearth/reearth-proto/gen/go/cms/v1"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -18,25 +19,35 @@ func NewCMS(g *gateway.Container) interfaces.CMS {
 	return &CMS{cms: g.CMS}
 }
 
-func (i *CMS) FindProjects(ctx context.Context, workspaceID accountsID.WorkspaceID, keyword *string, page interfaces.CMSPageParam, operator *usecase.Operator) (*gateway.CMSProjectList, error) {
+func (i *CMS) FindProjects(ctx context.Context, workspaceID accountsID.WorkspaceID, keyword *string, page interfaces.CMSPageParam, operator *usecase.Operator) (*cmspb.ListProjectsResponse, error) {
 	if err := i.authorize(workspaceID, operator); err != nil {
 		return nil, err
 	}
-	return i.cms.ListProjects(ctx, workspaceID, keyword, toCMSPage(page), operator.AcOperator.User)
+	return i.cms.ListProjects(ctx, &cmspb.ListProjectsRequest{
+		WorkspaceIds: []string{workspaceID.String()},
+		Keyword:      keyword,
+		PageInfo:     toCMSPageInfo(page),
+	}, operator.AcOperator.User)
 }
 
-func (i *CMS) FindModels(ctx context.Context, workspaceID accountsID.WorkspaceID, projectID string, page interfaces.CMSPageParam, operator *usecase.Operator) (*gateway.CMSModelList, error) {
+func (i *CMS) FindModels(ctx context.Context, workspaceID accountsID.WorkspaceID, projectID string, page interfaces.CMSPageParam, operator *usecase.Operator) (*cmspb.ListModelsResponse, error) {
 	if err := i.authorizeProject(ctx, workspaceID, projectID, operator); err != nil {
 		return nil, err
 	}
-	return i.cms.ListModels(ctx, projectID, toCMSPage(page), operator.AcOperator.User)
+	return i.cms.ListModels(ctx, &cmspb.ListModelsRequest{
+		ProjectId: projectID,
+		PageInfo:  toCMSPageInfo(page),
+	}, operator.AcOperator.User)
 }
 
-func (i *CMS) FindAssets(ctx context.Context, workspaceID accountsID.WorkspaceID, projectID string, page interfaces.CMSPageParam, operator *usecase.Operator) (*gateway.CMSAssetList, error) {
+func (i *CMS) FindAssets(ctx context.Context, workspaceID accountsID.WorkspaceID, projectID string, page interfaces.CMSPageParam, operator *usecase.Operator) (*cmspb.ListAssetsResponse, error) {
 	if err := i.authorizeProject(ctx, workspaceID, projectID, operator); err != nil {
 		return nil, err
 	}
-	return i.cms.ListAssets(ctx, projectID, toCMSPage(page), operator.AcOperator.User)
+	return i.cms.ListAssets(ctx, &cmspb.ListAssetsRequest{
+		ProjectId: projectID,
+		PageInfo:  toCMSPageInfo(page),
+	}, operator.AcOperator.User)
 }
 
 // authorize requires a signed-in operator who can read the workspace. It does
@@ -62,17 +73,20 @@ func (i *CMS) authorizeProject(ctx context.Context, workspaceID accountsID.Works
 	if err := i.authorize(workspaceID, operator); err != nil {
 		return err
 	}
-	p, err := i.cms.GetProject(ctx, workspaceID, projectID, operator.AcOperator.User)
+	p, err := i.cms.GetProject(ctx, &cmspb.ProjectRequest{
+		ProjectIdOrAlias:   projectID,
+		WorkspaceIdOrAlias: workspaceID.String(),
+	}, operator.AcOperator.User)
 	if err != nil {
 		return err
 	}
-	if p.WorkspaceID != workspaceID.String() {
+	if p.GetWorkspaceId() != workspaceID.String() {
 		return rerror.ErrNotFound
 	}
 	return nil
 }
 
-func toCMSPage(p interfaces.CMSPageParam) gateway.CMSPage {
+func toCMSPageInfo(p interfaces.CMSPageParam) *cmspb.PageInfo {
 	page := 1
 	if p.Page != nil && *p.Page > 1 {
 		page = *p.Page
@@ -81,5 +95,5 @@ func toCMSPage(p interfaces.CMSPageParam) gateway.CMSPage {
 	if p.PageSize != nil && *p.PageSize > 0 {
 		size = min(*p.PageSize, interfaces.CMSMaxPageSize)
 	}
-	return gateway.CMSPage{Page: page, PageSize: size}
+	return &cmspb.PageInfo{Page: int32(page), PageSize: int32(size)}
 }

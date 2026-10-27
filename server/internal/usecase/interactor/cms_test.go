@@ -6,6 +6,7 @@ import (
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+	cmspb "github.com/reearth/reearth-proto/gen/go/cms/v1"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -16,39 +17,41 @@ import (
 )
 
 type fakeCMSGateway struct {
-	projects map[string]*gateway.CMSProject
+	projects map[string]*cmspb.Project
 
-	calls      []string
-	lastPage   gateway.CMSPage
-	lastUserID *accountsID.UserID
+	calls           []string
+	listProjectsReq *cmspb.ListProjectsRequest
+	getProjectReq   *cmspb.ProjectRequest
+	lastPage        *cmspb.PageInfo
+	lastUserID      *accountsID.UserID
 }
 
-func (f *fakeCMSGateway) ListProjects(_ context.Context, _ accountsID.WorkspaceID, _ *string, page gateway.CMSPage, userID *accountsID.UserID) (*gateway.CMSProjectList, error) {
+func (f *fakeCMSGateway) ListProjects(_ context.Context, req *cmspb.ListProjectsRequest, userID *accountsID.UserID) (*cmspb.ListProjectsResponse, error) {
 	f.calls = append(f.calls, "ListProjects")
-	f.lastPage, f.lastUserID = page, userID
-	return &gateway.CMSProjectList{TotalCount: 3}, nil
+	f.listProjectsReq, f.lastPage, f.lastUserID = req, req.GetPageInfo(), userID
+	return &cmspb.ListProjectsResponse{TotalCount: 3}, nil
 }
 
-func (f *fakeCMSGateway) GetProject(_ context.Context, _ accountsID.WorkspaceID, projectID string, userID *accountsID.UserID) (*gateway.CMSProject, error) {
+func (f *fakeCMSGateway) GetProject(_ context.Context, req *cmspb.ProjectRequest, userID *accountsID.UserID) (*cmspb.Project, error) {
 	f.calls = append(f.calls, "GetProject")
-	f.lastUserID = userID
-	p, ok := f.projects[projectID]
+	f.getProjectReq, f.lastUserID = req, userID
+	p, ok := f.projects[req.GetProjectIdOrAlias()]
 	if !ok {
 		return nil, rerror.ErrNotFound
 	}
 	return p, nil
 }
 
-func (f *fakeCMSGateway) ListModels(_ context.Context, _ string, page gateway.CMSPage, userID *accountsID.UserID) (*gateway.CMSModelList, error) {
+func (f *fakeCMSGateway) ListModels(_ context.Context, req *cmspb.ListModelsRequest, userID *accountsID.UserID) (*cmspb.ListModelsResponse, error) {
 	f.calls = append(f.calls, "ListModels")
-	f.lastPage, f.lastUserID = page, userID
-	return &gateway.CMSModelList{TotalCount: 1}, nil
+	f.lastPage, f.lastUserID = req.GetPageInfo(), userID
+	return &cmspb.ListModelsResponse{TotalCount: 1}, nil
 }
 
-func (f *fakeCMSGateway) ListAssets(_ context.Context, _ string, page gateway.CMSPage, userID *accountsID.UserID) (*gateway.CMSAssetList, error) {
+func (f *fakeCMSGateway) ListAssets(_ context.Context, req *cmspb.ListAssetsRequest, userID *accountsID.UserID) (*cmspb.ListAssetsResponse, error) {
 	f.calls = append(f.calls, "ListAssets")
-	f.lastPage, f.lastUserID = page, userID
-	return &gateway.CMSAssetList{TotalCount: 2}, nil
+	f.lastPage, f.lastUserID = req.GetPageInfo(), userID
+	return &cmspb.ListAssetsResponse{TotalCount: 2}, nil
 }
 
 func cmsReader(ws accountsID.WorkspaceID) (*usecase.Operator, accountsID.UserID) {
@@ -68,12 +71,17 @@ func TestCMS_FindProjects(t *testing.T) {
 
 	t.Run("forwards the operator's user and defaults the page", func(t *testing.T) {
 		g := &fakeCMSGateway{}
-		res, err := NewCMS(&gateway.Container{CMS: g}).FindProjects(ctx, ws, nil, interfaces.CMSPageParam{}, op)
+		keyword := "city"
+		res, err := NewCMS(&gateway.Container{CMS: g}).FindProjects(ctx, ws, &keyword, interfaces.CMSPageParam{}, op)
 		require.NoError(t, err)
 
-		assert.Equal(t, int64(3), res.TotalCount)
+		assert.Equal(t, int64(3), res.GetTotalCount())
 		assert.Equal(t, &uid, g.lastUserID)
-		assert.Equal(t, gateway.CMSPage{Page: 1, PageSize: interfaces.CMSDefaultPageSize}, g.lastPage)
+		assert.Equal(t, []string{ws.String()}, g.listProjectsReq.GetWorkspaceIds())
+		assert.Equal(t, "city", g.listProjectsReq.GetKeyword())
+		assert.False(t, g.listProjectsReq.GetPublicOnly())
+		assert.Equal(t, int32(1), g.lastPage.GetPage())
+		assert.Equal(t, int32(interfaces.CMSDefaultPageSize), g.lastPage.GetPageSize())
 	})
 
 	t.Run("caps the page size", func(t *testing.T) {
@@ -81,7 +89,8 @@ func TestCMS_FindProjects(t *testing.T) {
 		_, err := NewCMS(&gateway.Container{CMS: g}).FindProjects(ctx, ws, nil, interfaces.CMSPageParam{Page: lo.ToPtr(3), PageSize: lo.ToPtr(1000)}, op)
 		require.NoError(t, err)
 
-		assert.Equal(t, gateway.CMSPage{Page: 3, PageSize: interfaces.CMSMaxPageSize}, g.lastPage)
+		assert.Equal(t, int32(3), g.lastPage.GetPage())
+		assert.Equal(t, int32(interfaces.CMSMaxPageSize), g.lastPage.GetPageSize())
 	})
 
 	t.Run("not configured", func(t *testing.T) {
@@ -117,9 +126,9 @@ func TestCMS_FindModelsAndAssets(t *testing.T) {
 	ws := accountsID.NewWorkspaceID()
 	op, uid := cmsReader(ws)
 	newGateway := func() *fakeCMSGateway {
-		return &fakeCMSGateway{projects: map[string]*gateway.CMSProject{
-			"own":   {ID: "own", WorkspaceID: ws.String()},
-			"other": {ID: "other", WorkspaceID: accountsID.NewWorkspaceID().String()},
+		return &fakeCMSGateway{projects: map[string]*cmspb.Project{
+			"own":   {Id: "own", WorkspaceId: ws.String()},
+			"other": {Id: "other", WorkspaceId: accountsID.NewWorkspaceID().String()},
 		}}
 	}
 
@@ -129,14 +138,14 @@ func TestCMS_FindModelsAndAssets(t *testing.T) {
 			if err != nil {
 				return 0, err
 			}
-			return res.TotalCount, nil
+			return res.GetTotalCount(), nil
 		},
 		"assets": func(uc interfaces.CMS, projectID string) (int64, error) {
 			res, err := uc.FindAssets(ctx, ws, projectID, interfaces.CMSPageParam{}, op)
 			if err != nil {
 				return 0, err
 			}
-			return res.TotalCount, nil
+			return res.GetTotalCount(), nil
 		},
 	}
 
@@ -149,6 +158,7 @@ func TestCMS_FindModelsAndAssets(t *testing.T) {
 			assert.NotZero(t, total)
 			assert.Equal(t, "GetProject", g.calls[0])
 			assert.Len(t, g.calls, 2)
+			assert.Equal(t, ws.String(), g.getProjectReq.GetWorkspaceIdOrAlias())
 			assert.Equal(t, &uid, g.lastUserID)
 		})
 

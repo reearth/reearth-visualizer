@@ -17,7 +17,6 @@ import (
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Config struct {
@@ -68,79 +67,51 @@ func newClient(c cmspb.ReEarthCMSClient, cfg Config) *Client {
 	}
 }
 
-func (c *Client) ListProjects(ctx context.Context, workspaceID accountsID.WorkspaceID, keyword *string, page gateway.CMSPage, userID *accountsID.UserID) (*gateway.CMSProjectList, error) {
+func (c *Client) ListProjects(ctx context.Context, req *cmspb.ListProjectsRequest, userID *accountsID.UserID) (*cmspb.ListProjectsResponse, error) {
 	ctx, cancel := c.callContext(ctx, userID)
 	defer cancel()
 
-	res, err := c.client.ListProjects(ctx, &cmspb.ListProjectsRequest{
-		WorkspaceIds: []string{workspaceID.String()},
-		Keyword:      keyword,
-		PageInfo:     toPageInfo(page),
-	})
+	res, err := c.client.ListProjects(ctx, req)
 	if err != nil {
 		return nil, mapError(ctx, "list projects", err)
 	}
-
-	projects := make([]*gateway.CMSProject, 0, len(res.GetProjects()))
-	for _, p := range res.GetProjects() {
-		projects = append(projects, toProject(p))
-	}
-	return &gateway.CMSProjectList{Projects: projects, TotalCount: res.GetTotalCount()}, nil
+	return res, nil
 }
 
-func (c *Client) GetProject(ctx context.Context, workspaceID accountsID.WorkspaceID, projectID string, userID *accountsID.UserID) (*gateway.CMSProject, error) {
+func (c *Client) GetProject(ctx context.Context, req *cmspb.ProjectRequest, userID *accountsID.UserID) (*cmspb.Project, error) {
 	ctx, cancel := c.callContext(ctx, userID)
 	defer cancel()
 
-	res, err := c.client.GetProject(ctx, &cmspb.ProjectRequest{
-		ProjectIdOrAlias:   projectID,
-		WorkspaceIdOrAlias: workspaceID.String(),
-	})
+	res, err := c.client.GetProject(ctx, req)
 	if err != nil {
 		return nil, mapError(ctx, "get project", err)
 	}
 	if res.GetProject() == nil {
 		return nil, rerror.ErrNotFound
 	}
-	return toProject(res.GetProject()), nil
+	return res.GetProject(), nil
 }
 
-func (c *Client) ListModels(ctx context.Context, projectID string, page gateway.CMSPage, userID *accountsID.UserID) (*gateway.CMSModelList, error) {
+func (c *Client) ListModels(ctx context.Context, req *cmspb.ListModelsRequest, userID *accountsID.UserID) (*cmspb.ListModelsResponse, error) {
 	ctx, cancel := c.callContext(ctx, userID)
 	defer cancel()
 
-	res, err := c.client.ListModels(ctx, &cmspb.ListModelsRequest{
-		ProjectId: projectID,
-		PageInfo:  toPageInfo(page),
-	})
+	res, err := c.client.ListModels(ctx, req)
 	if err != nil {
 		return nil, mapError(ctx, "list models", err)
 	}
-
-	models := make([]*gateway.CMSModel, 0, len(res.GetModels()))
-	for _, m := range res.GetModels() {
-		models = append(models, toModel(m))
-	}
-	return &gateway.CMSModelList{Models: models, TotalCount: res.GetTotalCount()}, nil
+	return res, nil
 }
 
-func (c *Client) ListAssets(ctx context.Context, projectID string, page gateway.CMSPage, userID *accountsID.UserID) (*gateway.CMSAssetList, error) {
+func (c *Client) ListAssets(ctx context.Context, req *cmspb.ListAssetsRequest, userID *accountsID.UserID) (*cmspb.ListAssetsResponse, error) {
 	ctx, cancel := c.callContext(ctx, userID)
 	defer cancel()
 
-	res, err := c.client.ListAssets(ctx, &cmspb.ListAssetsRequest{
-		ProjectId: projectID,
-		PageInfo:  toPageInfo(page),
-	})
+	res, err := c.client.ListAssets(ctx, req)
 	if err != nil {
 		return nil, mapError(ctx, "list assets", err)
 	}
-
-	assets := make([]*gateway.CMSAsset, 0, len(res.GetAssets()))
-	for _, a := range res.GetAssets() {
-		assets = append(assets, toAsset(a))
-	}
-	return &gateway.CMSAssetList{Assets: assets, TotalCount: res.GetTotalCount()}, nil
+	return res, nil
 }
 
 // callContext attaches the service token and the acting user, and bounds the
@@ -182,59 +153,4 @@ func isNotFound(err error) bool {
 		return false
 	}
 	return st.Code() == codes.NotFound || (st.Code() == codes.Unknown && st.Message() == "not found")
-}
-
-func toPageInfo(p gateway.CMSPage) *cmspb.PageInfo {
-	return &cmspb.PageInfo{
-		Page:     int32(p.Page),
-		PageSize: int32(p.PageSize),
-	}
-}
-
-func toProject(p *cmspb.Project) *gateway.CMSProject {
-	return &gateway.CMSProject{
-		ID:          p.GetId(),
-		Name:        p.GetName(),
-		Alias:       p.GetAlias(),
-		Description: p.GetDescription(),
-		WorkspaceID: p.GetWorkspaceId(),
-		Public:      p.GetVisibility() == cmspb.Visibility_PUBLIC,
-		CreatedAt:   toTime(p.GetCreatedAt()),
-		UpdatedAt:   toTime(p.GetUpdatedAt()),
-	}
-}
-
-func toModel(m *cmspb.Model) *gateway.CMSModel {
-	return &gateway.CMSModel{
-		ID:                m.GetId(),
-		ProjectID:         m.GetProjectId(),
-		Name:              m.GetName(),
-		Description:       m.GetDescription(),
-		Key:               m.GetKey(),
-		PublicAPIEndpoint: m.GetPublicApiEp(),
-		EditorURL:         m.GetEditorUrl(),
-		CreatedAt:         toTime(m.GetCreatedAt()),
-		UpdatedAt:         toTime(m.GetUpdatedAt()),
-	}
-}
-
-func toAsset(a *cmspb.Asset) *gateway.CMSAsset {
-	return &gateway.CMSAsset{
-		ID:                      a.GetId(),
-		ProjectID:               a.GetProjectId(),
-		Filename:                a.GetFilename(),
-		Size:                    a.GetSize(),
-		PreviewType:             a.GetPreviewType(),
-		URL:                     a.GetUrl(),
-		ArchiveExtractionStatus: a.GetArchiveExtractionStatus(),
-		Public:                  a.GetPublic(),
-		CreatedAt:               toTime(a.GetCreatedAt()),
-	}
-}
-
-func toTime(t *timestamppb.Timestamp) time.Time {
-	if t == nil {
-		return time.Time{}
-	}
-	return t.AsTime()
 }

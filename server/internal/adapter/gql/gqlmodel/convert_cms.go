@@ -1,77 +1,80 @@
 package gqlmodel
 
 import (
-	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"time"
+
+	cmspb "github.com/reearth/reearth-proto/gen/go/cms/v1"
 	"github.com/samber/lo"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ToCMSProjectConnection(l *gateway.CMSProjectList) *CMSProjectConnection {
-	if l == nil {
-		return &CMSProjectConnection{Nodes: []*CMSProject{}}
-	}
+func ToCMSProjectConnection(r *cmspb.ListProjectsResponse) *CMSProjectConnection {
 	return &CMSProjectConnection{
-		Nodes:      lo.Map(l.Projects, func(p *gateway.CMSProject, _ int) *CMSProject { return ToCMSProject(p) }),
-		TotalCount: int(l.TotalCount),
+		Nodes:      lo.Map(r.GetProjects(), func(p *cmspb.Project, _ int) *CMSProject { return ToCMSProject(p) }),
+		TotalCount: int(r.GetTotalCount()),
 	}
 }
 
-func ToCMSModelConnection(l *gateway.CMSModelList) *CMSModelConnection {
-	if l == nil {
-		return &CMSModelConnection{Nodes: []*CMSModel{}}
-	}
+func ToCMSModelConnection(r *cmspb.ListModelsResponse) *CMSModelConnection {
 	return &CMSModelConnection{
-		Nodes:      lo.Map(l.Models, func(m *gateway.CMSModel, _ int) *CMSModel { return ToCMSModel(m) }),
-		TotalCount: int(l.TotalCount),
+		Nodes:      lo.Map(r.GetModels(), func(m *cmspb.Model, _ int) *CMSModel { return ToCMSModel(m) }),
+		TotalCount: int(r.GetTotalCount()),
 	}
 }
 
-func ToCMSAssetConnection(l *gateway.CMSAssetList) *CMSAssetConnection {
-	if l == nil {
-		return &CMSAssetConnection{Nodes: []*CMSAsset{}}
-	}
+func ToCMSAssetConnection(r *cmspb.ListAssetsResponse) *CMSAssetConnection {
 	return &CMSAssetConnection{
-		Nodes:      lo.Map(l.Assets, func(a *gateway.CMSAsset, _ int) *CMSAsset { return ToCMSAsset(a) }),
-		TotalCount: int(l.TotalCount),
+		Nodes:      lo.Map(r.GetAssets(), func(a *cmspb.Asset, _ int) *CMSAsset { return ToCMSAsset(a) }),
+		TotalCount: int(r.GetTotalCount()),
 	}
 }
 
-func ToCMSProject(p *gateway.CMSProject) *CMSProject {
+func ToCMSProject(p *cmspb.Project) *CMSProject {
 	return &CMSProject{
-		ID:          ID(p.ID),
-		Name:        p.Name,
-		Alias:       p.Alias,
-		Description: p.Description,
-		WorkspaceID: ID(p.WorkspaceID),
-		Public:      p.Public,
-		CreatedAt:   p.CreatedAt,
-		UpdatedAt:   p.UpdatedAt,
+		ID:          ID(p.GetId()),
+		Name:        p.GetName(),
+		Alias:       p.GetAlias(),
+		Description: p.GetDescription(),
+		WorkspaceID: ID(p.GetWorkspaceId()),
+		Public:      p.GetVisibility() == cmspb.Visibility_PUBLIC,
+		CreatedAt:   toCMSTime(p.GetCreatedAt()),
+		UpdatedAt:   toCMSTime(p.GetUpdatedAt()),
 	}
 }
 
-func ToCMSModel(m *gateway.CMSModel) *CMSModel {
+func ToCMSModel(m *cmspb.Model) *CMSModel {
 	return &CMSModel{
-		ID:          ID(m.ID),
-		ProjectID:   ID(m.ProjectID),
-		Name:        m.Name,
-		Description: m.Description,
-		Key:         m.Key,
-		PublicAPIEp: m.PublicAPIEndpoint,
-		EditorURL:   m.EditorURL,
-		CreatedAt:   m.CreatedAt,
-		UpdatedAt:   m.UpdatedAt,
+		ID:          ID(m.GetId()),
+		ProjectID:   ID(m.GetProjectId()),
+		Name:        m.GetName(),
+		Description: m.GetDescription(),
+		Key:         m.GetKey(),
+		PublicAPIEp: m.GetPublicApiEp(),
+		EditorURL:   m.GetEditorUrl(),
+		CreatedAt:   toCMSTime(m.GetCreatedAt()),
+		UpdatedAt:   toCMSTime(m.GetUpdatedAt()),
 	}
 }
 
-func ToCMSAsset(a *gateway.CMSAsset) *CMSAsset {
+func ToCMSAsset(a *cmspb.Asset) *CMSAsset {
 	return &CMSAsset{
-		ID:                      ID(a.ID),
-		ProjectID:               ID(a.ProjectID),
-		Filename:                a.Filename,
-		Size:                    int64(a.Size),
-		PreviewType:             lo.EmptyableToPtr(a.PreviewType),
-		URL:                     a.URL,
-		ArchiveExtractionStatus: lo.EmptyableToPtr(a.ArchiveExtractionStatus),
-		Public:                  a.Public,
-		CreatedAt:               a.CreatedAt,
+		ID:                      ID(a.GetId()),
+		ProjectID:               ID(a.GetProjectId()),
+		Filename:                a.GetFilename(),
+		Size:                    int64(a.GetSize()),
+		PreviewType:             lo.EmptyableToPtr(a.GetPreviewType()),
+		URL:                     a.GetUrl(),
+		ArchiveExtractionStatus: lo.EmptyableToPtr(a.GetArchiveExtractionStatus()),
+		Public:                  a.GetPublic(),
+		CreatedAt:               toCMSTime(a.GetCreatedAt()),
 	}
+}
+
+// toCMSTime maps an unset timestamp to the zero time rather than the Unix
+// epoch that (*timestamppb.Timestamp)(nil).AsTime() would return.
+func toCMSTime(t *timestamppb.Timestamp) time.Time {
+	if t == nil {
+		return time.Time{}
+	}
+	return t.AsTime()
 }

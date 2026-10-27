@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	cmspb "github.com/reearth/reearth-proto/gen/go/cms/v1"
 	"github.com/reearth/reearth/server/internal/usecase"
-	"github.com/reearth/reearth/server/internal/usecase/gateway"
 )
 
 var ErrCMSNotConfigured = errors.New("cms integration is not configured")
@@ -26,7 +26,7 @@ type CMSPageParam struct {
 // CMS browses the Re:Earth CMS projects, models and assets of a workspace so a
 // CMS model or asset can be added as a layer. It is read-only.
 type CMS interface {
-	FindProjects(ctx context.Context, workspaceID accountsID.WorkspaceID, keyword *string, page CMSPageParam, operator *usecase.Operator) (*gateway.CMSProjectList, error)
-	FindModels(ctx context.Context, workspaceID accountsID.WorkspaceID, projectID string, page CMSPageParam, operator *usecase.Operator) (*gateway.CMSModelList, error)
-	FindAssets(ctx context.Context, workspaceID accountsID.WorkspaceID, projectID string, page CMSPageParam, operator *usecase.Operator) (*gateway.CMSAssetList, error)
+	FindProjects(ctx context.Context, workspaceID accountsID.WorkspaceID, keyword *string, page CMSPageParam, operator *usecase.Operator) (*cmspb.ListProjectsResponse, error)
+	FindModels(ctx context.Context, workspaceID accountsID.WorkspaceID, projectID string, page CMSPageParam, operator *usecase.Operator) (*cmspb.ListModelsResponse, error)
+	FindAssets(ctx context.Context, workspaceID accountsID.WorkspaceID, projectID string, page CMSPageParam, operator *usecase.Operator) (*cmspb.ListAssetsResponse, error)
 }
