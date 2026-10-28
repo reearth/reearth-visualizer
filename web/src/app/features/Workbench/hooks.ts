@@ -155,24 +155,11 @@ export default () => {
       ),
     []
   );
-  const flyToTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-  useEffect(() => () => clearTimeout(flyToTimeoutRef.current), []);
   // Same as the Editor's layer list ("Zoom to layer").
   const flyToLayer = useCallback(
     (layerId: string) => {
       if (!visibleLayerIds.includes(layerId)) return;
-      const flyTo = () =>
-        visualizerRef.current?.engine.flyTo?.(layerId, { duration: 0 });
-      flyTo();
-      // The first flyTo to a GeoJSON/KML layer can miss while its data source
-      // is still loading (https://github.com/CesiumGS/cesium/issues/4327), so
-      // fly again once it has.
-      const layer = DEFAULT_WORKBENCH_LAYERS.find((l) => l.id === layerId);
-      const type = layer && "data" in layer ? layer.data?.type : undefined;
-      if (type === "geojson" || type === "kml") {
-        clearTimeout(flyToTimeoutRef.current);
-        flyToTimeoutRef.current = setTimeout(flyTo, 800);
-      }
+      visualizerRef.current?.engine.flyTo?.(layerId, { duration: 0 });
     },
     [visibleLayerIds]
   );
