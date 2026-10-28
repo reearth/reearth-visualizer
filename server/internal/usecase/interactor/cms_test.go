@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"context"
+	"math"
 	"testing"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -91,6 +92,14 @@ func TestCMS_FindProjects(t *testing.T) {
 
 		assert.Equal(t, int32(3), g.lastPage.GetPage())
 		assert.Equal(t, int32(interfaces.CMSMaxPageSize), g.lastPage.GetPageSize())
+	})
+
+	t.Run("clamps a page beyond int32", func(t *testing.T) {
+		g := &fakeCMSGateway{}
+		_, err := NewCMS(&gateway.Container{CMS: g}).FindProjects(ctx, ws, nil, interfaces.CMSPageParam{Page: lo.ToPtr(math.MaxInt32 + 2)}, op)
+		require.NoError(t, err)
+
+		assert.Equal(t, int32(math.MaxInt32), g.lastPage.GetPage())
 	})
 
 	t.Run("not configured", func(t *testing.T) {

@@ -203,6 +203,26 @@ The server can browse a workspace's Re:Earth CMS projects, models and assets (Gr
 
 The acting user's ID is forwarded as `user-id` metadata so CMS applies that user's read access. When running CMS locally, serve its internal API on 50052; 50051 is used by the Visualizer internal API.
 
+
+#### Running Visualizer and CMS together locally
+
+The CMS internal API can't be reached from the test environment, so CMS queries are tested against a local [reearth-cms](https://github.com/reearth/reearth-cms) server (with a mock user). Usually one of the two runs in Docker and the other directly on the machine.
+
+Ports, so the two don't clash:
+
+| Service | HTTP | Internal gRPC |
+|---------|------|---------------|
+| Visualizer | 8080 | 50051 |
+| CMS | 8081 | 50052 |
+
+`REEARTH_VISUALIZER_CMS_ENDPOINT` depends on where the Visualizer server runs:
+
+- **Visualizer runs directly on the machine** (`server/.env`): `localhost:50052`.
+- **Visualizer runs in Docker** (`server/.env.docker`): `host.docker.internal:50052`. Inside the container `localhost` is the container itself, so `localhost:50052` fails with `connection refused`. `host.docker.internal` resolves on Docker Desktop (macOS/Windows); on Linux, add `extra_hosts: ["host.docker.internal:host-gateway"]` to the service.
+- **Both in the same Docker network**: the CMS service name, e.g. `reearth-cms:50052`.
+
+`REEARTH_VISUALIZER_CMS_TOKEN` must equal `REEARTH_CMS_INTERNALAPI_TOKEN` on the CMS side, and `REEARTH_VISUALIZER_CMS_USETLS` stays `false` for a local CMS.
+
 ### Development Notes
 
 #### Method Name Format

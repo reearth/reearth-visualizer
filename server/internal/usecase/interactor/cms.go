@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"context"
+	"math"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	cmspb "github.com/reearth/reearth-proto/gen/go/cms/v1"
@@ -89,7 +90,8 @@ func (i *CMS) authorizeProject(ctx context.Context, workspaceID accountsID.Works
 func toCMSPageInfo(p interfaces.CMSPageParam) *cmspb.PageInfo {
 	page := 1
 	if p.Page != nil && *p.Page > 1 {
-		page = *p.Page
+		// GraphQL Int is unbounded here; clamp so the int32 conversion can't wrap.
+		page = min(*p.Page, math.MaxInt32)
 	}
 	size := interfaces.CMSDefaultPageSize
 	if p.PageSize != nil && *p.PageSize > 0 {
