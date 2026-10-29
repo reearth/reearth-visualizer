@@ -16,11 +16,11 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "test": "npm run build && node scripts/consumer-test.mjs",
+    "test": "node scripts/consumer-test.mjs",
     "prepack": "npm run build"
   },
   "peerDependencies": {
-    "@reearth/core": ">=0.0.7-alpha.81"
+    "@reearth/core": "0.0.7-alpha.81"
   },
   "devDependencies": {
     "@reearth/core": "0.0.7-alpha.81",

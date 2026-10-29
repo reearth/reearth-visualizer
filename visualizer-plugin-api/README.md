@@ -5,12 +5,14 @@ TypeScript type definitions for the [Re:Earth Visualizer](https://github.com/ree
 ## Installation
 
 ```bash
-npm install --save-dev @reearth/visualizer-plugin-api @reearth/core
+npm install --save-dev @reearth/visualizer-plugin-api @reearth/core@0.0.7-alpha.81
 # or
-yarn add -D @reearth/visualizer-plugin-api @reearth/core
+yarn add -D @reearth/visualizer-plugin-api @reearth/core@0.0.7-alpha.81
 ```
 
-`@reearth/core` is a peer dependency. Install it alongside this package so TypeScript can resolve the layer and feature types used in the declarations.
+`@reearth/core` is a peer dependency, pinned to the version the Visualizer runs (`0.0.7-alpha.81`). Install that exact version, not `latest`, so the types match the Visualizer. Install it alongside this package so TypeScript can resolve the layer and feature types used in the declarations.
+
+Note: `@reearth/core` brings React and Cesium with it (about 350 packages), only for the type imports.
 
 ## Usage
 

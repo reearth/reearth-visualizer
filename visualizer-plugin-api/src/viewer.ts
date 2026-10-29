@@ -2,6 +2,7 @@ import {
   AssetsCesiumProperty as CoreAssetsCesiumProperty,
   AssetsProperty as CoreAssetsProperty,
   ComputedFeature,
+  MouseEventProps,
   SceneProperty as CoreSceneProperty,
   ViewerProperty as CoreViewerProperty
 } from "@reearth/core";
@@ -29,15 +30,8 @@ export declare type ViewerProperty = Omit<
   };
 };
 
-export declare type MouseEventProps = {
-  x?: number;
-  y?: number;
-  lat?: number;
-  lng?: number;
-  height?: number;
-  layerId?: string;
-  delta?: number;
-};
+// Same payload the engine sends; re-exported from core instead of copied.
+export type { MouseEventProps };
 
 export declare type LayerSelectWithRect = MouseEventProps & {
   pressedKey?: "shift";

@@ -63,6 +63,11 @@ jobs:
         working-directory: visualizer-plugin-api
         run: npm ci
 
+      - name: Test the declarations
+        # A published version number can't be reused, so don't publish broken types.
+        working-directory: visualizer-plugin-api
+        run: npm test
+
       - name: Activate npm via corepack
         # Node 22 ships npm 10.x; Trusted Publishing needs >=11.5.1
         # COREPACK_ENABLE_STRICT=0: lets npm run alongside declared pnpm packageManager field
