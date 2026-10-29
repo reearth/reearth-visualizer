@@ -44,6 +44,7 @@ e2e/
 | `layerDeletionReorder.spec.ts` | Layer Management | **Entire suite skipped** — WebKit DnD |
 | `multipleStyles.spec.ts` | Layer Styles | Fully automated |
 | `externalLayers.spec.ts` | External Layers | Mixed — some CI-skipped |
+| `layerCreatorValidation.spec.ts` | Add from URL / Value validation | Fully automated — URL checks use mocked routes |
 | `photoOverlay.spec.ts` | Photo Overlay | Mixed — some CI-skipped |
 | `page-refresh-on-mutation.spec.ts` | Editor Mutations | **Entire suite skipped** — Canvas API |
 

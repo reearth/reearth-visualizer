@@ -7,6 +7,9 @@ export class DataSourceManagerPage {
   urlInput: Locator;
   urlFormatSelect: Locator;
   urlError: Locator;
+  urlChecking: Locator;
+  csvLatColumnInput: Locator;
+  csvLngColumnInput: Locator;
   urlSubmitButton: Locator;
   urlCancelButton: Locator;
   valueModal: Locator;
@@ -21,6 +24,9 @@ export class DataSourceManagerPage {
     this.urlInput = this.page.getByTestId("url-layer-creator-url");
     this.urlFormatSelect = this.page.getByTestId("url-layer-creator-format");
     this.urlError = this.page.getByTestId("url-layer-creator-error");
+    this.urlChecking = this.page.getByTestId("url-layer-creator-checking");
+    this.csvLatColumnInput = this.page.getByTestId("url-layer-creator-lat");
+    this.csvLngColumnInput = this.page.getByTestId("url-layer-creator-lng");
     this.urlSubmitButton = this.page.getByTestId("url-layer-creator-submit");
     this.urlCancelButton = this.page.getByTestId("url-layer-creator-cancel");
     this.valueModal = this.page.getByTestId("value-layer-creator-modal");
@@ -40,6 +46,44 @@ export class DataSourceManagerPage {
   private async selectFormat(select: Locator, format: string) {
     await select.click();
     await this.page.getByRole("option", { name: format, exact: true }).click();
+  }
+
+  // Serves `body` for `url` from the browser's fetch, so URL validation can be
+  // tested without depending on an external host. The URL check is a
+  // cross-origin request, hence the CORS header.
+  async mockUrl(
+    url: string | RegExp,
+    { status = 200, body = "" }: { status?: number; body?: string } = {}
+  ) {
+    await this.page.route(url, (route) =>
+      route.fulfill({
+        status,
+        body,
+        headers: { "Access-Control-Allow-Origin": "*" }
+      })
+    );
+  }
+
+  // Leaving the field validates the URL against the format inferred from its
+  // extension (if any).
+  async enterUrl(url: string) {
+    await this.urlInput.fill(url);
+    await this.urlInput.blur();
+  }
+
+  async selectUrlFormat(format: string) {
+    await this.selectFormat(this.urlFormatSelect, format);
+  }
+
+  // Leaving the field validates the value, detecting the format if none is
+  // selected.
+  async enterValue(value: string) {
+    await this.valueInput.fill(value);
+    await this.valueInput.blur();
+  }
+
+  async selectValueFormat(format: string) {
+    await this.selectFormat(this.valueFormatSelect, format);
   }
 
   // Selecting the format validates the URL (client checks, then a fetch from
@@ -64,5 +108,10 @@ export class DataSourceManagerPage {
   async cancelUrl() {
     await this.urlCancelButton.click();
     await expect(this.urlModal).not.toBeVisible({ timeout: 10_000 });
+  }
+
+  async cancelValue() {
+    await this.valueCancelButton.click();
+    await expect(this.valueModal).not.toBeVisible({ timeout: 10_000 });
   }
 }
