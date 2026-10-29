@@ -124,140 +124,159 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
           </ActionWrapper>
         }
       >
-        <Content aria-busy={checking}>
-          <Intro>
-            {t(
-              "Add a layer from data hosted on the web. The URL must be publicly accessible and allow cross-origin requests."
-            )}
-          </Intro>
-          <InputGroup
-            label={t("URL")}
-            description={
-              error
-                ? undefined
-                : t("Supports GeoJSON, CSV, CZML, KML, 3D Tiles, MVT and WMS.")
-            }
-          >
-            <TextInput
-              extendWidth
-              placeholder="https://"
-              value={url}
-              error={!!error}
-              onChange={handleUrlChange}
-              onBlur={handleUrlBlur}
-              dataTestid="url-layer-creator-url"
-            />
-            {error && (
-              <ErrorText
-                id={ERROR_ID}
-                role="alert"
-                data-testid="url-layer-creator-error"
-              >
-                {error}
-              </ErrorText>
-            )}
-          </InputGroup>
-          <Selector
-            value={format}
-            options={formatOptions}
-            placeholder={t("Select format")}
-            onChange={handleFormatChange}
-            ariaLabel={t("Format")}
-            dataTestid="url-layer-creator-format"
-          />
-
-          {format === "csv" && (
-            <CsvColumnInputs
-              latColumn={latColumn}
-              lngColumn={lngColumn}
-              onLatColumnChange={setLatColumn}
-              onLngColumnChange={setLngColumn}
-              testIdPrefix="url-layer-creator"
-            />
-          )}
-
-          {(format === "mvt" || format === "wms") && (
+        <Body>
+          <Content aria-busy={checking} dimmed={checking}>
+            <Intro>
+              {t(
+                "Add a layer from data hosted on the web. The URL must be publicly accessible and allow cross-origin requests."
+              )}
+            </Intro>
             <InputGroup
-              label={t("Choose layer to add")}
-              data-testid="vectortiles-layer-group"
+              label={t("URL")}
+              description={
+                error
+                  ? undefined
+                  : t(
+                      "Supports GeoJSON, CSV, CZML, KML, 3D Tiles, MVT and WMS."
+                    )
+              }
             >
-              <LayerNameListWrapper data-testid="vectortiles-layer-list-wrapper">
-                <LayerNameList data-testid="vectortiles-layer-list">
-                  {layerNameList.map((layer: string, index: number) => (
-                    <LayerWrapper
-                      key={index}
-                      data-testid={`vectortiles-layer-item-${index}`}
-                    >
-                      <TextInput
-                        value={`${layer}`}
-                        extendWidth
-                        data-testid={`vectortiles-layer-textinput-${index}`}
-                      />
-                      <Button
-                        icon="close"
-                        iconButton
-                        appearance="simple"
-                        size="small"
-                        iconColor={theme.content.main}
-                        ariaLabel={t("Delete layer name")}
-                        onClick={() => handleLayerNameDelete(index)}
-                        data-testid={`vectortiles-layer-delete-button-${index}`}
-                      />
-                    </LayerWrapper>
-                  ))}
-                  {(!layerNameList.length || isLayerName) && (
-                    <LayerWrapper data-testid="vectortiles-layer-input-wrapper">
-                      <TextInput
-                        placeholder={t("layer name")}
-                        value={layerName}
-                        extendWidth
-                        onBlur={handleBlur}
-                        onChange={(value) => setLayerName(value)}
-                        data-testid="vectortiles-layer-input"
-                      />
-                      <Button
-                        icon="close"
-                        iconButton
-                        iconColor={theme.content.weak}
-                        size="small"
-                        appearance="simple"
-                        disabled
-                        data-testid="vectortiles-layer-input-disabled-button"
-                      />
-                    </LayerWrapper>
-                  )}
-                </LayerNameList>
-              </LayerNameListWrapper>
-
-              <Button
-                icon="plus"
-                title={t("Layer name")}
-                size="small"
-                onClick={handleLayerNameButtonClick}
-                data-testid="vectortiles-layer-add-button"
+              <TextInput
+                extendWidth
+                placeholder="https://"
+                value={url}
+                error={!!error}
+                onChange={handleUrlChange}
+                onBlur={handleUrlBlur}
+                dataTestid="url-layer-creator-url"
               />
+              {error && (
+                <ErrorText
+                  id={ERROR_ID}
+                  role="alert"
+                  data-testid="url-layer-creator-error"
+                >
+                  {error}
+                </ErrorText>
+              )}
             </InputGroup>
-          )}
+            <Selector
+              value={format}
+              options={formatOptions}
+              placeholder={t("Select format")}
+              onChange={handleFormatChange}
+              ariaLabel={t("Format")}
+              dataTestid="url-layer-creator-format"
+            />
 
-          {warning && (
-            <Warning>
-              <Icon icon="lightBulb" color={theme.warning.main} size="normal" />
-              {warning}
-            </Warning>
+            {format === "csv" && (
+              <CsvColumnInputs
+                latColumn={latColumn}
+                lngColumn={lngColumn}
+                onLatColumnChange={setLatColumn}
+                onLngColumnChange={setLngColumn}
+                testIdPrefix="url-layer-creator"
+              />
+            )}
+
+            {(format === "mvt" || format === "wms") && (
+              <InputGroup
+                label={t("Choose layer to add")}
+                data-testid="vectortiles-layer-group"
+              >
+                <LayerNameListWrapper data-testid="vectortiles-layer-list-wrapper">
+                  <LayerNameList data-testid="vectortiles-layer-list">
+                    {layerNameList.map((layer: string, index: number) => (
+                      <LayerWrapper
+                        key={index}
+                        data-testid={`vectortiles-layer-item-${index}`}
+                      >
+                        <TextInput
+                          value={`${layer}`}
+                          extendWidth
+                          data-testid={`vectortiles-layer-textinput-${index}`}
+                        />
+                        <Button
+                          icon="close"
+                          iconButton
+                          appearance="simple"
+                          size="small"
+                          iconColor={theme.content.main}
+                          ariaLabel={t("Delete layer name")}
+                          onClick={() => handleLayerNameDelete(index)}
+                          data-testid={`vectortiles-layer-delete-button-${index}`}
+                        />
+                      </LayerWrapper>
+                    ))}
+                    {(!layerNameList.length || isLayerName) && (
+                      <LayerWrapper data-testid="vectortiles-layer-input-wrapper">
+                        <TextInput
+                          placeholder={t("layer name")}
+                          value={layerName}
+                          extendWidth
+                          onBlur={handleBlur}
+                          onChange={(value) => setLayerName(value)}
+                          data-testid="vectortiles-layer-input"
+                        />
+                        <Button
+                          icon="close"
+                          iconButton
+                          iconColor={theme.content.weak}
+                          size="small"
+                          appearance="simple"
+                          disabled
+                          data-testid="vectortiles-layer-input-disabled-button"
+                        />
+                      </LayerWrapper>
+                    )}
+                  </LayerNameList>
+                </LayerNameListWrapper>
+
+                <Button
+                  icon="plus"
+                  title={t("Layer name")}
+                  size="small"
+                  onClick={handleLayerNameButtonClick}
+                  data-testid="vectortiles-layer-add-button"
+                />
+              </InputGroup>
+            )}
+
+            {warning && (
+              <Warning>
+                <Icon
+                  icon="lightBulb"
+                  color={theme.warning.main}
+                  size="normal"
+                />
+                {warning}
+              </Warning>
+            )}
+          </Content>
+          {checking && (
+            <Checking data-testid="url-layer-creator-checking">
+              <ClipLoader size={24} color={theme.content.main} />
+              {t("Checking the URL")}
+            </Checking>
           )}
-        </Content>
-        {checking && (
-          <Checking data-testid="url-layer-creator-checking">
-            <ClipLoader size={24} color={theme.content.main} />
-            {t("Checking the URL...")}
-          </Checking>
-        )}
+        </Body>
       </ModalPanel>
     </Modal>
   );
 };
 
-const Content = styled("div")(({ theme }) => ({
+// Positioned so the checking overlay covers only the form, not the whole
+// viewport-tall modal container.
+const Body = styled("div")(() => ({
+  // position: css.position.relative
+}));
+
+// Faded and not editable while the URL is checked.
+const Content = styled("div", {
+  shouldForwardProp: (prop) => prop !== "dimmed"
+})<{ dimmed: boolean }>(({ theme, dimmed }) => ({
+  opacity: dimmed ? 0.2 : 1,
+  pointerEvents: dimmed ? "none" : undefined,
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   alignItems: css.alignItems.flexStart,
@@ -288,8 +307,7 @@ const Warning = styled("div")(({ theme }) => ({
   ["& > svg"]: { flexShrink: 0 }
 }));
 
-// Covers the form (dimmed, not editable) while the URL's reachability is
-// checked.
+// Shown over the faded form while the URL's reachability is checked.
 const Checking = styled("div")(({ theme }) => ({
   position: css.position.absolute,
   inset: 0,
@@ -298,7 +316,6 @@ const Checking = styled("div")(({ theme }) => ({
   alignItems: css.alignItems.center,
   justifyContent: css.justifyContent.center,
   gap: theme.spacing.small,
-  background: theme.bg.transparentBlack,
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body
 }));

@@ -77,13 +77,17 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
         withBackground
         actions={
           <ActionWrapper>
-            {step === "csvColumns" && (
+            {step === "csvColumns" ? (
               <Button
                 icon="arrowLongLeft"
                 title={t("Back")}
                 onClick={handleBack}
                 data-testid="asset-layer-creator-back"
               />
+            ) : (
+              <Typography size="footnote" color={theme.content.weak}>
+                {t("Supports GeoJSON, CSV, CZML and KML.")}
+              </Typography>
             )}
             <RightActions>
               {selectedFormat === "geojson" && (

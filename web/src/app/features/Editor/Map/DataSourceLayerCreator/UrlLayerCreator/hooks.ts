@@ -9,6 +9,7 @@ import {
   UrlFormat,
   UrlIssue,
   checkResponse,
+  inferFormat,
   validateUrl,
   wmsLayersFromUrl
 } from "./utils";
@@ -23,8 +24,10 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
   const t = useT();
 
   const [url, setUrl] = useState("");
-  // Always chosen by the user; never inferred from the URL.
+  // Inferred from the URL's extension until the user picks one, after which
+  // their choice is kept (and a mismatching URL is reported as an error).
   const [format, setFormat] = useState<UrlFormat>();
+  const [formatChosen, setFormatChosen] = useState(false);
 
   const [latColumn, setLatColumn] = useState("");
   const [lngColumn, setLngColumn] = useState("");
@@ -122,13 +125,17 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     [issueMessage]
   );
 
-  const handleUrlChange = useCallback((value: string) => {
-    abortRef.current?.abort();
-    setChecking(false);
-    setUrl(value);
-    setError(undefined);
-    setVerified(false);
-  }, []);
+  const handleUrlChange = useCallback(
+    (value: string) => {
+      abortRef.current?.abort();
+      setChecking(false);
+      setUrl(value);
+      if (!formatChosen) setFormat(inferFormat(value.trim()));
+      setError(undefined);
+      setVerified(false);
+    },
+    [formatChosen]
+  );
 
   // Validates once the user has finished entering the URL (blur / Enter).
   const handleUrlBlur = useCallback(() => {
@@ -139,6 +146,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
   const handleFormatChange = useCallback(
     (value: string | string[]) => {
       setFormat(value as UrlFormat);
+      setFormatChosen(true);
       runValidation(trimmedUrl, value as UrlFormat);
     },
     [runValidation, trimmedUrl]

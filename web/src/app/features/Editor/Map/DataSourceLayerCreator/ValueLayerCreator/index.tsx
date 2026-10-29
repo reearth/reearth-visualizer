@@ -112,7 +112,9 @@ const ValueLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
           </Intro>
           <InputGroup
             label={t("Value")}
-            description={error ? undefined : "GeoJSON, CZML, KML"}
+            description={
+              error ? undefined : t("Supports GeoJSON, CZML and KML.")
+            }
           >
             <FullWidth>
               <TextArea

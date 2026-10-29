@@ -67,6 +67,18 @@ const detectFormat = (pathname: string): UrlFormat | undefined =>
 // Whether the last path segment has a file extension.
 const hasExtension = (pathname: string) => /\.[^/.]+$/.test(pathname);
 
+// The format the URL's extension identifies on its own, used to pre-select the
+// format. A plain ".json" may be GeoJSON or 3D Tiles and WMS has no extension,
+// so those are left to the user.
+export const inferFormat = (url: string): UrlFormat | undefined => {
+  const parsed = parseUrl(url);
+  if (!parsed) return undefined;
+  const pathname = safeDecode(parsed.pathname).toLowerCase();
+  if (pathname.endsWith(".json") && !pathname.endsWith("tileset.json"))
+    return undefined;
+  return detectFormat(pathname);
+};
+
 // Checks the URL's syntax and extension against the selected format, without
 // any request.
 export const validateUrl = (
