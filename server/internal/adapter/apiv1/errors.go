@@ -37,6 +37,14 @@ func conflict(format string, args ...any) error {
 	return &apiError{status: http.StatusConflict, code: ErrorErrorCodeConflict, message: fmt.Sprintf(format, args...)}
 }
 
+func unsupported(format string, args ...any) error {
+	return &apiError{status: http.StatusNotImplemented, code: ErrorErrorCodeUnsupported, message: fmt.Sprintf(format, args...)}
+}
+
+func permissionDenied(format string, args ...any) error {
+	return &apiError{status: http.StatusForbidden, code: ErrorErrorCodePermissionDenied, message: fmt.Sprintf(format, args...)}
+}
+
 var errUnauthorized = &apiError{status: http.StatusUnauthorized, code: ErrorErrorCodeUnauthorized, message: "unauthorized"}
 
 // RequireOperator rejects requests that the auth middleware could not attach
