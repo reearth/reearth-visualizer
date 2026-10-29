@@ -64,7 +64,7 @@ type ListProps = {
 /**
  * The plugin's extensions (reearth.yml calls widgets and blocks that), in a
  * collapsible panel per type. Every row works the same way: click it to
- * inspect it; its eye, shown on hover and always while it's hidden, takes it
+ * inspect it; its eye takes it
  * off the map, out of the story panel or out of the infobox.
  */
 export const ExtensionPanels: FC<ListProps> = ({ extensions, ...rowProps }) => {
@@ -155,7 +155,7 @@ const ExtensionRow: FC<
           onClick={() => onToggleHidden(ext.id)}
         />
       ),
-      keepVisible: hidden
+      keepVisible: true
     }
   ];
 
