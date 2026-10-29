@@ -12,7 +12,7 @@ type Props = {
   onFlyTo: (layerId: string) => void;
 };
 
-/** The map's layers: click a row to fly to it, its eye shows or hides it. */
+/** The map's layers: the crosshair flies to a visible layer, the eye shows or hides it. */
 const LayersPopover: FC<Props> = ({ layers, onToggle, onFlyTo }) => {
   const t = useT();
   return (
@@ -25,8 +25,22 @@ const LayersPopover: FC<Props> = ({ layers, onToggle, onFlyTo }) => {
               <Typography size="body">{layer.title ?? layer.id}</Typography>
             </Title>
           }
-          onClick={() => onFlyTo(layer.id)}
           actions={[
+            {
+              comp: layer.visible && (
+                <IconButton
+                  key="zoom"
+                  icon="crosshair"
+                  size="small"
+                  appearance="simple"
+                  placement="left"
+                  tooltipText={t("Fly to")}
+                  ariaLabel={t("Fly to")}
+                  onClick={() => onFlyTo(layer.id)}
+                />
+              ),
+              keepVisible: true
+            },
             {
               comp: (
                 <IconButton
