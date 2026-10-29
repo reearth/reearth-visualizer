@@ -99,21 +99,29 @@ None this round — the existing e2e test was repaired rather than extended. Ver
 
 ---
 
-## 2026-10-07 — REST API v1 for the CLI (server/internal/adapter/apiv1, interactor/scene.go)
+## 2026-10-07 — REST API v1 for the CLI (server/internal/adapter/apiv1, interactor/project.go, interactor/scene.go)
 
 ### Findings & Fixes
 
-1. **Unreadable workspaces leaked through list filters** (server/internal/adapter/apiv1/project.go)
+1. **`Project.Update` panicked outside GraphQL** (server/internal/usecase/interactor/project.go)
+   - Bug: before saving, it called `graphql.GetErrors(ctx)`, which panics with "missing response context" unless a gqlgen request is running. Only the internal gRPC API was excluded (`IsInternal`), so the first non-GraphQL caller, `PATCH /api/v1/projects/{id}`, returned 500 on every call.
+   - Fix: read the field errors only when `graphql.HasOperationContext(ctx)`. That is false for gRPC as well, so the `IsInternal` check was dropped. GraphQL behaviour is unchanged.
+
+2. **Unreadable workspaces leaked through list filters** (server/internal/adapter/apiv1/project.go)
    - Bug: listing a workspace the user cannot read returned an empty list, but with `starred=true` or `deleted=true` it returned 403, because those repo lookups answer `ErrOperationDenied` instead of an empty page. That revealed which workspace IDs exist. Found by Copilot review on #2452.
    - Fix: answer an empty list before any lookup when the operator cannot read the workspace.
 
-2. **Project lists loaded every story to find scene IDs** (server/internal/adapter/apiv1/project.go, interactor/scene.go)
+3. **The plugin upload contract described the wrong behaviour** (server/schemas/api/v1.yml)
+   - Bug: the spec said a new version is installed next to the old one. The usecase upgrades instead: it migrates the scene to the new version and deletes the old plugin. Found by Copilot review on #2452.
+   - Fix: the spec now documents the upgrade.
+
+4. **Project lists loaded every story to find scene IDs** (server/internal/adapter/apiv1/project.go, interactor/scene.go)
    - Bug: `FindByProjectsWithStory` was used only for scene IDs, so each list also read and decoded all stories and their pages for up to 100 scenes. Found by Copilot review on #2452.
    - Fix: added `Scene.FindByProjects`, a scene-only batch lookup.
 
 ### Tests added
 
-- e2e/api_v1_project_test.go (4 tests): the list endpoint end to end, including a regression check for unreadable workspaces with `starred`/`deleted`.
+- e2e/api_v1_project_test.go (9 tests): the API end to end, including regression checks for unreadable workspaces with `starred`/`deleted` and for plugin upgrades removing the old ID.
 
 ## 2026-10-08 — Layer style Interface tab loses style data on save (web/src/app/features/Editor/Map/LayerStylePanel/Editor/StyleInterface/**)
 
@@ -140,6 +148,16 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 - convert.test.tsx (3 tests): nested expression/conditions are kept, unknown appearance types are kept, and a known type is still removed once all its nodes are deleted.
 - convert.test.tsx (4 tests): round trip of the `true` fallback, compound `&&`/`||` and `startsWith(...) && startsWith(...)` conditions, the unsupported `==` operator, and an operator that appears more than once.
+
+## 2026-10-08 — REST API v1 alias errors (server/internal/adapter/apiv1/errors.go)
+
+### Findings & Fixes
+1. **Alias validation errors returned 500** (server/internal/adapter/apiv1/errors.go)
+   - Bug: `POST /api/v1/workspaces/{id}/projects` with an invalid alias (`Bad Alias!`, too short) or one already used in the workspace answered 500 "internal server error". The usecase returns these as `verror.VError` values, which `apperr.Classify` does not know, so the error handler treated them as unexpected and logged them as errors.
+   - Fix: the handler now maps a `VError` to 409 when its key ends in `already_exists` or `already_used`, to 404 for `repo.ErrResourceNotFound`, and to 400 otherwise, with the English message rendered from its template (e.g. "Invalid alias name: bad alias!").
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1CreateProject` now checks the default `p-<id>` alias, a custom alias, a duplicate alias (409) and two invalid aliases (400)
 
 ## 2026-10-09 — Condition parser misreads operators inside quotes/arguments (web/src/app/features/Editor/Map/LayerStylePanel/Editor/StyleInterface/convert.ts)
 

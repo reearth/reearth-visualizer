@@ -20,6 +20,7 @@ security:
   - bearerAuth: []
 tags:
   - name: Projects
+  - name: Plugins
 paths:
   /workspaces/{workspaceId}/projects:
     parameters:
@@ -66,6 +67,183 @@ paths:
           $ref: "#/components/responses/Error"
         "401":
           $ref: "#/components/responses/Error"
+    post:
+      operationId: createProject
+      summary: Create a project
+      description: Creates a project together with its scene, so that it can be opened in the editor and plugins can be installed right away.
+      tags: [Projects]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+      responses:
+        "201":
+          description: The created project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+  /projects/{projectId}:
+    parameters:
+      - $ref: "#/components/parameters/projectId"
+    get:
+      operationId: getProject
+      summary: Get a project
+      tags: [Projects]
+      responses:
+        "200":
+          description: The project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    patch:
+      operationId: updateProject
+      summary: Update a project
+      description: Changes only the fields that are given.
+      tags: [Projects]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+      responses:
+        "200":
+          description: The updated project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    delete:
+      operationId: deleteProject
+      summary: Move a project to the trash, or delete it permanently
+      description: |
+        Moves the project to the trash, as the web app does. With
+        `permanent=true` the project and its scene are deleted for good; this
+        is only allowed for a project that is already in the trash.
+      tags: [Projects]
+      parameters:
+        - name: permanent
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "204":
+          description: Moved to the trash, or deleted
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+  /projects/{projectId}/plugins:
+    parameters:
+      - $ref: "#/components/parameters/projectId"
+    get:
+      operationId: listPlugins
+      summary: List the plugins installed in a project
+      description: Includes the built-in Re:Earth plugin, marked with `system`.
+      tags: [Plugins]
+      responses:
+        "200":
+          description: The installed plugins
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PluginList"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    post:
+      operationId: uploadPlugin
+      summary: Upload a plugin and install it in a project
+      description: |
+        Send the plugin zip as the body (`application/zip`, up to 10 MB), or
+        `{"url": "..."}` to have the server download it. The zip must have
+        `reearth.yml` at its root and a `<extension-id>.js` per extension.
+
+        Uploading the same plugin ID and version again replaces it. A new
+        version upgrades the installed one: the project switches to it and the
+        old version is removed, so its plugin ID stops existing.
+      tags: [Plugins]
+      requestBody:
+        required: true
+        content:
+          application/zip:
+            schema:
+              type: string
+              format: binary
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadPluginRequest"
+      responses:
+        "201":
+          description: The installed plugin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Plugin"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  /projects/{projectId}/plugins/{pluginId}:
+    parameters:
+      - $ref: "#/components/parameters/projectId"
+      - name: pluginId
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      operationId: uninstallPlugin
+      summary: Uninstall a plugin from a project
+      tags: [Plugins]
+      responses:
+        "204":
+          description: Uninstalled
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
 components:
   securitySchemes:
     bearerAuth:
@@ -75,6 +253,12 @@ components:
   parameters:
     workspaceId:
       name: workspaceId
+      in: path
+      required: true
+      schema:
+        type: string
+    projectId:
+      name: projectId
       in: path
       required: true
       schema:
@@ -192,4 +376,77 @@ components:
           format: int64
         nextCursor:
           description: Pass as `cursor` to get the next page. Absent on the last page.
+          type: string
+    CreateProjectRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        visibility:
+          $ref: "#/components/schemas/Visibility"
+        alias:
+          type: string
+    UpdateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        starred:
+          type: boolean
+        archived:
+          type: boolean
+    Plugin:
+      type: object
+      required: [id, name, version, system, extensions]
+      properties:
+        id:
+          description: The plugin ID. Uploaded plugins belong to one scene, so it starts with the scene ID.
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        description:
+          type: string
+        author:
+          type: string
+        system:
+          description: Whether the plugin is built in. Built-in plugins cannot be uninstalled.
+          type: boolean
+        extensions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PluginExtension"
+    PluginExtension:
+      type: object
+      required: [id, type, name]
+      properties:
+        id:
+          type: string
+        type:
+          description: For example `widget`, `storyBlock` or `infoboxBlock`.
+          type: string
+        name:
+          type: string
+    PluginList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Plugin"
+    UploadPluginRequest:
+      type: object
+      required: [url]
+      properties:
+        url:
+          description: An https URL of the plugin zip.
           type: string
