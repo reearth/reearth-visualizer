@@ -73,7 +73,7 @@ func initPublicAPIEcho(ctx context.Context, cfg *ServerConfig, otelServiceName o
 		newUsecaseMiddleware(cfg, ""),
 		AttachLanguageMiddleware,
 	)
-	apiv1.RegisterHandlers(v1, apiv1.NewHandler())
+	apiv1.RegisterHandlers(v1, apiv1.NewHandler(cfg.Config.Published.Host))
 
 	e.Any("/*", func(c echo.Context) error { return echo.NewHTTPError(http.StatusNotFound) })
 
