@@ -80,11 +80,9 @@ test.describe("Adding Layers from External Resources", () => {
     await context.close();
   });
 
-  async function openDataSourceManager() {
+  async function openNewLayerMenu() {
     await projectScreen.newLayerButton.click();
-    await page.waitForTimeout(500);
-    await projectScreen.addLayerFromResourceButton.click();
-    await dataSourceManager.waitForOpen();
+    await expect(projectScreen.addFromUrlButton).toBeVisible();
   }
 
   test("Create a project for external layer tests", async () => {
@@ -106,11 +104,16 @@ test.describe("Adding Layers from External Resources", () => {
     await cesiumViewer.waitForGlobeReady();
   });
 
-  test("Open Data Source Manager and verify all tabs", async () => {
+  test("Open New Layer menu and verify all add options", async () => {
     test.info().annotations.push({ type: "story", description: "US-EXTL-001" });
-    await openDataSourceManager();
-    await dataSourceManager.verifyAllTabs();
-    await dataSourceManager.close();
+    await openNewLayerMenu();
+    await expect(projectScreen.addFromAssetsButton).toBeVisible();
+    await expect(projectScreen.addFromUrlButton).toBeVisible();
+    await expect(projectScreen.addFromValueButton).toBeVisible();
+    await expect(projectScreen.addFromPlateauButton).toBeVisible();
+    await expect(projectScreen.addSketchLayerButton).toBeVisible();
+    await expect(projectScreen.preset3dTilesMenu).toBeVisible();
+    await page.keyboard.press("Escape");
   });
 
   test("Add a GeoJSON layer from web URL", async () => {
@@ -121,12 +124,14 @@ test.describe("Adding Layers from External Resources", () => {
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
-    await openDataSourceManager();
-    await dataSourceManager.addGeoJsonFromUrl(
-      "https://raw.githubusercontent.com/johan/world.geo.json/master/countries/JPN.geo.json"
+    await openNewLayerMenu();
+    await projectScreen.addFromUrlButton.click();
+    await dataSourceManager.addFromUrl(
+      "https://raw.githubusercontent.com/johan/world.geo.json/master/countries/JPN.geo.json",
+      "GeoJSON"
     );
     await cesiumViewer.waitForLoaderToDisappear();
-    await dataSourceManager.waitForClosed();
+    await expect(dataSourceManager.urlModal).not.toBeVisible();
 
     const layersAfter = await cesiumViewer.getLayerCount();
     expect(layersAfter).toBe(layersBefore + 1);
@@ -140,8 +145,9 @@ test.describe("Adding Layers from External Resources", () => {
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
-    await openDataSourceManager();
-    await dataSourceManager.addGeoJsonFromValue(
+    await openNewLayerMenu();
+    await projectScreen.addFromValueButton.click();
+    await dataSourceManager.addFromValue(
       JSON.stringify({
         type: "FeatureCollection",
         features: [
@@ -154,30 +160,29 @@ test.describe("Adding Layers from External Resources", () => {
       })
     );
     await cesiumViewer.waitForLoaderToDisappear();
-    await dataSourceManager.waitForClosed();
+    await expect(dataSourceManager.valueModal).not.toBeVisible();
 
     const layersAfter = await cesiumViewer.getLayerCount();
     expect(layersAfter).toBe(layersBefore + 1);
   });
 
-  test("Add a 3D Tiles layer (Cesium OSM)", async () => {
+  test("Add a preset 3D Tiles layer (Re:Earth Buildings)", async () => {
     test.info().annotations.push({ type: "story", description: "US-EXTL-002" });
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
-    await openDataSourceManager();
-    await dataSourceManager.threeDTilesTab.click();
-    await page.waitForTimeout(300);
+    await openNewLayerMenu();
+    await projectScreen.preset3dTilesMenu.hover();
+    await expect(projectScreen.reearthBuildingsPresetButton).toBeVisible();
+    await expect(projectScreen.googlePhotorealisticPresetButton).toBeVisible();
 
-    await expect(dataSourceManager.cesiumOsmRadio).toBeVisible();
-    await expect(dataSourceManager.googlePhotorealisticRadio).toBeVisible();
-
-    await dataSourceManager.addToLayerButton.click();
+    // Presets are added straight from the menu, without a modal.
+    await projectScreen.reearthBuildingsPresetButton.click();
     await cesiumViewer.waitForLoaderToDisappear();
-    await dataSourceManager.waitForClosed();
 
-    const layersAfter = await cesiumViewer.getLayerCount();
-    expect(layersAfter).toBe(layersBefore + 1);
+    await expect
+      .poll(() => cesiumViewer.getLayerCount())
+      .toBe(layersBefore + 1);
   });
 
   test("Add a 3D Tiles layer from URL", async () => {
@@ -188,12 +193,14 @@ test.describe("Adding Layers from External Resources", () => {
     test.setTimeout(60000);
     const layersBefore = await cesiumViewer.getLayerCount();
 
-    await openDataSourceManager();
-    await dataSourceManager.addThreeDTilesFromUrl(
-      "https://assets.cms.plateau.reearth.io/assets/11/6a69e4-0363-4138-a8ae-170069a8682e/13100_tokyo23-ku_2022_3dtiles_1_1_op_bldg_13101_chiyoda-ku_lod2_no_texture/tileset.json"
+    await openNewLayerMenu();
+    await projectScreen.addFromUrlButton.click();
+    await dataSourceManager.addFromUrl(
+      "https://assets.cms.plateau.reearth.io/assets/11/6a69e4-0363-4138-a8ae-170069a8682e/13100_tokyo23-ku_2022_3dtiles_1_1_op_bldg_13101_chiyoda-ku_lod2_no_texture/tileset.json",
+      "3D Tiles"
     );
     await cesiumViewer.waitForLoaderToDisappear();
-    await dataSourceManager.waitForClosed();
+    await expect(dataSourceManager.urlModal).not.toBeVisible();
 
     const layersAfter = await cesiumViewer.getLayerCount();
     expect(layersAfter).toBe(layersBefore + 1);
@@ -208,12 +215,14 @@ test.describe("Adding Layers from External Resources", () => {
     expect(layerCount).toBeGreaterThanOrEqual(4);
   });
 
-  test("Canceling Data Source Manager does not add a layer", async () => {
+  test("Canceling Add from URL does not add a layer", async () => {
     test.info().annotations.push({ type: "story", description: "US-EXTL-001" });
     const layersBefore = await cesiumViewer.getLayerCount();
 
-    await openDataSourceManager();
-    await dataSourceManager.close();
+    await openNewLayerMenu();
+    await projectScreen.addFromUrlButton.click();
+    await expect(dataSourceManager.urlModal).toBeVisible();
+    await dataSourceManager.cancelUrl();
 
     const layersAfter = await cesiumViewer.getLayerCount();
     expect(layersAfter).toBe(layersBefore);

@@ -138,55 +138,88 @@ Street View and Google Map Search require a Google Maps tile type to comply with
   Street ViewとGoogle マップ検索は、Googleマップのポリシーに準拠するためGoogleマップのタイルタイプが必要です。Google
   サテライトまたはGoogle ロードマップを選択してください。
 Page: ページ
-From Assets: アセットから
-From Web: ウェブから
-Source Type: ソースタイプ
-Asset: アセット
-Resource URL: リソースURL
-Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ビジュアライザーは現在、CSVポイントデータのみ対応しています。緯度と経度の列名を以下に指定してください。
-Latitude Column Name: 緯度の列名
-Column Name: 列名
-Longitude Column Name: 経度の列名
-Add to Layer: レイヤーに追加
-From Value: 値から
-Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
-  CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
-Input Text: テキストを入力
-Value: 値
-Input data here: ここにデータを入力
+Upload: アップロード
+Search by the name: 名前で検索
+Uploaded at: アップロード日時
+No assets found: アセットが見つかりません
+Try adjusting your search or filters: 検索条件やフィルターを変更してみてください
+Visualizer Project Assets: Visualizerプロジェクトアセット
+Edits to the model in CMS will update added layer automatically: CMSでモデルを編集すると、追加したレイヤーも自動的に更新されます
+All formats: すべての形式
+Back: 戻る
+Prioritize Performance: パフォーマンスを優先
+If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
+  パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
 Auto Update Time: 自動時間更新
 'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': >-
   有効にすると、CZML ファイルが読み込まれた際に、シミュレーションの時計が CZML
   ファイルで定義された時間範囲に更新されます。警告：このオプションが有効な複数の CZML
   レイヤーが読み込まれた場合、最終的なシミュレーション時間は最後に読み込まれたレイヤーによって設定されます。
-Invalid GeoJSON format: 不正なGeoJSON形式
-Please enter valid GeoJSON: 有効なGeoJSONを入力してください
-Prioritize Performance: パフォーマンスを優先
-If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
-  パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
-Vector Tile: ベクトルタイル
-3D Tiles: 3Dタイル
-Data Source Manager: データソースマネージャー
-Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
-  KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
-Please provide cesium ion access token on Main settings to use Cesium Ion.: Cesium Ionを使用するには、メイン設定でCesium Ionアクセストークンを提供してください。
-Re:Earth: Re:Earth
-Cesium Ion: Cesium Ion
-Provider: プロバイダー
-Re:Earth Buildings: Re:Earth Buildings
-Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
+The development of the KML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: KML形式の開発はまだ試験段階で、あまり安定していません。また、一部の機能はまだ完全にはサポートされていないため、注意してご利用ください。
+Submit: 反映
+This file format is not supported. Please use GeoJSON, CSV, KML or CZML.: このファイル形式には対応していません。GeoJSON、CSV、KML、CZMLのいずれかを使用してください。
+The file cannot be greater than {{size}} MB. Please use a smaller file.: ファイルサイズは{{size}}MB以下にしてください。より小さいファイルを使用してください。
+Failed to upload the file.: ファイルのアップロードに失敗しました。
+Latitude Column Name: 緯度の列名
+Column name: 列名
+Longitude Column Name: 経度の列名
+Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ビジュアライザーは現在、CSVポイントデータのみ対応しています。緯度と経度の列名を以下に指定してください。
 Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
+Re:Earth Buildings: Re:Earth Buildings
+Add from Assets: アセットから追加
+Upload new files or pick existing ones: 新しいファイルをアップロード、または既存のファイルを選択
+Add from URL: URLから追加
+Link to externally hosted data: 外部でホストされているデータにリンク
+Add from Value: 値から追加
+Enter data or coordinates manually: データや座標を手動で入力
+Add layer from PLATEAU: PLATEAUからレイヤーを追加
+Browse PLATEAU open data: PLATEAUのオープンデータを閲覧
+Create Sketch Layer: スケッチレイヤーを作成
+Draw shapes and markers on the map: 地図上に図形やマーカーを描画
+Preset 3D Tiles: プリセット3Dタイル
+Open 3D buildings worldwide: 世界中のオープンな3D建物データ
+Photorealistic 3D mesh of the world: 世界のフォトリアリスティックな3Dメッシュ
+New Layer: 新しいレイヤー
+Vector Tiles (MVT): ベクトルタイル（MVT）
+3D Tiles: 3Dタイル
+Enter a valid URL starting with http:// or https://.: http:// または https:// で始まる有効なURLを入力してください。
+This URL looks like {{detected}} data, not {{selected}}. Change the format or check the URL.: このURLは{{selected}}ではなく{{detected}}のデータのようです。形式を変更するか、URLを確認してください。
+'{{selected}} URLs must end with {{extensions}}. Check the URL or change the format.': '{{selected}}のURLは{{extensions}}で終わる必要があります。URLを確認するか、形式を変更してください。'
+3D Tiles URLs must point to the tileset entry point (e.g. tileset.json), not a folder.: '3DタイルのURLは、フォルダではなくタイルセットのエントリーポイント（例: tileset.json）を指定する必要があります。'
+Vector tile URLs must be a template containing {z}, {x} and {y}.: ベクトルタイルのURLは、{z}、{x}、{y} を含むテンプレートである必要があります。
+The URL could not be reached. Check the link or your network connection.: URLにアクセスできませんでした。リンクまたはネットワーク接続を確認してください。
+The URL returned empty or unreadable data. Check that it points to a valid {{format}} file.: URLから空または読み取れないデータが返されました。有効な{{format}}ファイルを指定しているか確認してください。
+WMS URLs need at least one layer name. Add a layer below or include LAYERS= in the URL.: WMSのURLには少なくとも1つのレイヤー名が必要です。下でレイヤーを追加するか、URLにLAYERS=を含めてください。
+The development of the CZML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: CZML形式の開発はまだ試験段階で、あまり安定していません。また、一部の機能はまだ完全にはサポートされていないため、注意してご利用ください。
+Add a layer from data hosted on the web. The URL must be publicly accessible and allow cross-origin requests.: Web上でホストされているデータからレイヤーを追加します。URLは公開されており、クロスオリジンリクエストを許可している必要があります。
 URL: URL
+Supports GeoJSON, CZML and KML.: GeoJSON、CZML、KMLに対応しています。
+Supports GeoJSON, CSV, CZML and KML.: GeoJSON、CSV、CZML、KMLに対応しています。
+Supports GeoJSON, CSV, CZML, KML, 3D Tiles, MVT and WMS.: GeoJSON、CSV、CZML、KML、3Dタイル、MVT、WMSに対応しています。
+Select format: 形式を選択
+Format: 形式
 Choose layer to add: 追加するレイヤーを選択
+Delete layer name: レイヤー名を削除
 layer name: レイヤー名
 Layer name: レイヤー名
+Checking the URL: URLを確認しています
+The pasted value doesn't match any supported format (GeoJSON, CZML or KML).: 貼り付けた値は、対応している形式（GeoJSON、CZML、KML）のいずれにも一致しません。
+This value looks like {{detected}} data, not {{selected}}. Change the format or check the value.: この値は{{selected}}ではなく{{detected}}のデータのようです。形式を変更するか、値を確認してください。
+'Invalid GeoJSON: missing or invalid "type", or a "FeatureCollection" without a "features" array.': 無効なGeoJSONです。"type"がないか不正、または"FeatureCollection"に"features"配列がありません。
+'Invalid CZML: the data must be an array of packets whose first packet has "id": "document".': '無効なCZMLです。データはパケットの配列で、最初のパケットに"id": "document"が必要です。'
+'Invalid KML: missing <kml> root element or invalid XML.': 無効なKMLです。<kml>ルート要素がないか、XMLが不正です。
+Paste raw data in a supported format. The format is detected automatically, or you can select it manually.: 対応している形式の生データを貼り付けてください。形式は自動で検出されますが、手動で選択することもできます。
+Value: 値
+Paste data here: ここにデータを貼り付け
 'Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルの不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルが存在する場合の不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 'Disabled: Zoom level configuration is not available for system tiles.': '無効: ズームレベルの設定はシステムタイルでは利用できません。'
 Inspector: インスペクター
+Re:Earth: Re:Earth
 Layer: レイヤー
 Layer Name: レイヤー名
-Format: 形式
+Provider: プロバイダー
+Resource URL: リソースURL
 Custom property schema: カスタムプロパティスキーマ
 Update data resource URL: リソースURLを更新
 New data resource URL: 新しいリソースURL
@@ -197,7 +230,6 @@ Delete Field: フィールド削除
 More: その他
 Edit Custom Property: カスタムプロパティ編集
 New Custom Property: 新しいカスタムプロパティ
-Submit: 反映
 Property Title: プロパティタイトル
 Property Type: プロパティタイプ
 Please select one type: タイプを選択してください
@@ -224,11 +256,7 @@ NO STYLE: スタイルなし
 Enable PhotoOverlay: フォトオーバーレイを有効化
 Show photo overlay when the user clicks on a layer: レイヤーをクリックした際にフォトオーバーレイを表示
 Settings: 設定
-Add Layer from Resource: リソースからレイヤーを追加
-Add Sketch Layer: スケッチレイヤーを追加
-Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
-New Layer: 新しいレイヤー
 Fly to: 移動
 Visibility: 表示・非表示切り替え
 "Cesium Ion token not configured. Using fallback.\nClick to configure": Cesium Ionトークンが設定されていません。フォールバックを使用します。\nクリックして設定
@@ -267,6 +295,7 @@ Camera: カメラ
 Area: 都道府県
 Dataset Type: カテゴリー
 PLATEAU Data Catalog: PLATEAUデータカタログ
+Add to Layer: レイヤーに追加
 Search by name: 名前で検索
 No results found: 結果が見つかりません
 Loading...: ロード中...
@@ -571,7 +600,9 @@ Copy command: コマンドをコピー
 Connect a plugin: プラグインを接続
 Run this in your plugin's folder. It serves the plugin and opens it here, and reloads it when you save.: プラグインのフォルダでこのコマンドを実行します。プラグインを配信してここで開き、保存すると再読み込みします。
 'Or load a plugin from a server:': 'またはサーバーからプラグインを読み込む:'
-The server must serve reearth.yml and a .js file for each extension. A change event on <url>/events reloads the plugin.: サーバーは reearth.yml と、各拡張機能の .js ファイルを配信する必要があります。<url>/events の change イベントでプラグインを再読み込みします。
+The server must serve reearth.yml and a .js file for each extension. A change event on <url>/events reloads the plugin.: >-
+  サーバーは reearth.yml と、各拡張機能の .js ファイルを配信する必要があります。<url>/events の change
+  イベントでプラグインを再読み込みします。
 Can't reach the plugin server: プラグインのサーバーに接続できません
 Can't read reearth.yml: reearth.yml を読み取れません
 Nothing answered at {{url}}. Is this still running?: '{{url}} から応答がありません。まだ起動していますか？'
@@ -681,7 +712,6 @@ List Layout: リストのレイアウト
 Version: バージョン
 Wrong file format: 誤ったファイル形式
 Choose: 選択
-Upload: アップロード
 Position Capture: 位置キャプチャ
 Latitude: 緯度
 Longitude: 経度
@@ -759,7 +789,6 @@ Successfully uninstalled plugin.: プラグインのアンインストールに�
 Export already in progress.: エクスポートは既に進行中です。
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
-Failed to upload the file.: ファイルのアップロードに失敗しました。
 Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
 Failed to import project.: プロジェクトのインポートに失敗しました。
 Failed to create project.: プロジェクトの作成に失敗しました。

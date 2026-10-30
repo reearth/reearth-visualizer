@@ -19,6 +19,8 @@ export type TextInputProps = {
   appearance?: "readonly" | "present";
   extendWidth?: boolean;
   autoFocus?: boolean;
+  /** Renders the input with a danger-coloured border. */
+  error?: boolean;
   actions?: ReactNode[];
   leftAction?: FC[];
   onChange?: (text: string) => void;
@@ -40,6 +42,7 @@ export const TextInput: FC<TextInputProps> = ({
   actions,
   leftAction,
   autoFocus,
+  error,
   onChange,
   onBlur,
   onKeyDown,
@@ -98,6 +101,7 @@ export const TextInput: FC<TextInputProps> = ({
       appearance={appearance}
       extendWidth={extendWidth}
       status={isFocused || autoFocus ? "active" : "default"}
+      error={error}
     >
       {leftAction && (
         <ActionsWrapper>
@@ -129,15 +133,17 @@ export const TextInput: FC<TextInputProps> = ({
 };
 
 const Wrapper = styled("div", {
-  shouldForwardProp: (prop) => prop !== "extendWidth"
+  shouldForwardProp: (prop) => prop !== "extendWidth" && prop !== "error"
 })<{
   size: "normal" | "small";
   appearance?: "readonly" | "present";
   status: "default" | "active";
   extendWidth?: boolean;
-}>(({ size, theme, appearance, status, extendWidth }) => {
-  const borderStyle =
-    appearance === "present"
+  error?: boolean;
+}>(({ size, theme, appearance, status, extendWidth, error }) => {
+  const borderStyle = error
+    ? `1px solid ${theme.dangerous.main}`
+    : appearance === "present"
       ? status === "default"
         ? `1px solid transparent`
         : `1px solid ${theme.select.main}`

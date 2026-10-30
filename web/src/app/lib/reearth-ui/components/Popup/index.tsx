@@ -61,12 +61,21 @@ const Content = forwardRef<
   HTMLDivElement,
   HTMLProps<HTMLDivElement> & {
     tooltip?: boolean;
+    tooltipBackground?: string;
     ariaLabelledby?: string;
     ariaDescribedby?: string;
     dataTestid?: string;
   }
 >(function Content(
-  { style, tooltip, ariaLabelledby, ariaDescribedby, dataTestid, ...props },
+  {
+    style,
+    tooltip,
+    tooltipBackground,
+    ariaLabelledby,
+    ariaDescribedby,
+    dataTestid,
+    ...props
+  },
   propRef
 ) {
   const { context: floatingContext, ...context } = usePopoverContext();
@@ -101,7 +110,7 @@ const Content = forwardRef<
               ref={context.arrowRef}
               context={floatingContext}
               style={{
-                fill: theme.bg[2]
+                fill: tooltipBackground ?? theme.bg[2]
               }}
               width={8}
               height={6}
@@ -129,6 +138,8 @@ export type PopupProps = {
   shift?: ShiftOptions;
   nested?: boolean;
   tooltip?: boolean;
+  // Arrow color for tooltips, matching the tooltip's background.
+  tooltipBackground?: string;
   onOpenChange?: (open: boolean) => void;
   ariaLabelledby?: string;
   ariaDescribedby?: string;
@@ -144,6 +155,7 @@ export const Popup = ({
   extendContentWidth,
   autoClose,
   tooltip,
+  tooltipBackground,
   ariaLabelledby,
   ariaDescribedby,
   dataTestid,
@@ -201,6 +213,7 @@ export const Popup = ({
       </Trigger>
       <Content
         tooltip={tooltip}
+        tooltipBackground={tooltipBackground}
         onClick={handleContentClick}
         style={contentStyle}
         ariaLabelledby={ariaLabelledby}

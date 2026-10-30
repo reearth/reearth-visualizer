@@ -173,6 +173,7 @@ import PuzzlePiece from "./Icons/PuzzlePiece.svg?react";
 import Question from "./Icons/Question.svg?react";
 import Return from "./Icons/Return.svg?react";
 import Rows from "./Icons/Rows.svg?react";
+import SearchNotFound from "./Icons/SearchNotFound.svg?react";
 import Setting from "./Icons/Setting.svg?react";
 import SettingFilled from "./Icons/SettingFilled.svg?react";
 import Sidebar from "./Icons/Sidebar.svg?react";
@@ -388,6 +389,7 @@ export default {
   question: Question,
   return: Return,
   rows: Rows,
+  searchNotFound: SearchNotFound,
   setting: Setting,
   settingFilled: SettingFilled,
   sidebar: Sidebar,

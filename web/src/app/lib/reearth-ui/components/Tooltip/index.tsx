@@ -12,6 +12,9 @@ type TooltipProps = {
   offset?: number;
   iconColor?: string;
   placement?: Placement;
+  width?: number;
+  // Darker panel (and arrow) background: theme.bg[0] instead of theme.bg[2].
+  darkBackground?: boolean;
   triggerComponent?: ReactNode;
 };
 
@@ -22,9 +25,12 @@ const Tooltip: FC<TooltipProps> = ({
   offset = 6,
   iconColor,
   placement,
-  triggerComponent
+  triggerComponent,
+  width,
+  darkBackground
 }) => {
   const theme = useTheme();
+  const background = darkBackground ? theme.bg[0] : theme.bg[2];
   const t = useT();
 
   const tooltipIcon: IconName | undefined = useMemo(
@@ -64,8 +70,9 @@ const Tooltip: FC<TooltipProps> = ({
       trigger={trigger}
       triggerOnHover
       tooltip
+      tooltipBackground={background}
     >
-      <TipPanel>
+      <TipPanel width={width} background={background}>
         <Typography
           size="footnote"
           color={
@@ -90,13 +97,15 @@ const IconWrapper = styled("div")(() => ({
   alignItems: css.alignItems.center
 }));
 
-const TipPanel = styled("div")(({ theme }) => ({
-  maxWidth: "150px",
+const TipPanel = styled("div", {
+  shouldForwardProp: (prop) => prop !== "background"
+})<{ width?: number; background: string }>(({ theme, width, background }) => ({
+  maxWidth: width ? `${width}px` : "150px",
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   gap: theme.spacing.small,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
-  background: theme.bg[2],
+  background,
   color: theme.content.main,
   boxShadow: theme.shadow.tooltip,
   borderRadius: theme.radius.normal

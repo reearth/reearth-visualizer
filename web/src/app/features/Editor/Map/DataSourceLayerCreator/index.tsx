@@ -1,106 +1,149 @@
-import { Modal, ModalPanel, TabItem, Tabs } from "@reearth/app/lib/reearth-ui";
+import { Button, PopupMenu, PopupMenuItem } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
-import { styled } from "@reearth/services/theme";
-import { FC, ReactNode } from "react";
+import { useSetAtom } from "jotai";
+import { useCallback, useMemo } from "react";
 
-import { LayerAddProps } from "../../hooks/useLayers";
+import { useMapPage } from "../context";
+import { showAssetLayerCreatorAtom, showPlateauAssetLayerCreatorAtom, showSketchLayerCreatorAtom, showUrlLayerCreatorAtom, showValueLayerCreatorAtom } from "../state";
 
-import CSV from "./CSV";
-import CZML from "./CZML";
-import GeoJSON from "./GeoJSON";
-import KML from "./KML";
-import ThreeDTiles from "./ThreeDTiles";
-import VectorTiles from "./VectorTiles";
-import WmsTiles from "./WmsTiles";
-
-export type DataProps = {
-  sceneId: string;
-  onClose: () => void;
-  onSubmit: (layerAddInp: LayerAddProps) => void;
-};
-
-export type SourceType = "url" | "local" | "value";
-
-export type DataSourceOptType = {
-  label: string;
-  value: SourceType;
-  children?: ReactNode;
-}[];
-
-const DataSourceLayerCreator: FC<DataProps> = ({
-  sceneId,
-  onClose,
-  onSubmit
-}) => {
+const DataSourceLayerCreator = () => {
   const t = useT();
+  const { sceneId, handleLayerAdd } = useMapPage();
 
-  const tabsItem: TabItem[] = [
-    {
-      id: "geojson",
-      name: "GeoJSON",
-      children: (
-        <GeoJSON sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-      )
+  // Presets need no input, so they are added straight from the menu. Google
+  // Photorealistic always uses the Re:Earth provider (no Cesium Ion token).
+  const addPreset = useCallback(
+    (type: "reearth-buildings" | "google-photorealistic") => {
+      if (!sceneId) return;
+      const isGoogle = type === "google-photorealistic";
+      handleLayerAdd({
+        layerType: "simple",
+        sceneId,
+        title: isGoogle
+          ? t("Google Photorealistic 3D Tiles")
+          : t("Re:Earth Buildings"),
+        visible: true,
+        config: { data: { type, ...(isGoogle && { provider: "reearth" }) } }
+      });
     },
-    {
-      id: "csv",
-      name: "CSV",
-      children: <CSV sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-    },
-    {
-      id: "wms",
-      name: "WMS",
-      children: (
-        <WmsTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-      )
-    },
-    {
-      id: "vectorTiles",
-      name: t("Vector Tile"),
-      children: (
-        <VectorTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-      )
-    },
-    {
-      id: "threeDTiles",
-      name: t("3D Tiles"),
-      children: (
-        <ThreeDTiles sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-      )
-    },
-    {
-      id: "czml",
-      name: "CZML",
-      children: <CZML sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-    },
-    {
-      id: "kml",
-      name: "KML",
-      children: <KML sceneId={sceneId} onSubmit={onSubmit} onClose={onClose} />
-    }
-  ];
+    [handleLayerAdd, sceneId, t]
+  );
+
+  const setShowAssetLayerCreator = useSetAtom(showAssetLayerCreatorAtom);
+  const openAssetLayerCreator = useCallback(() => {
+    setShowAssetLayerCreator(true);
+  }, [setShowAssetLayerCreator]);
+
+  const setShowSketchLayerCreator = useSetAtom(showSketchLayerCreatorAtom);
+  const openSketchLayerCreator = useCallback(() => {
+    setShowSketchLayerCreator(true);
+  }, [setShowSketchLayerCreator]);
+
+  const setShowPlateauAssetLayerCreator = useSetAtom(
+    showPlateauAssetLayerCreatorAtom
+  );
+  const openPlateauAssetLayerCreator = useCallback(() => {
+    setShowPlateauAssetLayerCreator(true);
+  }, [setShowPlateauAssetLayerCreator]);
+
+  const setShowUrlLayerCreator = useSetAtom(showUrlLayerCreatorAtom);
+  const openUrlLayerCreator = useCallback(() => {
+    setShowUrlLayerCreator(true);
+  }, [setShowUrlLayerCreator]);
+
+  const setShowValueLayerCreator = useSetAtom(showValueLayerCreatorAtom);
+  const openValueLayerCreator = useCallback(() => {
+    setShowValueLayerCreator(true);
+  }, [setShowValueLayerCreator]);
+
+  const newLayerMenu: PopupMenuItem[] = useMemo(
+    () => [
+      {
+        id: "add-from-assets",
+        title: t("Add from Assets"),
+        description: t("Upload new files or pick existing ones"),
+        icon: "floppyDisk",
+        onClick: openAssetLayerCreator
+      },
+      {
+        id: "add-from-url",
+        title: t("Add from URL"),
+        description: t("Link to externally hosted data"),
+        icon: "linkSimple",
+        onClick: openUrlLayerCreator
+      },
+      {
+        id: "add-from-value",
+        title: t("Add from Value"),
+        description: t("Enter data or coordinates manually"),
+        icon: "pencilSimple",
+        onClick: openValueLayerCreator
+      },
+      {
+        id: "add-plateau-asset-layer",
+        title: t("Add layer from PLATEAU"),
+        description: t("Browse PLATEAU open data"),
+        icon: "plateau",
+        onClick: openPlateauAssetLayerCreator
+      },
+      {
+        id: "add-sketch-layer",
+        title: t("Create Sketch Layer"),
+        description: t("Draw shapes and markers on the map"),
+        icon: "polygon",
+        onClick: openSketchLayerCreator
+      },
+      {
+        id: "preset-3d-tiles",
+        title: t("Preset 3D Tiles"),
+        icon: "cube",
+        subItem: [
+          {
+            id: "preset-reearth-buildings",
+            title: t("Re:Earth Buildings"),
+            description: t("Open 3D buildings worldwide"),
+            onClick: () => addPreset("reearth-buildings")
+          },
+          {
+            id: "preset-google-photorealistic",
+            title: t("Google Photorealistic 3D Tiles"),
+            description: t("Photorealistic 3D mesh of the world"),
+            onClick: () => addPreset("google-photorealistic")
+          }
+        ]
+      }
+    ],
+    [
+      addPreset,
+      openAssetLayerCreator,
+      openUrlLayerCreator,
+      openValueLayerCreator,
+      openSketchLayerCreator,
+      openPlateauAssetLayerCreator,
+      t
+    ]
+  );
 
   return (
-    <Modal size="medium" visible={true} data-testid="datasource-modal">
-      <ModalPanel
-        title={t("Data Source Manager")}
-        onCancel={onClose}
-        data-testid="datasource-modal-panel"
-      >
-        <Wrapper data-testid="datasource-wrapper">
-          <Tabs
-            tabs={tabsItem}
-            position="left"
-            tabStyle="separated"
-            data-testid="datasource-tabs"
-          />
-        </Wrapper>
-      </ModalPanel>
-    </Modal>
+    <PopupMenu
+      label={
+        <Button
+          icon="plus"
+          title={t("New Layer")}
+          size="small"
+          extendWidth
+          data-testid="new-layer-button"
+        />
+      }
+      extendTriggerWidth
+      extendContentWidth
+      placement="bottom-end"
+      menu={newLayerMenu}
+      maxHeight={400}
+      width={200}
+      data-testid="new-layer-menu"
+    />
   );
 };
-const Wrapper = styled("div")(() => ({
-  height: "440px"
-}));
 
 export default DataSourceLayerCreator;
