@@ -51,7 +51,7 @@ type ViewerWindow = {
 test.describe.configure({ mode: "serial" });
 
 test.describe("Viewer Plugin API — semantic (webkit)", () => {
-  let context: BrowserContext;
+  let context: BrowserContext | undefined;
   let page: Page;
   let pluginFixture: PluginFixturePage;
   let cesiumViewer: CesiumViewerPage;
@@ -85,7 +85,8 @@ test.describe("Viewer Plugin API — semantic (webkit)", () => {
   });
 
   test.afterAll(async () => {
-    await context.close().catch(() => {});
+    // context is undefined when beforeAll failed before creating it
+    await context?.close().catch(() => {});
     // Shared project is deleted by plugin-api-teardown — nothing to clean up here.
   });
 
