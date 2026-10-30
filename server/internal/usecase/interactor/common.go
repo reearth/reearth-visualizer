@@ -122,6 +122,7 @@ func NewContainer(
 
 	return interfaces.Container{
 		Asset:           NewAsset(r, g),
+		CMS:             NewCMS(g),
 		NLSLayer:        NewNLSLayer(r, g),
 		Style:           NewStyle(r),
 		Plugin:          NewPlugin(r, g),
