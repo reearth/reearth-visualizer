@@ -126,7 +126,7 @@ func (Server) CreateProject(ctx context.Context, req CreateProjectRequestObject)
 
 	if err := createSceneAndStory(ctx, uc, prj.ID(), op); err != nil {
 		// Do not leave a project behind that the editor cannot open.
-		if derr := uc.Project.Delete(ctx, prj.ID(), op); derr != nil {
+		if derr := uc.Project.Delete(context.WithoutCancel(ctx), prj.ID(), op); derr != nil {
 			log.Errorfc(ctx, "api v1: could not remove project %s after a failed create: %v", prj.ID(), derr)
 		}
 		return nil, err

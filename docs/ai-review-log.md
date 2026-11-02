@@ -178,3 +178,23 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1CreateProject` checks that a missing visibility is 400; `TestAPIV1CreatePrivateProjectOnFreePlan` uses a policy checker that denies private projects and checks that private is 403 with nothing created, and public is still 201.
+
+## 2026-11-02 — REST API v1 review fixes (server/internal/adapter/apiv1)
+
+### Findings & Fixes
+1. **Plugin URLs outside github.com returned 500** (server/internal/adapter/apiv1/plugin.go)
+   - Bug: `POST /api/v1/projects/{id}/plugins` with `{"url": ...}` accepted any http(s) URL, but `UploadFromRemote` only knows github.com repositories. `repourl.ErrUnsupportedHost` / `ErrInvalidURL` were not mapped, so a URL such as `https://example.com/plugin.zip` was answered with 500 and logged as an error.
+   - Fix: both errors are answered with 400 and a message naming the supported form; the spec now describes the URL as a github.com repository URL.
+2. **Cleanup after a failed create used the request context** (server/internal/adapter/apiv1/project.go)
+   - Bug: if the client disconnected while the scene or story was being created, the cleanup delete ran on the canceled context and failed too, leaving a project the editor cannot open.
+   - Fix: the cleanup runs with `context.WithoutCancel(ctx)`.
+3. **Expected usecase errors returned 500** (server/internal/adapter/apiv1/errors.go)
+   - Bug: `interfaces.ErrPluginAlreadyInstalled` and the "operation is disabled by over used seat" errors (plain `errors.New` in the usecases) were classified as unexpected.
+   - Fix: they are answered with 409 `conflict` and 403 `permission_denied`.
+4. **GraphQL error guard checked the wrong context** (server/internal/usecase/interactor/project.go)
+   - Bug: `Project.Update` guarded `graphql.GetErrors` with `HasOperationContext`, but `GetErrors` panics when the response context is missing, which is a different value.
+   - Fix: `graphqlErrors` calls `GetErrors` and returns nil if it panics, so the check matches what `GetErrors` needs.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1RequiresAUser` covers every route (list and mutating routes were not covered); `TestAPIV1Plugins` checks a non-GitHub URL is 400; `TestAPIV1CreateProjectWithOverusedSeats` checks 403.
+- server/internal/usecase/interactor/project_test.go: `TestGraphqlErrors` covers a context without a response context.
