@@ -92,6 +92,8 @@ paths:
           $ref: "#/components/responses/Error"
         "403":
           $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
   /projects/{projectId}:
     parameters:
       - $ref: "#/components/parameters/projectId"
@@ -481,7 +483,7 @@ components:
           type: string
     CreateProjectRequest:
       type: object
-      required: [name]
+      required: [name, visibility]
       properties:
         name:
           type: string
@@ -489,7 +491,9 @@ components:
         description:
           type: string
         visibility:
-          $ref: "#/components/schemas/Visibility"
+          allOf:
+            - $ref: "#/components/schemas/Visibility"
+          description: Private projects need a workspace on a paid plan; on a free plan the request fails with 403.
         alias:
           type: string
     UpdateProjectRequest:

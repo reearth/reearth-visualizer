@@ -168,3 +168,13 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - convert.test.tsx (3 tests): quoted/nested operator characters round-trip unchanged, a quoted operator inside a simple value still parses, and `startsWith` args split only on the top-level comma.
+
+## 2026-11-02 — REST API v1 create silently made private projects public (server/internal/usecase/interactor/project.go)
+
+### Findings & Fixes
+1. **Private request on a free plan created a public project** (server/internal/usecase/interactor/project.go, server/internal/adapter/apiv1/project.go)
+   - Bug: `POST /api/v1/workspaces/{id}/projects` defaulted to private, but `Project.Create` switches visibility to public whenever the plan does not allow private projects, and the handler still answered 201. A CLI user who asked for (or defaulted to) a private project got a public one without noticing.
+   - Fix: `visibility` is now required in the request. `CreateProjectParam` has a `StrictVisibility` option, set only by the REST API, that makes `Create` return `ErrPrivateProjectNotAllowed` instead of switching to public; the handler answers it with 403 `permission_denied`. GraphQL keeps its current behaviour.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1CreateProject` checks that a missing visibility is 400; `TestAPIV1CreatePrivateProjectOnFreePlan` uses a policy checker that denies private projects and checks that private is 403 with nothing created, and public is still 201.

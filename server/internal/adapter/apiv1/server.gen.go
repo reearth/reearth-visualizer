@@ -116,10 +116,12 @@ func (e Visibility) Valid() bool {
 
 // CreateProjectRequest defines model for CreateProjectRequest.
 type CreateProjectRequest struct {
-	Alias       *string     `json:"alias,omitempty"`
-	Description *string     `json:"description,omitempty"`
-	Name        string      `json:"name"`
-	Visibility  *Visibility `json:"visibility,omitempty"`
+	Alias       *string `json:"alias,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+
+	// Visibility Private projects need a workspace on a paid plan; on a free plan the request fails with 403.
+	Visibility Visibility `json:"visibility"`
 }
 
 // Error defines model for Error.
@@ -1505,6 +1507,20 @@ func (response CreateProject403JSONResponse) VisitCreateProjectResponse(w http.R
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateProject409JSONResponse Error
+
+func (response CreateProject409JSONResponse) VisitCreateProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
 	_, err := buf.WriteTo(w)
 	return err
 }
