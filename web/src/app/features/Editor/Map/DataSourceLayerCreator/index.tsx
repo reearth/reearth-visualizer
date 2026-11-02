@@ -1,4 +1,5 @@
 import { Button, PopupMenu, PopupMenuItem } from "@reearth/app/lib/reearth-ui";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
@@ -10,8 +11,14 @@ const DataSourceLayerCreator = () => {
   const t = useT();
   const { sceneId, handleLayerAdd } = useMapPage();
 
-  // Presets need no input, so they are added straight from the menu. Google
-  // Photorealistic always uses the Re:Earth provider (no Cesium Ion token).
+  // Google Photorealistic is served by the Re:Earth provider only on EE; other
+  // deployments use Cesium Ion.
+  const googleProvider = useMemo(
+    () => (config()?.featureCollection === "ee" ? "reearth" : "cesium-ion"),
+    []
+  );
+
+  // Presets need no input, so they are added straight from the menu.
   const addPreset = useCallback(
     (type: "reearth-buildings" | "google-photorealistic") => {
       if (!sceneId) return;
@@ -23,10 +30,10 @@ const DataSourceLayerCreator = () => {
           ? t("Google Photorealistic 3D Tiles")
           : t("Re:Earth Buildings"),
         visible: true,
-        config: { data: { type, ...(isGoogle && { provider: "reearth" }) } }
+        config: { data: { type, ...(isGoogle && { provider: googleProvider }) } }
       });
     },
-    [handleLayerAdd, sceneId, t]
+    [googleProvider, handleLayerAdd, sceneId, t]
   );
 
   const setShowAssetLayerCreator = useSetAtom(showAssetLayerCreatorAtom);

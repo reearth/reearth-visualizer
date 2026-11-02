@@ -9,6 +9,7 @@ import {
   ValueFormat,
   ValueIssue,
   detectValueFormat,
+  toLoadableGeoJson,
   validateValue
 } from "./utils";
 
@@ -121,7 +122,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
           type: format,
           ...(format === "geojson"
             ? {
-                value: JSON.parse(text),
+                value: toLoadableGeoJson(JSON.parse(text)),
                 geojson: { useAsResource: prioritizePerformance }
               }
             : { url: dataUrl }),

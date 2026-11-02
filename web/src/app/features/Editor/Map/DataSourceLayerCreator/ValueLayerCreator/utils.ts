@@ -14,9 +14,7 @@ export type ValueIssue =
   | { reason: "wrongFormat"; detected: ValueFormat } // valid, but another format
   | { reason: "invalid" }; // looks like the format but is malformed
 
-const GEOJSON_TYPES = [
-  "FeatureCollection",
-  "Feature",
+const GEOMETRY_TYPES = [
   "Point",
   "MultiPoint",
   "LineString",
@@ -25,6 +23,8 @@ const GEOJSON_TYPES = [
   "MultiPolygon",
   "GeometryCollection"
 ];
+
+const GEOJSON_TYPES = ["FeatureCollection", "Feature", ...GEOMETRY_TYPES];
 
 const parseJson = (text: string): unknown => {
   try {
@@ -69,6 +69,13 @@ export const detectValueFormat = (value: string): ValueFormat | undefined => {
   if (isCzml(json)) return "czml";
   return undefined;
 };
+
+// The GeoJSON loader reads only a Feature or FeatureCollection at the top
+// level, so a bare geometry is wrapped in a Feature.
+export const toLoadableGeoJson = (json: unknown): unknown =>
+  isObject(json) && GEOMETRY_TYPES.includes(json.type as string)
+    ? { type: "Feature", geometry: json, properties: {} }
+    : json;
 
 // Checks a pasted value against the selected format.
 export const validateValue = (

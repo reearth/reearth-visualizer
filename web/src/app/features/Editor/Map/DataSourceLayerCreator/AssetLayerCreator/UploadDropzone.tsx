@@ -15,7 +15,9 @@ type Props = {
 const hasFiles = (e: DragEvent) => e.dataTransfer.types.includes("Files");
 
 // Accepts files dragged anywhere over the asset area, and while dragging or
-// uploading shows the drop zone in place of the asset browser.
+// uploading shows the drop zone over the asset browser. The browser stays
+// mounted (only hidden) so its scroll container keeps the pagination listeners
+// attached to it.
 const UploadDropzone: FC<Props> = ({ active, onDrop, content, children }) => {
   const [dragging, setDragging] = useState(false);
   // dragenter/dragleave also fire for child elements; count to know when the
@@ -64,28 +66,39 @@ const UploadDropzone: FC<Props> = ({ active, onDrop, content, children }) => {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {dragging || active ? (
+      <Browser concealed={dragging || active}>{children}</Browser>
+      {(dragging || active) && (
         <Zone data-testid="asset-layer-creator-dropzone">
           {!dragging && content}
         </Zone>
-      ) : (
-        children
       )}
     </Wrapper>
   );
 };
 
 const Wrapper = styled("div")(() => ({
+  position: css.position.relative,
   display: css.display.flex,
   flexDirection: css.flexDirection.column
 }));
 
-// As tall as the asset browser, so the modal keeps its size.
+// Hidden with visibility rather than unmounted or display: none, so it keeps
+// its size (a zero-height browser would make useLoadMore fetch every page).
+const Browser = styled("div", {
+  shouldForwardProp: (prop) => prop !== "concealed"
+})<{ concealed: boolean }>(({ concealed }) => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  visibility: concealed ? css.visibility.hidden : undefined
+}));
+
+// Covers the asset browser, so the modal keeps its size.
 const Zone = styled("div")(({ theme }) => ({
+  position: css.position.absolute,
+  inset: 0,
   display: css.display.flex,
   alignItems: css.alignItems.center,
   justifyContent: css.justifyContent.center,
-  height: 496,
   overflowY: css.overflow.auto,
   border: `1px solid ${theme.select.main}`,
   borderRadius: theme.radius.small,

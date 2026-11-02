@@ -28,6 +28,8 @@ export type TextInputProps = {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   type?: string;
   ariaLabel?: string;
+  /** Id of the element describing the input, e.g. its error message. */
+  ariaDescribedby?: string;
   dataTestid?: string;
 };
 
@@ -48,6 +50,7 @@ export const TextInput: FC<TextInputProps> = ({
   onKeyDown,
   type,
   ariaLabel,
+  ariaDescribedby,
   dataTestid
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
@@ -125,6 +128,8 @@ export const TextInput: FC<TextInputProps> = ({
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
         aria-label={ariaLabel}
+        aria-invalid={error || undefined}
+        aria-describedby={ariaDescribedby}
         data-testid={dataTestid}
       />
       {actions && <ActionsWrapper>{actions}</ActionsWrapper>}

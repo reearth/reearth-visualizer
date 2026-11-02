@@ -146,6 +146,8 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
                 placeholder="https://"
                 value={url}
                 error={!!error}
+                ariaLabel={t("URL")}
+                ariaDescribedby={error ? ERROR_ID : undefined}
                 onChange={handleUrlChange}
                 onBlur={handleUrlBlur}
                 dataTestid="url-layer-creator-url"
@@ -268,7 +270,7 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
 // Positioned so the checking overlay covers only the form, not the whole
 // viewport-tall modal container.
 const Body = styled("div")(() => ({
-  // position: css.position.relative
+  position: css.position.relative
 }));
 
 // Faded and not editable while the URL is checked.

@@ -56,9 +56,15 @@ const findParams = (params: URLSearchParams, name: string) =>
 const matchesExtension = (pathname: string, format: UrlFormat) =>
   FORMATS[format].extensions.some((ext) => pathname.endsWith(ext));
 
+// Formats whose data is JSON, so a plain ".json" URL may hold any of them.
+const JSON_FORMATS: UrlFormat[] = ["geojson", "czml", "3dtiles"];
+
+const isTilesetJson = (pathname: string) =>
+  pathname.split("/").pop() === "tileset.json";
+
 // ".json" is shared by GeoJSON and 3D Tiles; tileset.json means 3D Tiles.
 const detectFormat = (pathname: string): UrlFormat | undefined =>
-  pathname.endsWith("tileset.json")
+  isTilesetJson(pathname)
     ? "3dtiles"
     : (Object.keys(FORMATS) as UrlFormat[]).find((f) =>
         matchesExtension(pathname, f)
@@ -68,14 +74,13 @@ const detectFormat = (pathname: string): UrlFormat | undefined =>
 const hasExtension = (pathname: string) => /\.[^/.]+$/.test(pathname);
 
 // The format the URL's extension identifies on its own, used to pre-select the
-// format. A plain ".json" may be GeoJSON or 3D Tiles and WMS has no extension,
-// so those are left to the user.
+// format. A plain ".json" may be GeoJSON, CZML or 3D Tiles and WMS has no
+// extension, so those are left to the user.
 export const inferFormat = (url: string): UrlFormat | undefined => {
   const parsed = parseUrl(url);
   if (!parsed) return undefined;
   const pathname = safeDecode(parsed.pathname).toLowerCase();
-  if (pathname.endsWith(".json") && !pathname.endsWith("tileset.json"))
-    return undefined;
+  if (pathname.endsWith(".json") && !isTilesetJson(pathname)) return undefined;
   return detectFormat(pathname);
 };
 
@@ -96,9 +101,15 @@ export const validateUrl = (
   const detected = detectFormat(pathname);
   if (detected === format) return undefined;
 
-  // Entry points are not always named tileset.json, so any .json may be 3D
-  // Tiles; checkResponse then requires the tileset's "asset" property.
-  if (format === "3dtiles" && pathname.endsWith(".json")) return undefined;
+  // A plain .json (and a 3D Tiles entry point, which isn't always named
+  // tileset.json) doesn't tell which JSON format it holds; checkResponse checks
+  // the document structure against the selected format instead.
+  if (
+    JSON_FORMATS.includes(format) &&
+    pathname.endsWith(".json") &&
+    !isTilesetJson(pathname)
+  )
+    return undefined;
   if (detected) return { reason: "wrongFormat", detected };
 
   if (format === "wms") return undefined;
@@ -160,17 +171,48 @@ const readSample = async (res: Response) => {
   return { text, complete: !reader };
 };
 
-const isJson = (text: string) => {
+const parseJson = (text: string): unknown => {
   try {
-    JSON.parse(text);
-    return true;
+    return JSON.parse(text);
   } catch {
-    return false;
+    return undefined;
   }
 };
 
+const isObject = (v: unknown): v is Record<string, unknown> =>
+  !!v && typeof v === "object" && !Array.isArray(v);
+
+// The structure each JSON format requires at the top level of a complete
+// document. The GeoJSON loader reads only a Feature or FeatureCollection.
+const JSON_STRUCTURE: Record<
+  "geojson" | "czml" | "3dtiles",
+  (json: unknown) => boolean
+> = {
+  geojson: (json) =>
+    isObject(json) &&
+    (json.type === "Feature" ||
+      (json.type === "FeatureCollection" && Array.isArray(json.features))),
+  // An array of packets starting with the "document" packet.
+  czml: (json) =>
+    Array.isArray(json) && isObject(json[0]) && json[0].id === "document",
+  // https://github.com/CesiumGS/3d-tiles/blob/main/specification/schema/tileset.schema.json
+  "3dtiles": (json) =>
+    isObject(json) &&
+    isObject(json.asset) &&
+    "geometricError" in json &&
+    isObject(json.root)
+};
+
+// The same checks on a truncated sample, which can't be parsed.
+const JSON_PREFIX: Record<"geojson" | "czml" | "3dtiles", RegExp> = {
+  geojson: /^\{[\s\S]*"type"\s*:\s*"(Feature|FeatureCollection)"/,
+  czml: /^\[\s*\{[\s\S]*"id"\s*:\s*"document"/,
+  "3dtiles": /^\{[\s\S]*"asset"\s*:/
+};
+
 // Whether the sampled body plausibly holds data of the given format. When the
-// whole body was read, JSON formats are fully parsed to catch truncation.
+// whole body was read, JSON formats are fully parsed and their structure
+// checked.
 const looksValid = (
   format: UrlFormat,
   { text, complete }: { text: string; complete: boolean }
@@ -180,14 +222,10 @@ const looksValid = (
   switch (format) {
     case "geojson":
     case "czml":
-      return /^[[{]/.test(body) && (!complete || isJson(body));
     case "3dtiles":
-      // "asset" is required at the top of every tileset.
-      return (
-        body.startsWith("{") &&
-        /"asset"\s*:/.test(body) &&
-        (!complete || isJson(body))
-      );
+      return complete
+        ? JSON_STRUCTURE[format](parseJson(body))
+        : JSON_PREFIX[format].test(body);
     case "kml":
       // KMZ is a zip archive ("PK" signature).
       return body.startsWith("PK") || /<kml[\s>]/i.test(body);
