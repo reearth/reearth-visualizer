@@ -102,13 +102,10 @@ func (Server) CreateProject(ctx context.Context, req CreateProjectRequestObject)
 	if b.Name == "" {
 		return nil, invalidInput("name is required")
 	}
-	visibility := string(VisibilityPrivate)
-	if b.Visibility != nil {
-		if !b.Visibility.Valid() {
-			return nil, invalidInput("invalid visibility %q", *b.Visibility)
-		}
-		visibility = string(*b.Visibility)
+	if !b.Visibility.Valid() {
+		return nil, invalidInput("visibility must be public or private")
 	}
+	visibility := string(b.Visibility)
 
 	prj, err := uc.Project.Create(ctx, interfaces.CreateProjectParam{
 		WorkspaceID: wid,
@@ -116,15 +113,19 @@ func (Server) CreateProject(ctx context.Context, req CreateProjectRequestObject)
 		// Project import only accepts this form, so a project created with
 		// visualizer.VisualizerCesium ("cesium") could not be imported again
 		// after an export.
-		Visualizer:   webVisualizerCesium,
-		Name:         &b.Name,
-		Description:  b.Description,
-		CoreSupport:  lo.ToPtr(true),
-		Visibility:   &visibility,
-		ImportStatus: project.ProjectImportStatusNone,
-		ProjectAlias: b.Alias,
+		Visualizer:       webVisualizerCesium,
+		Name:             &b.Name,
+		Description:      b.Description,
+		CoreSupport:      lo.ToPtr(true),
+		Visibility:       &visibility,
+		ImportStatus:     project.ProjectImportStatusNone,
+		ProjectAlias:     b.Alias,
+		StrictVisibility: true,
 	}, op)
 	if err != nil {
+		if errors.Is(err, interfaces.ErrPrivateProjectNotAllowed) {
+			return nil, forbidden("private projects require a paid plan; create the project as public or upgrade the workspace")
+		}
 		return nil, err
 	}
 

@@ -29,6 +29,10 @@ func invalidInput(format string, args ...any) error {
 	return &apiError{status: http.StatusBadRequest, code: ErrorErrorCodeInvalidInput, message: fmt.Sprintf(format, args...)}
 }
 
+func forbidden(format string, args ...any) error {
+	return &apiError{status: http.StatusForbidden, code: ErrorErrorCodePermissionDenied, message: fmt.Sprintf(format, args...)}
+}
+
 func notFound(what string) error {
 	return &apiError{status: http.StatusNotFound, code: ErrorErrorCodeNotFound, message: what + " not found"}
 }

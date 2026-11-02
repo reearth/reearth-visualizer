@@ -461,6 +461,12 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 
 		errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
 		if errPrivate != nil {
+			if input.StrictVisibility && input.Visibility != nil && *input.Visibility == string(project.VisibilityPrivate) {
+				if errors.Is(errPrivate, ErrProjectCreationLimitExceeded) {
+					return nil, interfaces.ErrPrivateProjectNotAllowed
+				}
+				return nil, errPrivate
+			}
 			visibility = project.VisibilityPublic
 		} else {
 			if input.Visibility != nil {
