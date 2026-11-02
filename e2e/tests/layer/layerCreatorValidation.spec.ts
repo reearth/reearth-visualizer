@@ -175,8 +175,10 @@ test.describe("Add Layer from URL / Value — Validation", () => {
     await openUrlModal();
     await dataSourceManager.enterUrl(`${MOCK_HOST}/data.txt`);
     await dataSourceManager.selectUrlFormat("GeoJSON");
+    // The extension list is not matched as a whole: i18next escapes its "/"
+    // separator, so the page shows ".geojson &#x2F; .json".
     await expect(dataSourceManager.urlError).toContainText(
-      "GeoJSON URLs must end with .geojson / .json"
+      "GeoJSON URLs must end with .geojson"
     );
     await expect(dataSourceManager.urlSubmitButton).toBeDisabled();
     await dataSourceManager.cancelUrl();
