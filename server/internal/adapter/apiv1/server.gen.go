@@ -116,10 +116,12 @@ func (e Visibility) Valid() bool {
 
 // CreateProjectRequest defines model for CreateProjectRequest.
 type CreateProjectRequest struct {
-	Alias       *string     `json:"alias,omitempty"`
-	Description *string     `json:"description,omitempty"`
-	Name        string      `json:"name"`
-	Visibility  *Visibility `json:"visibility,omitempty"`
+	Alias       *string `json:"alias,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+
+	// Visibility Private projects need a workspace on a paid plan; on a free plan the request fails with 403.
+	Visibility Visibility `json:"visibility"`
 }
 
 // Error defines model for Error.
@@ -255,7 +257,7 @@ type UpdateProjectRequest struct {
 
 // UploadPluginRequest defines model for UploadPluginRequest.
 type UploadPluginRequest struct {
-	// Url An https URL of the plugin zip.
+	// Url A github.com repository URL, such as https://github.com/owner/repo or https://github.com/owner/repo/tree/branch. The server downloads the repository archive.
 	Url string `json:"url"`
 }
 
@@ -1056,6 +1058,20 @@ func (response UploadPlugin404JSONResponse) VisitUploadPluginResponse(w http.Res
 	return err
 }
 
+type UploadPlugin409JSONResponse Error
+
+func (response UploadPlugin409JSONResponse) VisitUploadPluginResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
 type UninstallPluginRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
 	PluginId  string    `json:"pluginId"`
@@ -1505,6 +1521,20 @@ func (response CreateProject403JSONResponse) VisitCreateProjectResponse(w http.R
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type CreateProject409JSONResponse Error
+
+func (response CreateProject409JSONResponse) VisitCreateProjectResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
 	_, err := buf.WriteTo(w)
 	return err
 }

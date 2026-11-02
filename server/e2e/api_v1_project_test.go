@@ -1,6 +1,7 @@
 package e2e
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"testing"
@@ -8,6 +9,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -53,8 +55,19 @@ func TestAPIV1ServesOnlyTheAPI(t *testing.T) {
 func TestAPIV1RequiresAUser(t *testing.T) {
 	e := startPublicAPI(t)
 
-	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/"+pID.String(), accountsID.UserID{}).Expect(),
-		http.StatusUnauthorized, "unauthorized")
+	for _, r := range []struct{ method, path string }{
+		{http.MethodGet, "/workspaces/" + wID.String() + "/projects"},
+		{http.MethodPost, "/workspaces/" + wID.String() + "/projects"},
+		{http.MethodGet, "/projects/" + pID.String()},
+		{http.MethodPatch, "/projects/" + pID.String()},
+		{http.MethodDelete, "/projects/" + pID.String()},
+		{http.MethodGet, "/projects/" + pID.String() + "/plugins"},
+		{http.MethodPost, "/projects/" + pID.String() + "/plugins"},
+		{http.MethodDelete, "/projects/" + pID.String() + "/plugins/reearth"},
+	} {
+		expectAPIError(t, apiV1(e, r.method, r.path, accountsID.UserID{}).Expect(),
+			http.StatusUnauthorized, "unauthorized")
+	}
 }
 
 func TestAPIV1GetProject(t *testing.T) {
@@ -122,7 +135,7 @@ func TestAPIV1ListProjectsPagination(t *testing.T) {
 	e := startPublicAPI(t)
 	path := "/workspaces/" + wID.String() + "/projects"
 	for _, name := range []string{"a", "b", "c"} {
-		apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"name": name}).
+		apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"name": name, "visibility": "private"}).
 			Expect().Status(http.StatusCreated)
 	}
 
@@ -159,7 +172,7 @@ func TestAPIV1CreateProject(t *testing.T) {
 	path := "/workspaces/" + wID.String() + "/projects"
 
 	p := apiV1(e, http.MethodPost, path, uID).
-		WithJSON(map[string]any{"name": "from cli", "description": "desc"}).
+		WithJSON(map[string]any{"name": "from cli", "description": "desc", "visibility": "private"}).
 		Expect().Status(http.StatusCreated).JSON().Object()
 	p.HasValue("name", "from cli")
 	p.HasValue("description", "desc")
@@ -175,29 +188,78 @@ func TestAPIV1CreateProject(t *testing.T) {
 	p.HasValue("alias", "p-"+created)
 
 	apiV1(e, http.MethodPost, path, uID).
-		WithJSON(map[string]any{"name": "aliased", "alias": "cli-alias-test"}).
+		WithJSON(map[string]any{"name": "aliased", "visibility": "public", "alias": "cli-alias-test"}).
 		Expect().Status(http.StatusCreated).JSON().Object().HasValue("alias", "cli-alias-test")
 	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
-		WithJSON(map[string]any{"name": "x", "alias": "cli-alias-test"}).Expect(),
+		WithJSON(map[string]any{"name": "x", "visibility": "private", "alias": "cli-alias-test"}).Expect(),
 		http.StatusConflict, "conflict")
 	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
-		WithJSON(map[string]any{"name": "x", "alias": "Bad Alias!"}).Expect(),
+		WithJSON(map[string]any{"name": "x", "visibility": "private", "alias": "Bad Alias!"}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
-		WithJSON(map[string]any{"name": "x", "alias": "ab"}).Expect(),
+		WithJSON(map[string]any{"name": "x", "visibility": "private", "alias": "ab"}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 
-	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"name": ""}).Expect(),
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"name": "", "visibility": "private"}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
 		WithJSON(map[string]any{"name": "x", "visibility": "secret"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"name": "x"}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithText("{").
 		WithHeader("Content-Type", "application/json").Expect(),
 		http.StatusBadRequest, "invalid_input")
 
 	// A reader cannot create projects.
-	expectAPIError(t, apiV1(e, http.MethodPost, path, uID3).WithJSON(map[string]any{"name": "x"}).Expect(),
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID3).WithJSON(map[string]any{"name": "x", "visibility": "private"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+}
+
+type denyPrivateProjects struct{}
+
+func (denyPrivateProjects) CheckPolicy(_ context.Context, req gateway.PolicyCheckRequest) (*gateway.PolicyCheckResponse, error) {
+	return &gateway.PolicyCheckResponse{
+		Allowed:   req.CheckType != gateway.PolicyCheckGeneralPrivateProjectCreation,
+		CheckType: req.CheckType,
+		Value:     req.Value,
+	}, nil
+}
+
+func TestAPIV1CreatePrivateProjectOnFreePlan(t *testing.T) {
+	e, _, g := startServer(t, publicApiConfig, true, baseSeeder)
+	g.PolicyChecker = denyPrivateProjects{}
+	path := "/workspaces/" + wID.String() + "/projects"
+
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "secret plans", "visibility": "private"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+	list := apiV1(e, http.MethodGet, path, uID).Expect().Status(http.StatusOK).JSON().Object()
+	for _, item := range list.Value("items").Array().Iter() {
+		item.Object().Value("name").String().NotEqual("secret plans")
+	}
+
+	apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "open plans", "visibility": "public"}).
+		Expect().Status(http.StatusCreated).JSON().Object().HasValue("visibility", "public")
+}
+
+type denyAllOperations struct{}
+
+func (denyAllOperations) CheckPolicy(_ context.Context, req gateway.PolicyCheckRequest) (*gateway.PolicyCheckResponse, error) {
+	return &gateway.PolicyCheckResponse{
+		Allowed:   req.CheckType != gateway.PolicyCheckGeneralOperationAllowed,
+		CheckType: req.CheckType,
+		Value:     req.Value,
+	}, nil
+}
+
+func TestAPIV1CreateProjectWithOverusedSeats(t *testing.T) {
+	e, _, g := startServer(t, publicApiConfig, true, baseSeeder)
+	g.PolicyChecker = denyAllOperations{}
+
+	expectAPIError(t, apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "x", "visibility": "public"}).Expect(),
 		http.StatusForbidden, "permission_denied")
 }
 
@@ -213,6 +275,10 @@ func TestAPIV1UpdateProject(t *testing.T) {
 	// Fields that were not given keep their value.
 	p.HasValue("description", pDesc)
 
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithJSON(map[string]any{}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithHeader("Content-Type", "application/json").Expect(),
+		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithJSON(map[string]any{"name": ""}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID3).WithJSON(map[string]any{"name": "x"}).Expect(),
@@ -242,8 +308,10 @@ func TestAPIV1DeleteProject(t *testing.T) {
 	apiV1(e, http.MethodGet, list, uID).WithQuery("deleted", true).Expect().Status(http.StatusOK).
 		JSON().Object().Value("items").Array().Length().IsEqual(1)
 
-	// Moving it to the trash again is a no-op.
+	// Moving it to the trash again is a no-op, but still needs write access.
 	apiV1(e, http.MethodDelete, path, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
 
 	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).WithQuery("permanent", true).Expect(),
 		http.StatusForbidden, "permission_denied")
@@ -286,7 +354,7 @@ func TestAPIV1RestoreProject(t *testing.T) {
 func TestAPIV1Plugins(t *testing.T) {
 	e := startPublicAPI(t)
 	prj := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
-		WithJSON(map[string]any{"name": "plugins"}).
+		WithJSON(map[string]any{"name": "plugins", "visibility": "private"}).
 		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
 	path := "/projects/" + prj + "/plugins"
 	zip, err := os.ReadFile(buildTestPluginZip(t, "testplugin", "1.0.0"))
@@ -330,6 +398,8 @@ func TestAPIV1Plugins(t *testing.T) {
 
 	expectAPIError(t, upload(uID, []byte("not a zip")), http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"url": "file:///etc/passwd"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"url": "https://example.com/plugin.zip"}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, upload(uID3, zip), http.StatusForbidden, "permission_denied")
 	expectAPIError(t, upload(uID2, zip), http.StatusNotFound, "not_found")

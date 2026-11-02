@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/apperr"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
@@ -27,6 +28,15 @@ func (e *apiError) Error() string { return e.message }
 
 func invalidInput(format string, args ...any) error {
 	return &apiError{status: http.StatusBadRequest, code: ErrorErrorCodeInvalidInput, message: fmt.Sprintf(format, args...)}
+}
+
+func forbidden(format string, args ...any) error {
+	return &apiError{status: http.StatusForbidden, code: ErrorErrorCodePermissionDenied, message: fmt.Sprintf(format, args...)}
+}
+
+func isSeatOverused(err error) bool {
+	msg := err.Error()
+	return strings.Contains(msg, "operation is disabled by over used seat") || strings.Contains(msg, "operation is disabled by overused seat")
 }
 
 func notFound(what string) error {
@@ -74,6 +84,13 @@ func toResponse(ctx context.Context, err error) (int, ErrorErrorCode, string) {
 	var ae *apiError
 	if errors.As(err, &ae) {
 		return ae.status, ae.code, ae.message
+	}
+
+	switch {
+	case errors.Is(err, interfaces.ErrPluginAlreadyInstalled):
+		return http.StatusConflict, ErrorErrorCodeConflict, "a plugin with this name is already installed in the project"
+	case isSeatOverused(err):
+		return http.StatusForbidden, ErrorErrorCodePermissionDenied, "the workspace has more members than its plan allows, so changes are disabled"
 	}
 
 	// Validation errors from the usecases, such as an invalid or taken

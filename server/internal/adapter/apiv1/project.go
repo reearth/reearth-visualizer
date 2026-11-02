@@ -102,31 +102,32 @@ func (Server) CreateProject(ctx context.Context, req CreateProjectRequestObject)
 	if b.Name == "" {
 		return nil, invalidInput("name is required")
 	}
-	visibility := string(VisibilityPrivate)
-	if b.Visibility != nil {
-		if !b.Visibility.Valid() {
-			return nil, invalidInput("invalid visibility %q", *b.Visibility)
-		}
-		visibility = string(*b.Visibility)
+	if !b.Visibility.Valid() {
+		return nil, invalidInput("visibility must be public or private")
 	}
+	visibility := string(b.Visibility)
 
 	prj, err := uc.Project.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID:  wid,
-		Visualizer:   visualizer.VisualizerCesium,
-		Name:         &b.Name,
-		Description:  b.Description,
-		CoreSupport:  lo.ToPtr(true),
-		Visibility:   &visibility,
-		ImportStatus: project.ProjectImportStatusNone,
-		ProjectAlias: b.Alias,
+		WorkspaceID:      wid,
+		Visualizer:       visualizer.VisualizerCesium,
+		Name:             &b.Name,
+		Description:      b.Description,
+		CoreSupport:      lo.ToPtr(true),
+		Visibility:       &visibility,
+		ImportStatus:     project.ProjectImportStatusNone,
+		ProjectAlias:     b.Alias,
+		StrictVisibility: true,
 	}, op)
 	if err != nil {
+		if errors.Is(err, interfaces.ErrPrivateProjectNotAllowed) {
+			return nil, forbidden("private projects require a paid plan; create the project as public or upgrade the workspace")
+		}
 		return nil, err
 	}
 
 	if err := createSceneAndStory(ctx, uc, prj.ID(), op); err != nil {
 		// Do not leave a project behind that the editor cannot open.
-		if derr := uc.Project.Delete(ctx, prj.ID(), op); derr != nil {
+		if derr := uc.Project.Delete(context.WithoutCancel(ctx), prj.ID(), op); derr != nil {
 			log.Errorfc(ctx, "api v1: could not remove project %s after a failed create: %v", prj.ID(), derr)
 		}
 		return nil, err
@@ -183,6 +184,9 @@ func (Server) UpdateProject(ctx context.Context, req UpdateProjectRequestObject)
 		return nil, invalidInput("invalid project ID %q", req.ProjectId)
 	}
 	b := req.Body
+	if b == nil || (b.Name == nil && b.Description == nil && b.Starred == nil && b.Archived == nil) {
+		return nil, invalidInput("nothing to update: set at least one of name, description, starred or archived")
+	}
 	if b.Name != nil && *b.Name == "" {
 		return nil, invalidInput("name cannot be empty")
 	}
@@ -232,6 +236,9 @@ func (Server) DeleteProject(ctx context.Context, req DeleteProjectRequestObject)
 		return DeleteProject204Response{}, nil
 	}
 
+	if !op.IsWritableWorkspace(prj.Workspace()) {
+		return nil, forbidden("permission denied")
+	}
 	if !prj.IsDeleted() {
 		if _, err := uc.Project.Update(ctx, interfaces.UpdateProjectParam{
 			ID:      pid,
