@@ -275,6 +275,10 @@ func TestAPIV1UpdateProject(t *testing.T) {
 	// Fields that were not given keep their value.
 	p.HasValue("description", pDesc)
 
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithJSON(map[string]any{}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithHeader("Content-Type", "application/json").Expect(),
+		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithJSON(map[string]any{"name": ""}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID3).WithJSON(map[string]any{"name": "x"}).Expect(),
@@ -304,8 +308,10 @@ func TestAPIV1DeleteProject(t *testing.T) {
 	apiV1(e, http.MethodGet, list, uID).WithQuery("deleted", true).Expect().Status(http.StatusOK).
 		JSON().Object().Value("items").Array().Length().IsEqual(1)
 
-	// Moving it to the trash again is a no-op.
+	// Moving it to the trash again is a no-op, but still needs write access.
 	apiV1(e, http.MethodDelete, path, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
 
 	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).WithQuery("permanent", true).Expect(),
 		http.StatusForbidden, "permission_denied")

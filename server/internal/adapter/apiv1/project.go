@@ -183,6 +183,9 @@ func (Server) UpdateProject(ctx context.Context, req UpdateProjectRequestObject)
 		return nil, invalidInput("invalid project ID %q", req.ProjectId)
 	}
 	b := req.Body
+	if b == nil || (b.Name == nil && b.Description == nil && b.Starred == nil && b.Archived == nil) {
+		return nil, invalidInput("nothing to update: set at least one of name, description, starred or archived")
+	}
 	if b.Name != nil && *b.Name == "" {
 		return nil, invalidInput("name cannot be empty")
 	}
@@ -232,6 +235,9 @@ func (Server) DeleteProject(ctx context.Context, req DeleteProjectRequestObject)
 		return DeleteProject204Response{}, nil
 	}
 
+	if !op.IsWritableWorkspace(prj.Workspace()) {
+		return nil, forbidden("permission denied")
+	}
 	if !prj.IsDeleted() {
 		if _, err := uc.Project.Update(ctx, interfaces.UpdateProjectParam{
 			ID:      pid,

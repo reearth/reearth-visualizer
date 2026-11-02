@@ -198,3 +198,16 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1RequiresAUser` covers every route (list and mutating routes were not covered); `TestAPIV1Plugins` checks a non-GitHub URL is 400; `TestAPIV1CreateProjectWithOverusedSeats` checks 403.
 - server/internal/usecase/interactor/project_test.go: `TestGraphqlErrors` covers a context without a response context.
+
+## 2026-11-02 — REST API v1 delete and update edge cases (server/internal/adapter/apiv1/project.go)
+
+### Findings & Fixes
+1. **A reader could "delete" a project already in the trash** (server/internal/adapter/apiv1/project.go)
+   - Bug: `DELETE /api/v1/projects/{id}` returned 204 without any write check when the project was already in the trash, because the only permission check ran inside `Project.Update`, which the no-op path skips. A workspace reader got 204 there but 403 for a live project.
+   - Fix: the handler checks write access to the workspace before the no-op.
+2. **PATCH with an empty body returned 200** (server/internal/adapter/apiv1/project.go)
+   - Bug: `PATCH /api/v1/projects/{id}` with no body or `{}` ran an update with no fields, which only bumped `updatedAt`.
+   - Fix: the handler answers 400 when no field is set.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1DeleteProject` checks a reader gets 403 on a project in the trash; `TestAPIV1UpdateProject` checks `{}` and a missing body are 400.
