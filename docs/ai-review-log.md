@@ -150,3 +150,26 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - convert.test.tsx (3 tests): quoted/nested operator characters round-trip unchanged, a quoted operator inside a simple value still parses, and `startsWith` args split only on the top-level comma.
+
+---
+
+## 2026-11-02 — PR #2504 review comments: add-layer creators (web/src/app/features/Editor/Map/DataSourceLayerCreator/**, reearth-ui Switcher/TextInput)
+
+### Findings & Fixes
+1. **Google Photorealistic preset broke non-EE deployments** (DataSourceLayerCreator/index.tsx)
+   - Bug: the preset always set `provider: "reearth"`; on OSS without a Re:Earth tiles provider the layer resolved to no URL and never loaded.
+   - Fix: restored the old default — `reearth` on EE, `cesium-ion` otherwise.
+2. **Asset pagination stopped after drag-over or upload** (AssetLayerCreator/UploadDropzone.tsx)
+   - Bug: the drop zone replaced (unmounted) the asset browser; `useLoadMore` binds its scroll/resize listeners only when `data` changes, so the remounted scroll container had none.
+   - Fix: the browser stays mounted and is hidden with `visibility` (not `display: none`, which would zero its height and make `useLoadMore` fetch every page); the drop zone is overlaid on top.
+3. **Bare GeoJSON geometries added as empty layers** (ValueLayerCreator/utils.ts, hooks.ts)
+   - Bug: validation accepted a top-level geometry, but the core loader reads only Feature/FeatureCollection, so `{"type":"Point",…}` produced zero features.
+   - Fix: `toLoadableGeoJson` wraps a bare geometry in a Feature before submission.
+4. **Plain `.json` URLs judged by extension rather than content** (UrlLayerCreator/utils.ts)
+   - Bug: `/orbits.json` with CZML selected was rejected as GeoJSON; `/mytileset.json` was detected as 3D Tiles (suffix match); a 3D Tiles response with `"asset"` only nested (e.g. `{"metadata":{"asset":{}}}`) passed.
+   - Fix: a plain `.json` defers to response validation for any JSON format; `tileset.json` matches the last path segment only; complete responses are parsed and checked against the selected format's top-level structure (GeoJSON Feature/FeatureCollection, CZML document packet, 3D Tiles `asset`/`geometricError`/`root`).
+5. **Accessibility** (Switcher, TextInput, UrlLayerCreator)
+   - Switcher was not focusable or keyboard-operable — added `tabIndex`, Space/Enter toggling and a focus ring. TextInput's error state was colour-only — it now sets `aria-invalid` and accepts `ariaDescribedby`, which the URL creator links to its error text. The URL creator's checking overlay is anchored to its body (`position: relative`) so it no longer covers the modal actions.
+
+### Tests added
+- None this round (verified URL rules with an ad-hoc vitest run; existing Switcher/TextInput tests pass).
