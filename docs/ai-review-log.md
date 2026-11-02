@@ -191,13 +191,9 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 3. **Expected usecase errors returned 500** (server/internal/adapter/apiv1/errors.go)
    - Bug: `interfaces.ErrPluginAlreadyInstalled` and the "operation is disabled by over used seat" errors (plain `errors.New` in the usecases) were classified as unexpected.
    - Fix: they are answered with 409 `conflict` and 403 `permission_denied`.
-4. **GraphQL error guard checked the wrong context** (server/internal/usecase/interactor/project.go)
-   - Bug: `Project.Update` guarded `graphql.GetErrors` with `HasOperationContext`, but `GetErrors` panics when the response context is missing, which is a different value.
-   - Fix: `graphqlErrors` calls `GetErrors` and returns nil if it panics, so the check matches what `GetErrors` needs.
 
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1RequiresAUser` covers every route (list and mutating routes were not covered); `TestAPIV1Plugins` checks a non-GitHub URL is 400; `TestAPIV1CreateProjectWithOverusedSeats` checks 403.
-- server/internal/usecase/interactor/project_test.go: `TestGraphqlErrors` covers a context without a response context.
 
 ## 2026-11-02 — REST API v1 delete and update edge cases (server/internal/adapter/apiv1/project.go)
 

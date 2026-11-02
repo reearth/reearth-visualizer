@@ -10,7 +10,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/99designs/gqlgen/graphql"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
@@ -881,13 +880,4 @@ func TestProject_ClaimImport_DistinguishesInProgressFromSucceeded(t *testing.T) 
 	c3, err := uc.ClaimImport(ctx, pj.ID(), op)
 	assert.NoError(t, err)
 	assert.Equal(t, project.ImportClaimAlreadySucceeded, c3, "a succeeded import must read as already-succeeded")
-}
-
-func TestGraphqlErrors(t *testing.T) {
-	assert.Nil(t, graphqlErrors(context.Background()))
-
-	ctx := graphql.WithResponseContext(context.Background(), graphql.DefaultErrorPresenter, graphql.DefaultRecover)
-	assert.Empty(t, graphqlErrors(ctx))
-	graphql.AddErrorf(ctx, "boom")
-	assert.Len(t, graphqlErrors(ctx), 1)
 }

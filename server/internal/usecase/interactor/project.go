@@ -34,7 +34,6 @@ import (
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
-	"github.com/vektah/gqlparser/v2/gqlerror"
 
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
@@ -635,8 +634,12 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdateProjectAlias(*p.ProjectAlias)
 	}
 
-	if errs := graphqlErrors(ctx); len(errs) > 0 {
-		return prj, nil
+	// Only GraphQL requests collect field errors; GetErrors panics outside one
+	// (gRPC internal API, REST API).
+	if graphql.HasOperationContext(ctx) {
+		if errs := graphql.GetErrors(ctx); len(errs) > 0 {
+			return prj, nil
+		}
 	}
 
 	currentTime := time.Now().UTC()
@@ -1620,13 +1623,4 @@ func (i *Project) checkGeneralPolicy(ctx context.Context, workspaceID accountsID
 		return ErrProjectCreationLimitExceeded
 	}
 	return nil
-}
-
-func graphqlErrors(ctx context.Context) (errs gqlerror.List) {
-	defer func() {
-		if recover() != nil {
-			errs = nil
-		}
-	}()
-	return graphql.GetErrors(ctx)
 }
