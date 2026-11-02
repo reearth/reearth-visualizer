@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1
+
+- Release to verify npm Trusted Publishing from `plugin_api_release.yml`; no API changes
+
 ## 2.1.0 (initial release)
 
 - Initial release of `@reearth/visualizer-plugin-api`
