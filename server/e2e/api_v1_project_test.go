@@ -380,7 +380,7 @@ func TestAPIV1PublishProject(t *testing.T) {
 	e, _, _ := startServer(t, &cfg, true, baseSeeder)
 
 	p := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
-		WithJSON(map[string]any{"name": "to publish"}).
+		WithJSON(map[string]any{"name": "to publish", "visibility": "private"}).
 		Expect().Status(http.StatusCreated).JSON().Object()
 	pid := p.Value("id").String().Raw()
 	sid := p.Value("sceneId").String().Raw()
@@ -428,7 +428,7 @@ func TestAPIV1PublishStory(t *testing.T) {
 
 	// Creating a project also creates its story.
 	pid := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
-		WithJSON(map[string]any{"name": "with story"}).
+		WithJSON(map[string]any{"name": "with story", "visibility": "private"}).
 		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
 	publish := "/projects/" + pid + "/story/publish"
 
