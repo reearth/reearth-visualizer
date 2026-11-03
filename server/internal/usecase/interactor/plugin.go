@@ -280,9 +280,7 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 }
 
 func (i *Plugin) uploadPluginFile(ctx context.Context, plugins map[string]*zip.File, oldSceneID string, newSceneID string) error {
-
 	for filePathInZip, zipFile := range plugins {
-
 		parts := strings.Split(filePathInZip, "/")
 		oldPluginId := parts[0]
 		realFileName := parts[1]
@@ -294,27 +292,34 @@ func (i *Plugin) uploadPluginFile(ctx context.Context, plugins map[string]*zip.F
 			return err
 		}
 
-		readCloser, err := zipFile.Open()
-		if err != nil {
-			return fmt.Errorf("error opening zip file entry: %w", err)
+		if err := i.uploadOnePluginFile(ctx, zipFile, realFileName, pid); err != nil {
+			return err
 		}
-		defer func() {
-			if cerr := readCloser.Close(); cerr != nil {
-				fmt.Printf("Error closing file: %v\n", cerr)
-			}
-		}()
+	}
 
-		file := &file.File{
-			Content:     readCloser,
-			Path:        realFileName,
-			Size:        int64(zipFile.UncompressedSize64),
-			ContentType: http.DetectContentType([]byte(zipFile.Name)),
+	return nil
+}
+
+func (i *Plugin) uploadOnePluginFile(ctx context.Context, zipFile *zip.File, realFileName string, pid id.PluginID) error {
+	readCloser, err := zipFile.Open()
+	if err != nil {
+		return fmt.Errorf("error opening zip file entry: %w", err)
+	}
+	defer func() {
+		if cerr := readCloser.Close(); cerr != nil {
+			fmt.Printf("Error closing file: %v\n", cerr)
 		}
+	}()
 
-		if err := i.file.UploadPluginFile(ctx, pid, file); err != nil {
-			return fmt.Errorf("error uploading plugin file: %w", err)
-		}
+	f := &file.File{
+		Content:     readCloser,
+		Path:        realFileName,
+		Size:        int64(zipFile.UncompressedSize64),
+		ContentType: http.DetectContentType([]byte(zipFile.Name)),
+	}
 
+	if err := i.file.UploadPluginFile(ctx, pid, f); err != nil {
+		return fmt.Errorf("error uploading plugin file: %w", err)
 	}
 
 	return nil
