@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.29 - 2026-10-28
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Workbench layer fly-to and always-visible row actions [VIZ-DEV-264] ([#2493](https://github.com/reearth/reearth-visualizer/pull/2493)) [`57d943`](https://github.com/reearth/reearth-visualizer/commit/57d943)
+- Debounce project export to prevent duplicate concurrent requests [SCA-03] [MEDIUM] ([#2484](https://github.com/reearth/reearth-visualizer/pull/2484)) [`fd1a3e`](https://github.com/reearth/reearth-visualizer/commit/fd1a3e)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.29 ([#2507](https://github.com/reearth/reearth-visualizer/pull/2507)) [`dc774c`](https://github.com/reearth/reearth-visualizer/commit/dc774c)
+
+### Server
+
+#### 🚀 Features
+
+- Add a REST API for the CLI as its own service [VIZ-DEV-260] ([#2486](https://github.com/reearth/reearth-visualizer/pull/2486)) [`087431`](https://github.com/reearth/reearth-visualizer/commit/087431)
+
+#### 🔧 Bug Fixes
+
+- Close zip entry readers per iteration instead of at function exit [SCA-07] [MEDIUM] ([#2485](https://github.com/reearth/reearth-visualizer/pull/2485)) [`3513a7`](https://github.com/reearth/reearth-visualizer/commit/3513a7)
+- Stop a malformed import zip from panicking past project import status tracking [REL-05] [HIGH] ([#2456](https://github.com/reearth/reearth-visualizer/pull/2456)) [`fdca20`](https://github.com/reearth/reearth-visualizer/commit/fdca20)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update node.js to v24.22.1 ([#2495](https://github.com/reearth/reearth-visualizer/pull/2495)) [`6004d7`](https://github.com/reearth/reearth-visualizer/commit/6004d7)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update node.js to v24.22.1 ([#2495](https://github.com/reearth/reearth-visualizer/pull/2495)) [`6004d7`](https://github.com/reearth/reearth-visualizer/commit/6004d7)
+
 ## 1.0.0-beta.16.28 - 2026-10-21
 
 ### Web

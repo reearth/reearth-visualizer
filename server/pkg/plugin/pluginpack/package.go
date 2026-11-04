@@ -78,14 +78,7 @@ func readTranslation(fs *zip.Reader, base string) (manifest.TranslationMap, erro
 		if len(lang) == 0 {
 			continue
 		}
-		langfile, err := f.Open()
-		if err != nil {
-			return nil, fmt.Errorf("failed to open translation file: %w", err)
-		}
-		defer func() {
-			_ = langfile.Close()
-		}()
-		t, err := manifest.ParseTranslation(langfile)
+		t, err := readOneTranslation(f)
 		if err != nil {
 			return nil, err
 		}
@@ -93,4 +86,16 @@ func readTranslation(fs *zip.Reader, base string) (manifest.TranslationMap, erro
 	}
 
 	return translationMap, nil
+}
+
+func readOneTranslation(f *zip.File) (manifest.TranslationRoot, error) {
+	langfile, err := f.Open()
+	if err != nil {
+		return manifest.TranslationRoot{}, fmt.Errorf("failed to open translation file: %w", err)
+	}
+	defer func() {
+		_ = langfile.Close()
+	}()
+
+	return manifest.ParseTranslation(langfile)
 }
