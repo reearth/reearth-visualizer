@@ -1,6 +1,8 @@
 import { Asset } from "@reearth/app/features/AssetsManager/types";
 import { AssetSortField, SortDirection } from "@reearth/services/gql";
 
+import { LayerFormat } from "./utils";
+
 export type AssetTab = "visualizer" | "cmsAssets" | "cmsModels";
 
 export type AssetLayout = "grid" | "list";
@@ -15,9 +17,18 @@ export const SORTS = {
 };
 export type SortKey = keyof typeof SORTS;
 
+// CMS assets also carry their format and the CMS project and model they
+// belong to.
+export type LayerAsset = Asset & {
+  format?: LayerFormat;
+  projectName?: string;
+  modelName?: string;
+  modelUrl?: string;
+};
+
 // What each tab provides to the shared asset browser.
 export type AssetSource = {
-  assets: Asset[];
+  assets: LayerAsset[];
   loading: boolean;
   loadMore: () => void;
   // Uploads one file and resolves to the new asset's id. Omitted for sources

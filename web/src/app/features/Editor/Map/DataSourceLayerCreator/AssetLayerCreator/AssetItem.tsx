@@ -1,20 +1,22 @@
-import { Asset } from "@reearth/app/features/AssetsManager/types";
 import { Typography } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, KeyboardEvent } from "react";
 
-import { ASSET_FORMATS, formatBytes, formatDate, formatOf } from "./utils";
+import { LayerAsset } from "./types";
+import { FORMAT_LABELS, assetFormat, formatBytes, formatDate } from "./utils";
 
 type Props = {
-  asset: Asset;
+  asset: LayerAsset;
   selected: boolean;
   onSelect: (id: string) => void;
 };
 
-const formatLabel = (asset: Asset) => {
-  const format = formatOf(asset.url);
-  return format ? ASSET_FORMATS[format].label : "";
+// Shortened to fit the cards and badges.
+const formatLabel = (asset: LayerAsset) => {
+  const format = assetFormat(asset);
+  if (format === "3dtiles") return "3D";
+  return format ? FORMAT_LABELS[format] : "";
 };
 
 // Cards and rows act as toggle buttons, so they are focusable and selectable
@@ -32,7 +34,8 @@ const selectableProps = ({ asset, selected, onSelect }: Props) => ({
   }
 });
 
-// Grid view: the format name as a tile, with the file name below.
+// Grid view: the format name as a tile, with the file name below (and the
+// CMS project above it).
 export const AssetCard: FC<Props> = (props) => {
   const { asset, selected } = props;
   return (
@@ -42,17 +45,26 @@ export const AssetCard: FC<Props> = (props) => {
       data-testid={`asset-layer-creator-card-${asset.id}`}
     >
       <CardPreview selected={selected}>{formatLabel(asset)}</CardPreview>
-      <CardName size="footnote">{asset.name}</CardName>
+      <CardInfo>
+        {asset.projectName && (
+          <CardName size="footnote" color="weak">
+            {asset.projectName}
+          </CardName>
+        )}
+        <CardName size="footnote">{asset.name}</CardName>
+      </CardInfo>
     </Card>
   );
 };
 
-// List view: format badge, name, size and upload time.
-export const AssetRow: FC<Props> = (props) => {
+// List view: format badge, name, size and upload time. CMS assets also show
+// their project and model.
+export const AssetRow: FC<Props & { cms?: boolean }> = ({ cms, ...props }) => {
   const { asset, selected } = props;
   return (
     <Row
       selected={selected}
+      cms={cms}
       {...selectableProps(props)}
       data-testid={`asset-layer-creator-row-${asset.id}`}
     >
@@ -61,6 +73,28 @@ export const AssetRow: FC<Props> = (props) => {
         <Badge>{formatLabel(asset).replace("GeoJSON", "Geo JSON")}</Badge>
         <Ellipsis>{asset.name}</Ellipsis>
       </NameCell>
+      {cms && (
+        <>
+          <Ellipsis>{asset.projectName}</Ellipsis>
+          <Ellipsis>
+            {asset.modelUrl ? (
+              <ModelLink
+                href={asset.modelUrl}
+                target="_blank"
+                rel="noreferrer"
+                selected={selected}
+                // Opening the model shouldn't toggle the row's selection.
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
+              >
+                {asset.modelName}
+              </ModelLink>
+            ) : (
+              asset.modelName
+            )}
+          </Ellipsis>
+        </>
+      )}
       <Cell>{formatBytes(asset.size)}</Cell>
       <Cell>{formatDate(asset.createdAt)}</Cell>
     </Row>
@@ -68,6 +102,8 @@ export const AssetRow: FC<Props> = (props) => {
 };
 
 export const LIST_COLUMNS = "1fr 120px 140px";
+export const CMS_LIST_COLUMNS =
+  "minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr) 80px 120px";
 
 const Card = styled("div", {
   shouldForwardProp: (prop) => prop !== "selected"
@@ -93,18 +129,23 @@ const CardPreview = styled("div", {
   background: selected ? theme.select.main : theme.bg[2]
 }));
 
-const CardName = styled(Typography)(({ theme }) => ({
-  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+const CardInfo = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`
+}));
+
+const CardName = styled(Typography)(() => ({
   whiteSpace: css.whiteSpace.nowrap,
   overflow: css.overflow.hidden,
   textOverflow: css.textOverflow.ellipsis
 }));
 
 const Row = styled("div", {
-  shouldForwardProp: (prop) => prop !== "selected"
-})<{ selected: boolean }>(({ theme, selected }) => ({
+  shouldForwardProp: (prop) => prop !== "selected" && prop !== "cms"
+})<{ selected: boolean; cms?: boolean }>(({ theme, selected, cms }) => ({
   display: "grid",
-  gridTemplateColumns: LIST_COLUMNS,
+  gridTemplateColumns: cms ? CMS_LIST_COLUMNS : LIST_COLUMNS,
   alignItems: css.alignItems.center,
   gap: theme.spacing.normal,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
@@ -145,4 +186,11 @@ const Cell = styled("div")(({ theme }) => ({
 const Ellipsis = styled(Cell)(() => ({
   overflow: css.overflow.hidden,
   textOverflow: css.textOverflow.ellipsis
+}));
+
+const ModelLink = styled("a", {
+  shouldForwardProp: (prop) => prop !== "selected"
+})<{ selected: boolean }>(({ theme, selected }) => ({
+  color: selected ? theme.content.main : theme.select.strong,
+  textDecoration: "underline"
 }));

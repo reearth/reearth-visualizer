@@ -1,10 +1,5 @@
 import { LayerAddProps } from "@reearth/app/features/Editor/hooks/useLayers";
-import {
-  InputGroup,
-  LayerNameList,
-  LayerNameListWrapper,
-  LayerWrapper
-} from "@reearth/app/features/Editor/Map/shared/SharedComponent";
+import { InputGroup } from "@reearth/app/features/Editor/Map/shared/SharedComponent";
 import {
   Button,
   Icon,
@@ -21,6 +16,7 @@ import { ClipLoader } from "react-spinners";
 
 import CsvColumnInputs from "../CsvColumnInputs";
 import InfoLayerTips from "../InfoLayerTips";
+import LayerNameInputs from "../LayerNameInputs";
 
 import useHooks from "./hooks";
 
@@ -42,9 +38,7 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
     formatOptions,
     latColumn,
     lngColumn,
-    layerNameList,
-    layerName,
-    isLayerName,
+    layerNameInputProps,
     checking,
     error,
     canSubmit,
@@ -57,10 +51,6 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
     handleUrlChange,
     handleUrlBlur,
     handleFormatChange,
-    setLayerName,
-    handleBlur,
-    handleLayerNameButtonClick,
-    handleLayerNameDelete,
     handleSubmit
   } = useHooks({ sceneId, onClose, onSubmit });
 
@@ -182,66 +172,7 @@ const UrlLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
             )}
 
             {(format === "mvt" || format === "wms") && (
-              <InputGroup
-                label={t("Choose layer to add")}
-                data-testid="vectortiles-layer-group"
-              >
-                <LayerNameListWrapper data-testid="vectortiles-layer-list-wrapper">
-                  <LayerNameList data-testid="vectortiles-layer-list">
-                    {layerNameList.map((layer: string, index: number) => (
-                      <LayerWrapper
-                        key={index}
-                        data-testid={`vectortiles-layer-item-${index}`}
-                      >
-                        <TextInput
-                          value={`${layer}`}
-                          extendWidth
-                          data-testid={`vectortiles-layer-textinput-${index}`}
-                        />
-                        <Button
-                          icon="close"
-                          iconButton
-                          appearance="simple"
-                          size="small"
-                          iconColor={theme.content.main}
-                          ariaLabel={t("Delete layer name")}
-                          onClick={() => handleLayerNameDelete(index)}
-                          data-testid={`vectortiles-layer-delete-button-${index}`}
-                        />
-                      </LayerWrapper>
-                    ))}
-                    {(!layerNameList.length || isLayerName) && (
-                      <LayerWrapper data-testid="vectortiles-layer-input-wrapper">
-                        <TextInput
-                          placeholder={t("layer name")}
-                          value={layerName}
-                          extendWidth
-                          onBlur={handleBlur}
-                          onChange={(value) => setLayerName(value)}
-                          data-testid="vectortiles-layer-input"
-                        />
-                        <Button
-                          icon="close"
-                          iconButton
-                          iconColor={theme.content.weak}
-                          size="small"
-                          appearance="simple"
-                          disabled
-                          data-testid="vectortiles-layer-input-disabled-button"
-                        />
-                      </LayerWrapper>
-                    )}
-                  </LayerNameList>
-                </LayerNameListWrapper>
-
-                <Button
-                  icon="plus"
-                  title={t("Layer name")}
-                  size="small"
-                  onClick={handleLayerNameButtonClick}
-                  data-testid="vectortiles-layer-add-button"
-                />
-              </InputGroup>
+              <LayerNameInputs {...layerNameInputProps} />
             )}
 
             {warning && (

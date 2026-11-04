@@ -4,19 +4,24 @@ import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useMemo, useState } from "react";
 import useFileInput from "use-file-input";
 
-import { AssetLayout, AssetSource, AssetTab, SortKey } from "./types";
+import { wmsLayersFromUrl } from "../UrlLayerCreator/utils";
+import { useLayerNames } from "../useLayerNames";
+
+import { MOCK_CMS_SOURCE } from "./mockCmsAssets";
+import { AssetLayout, AssetTab, SortKey } from "./types";
 import useUploads from "./useUploads";
 import useVisualizerAssets from "./useVisualizerAssets";
-import { ACCEPT_STRING, ASSET_FORMATS, AssetFormat, formatOf } from "./utils";
+import {
+  ACCEPT_STRING,
+  ASSET_FORMATS,
+  FORMAT_LABELS,
+  LayerFormat,
+  assetFormat,
+  needsLayerNames
+} from "./utils";
 
 const ALL_FORMATS = "all";
-
-// CMS sources aren't connected yet; their tabs show the browser empty.
-const EMPTY_SOURCE: AssetSource = {
-  assets: [],
-  loading: false,
-  loadMore: () => undefined
-};
+const ALL_PROJECTS = "all";
 
 type Props = {
   sceneId: string;
@@ -31,18 +36,25 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
   const [layout, setLayout] = useState<AssetLayout>("grid");
   const [sort, setSort] = useState<SortKey>("date-desc");
   const [formatFilter, setFormatFilter] = useState<string>(ALL_FORMATS);
+  const [projectFilter, setProjectFilter] = useState<string>(ALL_PROJECTS);
   const [keyword, setKeyword] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>();
 
-  // CSV needs a second step to name its coordinate columns.
-  const [step, setStep] = useState<"select" | "csvColumns">("select");
+  // CSV needs a second step to name its coordinate columns, MVT and WMS to
+  // name the layers to show.
+  const [step, setStep] = useState<"select" | "details">("select");
   const [latColumn, setLatColumn] = useState("");
   const [lngColumn, setLngColumn] = useState("");
   const [prioritizePerformance, setPrioritizePerformance] = useState(false);
   const [autoUpdateTime, setAutoUpdateTime] = useState(true);
+  const {
+    entered: enteredLayerNames,
+    reset: resetLayerNames,
+    inputProps: layerNameInputProps
+  } = useLayerNames();
 
   const visualizer = useVisualizerAssets({ sort, keyword });
-  const source = tab === "visualizer" ? visualizer : EMPTY_SOURCE;
+  const source = tab === "visualizer" ? visualizer : MOCK_CMS_SOURCE;
 
   // Files dropped onto the asset area or picked with Upload share one queue.
   const { uploads, uploading, enqueue, remove, clear } = useUploads({
@@ -64,7 +76,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
   const assets = useMemo(
     () =>
       source.assets.filter((a) => {
-        const format = formatOf(a.url);
+        const format = assetFormat(a);
         return (
           !!format && (formatFilter === ALL_FORMATS || format === formatFilter)
         );
@@ -81,20 +93,30 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     (newTab: AssetTab) => {
       setTab(newTab);
       setSelectedId(undefined);
+      // The other tab may not offer the filtered format.
+      setFormatFilter(ALL_FORMATS);
       setStep("select");
+      resetLayerNames();
       clear();
     },
-    [clear]
+    [clear, resetLayerNames]
   );
+
+  const isCmsTab = tab !== "visualizer";
 
   const formatOptions = useMemo(
     () => [
       { value: ALL_FORMATS, label: t("All formats") },
-      ...(Object.keys(ASSET_FORMATS) as AssetFormat[]).map((f) => ({
-        value: f,
-        label: ASSET_FORMATS[f].label
-      }))
+      ...(
+        Object.keys(isCmsTab ? FORMAT_LABELS : ASSET_FORMATS) as LayerFormat[]
+      ).map((f) => ({ value: f, label: FORMAT_LABELS[f] }))
     ],
+    [isCmsTab, t]
+  );
+
+  // TODO: list the workspace's CMS projects once CMS is connected.
+  const projectOptions = useMemo(
+    () => [{ value: ALL_PROJECTS, label: t("All CMS projects") }],
     [t]
   );
 
@@ -123,25 +145,43 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     setFormatFilter(value as string);
   }, []);
 
+  const handleProjectFilterChange = useCallback((value: string | string[]) => {
+    setProjectFilter(value as string);
+  }, []);
+
   const handleSelect = useCallback((id: string) => {
     setSelectedId((prev) => (prev === id ? undefined : id));
   }, []);
 
   // Selection only counts while the asset is visible (not filtered out).
   const selectedAsset = assets.find((a) => a.id === selectedId);
-  const selectedFormat = selectedAsset && formatOf(selectedAsset.url);
+  const selectedFormat = selectedAsset && assetFormat(selectedAsset);
+  const needsLayers = needsLayerNames(selectedFormat);
+  const needsDetails = selectedFormat === "csv" || needsLayers;
+
+  // WMS falls back to the URL's LAYERS parameter.
+  const layers = useMemo(
+    () =>
+      !enteredLayerNames.length && selectedFormat === "wms" && selectedAsset
+        ? wmsLayersFromUrl(selectedAsset.url)
+        : enteredLayerNames,
+    [enteredLayerNames, selectedAsset, selectedFormat]
+  );
 
   const canSubmit =
     !!selectedAsset &&
     !!selectedFormat &&
-    (step === "select" || (!!latColumn.trim() && !!lngColumn.trim()));
+    (step === "select" ||
+      (selectedFormat === "csv"
+        ? !!latColumn.trim() && !!lngColumn.trim()
+        : layers.length > 0));
 
   const handleBack = useCallback(() => setStep("select"), []);
 
   const handleSubmit = useCallback(() => {
     if (!canSubmit || !selectedAsset || !selectedFormat) return;
-    if (selectedFormat === "csv" && step === "select") {
-      setStep("csvColumns");
+    if (needsDetails && step === "select") {
+      setStep("details");
       return;
     }
     onSubmit({
@@ -160,6 +200,9 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
           ...(selectedFormat === "csv" && {
             csv: { latColumn: latColumn.trim(), lngColumn: lngColumn.trim() }
           }),
+          ...(needsLayers && {
+            layers: layers.length === 1 ? layers[0] : layers
+          }),
           ...(selectedFormat === "czml" && {
             time: { updateClockOnLoad: autoUpdateTime }
           })
@@ -171,7 +214,10 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     autoUpdateTime,
     canSubmit,
     latColumn,
+    layers,
     lngColumn,
+    needsDetails,
+    needsLayers,
     onClose,
     onSubmit,
     prioritizePerformance,
@@ -198,12 +244,17 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     sortOptions,
     formatFilter,
     formatOptions,
+    // CMS sources span several projects and support more formats.
+    isCmsTab,
+    projectFilter,
+    projectOptions,
     selectedId,
     selectedFormat,
     selectedAsset,
     step,
     latColumn,
     lngColumn,
+    layerNameInputProps,
     prioritizePerformance,
     autoUpdateTime,
     canSubmit,
@@ -216,6 +267,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     handleSortChange,
     handleSearch,
     handleFormatFilterChange,
+    handleProjectFilterChange,
     handleSelect,
     handleBack,
     handleSubmit

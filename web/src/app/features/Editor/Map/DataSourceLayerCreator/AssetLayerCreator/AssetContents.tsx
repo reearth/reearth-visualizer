@@ -1,4 +1,3 @@
-import { Asset } from "@reearth/app/features/AssetsManager/types";
 import {
   Icon,
   Loading,
@@ -14,19 +13,28 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, RefObject } from "react";
 
-import { AssetCard, AssetRow, LIST_COLUMNS } from "./AssetItem";
-import { AssetLayout } from "./types";
+import {
+  AssetCard,
+  AssetRow,
+  CMS_LIST_COLUMNS,
+  LIST_COLUMNS
+} from "./AssetItem";
+import { AssetLayout, LayerAsset } from "./types";
 
 type Option = { value: string; label: string };
 
 type Props = {
-  assets: Asset[];
+  assets: LayerAsset[];
   loading: boolean;
   wrapperRef: RefObject<HTMLDivElement | null>;
   contentRef: RefObject<HTMLDivElement | null>;
   layout: AssetLayout;
   formatFilter: string;
   formatOptions: Option[];
+  // CMS sources add a project filter and Project / Model list columns.
+  cms?: boolean;
+  projectFilter: string;
+  projectOptions: Option[];
   sort: string;
   sortOptions: Option[];
   selectedId?: string;
@@ -35,6 +43,7 @@ type Props = {
   onLayoutChange: (layout: AssetLayout) => void;
   onSearch: (keyword?: string) => void;
   onFormatFilterChange: (value: string | string[]) => void;
+  onProjectFilterChange: (value: string | string[]) => void;
   onSortChange: (value: string) => void;
   onSelect: (id: string) => void;
 };
@@ -48,6 +57,9 @@ const AssetContents: FC<Props> = ({
   layout,
   formatFilter,
   formatOptions,
+  cms,
+  projectFilter,
+  projectOptions,
   sort,
   sortOptions,
   selectedId,
@@ -55,6 +67,7 @@ const AssetContents: FC<Props> = ({
   onLayoutChange,
   onSearch,
   onFormatFilterChange,
+  onProjectFilterChange,
   onSortChange,
   onSelect
 }) => {
@@ -88,14 +101,26 @@ const AssetContents: FC<Props> = ({
         searchPlaceholder={t("Search by the name")}
         onSearch={onSearch}
         filters={
-          <FormatFilter>
-            <Selector
-              value={formatFilter}
-              options={formatOptions}
-              onChange={onFormatFilterChange}
-              dataTestid="asset-layer-creator-format"
-            />
-          </FormatFilter>
+          <Filters>
+            <Filter>
+              <Selector
+                value={formatFilter}
+                options={formatOptions}
+                onChange={onFormatFilterChange}
+                dataTestid="asset-layer-creator-format"
+              />
+            </Filter>
+            {cms && (
+              <Filter>
+                <Selector
+                  value={projectFilter}
+                  options={projectOptions}
+                  onChange={onProjectFilterChange}
+                  dataTestid="asset-layer-creator-project"
+                />
+              </Filter>
+            )}
+          </Filters>
         }
       />
 
@@ -104,8 +129,14 @@ const AssetContents: FC<Props> = ({
             area, so only the rows scroll and nothing shows behind it. */}
         {layout === "list" && !loading && !!assets.length && (
           <ListHeaderWrapper>
-            <ListHeader>
+            <ListHeader cms={cms}>
               <span>{t("Name")}</span>
+              {cms && (
+                <>
+                  <span>{t("Project")}</span>
+                  <span>{t("Model")}</span>
+                </>
+              )}
               <span>{t("Size")}</span>
               <span>{t("Uploaded at")}</span>
             </ListHeader>
@@ -143,6 +174,7 @@ const AssetContents: FC<Props> = ({
                 <AssetRow
                   key={asset.id}
                   asset={asset}
+                  cms={cms}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
                 />
@@ -155,9 +187,15 @@ const AssetContents: FC<Props> = ({
   );
 };
 
-const FormatFilter = styled("div")(() => ({
-  width: 150,
+const Filters = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.small,
   flexShrink: 0
+}));
+
+const Filter = styled("div")(() => ({
+  width: 150
 }));
 
 const AssetsArea = styled("div")(() => ({
@@ -201,9 +239,11 @@ const List = styled("div")(({ theme }) => ({
   gap: theme.spacing.micro
 }));
 
-const ListHeader = styled("div")(({ theme }) => ({
+const ListHeader = styled("div", {
+  shouldForwardProp: (prop) => prop !== "cms"
+})<{ cms?: boolean }>(({ theme, cms }) => ({
   display: "grid",
-  gridTemplateColumns: LIST_COLUMNS,
+  gridTemplateColumns: cms ? CMS_LIST_COLUMNS : LIST_COLUMNS,
   gap: theme.spacing.normal,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   color: theme.content.weak,

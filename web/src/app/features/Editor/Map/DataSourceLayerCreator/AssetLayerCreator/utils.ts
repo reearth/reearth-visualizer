@@ -1,16 +1,35 @@
 import { DataType } from "@reearth/core";
 
-export type AssetFormat = Extract<DataType, "geojson" | "csv" | "kml" | "czml">;
+import { LayerAsset } from "./types";
 
-// Display label and file extensions of each format that can be added as a layer.
-export const ASSET_FORMATS: Record<
-  AssetFormat,
-  { label: string; extensions: string[] }
-> = {
-  geojson: { label: "GeoJSON", extensions: ["geojson", "json"] },
-  csv: { label: "CSV", extensions: ["csv"] },
-  kml: { label: "KML", extensions: ["kml", "kmz"] },
-  czml: { label: "CZML", extensions: ["czml"] }
+// Every format an asset can be added as. CMS supports them all; Visualizer
+// assets are files uploaded here, so only ASSET_FORMATS.
+export type LayerFormat = Extract<
+  DataType,
+  "geojson" | "csv" | "kml" | "czml" | "mvt" | "wms" | "3dtiles"
+>;
+export type AssetFormat = Extract<LayerFormat, "geojson" | "csv" | "kml" | "czml">;
+
+export const FORMAT_LABELS: Record<LayerFormat, string> = {
+  geojson: "GeoJSON",
+  csv: "CSV",
+  kml: "KML",
+  czml: "CZML",
+  mvt: "MVT",
+  wms: "WMS",
+  "3dtiles": "3D Tiles"
+};
+
+// MVT and WMS show only the layers named before adding.
+export const needsLayerNames = (format?: LayerFormat) =>
+  format === "mvt" || format === "wms";
+
+// File extensions of each format that can be uploaded.
+export const ASSET_FORMATS: Record<AssetFormat, { extensions: string[] }> = {
+  geojson: { extensions: ["geojson", "json"] },
+  csv: { extensions: ["csv"] },
+  kml: { extensions: ["kml", "kmz"] },
+  czml: { extensions: ["czml"] }
 };
 
 export const ACCEPT_STRING = Object.values(ASSET_FORMATS)
@@ -24,6 +43,11 @@ export const formatOf = (url: string): AssetFormat | undefined => {
     ASSET_FORMATS[f].extensions.includes(ext)
   );
 };
+
+// The format CMS states, or the one the file extension implies. MVT, WMS and
+// 3D Tiles can't be told from the URL (a tileset.json looks like GeoJSON).
+export const assetFormat = (asset: LayerAsset): LayerFormat | undefined =>
+  asset.format ?? formatOf(asset.url);
 
 // e.g. 360 → "360 Bytes", 91115 → "88.98 KB".
 export const formatBytes = (bytes: number): string => {
