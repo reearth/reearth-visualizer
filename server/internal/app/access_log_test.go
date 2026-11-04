@@ -3,12 +3,15 @@ package app
 import (
 	"bytes"
 	"context"
+	"net/http"
 	"testing"
 
 	"github.com/99designs/gqlgen/graphql"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearthx/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -100,4 +103,67 @@ func TestWorkspaceIDFromVariables(t *testing.T) {
 			assert.Equal(t, tt.want, workspaceIDFromVariables(tt.vars))
 		})
 	}
+}
+
+func withReadableWorkspaces(ctx context.Context, ws ...accountsID.WorkspaceID) context.Context {
+	return adapter.AttachOperator(ctx, &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{ReadableWorkspaces: ws},
+	})
+}
+
+func withWorkspaceHeader(ctx context.Context, name string, vars map[string]any, ws string) context.Context {
+	return graphql.WithOperationContext(ctx, &graphql.OperationContext{
+		OperationName: name,
+		Operation:     &ast.OperationDefinition{Operation: ast.Query, Name: name},
+		Variables:     vars,
+		Headers:       http.Header{workspaceHeader: []string{ws}},
+	})
+}
+
+func TestAccessLogger_WorkspaceFromHeader(t *testing.T) {
+	wid := accountsID.NewWorkspaceID()
+	ctx := adapter.AttachUser(context.Background(), testAccessLogUser())
+	ctx = withReadableWorkspaces(ctx, wid)
+	ctx = withWorkspaceHeader(ctx, "GetScene", map[string]any{"sceneId": "s-1"}, wid.String())
+
+	assert.Contains(t, runAccessLogger(ctx), wid.String())
+}
+
+func TestAccessLogger_VariableWinsOverHeader(t *testing.T) {
+	wid := accountsID.NewWorkspaceID()
+	ctx := adapter.AttachUser(context.Background(), testAccessLogUser())
+	ctx = withReadableWorkspaces(ctx, wid)
+	ctx = withWorkspaceHeader(ctx, "GetProjects", map[string]any{"workspaceId": "ws-1"}, wid.String())
+
+	out := runAccessLogger(ctx)
+
+	assert.Contains(t, out, "ws-1")
+	assert.NotContains(t, out, wid.String())
+}
+
+func TestAccessLogger_HeaderForUnreadableWorkspace(t *testing.T) {
+	other := accountsID.NewWorkspaceID()
+	ctx := adapter.AttachUser(context.Background(), testAccessLogUser())
+	ctx = withReadableWorkspaces(ctx, accountsID.NewWorkspaceID())
+	ctx = withWorkspaceHeader(ctx, "GetScene", nil, other.String())
+
+	out := runAccessLogger(ctx)
+
+	assert.Contains(t, out, "GetScene")
+	assert.NotContains(t, out, "workspace_id")
+}
+
+func TestAccessLogger_InvalidHeader(t *testing.T) {
+	ctx := adapter.AttachUser(context.Background(), testAccessLogUser())
+	ctx = withReadableWorkspaces(ctx, accountsID.NewWorkspaceID())
+	ctx = withWorkspaceHeader(ctx, "GetScene", nil, "not-a-workspace")
+
+	assert.NotContains(t, runAccessLogger(ctx), "workspace_id")
+}
+
+func TestAccessLogger_HeaderWithoutOperator(t *testing.T) {
+	ctx := adapter.AttachUser(context.Background(), testAccessLogUser())
+	ctx = withWorkspaceHeader(ctx, "GetScene", nil, accountsID.NewWorkspaceID().String())
+
+	assert.NotContains(t, runAccessLogger(ctx), "workspace_id")
 }
