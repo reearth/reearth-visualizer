@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongo:
-        image: mongo:8
+        image: mongo:7.0
         ports:
           - 27017:27017
     steps:
@@ -74,7 +74,7 @@ jobs:
           go-version-file: server/go.mod
           cache-dependency-path: server/go.sum
       - name: test
-        run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+        run: go test ./... -count=1 -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
         env:
           REEARTH_DB: mongodb://localhost
         working-directory: server

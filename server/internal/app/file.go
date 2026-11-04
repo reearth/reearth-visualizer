@@ -29,7 +29,7 @@ func serveFiles(
 		return
 	}
 
-	fileHandler := func(handler func(echo.Context) (io.Reader, string, error)) echo.HandlerFunc {
+	fileHandler := func(handler func(echo.Context) (io.Reader, string, error), hardenResponse bool) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			reader, filename, err := handler(ctx)
 			if err != nil {
@@ -47,6 +47,12 @@ func serveFiles(
 					ct = ct2
 				}
 			}
+			if hardenResponse {
+				ctx.Response().Header().Set("X-Content-Type-Options", "nosniff")
+				if shouldForceAttachment(ct) {
+					ctx.Response().Header().Set("Content-Disposition", "attachment")
+				}
+			}
 			return ctx.Stream(http.StatusOK, ct, reader)
 		}
 	}
@@ -57,7 +63,7 @@ func serveFiles(
 			filename := ctx.Param("filename")
 			r, err := fileGateway.ReadAsset(ctx.Request().Context(), filename)
 			return r, filename, err
-		}),
+		}, true),
 		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 
@@ -79,7 +85,7 @@ func serveFiles(
 			filename := ctx.Param("filename")
 			r, err := fileGateway.ReadPluginFile(ctx.Request().Context(), pid, filename)
 			return r, filename, err
-		}),
+		}, false),
 		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 	)
 
@@ -89,8 +95,22 @@ func serveFiles(
 			name := ctx.Param("name")
 			r, err := fileGateway.ReadBuiltSceneFile(ctx.Request().Context(), name)
 			return r, name + ".json", err
-		}),
+		}, false),
 		middleware.FilesCORSMiddleware(domainChecker, allowedOrigins, publishedHost),
 		RequireGatewayToken(gatewayToken, previousGatewayToken),
 	)
+}
+
+func shouldForceAttachment(contentType string) bool {
+	mediaType, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		mediaType = contentType
+	}
+	switch mediaType {
+	case "text/html", "text/xml", "application/xml", "image/svg+xml", "application/xhtml+xml", "application/octet-stream",
+		"application/javascript", "text/javascript", "application/x-javascript", "application/pdf":
+		return true
+	default:
+		return false
+	}
 }

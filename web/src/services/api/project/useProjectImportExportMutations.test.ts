@@ -1,4 +1,117 @@
+import { act, renderHook } from "@testing-library/react";
 import { expect, test, vi, beforeEach, describe } from "vitest";
+
+import { useProjectImportExportMutations } from "./useProjectImportExportMutations";
+
+const mutate = vi.fn();
+const setNotification = vi.fn();
+
+vi.mock("@apollo/client/react", () => ({
+  useMutation: () => [mutate]
+}));
+
+vi.mock("@reearth/services/auth/useAuth", () => ({
+  useAuth: () => ({ getAccessToken: () => Promise.resolve(undefined) })
+}));
+
+vi.mock("@reearth/services/i18n/hooks", () => ({
+  useT: () => (s: string) => s
+}));
+
+vi.mock("@reearth/services/state", () => ({
+  useNotification: () => [undefined, setNotification]
+}));
+
+vi.mock("@reearth/services/restful/useRestful", () => ({
+  default: () => ({ axios: { post: vi.fn(), put: vi.fn() } })
+}));
+
+describe("useProjectImportExportMutations.exportProject debounce", () => {
+  beforeEach(() => {
+    mutate.mockReset();
+    setNotification.mockReset();
+  });
+
+  test("ignores a second export of the same project while the first is in flight, and tells the user why", async () => {
+    let resolveFirst: (value: unknown) => void = () => {};
+    mutate.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveFirst = resolve;
+      })
+    );
+
+    const { result } = renderHook(() => useProjectImportExportMutations());
+
+    let firstCall: Promise<unknown> = Promise.resolve();
+    let secondResult: { status: string } | undefined;
+    await act(async () => {
+      firstCall = result.current.exportProject("project-1");
+      await Promise.resolve();
+      secondResult = await result.current.exportProject("project-1");
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(1);
+    expect(secondResult).toEqual({ status: "in_progress" });
+    expect(setNotification).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "info",
+        text: "Export already in progress."
+      })
+    );
+
+    await act(async () => {
+      resolveFirst({ data: null, error: new Error("boom") });
+      await firstCall;
+    });
+  });
+
+  test("releases the guard when the mutation throws", async () => {
+    mutate.mockRejectedValueOnce(new Error("network error"));
+
+    const { result } = renderHook(() => useProjectImportExportMutations());
+
+    await act(async () => {
+      await result.current.exportProject("project-1");
+    });
+
+    mutate.mockResolvedValueOnce({ data: null, error: new Error("boom") });
+    await act(async () => {
+      await result.current.exportProject("project-1");
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(2);
+  });
+
+  test("allows a new export of the same project once the previous one finishes", async () => {
+    mutate.mockResolvedValue({ data: null, error: new Error("boom") });
+
+    const { result } = renderHook(() => useProjectImportExportMutations());
+
+    await act(async () => {
+      await result.current.exportProject("project-1");
+    });
+    await act(async () => {
+      await result.current.exportProject("project-1");
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(2);
+  });
+
+  test("allows concurrent exports of different projects", async () => {
+    mutate.mockImplementation(() => new Promise(() => {}));
+
+    const { result } = renderHook(() => useProjectImportExportMutations());
+
+    await act(async () => {
+      result.current.exportProject("project-1");
+      await Promise.resolve();
+      result.current.exportProject("project-2");
+      await Promise.resolve();
+    });
+
+    expect(mutate).toHaveBeenCalledTimes(2);
+  });
+});
 
 describe("useProjectImportExportMutations", () => {
   beforeEach(() => {

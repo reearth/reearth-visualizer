@@ -147,6 +147,62 @@ func TestScene_InstallPlugin(t *testing.T) {
 	}
 }
 
+type notifyDownloadHookRegistry struct {
+	gateway.PluginRegistry
+	onNotifyDownload func()
+}
+
+func (g *notifyDownloadHookRegistry) NotifyDownload(context.Context, id.PluginID) error {
+	g.onNotifyDownload()
+	return nil
+}
+
+func TestScene_InstallPlugin_ConcurrentEditDuringDownloadIsNotLost(t *testing.T) {
+	assert := assert.New(t)
+	ctx := context.Background()
+
+	sid := id.NewSceneID()
+	pid := id.MustPluginID("plugin~1.0.0")
+	otherPid := id.MustPluginID("other-plugin~1.0.0")
+
+	tid := accountsID.NewWorkspaceID()
+	sc := scene.New().ID(sid).Workspace(tid).MustBuild()
+	sr := memory.NewSceneWith(sc)
+	pl := plugin.New().ID(pid).MustBuild()
+	pr := memory.NewPluginWith(pl)
+	prr := memory.NewProperty()
+
+	registry := &notifyDownloadHookRegistry{
+		onNotifyDownload: func() {
+			concurrent := scene.New().ID(sid).Workspace(tid).MustBuild()
+			assert.True(concurrent.Plugins().Add(scene.NewPlugin(otherPid, nil)))
+			assert.NoError(sr.Save(ctx, concurrent))
+		},
+	}
+
+	uc := &Scene{
+		sceneRepo:      sr,
+		pluginRepo:     pr,
+		pluginRegistry: registry,
+		propertyRepo:   prr,
+		transaction:    &usecasex.NopTransaction{},
+	}
+
+	o := &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{tid},
+		},
+	}
+
+	_, _, err := uc.InstallPlugin(ctx, sid, pid, o)
+	assert.NoError(err)
+
+	final, err := sr.FindByID(ctx, sid)
+	assert.NoError(err)
+	assert.True(final.Plugins().Has(pid), "the plugin this call installed must be present")
+	assert.True(final.Plugins().Has(otherPid), "the concurrent edit made while the marketplace call was in flight must not be lost")
+}
+
 func TestScene_UninstallPlugin(t *testing.T) {
 	type args struct {
 		pluginID id.PluginID

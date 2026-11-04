@@ -14,28 +14,15 @@ import (
 	"github.com/reearth/reearthx/rerror"
 )
 
-func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.PluginID, operator *usecase.Operator) (_ *scene.Scene, _ *id.PropertyID, err error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	s, err := i.sceneRepo.FindByID(ctx, sid)
+func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.PluginID, operator *usecase.Operator) (*scene.Scene, *id.PropertyID, error) {
+	precheck, err := i.sceneRepo.FindByID(ctx, sid)
 	if err != nil {
 		return nil, nil, err
 	}
-	if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
+	if err := i.CanWriteWorkspace(precheck.Workspace(), operator); err != nil {
 		return nil, nil, err
 	}
-
-	if s.Plugins().HasPlugin(pid) {
+	if precheck.Plugins().HasPlugin(pid) {
 		return nil, nil, interfaces.ErrPluginAlreadyInstalled
 	}
 
@@ -53,29 +40,45 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 		return nil, nil, ErrPluginNotFound
 	}
 
+	var s *scene.Scene
 	var p *property.Property
-	if schema := plugin.Schema(); schema != nil {
-		p, err = property.New().NewID().Schema(*schema).Scene(sid).Build()
+	err = runWithTxRetry(ctx, i.transaction, txMaxRetries, func(txCtx context.Context) error {
+		var err error
+		s, err = i.sceneRepo.FindByID(txCtx, sid)
 		if err != nil {
-			return nil, nil, err
+			return err
 		}
-	}
-
-	if !s.Plugins().Add(scene.NewPlugin(pid, p.IDRef())) {
-		return nil, nil, interfaces.ErrPluginAlreadyInstalled
-	}
-
-	if p != nil {
-		if err := i.propertyRepo.Save(ctx, p); err != nil {
-			return nil, nil, err
+		if err := i.CanWriteWorkspace(s.Workspace(), operator); err != nil {
+			return err
 		}
-	}
+		if s.Plugins().HasPlugin(pid) {
+			return interfaces.ErrPluginAlreadyInstalled
+		}
 
-	if err := i.sceneRepo.Save(ctx, s); err != nil {
+		p = nil
+		if schema := plugin.Schema(); schema != nil {
+			p, err = property.New().NewID().Schema(*schema).Scene(sid).Build()
+			if err != nil {
+				return err
+			}
+		}
+
+		if !s.Plugins().Add(scene.NewPlugin(pid, p.IDRef())) {
+			return interfaces.ErrPluginAlreadyInstalled
+		}
+
+		if p != nil {
+			if err := i.propertyRepo.Save(txCtx, p); err != nil {
+				return err
+			}
+		}
+
+		return i.sceneRepo.Save(txCtx, s)
+	})
+	if err != nil {
 		return nil, nil, err
 	}
 
-	tx.Commit()
 	return s, p.IDRef(), nil
 }
 

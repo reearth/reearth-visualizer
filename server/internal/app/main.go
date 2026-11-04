@@ -36,6 +36,8 @@ func Start(debug bool, version string) {
 	serviceName := otel.OtelVisualizerServiceName
 	if conf.Visualizer.InternalApi.Active {
 		serviceName = otel.OtelVisualizerInternalApiServiceName
+	} else if conf.Visualizer.PublicApi.Active {
+		serviceName = otel.OtelVisualizerPublicApiServiceName
 	}
 	if conf.OtelEnabled {
 		closer, err := otel.InitTracer(ctx, &otel.Config{

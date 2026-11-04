@@ -208,35 +208,16 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 	}
 
 	result := map[string]any{}
+	idReplacements := make([]string, 0, len(assets)*2)
 
 	for beforeName, zipFile := range assets {
 		if zipFile.UncompressedSize64 == 0 {
 			continue
 		}
 		realName := assetNames[beforeName]
-		readCloser, err := zipFile.Open()
+
+		url, err := i.importAssetFile(ctx, zipFile, realName, newProject, ws)
 		if err != nil {
-			fmt.Printf("open failed for %s: %v", realName, err.Error())
-			return nil, result, err
-		}
-
-		defer func() {
-			if cerr := readCloser.Close(); cerr != nil {
-				log.Errorf("[Import Error] closing file: %v\n", cerr)
-			}
-		}()
-
-		file := &file.File{
-			Content:     readCloser,
-			Path:        realName,
-			Size:        int64(zipFile.UncompressedSize64),
-			ContentType: http.DetectContentType([]byte(zipFile.Name)),
-		}
-
-		pid := newProject.ID()
-		_, url, err := i.uploadAndSave(ctx, file, ws, &pid, true)
-		if err != nil {
-			log.Errorf("[Import Error] asset upload failed for %s: %v", realName, err.Error())
 			return nil, result, err
 		}
 
@@ -250,13 +231,44 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		// Replace new asset file name
 		beforeUrl := fmt.Sprintf("%s/assets/%s", currentHost, beforeName)
 		afterUrl := fmt.Sprintf("%s/assets/%s", currentHost, afterName)
-		*data = bytes.Replace(*data, []byte(beforeUrl), []byte(afterUrl), -1)
+		idReplacements = append(idReplacements, beforeUrl, afterUrl)
 
 		result[afterName] = fmt.Sprintf("name: %s ", realName)
 		fmt.Println("[Import Asset] ", afterName, " name: ", realName)
 	}
 
+	replaceIDsInPlace(data, idReplacements)
+
 	return data, result, nil
+}
+
+func (i *Asset) importAssetFile(ctx context.Context, zipFile *zip.File, realName string, newProject *project.Project, ws *accountsWorkspace.Workspace) (*url.URL, error) {
+	readCloser, err := zipFile.Open()
+	if err != nil {
+		fmt.Printf("open failed for %s: %v", realName, err.Error())
+		return nil, err
+	}
+	defer func() {
+		if cerr := readCloser.Close(); cerr != nil {
+			log.Errorf("[Import Error] closing file: %v\n", cerr)
+		}
+	}()
+
+	f := &file.File{
+		Content:     readCloser,
+		Path:        realName,
+		Size:        int64(zipFile.UncompressedSize64),
+		ContentType: http.DetectContentType([]byte(zipFile.Name)),
+	}
+
+	pid := newProject.ID()
+	_, url, err := i.uploadAndSave(ctx, f, ws, &pid, true)
+	if err != nil {
+		log.Errorf("[Import Error] asset upload failed for %s: %v", realName, err.Error())
+		return nil, err
+	}
+
+	return url, nil
 }
 
 func (i *Asset) updateProjectImage(ctx context.Context, newProject *project.Project, url *url.URL, beforeName string) error {

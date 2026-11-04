@@ -114,6 +114,7 @@ type HealthCheckConfig struct {
 
 type VisualizerConfig struct {
 	InternalApi InternalApiConfig `pp:",omitempty"`
+	PublicApi   PublicApiConfig   `pp:",omitempty"`
 
 	PublishedGateway PublishedGatewayConfig `pp:",omitempty"`
 
@@ -144,6 +145,13 @@ type InternalApiConfig struct {
 	Active bool   `default:"false" pp:",omitempty"`
 	Port   string `default:"50051" pp:",omitempty"`
 	Token  string `default:"" pp:",omitempty"`
+}
+
+// PublicApiConfig runs the process as the REST API service (/api/v1) only,
+// without GraphQL or the web app, so that its traffic is served by its own
+// deployment. Set with REEARTH_VISUALIZER_PUBLICAPI_ACTIVE.
+type PublicApiConfig struct {
+	Active bool `default:"false" pp:",omitempty"`
 }
 
 type PublishedGatewayConfig struct {

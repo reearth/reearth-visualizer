@@ -461,6 +461,12 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 
 		errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
 		if errPrivate != nil {
+			if input.StrictVisibility && input.Visibility != nil && *input.Visibility == string(project.VisibilityPrivate) {
+				if errors.Is(errPrivate, ErrProjectCreationLimitExceeded) {
+					return nil, interfaces.ErrPrivateProjectNotAllowed
+				}
+				return nil, errPrivate
+			}
 			visibility = project.VisibilityPublic
 		} else {
 			if input.Visibility != nil {
@@ -628,7 +634,9 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdateProjectAlias(*p.ProjectAlias)
 	}
 
-	if !adapter.IsInternal(ctx) {
+	// Only GraphQL requests collect field errors; GetErrors panics outside one
+	// (gRPC internal API, REST API).
+	if graphql.HasOperationContext(ctx) {
 		if errs := graphql.GetErrors(ctx); len(errs) > 0 {
 			return prj, nil
 		}

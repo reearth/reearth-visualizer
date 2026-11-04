@@ -4,7 +4,7 @@ import { EXPORT_PROJECT } from "@reearth/services/gql/queries/project";
 import { useT } from "@reearth/services/i18n/hooks";
 import useRestful from "@reearth/services/restful/useRestful";
 import { useNotification } from "@reearth/services/state";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { ImportProjectResponse } from "./types";
@@ -32,6 +32,8 @@ export const useProjectImportExportMutations = () => {
 
   const [exportProjectMutation] = useMutation(EXPORT_PROJECT);
 
+  const exportingProjectIds = useRef(new Set<string>());
+
   const getBackendUrl = useCallback(() => {
     const apiUrl = window.REEARTH_CONFIG?.api;
     return apiUrl?.replace(/\/api$/, "");
@@ -40,6 +42,15 @@ export const useProjectImportExportMutations = () => {
   const exportProject = useCallback(
     async (projectId: string) => {
       if (!projectId) return { status: "error" };
+      if (exportingProjectIds.current.has(projectId)) {
+        setNotification({
+          type: "info",
+          text: t("Export already in progress."),
+          duration: 5000
+        });
+        return { status: "in_progress" };
+      }
+      exportingProjectIds.current.add(projectId);
 
       try {
         const { data, error } = await exportProjectMutation({
@@ -97,6 +108,8 @@ export const useProjectImportExportMutations = () => {
           text: t("Failed to export project.")
         });
         return { status: "error" };
+      } finally {
+        exportingProjectIds.current.delete(projectId);
       }
     },
     [exportProjectMutation, t, setNotification, getBackendUrl, getAccessToken]

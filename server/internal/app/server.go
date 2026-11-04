@@ -73,7 +73,11 @@ func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 		address: address,
 	}
 
-	w.appServer = initEcho(ctx, cfg, cfg.ServiceName)
+	if cfg.Config.Visualizer.PublicApi.Active {
+		w.appServer = initPublicAPIEcho(ctx, cfg, cfg.ServiceName)
+	} else {
+		w.appServer = initEcho(ctx, cfg, cfg.ServiceName)
+	}
 
 	if cfg.Config.Visualizer.InternalApi.Active {
 		w.internalPort = ":" + cfg.Config.Visualizer.InternalApi.Port

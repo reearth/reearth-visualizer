@@ -527,13 +527,13 @@ func (m *SplitUploadManager) runWorker() {
 }
 
 // runImportJob assembles (already done — the session's file is written
-// in place, chunk by chunk) and imports one completed upload. It recovers
-// from any panic in the pipeline so a single bad upload can only fail that
-// one import, never take down the process — this is the general fix for
-// the class of bug behind REL-01, not just its specific trigger. The
-// bounded context is the general fix for REL-03: a stalled downstream call
-// times out instead of hanging this worker (and its slot in the pool)
-// forever.
+// in place, chunk by chunk) and imports one completed upload. Its own
+// recover covers ClaimImport and the zip-open/uncompress steps that run
+// before ImportProject; panics inside ImportProject itself are recovered
+// there instead (Go recovers innermost-first), so a single bad upload can
+// only fail that one import, never take down the process. The bounded
+// context is the general fix for REL-03: a stalled downstream call times
+// out instead of hanging this worker (and its slot in the pool) forever.
 func (m *SplitUploadManager) runImportJob(job importJob) {
 	bgctx, cancel := context.WithTimeout(context.Background(), m.importJobTimeout)
 	defer cancel()
