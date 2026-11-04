@@ -1,4 +1,4 @@
-import { Reearth } from "./reearth";
+import type { Reearth } from "@reearth/visualizer-plugin-api";
 
 export type GlobalThis = {
   reearth: Reearth;

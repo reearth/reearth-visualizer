@@ -60,11 +60,29 @@ declarations cause errors in projects that do not install React or Cesium types 
 
 ## Versioning
 
-This package version tracks the Re:Earth plugin API version directly.
-`@reearth/visualizer-plugin-api@2.1.0` corresponds to plugin API version 2.1.0.
-When the plugin API version bumps, a new version of this package is released with the same version number.
+This package follows [semantic versioning](https://semver.org): `MAJOR.MINOR.PATCH`, for example `2.1.1`.
+
+| Part | Bump it when | Example |
+|------|--------------|---------|
+| `MAJOR` (the `2` in `2.1.1`) | A big or breaking change to the plugin API types, such as removing or renaming something plugins use. Plugin authors may need to change their code. | `2.1.1` → `3.0.0` |
+| `MINOR` (the `1` in `2.1.1`) | A bug fix, or any change that affects the types in this package, such as adding a new API or fixing a wrong type. Existing plugins keep working. | `2.1.1` → `2.2.0` |
+| `PATCH` (the last `1` in `2.1.1`) | A small update with no effect on the types, such as docs, comments, `repository` metadata or a release-process check. | `2.1.0` → `2.1.1` |
+
+Every release needs a new version number, because npm never lets you publish the same version twice.
 
 See [CHANGELOG.md](./CHANGELOG.md) for the full history.
+
+## Source of truth
+
+This package is the single source of truth for the plugin API types. The Visualizer web app (`web/`) imports them from here, so there is no second copy to keep in sync. To change the API types:
+
+1. Edit `visualizer-plugin-api/src`, bump the version in `package.json`, and update `CHANGELOG.md`.
+2. Release the package (see below).
+3. Update the `@reearth/visualizer-plugin-api` version in `web/package.json` and run `yarn install`.
+
+To try a change in `web/` before releasing, build the package (`npm run build`) and point `web` at it with `yarn add @reearth/visualizer-plugin-api@portal:../visualizer-plugin-api`. Do not commit that; the web Dockerfile only builds from `web/`.
+
+When `@reearth/core` is upgraded in `web/`, upgrade the pinned peer version here and release too.
 
 ## Releasing
 
@@ -72,7 +90,7 @@ Publishing uses [npm OIDC Trusted Publishing](https://docs.npmjs.com/generating-
 
 ### One-time SRE setup
 
-1. Create the `npm-publish` environment on this GitHub repo with a required reviewer (Settings → Environments → New environment). Restrict deployment refs to tags matching `visualizer-plugin-api-v*`.
+1. Create the `npm-publish` environment on this GitHub repo with a required reviewer (Settings → Environments → New environment). Restrict deployment branches to `main`.
 2. Configure OIDC Trusted Publishing on npmjs.com for `@reearth/visualizer-plugin-api`:
    - Repository: `reearth/reearth-visualizer`
    - Workflow filename: `plugin_api_release.yml`
