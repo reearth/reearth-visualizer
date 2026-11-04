@@ -1,21 +1,12 @@
-import {
-  Button,
-  PopupMenu,
-  DragAndDropList
-} from "@reearth/app/lib/reearth-ui";
+import { DragAndDropList } from "@reearth/app/lib/reearth-ui";
 import { Panel } from "@reearth/app/ui/layout";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { useSetAtom } from "jotai";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { useMapPage } from "../context";
-import {
-  showDataSourceLayerCreatorAtom,
-  showPlateauAssetLayerCreatorAtom,
-  showSketchLayerCreatorAtom
-} from "../state";
+import DataSourceLayerCreator from "../DataSourceLayerCreator";
 
 import LayerItem from "./LayerItem";
 
@@ -26,53 +17,6 @@ const LayersPanel: FC = () => {
   const { layers, handleLayerMove, handleLayerSelect } = useMapPage();
 
   const t = useT();
-
-  const setShowDataSourceLayerCreator = useSetAtom(
-    showDataSourceLayerCreatorAtom
-  );
-  const openDataSourceLayerCreator = useCallback(() => {
-    setShowDataSourceLayerCreator(true);
-  }, [setShowDataSourceLayerCreator]);
-
-  const setShowSketchLayerCreator = useSetAtom(showSketchLayerCreatorAtom);
-  const openSketchLayerCreator = useCallback(() => {
-    setShowSketchLayerCreator(true);
-  }, [setShowSketchLayerCreator]);
-
-  const setShowPlateauAssetLayerCreator = useSetAtom(
-    showPlateauAssetLayerCreatorAtom
-  );
-  const openPlateauAssetLayerCreator = useCallback(() => {
-    setShowPlateauAssetLayerCreator(true);
-  }, [setShowPlateauAssetLayerCreator]);
-
-  const newLayerMenu = useMemo(() => {
-    return [
-      {
-        id: "add-datasorce-layer",
-        title: t("Add Layer from Resource"),
-        icon: "file" as const,
-        onClick: openDataSourceLayerCreator
-      },
-      {
-        id: "add-sketch-layer",
-        title: t("Add Sketch Layer"),
-        icon: "pencilSimple" as const,
-        onClick: openSketchLayerCreator
-      },
-      {
-        id: "add-plateau-asset-layer",
-        title: t("Add Layer from PLATEAU Asset"),
-        icon: "plateau" as const,
-        onClick: openPlateauAssetLayerCreator
-      }
-    ];
-  }, [
-    openDataSourceLayerCreator,
-    openSketchLayerCreator,
-    openPlateauAssetLayerCreator,
-    t
-  ]);
 
   const [isDragging, setIsDragging] = useState(false);
   const [editingLayerNameId, setEditingLayerNameId] = useState("");
@@ -117,22 +61,7 @@ const LayersPanel: FC = () => {
       extend
     >
       <Wrapper data-testid="layers-panel-wrapper">
-        <PopupMenu
-          label={
-            <Button
-              icon="plus"
-              title={t("New Layer")}
-              size="small"
-              extendWidth
-              data-testid="new-layer-button"
-            />
-          }
-          extendTriggerWidth
-          extendContentWidth
-          placement="bottom-end"
-          menu={newLayerMenu}
-          data-testid="new-layer-menu"
-        />
+        <DataSourceLayerCreator />
         <LayersContainer data-testid="layers-container">
           <DragAndDropList
             items={DraggableLayerItems}
