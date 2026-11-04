@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.30 - 2026-11-04
+
+### Web
+
+#### 🚀 Features
+
+- Add @reearth&#x2F;visualizer-plugin-api npm package [VIZ-DEV-274] ([#2466](https://github.com/reearth/reearth-visualizer/pull/2466)) [`7c0471`](https://github.com/reearth/reearth-visualizer/commit/7c0471)
+
+#### ✨ Refactor
+
+- Align add layer UI&#x2F;UX feature with the design ([#2504](https://github.com/reearth/reearth-visualizer/pull/2504)) [`e7b8c4`](https://github.com/reearth/reearth-visualizer/commit/e7b8c4)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.30 ([#2516](https://github.com/reearth/reearth-visualizer/pull/2516)) [`98eaeb`](https://github.com/reearth/reearth-visualizer/commit/98eaeb)
+
+### Server
+
+#### 🚀 Features
+
+- Add project and plugin endpoints to the REST API [VIZ-DEV-260] ([#2496](https://github.com/reearth/reearth-visualizer/pull/2496)) [`cfb9f0`](https://github.com/reearth/reearth-visualizer/commit/cfb9f0)
+
+### e2e
+
+#### 🧪 Testing
+
+- Add Timeline plugin API semantic tests [VIZ-DEV-204] ([#2505](https://github.com/reearth/reearth-visualizer/pull/2505)) [`5f4437`](https://github.com/reearth/reearth-visualizer/commit/5f4437)
+
+### plugin-api
+
+#### 🔧 Bug Fixes
+
+- Add repository field required for npm provenance ([#2514](https://github.com/reearth/reearth-visualizer/pull/2514)) [`71aa48`](https://github.com/reearth/reearth-visualizer/commit/71aa48)
+
+#### Miscellaneous Tasks
+
+- Bump to 2.1.1 to verify Trusted Publishing ([#2513](https://github.com/reearth/reearth-visualizer/pull/2513)) [`baa928`](https://github.com/reearth/reearth-visualizer/commit/baa928)
+
 ## 1.0.0-beta.16.29 - 2026-10-28
 
 ### Web
