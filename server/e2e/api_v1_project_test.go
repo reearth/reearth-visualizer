@@ -597,6 +597,9 @@ func TestAPIV1ImportProject(t *testing.T) {
 		WithFormField("file_id", "x").Expect(), http.StatusBadRequest, "invalid_input")
 	// A path-unsafe file ID.
 	expectAPIError(t, chunk(uID, "../escape", 0, 1, zipData), http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).WithJSON(map[string]any{"file_id": "x"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).Expect(), http.StatusBadRequest, "invalid_input")
 	// A reader cannot import into the workspace.
 	expectAPIError(t, chunk(uID3, "apiv1-import-reader", 0, 1, zipData), http.StatusForbidden, "permission_denied")
 }

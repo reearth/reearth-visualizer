@@ -230,3 +230,13 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1RestoreProject` checks a reader gets 403 on a project that is not in the trash.
+
+## 2026-11-04 — REST API v1 import with a non-multipart body (server/internal/adapter/apiv1/errors.go)
+
+### Findings & Fixes
+1. **A non-multipart import request returned 500** (server/internal/adapter/apiv1/errors.go)
+   - Bug: the generated wrapper for `POST /api/v1/workspaces/{id}/projects/import` calls `MultipartReader()` before the handler and returns its error as is. `http.ErrNotMultipart` and `http.ErrMissingBoundary` were not mapped, so a JSON or empty body got 500 "internal" and an ERROR log, and the handler's own body check never ran.
+   - Fix: both errors are answered with 400 `invalid_input`.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1ImportProject` checks a JSON body and an empty body are 400.

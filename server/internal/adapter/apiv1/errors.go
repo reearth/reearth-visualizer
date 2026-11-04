@@ -95,6 +95,8 @@ func toResponse(ctx context.Context, err error) (int, ErrorErrorCode, string) {
 	}
 
 	switch {
+	case errors.Is(err, http.ErrNotMultipart), errors.Is(err, http.ErrMissingBoundary):
+		return http.StatusBadRequest, ErrorErrorCodeInvalidInput, "send the request body as multipart/form-data"
 	case errors.Is(err, interfaces.ErrPluginAlreadyInstalled):
 		return http.StatusConflict, ErrorErrorCodeConflict, "a plugin with this name is already installed in the project"
 	case isSeatOverused(err):
