@@ -122,16 +122,16 @@ type VisualizerConfig struct {
 	Policy        Policy              `pp:",omitempty"`
 	DomainChecker DomainCheckerConfig `pp:",omitempty"`
 
-	CMS CMSConfig `pp:",omitempty"`
+	CMS CMSConfig `envconfig:"GRPC" pp:",omitempty"`
 }
 
 // CMSConfig points at the Re:Earth CMS internal gRPC API. Leaving Endpoint
 // empty disables the CMS queries.
 type CMSConfig struct {
-	Endpoint string `pp:",omitempty"`
-	Token    string `pp:",omitempty"`
-	UseTLS   bool   `pp:",omitempty"`
-	Timeout  int    `default:"10" pp:",omitempty"`
+	Endpoint string `envconfig:"ENDPOINT_CMS" pp:",omitempty"`
+	Token    string `envconfig:"TOKEN_CMS" pp:",omitempty"`
+	UseTLS   bool   `envconfig:"USE_TLS" pp:",omitempty"`
+	Timeout  int    `envconfig:"TIMEOUT_CMS" default:"10" pp:",omitempty"`
 }
 
 type Policy struct {
