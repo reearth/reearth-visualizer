@@ -12,6 +12,7 @@ import {
 import { createContext, useContext, ReactNode, MutableRefObject } from "react";
 
 import {
+  LayerAddProps,
   LayerConfigUpdateProps,
   LayerMoveProps,
   LayerNameUpdateProps,
@@ -37,6 +38,7 @@ export interface MapPageContextType {
   handleSceneSettingSelect: (groupId: string) => void;
   layers: NLSLayer[];
   selectedLayerId?: string;
+  handleLayerAdd: (inp: LayerAddProps) => void;
   handleLayerDelete: (id: string) => void;
   handleLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   handleLayerMove: (inp: LayerMoveProps) => void;
