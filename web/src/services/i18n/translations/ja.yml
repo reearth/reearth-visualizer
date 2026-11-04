@@ -180,8 +180,7 @@ Preset 3D Tiles: プリセット3Dタイル
 Open 3D buildings worldwide: 世界中のオープンな3D建物データ
 Photorealistic 3D mesh of the world: 世界のフォトリアリスティックな3Dメッシュ
 Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
-OpenStreetMap buildings via Cesium Ion: Cesium Ion経由のOpenStreetMap建物データ
-Please provide cesium ion access token on Main settings to use Cesium Ion.: Cesium Ionを使用するには、メイン設定でCesium Ionアクセストークンを提供してください。
+Requires a Cesium Ion access token: Cesium Ionアクセストークンが必要です
 New Layer: 新しいレイヤー
 Vector Tiles (MVT): ベクトルタイル（MVT）
 3D Tiles: 3Dタイル

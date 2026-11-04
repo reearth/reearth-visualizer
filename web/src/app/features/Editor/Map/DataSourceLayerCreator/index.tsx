@@ -4,7 +4,6 @@ import { useT } from "@reearth/services/i18n/hooks";
 import { useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
 
-import { useCesiumIonAccessToken } from "../../atoms";
 import { useMapPage } from "../context";
 import {
   showAssetLayerCreatorAtom,
@@ -24,14 +23,6 @@ const DataSourceLayerCreator = () => {
     () => (config()?.featureCollection === "ee" ? "reearth" : "cesium-ion"),
     []
   );
-
-  // Cesium Ion backed presets need a token set in the scene's Main settings.
-  const [cesiumIonAccessToken] = useCesiumIonAccessToken();
-  const cesiumIonWarning = cesiumIonAccessToken
-    ? undefined
-    : t(
-        "Please provide cesium ion access token on Main settings to use Cesium Ion."
-      );
 
   // Presets need no input, so they are added straight from the menu.
   const addPreset = useCallback(
@@ -133,20 +124,16 @@ const DataSourceLayerCreator = () => {
           {
             id: "preset-osm-buildings",
             title: t("Cesium OSM 3D Tiles"),
-            description:
-              cesiumIonWarning ?? t("OpenStreetMap buildings via Cesium Ion"),
-            descriptionAppearance: cesiumIonWarning ? "warning" : "default",
+            description: t("Requires a Cesium Ion access token"),
             onClick: () => addPreset("osm-buildings")
           },
           {
             id: "preset-google-photorealistic",
             title: t("Google Photorealistic 3D Tiles"),
-            ...(googleProvider === "cesium-ion" && cesiumIonWarning
-              ? {
-                  description: cesiumIonWarning,
-                  descriptionAppearance: "warning"
-                }
-              : { description: t("Photorealistic 3D mesh of the world") }),
+            description:
+              googleProvider === "cesium-ion"
+                ? t("Requires a Cesium Ion access token")
+                : t("Photorealistic 3D mesh of the world"),
             onClick: () => addPreset("google-photorealistic")
           }
         ]
@@ -154,7 +141,6 @@ const DataSourceLayerCreator = () => {
     ],
     [
       addPreset,
-      cesiumIonWarning,
       googleProvider,
       openAssetLayerCreator,
       openUrlLayerCreator,
