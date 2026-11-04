@@ -341,9 +341,11 @@ func TestAPIV1RestoreProject(t *testing.T) {
 	apiV1(e, http.MethodGet, list, uID).WithQuery("deleted", true).Expect().Status(http.StatusOK).
 		JSON().Object().Value("items").Array().IsEmpty()
 
-	// Restoring a project that is not in the trash is a no-op.
+	// Restoring a project that is not in the trash is a no-op, but still needs write access.
 	apiV1(e, http.MethodPost, restore, uID).Expect().Status(http.StatusOK).
 		JSON().Object().HasValue("deleted", false)
+	expectAPIError(t, apiV1(e, http.MethodPost, restore, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
 
 	expectAPIError(t, apiV1(e, http.MethodPost, "/projects/nope/restore", uID).Expect(),
 		http.StatusBadRequest, "invalid_input")

@@ -250,8 +250,6 @@ func (Server) DeleteProject(ctx context.Context, req DeleteProjectRequestObject)
 	return DeleteProject204Response{}, nil
 }
 
-// fetchProject returns the project, or a not found error when it does not
-// exist or the user cannot read its workspace.
 // RestoreProject moves a project out of the trash. A project that is not in
 // the trash is returned unchanged, so retrying is safe.
 func (Server) RestoreProject(ctx context.Context, req RestoreProjectRequestObject) (RestoreProjectResponseObject, error) {
@@ -263,6 +261,9 @@ func (Server) RestoreProject(ctx context.Context, req RestoreProjectRequestObjec
 	prj, err := fetchProject(ctx, uc, pid)
 	if err != nil {
 		return nil, err
+	}
+	if !op.IsWritableWorkspace(prj.Workspace()) {
+		return nil, forbidden("permission denied")
 	}
 
 	if prj.IsDeleted() {
@@ -331,6 +332,8 @@ func publishedURL(hostPattern, alias string) *string {
 	return &u
 }
 
+// fetchProject returns the project, or a not found error when it does not
+// exist or the user cannot read its workspace.
 func fetchProject(ctx context.Context, uc *interfaces.Container, pid id.ProjectID) (*project.Project, error) {
 	_, op := usecases(ctx)
 	res, err := uc.Project.Fetch(ctx, []id.ProjectID{pid}, op)

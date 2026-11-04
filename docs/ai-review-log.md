@@ -207,3 +207,13 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1DeleteProject` checks a reader gets 403 on a project in the trash; `TestAPIV1UpdateProject` checks `{}` and a missing body are 400.
+
+## 2026-11-04 — REST API v1 restore permission (server/internal/adapter/apiv1/project.go)
+
+### Findings & Fixes
+1. **A reader could "restore" a live project** (server/internal/adapter/apiv1/project.go)
+   - Bug: `POST /api/v1/projects/{id}/restore` only checked write access inside `Project.Update`, which is skipped when the project is not in the trash, so a workspace reader got 200 for a live project but 403 for a trashed one.
+   - Fix: the handler checks write access before the no-op, as `DeleteProject` does. Also moved `fetchProject`'s doc comment back onto `fetchProject`; a merge had left it on `RestoreProject`.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1RestoreProject` checks a reader gets 403 on a project that is not in the trash.
