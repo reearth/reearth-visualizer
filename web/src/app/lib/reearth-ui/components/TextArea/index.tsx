@@ -11,6 +11,8 @@ export type TextAreaProps = {
   rows?: number;
   counter?: boolean;
   maxLength?: number;
+  /** Renders the text area with a danger-coloured border. */
+  error?: boolean;
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
   ariaLabel?: string;
@@ -26,6 +28,7 @@ export const TextArea: FC<TextAreaProps> = ({
   counter,
   maxLength,
   appearance,
+  error,
   onChange,
   onBlur,
   ariaLabel,
@@ -61,6 +64,7 @@ export const TextArea: FC<TextAreaProps> = ({
       <TextAreaWrapper
         appearance={appearance}
         status={isFocused ? "active" : "default"}
+        error={error}
       >
         <StyledTextArea
           resizable={resizable}
@@ -93,12 +97,16 @@ const Wrapper = styled("div")(() => ({
   flexDirection: css.flexDirection.column
 }));
 
-const TextAreaWrapper = styled("div")<{
+const TextAreaWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "error"
+})<{
   status: "default" | "active";
   appearance?: "readonly" | "present";
-}>(({ appearance, theme, status }) => ({
-  border:
-    appearance === "present"
+  error?: boolean;
+}>(({ appearance, theme, status, error }) => ({
+  border: error
+    ? `1px solid ${theme.dangerous.main}`
+    : appearance === "present"
       ? `1px solid transparent`
       : status === "default" || appearance === "readonly"
         ? `1px solid ${theme.outline.weak}`
