@@ -131,7 +131,7 @@ func (Server) CreateProject(ctx context.Context, req CreateProjectRequestObject)
 
 	if err := createSceneAndStory(ctx, uc, prj.ID(), op); err != nil {
 		// Do not leave a project behind that the editor cannot open.
-		if derr := uc.Project.Delete(ctx, prj.ID(), op); derr != nil {
+		if derr := uc.Project.Delete(context.WithoutCancel(ctx), prj.ID(), op); derr != nil {
 			log.Errorfc(ctx, "api v1: could not remove project %s after a failed create: %v", prj.ID(), derr)
 		}
 		return nil, err
@@ -188,6 +188,9 @@ func (Server) UpdateProject(ctx context.Context, req UpdateProjectRequestObject)
 		return nil, invalidInput("invalid project ID %q", req.ProjectId)
 	}
 	b := req.Body
+	if b == nil || (b.Name == nil && b.Description == nil && b.Starred == nil && b.Archived == nil) {
+		return nil, invalidInput("nothing to update: set at least one of name, description, starred or archived")
+	}
 	if b.Name != nil && *b.Name == "" {
 		return nil, invalidInput("name cannot be empty")
 	}
@@ -237,6 +240,9 @@ func (Server) DeleteProject(ctx context.Context, req DeleteProjectRequestObject)
 		return DeleteProject204Response{}, nil
 	}
 
+	if !op.IsWritableWorkspace(prj.Workspace()) {
+		return nil, forbidden("permission denied")
+	}
 	if !prj.IsDeleted() {
 		if _, err := uc.Project.Update(ctx, interfaces.UpdateProjectParam{
 			ID:      pid,
@@ -248,8 +254,6 @@ func (Server) DeleteProject(ctx context.Context, req DeleteProjectRequestObject)
 	return DeleteProject204Response{}, nil
 }
 
-// fetchProject returns the project, or a not found error when it does not
-// exist or the user cannot read its workspace.
 // RestoreProject moves a project out of the trash. A project that is not in
 // the trash is returned unchanged, so retrying is safe.
 func (Server) RestoreProject(ctx context.Context, req RestoreProjectRequestObject) (RestoreProjectResponseObject, error) {
@@ -261,6 +265,9 @@ func (Server) RestoreProject(ctx context.Context, req RestoreProjectRequestObjec
 	prj, err := fetchProject(ctx, uc, pid)
 	if err != nil {
 		return nil, err
+	}
+	if !op.IsWritableWorkspace(prj.Workspace()) {
+		return nil, forbidden("permission denied")
 	}
 
 	if prj.IsDeleted() {
@@ -331,6 +338,8 @@ func publishedURL(hostPattern, alias string) *string {
 
 const webVisualizerCesium = visualizer.Visualizer("CESIUM")
 
+// fetchProject returns the project, or a not found error when it does not
+// exist or the user cannot read its workspace.
 func fetchProject(ctx context.Context, uc *interfaces.Container, pid id.ProjectID) (*project.Project, error) {
 	_, op := usecases(ctx)
 	res, err := uc.Project.Fetch(ctx, []id.ProjectID{pid}, op)

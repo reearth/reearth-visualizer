@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/apperr"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/plugin/repourl"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
@@ -57,6 +58,9 @@ func (Server) UploadPlugin(ctx context.Context, req UploadPluginRequestObject) (
 	if err != nil {
 		if isInvalidPluginPackage(err) {
 			return nil, invalidInput("%s", err.Error())
+		}
+		if errors.Is(err, repourl.ErrUnsupportedHost) || errors.Is(err, repourl.ErrInvalidURL) {
+			return nil, invalidInput("url must be a github.com repository URL, such as https://github.com/owner/repo")
 		}
 		return nil, err
 	}

@@ -59,8 +59,19 @@ func TestAPIV1ServesOnlyTheAPI(t *testing.T) {
 func TestAPIV1RequiresAUser(t *testing.T) {
 	e := startPublicAPI(t)
 
-	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/"+pID.String(), accountsID.UserID{}).Expect(),
-		http.StatusUnauthorized, "unauthorized")
+	for _, r := range []struct{ method, path string }{
+		{http.MethodGet, "/workspaces/" + wID.String() + "/projects"},
+		{http.MethodPost, "/workspaces/" + wID.String() + "/projects"},
+		{http.MethodGet, "/projects/" + pID.String()},
+		{http.MethodPatch, "/projects/" + pID.String()},
+		{http.MethodDelete, "/projects/" + pID.String()},
+		{http.MethodGet, "/projects/" + pID.String() + "/plugins"},
+		{http.MethodPost, "/projects/" + pID.String() + "/plugins"},
+		{http.MethodDelete, "/projects/" + pID.String() + "/plugins/reearth"},
+	} {
+		expectAPIError(t, apiV1(e, r.method, r.path, accountsID.UserID{}).Expect(),
+			http.StatusUnauthorized, "unauthorized")
+	}
 }
 
 func TestAPIV1GetProject(t *testing.T) {
@@ -237,6 +248,25 @@ func TestAPIV1CreatePrivateProjectOnFreePlan(t *testing.T) {
 		Expect().Status(http.StatusCreated).JSON().Object().HasValue("visibility", "public")
 }
 
+type denyAllOperations struct{}
+
+func (denyAllOperations) CheckPolicy(_ context.Context, req gateway.PolicyCheckRequest) (*gateway.PolicyCheckResponse, error) {
+	return &gateway.PolicyCheckResponse{
+		Allowed:   req.CheckType != gateway.PolicyCheckGeneralOperationAllowed,
+		CheckType: req.CheckType,
+		Value:     req.Value,
+	}, nil
+}
+
+func TestAPIV1CreateProjectWithOverusedSeats(t *testing.T) {
+	e, _, g := startServer(t, publicApiConfig, true, baseSeeder)
+	g.PolicyChecker = denyAllOperations{}
+
+	expectAPIError(t, apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "x", "visibility": "public"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+}
+
 func TestAPIV1UpdateProject(t *testing.T) {
 	e := startPublicAPI(t)
 	path := "/projects/" + pID.String()
@@ -249,6 +279,10 @@ func TestAPIV1UpdateProject(t *testing.T) {
 	// Fields that were not given keep their value.
 	p.HasValue("description", pDesc)
 
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithJSON(map[string]any{}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithHeader("Content-Type", "application/json").Expect(),
+		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithJSON(map[string]any{"name": ""}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID3).WithJSON(map[string]any{"name": "x"}).Expect(),
@@ -278,8 +312,10 @@ func TestAPIV1DeleteProject(t *testing.T) {
 	apiV1(e, http.MethodGet, list, uID).WithQuery("deleted", true).Expect().Status(http.StatusOK).
 		JSON().Object().Value("items").Array().Length().IsEqual(1)
 
-	// Moving it to the trash again is a no-op.
+	// Moving it to the trash again is a no-op, but still needs write access.
 	apiV1(e, http.MethodDelete, path, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
 
 	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).WithQuery("permanent", true).Expect(),
 		http.StatusForbidden, "permission_denied")
@@ -309,9 +345,11 @@ func TestAPIV1RestoreProject(t *testing.T) {
 	apiV1(e, http.MethodGet, list, uID).WithQuery("deleted", true).Expect().Status(http.StatusOK).
 		JSON().Object().Value("items").Array().IsEmpty()
 
-	// Restoring a project that is not in the trash is a no-op.
+	// Restoring a project that is not in the trash is a no-op, but still needs write access.
 	apiV1(e, http.MethodPost, restore, uID).Expect().Status(http.StatusOK).
 		JSON().Object().HasValue("deleted", false)
+	expectAPIError(t, apiV1(e, http.MethodPost, restore, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
 
 	expectAPIError(t, apiV1(e, http.MethodPost, "/projects/nope/restore", uID).Expect(),
 		http.StatusBadRequest, "invalid_input")
@@ -366,6 +404,8 @@ func TestAPIV1Plugins(t *testing.T) {
 
 	expectAPIError(t, upload(uID, []byte("not a zip")), http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"url": "file:///etc/passwd"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"url": "https://example.com/plugin.zip"}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, upload(uID3, zip), http.StatusForbidden, "permission_denied")
 	expectAPIError(t, upload(uID2, zip), http.StatusNotFound, "not_found")

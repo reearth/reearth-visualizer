@@ -433,6 +433,8 @@ paths:
           $ref: "#/components/responses/Error"
         "404":
           $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
   /projects/{projectId}/plugins/{pluginId}:
     parameters:
       - $ref: "#/components/parameters/projectId"
@@ -755,5 +757,5 @@ components:
       required: [url]
       properties:
         url:
-          description: An https URL of the plugin zip.
+          description: A github.com repository URL, such as https://github.com/owner/repo or https://github.com/owner/repo/tree/branch. The server downloads the repository archive.
           type: string
