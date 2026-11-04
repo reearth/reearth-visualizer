@@ -240,7 +240,7 @@ type Project struct {
 	ImportStatus *ProjectImportStatus `json:"importStatus,omitempty"`
 	Name         string               `json:"name"`
 
-	// PublishedAlias The alias in the published URL. Set once the project has been published.
+	// PublishedAlias The alias used in the published URL. Set by the first publish request, whatever its status, and kept after unpublishing.
 	PublishedAlias    *string           `json:"publishedAlias,omitempty"`
 	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
@@ -303,7 +303,7 @@ type Story struct {
 	Id        string `json:"id"`
 	ProjectId string `json:"projectId"`
 
-	// PublishedAlias The alias in the story's published URL. Set once it has been published.
+	// PublishedAlias The alias used in the story's published URL. Every story has one from creation; it only becomes reachable once the story is published.
 	PublishedAlias    *string           `json:"publishedAlias,omitempty"`
 	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`

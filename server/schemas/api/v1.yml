@@ -555,7 +555,7 @@ components:
           description: The project alias used in the editor URL.
           type: string
         publishedAlias:
-          description: The alias in the published URL. Set once the project has been published.
+          description: The alias used in the published URL. Set by the first publish request, whatever its status, and kept after unpublishing.
           type: string
         importStatus:
           description: Set on a project created by an import.
@@ -681,7 +681,7 @@ components:
         title:
           type: string
         publishedAlias:
-          description: The alias in the story's published URL. Set once it has been published.
+          description: The alias used in the story's published URL. Every story has one from creation; it only becomes reachable once the story is published.
           type: string
         publishmentStatus:
           $ref: "#/components/schemas/PublishmentStatus"
