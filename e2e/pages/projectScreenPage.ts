@@ -12,6 +12,7 @@ export class ProjectScreenPage {
   addFromPlateauButton: Locator;
   preset3dTilesMenu: Locator;
   reearthBuildingsPresetButton: Locator;
+  osmBuildingsPresetButton: Locator;
   googlePhotorealisticPresetButton: Locator;
   layerNameInput: Locator;
   newCustomPropertyButton: Locator;
@@ -89,6 +90,9 @@ export class ProjectScreenPage {
     });
     this.reearthBuildingsPresetButton = this.page.getByRole("menuitem", {
       name: "Re:Earth Buildings"
+    });
+    this.osmBuildingsPresetButton = this.page.getByRole("menuitem", {
+      name: "Cesium OSM 3D Tiles"
     });
     this.googlePhotorealisticPresetButton = this.page.getByRole("menuitem", {
       name: "Google Photorealistic 3D Tiles"

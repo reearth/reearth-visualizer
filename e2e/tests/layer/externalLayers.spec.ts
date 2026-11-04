@@ -174,6 +174,7 @@ test.describe("Adding Layers from External Resources", () => {
     await openNewLayerMenu();
     await projectScreen.preset3dTilesMenu.hover();
     await expect(projectScreen.reearthBuildingsPresetButton).toBeVisible();
+    await expect(projectScreen.osmBuildingsPresetButton).toBeVisible();
     await expect(projectScreen.googlePhotorealisticPresetButton).toBeVisible();
 
     // Presets are added straight from the menu, without a modal.
@@ -183,6 +184,27 @@ test.describe("Adding Layers from External Resources", () => {
     await expect
       .poll(() => cesiumViewer.getLayerCount())
       .toBe(layersBefore + 1);
+  });
+
+  test("Add a preset 3D Tiles layer (Cesium OSM 3D Tiles)", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EXTL-002" });
+    test.setTimeout(60000);
+    const layersBefore = await cesiumViewer.getLayerCount();
+
+    await openNewLayerMenu();
+    await projectScreen.preset3dTilesMenu.hover();
+    await expect(projectScreen.osmBuildingsPresetButton).toBeVisible();
+
+    // Presets are added straight from the menu, without a modal.
+    await projectScreen.osmBuildingsPresetButton.click();
+    await cesiumViewer.waitForLoaderToDisappear();
+
+    await expect
+      .poll(() => cesiumViewer.getLayerCount())
+      .toBe(layersBefore + 1);
+    await expect(
+      projectScreen.getLayerByName("Cesium OSM 3D Tiles")
+    ).toBeVisible();
   });
 
   test("Add a 3D Tiles layer from URL", async () => {

@@ -15,6 +15,8 @@ export type PopupMenuItem = {
   title?: string;
   /** Secondary line rendered under the title. */
   description?: string;
+  /** "warning" shows the description in full, in the warning color with an icon. */
+  descriptionAppearance?: "default" | "warning";
   icon?: IconName;
   iconColor?: string;
   color?: string;
@@ -118,6 +120,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       subItem,
       title,
       description,
+      descriptionAppearance,
       disabled,
       dataTestid: itemTestid,
       tileComponent
@@ -129,7 +132,16 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         <TitleWrapper disabled={disabled} itemColor={itemColor}>
           {title}
         </TitleWrapper>
-        <Description>{description}</Description>
+        {descriptionAppearance === "warning" ? (
+          <WarningDescription>
+            <IconWrapper>
+              <Icon icon="lightBulb" size="small" color={theme.warning.main} />
+            </IconWrapper>
+            {description}
+          </WarningDescription>
+        ) : (
+          <Description>{description}</Description>
+        )}
       </TextWrapper>
     ) : (
       <TitleWrapper
@@ -450,4 +462,14 @@ const Description = styled("div")(({ theme }) => ({
   whiteSpace: css.whiteSpace.nowrap,
   overflow: css.overflow.hidden,
   textOverflow: css.textOverflow.ellipsis
+}));
+
+// Wraps instead of truncating so the whole warning stays readable.
+const WarningDescription = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.micro,
+  fontSize: theme.fonts.sizes.footnote,
+  color: theme.warning.main,
+  whiteSpace: css.whiteSpace.normal
 }));
