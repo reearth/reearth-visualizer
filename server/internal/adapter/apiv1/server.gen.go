@@ -257,7 +257,7 @@ type UpdateProjectRequest struct {
 
 // UploadPluginRequest defines model for UploadPluginRequest.
 type UploadPluginRequest struct {
-	// Url An https URL of the plugin zip.
+	// Url A github.com repository URL, such as https://github.com/owner/repo or https://github.com/owner/repo/tree/branch. The server downloads the repository archive.
 	Url string `json:"url"`
 }
 
@@ -1054,6 +1054,20 @@ func (response UploadPlugin404JSONResponse) VisitUploadPluginResponse(w http.Res
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UploadPlugin409JSONResponse Error
+
+func (response UploadPlugin409JSONResponse) VisitUploadPluginResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
 	_, err := buf.WriteTo(w)
 	return err
 }

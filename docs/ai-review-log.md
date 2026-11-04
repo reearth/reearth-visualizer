@@ -178,3 +178,32 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1CreateProject` checks that a missing visibility is 400; `TestAPIV1CreatePrivateProjectOnFreePlan` uses a policy checker that denies private projects and checks that private is 403 with nothing created, and public is still 201.
+
+## 2026-11-02 — REST API v1 review fixes (server/internal/adapter/apiv1)
+
+### Findings & Fixes
+1. **Plugin URLs outside github.com returned 500** (server/internal/adapter/apiv1/plugin.go)
+   - Bug: `POST /api/v1/projects/{id}/plugins` with `{"url": ...}` accepted any http(s) URL, but `UploadFromRemote` only knows github.com repositories. `repourl.ErrUnsupportedHost` / `ErrInvalidURL` were not mapped, so a URL such as `https://example.com/plugin.zip` was answered with 500 and logged as an error.
+   - Fix: both errors are answered with 400 and a message naming the supported form; the spec now describes the URL as a github.com repository URL.
+2. **Cleanup after a failed create used the request context** (server/internal/adapter/apiv1/project.go)
+   - Bug: if the client disconnected while the scene or story was being created, the cleanup delete ran on the canceled context and failed too, leaving a project the editor cannot open.
+   - Fix: the cleanup runs with `context.WithoutCancel(ctx)`.
+3. **Expected usecase errors returned 500** (server/internal/adapter/apiv1/errors.go)
+   - Bug: `interfaces.ErrPluginAlreadyInstalled` and the "operation is disabled by over used seat" errors (plain `errors.New` in the usecases) were classified as unexpected.
+   - Fix: they are answered with 409 `conflict` and 403 `permission_denied`.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1RequiresAUser` covers every route (list and mutating routes were not covered); `TestAPIV1Plugins` checks a non-GitHub URL is 400; `TestAPIV1CreateProjectWithOverusedSeats` checks 403.
+
+## 2026-11-02 — REST API v1 delete and update edge cases (server/internal/adapter/apiv1/project.go)
+
+### Findings & Fixes
+1. **A reader could "delete" a project already in the trash** (server/internal/adapter/apiv1/project.go)
+   - Bug: `DELETE /api/v1/projects/{id}` returned 204 without any write check when the project was already in the trash, because the only permission check ran inside `Project.Update`, which the no-op path skips. A workspace reader got 204 there but 403 for a live project.
+   - Fix: the handler checks write access to the workspace before the no-op.
+2. **PATCH with an empty body returned 200** (server/internal/adapter/apiv1/project.go)
+   - Bug: `PATCH /api/v1/projects/{id}` with no body or `{}` ran an update with no fields, which only bumped `updatedAt`.
+   - Fix: the handler answers 400 when no field is set.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1DeleteProject` checks a reader gets 403 on a project in the trash; `TestAPIV1UpdateProject` checks `{}` and a missing body are 400.
