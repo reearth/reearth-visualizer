@@ -1,0 +1,77 @@
+# Read-only browsing of Re:Earth CMS through the CMS internal API, used to add
+# a CMS model or asset as a layer. IDs on these types are CMS IDs, not
+# Visualizer node IDs. Pagination is CMS's page-based model: page is 1-based,
+# pageSize defaults to 50 and is capped at 100.
+
+type CMSProject {
+  id: ID!
+  name: String!
+  alias: String!
+  description: String!
+  workspaceId: ID!
+  public: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CMSModel {
+  id: ID!
+  projectId: ID!
+  name: String!
+  description: String!
+  key: String!
+  # CMS Public API URL of the model. Its items are served as GeoJSON at this
+  # URL with ".geojson" appended.
+  publicApiEp: String!
+  editorUrl: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type CMSAsset {
+  id: ID!
+  projectId: ID!
+  filename: String!
+  size: FileSize!
+  previewType: String
+  url: String!
+  archiveExtractionStatus: String
+  public: Boolean!
+  createdAt: DateTime!
+}
+
+type CMSProjectConnection {
+  nodes: [CMSProject!]!
+  totalCount: Int!
+}
+
+type CMSModelConnection {
+  nodes: [CMSModel!]!
+  totalCount: Int!
+}
+
+type CMSAssetConnection {
+  nodes: [CMSAsset!]!
+  totalCount: Int!
+}
+
+extend type Query {
+  cmsProjects(
+    workspaceId: ID!
+    keyword: String
+    page: Int
+    pageSize: Int
+  ): CMSProjectConnection!
+  cmsModels(
+    workspaceId: ID!
+    projectId: ID!
+    page: Int
+    pageSize: Int
+  ): CMSModelConnection!
+  cmsAssets(
+    workspaceId: ID!
+    projectId: ID!
+    page: Int
+    pageSize: Int
+  ): CMSAssetConnection!
+}
