@@ -108,8 +108,12 @@ func (Server) CreateProject(ctx context.Context, req CreateProjectRequestObject)
 	visibility := string(b.Visibility)
 
 	prj, err := uc.Project.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID:      wid,
-		Visualizer:       visualizer.VisualizerCesium,
+		WorkspaceID: wid,
+		// The value the web app stores, which GraphQL passes through as is.
+		// Project import only accepts this form, so a project created with
+		// visualizer.VisualizerCesium ("cesium") could not be imported again
+		// after an export.
+		Visualizer:       webVisualizerCesium,
 		Name:             &b.Name,
 		Description:      b.Description,
 		CoreSupport:      lo.ToPtr(true),
@@ -331,6 +335,8 @@ func publishedURL(hostPattern, alias string) *string {
 	}
 	return &u
 }
+
+const webVisualizerCesium = visualizer.Visualizer("CESIUM")
 
 // fetchProject returns the project, or a not found error when it does not
 // exist or the user cannot read its workspace.

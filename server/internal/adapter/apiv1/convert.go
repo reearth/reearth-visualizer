@@ -39,6 +39,16 @@ func toProject(p *project.Project, sceneID *id.SceneID) Project {
 		t = t.UTC()
 		res.PublishedAt = &t
 	}
+	if m := p.Metadata(); m != nil && m.ImportStatus() != nil {
+		if st := ProjectImportStatus(*m.ImportStatus()); st.Valid() {
+			res.ImportStatus = &st
+			if st == ProjectImportStatusFAILED && m.ImportResultLog() != nil {
+				if msg, ok := (*m.ImportResultLog())["message"].(string); ok && msg != "" {
+					res.ImportError = &msg
+				}
+			}
+		}
+	}
 	return res
 }
 
