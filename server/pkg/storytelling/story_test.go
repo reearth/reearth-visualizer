@@ -105,3 +105,32 @@ func TestStory_SettersGetters(t *testing.T) {
 
 func TestStory_ValidateProperties(t *testing.T) {
 }
+
+func TestStory_SetPublishedAt_KeepsFirstPublishedAt(t *testing.T) {
+	first := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	second := time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC)
+
+	s := &Story{}
+	assert.Nil(t, s.FirstPublishedAt())
+
+	s.SetPublishedAt(first)
+	assert.Equal(t, first, *s.PublishedAt())
+	assert.Equal(t, first, *s.FirstPublishedAt())
+
+	// A republish moves PublishedAt but keeps the first publish time.
+	s.SetPublishedAt(second)
+	assert.Equal(t, second, *s.PublishedAt())
+	assert.Equal(t, first, *s.FirstPublishedAt())
+}
+
+func TestStory_SetPublishedAt_DoesNotBackfillFirstPublishedAtForLegacyStory(t *testing.T) {
+	legacyPublishedAt := time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC)
+	republishedAt := time.Date(2026, 3, 1, 0, 0, 0, 0, time.UTC)
+
+	s := &Story{publishedAt: &legacyPublishedAt}
+	assert.Nil(t, s.FirstPublishedAt())
+
+	s.SetPublishedAt(republishedAt)
+	assert.Equal(t, republishedAt, *s.PublishedAt())
+	assert.Nil(t, s.FirstPublishedAt(), "a republish of a story published before firstPublishedAt existed must not fabricate a first-publish time")
+}

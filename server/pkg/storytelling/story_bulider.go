@@ -108,6 +108,11 @@ func (b *StoryBuilder) PublishedAt(t *time.Time) *StoryBuilder {
 	return b
 }
 
+func (b *StoryBuilder) FirstPublishedAt(t *time.Time) *StoryBuilder {
+	b.s.firstPublishedAt = t
+	return b
+}
+
 func (b *StoryBuilder) PublicTitle(title string) *StoryBuilder {
 	b.s.publicTitle = title
 	return b
