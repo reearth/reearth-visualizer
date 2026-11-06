@@ -16,13 +16,17 @@ import (
 )
 
 // Server implements StrictServerInterface.
-type Server struct{}
+type Server struct {
+	// publishedHost is the published site's host pattern (Published.Host),
+	// with "{}" standing for the published alias. Empty when not configured.
+	publishedHost string
+}
 
 var _ StrictServerInterface = Server{}
 
 // NewHandler returns the API's handler, ready for RegisterHandlers.
-func NewHandler() ServerInterface {
-	return NewStrictHandler(Server{}, nil)
+func NewHandler(publishedHost string) ServerInterface {
+	return NewStrictHandler(Server{publishedHost: publishedHost}, nil)
 }
 
 func usecases(ctx context.Context) (*interfaces.Container, *usecase.Operator) {
