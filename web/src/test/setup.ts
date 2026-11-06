@@ -11,10 +11,25 @@ import { afterEach, expect, vi } from "vitest";
 import "web-streams-polyfill/polyfill";
 
 declare global {
+  // The JSDOM instance Vitest's jsdom environment exposes.
+  var jsdom: { window: Window };
+
   namespace Vi {
     interface JestAssertion<T> extends jest.Matchers<void, T>, EmotionMatchers {
       toHaveStyleRule: EmotionMatchers["toHaveStyleRule"];
     }
+  }
+}
+
+// Node 25+ ships a built-in localStorage that is undefined unless Node runs
+// with --localstorage-file, and it shadows jsdom's. Restore jsdom's storage.
+for (const key of ["localStorage", "sessionStorage"] as const) {
+  if (!globalThis[key]) {
+    Object.defineProperty(globalThis, key, {
+      configurable: true,
+      writable: true,
+      value: jsdom.window[key]
+    });
   }
 }
 

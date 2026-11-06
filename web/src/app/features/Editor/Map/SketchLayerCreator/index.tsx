@@ -84,6 +84,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
         data-testid="sketch-layer-creator-modal"
         title={t("New Sketch Layer")}
         onCancel={onClose}
+        withBackground
         actions={
           <>
             <Button
