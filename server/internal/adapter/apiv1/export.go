@@ -35,13 +35,27 @@ func (s Server) ExportProject(ctx context.Context, req ExportProjectRequestObjec
 	if err != nil {
 		return nil, err
 	}
-	r, err := s.file.ReadExportProjectZip(ctx, filename)
+	body, err := openExport(ctx, s.file, filename)
 	if err != nil {
 		return nil, err
 	}
-	return ExportProject200ApplicationzipResponse{
-		Body: &exportReader{ReadCloser: r, ctx: ctx, file: s.file, name: filename},
-	}, nil
+	return ExportProject200ApplicationzipResponse{Body: body}, nil
+}
+
+func openExport(ctx context.Context, file gateway.File, name string) (io.ReadCloser, error) {
+	r, err := file.ReadExportProjectZip(ctx, name)
+	if err != nil {
+		removeExport(ctx, file, name)
+		return nil, err
+	}
+	return &exportReader{ReadCloser: r, ctx: ctx, file: file, name: name}, nil
+}
+
+func removeExport(ctx context.Context, file gateway.File, name string) {
+	// The request context may be ending as the response finishes.
+	if err := file.RemoveExportProjectZip(context.WithoutCancel(ctx), name); err != nil {
+		log.Warnfc(ctx, "api v1: could not remove export %s: %v", name, err)
+	}
 }
 
 // exportReader removes the stored export once the response is done with it.
@@ -54,9 +68,6 @@ type exportReader struct {
 
 func (r *exportReader) Close() error {
 	err := r.ReadCloser.Close()
-	// The request context may be ending as the response finishes.
-	if rerr := r.file.RemoveExportProjectZip(context.WithoutCancel(r.ctx), r.name); rerr != nil {
-		log.Warnfc(r.ctx, "api v1: could not remove export %s: %v", r.name, rerr)
-	}
+	removeExport(r.ctx, r.file, r.name)
 	return err
 }

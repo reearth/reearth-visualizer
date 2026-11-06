@@ -240,3 +240,13 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1ImportProject` checks a JSON body and an empty body are 400.
+
+## 2026-11-06 — REST API v1 export left its zip behind on a failed read (server/internal/adapter/apiv1/export.go)
+
+### Findings & Fixes
+1. **Export zip left in storage when reading it back failed** (server/internal/adapter/apiv1/export.go)
+   - Bug: `GET /api/v1/projects/{id}/export` writes the zip to export storage, then reads it back to stream it. The zip was only removed when the response finished, so if the read failed the handler returned the error and the zip stayed in storage. Raised by ZTongci on #2488.
+   - Fix: `openExport` removes the stored zip when it cannot be read; both removal paths share `removeExport`.
+
+### Tests added
+- server/internal/adapter/apiv1/export_test.go: `TestOpenExport` checks the zip is removed after a failed read, and only after the response is closed on success.
