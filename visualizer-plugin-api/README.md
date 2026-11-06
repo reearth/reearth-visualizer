@@ -68,6 +68,8 @@ This package follows [semantic versioning](https://semver.org): `MAJOR.MINOR.PAT
 | `MINOR` (the `1` in `2.1.1`) | A bug fix, or any change that affects the types in this package, but only adds or widens something, such as a new API or a new optional field. Existing plugins keep compiling. | `2.1.1` → `2.2.0` |
 | `PATCH` (the last `1` in `2.1.1`) | A small update with no effect on the types, such as docs, comments, `repository` metadata or a release-process check. | `2.1.1` → `2.1.2` |
 
+A bug fix is `MINOR`, not `PATCH`, unlike many packages, because in a package that only has types a fix always changes the types. `PATCH` is only for changes that do not change the types.
+
 Plugins that depend on `^2.1.1` pick up every `MINOR` and `PATCH` release automatically, so never ship a change that can break a build as one of those.
 
 Every release needs a new version number, because npm never lets you publish the same version twice.
