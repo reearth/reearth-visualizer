@@ -11,26 +11,33 @@ import type { PluginInfoboxBlock as InternalPluginInfoboxBlock } from "../../../
 import type { PluginStoryBlock as InternalPluginStoryBlock } from "../../../StoryPanel/types";
 import type { WidgetLayout as InternalWidgetLayout } from "../../../Widgets/types";
 
-// The package inlines simplified copies of these types, so the compiler is the
-// only thing keeping them in sync. These are type-level checks: they do not run
-// at runtime, `yarn type` is what fails when a type drifts.
+// The package inlines copies of these types, so the compiler is the only thing
+// keeping them in sync. These are type-level checks: they do not run at
+// runtime, `yarn type` is what fails when a type drifts.
+//
+// The types must be equal, not only assignable one way. Most fields are
+// optional, so a field removed from one side would still be assignable, and
+// plugins would see a field that the app never sends.
 describe("plugin API types", () => {
-  it("accepts the app's internal types for what plugins receive", () => {
-    expectTypeOf<InternalPluginInfoboxBlock>().toExtend<PluginInfoboxBlock>();
-    expectTypeOf<InternalPluginStoryBlock>().toExtend<PluginStoryBlock>();
-    expectTypeOf<InternalWidgetLayout>().toExtend<WidgetLayout>();
+  it("keeps the app's internal types equal to what plugins see", () => {
+    expectTypeOf<InternalPluginInfoboxBlock>().toEqualTypeOf<PluginInfoboxBlock>();
+    expectTypeOf<InternalPluginStoryBlock>().toEqualTypeOf<PluginStoryBlock>();
+    expectTypeOf<InternalWidgetLayout>().toEqualTypeOf<WidgetLayout>();
   });
 
-  it("accepts the app's scene mode in the viewer property", () => {
+  it("keeps the app's scene mode equal to the viewer property's", () => {
     type PackageSceneMode = NonNullable<
       NonNullable<ViewerProperty["scene"]>["mode"]
     >;
-    expectTypeOf<InternalSceneMode>().toExtend<PackageSceneMode>();
+    expectTypeOf<InternalSceneMode>().toEqualTypeOf<PackageSceneMode>();
   });
 
-  it("fails the type check when a type is not compatible", () => {
-    // If this line stops being an error, the checks above no longer guard anything.
+  it("fails the type check when a type drifts", () => {
+    // If these lines stop being errors, the checks above no longer guard anything.
     // @ts-expect-error `{ nope: 1 }` is not a WidgetLayout
-    expectTypeOf<{ nope: 1 }>().toExtend<WidgetLayout>();
+    expectTypeOf<{ nope: 1 }>().toEqualTypeOf<WidgetLayout>();
+    // An optional field that is missing on one side must be caught.
+    // @ts-expect-error `align` is missing
+    expectTypeOf<Omit<InternalWidgetLayout, "align">>().toEqualTypeOf<WidgetLayout>();
   });
 });
