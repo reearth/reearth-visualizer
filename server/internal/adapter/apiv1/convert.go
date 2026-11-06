@@ -29,6 +29,9 @@ func toProject(p *project.Project, sceneID *id.SceneID) Project {
 	if a := p.ProjectAlias(); a != "" {
 		res.Alias = &a
 	}
+	if a := p.Alias(); a != "" {
+		res.PublishedAlias = &a
+	}
 	if u := p.ImageURL(); u != nil {
 		res.ImageUrl = lo.ToPtr(u.String())
 	}
@@ -36,7 +39,29 @@ func toProject(p *project.Project, sceneID *id.SceneID) Project {
 		t = t.UTC()
 		res.PublishedAt = &t
 	}
+	if m := p.Metadata(); m != nil && m.ImportStatus() != nil {
+		if st := ProjectImportStatus(*m.ImportStatus()); st.Valid() {
+			res.ImportStatus = &st
+			if st == ProjectImportStatusFAILED && m.ImportResultLog() != nil {
+				if msg, ok := (*m.ImportResultLog())["message"].(string); ok && msg != "" {
+					res.ImportError = &msg
+				}
+			}
+		}
+	}
 	return res
+}
+
+func fromPublishmentStatus(s PublishmentStatus) (project.PublishmentStatus, bool) {
+	switch s {
+	case PublishmentStatusPublic:
+		return project.PublishmentStatusPublic, true
+	case PublishmentStatusLimited:
+		return project.PublishmentStatusLimited, true
+	case PublishmentStatusPrivate:
+		return project.PublishmentStatusPrivate, true
+	}
+	return "", false
 }
 
 func toPublishmentStatus(s project.PublishmentStatus) PublishmentStatus {
