@@ -1,6 +1,7 @@
 import { LayerAddProps } from "@reearth/app/features/Editor/hooks/useLayers";
 import {
   Button,
+  Icon,
   IconButton,
   Modal,
   ModalPanel,
@@ -9,7 +10,7 @@ import {
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
-import { styled, useTheme } from "@reearth/services/theme";
+import { keyframes, styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback } from "react";
 
@@ -63,6 +64,9 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
     prioritizePerformance,
     autoUpdateTime,
     canSubmit,
+    checking,
+    modelError,
+    dismissModelIssue,
     setLayout,
     setLatColumn,
     setLngColumn,
@@ -150,23 +154,23 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
               )}
               {/* Where the selected CMS asset is served from. */}
               {step === "select" && isCmsTab && selectedAsset && (
-                  <HostedBy>
-                    <HostedByLabel size="footnote" color={theme.content.weak}>
-                      {t("Hosted by CMS")}
-                    </HostedByLabel>
-                    <UrlWrapper>
-                      <Url title={selectedAsset.url}>{selectedAsset.url}</Url>
-                      <IconButton
-                        icon="copy"
-                        size="small"
-                        appearance="simple"
-                        iconColor={theme.content.weak}
-                        ariaLabel={t("Copy")}
-                        onClick={handleCopyUrl}
-                      />
-                    </UrlWrapper>
-                  </HostedBy>
-                )}
+                <HostedBy>
+                  <HostedByLabel size="footnote" color={theme.content.weak}>
+                    {t("Hosted by CMS")}
+                  </HostedByLabel>
+                  <UrlWrapper>
+                    <Url title={selectedAsset.url}>{selectedAsset.url}</Url>
+                    <IconButton
+                      icon="copy"
+                      size="small"
+                      appearance="simple"
+                      iconColor={theme.content.weak}
+                      ariaLabel={t("Copy")}
+                      onClick={handleCopyUrl}
+                    />
+                  </UrlWrapper>
+                </HostedBy>
+              )}
               <Button
                 title={t("Cancel")}
                 onClick={onClose}
@@ -184,97 +188,129 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
         }
       >
         <Wrapper>
-          {step === "details" && selectedAsset && selectedFormat ? (
-            <DetailsStep
-              data-testid={
-                selectedFormat === "csv"
-                  ? "asset-layer-creator-csv-columns"
-                  : "asset-layer-creator-layer-names"
-              }
-            >
-              <SelectedAsset>
-                <Badge>{FORMAT_LABELS[selectedFormat]}</Badge>
-                {needsLayerNames(selectedFormat) ? (
-                  <AssetInfo>
-                    <Typography size="footnote" color={theme.content.weak}>
-                      {selectedAsset.projectName}
-                      {selectedAsset.modelName && (
-                        <>
-                          {" / "}
-                          <ModelLink
-                            href={selectedAsset.modelUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {selectedAsset.modelName}
-                          </ModelLink>
-                        </>
-                      )}
-                    </Typography>
-                    <UrlWrapper>
-                      <Url title={selectedAsset.url}>{selectedAsset.url}</Url>
-                      <IconButton
-                        icon="copy"
-                        size="small"
-                        appearance="simple"
-                        iconColor={theme.content.weak}
-                        ariaLabel={t("Copy")}
-                        onClick={handleCopyUrl}
-                      />
-                    </UrlWrapper>
-                  </AssetInfo>
+          <ContentWrapper dimmed={checking}>
+            {step === "details" && selectedAsset && selectedFormat ? (
+              <DetailsStep
+                data-testid={
+                  selectedFormat === "csv"
+                    ? "asset-layer-creator-csv-columns"
+                    : "asset-layer-creator-layer-names"
+                }
+              >
+                <SelectedAsset>
+                  <Badge>{FORMAT_LABELS[selectedFormat]}</Badge>
+                  {needsLayerNames(selectedFormat) ? (
+                    <AssetInfo>
+                      <Typography size="footnote" color={theme.content.weak}>
+                        {selectedAsset.projectName}
+                        {selectedAsset.modelName && (
+                          <>
+                            {" / "}
+                            <ModelLink
+                              href={selectedAsset.modelUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {selectedAsset.modelName}
+                            </ModelLink>
+                          </>
+                        )}
+                      </Typography>
+                      <UrlWrapper>
+                        <Url title={selectedAsset.url}>{selectedAsset.url}</Url>
+                        <IconButton
+                          icon="copy"
+                          size="small"
+                          appearance="simple"
+                          iconColor={theme.content.weak}
+                          ariaLabel={t("Copy")}
+                          onClick={handleCopyUrl}
+                        />
+                      </UrlWrapper>
+                    </AssetInfo>
+                  ) : (
+                    <Typography size="body">{selectedAsset.name}</Typography>
+                  )}
+                </SelectedAsset>
+                {selectedFormat === "csv" ? (
+                  <CsvColumnInputs
+                    latColumn={latColumn}
+                    lngColumn={lngColumn}
+                    onLatColumnChange={setLatColumn}
+                    onLngColumnChange={setLngColumn}
+                    testIdPrefix="asset-layer-creator"
+                  />
                 ) : (
-                  <Typography size="body">{selectedAsset.name}</Typography>
+                  <LayerNameInputs {...layerNameInputProps} />
                 )}
-              </SelectedAsset>
-              {selectedFormat === "csv" ? (
-                <CsvColumnInputs
-                  latColumn={latColumn}
-                  lngColumn={lngColumn}
-                  onLatColumnChange={setLatColumn}
-                  onLngColumnChange={setLngColumn}
-                  testIdPrefix="asset-layer-creator"
+              </DetailsStep>
+            ) : (
+              <UploadDropzone
+                active={uploads.length > 0}
+                onDrop={handleDropFiles}
+                content={
+                  <UploadList
+                    uploads={uploads}
+                    uploading={uploading}
+                    onRemove={handleUploadRemove}
+                    onSubmit={handleUploadSubmit}
+                  />
+                }
+              >
+                <AssetContents
+                  assets={assets}
+                  loading={loading}
+                  wrapperRef={wrapperRef}
+                  contentRef={contentRef}
+                  layout={layout}
+                  formatFilter={formatFilter}
+                  formatOptions={formatOptions}
+                  tab={tab}
+                  projectFilter={projectFilter}
+                  projectOptions={projectOptions}
+                  sort={sort}
+                  sortOptions={sortOptions}
+                  selectedId={selectedId}
+                  onUpload={upload}
+                  onLayoutChange={setLayout}
+                  onSearch={handleSearch}
+                  onFormatFilterChange={handleFormatFilterChange}
+                  onProjectFilterChange={handleProjectFilterChange}
+                  onSortChange={handleSortChange}
+                  onSelect={handleSelect}
                 />
-              ) : (
-                <LayerNameInputs {...layerNameInputProps} />
-              )}
-            </DetailsStep>
-          ) : (
-            <UploadDropzone
-              active={uploads.length > 0}
-              onDrop={handleDropFiles}
-              content={
-                <UploadList
-                  uploads={uploads}
-                  uploading={uploading}
-                  onRemove={handleUploadRemove}
-                  onSubmit={handleUploadSubmit}
-                />
-              }
-            >
-              <AssetContents
-                assets={assets}
-                loading={loading}
-                wrapperRef={wrapperRef}
-                contentRef={contentRef}
-                layout={layout}
-                formatFilter={formatFilter}
-                formatOptions={formatOptions}
-                cms={isCmsTab}
-                projectFilter={projectFilter}
-                projectOptions={projectOptions}
-                sort={sort}
-                sortOptions={sortOptions}
-                selectedId={selectedId}
-                onUpload={upload}
-                onLayoutChange={setLayout}
-                onSearch={handleSearch}
-                onFormatFilterChange={handleFormatFilterChange}
-                onProjectFilterChange={handleProjectFilterChange}
-                onSortChange={handleSortChange}
-                onSelect={handleSelect}
+              </UploadDropzone>
+            )}
+          </ContentWrapper>
+          {checking && (
+            <CheckWrapper data-testid="asset-layer-creator-checking">
+              <Spinner aria-hidden>
+                {SPOKES.map((i) => (
+                  <Spoke key={i} index={i} />
+                ))}
+              </Spinner>
+              {t("Checking the model")}
+            </CheckWrapper>
+          )}
+          {modelError && (
+            <ModelError role="alert" data-testid="asset-layer-creator-error">
+              <Icon icon="warning" color={theme.dangerous.main} />
+              <ModelErrorText>
+                <Typography size="body" weight="bold">
+                  {t("Cannot add this Model")}
+                </Typography>
+                <Typography size="footnote" color={theme.content.main}>
+                  {modelError}
+                </Typography>
+              </ModelErrorText>
+              <IconButton
+                icon="close"
+                size="small"
+                appearance="simple"
+                ariaLabel={t("Close")}
+                onClick={dismissModelIssue}
               />
-            </UploadDropzone>
+            </ModelError>
           )}
         </Wrapper>
       </ModalPanel>
@@ -282,11 +318,85 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
   );
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
+const Wrapper = styled("div")(() => ({
+  position: css.position.relative
+}));
+
+const ContentWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "dimmed"
+})<{ dimmed: boolean }>(({ theme, dimmed }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   gap: theme.spacing.small,
-  padding: theme.spacing.large
+  padding: theme.spacing.large,
+  opacity: dimmed ? 0.2 : 1,
+  pointerEvents: dimmed ? "none" : undefined
+}));
+
+const CheckWrapper = styled("div")(({ theme }) => ({
+  position: css.position.absolute,
+  inset: 0,
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
+  gap: theme.spacing.small,
+  color: theme.content.main,
+  fontSize: theme.fonts.sizes.h5,
+  fontWeight: theme.fonts.weight.regular
+}));
+
+// Eight spokes fading in turn around the centre.
+const SPOKES = [0, 1, 2, 3, 4, 5, 6, 7];
+
+const fade = keyframes`
+  from { opacity: 1; }
+  to { opacity: 0.2; }
+`;
+
+const Spinner = styled("div")(() => ({
+  position: css.position.relative,
+  width: 20,
+  height: 20
+}));
+
+const Spoke = styled("span", {
+  shouldForwardProp: (prop) => prop !== "index"
+})<{ index: number }>(({ theme, index }) => ({
+  position: css.position.absolute,
+  left: 9,
+  top: 0,
+  width: 2,
+  height: 6,
+  borderRadius: 1,
+  background: theme.content.main,
+  transformOrigin: "1px 10px",
+  transform: `rotate(${index * 45}deg)`,
+  animation: `${fade} 0.8s linear infinite`,
+  animationDelay: `${(index - SPOKES.length) * 0.1}s`
+}));
+
+// Over the assets, just above the footer.
+const ModelError = styled("div")(({ theme }) => ({
+  position: css.position.absolute,
+  left: "50%",
+  bottom: theme.spacing.large,
+  transform: "translateX(-50%)",
+  display: css.display.flex,
+  alignItems: css.alignItems.flexStart,
+  gap: theme.spacing.small,
+  width: 400,
+  padding: theme.spacing.normal,
+  borderRadius: theme.radius.normal,
+  background: theme.bg[1],
+  boxShadow: theme.shadow.tooltip
+}));
+
+const ModelErrorText = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  gap: theme.spacing.smallest,
+  flex: 1
 }));
 
 const DetailsStep = styled("div")(({ theme }) => ({

@@ -1,6 +1,8 @@
 import { DataType } from "@reearth/core";
 
-import { LayerAsset } from "./types";
+import { isWmsUrl } from "../UrlLayerCreator/utils";
+
+import { AssetTab, LayerAsset, SortKey } from "./types";
 
 // Every format an asset can be added as. CMS supports them all; Visualizer
 // assets are files uploaded here, so only ASSET_FORMATS.
@@ -8,7 +10,10 @@ export type LayerFormat = Extract<
   DataType,
   "geojson" | "csv" | "kml" | "czml" | "mvt" | "wms" | "3dtiles"
 >;
-export type AssetFormat = Extract<LayerFormat, "geojson" | "csv" | "kml" | "czml">;
+export type AssetFormat = Extract<
+  LayerFormat,
+  "geojson" | "csv" | "kml" | "czml"
+>;
 
 export const FORMAT_LABELS: Record<LayerFormat, string> = {
   geojson: "GeoJSON",
@@ -48,6 +53,98 @@ export const formatOf = (url: string): AssetFormat | undefined => {
 // 3D Tiles can't be told from the URL (a tileset.json looks like GeoJSON).
 export const assetFormat = (asset: LayerAsset): LayerFormat | undefined =>
   asset.format ?? formatOf(asset.url);
+
+// The list view's grid columns on each tab, shared by its header and rows.
+export const LIST_COLUMNS: Record<AssetTab, string> = {
+  visualizer: "1fr 120px 140px",
+  cmsAssets: "minmax(0, 1.4fr) minmax(0, 1fr) 80px 120px",
+  cmsModels: "minmax(0, 1.4fr) minmax(0, 1fr) 140px"
+};
+
+const MVT_TEMPLATE = "{z}/{x}/{y}.mvt";
+
+// How a CMS asset is added as a layer: the URL and format to load it with.
+// - MVT is an asset CMS gives the MVT preview type, or a .mvt / .pbf file.
+//   Its tiles are served from a {z}/{x}/{y} template, found as CMS's own
+//   viewer does: a tile's z/x/y path is replaced, an archive is served next
+//   to it once CMS has extracted it, and a lone file from its folder.
+// - WMS has no preview type in CMS, so it is recognised from the URL.
+// - Other formats go by the extension.
+export const cmsAssetLayer = (asset: {
+  url: string;
+  previewType?: string | null;
+  archiveExtractionStatus?: string | null;
+}): { url: string; format?: LayerFormat } => {
+  const { url } = asset;
+  const mvtFile = /\.(mvt|pbf)$/i.test(url);
+  if (asset.previewType?.toLowerCase() !== "geo_mvt" && !mvtFile)
+    return isWmsUrl(url) ? { url, format: "wms" } : { url };
+
+  const tile = /\/\d{1,5}\/\d{1,5}\/\d{1,5}\.(mvt|pbf)$/i;
+  if (tile.test(url))
+    return { url: url.replace(tile, `/${MVT_TEMPLATE}`), format: "mvt" };
+  if (mvtFile)
+    return {
+      url: url.replace(/\/[^/]+$/, `/${MVT_TEMPLATE}`),
+      format: "mvt"
+    };
+  if (
+    /\.(zip|7z)$/i.test(url) &&
+    asset.archiveExtractionStatus?.toLowerCase() === "done"
+  )
+    return {
+      url: `${url.replace(/\.(zip|7z)$/i, "")}/${MVT_TEMPLATE}`,
+      format: "mvt"
+    };
+  // Not extracted (yet), or not something tiles can be served from.
+  return { url };
+};
+
+export type ModelIssue = "noGeometry" | "unavailable";
+
+const MODEL_CHECK_TIMEOUT_MS = 15000;
+
+// A CMS model is served as GeoJSON only when it is published to the Public
+// API (otherwise 404) and has a geometry field (otherwise CMS fails with "no
+// geometry field in this model"). Fetches a single item to find out.
+export const checkModelGeoJson = async (
+  url: string,
+  signal: AbortSignal
+): Promise<ModelIssue | undefined> => {
+  try {
+    const res = await fetch(`${url}?limit=1`, {
+      signal: AbortSignal.any([
+        signal,
+        AbortSignal.timeout(MODEL_CHECK_TIMEOUT_MS)
+      ])
+    });
+    if (res.ok) {
+      res.body?.cancel().catch(() => undefined);
+      return undefined;
+    }
+    const body = await res.text().catch(() => "");
+    return res.status !== 404 && /geometry/i.test(body)
+      ? "noGeometry"
+      : "unavailable";
+  } catch {
+    return "unavailable";
+  }
+};
+
+// For sources the server can't sort, such as CMS.
+export const sortAssets = (assets: LayerAsset[], sort: SortKey) => {
+  const [field, direction] = sort.split("-");
+  const sign = direction === "asc" ? 1 : -1;
+  return [...assets].sort(
+    (a, b) =>
+      sign *
+      (field === "name"
+        ? a.name.localeCompare(b.name)
+        : field === "size"
+          ? a.size - b.size
+          : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+  );
+};
 
 // e.g. 360 → "360 Bytes", 91115 → "88.98 KB".
 export const formatBytes = (bytes: number): string => {

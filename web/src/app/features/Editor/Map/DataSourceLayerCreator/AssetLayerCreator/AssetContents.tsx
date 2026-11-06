@@ -13,13 +13,9 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, RefObject } from "react";
 
-import {
-  AssetCard,
-  AssetRow,
-  CMS_LIST_COLUMNS,
-  LIST_COLUMNS
-} from "./AssetItem";
-import { AssetLayout, LayerAsset } from "./types";
+import { AssetCard, AssetRow } from "./AssetItem";
+import { AssetLayout, AssetTab, LayerAsset } from "./types";
+import { LIST_COLUMNS } from "./utils";
 
 type Option = { value: string; label: string };
 
@@ -31,8 +27,8 @@ type Props = {
   layout: AssetLayout;
   formatFilter: string;
   formatOptions: Option[];
-  // CMS sources add a project filter and Project / Model list columns.
-  cms?: boolean;
+  // Picks the list columns; CMS tabs also add a project filter.
+  tab: AssetTab;
   projectFilter: string;
   projectOptions: Option[];
   sort: string;
@@ -57,7 +53,7 @@ const AssetContents: FC<Props> = ({
   layout,
   formatFilter,
   formatOptions,
-  cms,
+  tab,
   projectFilter,
   projectOptions,
   sort,
@@ -110,7 +106,7 @@ const AssetContents: FC<Props> = ({
                 dataTestid="asset-layer-creator-format"
               />
             </Filter>
-            {cms && (
+            {tab !== "visualizer" && (
               <Filter>
                 <Selector
                   value={projectFilter}
@@ -125,20 +121,15 @@ const AssetContents: FC<Props> = ({
       />
 
       <AssetsArea>
-        {/* Like the dashboard asset list: the header sits outside the scroll
-            area, so only the rows scroll and nothing shows behind it. */}
         {layout === "list" && !loading && !!assets.length && (
           <ListHeaderWrapper>
-            <ListHeader cms={cms}>
+            <ListHeader tab={tab}>
               <span>{t("Name")}</span>
-              {cms && (
-                <>
-                  <span>{t("Project")}</span>
-                  <span>{t("Model")}</span>
-                </>
-              )}
-              <span>{t("Size")}</span>
-              <span>{t("Uploaded at")}</span>
+              {tab !== "visualizer" && <span>{t("Project")}</span>}
+              {tab !== "cmsModels" && <span>{t("Size")}</span>}
+              <span>
+                {tab === "cmsModels" ? t("Created") : t("Uploaded at")}
+              </span>
             </ListHeader>
           </ListHeaderWrapper>
         )}
@@ -163,6 +154,7 @@ const AssetContents: FC<Props> = ({
                 <AssetCard
                   key={asset.id}
                   asset={asset}
+                  tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
                 />
@@ -174,7 +166,7 @@ const AssetContents: FC<Props> = ({
                 <AssetRow
                   key={asset.id}
                   asset={asset}
-                  cms={cms}
+                  tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
                 />
@@ -240,10 +232,10 @@ const List = styled("div")(({ theme }) => ({
 }));
 
 const ListHeader = styled("div", {
-  shouldForwardProp: (prop) => prop !== "cms"
-})<{ cms?: boolean }>(({ theme, cms }) => ({
+  shouldForwardProp: (prop) => prop !== "tab"
+})<{ tab: AssetTab }>(({ theme, tab }) => ({
   display: "grid",
-  gridTemplateColumns: cms ? CMS_LIST_COLUMNS : LIST_COLUMNS,
+  gridTemplateColumns: LIST_COLUMNS[tab],
   gap: theme.spacing.normal,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   color: theme.content.weak,
