@@ -201,7 +201,7 @@ func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *account
 		ID(uId).
 		Name(userModel.Name()).
 		Alias(userModel.Alias()).
-		Email(userModel.Email()).
+		OptionalEmail(userModel.Email()).
 		Metadata(usermetadata).
 		Workspace(wid).
 		Auths(auths)

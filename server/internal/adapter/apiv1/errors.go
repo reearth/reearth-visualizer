@@ -47,6 +47,14 @@ func conflict(format string, args ...any) error {
 	return &apiError{status: http.StatusConflict, code: ErrorErrorCodeConflict, message: fmt.Sprintf(format, args...)}
 }
 
+func unsupported(format string, args ...any) error {
+	return &apiError{status: http.StatusNotImplemented, code: ErrorErrorCodeUnsupported, message: fmt.Sprintf(format, args...)}
+}
+
+func permissionDenied(format string, args ...any) error {
+	return &apiError{status: http.StatusForbidden, code: ErrorErrorCodePermissionDenied, message: fmt.Sprintf(format, args...)}
+}
+
 var errUnauthorized = &apiError{status: http.StatusUnauthorized, code: ErrorErrorCodeUnauthorized, message: "unauthorized"}
 
 // RequireOperator rejects requests that the auth middleware could not attach
@@ -87,6 +95,8 @@ func toResponse(ctx context.Context, err error) (int, ErrorErrorCode, string) {
 	}
 
 	switch {
+	case errors.Is(err, http.ErrNotMultipart), errors.Is(err, http.ErrMissingBoundary):
+		return http.StatusBadRequest, ErrorErrorCodeInvalidInput, "send the request body as multipart/form-data"
 	case errors.Is(err, interfaces.ErrPluginAlreadyInstalled):
 		return http.StatusConflict, ErrorErrorCodeConflict, "a plugin with this name is already installed in the project"
 	case isSeatOverused(err):
