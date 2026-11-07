@@ -169,6 +169,19 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 ### Tests added
 - convert.test.tsx (3 tests): quoted/nested operator characters round-trip unchanged, a quoted operator inside a simple value still parses, and `startsWith` args split only on the top-level comma.
 
+## 2026-10-09 — REST API v1 project create (server/internal/adapter/apiv1/project.go)
+
+### Findings & Fixes
+1. **API-created projects could not be imported again after an export** (server/internal/adapter/apiv1/project.go)
+   - Bug: `POST /api/v1/workspaces/{id}/projects` stored the visualizer as `visualizer.VisualizerCesium` ("cesium"), while GraphQL passes its enum value through and the web app's projects store "CESIUM". Export writes the stored value as is, and import parses it into the GraphQL enum, which rejects "cesium", so importing the export of an API-created project always failed with "project data parse error".
+   - Fix: the API stores "CESIUM", as the web app does. Projects stored as "cesium" by other paths (the internal API, older imports) have the same export problem; that is left for a separate fix.
+2. **A reader got 400 instead of 403 when importing** (server/internal/adapter/apiv1/import.go)
+   - Bug: the shared chunked upload answers every failure to start an import, including a missing write permission, with 400.
+   - Fix: the import endpoint checks write access to the workspace first and answers 403.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1ImportProject` exports a project, imports the zip back, polls until SUCCESS and compares the copy; it also covers an unstarted upload, missing fields, an unsafe file ID and a reader (403)
+
 ---
 
 ## 2026-11-02 — PR #2504 review comments: add-layer creators (web/src/app/features/Editor/Map/DataSourceLayerCreator/**, reearth-ui Switcher/TextInput)
@@ -229,3 +242,33 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1DeleteProject` checks a reader gets 403 on a project in the trash; `TestAPIV1UpdateProject` checks `{}` and a missing body are 400.
+
+## 2026-11-04 — REST API v1 restore permission (server/internal/adapter/apiv1/project.go)
+
+### Findings & Fixes
+1. **A reader could "restore" a live project** (server/internal/adapter/apiv1/project.go)
+   - Bug: `POST /api/v1/projects/{id}/restore` only checked write access inside `Project.Update`, which is skipped when the project is not in the trash, so a workspace reader got 200 for a live project but 403 for a trashed one.
+   - Fix: the handler checks write access before the no-op, as `DeleteProject` does. Also moved `fetchProject`'s doc comment back onto `fetchProject`; a merge had left it on `RestoreProject`.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1RestoreProject` checks a reader gets 403 on a project that is not in the trash.
+
+## 2026-11-04 — REST API v1 import with a non-multipart body (server/internal/adapter/apiv1/errors.go)
+
+### Findings & Fixes
+1. **A non-multipart import request returned 500** (server/internal/adapter/apiv1/errors.go)
+   - Bug: the generated wrapper for `POST /api/v1/workspaces/{id}/projects/import` calls `MultipartReader()` before the handler and returns its error as is. `http.ErrNotMultipart` and `http.ErrMissingBoundary` were not mapped, so a JSON or empty body got 500 "internal" and an ERROR log, and the handler's own body check never ran.
+   - Fix: both errors are answered with 400 `invalid_input`.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1ImportProject` checks a JSON body and an empty body are 400.
+
+## 2026-11-06 — REST API v1 export left its zip behind on a failed read (server/internal/adapter/apiv1/export.go)
+
+### Findings & Fixes
+1. **Export zip left in storage when reading it back failed** (server/internal/adapter/apiv1/export.go)
+   - Bug: `GET /api/v1/projects/{id}/export` writes the zip to export storage, then reads it back to stream it. The zip was only removed when the response finished, so if the read failed the handler returned the error and the zip stayed in storage. Raised by ZTongci on #2488.
+   - Fix: `openExport` removes the stored zip when it cannot be read; both removal paths share `removeExport`.
+
+### Tests added
+- server/internal/adapter/apiv1/export_test.go: `TestOpenExport` checks the zip is removed after a failed read, and only after the response is closed on success.
