@@ -14,7 +14,11 @@ import fragmentMatcher from "../__gen__/fragmentMatcher.json";
 
 import { authLink, sentryLink, errorLink, uploadLink, taskLink } from "./links";
 import langLink from "./links/langLink";
-import { paginationMerge, paginationMergeNodes } from "./pagination";
+import {
+  pageMergeNodes,
+  paginationMerge,
+  paginationMergeNodes
+} from "./pagination";
 
 const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const endpoint = window.REEARTH_CONFIG?.api
@@ -66,6 +70,18 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
           datasetSchemas: {
             keyArgs: ["sceneId", "first", "after"],
             merge: paginationMerge
+          },
+          cmsProjects: {
+            keyArgs: ["workspaceId", "keyword", "pageSize"],
+            merge: pageMergeNodes
+          },
+          cmsModels: {
+            keyArgs: ["workspaceId", "projectId", "pageSize"],
+            merge: pageMergeNodes
+          },
+          cmsAssets: {
+            keyArgs: ["workspaceId", "projectId", "pageSize"],
+            merge: pageMergeNodes
           }
         }
       }

@@ -1,4 +1,3 @@
-import { Asset } from "@reearth/app/features/AssetsManager/types";
 import {
   Icon,
   Loading,
@@ -14,19 +13,24 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, RefObject } from "react";
 
-import { AssetCard, AssetRow, LIST_COLUMNS } from "./AssetItem";
-import { AssetLayout } from "./types";
+import { AssetCard, AssetRow } from "./AssetItem";
+import { AssetLayout, AssetTab, LayerAsset } from "./types";
+import { LIST_COLUMNS } from "./utils";
 
 type Option = { value: string; label: string };
 
 type Props = {
-  assets: Asset[];
+  assets: LayerAsset[];
   loading: boolean;
   wrapperRef: RefObject<HTMLDivElement | null>;
   contentRef: RefObject<HTMLDivElement | null>;
   layout: AssetLayout;
   formatFilter: string;
   formatOptions: Option[];
+  // Picks the list columns; CMS tabs also add a project filter.
+  tab: AssetTab;
+  projectFilter: string;
+  projectOptions: Option[];
   sort: string;
   sortOptions: Option[];
   selectedId?: string;
@@ -35,6 +39,7 @@ type Props = {
   onLayoutChange: (layout: AssetLayout) => void;
   onSearch: (keyword?: string) => void;
   onFormatFilterChange: (value: string | string[]) => void;
+  onProjectFilterChange: (value: string | string[]) => void;
   onSortChange: (value: string) => void;
   onSelect: (id: string) => void;
 };
@@ -48,6 +53,9 @@ const AssetContents: FC<Props> = ({
   layout,
   formatFilter,
   formatOptions,
+  tab,
+  projectFilter,
+  projectOptions,
   sort,
   sortOptions,
   selectedId,
@@ -55,6 +63,7 @@ const AssetContents: FC<Props> = ({
   onLayoutChange,
   onSearch,
   onFormatFilterChange,
+  onProjectFilterChange,
   onSortChange,
   onSelect
 }) => {
@@ -88,26 +97,42 @@ const AssetContents: FC<Props> = ({
         searchPlaceholder={t("Search by the name")}
         onSearch={onSearch}
         filters={
-          <FormatFilter>
-            <Selector
-              value={formatFilter}
-              options={formatOptions}
-              onChange={onFormatFilterChange}
-              dataTestid="asset-layer-creator-format"
-            />
-          </FormatFilter>
+          <Filters>
+            {/* CMS models only come as GeoJSON. */}
+            {tab !== "cmsModels" && (
+              <Filter>
+                <Selector
+                  value={formatFilter}
+                  options={formatOptions}
+                  onChange={onFormatFilterChange}
+                  dataTestid="asset-layer-creator-format"
+                />
+              </Filter>
+            )}
+            {tab !== "visualizer" && (
+              <Filter>
+                <Selector
+                  value={projectFilter}
+                  options={projectOptions}
+                  onChange={onProjectFilterChange}
+                  dataTestid="asset-layer-creator-project"
+                />
+              </Filter>
+            )}
+          </Filters>
         }
       />
 
       <AssetsArea>
-        {/* Like the dashboard asset list: the header sits outside the scroll
-            area, so only the rows scroll and nothing shows behind it. */}
         {layout === "list" && !loading && !!assets.length && (
           <ListHeaderWrapper>
-            <ListHeader>
+            <ListHeader tab={tab}>
               <span>{t("Name")}</span>
-              <span>{t("Size")}</span>
-              <span>{t("Uploaded at")}</span>
+              {tab !== "visualizer" && <span>{t("Project")}</span>}
+              {tab !== "cmsModels" && <span>{t("Size")}</span>}
+              <span>
+                {tab === "cmsModels" ? t("Created") : t("Uploaded at")}
+              </span>
             </ListHeader>
           </ListHeaderWrapper>
         )}
@@ -132,6 +157,7 @@ const AssetContents: FC<Props> = ({
                 <AssetCard
                   key={asset.id}
                   asset={asset}
+                  tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
                 />
@@ -143,6 +169,7 @@ const AssetContents: FC<Props> = ({
                 <AssetRow
                   key={asset.id}
                   asset={asset}
+                  tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
                 />
@@ -155,14 +182,21 @@ const AssetContents: FC<Props> = ({
   );
 };
 
-const FormatFilter = styled("div")(() => ({
-  width: 150,
+const Filters = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.small,
   flexShrink: 0
 }));
 
-const AssetsArea = styled("div")(() => ({
+const Filter = styled("div")(() => ({
+  width: 150
+}));
+
+const AssetsArea = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
+  padding: theme.spacing.small,
   height: 440
 }));
 
@@ -201,9 +235,11 @@ const List = styled("div")(({ theme }) => ({
   gap: theme.spacing.micro
 }));
 
-const ListHeader = styled("div")(({ theme }) => ({
+const ListHeader = styled("div", {
+  shouldForwardProp: (prop) => prop !== "tab"
+})<{ tab: AssetTab }>(({ theme, tab }) => ({
   display: "grid",
-  gridTemplateColumns: LIST_COLUMNS,
+  gridTemplateColumns: LIST_COLUMNS[tab],
   gap: theme.spacing.normal,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   color: theme.content.weak,
