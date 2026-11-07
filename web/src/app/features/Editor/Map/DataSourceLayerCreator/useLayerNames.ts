@@ -36,8 +36,7 @@ export const useLayerNames = () => {
 
   // Includes a name still being typed so it isn't dropped on a direct Add.
   const entered = useMemo(
-    () =>
-      [...new Set([...layerNameList, layerName.trim()])].filter(Boolean),
+    () => [...new Set([...layerNameList, layerName.trim()])].filter(Boolean),
     [layerNameList, layerName]
   );
 

@@ -55,7 +55,7 @@ export const AssetCard: FC<Props & { tab: AssetTab }> = ({ tab, ...props }) => {
       <CardPreview selected={selected}>
         {tab === "cmsModels" ? (
           <>
-            <Icon  icon="folderSimple" size="large" />
+            <Icon icon="folderSimple" size="large" />
             {t("Model")}
           </>
         ) : (

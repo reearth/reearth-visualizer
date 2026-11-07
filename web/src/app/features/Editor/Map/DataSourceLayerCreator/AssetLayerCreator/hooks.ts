@@ -75,6 +75,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
   const visualizer = useVisualizerAssets({ sort, keyword });
   const cms = useCmsAssets({
     tab: tab === "cmsModels" ? "cmsModels" : "cmsAssets",
+    skip: !isCmsTab,
     projects: shownCmsProjects,
     projectId: projectFilter === ALL_PROJECTS ? undefined : projectFilter,
     sort,
@@ -142,14 +143,16 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     [cancelCheck, clear, resetLayerNames]
   );
 
-  // CMS assets can also be MVT and WMS. CMS models are always GeoJSON, so
-  // their tab has no format filter.
+  // CMS assets can also be MVT, WMS and 3D Tiles. CMS models are always
+  // GeoJSON, so their tab has no format filter.
   const formatOptions = useMemo(
     () => [
       { value: ALL_FORMATS, label: t("All formats") },
       ...[
         ...(Object.keys(ASSET_FORMATS) as AssetFormat[]),
-        ...(tab === "cmsAssets" ? (["mvt", "wms"] as LayerFormat[]) : [])
+        ...(tab === "cmsAssets"
+          ? (["mvt", "wms", "3dtiles"] as LayerFormat[])
+          : [])
       ].map((f) => ({ value: f, label: FORMAT_LABELS[f] }))
     ],
     [tab, t]
@@ -189,16 +192,25 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     setFormatFilter(value as string);
   }, []);
 
-  const handleProjectFilterChange = useCallback((value: string | string[]) => {
-    setProjectFilter(value as string);
-    setSelectedId(undefined);
-    setModelIssue(undefined);
-  }, []);
+  // A new selection drops the last one's model check and layer names.
+  const handleProjectFilterChange = useCallback(
+    (value: string | string[]) => {
+      cancelCheck();
+      resetLayerNames();
+      setProjectFilter(value as string);
+      setSelectedId(undefined);
+    },
+    [cancelCheck, resetLayerNames]
+  );
 
-  const handleSelect = useCallback((id: string) => {
-    setSelectedId((prev) => (prev === id ? undefined : id));
-    setModelIssue(undefined);
-  }, []);
+  const handleSelect = useCallback(
+    (id: string) => {
+      cancelCheck();
+      resetLayerNames();
+      setSelectedId((prev) => (prev === id ? undefined : id));
+    },
+    [cancelCheck, resetLayerNames]
+  );
 
   // Selection only counts while the asset is visible (not filtered out).
   const selectedAsset = assets.find((a) => a.id === selectedId);
@@ -265,7 +277,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     onSubmit({
       layerType: "simple",
       sceneId,
-    
+
       title:
         tab === "cmsModels"
           ? selectedAsset.name

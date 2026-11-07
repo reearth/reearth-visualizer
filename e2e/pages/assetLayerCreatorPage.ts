@@ -18,6 +18,8 @@ export class AssetLayerCreatorPage {
   error: Locator;
   errorCloseButton: Locator;
   layerNames: Locator;
+  layerNameInput: Locator;
+  layerNameAddButton: Locator;
   backButton: Locator;
   submitButton: Locator;
   cancelButton: Locator;
@@ -36,6 +38,10 @@ export class AssetLayerCreatorPage {
     this.error = this.page.getByTestId("asset-layer-creator-error");
     this.errorCloseButton = this.error.getByRole("button", { name: "Close" });
     this.layerNames = this.page.getByTestId("asset-layer-creator-layer-names");
+    this.layerNameInput = this.layerNames.getByPlaceholder("layer name");
+    this.layerNameAddButton = this.page.getByTestId(
+      "vectortiles-layer-add-button"
+    );
     this.backButton = this.page.getByTestId("asset-layer-creator-back");
     this.submitButton = this.page.getByTestId("asset-layer-creator-submit");
     this.cancelButton = this.page.getByTestId("asset-layer-creator-cancel");
@@ -106,6 +112,25 @@ export class AssetLayerCreatorPage {
         headers: { "Access-Control-Allow-Origin": "*" }
       })
     );
+  }
+
+  async enterLayerName(name: string) {
+    await this.layerNameInput.fill(name);
+    await expect(this.submitButton).toBeEnabled();
+  }
+
+  // The input of the next layer the editor adds (AddNLSLayerSimple).
+  async waitForAddedLayer(): Promise<Record<string, unknown>> {
+    const request = await this.page.waitForRequest((req) => {
+      if (!req.url().includes("/graphql") || req.method() !== "POST")
+        return false;
+      try {
+        return req.postDataJSON()?.operationName === "AddNLSLayerSimple";
+      } catch {
+        return false;
+      }
+    });
+    return request.postDataJSON().variables.input;
   }
 
   async selectCard(id: string) {

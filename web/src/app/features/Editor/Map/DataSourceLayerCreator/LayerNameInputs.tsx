@@ -36,7 +36,7 @@ const LayerNameInputs: FC<Props> = ({
           <LayerNameList data-testid="vectortiles-layer-list">
             {layerNameList.map((layer: string, index: number) => (
               <LayerWrapper
-                key={index}
+                key={layer}
                 data-testid={`vectortiles-layer-item-${index}`}
               >
                 <TextInput

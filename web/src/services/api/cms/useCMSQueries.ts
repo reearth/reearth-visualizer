@@ -31,7 +31,8 @@ const useLoadNextPage = (
   return { hasMore, loadMore };
 };
 
-// The workspace's CMS projects, as many as one page holds.
+// All of the workspace's CMS projects: the pages after the first are fetched
+// in turn until totalCount is reached (the cache appends them).
 export const useCMSProjects = ({
   workspaceId,
   keyword,
@@ -41,19 +42,30 @@ export const useCMSProjects = ({
   keyword?: string;
   skip?: boolean;
 }) => {
-  const { data, loading, error } = useQuery(GET_CMS_PROJECTS, {
+  const { data, loading, error, fetchMore } = useQuery(GET_CMS_PROJECTS, {
     variables: {
       workspaceId: workspaceId ?? "",
       keyword,
+      page: 1,
       pageSize: CMS_MAX_PAGE_SIZE
     },
     skip: skip || !workspaceId
   });
 
+  const projects = data?.cmsProjects.nodes;
+  const totalCount = data?.cmsProjects.totalCount ?? 0;
+  const loaded = projects?.length ?? 0;
+  const hasMore = !skip && !error && loaded > 0 && loaded < totalCount;
+  const nextPage = Math.floor(loaded / CMS_MAX_PAGE_SIZE) + 1;
+  useEffect(() => {
+    if (!hasMore || loading) return;
+    fetchMore({ variables: { page: nextPage } }).catch(() => undefined);
+  }, [fetchMore, hasMore, loading, nextPage]);
+
   return {
-    projects: data?.cmsProjects.nodes,
-    totalCount: data?.cmsProjects.totalCount ?? 0,
-    loading,
+    projects,
+    totalCount,
+    loading: loading || hasMore,
     error
   };
 };
@@ -127,7 +139,8 @@ type Page<T> = { nodes: T[]; totalCount: number };
 // CMS lists models and assets one project at a time, so these query every
 // given project in parallel and merge the results. Each project pages on its
 // own; loadMore fetches the next page of every project that has more. A
-// project that fails (e.g. no access) is left out rather than failing all.
+// project that fails (e.g. no access) is left out rather than failing all,
+// and its first page is tried again when the hook is used again (unskipped).
 const useAcrossProjects = <T>({
   workspaceId,
   projectIds,
@@ -144,6 +157,7 @@ const useAcrossProjects = <T>({
   const [loaded, setLoaded] = useState<{
     key: string;
     pages: Record<string, Page<T>>;
+    failed: string[];
   }>();
   // The key whose first pages are being fetched, so it's fetched only once.
   const inFlightRef = useRef<string>(undefined);
@@ -154,10 +168,14 @@ const useAcrossProjects = <T>({
       const results = await Promise.allSettled(
         targets.map(({ projectId, page }) => fetchPage(projectId, page))
       );
-      return targets.flatMap(({ projectId }, i) => {
+      const pages: Record<string, Page<T>> = {};
+      const failed: string[] = [];
+      targets.forEach(({ projectId }, i) => {
         const r = results[i];
-        return r.status === "fulfilled" ? [{ projectId, page: r.value }] : [];
+        if (r.status === "fulfilled") pages[projectId] = r.value;
+        else failed.push(projectId);
       });
+      return { pages, failed };
     },
     [fetchPage]
   );
@@ -174,18 +192,32 @@ const useAcrossProjects = <T>({
     inFlightRef.current = requestKey;
     fetchPages(
       projectKey.split(",").map((projectId) => ({ projectId, page: 1 }))
-    ).then((results) => {
+    ).then(({ pages, failed }) => {
       // Superseded by another workspace or project list.
       if (inFlightRef.current !== requestKey) return;
       inFlightRef.current = undefined;
-      setLoaded({
-        key: requestKey,
-        pages: Object.fromEntries(
-          results.map(({ projectId, page }) => [projectId, page])
-        )
-      });
+      setLoaded({ key: requestKey, pages, failed });
     });
   }, [fetchPages, loadedKey, projectKey, requestKey, skip, workspaceId]);
+
+  // Back from skipped (e.g. one project picked, then all projects again):
+  // retry the projects that failed, keeping what loaded.
+  const wasSkippedRef = useRef(skip);
+  const failedKey = loaded?.key === requestKey ? loaded.failed.join(",") : "";
+  useEffect(() => {
+    const returned = wasSkippedRef.current && !skip;
+    wasSkippedRef.current = skip;
+    if (!returned || !failedKey) return;
+    fetchPages(
+      failedKey.split(",").map((projectId) => ({ projectId, page: 1 }))
+    ).then(({ pages, failed }) =>
+      setLoaded((prev) =>
+        prev?.key === requestKey
+          ? { key: requestKey, pages: { ...prev.pages, ...pages }, failed }
+          : prev
+      )
+    );
+  }, [failedKey, fetchPages, requestKey, skip]);
 
   const pages = useMemo(
     () => (loaded?.key === requestKey ? loaded.pages : {}),
@@ -201,7 +233,7 @@ const useAcrossProjects = <T>({
     if (!hasMore || loadingMoreRef.current) return;
     loadingMoreRef.current = true;
     try {
-      const results = await fetchPages(
+      const { pages: results } = await fetchPages(
         remaining.map(([projectId, p]) => ({
           projectId,
           page: Math.floor(p.nodes.length / CMS_PAGE_SIZE) + 1
@@ -210,13 +242,13 @@ const useAcrossProjects = <T>({
       setLoaded((prev) => {
         if (prev?.key !== requestKey) return prev;
         const next = { ...prev.pages };
-        for (const { projectId, page } of results) {
+        for (const [projectId, page] of Object.entries(results)) {
           next[projectId] = {
             totalCount: page.totalCount,
             nodes: [...(next[projectId]?.nodes ?? []), ...page.nodes]
           };
         }
-        return { key: requestKey, pages: next };
+        return { ...prev, pages: next };
       });
     } finally {
       loadingMoreRef.current = false;

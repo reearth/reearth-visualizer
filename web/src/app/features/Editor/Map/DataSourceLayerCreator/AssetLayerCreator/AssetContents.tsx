@@ -193,7 +193,7 @@ const Filter = styled("div")(() => ({
   width: 150
 }));
 
-const AssetsArea = styled("div")(({ theme}) => ({
+const AssetsArea = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   padding: theme.spacing.small,

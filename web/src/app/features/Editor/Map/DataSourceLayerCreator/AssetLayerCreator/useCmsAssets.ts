@@ -13,15 +13,17 @@ import { cmsAssetLayer, sortAssets } from "./utils";
 
 // CMS assets, or models as GeoJSON layers, of one project or (without
 // projectId) of all the given projects. CMS can't search or sort these, so
-// both apply to the pages loaded so far.
+// both apply to the pages loaded so far. Nothing is fetched while skipped.
 export default ({
   tab,
+  skip,
   projects,
   projectId,
   sort,
   keyword
 }: {
   tab: "cmsAssets" | "cmsModels";
+  skip?: boolean;
   projects: CMSProject[];
   projectId?: string;
   sort: SortKey;
@@ -31,26 +33,28 @@ export default ({
   const workspaceId = currentWorkspace?.id;
   const all = !projectId;
   const projectIds = useMemo(() => projects.map((p) => p.id), [projects]);
+  const showAssets = !skip && tab === "cmsAssets";
+  const showModels = !skip && tab === "cmsModels";
 
   const oneAssets = useCMSAssets({
     workspaceId,
     projectId,
-    skip: tab !== "cmsAssets" || all
+    skip: !showAssets || all
   });
   const allAssets = useCMSAssetsAcrossProjects({
     workspaceId,
     projectIds,
-    skip: tab !== "cmsAssets" || !all
+    skip: !showAssets || !all
   });
   const oneModels = useCMSModels({
     workspaceId,
     projectId,
-    skip: tab !== "cmsModels" || all
+    skip: !showModels || all
   });
   const allModels = useCMSModelsAcrossProjects({
     workspaceId,
     projectIds,
-    skip: tab !== "cmsModels" || !all
+    skip: !showModels || !all
   });
   const assetsSource = all ? allAssets : oneAssets;
   const modelsSource = all ? allModels : oneModels;

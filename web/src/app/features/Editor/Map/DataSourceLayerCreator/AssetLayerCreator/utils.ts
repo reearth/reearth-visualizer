@@ -42,8 +42,17 @@ export const ACCEPT_STRING = Object.values(ASSET_FORMATS)
   .map((ext) => `.${ext}`)
   .join(",");
 
+// The URL's path without its query or fragment.
+const pathOf = (url: string) => {
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return url.split(/[?#]/)[0];
+  }
+};
+
 export const formatOf = (url: string): AssetFormat | undefined => {
-  const ext = url.split(".").pop()?.toLowerCase() ?? "";
+  const ext = pathOf(url).split(".").pop()?.toLowerCase() ?? "";
   return (Object.keys(ASSET_FORMATS) as AssetFormat[]).find((f) =>
     ASSET_FORMATS[f].extensions.includes(ext)
   );
@@ -68,6 +77,9 @@ const MVT_TEMPLATE = "{z}/{x}/{y}.mvt";
 //   Its tiles are served from a {z}/{x}/{y} template, found as CMS's own
 //   viewer does: a tile's z/x/y path is replaced, an archive is served next
 //   to it once CMS has extracted it, and a lone file from its folder.
+// - 3D Tiles is an asset CMS gives the 3D Tiles preview type: its tileset
+//   entry point (.json), or an archive whose tileset.json is served next to
+//   it once extracted.
 // - WMS has no preview type in CMS, so it is recognised from the URL.
 // - Other formats go by the extension.
 export const cmsAssetLayer = (asset: {
@@ -76,6 +88,20 @@ export const cmsAssetLayer = (asset: {
   archiveExtractionStatus?: string | null;
 }): { url: string; format?: LayerFormat } => {
   const { url } = asset;
+  const path = pathOf(url);
+  const extracted =
+    /\.(zip|7z)$/i.test(path) &&
+    asset.archiveExtractionStatus?.toLowerCase() === "done";
+  if (asset.previewType?.toLowerCase() === "geo_3d_tiles") {
+    if (/\.json$/i.test(path)) return { url, format: "3dtiles" };
+    if (extracted)
+      return {
+        url: `${url.replace(/\.(zip|7z)$/i, "")}/tileset.json`,
+        format: "3dtiles"
+      };
+    return { url };
+  }
+
   const mvtFile = /\.(mvt|pbf)$/i.test(url);
   if (asset.previewType?.toLowerCase() !== "geo_mvt" && !mvtFile)
     return isWmsUrl(url) ? { url, format: "wms" } : { url };
@@ -88,10 +114,7 @@ export const cmsAssetLayer = (asset: {
       url: url.replace(/\/[^/]+$/, `/${MVT_TEMPLATE}`),
       format: "mvt"
     };
-  if (
-    /\.(zip|7z)$/i.test(url) &&
-    asset.archiveExtractionStatus?.toLowerCase() === "done"
-  )
+  if (extracted)
     return {
       url: `${url.replace(/\.(zip|7z)$/i, "")}/${MVT_TEMPLATE}`,
       format: "mvt"

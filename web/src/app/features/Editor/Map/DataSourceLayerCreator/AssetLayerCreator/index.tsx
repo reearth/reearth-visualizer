@@ -83,13 +83,20 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
   } = useHooks({ sceneId, onClose, onSubmit });
 
   const [, setNotification] = useNotification();
-  const handleCopyUrl = useCallback(() => {
+  const handleCopyUrl = useCallback(async () => {
     if (!selectedAsset) return;
-    navigator.clipboard.writeText(selectedAsset.url);
-    setNotification({
-      type: "success",
-      text: t("Asset URL copied to clipboard")
-    });
+    try {
+      await navigator.clipboard.writeText(selectedAsset.url);
+      setNotification({
+        type: "success",
+        text: t("Asset URL copied to clipboard")
+      });
+    } catch {
+      setNotification({
+        type: "error",
+        text: t("Could not copy the asset URL to the clipboard")
+      });
+    }
   }, [selectedAsset, setNotification, t]);
 
   return (

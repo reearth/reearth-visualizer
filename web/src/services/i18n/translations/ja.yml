@@ -34,6 +34,7 @@ Size: サイズ
 Path: アセットURL
 No asset has been uploaded yet: まだアセットがアップロードされていません
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
+Could not copy the asset URL to the clipboard: アセットURLをクリップボードにコピーできませんでした
 Public: 公開
 Private: 非公開
 Create new project: 新しいプロジェクトを作成
@@ -197,7 +198,7 @@ Photorealistic 3D mesh of the world: 世界のフォトリアリスティック�
 New Layer: 新しいレイヤー
 Choose layer to add: 追加するレイヤーを選択
 Delete layer name: レイヤー名を削除
-layer name: ''
+layer name: レイヤー名
 Layer name: レイヤー名
 Vector Tiles (MVT): ベクトルタイル（MVT）
 3D Tiles: 3Dタイル

@@ -1,11 +1,18 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { checkModelGeoJson, cmsAssetLayer } from "./utils";
+import { checkModelGeoJson, cmsAssetLayer, formatOf } from "./utils";
 
+// A stand-in for what checkModelGeoJson reads of a Response: a real one
+// fails in CI, where jsdom's ReadableStream isn't the one undici expects.
 const respond = (status: number, body = "") =>
   vi.stubGlobal(
     "fetch",
-    vi.fn().mockResolvedValue(new Response(body, { status }))
+    vi.fn().mockResolvedValue({
+      ok: status >= 200 && status < 300,
+      status,
+      body: null,
+      text: async () => body
+    })
   );
 
 const check = () =>
@@ -97,9 +104,42 @@ describe("cmsAssetLayer", () => {
     });
   });
 
+  it("serves CMS 3D Tiles from their tileset entry point", () => {
+    expect(
+      cmsAssetLayer({
+        url: `${base}/tileset.json`,
+        previewType: "geo_3d_tiles"
+      })
+    ).toEqual({ url: `${base}/tileset.json`, format: "3dtiles" });
+    expect(
+      cmsAssetLayer({
+        url: `${base}.zip`,
+        previewType: "geo_3d_tiles",
+        archiveExtractionStatus: "done"
+      })
+    ).toEqual({ url: `${base}/tileset.json`, format: "3dtiles" });
+    expect(
+      cmsAssetLayer({
+        url: `${base}.zip`,
+        previewType: "geo_3d_tiles",
+        archiveExtractionStatus: "pending"
+      })
+    ).toEqual({ url: `${base}.zip` });
+  });
+
   it("leaves other assets to their extension", () => {
     expect(
       cmsAssetLayer({ url: `${base}.geojson`, previewType: "geo" })
     ).toEqual({ url: `${base}.geojson` });
+  });
+});
+
+describe("formatOf", () => {
+  it("reads the extension from the path, not the query or fragment", () => {
+    expect(formatOf("https://example.com/roads.geojson?token=a.b")).toBe(
+      "geojson"
+    );
+    expect(formatOf("https://example.com/points.csv#top")).toBe("csv");
+    expect(formatOf("https://example.com/data?file=x.kml")).toBeUndefined();
   });
 });

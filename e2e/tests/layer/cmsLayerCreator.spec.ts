@@ -172,6 +172,19 @@ test.describe("Add Layer from CMS", () => {
         `Dashboard did not load properly. Current URL: ${currentUrl}. Error: ${error}`
       );
     }
+
+    // A project to add the layers to, so each test can run on its own.
+    await dashBoardPage.projects.click();
+    await projectsPage.newProjectButton.waitFor({ state: "visible" });
+    await projectsPage.newProjectButton.click();
+    await projectsPage.createNewProject(
+      projectName,
+      projectAlias,
+      "CMS Layer Creator E2E Test"
+    );
+    await expect(projectsPage.noticeBanner).toBeVisible();
+    await projectsPage.goToProjectPage(projectName);
+    await expect(projectScreen.newLayerButton).toBeVisible();
   });
 
   // eslint-disable-next-line no-empty-pattern
@@ -201,23 +214,6 @@ test.describe("Add Layer from CMS", () => {
     ).click();
     await expect(assetLayerCreator.submitButton).toBeDisabled();
   }
-
-  test("Create a project for CMS layer tests", async () => {
-    await dashBoardPage.projects.click();
-    await projectsPage.newProjectButton.waitFor({ state: "visible" });
-    await projectsPage.newProjectButton.click();
-    await projectsPage.createNewProject(
-      projectName,
-      projectAlias,
-      "CMS Layer Creator E2E Test"
-    );
-    await expect(projectsPage.noticeBanner).toBeVisible();
-  });
-
-  test("Navigate to editor", async () => {
-    await projectsPage.goToProjectPage(projectName);
-    await expect(projectScreen.newLayerButton).toBeVisible();
-  });
 
   test("Models: lists every project's models, without a format filter", async () => {
     test.info().annotations.push({ type: "story", description: "US-EXTL-008" });
@@ -320,5 +316,55 @@ test.describe("Add Layer from CMS", () => {
     await assetLayerCreator.backButton.click();
     await expect(assetLayerCreator.card("asset-mvt")).toBeVisible();
     await assetLayerCreator.cancel();
+  });
+
+  test("Assets: adds an MVT asset with the layers named", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EXTL-009" });
+    await openTab("cmsAssets");
+    await assetLayerCreator.selectCard("asset-mvt");
+    await assetLayerCreator.submitButton.click();
+
+    // One name added to the list, one still being typed.
+    await assetLayerCreator.enterLayerName("roads");
+    await assetLayerCreator.layerNameAddButton.click();
+    await assetLayerCreator.layerNameInput.fill("rivers");
+
+    const added = assetLayerCreator.waitForAddedLayer();
+    await assetLayerCreator.submitButton.click();
+    expect(await added).toMatchObject({
+      title: "tiles",
+      config: {
+        data: {
+          type: "mvt",
+          url: `${MOCK_HOST}/assets/tiles/{z}/{x}/{y}.mvt`,
+          layers: ["roads", "rivers"]
+        }
+      }
+    });
+    await expect(assetLayerCreator.modal).not.toBeVisible({ timeout: 10_000 });
+    await projectScreen.verifyLayerAdded("tiles");
+  });
+
+  test("Assets: adds a WMS asset with a single layer name", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EXTL-009" });
+    await openTab("cmsAssets");
+    await assetLayerCreator.selectCard("asset-wms");
+    await assetLayerCreator.submitButton.click();
+    await assetLayerCreator.enterLayerName("tokyo");
+
+    const added = assetLayerCreator.waitForAddedLayer();
+    await assetLayerCreator.submitButton.click();
+    expect(await added).toMatchObject({
+      title: "tokyo_wms",
+      config: {
+        data: {
+          type: "wms",
+          url: `${MOCK_HOST}/assets/tokyo_wms.cgi`,
+          layers: "tokyo"
+        }
+      }
+    });
+    await expect(assetLayerCreator.modal).not.toBeVisible({ timeout: 10_000 });
+    await projectScreen.verifyLayerAdded("tokyo_wms");
   });
 });
