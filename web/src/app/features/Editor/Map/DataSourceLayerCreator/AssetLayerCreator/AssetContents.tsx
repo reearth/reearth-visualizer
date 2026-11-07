@@ -98,14 +98,17 @@ const AssetContents: FC<Props> = ({
         onSearch={onSearch}
         filters={
           <Filters>
-            <Filter>
-              <Selector
-                value={formatFilter}
-                options={formatOptions}
-                onChange={onFormatFilterChange}
-                dataTestid="asset-layer-creator-format"
-              />
-            </Filter>
+            {/* CMS models only come as GeoJSON. */}
+            {tab !== "cmsModels" && (
+              <Filter>
+                <Selector
+                  value={formatFilter}
+                  options={formatOptions}
+                  onChange={onFormatFilterChange}
+                  dataTestid="asset-layer-creator-format"
+                />
+              </Filter>
+            )}
             {tab !== "visualizer" && (
               <Filter>
                 <Selector
@@ -190,9 +193,10 @@ const Filter = styled("div")(() => ({
   width: 150
 }));
 
-const AssetsArea = styled("div")(() => ({
+const AssetsArea = styled("div")(({ theme}) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
+  padding: theme.spacing.small,
   height: 440
 }));
 

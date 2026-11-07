@@ -328,7 +328,7 @@ const ContentWrapper = styled("div", {
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   gap: theme.spacing.small,
-  padding: theme.spacing.large,
+  padding: theme.spacing.normal,
   opacity: dimmed ? 0.2 : 1,
   pointerEvents: dimmed ? "none" : undefined
 }));
@@ -403,6 +403,7 @@ const DetailsStep = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   gap: theme.spacing.large,
+  padding: theme.spacing.small,
   minHeight: 496
 }));
 

@@ -142,18 +142,15 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     [cancelCheck, clear, resetLayerNames]
   );
 
-  // CMS models are always added as GeoJSON; CMS assets can also be MVT and
-  // WMS.
+  // CMS assets can also be MVT and WMS. CMS models are always GeoJSON, so
+  // their tab has no format filter.
   const formatOptions = useMemo(
     () => [
       { value: ALL_FORMATS, label: t("All formats") },
-      ...(tab === "cmsModels"
-        ? (["geojson"] as LayerFormat[])
-        : [
-            ...(Object.keys(ASSET_FORMATS) as AssetFormat[]),
-            ...(tab === "cmsAssets" ? (["mvt", "wms"] as LayerFormat[]) : [])
-          ]
-      ).map((f) => ({ value: f, label: FORMAT_LABELS[f] }))
+      ...[
+        ...(Object.keys(ASSET_FORMATS) as AssetFormat[]),
+        ...(tab === "cmsAssets" ? (["mvt", "wms"] as LayerFormat[]) : [])
+      ].map((f) => ({ value: f, label: FORMAT_LABELS[f] }))
     ],
     [tab, t]
   );
