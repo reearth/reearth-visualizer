@@ -6,7 +6,7 @@ import AddMemberModal from "./AddMemberModal";
 
 const mocks = vi.hoisted(() => ({
   found: undefined as
-    | { id: string; name: string; alias: string; email?: string }
+    | { id: string; name: string; email?: string }
     | undefined,
   error: undefined as Error | undefined,
   addMemberToWorkspace: vi.fn()
@@ -75,7 +75,6 @@ describe("AddMemberModal", () => {
     mocks.found = {
       id: "u1",
       name: "Someone",
-      alias: "someone",
       email: "someone@example.com"
     };
     const { addButton, input } = setup();
@@ -88,7 +87,7 @@ describe("AddMemberModal", () => {
     });
 
     expect(addButton).not.toBeDisabled();
-    expect(screen.getByText("someone")).toBeInTheDocument();
+    expect(screen.getByText("Someone")).toBeInTheDocument();
     expect(screen.queryByText("someone@example.com")).not.toBeInTheDocument();
   });
 

@@ -1481,7 +1481,6 @@ type User struct {
 	ID    ID      `json:"id"`
 	Name  string  `json:"name"`
 	Email string  `json:"email"`
-	Alias string  `json:"alias"`
 	Host  *string `json:"host,omitempty"`
 }
 

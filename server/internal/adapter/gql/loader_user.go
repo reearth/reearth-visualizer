@@ -61,9 +61,6 @@ func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.
 
 func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
 	trimmed := strings.TrimSpace(nameOrEmail)
-	if trimmed == "" {
-		return nil, nil
-	}
 
 	if c.client != nil {
 		u, err := c.client.UserRepo.FindByAlias(ctx, trimmed)
@@ -88,7 +85,7 @@ func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmo
 		return nil, err
 	}
 	for _, user := range res {
-		if user.Alias() == trimmed || user.Name() == trimmed || user.Email() == trimmed {
+		if user.Name() == trimmed || user.Email() == trimmed {
 			return gqlmodel.ToUser(user), nil
 		}
 	}

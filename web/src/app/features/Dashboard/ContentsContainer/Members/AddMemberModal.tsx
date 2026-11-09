@@ -46,7 +46,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
   );
 
   const [searchResult, setSearchResult] = useState<
-    { id: string; name: string; alias: string }[]
+    { id: string; name: string }[]
   >([]);
 
   const { user, loading, error } = useSearchUser(debouncedSearchTerm, {
@@ -76,8 +76,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
               ...prev,
               {
                 id: user.id,
-                name: user.name,
-                alias: user.alias
+                name: user.name
               }
             ]
       );
@@ -160,9 +159,6 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
           <ItemContainer key={user.id}>
             <UserInfo>
               <Typography size="body">{user.name}</Typography>
-              <Typography size="body" color="weak">
-                {user.alias}
-              </Typography>
             </UserInfo>
             <IconButton
               appearance="simple"

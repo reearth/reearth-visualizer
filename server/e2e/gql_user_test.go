@@ -33,7 +33,6 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 
 	u := accountsUser.New().ID(uId1).
 		Name("e2e").
-		Alias("test-user").
 		Email("e2e@e2e.com").
 		Auths([]accountsUser.Auth{*auth}).
 		Metadata(metadata).
@@ -121,26 +120,6 @@ func TestSearchUser(t *testing.T) {
 			wantFound: true,
 		},
 		{
-			name:      "exact alias",
-			input:     "test-user",
-			wantFound: true,
-		},
-		{
-			name:      "trimmed alias",
-			input:     " test-user ",
-			wantFound: true,
-		},
-		{
-			name:      "exact email",
-			input:     "e2e@e2e.com",
-			wantFound: true,
-		},
-		{
-			name:      "partial alias",
-			input:     "test-us",
-			wantFound: false,
-		},
-		{
 			name:      "not found",
 			input:     "notfound",
 			wantFound: false,
@@ -149,7 +128,7 @@ func TestSearchUser(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			query := fmt.Sprintf(`{ searchUser(nameOrEmail: "%s"){ id name email alias } }`, tt.input)
+			query := fmt.Sprintf(`{ searchUser(nameOrEmail: "%s"){ id name email } }`, tt.input)
 			request := GraphQLRequest{Query: query}
 			resp := Request(e, uId1.String(), request).Object().Value("data").Object()
 
@@ -158,7 +137,6 @@ func TestSearchUser(t *testing.T) {
 				o.Value("id").String().IsEqual(uId1.String())
 				o.Value("name").String().IsEqual("e2e")
 				o.Value("email").String().IsEqual("e2e@e2e.com")
-				o.Value("alias").String().IsEqual("test-user")
 			} else {
 				resp.Value("searchUser").IsNull()
 				resp.NotContainsKey("errors")

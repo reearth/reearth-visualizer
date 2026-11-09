@@ -6,8 +6,8 @@ import { describe, expect, it } from "vitest";
 import { useSearchUser } from "./useUserQueries";
 
 describe("useSearchUser", () => {
-  it("looks up an alias and returns it with the user", async () => {
-    const user = { id: "u1", name: "Display Name", alias: "user-alias" };
+  it("returns the matching user with their name", async () => {
+    const user = { id: "u1", name: "Display Name" };
     const { result } = renderHook(() => useSearchUser("user-alias"), {
       wrapper: ({ children }) => (
         <MockedProvider
@@ -15,7 +15,7 @@ describe("useSearchUser", () => {
             {
               request: {
                 query: GET_USER_BY_SEARCH,
-                variables: { alias: "user-alias" }
+                variables: { nameOrEmail: "user-alias" }
               },
               result: { data: { searchUser: user } }
             }
@@ -40,7 +40,7 @@ describe("useSearchUser", () => {
             {
               request: {
                 query: GET_USER_BY_SEARCH,
-                variables: { alias: "user-alias" }
+                variables: { nameOrEmail: "user-alias" }
               },
               error: failure
             }
