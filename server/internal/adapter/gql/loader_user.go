@@ -85,7 +85,7 @@ func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmo
 		return nil, err
 	}
 	for _, user := range res {
-		if user.Name() == trimmed || user.Email() == trimmed {
+		if user.Alias() == trimmed {
 			return gqlmodel.ToUser(user), nil
 		}
 	}

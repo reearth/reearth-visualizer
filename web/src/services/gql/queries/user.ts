@@ -1,11 +1,11 @@
 import { gql } from "@reearth/services/gql/__gen__";
 
 export const GET_USER_BY_SEARCH = gql(`
-  query GetUserBySearch($nameOrEmail: String!) {
-    searchUser(nameOrEmail: $nameOrEmail) {
+  query GetUserBySearch($alias: String!) {
+    searchUser(nameOrEmail: $alias) {
       id
       name
-      email
+      alias
     }
   }
 `);
@@ -35,7 +35,6 @@ export const GET_ME = gql(`
           user {
             id
             name
-            email
           }
           userId
           role

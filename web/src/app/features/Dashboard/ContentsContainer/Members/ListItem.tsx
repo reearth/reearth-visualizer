@@ -52,9 +52,6 @@ const ListItem: FC<{
         </TypographyWrapper>
       </UserWrapper>
       <TypographyWrapper>
-        <Typography size="body">{member.user?.email}</Typography>
-      </TypographyWrapper>
-      <TypographyWrapper>
         <TypographyOfMember size="body">
           {PermissionService.getRoleLabel(t, member.role)}
         </TypographyOfMember>
@@ -101,7 +98,7 @@ export default ListItem;
 
 const StyledListItem = styled("div")(({ theme }) => ({
   display: css.display.grid,
-  gridTemplateColumns: "3.0fr 4fr 2fr 1fr",
+  gridTemplateColumns: "3.0fr 2fr 1fr",
   padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
   alignItems: css.alignItems.center,
   borderRadius: theme.radius.normal,

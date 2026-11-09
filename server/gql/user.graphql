@@ -2,6 +2,7 @@ type User implements Node {
   id: ID!
   name: String!
   email: String!
+  alias: String!
   host: String
 }
 

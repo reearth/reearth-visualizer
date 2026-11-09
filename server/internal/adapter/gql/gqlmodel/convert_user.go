@@ -18,6 +18,7 @@ func ToUser(u *accountsUser.User) *User {
 		ID:    IDFrom(u.ID()),
 		Name:  u.Name(),
 		Email: u.Email(),
+		Alias: u.Alias(),
 		Host:  lo.EmptyableToPtr(u.Host()),
 	}
 }
@@ -31,6 +32,7 @@ func ToUserFromSimple(u *accountsUser.Simple) *User {
 		ID:    IDFrom(u.ID),
 		Name:  u.Name,
 		Email: u.Email,
+		Alias: "",
 	}
 }
 

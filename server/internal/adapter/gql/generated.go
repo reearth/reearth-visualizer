@@ -1032,6 +1032,7 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
+		Alias func(childComplexity int) int
 		Email func(childComplexity int) int
 		Host  func(childComplexity int) int
 		ID    func(childComplexity int) int
@@ -5627,6 +5628,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.UploadPluginPayload.ScenePlugin(childComplexity), true
 
+	case "User.alias":
+		if e.complexity.User.Alias == nil {
+			break
+		}
+
+		return e.complexity.User.Alias(childComplexity), true
 	case "User.email":
 		if e.complexity.User.Email == nil {
 			break
@@ -7733,6 +7740,7 @@ extend type Mutation {
   id: ID!
   name: String!
   email: String!
+  alias: String!
   host: String
 }
 
@@ -27216,6 +27224,8 @@ func (ec *executionContext) fieldContext_Query_searchUser(ctx context.Context, f
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "alias":
+				return ec.fieldContext_User_alias(ctx, field)
 			case "host":
 				return ec.fieldContext_User_host(ctx, field)
 			}
@@ -32586,6 +32596,35 @@ func (ec *executionContext) fieldContext_User_email(_ context.Context, field gra
 	return fc, nil
 }
 
+func (ec *executionContext) _User_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_User_alias,
+		func(ctx context.Context) (any, error) {
+			return obj.Alias, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_User_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_host(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.User) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -34004,6 +34043,8 @@ func (ec *executionContext) fieldContext_WorkspaceMember_user(_ context.Context,
 				return ec.fieldContext_User_name(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
+			case "alias":
+				return ec.fieldContext_User_alias(ctx, field)
 			case "host":
 				return ec.fieldContext_User_host(ctx, field)
 			}
@@ -48236,6 +48277,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "email":
 			out.Values[i] = ec._User_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "alias":
+			out.Values[i] = ec._User_alias(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

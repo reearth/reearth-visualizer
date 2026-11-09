@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AddMemberModal from "./AddMemberModal";
 
 const mocks = vi.hoisted(() => ({
-  found: undefined as { id: string; name: string; email: string } | undefined,
+  found: undefined as { id: string; name: string; alias: string } | undefined,
   addMemberToWorkspace: vi.fn()
 }));
 
@@ -64,7 +64,7 @@ describe("AddMemberModal", () => {
   });
 
   it("enables Add once the search finds someone", () => {
-    mocks.found = { id: "u1", name: "Someone", email: "someone@example.com" };
+    mocks.found = { id: "u1", name: "Someone", alias: "someone" };
     const { addButton, input } = setup();
 
     act(() => {
@@ -75,5 +75,7 @@ describe("AddMemberModal", () => {
     });
 
     expect(addButton).not.toBeDisabled();
+    expect(screen.getByText("someone")).toBeInTheDocument();
+    expect(screen.queryByText("someone@example.com")).not.toBeInTheDocument();
   });
 });

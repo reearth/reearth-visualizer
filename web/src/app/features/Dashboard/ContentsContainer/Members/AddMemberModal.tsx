@@ -48,7 +48,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
   );
 
   const [searchResult, setSearchResult] = useState<
-    { id: string; name: string; email: string }[]
+    { id: string; name: string; alias: string }[]
   >([]);
 
   const { user, loading } = useSearchUser(debouncedSearchTerm, {
@@ -80,7 +80,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
               {
                 id: user.id,
                 name: user.name,
-                email: user.email
+                alias: user.alias
               }
             ]
       );
@@ -137,8 +137,6 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
           />
         ]}
       >
-        {/* The lookup behind this box matches on alias only, so naming any
-        other field here sends people to a search that cannot succeed. */}
         <Typography size="body">{t("Search by user alias")}</Typography>
         <TextInput
           placeholder="user-alias"
@@ -166,7 +164,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
             <UserInfo>
               <Typography size="body">{user.name}</Typography>
               <Typography size="body" color="weak">
-                {user.email}
+                {user.alias}
               </Typography>
             </UserInfo>
             <IconButton
