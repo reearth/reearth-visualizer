@@ -2,7 +2,10 @@ package gql
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	graphql "github.com/hasura/go-graphql-client"
@@ -12,6 +15,7 @@ import (
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
 
@@ -149,7 +153,7 @@ func TestUserLoader_SearchUser_ReturnsTheMatch(t *testing.T) {
 	defer ctrl.Finish()
 
 	uid := accountsID.NewUserID()
-	found, err := accountsUser.New().ID(uid).Name("Someone").Email("someone@example.com").Workspace(accountsID.NewWorkspaceID()).Build()
+	found, err := accountsUser.New().ID(uid).Name("Someone").Alias("someone").Email("someone@example.com").Workspace(accountsID.NewWorkspaceID()).Build()
 	if err != nil {
 		t.Fatalf("failed to build user: %v", err)
 	}
@@ -168,4 +172,51 @@ func TestUserLoader_SearchUser_ReturnsTheMatch(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, u)
 	assert.Equal(t, "Someone", u.Name)
+	assert.Equal(t, "someone", u.Alias)
+}
+
+func TestUserLoader_SearchUser_Blank(t *testing.T) {
+	for _, keyword := range []string{"", " \t\n"} {
+		t.Run(keyword, func(t *testing.T) {
+			r := userMock.NewMockRepo(gomock.NewController(t))
+			for _, client := range []*gqlclient.Client{nil, {UserRepo: r}} {
+				loader := NewUserLoader(client, nil)
+				u, err := loader.SearchUser(context.Background(), keyword)
+				require.NoError(t, err)
+				require.Nil(t, u)
+			}
+		})
+	}
+}
+
+func TestUserLoader_Fetch_PreservesAliasesFromAccounts(t *testing.T) {
+	uids := []accountsID.UserID{accountsID.NewUserID(), accountsID.NewUserID()}
+	wid := accountsID.NewWorkspaceID()
+	aliases := []string{"first-alias", "second-alias"}
+	users := make([]map[string]any, len(uids))
+	for i, uid := range uids {
+		users[i] = map[string]any{
+			"id": uid.String(), "name": "Display Name", "alias": aliases[i],
+			"email": "", "workspace": wid.String(), "metadata": map[string]any{},
+		}
+	}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+			"data": map[string]any{"findUsersByIDs": users},
+		}))
+	}))
+	t.Cleanup(srv.Close)
+	client := gqlclient.NewClient(srv.URL, 10, srv.Client().Transport)
+	loader := NewUserLoader(client, nil)
+	got, errs := loader.Fetch(context.Background(), []gqlmodel.ID{
+		gqlmodel.ID(uids[0].String()), gqlmodel.ID(uids[1].String()),
+	})
+	require.Empty(t, errs)
+	require.Len(t, got, len(uids))
+	for i, u := range got {
+		require.NotNil(t, u)
+		assert.Equal(t, aliases[i], u.Alias)
+		assert.Empty(t, u.Email)
+	}
 }

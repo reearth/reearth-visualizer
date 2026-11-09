@@ -31,8 +31,6 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
   const t = useT();
   const theme = useTheme();
 
-  const [userNotFoundWarningVisible, setUserNotFoundWarningVisible] =
-    useState(false);
   const [userExistsWarningVisible, setUserExistsWarningVisible] =
     useState(false);
 
@@ -51,7 +49,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
     { id: string; name: string; alias: string }[]
   >([]);
 
-  const { user, loading } = useSearchUser(debouncedSearchTerm, {
+  const { user, loading, error } = useSearchUser(debouncedSearchTerm, {
     skip: !debouncedSearchTerm
   });
 
@@ -68,7 +66,6 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
   );
 
   useEffect(() => {
-    setUserNotFoundWarningVisible(!user);
     const alreadyExists = !!user && existingMemberIds.has(user.id);
     setUserExistsWarningVisible(alreadyExists);
     if (user && !alreadyExists) {
@@ -143,7 +140,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
           value={searchTerm}
           onChange={setSearchTerm}
         />
-        {userNotFoundWarningVisible && debouncedSearchTerm && !loading && (
+        {!user && !error && debouncedSearchTerm && !loading && (
           <Warning>
             <Icon icon="warning" size="large" color={theme.warning.main} />
             <Typography size="body" color="warning">

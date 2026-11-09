@@ -576,6 +576,11 @@ func (q *UserQueryInteractor) FetchByNameOrEmail(ctx context.Context, nameOrEmai
 }
 
 func (q *UserQueryInteractor) SearchUser(ctx context.Context, keyword string) (accountsUser.List, error) {
+	keyword = strings.TrimSpace(keyword)
+	if keyword == "" {
+		return nil, nil
+	}
+
 	for _, r := range q.repos {
 		u, err := r.FindByAlias(ctx, keyword)
 		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
