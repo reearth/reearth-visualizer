@@ -66,6 +66,10 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
   );
 
   useEffect(() => {
+    if (!debouncedSearchTerm || loading || error) {
+      setUserExistsWarningVisible(false);
+      return;
+    }
     const alreadyExists = !!user && existingMemberIds.has(user.id);
     setUserExistsWarningVisible(alreadyExists);
     if (user && !alreadyExists) {
@@ -81,7 +85,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
             ]
       );
     }
-  }, [user, existingMemberIds]);
+  }, [user, existingMemberIds, debouncedSearchTerm, loading, error]);
 
   const { addMemberToWorkspace } = useWorkspaceMutations();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -107,9 +111,16 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
     }
   }, [searchResult, workspace?.id, isSubmitting, addMemberToWorkspace, onClose]);
 
-  const handleRemoveUserFromSearchResult = useCallback((userId: string) => {
-    setSearchResult((prev) => prev.filter((u) => u.id !== userId));
-  }, []);
+  const handleRemoveUserFromSearchResult = useCallback(
+    (userId: string) => {
+      setSearchResult((prev) => prev.filter((u) => u.id !== userId));
+      if (user?.id === userId) {
+        setSearchTerm("");
+        setDebouncedSearchTerm("");
+      }
+    },
+    [user?.id]
+  );
 
   return (
     <Modal visible={visible} size="small">
