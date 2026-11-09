@@ -39,7 +39,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
 
   useDebounce(
     () => {
-      setDebouncedSearchTerm(searchTerm);
+      setDebouncedSearchTerm(searchTerm.trim());
     },
     500,
     [searchTerm]
