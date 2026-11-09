@@ -272,3 +272,13 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - server/internal/adapter/apiv1/export_test.go: `TestOpenExport` checks the zip is removed after a failed read, and only after the response is closed on success.
+
+## 2026-11-09 — Reselecting removed member search results
+
+### Findings & Fixes
+1. **A removed user could stay absent when the normalized search was unchanged** (web/src/app/features/Dashboard/ContentsContainer/Members/AddMemberModal.tsx)
+   - Bug: selected results were populated only when the returned user changed. Editing whitespace around the same alias could leave the query and cached user unchanged after removal.
+   - Fix: removing the current search result clears the input and debounced search. Result selection also reacts to search/loading/error changes and ignores blank or incomplete lookups, so a cached user can be selected again after retyping without being immediately restored on removal.
+
+### Validation
+- Reviewed the removal, skipped-query/cache, and repeated-search state transitions; automated tests were not run for this follow-up.
