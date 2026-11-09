@@ -1,8 +1,9 @@
 import { Button, TextInput, Typography } from "@reearth/app/lib/reearth-ui";
 import { useMe } from "@reearth/services/api/user";
 import { useWorkspace } from "@reearth/services/api/workspace";
+import type { WorkspaceMember } from "@reearth/services/api/workspace/types";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { Role, WorkspaceMember } from "@reearth/services/gql";
+import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";

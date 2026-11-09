@@ -1,5 +1,6 @@
 import { Button, PopupMenu, Typography } from "@reearth/app/lib/reearth-ui";
-import { Role, WorkspaceMember } from "@reearth/services/gql";
+import type { WorkspaceMember } from "@reearth/services/api/workspace/types";
+import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";

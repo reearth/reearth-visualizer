@@ -1,4 +1,5 @@
-import { Role, WorkspaceMember } from "@reearth/services/gql";
+import type { WorkspaceMember } from "@reearth/services/api/workspace/types";
+import { Role } from "@reearth/services/gql";
 import { fireEvent, render, screen } from "@reearth/test/utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -87,9 +88,7 @@ describe("Members", () => {
   it("filters by name only", () => {
     render(<Members currentWorkspace={{ id: "workspace-1", name: "WS" }} />);
 
-    const search = screen.getByPlaceholderText(
-      "Search member by name"
-    );
+    const search = screen.getByPlaceholderText("Search member by name");
 
     fireEvent.change(search, { target: { value: "ad" } });
     fireEvent.blur(search);
@@ -101,9 +100,7 @@ describe("Members", () => {
   it("shows the empty state when nothing matches the search", () => {
     render(<Members currentWorkspace={{ id: "workspace-1", name: "WS" }} />);
 
-    const search = screen.getByPlaceholderText(
-      "Search member by name"
-    );
+    const search = screen.getByPlaceholderText("Search member by name");
     fireEvent.change(search, { target: { value: "nobody" } });
     fireEvent.blur(search);
 
@@ -116,9 +113,7 @@ describe("Members", () => {
       <Members currentWorkspace={{ id: "workspace-1", name: "WS" }} />
     );
 
-    const search = screen.getByPlaceholderText(
-      "Search member by name"
-    );
+    const search = screen.getByPlaceholderText("Search member by name");
     fireEvent.change(search, { target: { value: "ad" } });
     fireEvent.blur(search);
     expect(rowNames()).toEqual(["Adam"]);
@@ -172,9 +167,7 @@ describe("Members", () => {
     it("does not protect a non-owner just because the search narrows to one row", () => {
       render(<Members currentWorkspace={{ id: "workspace-1", name: "WS" }} />);
 
-      const search = screen.getByPlaceholderText(
-      "Search member by name"
-      );
+      const search = screen.getByPlaceholderText("Search member by name");
       fireEvent.change(search, { target: { value: "Aaron" } });
       fireEvent.blur(search);
 
