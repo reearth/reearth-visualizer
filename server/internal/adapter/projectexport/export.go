@@ -21,25 +21,15 @@ import (
 	"github.com/spf13/afero"
 )
 
-// ToStorage writes the export zip of a project to the export storage and
-// returns its file name ("<project ID>.zip"), which the export storage is
-// read and removed by. The GraphQL API hands this name out as a download URL
-// the client fetches separately, and that download route parses the project
-// ID back out of the name, so it has to stay this deterministic form.
+// ToStorage writes the export zip to export storage as "<project ID>.zip",
+// the name the GraphQL download URL depends on.
 func ToStorage(ctx context.Context, uc *interfaces.Container, op *usecase.Operator, pid id.ProjectID) (string, error) {
 	return toStorage(ctx, uc, op, pid, fmt.Sprintf("%s.zip", pid.String()))
 }
 
-// ToStorageUnique is like ToStorage, but writes to a name that's unique per
-// call instead of the deterministic "<project ID>.zip". Use this for a
-// caller that reads the result back directly within the same request/response
-// (never handing out a separate download URL for someone else to fetch
-// later), such as the REST API's synchronous export endpoint.
-//
-// REL-11: that REST endpoint removes its copy as soon as its own response
-// finishes. Sharing ToStorage's deterministic name meant a concurrent
-// GraphQL or gRPC export of the same project could have its file truncated
-// or deleted out from under it by an unrelated REST request finishing first.
+// ToStorageUnique is ToStorage with a per-call unique name instead, for a
+// caller like the REST API that reads the result back directly instead of
+// handing out a download URL.
 func ToStorageUnique(ctx context.Context, uc *interfaces.Container, op *usecase.Operator, pid id.ProjectID) (string, error) {
 	objectName, err := uniqueExportObjectName(pid)
 	if err != nil {
