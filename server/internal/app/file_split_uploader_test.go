@@ -1149,3 +1149,33 @@ func TestSplitUploadManager_CleanupSession_ForceRemovesDispatchedSession(t *test
 		t.Errorf("the import worker's forced cleanup must remove the file, stat err = %v", err)
 	}
 }
+
+// TestUploadSession_Close_IsIdempotent is a regression test: close() had no
+// guard against being called twice on the same non-dispatched session, so
+// two concurrent cleanups of the same session (e.g. two failed chunks, or a
+// chunk failure racing the stale sweep) both succeeded and both reported
+// the same receivedBytes as released -- a double release of the aggregate
+// budget. This confirms a second close() call is a no-op.
+func TestUploadSession_Close_IsIdempotent(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, err := m.getOrCreateSession("close-twice", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := session.writeChunk(0, strings.NewReader("data")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+
+	first, closed := session.close(false)
+	if !closed || first != 4 {
+		t.Fatalf("first close() = (%d, %v), want (4, true)", first, closed)
+	}
+
+	second, closed := session.close(false)
+	if closed {
+		t.Error("a second close() must not report closed=true")
+	}
+	if second != 0 {
+		t.Errorf("a second close() must report 0 bytes, got %d", second)
+	}
+}

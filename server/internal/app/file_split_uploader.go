@@ -129,6 +129,7 @@ type uploadSession struct {
 	receivedBytes int64
 	project       *project.Project
 	dispatched    bool
+	closed        bool
 	updatedAt     time.Time
 	mgr           *SplitUploadManager
 }
@@ -325,9 +326,13 @@ func (s *uploadSession) isStale(cutoff time.Time) bool {
 func (s *uploadSession) close(force bool) (releasedBytes int64, closed bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.closed {
+		return 0, false
+	}
 	if s.dispatched && !force {
 		return 0, false
 	}
+	s.closed = true
 	if err := s.file.Close(); err != nil {
 		log.Printf("Warning: failed to close upload file: %v", err)
 	}
