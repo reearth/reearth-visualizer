@@ -1,5 +1,5 @@
-import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { MouseEventHandles, MouseEvents } from "@reearth/core";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { useGet } from "../../utils";

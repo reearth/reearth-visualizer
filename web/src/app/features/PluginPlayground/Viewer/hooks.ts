@@ -1,7 +1,7 @@
-import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { Camera } from "@reearth/app/utils/value";
 import { MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 import {
   MutableRefObject,
   useCallback,
