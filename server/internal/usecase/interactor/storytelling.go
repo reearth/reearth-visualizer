@@ -449,8 +449,16 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 
 	// Phase 4: GCS cleanup after the commit. A stale file at the old alias is
 	// harmless if this fails, so we log and continue rather than returning an error.
+	//
+	// REL-09 fix: stories are uploaded via UploadStory to the stories/ prefix
+	// (uploadPublishStory -> i.file.UploadStory), but this cleanup called
+	// RemoveBuiltScene, which deletes from maps/ -- a path a story never
+	// wrote to. GCS returns no error for deleting an object that doesn't
+	// exist, so the real stories/<alias>.json was silently never removed,
+	// leaving it servable at its old public URL indefinitely after
+	// unpublish or an alias change.
 	if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate || prevAlias != story.Alias() {
-		if err := i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
+		if err := i.file.RemoveStory(ctx, prevAlias); err != nil {
 			log.Warnfc(ctx, "failed to remove old built story %q: %v", prevAlias, err)
 		}
 	}
