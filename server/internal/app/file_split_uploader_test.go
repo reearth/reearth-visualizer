@@ -1108,7 +1108,10 @@ func TestUploadSession_Close_ReturnsCurrentReceivedBytes(t *testing.T) {
 		t.Fatalf("writeChunk: %v", err)
 	}
 
-	got := session.close(false)
+	got, closed := session.close(false)
+	if !closed {
+		t.Fatal("close(false) on a non-dispatched session must actually close")
+	}
 	if want := int64(4); got != want {
 		t.Errorf("close() returned %d bytes, want %d", got, want)
 	}

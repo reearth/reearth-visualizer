@@ -302,12 +302,6 @@ func (s *uploadSession) isStale(cutoff time.Time) bool {
 	return s.updatedAt.Before(cutoff)
 }
 
-func (s *uploadSession) isDispatched() bool {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.dispatched
-}
-
 // close releases the session's backing file and reports the resident byte
 // count to release from the aggregate budget, both decided under the same
 // lock a concurrent writeChunk uses -- so a chunk that lands mid-cleanup is
@@ -322,11 +316,17 @@ func (s *uploadSession) isDispatched() bool {
 // about to read. With force=false on a dispatched session, close reports
 // no bytes and leaves the file alone for the worker's own close(true) to
 // handle once it actually finishes.
-func (s *uploadSession) close(force bool) (releasedBytes int64) {
+// close reports (bytes to release, whether it actually closed anything).
+// closed=false means dispatched was true and force was false: the caller
+// does not own this session and must not touch its map entry either --
+// the dispatched check and the file close happen under the same lock
+// (never split across map operations), so no concurrent writeChunk can
+// slip through between "decided not dispatched" and "closed the file".
+func (s *uploadSession) close(force bool) (releasedBytes int64, closed bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.dispatched && !force {
-		return 0
+		return 0, false
 	}
 	if err := s.file.Close(); err != nil {
 		log.Printf("Warning: failed to close upload file: %v", err)
@@ -334,7 +334,7 @@ func (s *uploadSession) close(force bool) (releasedBytes int64) {
 	if err := os.Remove(s.filePath); err != nil && !os.IsNotExist(err) {
 		log.Printf("Warning: failed to remove upload file: %v", err)
 	}
-	return s.receivedBytes
+	return s.receivedBytes, true
 }
 
 // importJob is the handoff between a completed upload and the background
@@ -741,22 +741,22 @@ func (m *SplitUploadManager) cleanupSession(fileID string, force bool) {
 		return
 	}
 
-	if !force && s.isDispatched() {
+	// Decide ownership and close the file as one atomic step (inside
+	// close, under s.mu) before touching the map at all, so a session that
+	// becomes dispatched between this call and the lock below is never
+	// removed from the map without anyone having actually freed it.
+	released, closed := s.close(force)
+	if !closed {
 		return
 	}
 
 	m.mgrMu.Lock()
-	cur, stillPresent := m.sessions[fileID]
-	if stillPresent && cur == s {
+	if cur, present := m.sessions[fileID]; present && cur == s {
 		delete(m.sessions, fileID)
-	} else {
-		stillPresent = false
 	}
 	m.mgrMu.Unlock()
 
-	if stillPresent {
-		m.releaseBytes(s.close(force))
-	}
+	m.releaseBytes(released)
 }
 
 func (m *SplitUploadManager) StartCleanupRoutine(interval time.Duration) {
@@ -788,39 +788,27 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 	}
 	m.mgrMu.Unlock()
 
-	var stale []*uploadSession
 	for _, s := range candidates {
-		if s.isStale(staleCutoffFor(s, now)) {
-			stale = append(stale, s)
-		}
-	}
-
-	m.mgrMu.Lock()
-	var toClose []*uploadSession
-	for _, s := range stale {
-		cur, ok := m.sessions[s.fileID]
-		if !ok || cur != s {
-			continue
-		}
-		// Re-check right before deciding: a chunk may have landed (and
-		// pushed updatedAt forward) between the scan above and now, in
-		// which case this session is no longer actually stale.
 		if !s.isStale(staleCutoffFor(s, now)) {
 			continue
 		}
-		// A dispatched session belongs to the import worker now; leave its
-		// map entry and file for that worker's own forced cleanup instead
-		// of reaping an import that's just taking a while.
-		if s.isDispatched() {
+
+		// Same ordering as cleanupSession: close (which atomically
+		// re-checks dispatched under s.mu) before touching the map, so a
+		// session dispatched since the scan above is never removed without
+		// anyone having freed it.
+		released, closed := s.close(false)
+		if !closed {
 			continue
 		}
-		delete(m.sessions, s.fileID)
-		toClose = append(toClose, s)
-	}
-	m.mgrMu.Unlock()
 
-	for _, s := range toClose {
-		m.releaseBytes(s.close(false))
+		m.mgrMu.Lock()
+		if cur, present := m.sessions[s.fileID]; present && cur == s {
+			delete(m.sessions, s.fileID)
+		}
+		m.mgrMu.Unlock()
+
+		m.releaseBytes(released)
 	}
 }
 
