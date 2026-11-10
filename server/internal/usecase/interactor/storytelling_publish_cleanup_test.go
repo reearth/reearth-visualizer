@@ -25,11 +25,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestStorytelling_Publish_UnpublishRemovesStoryFile is a regression test for
-// REL-09: unpublishing (or renaming) a story called RemoveBuiltScene on the
-// old alias, which deletes from the maps/ prefix, while stories are actually
-// uploaded under stories/ via UploadStory. The old story file was never
-// deleted, so it stayed readable at its old URL after unpublish.
 func TestStorytelling_Publish_UnpublishRemovesStoryFile(t *testing.T) {
 	ctx := context.Background()
 
@@ -81,10 +76,6 @@ func TestStorytelling_Publish_UnpublishRemovesStoryFile(t *testing.T) {
 		WritableScenes: []id.SceneID{sc.ID()},
 	}
 
-	// No explicit alias: the story keeps the default alias NewStory() already
-	// assigns it. The regression doesn't depend on a custom alias -- it only
-	// needs a story that was actually uploaded to stories/ and then
-	// unpublished, so this avoids the uniqueness check entirely.
 	story := storytelling.NewStory().NewID().Scene(sc.ID()).Title("Test Story").MustBuild()
 	require.NoError(t, db.Storytelling.Save(ctx, *story))
 
@@ -96,21 +87,16 @@ func TestStorytelling_Publish_UnpublishRemovesStoryFile(t *testing.T) {
 	storyAlias := published.Alias()
 	require.NotEmpty(t, storyAlias)
 
-	// The published story file exists at its alias.
 	r, err := fileGateway.ReadStoryFile(ctx, storyAlias)
 	require.NoError(t, err, "story file should exist right after publishing")
 	_ = r.Close()
 
-	// Unpublish.
 	_, err = storytellingUC.Publish(ctx, interfaces.PublishStoryInput{
 		ID:     story.Id(),
 		Status: storytelling.PublishmentStatusPrivate,
 	}, operator)
 	require.NoError(t, err)
 
-	// The story file must now be gone -- this is the REL-09 fix. Before the
-	// fix, this read would still succeed because cleanup deleted from maps/
-	// instead of stories/.
 	_, err = fileGateway.ReadStoryFile(ctx, storyAlias)
 	assert.ErrorIs(t, err, rerror.ErrNotFound, "story file must be removed from storage after unpublish")
 }
