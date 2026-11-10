@@ -38,7 +38,7 @@ type fileRepo struct {
 	base         *url.URL
 	cacheControl string
 	client       *s3.Client
-	uploader     *manager.Uploader
+	uploader     *manager.Uploader //nolint:staticcheck // transfermanager replacement is still pre-1.0
 }
 
 func NewS3(ctx context.Context, bucketName, baseURL, cacheControl string) (gateway.File, error) {
@@ -67,7 +67,7 @@ func NewS3(ctx context.Context, bucketName, baseURL, cacheControl string) (gatew
 		base:         u,
 		cacheControl: cacheControl,
 		client:       client,
-		uploader:     manager.NewUploader(client),
+		uploader:     manager.NewUploader(client), //nolint:staticcheck // transfermanager replacement is still pre-1.0
 	}, nil
 }
 
@@ -282,10 +282,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 	// By default, uploading the file with same name. It will overwrite the existing file.
 	// No need to check if the file exists.
 
-	// manager.Uploader streams content in parts (multipart upload for larger
-	// files) instead of buffering the whole object into memory first, same
-	// shape as the GCS implementation's io.Copy into a streaming writer.
-	_, err := f.uploader.Upload(ctx, &s3.PutObjectInput{
+	_, err := f.uploader.Upload(ctx, &s3.PutObjectInput{ //nolint:staticcheck // transfermanager replacement is still pre-1.0
 		Body:         content,
 		Bucket:       aws.String(f.bucketName),
 		CacheControl: &f.cacheControl,
