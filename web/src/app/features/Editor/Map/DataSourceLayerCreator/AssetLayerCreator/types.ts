@@ -17,10 +17,11 @@ export const SORTS = {
 };
 export type SortKey = keyof typeof SORTS;
 
-// CMS assets also carry their format and the CMS project and model they
-// belong to.
+// CMS assets also carry their format, whether they are private (their URL
+// needs CMS credentials), and the CMS project and model they belong to.
 export type LayerAsset = Asset & {
   format?: LayerFormat;
+  private?: boolean;
   projectName?: string;
   modelName?: string;
   modelUrl?: string;
@@ -31,6 +32,8 @@ export type AssetSource = {
   assets: LayerAsset[];
   loading: boolean;
   loadMore: () => void;
+  // Some of the source's items couldn't be loaded (e.g. a CMS project).
+  incomplete?: boolean;
   // Uploads one file and resolves to the new asset's id. Omitted for sources
   // that can't be uploaded to (hides Upload and disables drag and drop).
   uploadFile?: (file: File) => Promise<string | undefined>;

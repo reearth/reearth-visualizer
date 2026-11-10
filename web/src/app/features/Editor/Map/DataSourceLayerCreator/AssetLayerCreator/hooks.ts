@@ -19,7 +19,7 @@ import {
   AssetFormat,
   FORMAT_LABELS,
   LayerFormat,
-  ModelIssue,
+  AddIssue,
   assetFormat,
   checkModelGeoJson,
   needsLayerNames
@@ -116,17 +116,18 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     onLoadMore: source.loadMore
   });
 
-  // A CMS model is checked to serve GeoJSON before it's added. A failed
-  // check is shown in the modal until dismissed or the selection changes.
+  // A CMS model is checked to serve GeoJSON before it's added, and a private
+  // CMS asset isn't added. Why is shown in the modal until dismissed or the
+  // selection changes.
   const [checking, setChecking] = useState(false);
-  const [modelIssue, setModelIssue] = useState<ModelIssue>();
+  const [addIssue, setAddIssue] = useState<AddIssue>();
   const checkAbortRef = useRef<AbortController>(undefined);
   const cancelCheck = useCallback(() => {
     checkAbortRef.current?.abort();
     setChecking(false);
-    setModelIssue(undefined);
+    setAddIssue(undefined);
   }, []);
-  const dismissModelIssue = useCallback(() => setModelIssue(undefined), []);
+  const dismissAddIssue = useCallback(() => setAddIssue(undefined), []);
   useEffect(() => () => checkAbortRef.current?.abort(), []);
 
   const handleTabChange = useCallback(
@@ -238,13 +239,16 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
 
   const handleBack = useCallback(() => setStep("select"), []);
 
-  const modelIssueMessages: Record<ModelIssue, string> = useMemo(
+  const addIssueMessages: Record<AddIssue, string> = useMemo(
     () => ({
       noGeometry: t(
         "No Geometry field was found in this model, so GeoJSON export is not available."
       ),
       unavailable: t(
         "The model could not be loaded from the CMS Public API. Make sure it is published to the Public API."
+      ),
+      private: t(
+        "This asset is private in CMS, so it cannot be loaded on the map. Make it public in CMS to add it."
       )
     }),
     [t]
@@ -252,6 +256,10 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit || !selectedAsset || !selectedFormat) return;
+    if (selectedAsset.private) {
+      setAddIssue("private");
+      return;
+    }
     if (needsDetails && step === "select") {
       setStep("details");
       return;
@@ -259,7 +267,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     if (tab === "cmsModels") {
       const controller = new AbortController();
       checkAbortRef.current = controller;
-      setModelIssue(undefined);
+      setAddIssue(undefined);
       setChecking(true);
       const [issue] = await Promise.all([
         checkModelGeoJson(selectedAsset.url, controller.signal),
@@ -270,7 +278,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
       if (controller.signal.aborted) return;
       setChecking(false);
       if (issue) {
-        setModelIssue(issue);
+        setAddIssue(issue);
         return;
       }
     }
@@ -326,6 +334,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     assets,
     loading:
       (source.loading || (isCmsTab && cmsProjectsLoading)) && !assets.length,
+    incomplete: !!source.incomplete,
     upload: source.uploadFile ? openFilePicker : undefined,
     uploads,
     uploading,
@@ -353,8 +362,14 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     autoUpdateTime,
     canSubmit,
     checking,
-    modelError: modelIssue && modelIssueMessages[modelIssue],
-    dismissModelIssue,
+    addError: addIssue && {
+      title:
+        tab === "cmsModels"
+          ? t("Cannot add this Model")
+          : t("Cannot add this Asset"),
+      message: addIssueMessages[addIssue]
+    },
+    dismissAddIssue,
     setLayout,
     setLatColumn,
     setLngColumn,

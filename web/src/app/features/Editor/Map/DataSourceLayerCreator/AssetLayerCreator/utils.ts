@@ -88,42 +88,46 @@ export const cmsAssetLayer = (asset: {
   archiveExtractionStatus?: string | null;
 }): { url: string; format?: LayerFormat } => {
   const { url } = asset;
-  const path = pathOf(url);
+  // Paths are matched and rewritten without the query or fragment, which are
+  // kept (e.g. an access token every tile needs).
+  const path = url.split(/[?#]/)[0];
+  const rest = url.slice(path.length);
+  const withPath = (newPath: string) => newPath + rest;
   const extracted =
     /\.(zip|7z)$/i.test(path) &&
     asset.archiveExtractionStatus?.toLowerCase() === "done";
+  const archiveDir = path.replace(/\.(zip|7z)$/i, "");
   if (asset.previewType?.toLowerCase() === "geo_3d_tiles") {
     if (/\.json$/i.test(path)) return { url, format: "3dtiles" };
     if (extracted)
-      return {
-        url: `${url.replace(/\.(zip|7z)$/i, "")}/tileset.json`,
-        format: "3dtiles"
-      };
+      return { url: withPath(`${archiveDir}/tileset.json`), format: "3dtiles" };
     return { url };
   }
 
-  const mvtFile = /\.(mvt|pbf)$/i.test(url);
+  const mvtFile = /\.(mvt|pbf)$/i.test(path);
   if (asset.previewType?.toLowerCase() !== "geo_mvt" && !mvtFile)
     return isWmsUrl(url) ? { url, format: "wms" } : { url };
 
   const tile = /\/\d{1,5}\/\d{1,5}\/\d{1,5}\.(mvt|pbf)$/i;
-  if (tile.test(url))
-    return { url: url.replace(tile, `/${MVT_TEMPLATE}`), format: "mvt" };
+  if (tile.test(path))
+    return {
+      url: withPath(path.replace(tile, `/${MVT_TEMPLATE}`)),
+      format: "mvt"
+    };
   if (mvtFile)
     return {
-      url: url.replace(/\/[^/]+$/, `/${MVT_TEMPLATE}`),
+      url: withPath(path.replace(/\/[^/]+$/, `/${MVT_TEMPLATE}`)),
       format: "mvt"
     };
   if (extracted)
-    return {
-      url: `${url.replace(/\.(zip|7z)$/i, "")}/${MVT_TEMPLATE}`,
-      format: "mvt"
-    };
+    return { url: withPath(`${archiveDir}/${MVT_TEMPLATE}`), format: "mvt" };
   // Not extracted (yet), or not something tiles can be served from.
   return { url };
 };
 
-export type ModelIssue = "noGeometry" | "unavailable";
+// Why the selected CMS model or asset can't be added: a model not served as
+// GeoJSON, or a private asset, whose URL needs CMS credentials to load.
+export type AddIssue = "noGeometry" | "unavailable" | "private";
 
 const MODEL_CHECK_TIMEOUT_MS = 15000;
 
@@ -133,14 +137,16 @@ const MODEL_CHECK_TIMEOUT_MS = 15000;
 export const checkModelGeoJson = async (
   url: string,
   signal: AbortSignal
-): Promise<ModelIssue | undefined> => {
+): Promise<AddIssue | undefined> => {
+  // Aborted by the caller or after the timeout. (AbortSignal.any would do,
+  // but it needs Safari 17.4+.)
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  const timeout = setTimeout(abort, MODEL_CHECK_TIMEOUT_MS);
+  if (signal.aborted) abort();
+  else signal.addEventListener("abort", abort, { once: true });
   try {
-    const res = await fetch(`${url}?limit=1`, {
-      signal: AbortSignal.any([
-        signal,
-        AbortSignal.timeout(MODEL_CHECK_TIMEOUT_MS)
-      ])
-    });
+    const res = await fetch(`${url}?limit=1`, { signal: controller.signal });
     if (res.ok) {
       res.body?.cancel().catch(() => undefined);
       return undefined;
@@ -151,6 +157,9 @@ export const checkModelGeoJson = async (
       : "unavailable";
   } catch {
     return "unavailable";
+  } finally {
+    clearTimeout(timeout);
+    signal.removeEventListener("abort", abort);
   }
 };
 

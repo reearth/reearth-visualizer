@@ -59,6 +59,9 @@ export default ({
   const assetsSource = all ? allAssets : oneAssets;
   const modelsSource = all ? allModels : oneModels;
   const source = tab === "cmsAssets" ? assetsSource : modelsSource;
+  const incomplete = all
+    ? (tab === "cmsAssets" ? allAssets : allModels).failedCount > 0
+    : !!(tab === "cmsAssets" ? oneAssets : oneModels).error;
 
   const assets = useMemo(() => {
     const projectNames = new Map(projects.map((p) => [p.id, p.name]));
@@ -70,6 +73,7 @@ export default ({
             name: a.filename,
             size: a.size,
             ...cmsAssetLayer(a),
+            private: a.public === false,
             createdAt: a.createdAt,
             contentType: "",
             projectName: projectNames.get(a.projectId)
@@ -103,5 +107,10 @@ export default ({
     workspaceId
   ]);
 
-  return { assets, loading: source.loading, loadMore: source.loadMore };
+  return {
+    assets,
+    loading: source.loading,
+    loadMore: source.loadMore,
+    incomplete
+  };
 };

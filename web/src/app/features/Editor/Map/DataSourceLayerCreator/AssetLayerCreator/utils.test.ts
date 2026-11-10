@@ -45,6 +45,25 @@ describe("checkModelGeoJson", () => {
     expect(await check()).toBe("unavailable");
   });
 
+  it("stops when aborted", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        (_url: string, { signal }: { signal: AbortSignal }) =>
+          new Promise((_, reject) =>
+            signal.addEventListener("abort", () => reject(signal.reason))
+          )
+      )
+    );
+    const controller = new AbortController();
+    const result = checkModelGeoJson(
+      "https://cms.example.com/m",
+      controller.signal
+    );
+    controller.abort();
+    expect(await result).toBe("unavailable");
+  });
+
   it("reports a network failure", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("failed")));
     expect(await check()).toBe("unavailable");
@@ -78,6 +97,20 @@ describe("cmsAssetLayer", () => {
     expect(
       cmsAssetLayer({ url: `${base}/roads.mvt`, previewType: "unknown" })
     ).toEqual({ url: `${base}/{z}/{x}/{y}.mvt`, format: "mvt" });
+  });
+
+  it("matches the path, keeping a query such as a token", () => {
+    expect(cmsAssetLayer({ url: `${base}/12/3639/1612.pbf?token=a` })).toEqual({
+      url: `${base}/{z}/{x}/{y}.mvt?token=a`,
+      format: "mvt"
+    });
+    expect(
+      cmsAssetLayer({
+        url: `${base}.zip?token=a`,
+        previewType: "geo_3d_tiles",
+        archiveExtractionStatus: "done"
+      })
+    ).toEqual({ url: `${base}/tileset.json?token=a`, format: "3dtiles" });
   });
 
   it("leaves out an MVT archive that isn't extracted yet", () => {

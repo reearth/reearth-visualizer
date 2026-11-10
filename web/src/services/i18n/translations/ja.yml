@@ -34,7 +34,6 @@ Size: サイズ
 Path: アセットURL
 No asset has been uploaded yet: まだアセットがアップロードされていません
 Asset URL copied to clipboard: アセットURLがクリップボードにコピーされました
-Could not copy the asset URL to the clipboard: アセットURLをクリップボードにコピーできませんでした
 Public: 公開
 Private: 非公開
 Create new project: 新しいプロジェクトを作成
@@ -140,6 +139,7 @@ Street View and Google Map Search require a Google Maps tile type to comply with
 Page: ページ
 Upload: アップロード
 Search by the name: 名前で検索
+Some items could not be loaded from CMS.: 一部の項目をCMSから読み込めませんでした。
 Project: プロジェクト
 Uploaded at: アップロード日時
 No assets found: アセットが見つかりません
@@ -153,6 +153,10 @@ All formats: すべての形式
 All CMS projects: すべてのCMSプロジェクト
 No Geometry field was found in this model, so GeoJSON export is not available.: このモデルにはジオメトリフィールドがないため、GeoJSONとして出力できません。
 The model could not be loaded from the CMS Public API. Make sure it is published to the Public API.: CMSの公開APIからモデルを読み込めませんでした。モデルが公開APIで公開されているか確認してください。
+This asset is private in CMS, so it cannot be loaded on the map. Make it public in CMS to add it.: このアセットはCMSで非公開のため、地図に読み込めません。追加するにはCMSで公開してください。
+Cannot add this Model: このモデルは追加できません
+Cannot add this Asset: このアセットは追加できません
+Could not copy the asset URL to the clipboard: アセットURLをクリップボードにコピーできませんでした
 Back: 戻る
 Supports GeoJSON, CSV, CZML and KML.: GeoJSON、CSV、CZML、KMLに対応しています。
 Prioritize Performance: パフォーマンスを優先
@@ -167,7 +171,6 @@ The development of the KML format is still in the experimental stage and not ver
 Hosted by CMS: CMSでホスト
 Copy: コピー
 Checking the model: モデルを確認しています
-Cannot add this Model: このモデルは追加できません
 Close: 閉じる
 Submit: 反映
 This file format is not supported. Please use GeoJSON, CSV, KML or CZML.: このファイル形式には対応していません。GeoJSON、CSV、KML、CZMLのいずれかを使用してください。

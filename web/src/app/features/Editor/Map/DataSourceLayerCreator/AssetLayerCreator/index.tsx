@@ -38,6 +38,7 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
     tab,
     assets,
     loading,
+    incomplete,
     upload,
     uploads,
     uploading,
@@ -65,8 +66,8 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
     autoUpdateTime,
     canSubmit,
     checking,
-    modelError,
-    dismissModelIssue,
+    addError,
+    dismissAddIssue,
     setLayout,
     setLatColumn,
     setLngColumn,
@@ -267,6 +268,7 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
                 <AssetContents
                   assets={assets}
                   loading={loading}
+                  incomplete={incomplete}
                   wrapperRef={wrapperRef}
                   contentRef={contentRef}
                   layout={layout}
@@ -299,25 +301,25 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
               {t("Checking the model")}
             </CheckWrapper>
           )}
-          {modelError && (
-            <ModelError role="alert" data-testid="asset-layer-creator-error">
+          {addError && (
+            <AddError role="alert" data-testid="asset-layer-creator-error">
               <Icon icon="warning" color={theme.dangerous.main} />
-              <ModelErrorText>
+              <AddErrorText>
                 <Typography size="body" weight="bold">
-                  {t("Cannot add this Model")}
+                  {addError.title}
                 </Typography>
                 <Typography size="footnote" color={theme.content.main}>
-                  {modelError}
+                  {addError.message}
                 </Typography>
-              </ModelErrorText>
+              </AddErrorText>
               <IconButton
                 icon="close"
                 size="small"
                 appearance="simple"
                 ariaLabel={t("Close")}
-                onClick={dismissModelIssue}
+                onClick={dismissAddIssue}
               />
-            </ModelError>
+            </AddError>
           )}
         </Wrapper>
       </ModalPanel>
@@ -384,7 +386,7 @@ const Spoke = styled("span", {
 }));
 
 // Over the assets, just above the footer.
-const ModelError = styled("div")(({ theme }) => ({
+const AddError = styled("div")(({ theme }) => ({
   position: css.position.absolute,
   left: "50%",
   bottom: theme.spacing.large,
@@ -399,7 +401,7 @@ const ModelError = styled("div")(({ theme }) => ({
   boxShadow: theme.shadow.tooltip
 }));
 
-const ModelErrorText = styled("div")(({ theme }) => ({
+const AddErrorText = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   gap: theme.spacing.smallest,

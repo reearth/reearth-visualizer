@@ -172,6 +172,60 @@ describe("useCMSModelsAcrossProjects", () => {
     // Only p2 is fetched again.
     expect(query).toHaveBeenCalledTimes(3);
   });
+
+  it("counts a project whose next page fails, and stops loading it", async () => {
+    query.mockImplementation(
+      async ({ variables: { page } }: { variables: { page: number } }) => {
+        if (page > 1) throw new Error("down");
+        return {
+          data: {
+            cmsModels: {
+              totalCount: CMS_PAGE_SIZE * 2,
+              nodes: [model("m-p1", "p1")]
+            }
+          }
+        };
+      }
+    );
+    const { result } = renderHook(() =>
+      useCMSModelsAcrossProjects({ workspaceId: "ws", projectIds: ["p1"] })
+    );
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.failedCount).toBe(0);
+
+    await act(() => result.current.loadMore());
+
+    expect(result.current.failedCount).toBe(1);
+    expect(result.current.models.map((m) => m.id)).toEqual(["m-p1"]);
+    expect(result.current.hasMore).toBe(false);
+  });
+
+  it("pages by the page loaded, not by the item count", async () => {
+    // Every page is shorter than CMS_PAGE_SIZE.
+    query.mockImplementation(
+      async ({ variables: { page } }: { variables: { page: number } }) => ({
+        data: {
+          cmsModels: {
+            totalCount: CMS_PAGE_SIZE * 3,
+            nodes: [model(`m-${page}`, "p1")]
+          }
+        }
+      })
+    );
+    const { result } = renderHook(() =>
+      useCMSModelsAcrossProjects({ workspaceId: "ws", projectIds: ["p1"] })
+    );
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    await act(() => result.current.loadMore());
+    await act(() => result.current.loadMore());
+
+    expect(result.current.models.map((m) => m.id)).toEqual([
+      "m-1",
+      "m-2",
+      "m-3"
+    ]);
+    expect(result.current.hasMore).toBe(false);
+  });
 });
 
 describe("useCMSProjects", () => {
@@ -196,5 +250,27 @@ describe("useCMSProjects", () => {
     );
     // Still loading until the remaining projects arrive.
     expect(result.current.loading).toBe(true);
+  });
+
+  it("stops loading and returns the error when a page fails", async () => {
+    const fetchMore = vi.fn().mockRejectedValue(new Error("down"));
+    vi.mocked(useQuery).mockReturnValue({
+      data: {
+        cmsProjects: {
+          totalCount: 150,
+          nodes: Array.from({ length: 100 }, (_, i) => ({ id: `p${i}` }))
+        }
+      },
+      loading: false,
+      error: undefined,
+      fetchMore
+    } as unknown as ReturnType<typeof useQuery>);
+
+    const { result } = renderHook(() => useCMSProjects({ workspaceId: "ws" }));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.error).toEqual(new Error("down"));
+    expect(result.current.projects).toHaveLength(100);
+    expect(fetchMore).toHaveBeenCalledTimes(1);
   });
 });

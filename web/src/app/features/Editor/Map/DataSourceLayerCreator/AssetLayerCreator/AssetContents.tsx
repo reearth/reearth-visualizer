@@ -22,6 +22,8 @@ type Option = { value: string; label: string };
 type Props = {
   assets: LayerAsset[];
   loading: boolean;
+  // Notes that some items couldn't be loaded.
+  incomplete?: boolean;
   wrapperRef: RefObject<HTMLDivElement | null>;
   contentRef: RefObject<HTMLDivElement | null>;
   layout: AssetLayout;
@@ -48,6 +50,7 @@ type Props = {
 const AssetContents: FC<Props> = ({
   assets,
   loading,
+  incomplete,
   wrapperRef,
   contentRef,
   layout,
@@ -124,6 +127,14 @@ const AssetContents: FC<Props> = ({
       />
 
       <AssetsArea>
+        {incomplete && !loading && (
+          <Notice data-testid="asset-layer-creator-incomplete">
+            <Icon icon="warning" size="small" color={theme.warning.main} />
+            <Typography size="footnote" color={theme.content.weak}>
+              {t("Some items could not be loaded from CMS.")}
+            </Typography>
+          </Notice>
+        )}
         {layout === "list" && !loading && !!assets.length && (
           <ListHeaderWrapper>
             <ListHeader tab={tab}>
@@ -187,6 +198,13 @@ const Filters = styled("div")(({ theme }) => ({
   alignItems: css.alignItems.center,
   gap: theme.spacing.small,
   flexShrink: 0
+}));
+
+const Notice = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.smallest,
+  padding: `0 ${theme.spacing.small}px ${theme.spacing.small}px`
 }));
 
 const Filter = styled("div")(() => ({
