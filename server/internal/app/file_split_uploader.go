@@ -305,6 +305,13 @@ func (s *uploadSession) isStale(cutoff time.Time) bool {
 func (s *uploadSession) close() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.dispatched {
+		// Ownership of the file has passed to the import worker, which does
+		// its own cleanupSession once the import finishes. A concurrent
+		// chunk failure's cleanup must not close or remove it out from
+		// under a dispatch it raced with.
+		return
+	}
 	if err := s.file.Close(); err != nil {
 		log.Printf("Warning: failed to close upload file: %v", err)
 	}

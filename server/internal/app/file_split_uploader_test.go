@@ -1055,3 +1055,38 @@ func TestSplitUploadManager_CleanupStaleSessions_ReservedBytesUseShorterCutoff(t
 		t.Error("a session with no reserved bytes must keep the full 24h cutoff")
 	}
 }
+
+// TestSplitUploadManager_CleanupSession_SkipsFileRemovalForDispatchedSession
+// is a regression test: cleanupSession used to close and remove a session's
+// backing file unconditionally. If a different chunk's failure triggered
+// cleanup for a session that another, concurrent chunk had just completed
+// and dispatched for import, the import worker's later read of that file
+// could lose the race and fail -- deleting a file a legitimate, in-progress
+// import still needs. This confirms a dispatched session's file is left
+// alone.
+func TestSplitUploadManager_CleanupSession_SkipsFileRemovalForDispatchedSession(t *testing.T) {
+	m := newTestManager(t)
+
+	session, err := m.getOrCreateSession("dispatched-session", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	filePath := session.snapshot().FilePath
+
+	session.mu.Lock()
+	session.dispatched = true
+	session.mu.Unlock()
+
+	m.cleanupSession("dispatched-session")
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions["dispatched-session"]
+	m.mgrMu.Unlock()
+	if exists {
+		t.Error("the session should still be removed from the manager's map")
+	}
+
+	if _, err := os.Stat(filePath); err != nil {
+		t.Errorf("a dispatched session's backing file must not be removed by cleanupSession, stat err = %v", err)
+	}
+}
