@@ -37,10 +37,11 @@ type StorageResult = {
   string?: unknown;
   number?: unknown;
   object?: unknown;
-  missing?: unknown;
+  missing?: boolean;
   keys?: string[];
   keysAfterDelete?: string[];
   keysAfterDrop?: string[];
+  stringAfterDrop?: boolean;
 };
 
 test.describe.configure({ mode: "serial" });
@@ -107,13 +108,14 @@ test.describe("Data Plugin API — semantic (webkit)", () => {
     expect(result.object).toEqual({ a: 1, nested: { b: [1, 2] } });
   });
 
-  test("getAsync returns null for a key that was never set", async () => {
+  test("getAsync returns no value (null or undefined) for a key that was never set", async () => {
     test.info().annotations.push({
       type: "story",
       description: "PLUGIN-DAT-002"
     });
 
-    expect(result.missing).toBeNull();
+    // localForage gives null; undefined would also mean "no value".
+    expect(result.missing).toBe(true);
   });
 
   test("keysAsync lists the stored keys", async () => {
@@ -134,12 +136,13 @@ test.describe("Data Plugin API — semantic (webkit)", () => {
     expect(result.keysAfterDelete).toEqual(["e2e-object", "e2e-string"]);
   });
 
-  test("dropStoreAsync removes every key", async () => {
+  test("dropStoreAsync removes every key and value", async () => {
     test.info().annotations.push({
       type: "story",
       description: "PLUGIN-DAT-005"
     });
 
     expect(result.keysAfterDrop).toEqual([]);
+    expect(result.stringAfterDrop).toBe(true);
   });
 });

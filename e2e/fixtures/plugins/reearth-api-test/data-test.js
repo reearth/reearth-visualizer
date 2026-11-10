@@ -34,13 +34,14 @@ exports.onMessage = function(msg) {
       .then(function(v) { result.string = v; return storage.getAsync("e2e-number"); })
       .then(function(v) { result.number = v; return storage.getAsync("e2e-object"); })
       .then(function(v) { result.object = v; return storage.getAsync("e2e-missing"); })
-      .then(function(v) { result.missing = v === undefined ? null : v; return storage.keysAsync(); })
+      .then(function(v) { result.missing = v == null; return storage.keysAsync(); })
       .then(function(v) { result.keys = v.slice().sort(); return storage.deleteAsync("e2e-number"); })
       .then(function() { return storage.keysAsync(); })
       .then(function(v) { result.keysAfterDelete = v.slice().sort(); return storage.dropStoreAsync(); })
       .then(function() { return storage.keysAsync(); })
+      .then(function(v) { result.keysAfterDrop = v; return storage.getAsync("e2e-string"); })
       .then(function(v) {
-        result.keysAfterDrop = v;
+        result.stringAfterDrop = v == null;
         reearth.ui.postMessage({ action: "data-storage-result", result: result });
       })
       .catch(function(err) {
