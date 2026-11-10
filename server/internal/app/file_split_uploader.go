@@ -115,18 +115,20 @@ func validateChunkRequest(fileID string, chunkNum, totalChunks int, chunkSize in
 // prevents the class of bug that produced REL-02: a goroutine or handler
 // touching session state without holding its lock.
 type uploadSession struct {
-	mu            sync.Mutex
-	fileID        string
-	filePath      string
-	file          *os.File
-	chunkSize     int64
-	totalChunks   int
-	received      map[int]struct{}
-	receivedBytes int64
-	project       *project.Project
-	dispatched    bool
-	updatedAt     time.Time
-	mgr           *SplitUploadManager
+	mu               sync.Mutex
+	fileID           string
+	filePath         string
+	file             *os.File
+	chunkSize        int64
+	totalChunks      int
+	received         map[int]struct{}
+	receivedBytes    int64
+	project          *project.Project
+	dispatched       bool
+	updatedAt        time.Time
+	mgr              *SplitUploadManager
+	ownerUserID      string
+	ownerWorkspaceID accountsID.WorkspaceID
 }
 
 // sessionInfo is an immutable snapshot of the fields callers need after
@@ -271,6 +273,22 @@ func (s *uploadSession) setProject(p *project.Project) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.project = p
+}
+
+// setOwner records who started this session (SEC-02), so later chunks --
+// including a chunk 0 "retry" -- can be checked against the actual caller
+// instead of trusting the client-supplied file_id alone.
+func (s *uploadSession) setOwner(userID string, wsID accountsID.WorkspaceID) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.ownerUserID = userID
+	s.ownerWorkspaceID = wsID
+}
+
+func (s *uploadSession) matchesOwner(userID string, wsID accountsID.WorkspaceID) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.ownerUserID == userID && s.ownerWorkspaceID == wsID
 }
 
 func (s *uploadSession) snapshot() sessionInfo {
@@ -601,7 +619,16 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 	)
 }
 
+func operatorUserID(op *usecase.Operator) string {
+	if op == nil || op.AcOperator == nil || op.AcOperator.User == nil {
+		return ""
+	}
+	return op.AcOperator.User.String()
+}
+
 func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId accountsID.WorkspaceID, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
+
+	callerUserID := operatorUserID(op)
 
 	var session *uploadSession
 
@@ -609,6 +636,11 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 		// A session already existing means this is a retry: reuse it
 		// instead of creating another temporary project.
 		if s, ok := m.getSession(fileID); ok {
+			// SEC-02: file_id is client-chosen, so a "retry" could be
+			// another caller hijacking someone else's in-progress session.
+			if !s.matchesOwner(callerUserID, wsId) {
+				return nil, echo.NewHTTPError(http.StatusForbidden, "upload session does not belong to this caller")
+			}
 			session = s
 		} else {
 			if m.atCapacity() {
@@ -625,6 +657,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to start upload session: %v", err))
 			}
 			s.setProject(prj)
+			s.setOwner(callerUserID, wsId)
 			session = s
 		}
 	} else {
@@ -633,6 +666,10 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 		s, ok := m.getSession(fileID)
 		if !ok {
 			return nil, echo.NewHTTPError(http.StatusBadRequest, "unknown or expired upload session; restart the upload from chunk 0")
+		}
+		// SEC-02: reject a chunk from anyone but the session's creator.
+		if !s.matchesOwner(callerUserID, wsId) {
+			return nil, echo.NewHTTPError(http.StatusForbidden, "upload session does not belong to this caller")
 		}
 		// total_chunks must agree with the session's original value, or a
 		// client could inflate it to bypass validateChunkRequest's bound

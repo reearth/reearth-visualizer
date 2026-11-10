@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,6 +15,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/labstack/echo/v4"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/apperr"
@@ -977,3 +981,65 @@ func TestSplitUploadManager_RunImportJob_ClaimErrorWritesFailed(t *testing.T) {
 		t.Error("ClaimImport error must write a terminal FAILED status (REL-09)")
 	}
 }
+
+// TestSplitUploadManager_HandleChunkedUpload_RejectsChunkFromDifferentOwner
+// is a regression test for SEC-02: upload sessions were keyed only by the
+// client-supplied file_id, with no check against who actually created them.
+// Any caller who knew or guessed another user's file_id could resend chunk 0
+// (treated as a retry) or a later chunk and tamper with that user's import.
+// This confirms a caller other than the session's creator is rejected, both
+// on the chunk-0 "retry" path and on a later chunk, while the real owner can
+// still continue.
+func TestSplitUploadManager_HandleChunkedUpload_RejectsChunkFromDifferentOwner(t *testing.T) {
+	m := newTestManager(t)
+	const fileID = "sec02-session"
+
+	ownerWs := accountsID.NewWorkspaceID()
+	attackerWs := accountsID.NewWorkspaceID()
+	ownerUser := accountsID.NewUserID()
+	attackerUser := accountsID.NewUserID()
+
+	session, err := m.getOrCreateSession(fileID, 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	session.setOwner(ownerUser.String(), ownerWs)
+
+	attackerOp := &usecase.Operator{AcOperator: &accountsWorkspace.Operator{User: &attackerUser}}
+
+	assertForbidden := func(t *testing.T, err error) {
+		t.Helper()
+		herr, ok := err.(*echo.HTTPError)
+		if !ok || herr.Code != http.StatusForbidden {
+			t.Errorf("expected 403 Forbidden, got %v", err)
+		}
+	}
+
+	// Attacker "retries" chunk 0 for the victim's file_id.
+	_, err = m.handleChunkedUpload(context.Background(), nil, attackerOp, attackerWs, fileID, 0, 2, fakeMultipartFile{bytes.NewReader([]byte("data"))})
+	if err == nil {
+		t.Fatal("expected an error for a chunk 0 retry from a different caller")
+	}
+	assertForbidden(t, err)
+
+	// Attacker sends a later chunk for the victim's file_id.
+	_, err = m.handleChunkedUpload(context.Background(), nil, attackerOp, attackerWs, fileID, 1, 2, fakeMultipartFile{bytes.NewReader([]byte("data"))})
+	if err == nil {
+		t.Fatal("expected an error for a non-zero chunk from a different caller")
+	}
+	assertForbidden(t, err)
+
+	// The real owner can still continue the upload.
+	ownerOp := &usecase.Operator{AcOperator: &accountsWorkspace.Operator{User: &ownerUser}}
+	if _, err := m.handleChunkedUpload(context.Background(), nil, ownerOp, ownerWs, fileID, 1, 2, fakeMultipartFile{bytes.NewReader([]byte("data"))}); err != nil {
+		t.Errorf("the session's own owner must still be accepted: %v", err)
+	}
+}
+
+// fakeMultipartFile adapts a *bytes.Reader to satisfy multipart.File (which
+// also needs Close) for tests that call handleChunkedUpload directly.
+type fakeMultipartFile struct {
+	*bytes.Reader
+}
+
+func (fakeMultipartFile) Close() error { return nil }
