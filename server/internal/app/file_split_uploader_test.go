@@ -1179,3 +1179,34 @@ func TestUploadSession_Close_IsIdempotent(t *testing.T) {
 		t.Errorf("a second close() must report 0 bytes, got %d", second)
 	}
 }
+
+// TestSplitUploadManager_CleanupStaleSessions_SkipsDispatchedSession confirms
+// the stale sweep leaves a dispatched session alone even once it's old
+// enough to otherwise qualify as stale, since cleanupStaleSessions delegates
+// to cleanupSession's own dispatched guard.
+func TestSplitUploadManager_CleanupStaleSessions_SkipsDispatchedSession(t *testing.T) {
+	m := newTestManager(t)
+
+	session, err := m.getOrCreateSession("dispatched-but-stale", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	filePath := session.snapshot().FilePath
+
+	session.mu.Lock()
+	session.dispatched = true
+	session.mu.Unlock()
+	session.setUpdatedAtForTest(time.Now().Add(-25 * time.Hour))
+
+	m.cleanupStaleSessions()
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions["dispatched-but-stale"]
+	m.mgrMu.Unlock()
+	if !exists {
+		t.Error("the stale sweep must leave a dispatched session in the map for its owner's forced cleanup")
+	}
+	if _, err := os.Stat(filePath); err != nil {
+		t.Errorf("the stale sweep must not remove a dispatched session's file, stat err = %v", err)
+	}
+}

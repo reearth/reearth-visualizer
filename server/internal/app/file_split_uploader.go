@@ -76,8 +76,6 @@ const maxConcurrentSessions = 256
 
 var maxAggregateBytes int64 = 1 * 1024 * 1024 * 1024 // 1GB
 
-// reservedBytesStaleAfter is the stale cutoff for sessions already holding
-// reserved bytes, shorter than cleanupStaleSessions' general 24h sweep.
 const reservedBytesStaleAfter = 1 * time.Hour
 
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
@@ -303,26 +301,6 @@ func (s *uploadSession) isStale(cutoff time.Time) bool {
 	return s.updatedAt.Before(cutoff)
 }
 
-// close releases the session's backing file and reports the resident byte
-// count to release from the aggregate budget, both decided under the same
-// lock a concurrent writeChunk uses -- so a chunk that lands mid-cleanup is
-// never silently dropped from the release.
-//
-// force must be true for the import worker's own teardown (dispatchImport's
-// timeout path, runImportJob's deferred cleanup) -- the only callers that
-// actually own a dispatched session once it's handed off. Every other
-// caller (a chunk failure's cleanup) must pass false, since dispatched only
-// ever goes false->true and never resets: without the guard below, that
-// caller could race a concurrent dispatch and delete a file the worker is
-// about to read. With force=false on a dispatched session, close reports
-// no bytes and leaves the file alone for the worker's own close(true) to
-// handle once it actually finishes.
-// close reports (bytes to release, whether it actually closed anything).
-// closed=false means dispatched was true and force was false: the caller
-// does not own this session and must not touch its map entry either --
-// the dispatched check and the file close happen under the same lock
-// (never split across map operations), so no concurrent writeChunk can
-// slip through between "decided not dispatched" and "closed the file".
 func (s *uploadSession) close(force bool) (releasedBytes int64, closed bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -734,10 +712,6 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 	return resp, nil
 }
 
-// cleanupSession tears down a session. force must be true only for the
-// import worker's own teardown (see close's doc comment) -- every other
-// caller passes false, which leaves a dispatched session's map entry and
-// file alone for the worker's own forced cleanup to handle instead.
 func (m *SplitUploadManager) cleanupSession(fileID string, force bool) {
 	m.mgrMu.Lock()
 	s, ok := m.sessions[fileID]
@@ -746,10 +720,6 @@ func (m *SplitUploadManager) cleanupSession(fileID string, force bool) {
 		return
 	}
 
-	// Decide ownership and close the file as one atomic step (inside
-	// close, under s.mu) before touching the map at all, so a session that
-	// becomes dispatched between this call and the lock below is never
-	// removed from the map without anyone having actually freed it.
 	released, closed := s.close(force)
 	if !closed {
 		return
@@ -773,9 +743,6 @@ func (m *SplitUploadManager) StartCleanupRoutine(interval time.Duration) {
 	}()
 }
 
-// staleCutoffFor returns the cutoff a session should be checked against: the
-// shorter reservedBytesStaleAfter once it holds reserved bytes, the general
-// 24h grace period otherwise.
 func staleCutoffFor(s *uploadSession, now time.Time) time.Time {
 	if s.snapshot().ReceivedBytes > 0 {
 		return now.Add(-reservedBytesStaleAfter)
@@ -797,23 +764,7 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 		if !s.isStale(staleCutoffFor(s, now)) {
 			continue
 		}
-
-		// Same ordering as cleanupSession: close (which atomically
-		// re-checks dispatched under s.mu) before touching the map, so a
-		// session dispatched since the scan above is never removed without
-		// anyone having freed it.
-		released, closed := s.close(false)
-		if !closed {
-			continue
-		}
-
-		m.mgrMu.Lock()
-		if cur, present := m.sessions[s.fileID]; present && cur == s {
-			delete(m.sessions, s.fileID)
-		}
-		m.mgrMu.Unlock()
-
-		m.releaseBytes(released)
+		m.cleanupSession(s.fileID, false)
 	}
 }
 
