@@ -1,4 +1,3 @@
-import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import type {
   ComputedFeature,
   SelectedFeatureInfo,
@@ -15,6 +14,7 @@ import type {
   SketchType,
   TimelineManagerRef
 } from "@reearth/core";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 import type { PropsWithChildren, RefObject } from "react";
 
 import { Story } from "../StoryPanel";
