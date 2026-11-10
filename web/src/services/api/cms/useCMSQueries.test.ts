@@ -230,7 +230,8 @@ describe("useCMSModelsAcrossProjects", () => {
 
 describe("useCMSProjects", () => {
   it("fetches the pages after the first until every project is loaded", async () => {
-    const fetchMore = vi.fn().mockResolvedValue({});
+    // Kept pending: once page 2 has loaded, nothing is left to fetch.
+    const fetchMore = vi.fn(() => new Promise(() => undefined));
     vi.mocked(useQuery).mockReturnValue({
       data: {
         cmsProjects: {
