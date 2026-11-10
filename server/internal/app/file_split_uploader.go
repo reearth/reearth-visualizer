@@ -302,7 +302,11 @@ func (s *uploadSession) isStale(cutoff time.Time) bool {
 	return s.updatedAt.Before(cutoff)
 }
 
-func (s *uploadSession) close() {
+// close releases the session's backing file and reports the resident byte
+// count to release from the aggregate budget, both decided under the same
+// lock a concurrent writeChunk uses -- so a chunk that lands mid-cleanup is
+// never silently dropped from the release.
+func (s *uploadSession) close() (releasedBytes int64) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if s.dispatched {
@@ -310,7 +314,7 @@ func (s *uploadSession) close() {
 		// its own cleanupSession once the import finishes. A concurrent
 		// chunk failure's cleanup must not close or remove it out from
 		// under a dispatch it raced with.
-		return
+		return 0
 	}
 	if err := s.file.Close(); err != nil {
 		log.Printf("Warning: failed to close upload file: %v", err)
@@ -318,6 +322,7 @@ func (s *uploadSession) close() {
 	if err := os.Remove(s.filePath); err != nil && !os.IsNotExist(err) {
 		log.Printf("Warning: failed to remove upload file: %v", err)
 	}
+	return s.receivedBytes
 }
 
 // importJob is the handoff between a completed upload and the background
@@ -721,8 +726,7 @@ func (m *SplitUploadManager) cleanupSession(fileID string) {
 	m.mgrMu.Unlock()
 
 	if ok {
-		m.releaseBytes(s.snapshot().ReceivedBytes)
-		s.close()
+		m.releaseBytes(s.close())
 	}
 }
 
@@ -735,10 +739,18 @@ func (m *SplitUploadManager) StartCleanupRoutine(interval time.Duration) {
 	}()
 }
 
+// staleCutoffFor returns the cutoff a session should be checked against: the
+// shorter reservedBytesStaleAfter once it holds reserved bytes, the general
+// 24h grace period otherwise.
+func staleCutoffFor(s *uploadSession, now time.Time) time.Time {
+	if s.snapshot().ReceivedBytes > 0 {
+		return now.Add(-reservedBytesStaleAfter)
+	}
+	return now.Add(-24 * time.Hour)
+}
+
 func (m *SplitUploadManager) cleanupStaleSessions() {
 	now := time.Now()
-	cutoff := now.Add(-24 * time.Hour)
-	reservedCutoff := now.Add(-reservedBytesStaleAfter)
 
 	m.mgrMu.Lock()
 	candidates := make([]*uploadSession, 0, len(m.sessions))
@@ -749,26 +761,31 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 
 	var stale []*uploadSession
 	for _, s := range candidates {
-		sessionCutoff := cutoff
-		if s.snapshot().ReceivedBytes > 0 {
-			sessionCutoff = reservedCutoff
-		}
-		if s.isStale(sessionCutoff) {
+		if s.isStale(staleCutoffFor(s, now)) {
 			stale = append(stale, s)
 		}
 	}
 
 	m.mgrMu.Lock()
+	var toClose []*uploadSession
 	for _, s := range stale {
-		if cur, ok := m.sessions[s.fileID]; ok && cur == s {
-			delete(m.sessions, s.fileID)
+		cur, ok := m.sessions[s.fileID]
+		if !ok || cur != s {
+			continue
 		}
+		// Re-check right before deciding: a chunk may have landed (and
+		// pushed updatedAt forward) between the scan above and now, in
+		// which case this session is no longer actually stale.
+		if !s.isStale(staleCutoffFor(s, now)) {
+			continue
+		}
+		delete(m.sessions, s.fileID)
+		toClose = append(toClose, s)
 	}
 	m.mgrMu.Unlock()
 
-	for _, s := range stale {
-		m.releaseBytes(s.snapshot().ReceivedBytes)
-		s.close()
+	for _, s := range toClose {
+		m.releaseBytes(s.close())
 	}
 }
 

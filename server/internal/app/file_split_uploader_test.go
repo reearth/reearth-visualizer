@@ -1090,3 +1090,25 @@ func TestSplitUploadManager_CleanupSession_SkipsFileRemovalForDispatchedSession(
 		t.Errorf("a dispatched session's backing file must not be removed by cleanupSession, stat err = %v", err)
 	}
 }
+
+// TestUploadSession_Close_ReturnsCurrentReceivedBytes is a regression test:
+// cleanupSession used to snapshot ReceivedBytes and close() in two separate
+// locked sections, so a chunk that landed in between added bytes to the
+// aggregate budget that were never released once the session was torn down.
+// This confirms close() reports the byte count as of the same lock scope
+// that performs the close, not a stale read from before it.
+func TestUploadSession_Close_ReturnsCurrentReceivedBytes(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, err := m.getOrCreateSession("close-bytes", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := session.writeChunk(0, strings.NewReader("data")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+
+	got := session.close()
+	if want := int64(4); got != want {
+		t.Errorf("close() returned %d bytes, want %d", got, want)
+	}
+}
