@@ -27,6 +27,20 @@ import (
 // SaveExportProjectZip closes the zip writer and the file itself, so the
 // deferred closes below fail by design on success; their errors are not
 // returned, as before this was moved out of the GraphQL resolver.
+// NOTE(SCA-02, AI compliance scan finding): the local scratch file below is
+// created at a fixed "<projectID>.zip" path, so two concurrent exports of the
+// same project race on it -- the second Create truncates the file the first
+// is still streaming assets into, and the first export's deferred cleanup can
+// then delete the second export's file out from under it, producing a
+// corrupted zip that both callers see as a success. A complete fix (unique
+// scratch filename per export, same deterministic served object name) was
+// written and tested but its PR was closed unmerged (#2424) before this
+// package existed. Accepting this as a tradeoff for now: exporting is a rare,
+// deliberate action and the race needs two exports of the exact same project
+// to overlap within the few-seconds-to-minutes an export takes, so real-world
+// likelihood is low. Flagged repeatedly across monthly AI compliance scans
+// (most recently as SCA-02 in eukarya-inc/compliance#263) -- each scan opens
+// a fresh issue, so this comment is the durable record instead of a thread.
 func ToStorage(ctx context.Context, uc *interfaces.Container, op *usecase.Operator, pid id.ProjectID) (string, error) {
 	fs := afero.NewOsFs()
 
