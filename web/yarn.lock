@@ -5967,6 +5967,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reearth/visualizer-plugin-api@npm:2.1.1":
+  version: 2.1.1
+  resolution: "@reearth/visualizer-plugin-api@npm:2.1.1"
+  peerDependencies:
+    "@reearth/core": 0.0.7-alpha.81
+  checksum: 10c0/d407cc4fd347b7e1a431f904db4ea388ad05a7e93a93583f8f28978fafa228af06c6f8a26abaa29b78bb46ac7cd77bc9a608a2a1dfd721572109538480a9236a
+  languageName: node
+  linkType: hard
+
 "@reearth/visualizer@workspace:.":
   version: 0.0.0-use.local
   resolution: "@reearth/visualizer@workspace:."
@@ -6010,6 +6019,7 @@ __metadata:
     "@radix-ui/react-slot": "npm:1.2.4"
     "@reearth/core": "npm:0.0.7-alpha.81"
     "@reearth/sentinel": "npm:0.1.2"
+    "@reearth/visualizer-plugin-api": "npm:2.1.1"
     "@reearth/zushi": "npm:0.3.0"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"

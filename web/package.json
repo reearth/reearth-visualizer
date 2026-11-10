@@ -1,6 +1,6 @@
 {
   "name": "@reearth/visualizer",
-  "version": "1.0.0-beta.16.30",
+  "version": "1.0.0-beta.16.31",
   "repository": "https://github.com/reearth/reearth-visualizer.git",
   "author": "Re:Earth contributors <community@reearth.io>",
   "license": "Apache-2.0",
@@ -27,7 +27,6 @@
     "gql": "graphql-codegen",
     "gql:plateau": "graphql-codegen --config ./src/services/plateau/graphql/codegen_catelog.ts",
     "i18n": "i18next",
-    "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc",
     "scan:lock": "sh ./bin/scan-yarn-lock.sh",
     "docs:generate": "node docs/scripts/generate-module-docs.js",
     "docs:validate": "node docs/scripts/validate-docs.js",
@@ -135,6 +134,7 @@
     "@radix-ui/react-slot": "1.2.4",
     "@reearth/core": "0.0.7-alpha.81",
     "@reearth/sentinel": "0.1.2",
+    "@reearth/visualizer-plugin-api": "2.1.1",
     "@reearth/zushi": "0.3.0",
     "@rot1024/use-transition": "1.0.0",
     "@sentry/browser": "7.77.0",
