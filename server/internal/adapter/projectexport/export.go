@@ -28,6 +28,12 @@ import (
 // deferred closes below fail by design on success; their errors are not
 // returned, as before this was moved out of the GraphQL resolver.
 func ToStorage(ctx context.Context, uc *interfaces.Container, op *usecase.Operator, pid id.ProjectID) (string, error) {
+	// Authorize before creating the scratch file below, which is named
+	// deterministically from pid alone.
+	if _, err := uc.Project.CheckProjectExportAccess(ctx, pid, op); err != nil {
+		return "", err
+	}
+
 	fs := afero.NewOsFs()
 
 	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", pid.String()))
