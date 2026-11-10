@@ -63,10 +63,9 @@ User already joined this workspace.: ユーザーはすでにこのワークス�
 Remove: 削除
 'Your are removing member ': '次のメンバーを削除しています '
 ' out of this workspace. Are you sure you want to do that?': ' 削除後このワークスペースに存在しない。本当に削除しますか？'
-Search member by name or email: 名前またはEメールでメンバーを検索
+Search member by name: 名前でメンバーを検索
 invite user: ユーザーを招待
 User Name: ユーザー名
-Email: メールアドレス
 Role: 役割
 No Member match your search.: 一致するメンバーが見つかりません'
 Change Role: 役割を変更

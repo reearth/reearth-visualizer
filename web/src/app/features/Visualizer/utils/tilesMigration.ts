@@ -1,4 +1,4 @@
-import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 
 /**
  * Configuration for viewer property migration and fallback (tiles and terrain)

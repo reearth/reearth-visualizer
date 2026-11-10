@@ -271,6 +271,8 @@ export type ReearthPluginContext = {
 
 The plugin API exposed via `globalThis.reearth` provides comprehensive access to the Re:Earth viewer:
 
+> The TypeScript types for this API live in the npm package `@reearth/visualizer-plugin-api` (`visualizer-plugin-api/` in the repo root). The web app imports them through `src/app/features/Visualizer/Crust/Plugins/pluginAPI/types`, which re-exports the package and adds the web-only `GlobalThis` type. To change the API types, change the package first, release it, then bump the dependency here. See `visualizer-plugin-api/README.md`.
+
 ### Core Properties
 
 - `reearth.version` - Re:Earth version
