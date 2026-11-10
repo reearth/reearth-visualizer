@@ -76,11 +76,8 @@ const maxConcurrentSessions = 256
 
 var maxAggregateBytes int64 = 1 * 1024 * 1024 * 1024 // 1GB
 
-// reservedBytesStaleAfter is a shorter cutoff than cleanupStaleSessions'
-// general 24h sweep, applied only to sessions already holding bytes reserved
-// against maxAggregateBytes (REL-08). A session that has received data but
-// gone quiet for an hour is effectively abandoned, and holding its
-// reservation for a full day can starve every other upload on the instance.
+// reservedBytesStaleAfter is the stale cutoff for sessions already holding
+// reserved bytes, shorter than cleanupStaleSessions' general 24h sweep.
 const reservedBytesStaleAfter = 1 * time.Hour
 
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
@@ -667,9 +664,6 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				log.Warnfc(ctx, "[Import] rejected chunk: %s", errMsg)
 				writeImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 			}
-			// REL-08: release this session's reserved bytes now instead of
-			// leaving them counted against the aggregate budget until the
-			// 24h stale-session sweep.
 			m.cleanupSession(fileID)
 			return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
 		}
