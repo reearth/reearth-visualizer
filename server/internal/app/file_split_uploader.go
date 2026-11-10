@@ -302,18 +302,30 @@ func (s *uploadSession) isStale(cutoff time.Time) bool {
 	return s.updatedAt.Before(cutoff)
 }
 
+func (s *uploadSession) isDispatched() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.dispatched
+}
+
 // close releases the session's backing file and reports the resident byte
 // count to release from the aggregate budget, both decided under the same
 // lock a concurrent writeChunk uses -- so a chunk that lands mid-cleanup is
 // never silently dropped from the release.
-func (s *uploadSession) close() (releasedBytes int64) {
+//
+// force must be true for the import worker's own teardown (dispatchImport's
+// timeout path, runImportJob's deferred cleanup) -- the only callers that
+// actually own a dispatched session once it's handed off. Every other
+// caller (a chunk failure's cleanup) must pass false, since dispatched only
+// ever goes false->true and never resets: without the guard below, that
+// caller could race a concurrent dispatch and delete a file the worker is
+// about to read. With force=false on a dispatched session, close reports
+// no bytes and leaves the file alone for the worker's own close(true) to
+// handle once it actually finishes.
+func (s *uploadSession) close(force bool) (releasedBytes int64) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if s.dispatched {
-		// Ownership of the file has passed to the import worker, which does
-		// its own cleanupSession once the import finishes. A concurrent
-		// chunk failure's cleanup must not close or remove it out from
-		// under a dispatch it raced with.
+	if s.dispatched && !force {
 		return 0
 	}
 	if err := s.file.Close(); err != nil {
@@ -528,7 +540,7 @@ func (m *SplitUploadManager) dispatchImport(job importJob) {
 			// cleanupSession is deferred here, not called after
 			// UpdateImportStatus, so the session/tempfile is still freed
 			// even if the status write panics or otherwise never returns.
-			defer m.cleanupSession(job.fileID)
+			defer m.cleanupSession(job.fileID, true)
 			errMsg := "import worker pool did not accept job in time"
 			log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
 			UpdateImportStatus(context.Background(), job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, map[string]any{})
@@ -565,7 +577,7 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 			UpdateImportStatus(bgctx, job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, result)
 		}
 	}()
-	defer m.cleanupSession(job.fileID)
+	defer m.cleanupSession(job.fileID, true)
 
 	claim, err := job.usecases.Project.ClaimImport(bgctx, job.projectID, job.op)
 	if err != nil {
@@ -676,13 +688,13 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				log.Warnfc(ctx, "[Import] rejected chunk: %s", errMsg)
 				writeImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 			}
-			m.cleanupSession(fileID)
+			m.cleanupSession(fileID, false)
 			return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
 		}
 		if pid := session.snapshot().ProjectID; pid != nil {
 			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 		}
-		m.cleanupSession(fileID)
+		m.cleanupSession(fileID, false)
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 	}
 
@@ -717,16 +729,33 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 	return resp, nil
 }
 
-func (m *SplitUploadManager) cleanupSession(fileID string) {
+// cleanupSession tears down a session. force must be true only for the
+// import worker's own teardown (see close's doc comment) -- every other
+// caller passes false, which leaves a dispatched session's map entry and
+// file alone for the worker's own forced cleanup to handle instead.
+func (m *SplitUploadManager) cleanupSession(fileID string, force bool) {
 	m.mgrMu.Lock()
 	s, ok := m.sessions[fileID]
-	if ok {
+	m.mgrMu.Unlock()
+	if !ok {
+		return
+	}
+
+	if !force && s.isDispatched() {
+		return
+	}
+
+	m.mgrMu.Lock()
+	cur, stillPresent := m.sessions[fileID]
+	if stillPresent && cur == s {
 		delete(m.sessions, fileID)
+	} else {
+		stillPresent = false
 	}
 	m.mgrMu.Unlock()
 
-	if ok {
-		m.releaseBytes(s.close())
+	if stillPresent {
+		m.releaseBytes(s.close(force))
 	}
 }
 
@@ -779,13 +808,19 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 		if !s.isStale(staleCutoffFor(s, now)) {
 			continue
 		}
+		// A dispatched session belongs to the import worker now; leave its
+		// map entry and file for that worker's own forced cleanup instead
+		// of reaping an import that's just taking a while.
+		if s.isDispatched() {
+			continue
+		}
 		delete(m.sessions, s.fileID)
 		toClose = append(toClose, s)
 	}
 	m.mgrMu.Unlock()
 
 	for _, s := range toClose {
-		m.releaseBytes(s.close())
+		m.releaseBytes(s.close(false))
 	}
 }
 
