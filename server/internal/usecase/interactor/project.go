@@ -983,11 +983,13 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	// delete fail every time. Same fix as ReleaseSceneLock: detach from the
 	// request ctx and bound it with its own timeout instead.
 	if prj.PublishmentStatus() == project.PublishmentStatusPrivate || prevAlias != prj.Alias() {
-		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), builtSceneCleanupTimeout)
-		if err := i.file.RemoveBuiltScene(cleanupCtx, prevAlias); err != nil {
-			log.Warnfc(ctx, "failed to remove old built scene %q: %v", prevAlias, err)
-		}
-		cancel()
+		func() {
+			cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), builtSceneCleanupTimeout)
+			defer cancel()
+			if err := i.file.RemoveBuiltScene(cleanupCtx, prevAlias); err != nil {
+				log.Warnfc(ctx, "failed to remove old built scene %q: %v", prevAlias, err)
+			}
+		}()
 	}
 
 	return prj, nil
