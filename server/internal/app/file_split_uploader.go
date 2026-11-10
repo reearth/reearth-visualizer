@@ -76,6 +76,13 @@ const maxConcurrentSessions = 256
 
 var maxAggregateBytes int64 = 1 * 1024 * 1024 * 1024 // 1GB
 
+// reservedBytesStaleAfter is a shorter cutoff than cleanupStaleSessions'
+// general 24h sweep, applied only to sessions already holding bytes reserved
+// against maxAggregateBytes (REL-08). A session that has received data but
+// gone quiet for an hour is effectively abandoned, and holding its
+// reservation for a full day can starve every other upload on the instance.
+const reservedBytesStaleAfter = 1 * time.Hour
+
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
 // fileID flows directly into filepath.Join(tempDir, fileID); without this,
 // a client could send a path-traversal value (e.g. "../../etc/cron.d/x")
@@ -660,11 +667,16 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				log.Warnfc(ctx, "[Import] rejected chunk: %s", errMsg)
 				writeImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 			}
+			// REL-08: release this session's reserved bytes now instead of
+			// leaving them counted against the aggregate budget until the
+			// 24h stale-session sweep.
+			m.cleanupSession(fileID)
 			return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
 		}
 		if pid := session.snapshot().ProjectID; pid != nil {
 			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 		}
+		m.cleanupSession(fileID)
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 	}
 
@@ -723,7 +735,9 @@ func (m *SplitUploadManager) StartCleanupRoutine(interval time.Duration) {
 }
 
 func (m *SplitUploadManager) cleanupStaleSessions() {
-	cutoff := time.Now().Add(-24 * time.Hour)
+	now := time.Now()
+	cutoff := now.Add(-24 * time.Hour)
+	reservedCutoff := now.Add(-reservedBytesStaleAfter)
 
 	m.mgrMu.Lock()
 	candidates := make([]*uploadSession, 0, len(m.sessions))
@@ -734,7 +748,11 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 
 	var stale []*uploadSession
 	for _, s := range candidates {
-		if s.isStale(cutoff) {
+		sessionCutoff := cutoff
+		if s.snapshot().ReceivedBytes > 0 {
+			sessionCutoff = reservedCutoff
+		}
+		if s.isStale(sessionCutoff) {
 			stale = append(stale, s)
 		}
 	}

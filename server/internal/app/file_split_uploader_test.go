@@ -14,6 +14,7 @@ import (
 	"testing"
 	"time"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/apperr"
@@ -975,5 +976,82 @@ func TestSplitUploadManager_RunImportJob_ClaimErrorWritesFailed(t *testing.T) {
 
 	if !gotFailed {
 		t.Error("ClaimImport error must write a terminal FAILED status (REL-09)")
+	}
+}
+
+// fakeMultipartFile adapts a *bytes.Reader to satisfy multipart.File (which
+// also needs Close) for tests that call handleChunkedUpload directly.
+type fakeMultipartFile struct {
+	*bytes.Reader
+}
+
+func (fakeMultipartFile) Close() error { return nil }
+
+// TestSplitUploadManager_HandleChunkedUpload_CleansUpSessionOnWriteChunkFailure
+// is a regression test for REL-08: a failed chunk write used to leave the
+// session's reserved bytes counted against maxAggregateBytes until the 24h
+// stale-session sweep, so a handful of failed uploads could lock out every
+// new import on the instance. This confirms the session (and its reserved
+// bytes) is released immediately when writeChunk rejects a chunk.
+func TestSplitUploadManager_HandleChunkedUpload_CleansUpSessionOnWriteChunkFailure(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+	const fileID = "rel08-cleanup"
+
+	if _, err := m.getOrCreateSession(fileID, 2); err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	// 5 bytes on a non-final chunk exceeds the 4-byte chunkSize, which
+	// writeChunk rejects as an expected (client) error.
+	oversized := fakeMultipartFile{bytes.NewReader([]byte("abcde"))}
+
+	if _, err := m.handleChunkedUpload(context.Background(), nil, nil, accountsID.WorkspaceID{}, fileID, 0, 2, oversized); err == nil {
+		t.Fatal("expected an error for an oversized chunk")
+	}
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions[fileID]
+	m.mgrMu.Unlock()
+	if exists {
+		t.Error("a failed chunk write must release the session instead of leaving its reserved bytes held")
+	}
+}
+
+// TestSplitUploadManager_CleanupStaleSessions_ReservedBytesUseShorterCutoff
+// is a regression test for REL-08: an abandoned session that already
+// received data used to share the same 24h cutoff as a brand-new session,
+// so its reserved bytes stayed locked for up to a day. A session holding
+// reserved bytes must be reaped after the shorter reservedBytesStaleAfter
+// instead, while an empty session still gets the full 24h.
+func TestSplitUploadManager_CleanupStaleSessions_ReservedBytesUseShorterCutoff(t *testing.T) {
+	m := newTestManager(t)
+
+	withBytes, err := m.getOrCreateSession("with-bytes", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := withBytes.writeChunk(0, strings.NewReader("data")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+	withBytes.setUpdatedAtForTest(time.Now().Add(-2 * reservedBytesStaleAfter))
+
+	empty, err := m.getOrCreateSession("empty", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	empty.setUpdatedAtForTest(time.Now().Add(-2 * reservedBytesStaleAfter))
+
+	m.cleanupStaleSessions()
+
+	m.mgrMu.Lock()
+	_, withBytesExists := m.sessions["with-bytes"]
+	_, emptyExists := m.sessions["empty"]
+	m.mgrMu.Unlock()
+
+	if withBytesExists {
+		t.Error("a session holding reserved bytes must be reaped after reservedBytesStaleAfter, not the full 24h")
+	}
+	if !emptyExists {
+		t.Error("a session with no reserved bytes must keep the full 24h cutoff")
 	}
 }
