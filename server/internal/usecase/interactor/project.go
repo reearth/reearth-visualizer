@@ -869,6 +869,11 @@ func (i *Project) CheckSceneAlias(ctx context.Context, newAlias string, pid *id.
 	return true, nil
 }
 
+// builtSceneCleanupTimeout bounds the post-commit GCS cleanup in Publish
+// below, which runs detached from the request ctx so a client disconnecting
+// right after the commit doesn't make the cleanup fail every time (REL-10).
+const builtSceneCleanupTimeout = 10 * time.Second
+
 func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, op *usecase.Operator) (*project.Project, error) {
 	// Phase 1: reads + validation — no transaction held during this work.
 	prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, &params.ID)
@@ -970,11 +975,21 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	}
 
 	// Phase 4: GCS cleanup after the commit. A stale file at the old alias is
-	// harmless if this fails, so we log and continue rather than returning an error.
+	// harmless for a rename, but not for an unpublish -- the public handler
+	// reads straight from storage with no DB status check (REL-10), so a
+	// failed delete here means the project stays publicly readable while the
+	// UI says Private. RemoveBuiltScene used to run on the request ctx, so a
+	// client disconnecting right after the commit (ctx canceled) made the
+	// delete fail every time. Same fix as ReleaseSceneLock: detach from the
+	// request ctx and bound it with its own timeout instead.
 	if prj.PublishmentStatus() == project.PublishmentStatusPrivate || prevAlias != prj.Alias() {
-		if err := i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
-			log.Warnfc(ctx, "failed to remove old built scene %q: %v", prevAlias, err)
-		}
+		func() {
+			cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), builtSceneCleanupTimeout)
+			defer cancel()
+			if err := i.file.RemoveBuiltScene(cleanupCtx, prevAlias); err != nil {
+				log.Warnfc(ctx, "failed to remove old built scene %q: %v", prevAlias, err)
+			}
+		}()
 	}
 
 	return prj, nil
