@@ -649,16 +649,6 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 		log.Infof("[Import] Upload chunk ID: %s chunk: %d of %d ", fileID, chunkNum+1, totalChunks)
 	}
 
-	// NOTE(REL-08, AI compliance scan finding): neither error path below calls
-	// m.cleanupSession, so a failed or abandoned session keeps its reserved
-	// bytes counted against maxAggregateBytes until cleanupStaleSessions'
-	// 24h cutoff runs. A few such sessions on one instance can lock out every
-	// new import with "too many bytes being uploaded" until that sweep fires.
-	// Still open -- not yet fixed. Flagged in prior monthly AI compliance
-	// scans (most recently as REL-08 in eukarya-inc/compliance#263); each
-	// scan opens a fresh issue, so this comment is the durable record. Fix:
-	// call m.cleanupSession(fileID) on these terminal error paths and use a
-	// much shorter idle cutoff for sessions still holding reserved bytes.
 	completed, err := session.writeChunk(chunkNum, file)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to write chunk: %v", err)
