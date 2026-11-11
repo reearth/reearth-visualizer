@@ -113,6 +113,10 @@ func Init(r *repo.Container) error {
 		func() error { return r.Property.(*Property).Init(ctx) },
 		func() error { return r.PropertySchema.(*PropertySchema).Init(ctx) },
 		func() error { return r.Scene.(*Scene).Init(ctx) },
+		func() error { return r.NLSLayer.(*NLSLayer).Init(ctx) },
+		func() error { return r.Style.(*Style).Init(ctx) },
+		func() error { return r.Storytelling.(*Storytelling).Init(ctx) },
+		func() error { return r.ProjectMetadata.(*ProjectMetadata).Init(ctx) },
 		// func() error { return r.User.(*accountsMongo.User).Init() },
 		// func() error { return r.Workspace.(*accountsMongo.Workspace).Init() },
 	)
