@@ -450,7 +450,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	// Phase 4: GCS cleanup after the commit. A stale file at the old alias is
 	// harmless if this fails, so we log and continue rather than returning an error.
 	if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate || prevAlias != story.Alias() {
-		if err := i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
+		if err := i.file.RemoveStory(ctx, prevAlias); err != nil {
 			log.Warnfc(ctx, "failed to remove old built story %q: %v", prevAlias, err)
 		}
 	}
