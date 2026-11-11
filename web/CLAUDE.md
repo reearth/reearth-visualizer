@@ -92,6 +92,10 @@ See [docs/1password-setup.md](docs/1password-setup.md) for setup guide.
 - `config/` - Application configuration and feature flags
 - `i18n/` - Internationalization setup
 
+#### Plugin API types
+
+The `reearth` global's types come from the npm package `@reearth/visualizer-plugin-api` (source in `visualizer-plugin-api/` at the repo root). Do not redefine them in `web/`; change the package, release it, then bump the dependency. See `visualizer-plugin-api/README.md`.
+
 #### Configuration System (src/services/config/)
 
 The configuration system manages application-wide settings and feature flags:

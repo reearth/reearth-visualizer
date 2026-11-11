@@ -1,6 +1,6 @@
-import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { merge } from "@reearth/app/utils/object";
 import type { Layer, TimelineManagerRef } from "@reearth/core";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 
 import type { Widget } from "../../Widgets";
 import type { ClientStorage } from "../useClientStorage";

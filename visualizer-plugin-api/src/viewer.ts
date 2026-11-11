@@ -9,9 +9,8 @@ import {
 
 import { LatLngHeight } from "./common";
 
-// SYNC: web/src/app/features/Editor/Visualizer/type.ts (ViewerProperty) and
-// web/src/app/types/sceneProperty.ts (SceneMode). Inlined because those modules
-// are internal to the app.
+// Inlined because the app's own ViewerProperty (Editor/Visualizer/type.ts) and
+// SceneMode (app/types/sceneProperty.ts) are internal to the app.
 type SceneMode = "3d";
 
 export declare type ViewerProperty = Omit<

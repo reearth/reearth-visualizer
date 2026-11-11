@@ -1,4 +1,3 @@
-import type { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { hiddenExtensionKey } from "@reearth/app/features/Visualizer/Crust/hiddenExtensionKey";
 import type {
   Camera,
@@ -9,6 +8,7 @@ import {
   useDevPluginExtensionRenderKey,
   useDevPluginExtensions
 } from "@reearth/services/state/devPlugins";
+import type { ViewerProperty } from "@reearth/visualizer-plugin-api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { buildBlocks, buildLayers, buildStory, buildWidgets } from "./build";

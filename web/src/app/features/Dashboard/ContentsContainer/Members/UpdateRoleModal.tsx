@@ -1,7 +1,8 @@
 import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
 import { InputField, SelectField } from "@reearth/app/ui/fields";
 import { useWorkspaceMutations } from "@reearth/services/api/workspace";
-import { Role, WorkspaceMember } from "@reearth/services/gql";
+import type { WorkspaceMember } from "@reearth/services/api/workspace/types";
+import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
 import { Workspace } from "@reearth/services/state";
 import { FC, useCallback, useMemo, useState } from "react";

@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import {
   PhotoOverlayPreview,
   SketchFeatureTooltip
@@ -23,6 +22,7 @@ import type { NLSLayer } from "@reearth/services/api/layer";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
 import { css } from "@reearth/services/theme/reearthTheme/common";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 import { FC, MutableRefObject, SetStateAction, useMemo, useRef } from "react";
 
 import { VISUALIZER_CORE_DOM_ID } from "./constaints";

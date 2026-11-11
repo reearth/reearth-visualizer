@@ -1,15 +1,10 @@
 import { Layer } from "@reearth/core";
 
-// SYNC: These inlined types must be kept in sync with the web source manually.
-// No CI check enforces this — when the source changes, update here too.
-//   WidgetLocation / WidgetAlignment / WidgetLayout
-//     → web/src/app/features/Visualizer/Crust/Widgets/types.ts
-//   PluginInfoboxBlock
-//     → web/src/app/features/Visualizer/Crust/Infobox/types.ts
-//       (Omit<InfoboxBlock, "propertyForPluginAPI" | "propertyItemsForPluginBlock">)
-//   PluginStoryBlock
-//     → web/src/app/features/Visualizer/Crust/StoryPanel/types.ts
-//       (Omit<StoryBlock, "propertyForPluginAPI" | "propertyItemsForPluginBlock">)
+// These are simplified copies of the app's internal types. The Visualizer web
+// app imports this package, and web/src/app/features/Visualizer/Crust/Plugins/
+// pluginAPI/types/compat.test.ts makes `yarn type` fail if the internal types
+// (Widgets/types.ts, Infobox/types.ts, StoryPanel/types.ts) stop being
+// assignable to them. Change the plugin-facing shape here first.
 
 // Inlined from web/src/app/features/Visualizer/Crust/Widgets/types.ts
 export type WidgetLocation = {

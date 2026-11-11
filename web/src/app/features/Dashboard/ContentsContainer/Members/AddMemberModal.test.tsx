@@ -5,14 +5,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AddMemberModal from "./AddMemberModal";
 
 const mocks = vi.hoisted(() => ({
-  found: undefined as { id: string; name: string; email: string } | undefined,
+  found: undefined as
+    | { id: string; name: string; email?: string }
+    | undefined,
+  error: undefined as Error | undefined,
   addMemberToWorkspace: vi.fn()
 }));
 
 vi.mock("@reearth/services/api/user", async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   useMe: () => ({ me: undefined, loading: false }),
-  useSearchUser: () => ({ user: mocks.found, loading: false })
+  useSearchUser: () => ({
+    user: mocks.found,
+    loading: false,
+    error: mocks.error
+  })
 }));
 
 vi.mock("@reearth/services/api/workspace", () => ({
@@ -36,6 +43,7 @@ const setup = () => {
 describe("AddMemberModal", () => {
   beforeEach(() => {
     mocks.found = undefined;
+    mocks.error = undefined;
     mocks.addMemberToWorkspace.mockReset();
     vi.useFakeTimers({ shouldAdvanceTime: true });
   });
@@ -64,7 +72,11 @@ describe("AddMemberModal", () => {
   });
 
   it("enables Add once the search finds someone", () => {
-    mocks.found = { id: "u1", name: "Someone", email: "someone@example.com" };
+    mocks.found = {
+      id: "u1",
+      name: "Someone",
+      email: "someone@example.com"
+    };
     const { addButton, input } = setup();
 
     act(() => {
@@ -75,5 +87,20 @@ describe("AddMemberModal", () => {
     });
 
     expect(addButton).not.toBeDisabled();
+    expect(screen.getByText("Someone")).toBeInTheDocument();
+    expect(screen.queryByText("someone@example.com")).not.toBeInTheDocument();
+  });
+
+  it("does not report a missing user when the search fails", () => {
+    mocks.error = new Error("accounts unavailable");
+    const { addButton, input } = setup();
+
+    act(() => {
+      fireEvent.change(input, { target: { value: "someone" } });
+      vi.advanceTimersByTime(600);
+    });
+
+    expect(addButton).toBeDisabled();
+    expect(screen.queryByText("Can't find the user")).not.toBeInTheDocument();
   });
 });

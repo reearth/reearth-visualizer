@@ -6,12 +6,12 @@ export const useSearchUser = (
   nameOrEmail: string,
   options?: { skip?: boolean }
 ) => {
-  const { data, loading } = useQuery(GET_USER_BY_SEARCH, {
+  const { data, loading, error } = useQuery(GET_USER_BY_SEARCH, {
     variables: { nameOrEmail },
     skip: options?.skip
   });
 
   const user = useMemo(() => data?.searchUser, [data]);
 
-  return { loading, user };
+  return { loading, user, error };
 };

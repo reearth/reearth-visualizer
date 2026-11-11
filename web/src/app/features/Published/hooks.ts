@@ -1,4 +1,3 @@
-import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import {
   InternalWidget,
   WidgetAlignSystem,
@@ -15,6 +14,7 @@ import { DeviceType } from "@reearth/app/utils/device";
 import type { Camera } from "@reearth/app/utils/value";
 import { MapRef } from "@reearth/core";
 import type { NLSInfobox } from "@reearth/services/api/layer/types";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
