@@ -125,6 +125,7 @@ test.describe("Add Layer from CMS", () => {
     projectScreen = new ProjectScreenPage(page);
     assetLayerCreator = new AssetLayerCreatorPage(page);
 
+    await assetLayerCreator.enableDevMode();
     graphQLCalls = await assetLayerCreator.mockGraphQL({
       GetCMSProjects: () => ({
         cmsProjects: {
