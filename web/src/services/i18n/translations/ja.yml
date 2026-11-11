@@ -152,7 +152,7 @@ Edits to the model in CMS will update added layer automatically: CMSでモデル
 All formats: すべての形式
 All CMS projects: すべてのCMSプロジェクト
 No Geometry field was found in this model, so GeoJSON export is not available.: このモデルにはジオメトリフィールドがないため、GeoJSONとして出力できません。
-The model could not be loaded from the CMS Public API. Make sure it is published to the Public API.: CMSの公開APIからモデルを読み込めませんでした。モデルが公開APIで公開されているか確認してください。
+The model could not be loaded from the CMS Public API. Make sure it is published to the Public API.: CMSのパブリックAPIからモデルを読み込めませんでした。モデルがパブリックAPIで公開されているか確認してください。
 This asset is private in CMS, so it cannot be loaded on the map. Make it public in CMS to add it.: このアセットはCMSで非公開のため、地図に読み込めません。追加するにはCMSで公開してください。
 Cannot add this Model: このモデルは追加できません
 Cannot add this Asset: このアセットは追加できません
