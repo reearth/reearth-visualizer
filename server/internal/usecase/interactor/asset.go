@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/labstack/gommon/log"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -331,7 +332,9 @@ func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *accountsWor
 }
 
 func (i *Asset) removeUploadedAsset(ctx context.Context, u *url.URL) {
-	if err := i.gateways.File.RemoveAsset(context.WithoutCancel(ctx), u); err != nil {
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
+	defer cancel()
+	if err := i.gateways.File.RemoveAsset(ctx, u); err != nil {
 		log.Errorf("asset: failed to remove uploaded file %s: %v", u, err)
 	}
 }
@@ -346,6 +349,7 @@ func (i *Asset) checkAssetSizePolicy(ctx context.Context, wsID accountsID.Worksp
 		Value:       size,
 	})
 	if err != nil {
+		log.Errorf("asset: policy check failed for workspace %s: %v", wsID, err)
 		return rerror.NewE(i18n.T("policy check failed"))
 	}
 	if !resp.Allowed {

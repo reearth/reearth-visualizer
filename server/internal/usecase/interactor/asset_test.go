@@ -10,6 +10,7 @@ import (
 	"image/color"
 	"image/png"
 	"io"
+	"os"
 	"path"
 	"strings"
 	"testing"
@@ -442,9 +443,10 @@ func newAssetPolicyTestEnv(t *testing.T, allowed bool) (*Asset, afero.Fs, *MockP
 func storedAssetFiles(t *testing.T, memFs afero.Fs) []string {
 	t.Helper()
 	entries, err := afero.ReadDir(memFs, "assets")
-	if err != nil {
+	if errors.Is(err, os.ErrNotExist) {
 		return nil
 	}
+	require.NoError(t, err)
 	names := make([]string, 0, len(entries))
 	for _, e := range entries {
 		names = append(names, e.Name())
