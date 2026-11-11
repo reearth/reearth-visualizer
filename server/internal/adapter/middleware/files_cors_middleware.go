@@ -40,6 +40,17 @@ func FilesCORSMiddleware(domainChecker gateway.DomainChecker, allowedOrigins []s
 					log.Errorfc(c.Request().Context(), "[FilesCORSMiddleware] extract domain err: %v", err)
 					return next(c)
 				}
+				// NOTE(REL-06, AI compliance scan finding): CheckDomain is an
+				// uncached, synchronous HTTP call (30s default timeout) on every
+				// third-party-custom-domain asset request, with no circuit
+				// breaker. Root cause investigated; not fixed yet. Checked prod
+				// traffic (90-day window): the vast majority of asset requests hit
+				// the cached first-party-subdomain path above and never reach this
+				// call, so real exposure is low today, but it would degrade badly
+				// if the domain-check service itself got slow. Flagged across
+				// multiple monthly AI compliance scans (most recently as REL-06 in
+				// eukarya-inc/compliance#263); each scan opens a fresh issue, so
+				// this comment is the durable record of the investigation.
 				domainResp, err := domainChecker.CheckDomain(c.Request().Context(), gateway.DomainCheckRequest{
 					Domain: domain,
 				})
