@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"strings"
 
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
@@ -148,9 +149,58 @@ func applyOptionalSceneFilter(filter interface{}, ids id.SceneIDList) interface{
 }
 
 func createIndexes(ctx context.Context, c *mongox.ClientCollection, keys, uniqueKeys []string) error {
+	keys, uniqueKeys, skipped, err := skipIndexesWithOtherUniqueness(ctx, c.Client(), keys, uniqueKeys)
+	if err != nil {
+		return err
+	}
+	if len(skipped) > 0 {
+		log.Warnfc(ctx, "mongo: %s: index exists with different unique option, skipped: %v\n", c.Client().Name(), skipped)
+	}
 	created, deleted, err := c.Indexes(ctx, keys, uniqueKeys)
 	if len(created) > 0 || len(deleted) > 0 {
 		log.Infofc(ctx, "mongo: %s: index deleted: %v, created: %v\n", c.Client().Name(), deleted, created)
 	}
 	return err
+}
+
+func skipIndexesWithOtherUniqueness(ctx context.Context, col *mongo.Collection, keys, uniqueKeys []string) ([]string, []string, []string, error) {
+	cur, err := col.Indexes().List(ctx)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	var specs []struct {
+		Key    bson.D `bson:"key"`
+		Unique bool   `bson:"unique"`
+	}
+	if err := cur.All(ctx, &specs); err != nil {
+		return nil, nil, nil, err
+	}
+
+	unique := map[string]bool{}
+	nonUnique := map[string]bool{}
+	for _, s := range specs {
+		k := strings.Join(lo.Map(s.Key, func(e bson.E, _ int) string { return e.Key }), ",")
+		if s.Unique {
+			unique[k] = true
+		} else {
+			nonUnique[k] = true
+		}
+	}
+
+	var skipped []string
+	keys = lo.Filter(keys, func(k string, _ int) bool {
+		conflict := unique[k] && !nonUnique[k]
+		if conflict {
+			skipped = append(skipped, k)
+		}
+		return !conflict
+	})
+	uniqueKeys = lo.Filter(uniqueKeys, func(k string, _ int) bool {
+		conflict := nonUnique[k] && !unique[k]
+		if conflict {
+			skipped = append(skipped, k)
+		}
+		return !conflict
+	})
+	return keys, uniqueKeys, skipped, nil
 }
