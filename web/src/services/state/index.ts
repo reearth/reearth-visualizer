@@ -1,4 +1,4 @@
-import { atom, useAtom, useSetAtom } from "jotai";
+import { atom, getDefaultStore, useAtom, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
 import type { WorkspaceMember } from "../api/workspace/types";
@@ -62,6 +62,8 @@ export const useCurrentTheme = () => useAtom(currentTheme);
 
 const workspace = atom<Workspace | undefined>(undefined);
 export const useWorkspace = () => useAtom(workspace);
+export const getCurrentWorkspaceId = () =>
+  getDefaultStore().get(workspace)?.id;
 
 const projectId = atom<string | undefined>(undefined);
 export const useProjectId = () => useAtom(projectId);
