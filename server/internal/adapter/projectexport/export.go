@@ -42,6 +42,12 @@ import (
 // (most recently as SCA-02 in eukarya-inc/compliance#263) -- each scan opens
 // a fresh issue, so this comment is the durable record instead of a thread.
 func ToStorage(ctx context.Context, uc *interfaces.Container, op *usecase.Operator, pid id.ProjectID) (string, error) {
+	// Authorize before creating the scratch file below, which is named
+	// deterministically from pid alone.
+	if _, err := uc.Project.CheckProjectExportAccess(ctx, pid, op); err != nil {
+		return "", err
+	}
+
 	fs := afero.NewOsFs()
 
 	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", pid.String()))
