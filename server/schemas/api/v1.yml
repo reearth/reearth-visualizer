@@ -281,9 +281,9 @@ paths:
       summary: Publish or unpublish a project
       description: |
         Sets the publishment status, as the web app's publish dialog does.
-        `public` and `limited` both publish the project and upload its latest
-        state; `limited` asks search engines not to index the page.
-        `private` unpublishes it.
+        `indexable` and `noindex` both publish the project and upload its
+        latest state; `noindex` asks search engines not to index the page.
+        `unpublished` unpublishes it.
 
         `alias` sets the published alias, which names the published URL. It
         is kept when omitted, and a new project gets `c-<scene ID>`.
@@ -524,7 +524,12 @@ components:
       enum: [public, private]
     PublishmentStatus:
       type: string
-      enum: [public, limited, private]
+      enum: [indexable, noindex, unpublished]
+      description: |
+        Whether the project or story is published. `indexable` and `noindex`
+        are both published; `noindex` asks search engines not to index the
+        page. `unpublished` means it has no published page. This is not the
+        project's `visibility`.
     Project:
       type: object
       required:
@@ -668,7 +673,7 @@ components:
         url:
           type: string
           description: |
-            The published URL. Absent when the project is private or the
+            The published URL. Absent when the project is unpublished or the
             server has no published host configured.
     Story:
       type: object
@@ -700,7 +705,7 @@ components:
         url:
           type: string
           description: |
-            The published URL. Absent when the story is private or the server
+            The published URL. Absent when the story is unpublished or the server
             has no published host configured.
     ImportUploadResponse:
       type: object

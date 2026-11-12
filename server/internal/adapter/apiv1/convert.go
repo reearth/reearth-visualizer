@@ -54,11 +54,11 @@ func toProject(p *project.Project, sceneID *id.SceneID) Project {
 
 func fromPublishmentStatus(s PublishmentStatus) (project.PublishmentStatus, bool) {
 	switch s {
-	case PublishmentStatusPublic:
+	case PublishmentStatusIndexable:
 		return project.PublishmentStatusPublic, true
-	case PublishmentStatusLimited:
+	case PublishmentStatusNoindex:
 		return project.PublishmentStatusLimited, true
-	case PublishmentStatusPrivate:
+	case PublishmentStatusUnpublished:
 		return project.PublishmentStatusPrivate, true
 	}
 	return "", false
@@ -67,11 +67,11 @@ func fromPublishmentStatus(s PublishmentStatus) (project.PublishmentStatus, bool
 func toPublishmentStatus(s project.PublishmentStatus) PublishmentStatus {
 	switch s {
 	case project.PublishmentStatusPublic:
-		return PublishmentStatusPublic
+		return PublishmentStatusIndexable
 	case project.PublishmentStatusLimited:
-		return PublishmentStatusLimited
+		return PublishmentStatusNoindex
 	default:
-		return PublishmentStatusPrivate
+		return PublishmentStatusUnpublished
 	}
 }
 

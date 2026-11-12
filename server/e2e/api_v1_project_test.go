@@ -431,37 +431,37 @@ func TestAPIV1PublishProject(t *testing.T) {
 	p.NotContainsKey("publishedAlias")
 	publish := "/projects/" + pid + "/publish"
 
-	// Limited by default alias: c-<scene ID>.
-	res := apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "limited"}).
+	// noindex with the default alias: c-<scene ID>.
+	res := apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "noindex"}).
 		Expect().Status(http.StatusOK).JSON().Object()
-	res.Value("project").Object().HasValue("publishmentStatus", "limited").HasValue("publishedAlias", "c-"+sid)
+	res.Value("project").Object().HasValue("publishmentStatus", "noindex").HasValue("publishedAlias", "c-"+sid)
 	res.Value("project").Object().Value("publishedAt").String().NotEmpty()
 	res.HasValue("url", "https://c-"+sid+".example.com")
 
-	// Public with a custom alias.
+	// indexable with a custom alias.
 	res = apiV1(e, http.MethodPost, publish, uID).
-		WithJSON(map[string]any{"status": "public", "alias": "cli-published"}).
+		WithJSON(map[string]any{"status": "indexable", "alias": "cli-published"}).
 		Expect().Status(http.StatusOK).JSON().Object()
-	res.Value("project").Object().HasValue("publishmentStatus", "public").HasValue("publishedAlias", "cli-published")
+	res.Value("project").Object().HasValue("publishmentStatus", "indexable").HasValue("publishedAlias", "cli-published")
 	res.HasValue("url", "https://cli-published.example.com")
 
-	// Private unpublishes and keeps the alias, without a URL.
-	res = apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "private"}).
+	// unpublished keeps the alias, without a URL.
+	res = apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "unpublished"}).
 		Expect().Status(http.StatusOK).JSON().Object()
-	res.Value("project").Object().HasValue("publishmentStatus", "private").HasValue("publishedAlias", "cli-published")
+	res.Value("project").Object().HasValue("publishmentStatus", "unpublished").HasValue("publishedAlias", "cli-published")
 	res.NotContainsKey("url")
 
 	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "secret"}).Expect(),
 		http.StatusBadRequest, "invalid_input")
 	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).
-		WithJSON(map[string]any{"status": "public", "alias": "Bad Alias!"}).Expect(),
+		WithJSON(map[string]any{"status": "indexable", "alias": "Bad Alias!"}).Expect(),
 		http.StatusBadRequest, "invalid_input")
-	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID3).WithJSON(map[string]any{"status": "public"}).Expect(),
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID3).WithJSON(map[string]any{"status": "indexable"}).Expect(),
 		http.StatusForbidden, "permission_denied")
 
 	// A project in the trash cannot be published.
 	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
-	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "public"}).Expect(),
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "indexable"}).Expect(),
 		http.StatusConflict, "conflict")
 }
 
@@ -476,39 +476,39 @@ func TestAPIV1PublishStory(t *testing.T) {
 		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
 	publish := "/projects/" + pid + "/story/publish"
 
-	// Limited, with the default alias s-<story ID>.
-	res := apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "limited"}).
+	// noindex, with the default alias s-<story ID>.
+	res := apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "noindex"}).
 		Expect().Status(http.StatusOK).JSON().Object()
 	story := res.Value("story").Object()
 	sid := story.Value("id").String().Raw()
-	story.HasValue("projectId", pid).HasValue("publishmentStatus", "limited").HasValue("publishedAlias", "s-"+sid)
+	story.HasValue("projectId", pid).HasValue("publishmentStatus", "noindex").HasValue("publishedAlias", "s-"+sid)
 	story.Value("publishedAt").String().NotEmpty()
 	res.HasValue("url", "https://s-"+sid+".example.com")
 
 	// The project itself stays unpublished.
 	apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().Status(http.StatusOK).
-		JSON().Object().HasValue("publishmentStatus", "private")
+		JSON().Object().HasValue("publishmentStatus", "unpublished")
 
-	// Public with a custom alias, then private keeps the alias without a URL.
+	// indexable with a custom alias, then unpublished keeps the alias without a URL.
 	res = apiV1(e, http.MethodPost, publish, uID).
-		WithJSON(map[string]any{"status": "public", "alias": "cli-story"}).
+		WithJSON(map[string]any{"status": "indexable", "alias": "cli-story"}).
 		Expect().Status(http.StatusOK).JSON().Object()
-	res.Value("story").Object().HasValue("publishmentStatus", "public").HasValue("publishedAlias", "cli-story")
+	res.Value("story").Object().HasValue("publishmentStatus", "indexable").HasValue("publishedAlias", "cli-story")
 	res.HasValue("url", "https://cli-story.example.com")
-	res = apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "private"}).
+	res = apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "unpublished"}).
 		Expect().Status(http.StatusOK).JSON().Object()
-	res.Value("story").Object().HasValue("publishmentStatus", "private").HasValue("publishedAlias", "cli-story")
+	res.Value("story").Object().HasValue("publishmentStatus", "unpublished").HasValue("publishedAlias", "cli-story")
 	res.NotContainsKey("url")
 
 	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "secret"}).Expect(),
 		http.StatusBadRequest, "invalid_input")
-	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID3).WithJSON(map[string]any{"status": "public"}).Expect(),
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID3).WithJSON(map[string]any{"status": "indexable"}).Expect(),
 		http.StatusForbidden, "permission_denied")
 	expectAPIError(t, apiV1(e, http.MethodPost, "/projects/01m4dn2d8ksnekewhejqa5bbzz/story/publish", uID).
-		WithJSON(map[string]any{"status": "public"}).Expect(), http.StatusNotFound, "not_found")
+		WithJSON(map[string]any{"status": "indexable"}).Expect(), http.StatusNotFound, "not_found")
 
 	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
-	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "public"}).Expect(),
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "indexable"}).Expect(),
 		http.StatusConflict, "conflict")
 }
 

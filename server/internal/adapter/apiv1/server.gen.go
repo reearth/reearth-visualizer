@@ -106,19 +106,19 @@ func (e ProjectSort) Valid() bool {
 
 // Defines values for PublishmentStatus.
 const (
-	PublishmentStatusLimited PublishmentStatus = "limited"
-	PublishmentStatusPrivate PublishmentStatus = "private"
-	PublishmentStatusPublic  PublishmentStatus = "public"
+	PublishmentStatusIndexable   PublishmentStatus = "indexable"
+	PublishmentStatusNoindex     PublishmentStatus = "noindex"
+	PublishmentStatusUnpublished PublishmentStatus = "unpublished"
 )
 
 // Valid indicates whether the value is a known member of the PublishmentStatus enum.
 func (e PublishmentStatus) Valid() bool {
 	switch e {
-	case PublishmentStatusLimited:
+	case PublishmentStatusIndexable:
 		return true
-	case PublishmentStatusPrivate:
+	case PublishmentStatusNoindex:
 		return true
-	case PublishmentStatusPublic:
+	case PublishmentStatusUnpublished:
 		return true
 	default:
 		return false
@@ -241,8 +241,13 @@ type Project struct {
 	Name         string               `json:"name"`
 
 	// PublishedAlias The alias used in the published URL. Set by the first publish request, whatever its status, and kept after unpublishing.
-	PublishedAlias    *string           `json:"publishedAlias,omitempty"`
-	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
+	PublishedAlias *string    `json:"publishedAlias,omitempty"`
+	PublishedAt    *time.Time `json:"publishedAt,omitempty"`
+
+	// PublishmentStatus Whether the project or story is published. `indexable` and `noindex`
+	// are both published; `noindex` asks search engines not to index the
+	// page. `unpublished` means it has no published page. This is not the
+	// project's `visibility`.
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 
 	// SceneId The scene of the project. Plugins are installed into it.
@@ -273,7 +278,12 @@ type ProjectSort string
 // PublishProjectRequest defines model for PublishProjectRequest.
 type PublishProjectRequest struct {
 	// Alias Published alias. Kept when omitted.
-	Alias  *string           `json:"alias,omitempty"`
+	Alias *string `json:"alias,omitempty"`
+
+	// Status Whether the project or story is published. `indexable` and `noindex`
+	// are both published; `noindex` asks search engines not to index the
+	// page. `unpublished` means it has no published page. This is not the
+	// project's `visibility`.
 	Status PublishmentStatus `json:"status"`
 }
 
@@ -281,7 +291,7 @@ type PublishProjectRequest struct {
 type PublishProjectResponse struct {
 	Project Project `json:"project"`
 
-	// Url The published URL. Absent when the project is private or the
+	// Url The published URL. Absent when the project is unpublished or the
 	// server has no published host configured.
 	Url *string `json:"url,omitempty"`
 }
@@ -290,12 +300,15 @@ type PublishProjectResponse struct {
 type PublishStoryResponse struct {
 	Story Story `json:"story"`
 
-	// Url The published URL. Absent when the story is private or the server
+	// Url The published URL. Absent when the story is unpublished or the server
 	// has no published host configured.
 	Url *string `json:"url,omitempty"`
 }
 
-// PublishmentStatus defines model for PublishmentStatus.
+// PublishmentStatus Whether the project or story is published. `indexable` and `noindex`
+// are both published; `noindex` asks search engines not to index the
+// page. `unpublished` means it has no published page. This is not the
+// project's `visibility`.
 type PublishmentStatus string
 
 // Story defines model for Story.
@@ -304,8 +317,13 @@ type Story struct {
 	ProjectId string `json:"projectId"`
 
 	// PublishedAlias The alias used in the story's published URL. Every story has one from creation; it only becomes reachable once the story is published.
-	PublishedAlias    *string           `json:"publishedAlias,omitempty"`
-	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
+	PublishedAlias *string    `json:"publishedAlias,omitempty"`
+	PublishedAt    *time.Time `json:"publishedAt,omitempty"`
+
+	// PublishmentStatus Whether the project or story is published. `indexable` and `noindex`
+	// are both published; `noindex` asks search engines not to index the
+	// page. `unpublished` means it has no published page. This is not the
+	// project's `visibility`.
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 	Title             string            `json:"title"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
