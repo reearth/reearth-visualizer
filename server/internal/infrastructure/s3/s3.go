@@ -1,7 +1,6 @@
 package s3
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/kennygrant/sanitize"
@@ -38,6 +38,7 @@ type fileRepo struct {
 	base         *url.URL
 	cacheControl string
 	client       *s3.Client
+	uploader     *manager.Uploader //nolint:staticcheck // transfermanager replacement is still pre-1.0
 }
 
 func NewS3(ctx context.Context, bucketName, baseURL, cacheControl string) (gateway.File, error) {
@@ -59,11 +60,14 @@ func NewS3(ctx context.Context, bucketName, baseURL, cacheControl string) (gatew
 		return nil, err
 	}
 
+	client := s3.NewFromConfig(cfg)
+
 	return &fileRepo{
 		bucketName:   bucketName,
 		base:         u,
 		cacheControl: cacheControl,
-		client:       s3.NewFromConfig(cfg),
+		client:       client,
+		uploader:     manager.NewUploader(client), //nolint:staticcheck // transfermanager replacement is still pre-1.0
 	}, nil
 }
 
@@ -278,18 +282,11 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 	// By default, uploading the file with same name. It will overwrite the existing file.
 	// No need to check if the file exists.
 
-	ba, err := io.ReadAll(content)
-	if err != nil {
-		return 0, rerror.ErrInternalByWithContext(ctx, err)
-	}
-	body := bytes.NewReader(ba)
-
-	_, err = f.client.PutObject(ctx, &s3.PutObjectInput{
-		Body:          body,
-		Bucket:        aws.String(f.bucketName),
-		CacheControl:  &f.cacheControl,
-		Key:           aws.String(filename),
-		ContentLength: lo.ToPtr(body.Size()),
+	_, err := f.uploader.Upload(ctx, &s3.PutObjectInput{ //nolint:staticcheck // transfermanager replacement is still pre-1.0
+		Body:         content,
+		Bucket:       aws.String(f.bucketName),
+		CacheControl: &f.cacheControl,
+		Key:          aws.String(filename),
 	})
 	if err != nil {
 		log.Errorfc(ctx, "s3: upload err: %v", err)

@@ -245,6 +245,13 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *accountsUser.Us
 
 	wsList := accountsWorkspace.List(workspaces)
 
+	// NOTE(SCA-05, AI compliance scan finding): loads every full scene
+	// document in the user's workspaces on each authenticated request, just
+	// for the ID lists below. Accepted tradeoff: a real fix needs a
+	// dedicated ID-only query, not just a Mongo projection (the domain
+	// builder in find() needs fields a projection would drop). Touches the
+	// auth hot path for a rare trigger (1k+ project workspace). Re-flagged
+	// each monthly scan (compliance#263); comment is the durable record.
 	scenes, err := cfg.Repos.Scene.FindByWorkspace(ctx, wsList.IDs()...)
 	if err != nil {
 		return nil, err
