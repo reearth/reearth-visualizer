@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/labstack/gommon/log"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -286,25 +287,21 @@ var (
 )
 
 func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *accountsWorkspace.Workspace, pid *id.ProjectID, coreSupport bool) (*asset.Asset, *url.URL, error) {
+	if f.Size > 0 {
+		if err := i.checkAssetSizePolicy(ctx, ws.ID(), f.Size); err != nil {
+			return nil, nil, err
+		}
+	}
 
-	// upload
 	u, size, err := i.gateways.File.UploadAsset(ctx, f)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	if i.gateways != nil && i.gateways.PolicyChecker != nil {
-		policyReq := gateway.PolicyCheckRequest{
-			WorkspaceID: ws.ID(),
-			CheckType:   gateway.PolicyCheckUploadAssetsSize,
-			Value:       size,
-		}
-		policyResp, err := i.gateways.PolicyChecker.CheckPolicy(ctx, policyReq)
-		if err != nil {
-			return nil, nil, rerror.NewE(i18n.T("policy check failed"))
-		}
-		if !policyResp.Allowed {
-			return nil, nil, ErrAssetUploadSizeLimitExceeded
+	if size != f.Size {
+		if err := i.checkAssetSizePolicy(ctx, ws.ID(), size); err != nil {
+			i.removeUploadedAsset(ctx, u)
+			return nil, nil, err
 		}
 	}
 
@@ -321,13 +318,42 @@ func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *accountsWor
 		Build()
 	if err != nil {
 		log.Errorf("[Import Error] asset build")
+		i.removeUploadedAsset(ctx, u)
 		return nil, nil, err
 	}
 
 	if err := i.repos.Asset.Save(ctx, a); err != nil {
 		log.Errorf("[Import Error] save asset")
+		i.removeUploadedAsset(ctx, u)
 		return nil, nil, err
 	}
 
 	return a, u, nil
+}
+
+func (i *Asset) removeUploadedAsset(ctx context.Context, u *url.URL) {
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
+	defer cancel()
+	if err := i.gateways.File.RemoveAsset(ctx, u); err != nil {
+		log.Errorf("asset: failed to remove uploaded file %s: %v", u, err)
+	}
+}
+
+func (i *Asset) checkAssetSizePolicy(ctx context.Context, wsID accountsID.WorkspaceID, size int64) error {
+	if i.gateways == nil || i.gateways.PolicyChecker == nil {
+		return nil
+	}
+	resp, err := i.gateways.PolicyChecker.CheckPolicy(ctx, gateway.PolicyCheckRequest{
+		WorkspaceID: wsID,
+		CheckType:   gateway.PolicyCheckUploadAssetsSize,
+		Value:       size,
+	})
+	if err != nil {
+		log.Errorf("asset: policy check failed for workspace %s: %v", wsID, err)
+		return rerror.NewE(i18n.T("policy check failed"))
+	}
+	if !resp.Allowed {
+		return ErrAssetUploadSizeLimitExceeded
+	}
+	return nil
 }
