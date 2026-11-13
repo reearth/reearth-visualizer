@@ -5950,13 +5950,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/sentinel@npm:0.1.2":
-  version: 0.1.2
-  resolution: "@reearth/sentinel@npm:0.1.2"
+"@reearth/sentinel@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@reearth/sentinel@npm:0.2.0"
   dependencies:
     idb: "npm:^8.0.0"
     jose: "npm:^5.0.0"
-  checksum: 10c0/c2a8d6acb1de74989123b014083c989b60e536b7fb2be994acb363d25574256c9769c722118bccc125c8eb952306cc18f72c3c347be1ec2d6040f55b99273d0f
+  checksum: 10c0/3064eed7ad43e3c28add4afad5165b40a7ab5b039dcdfae01263724bccf0509abd2b11e2fe5139846991295f1de1d65aa598f775e8cb5bff9fc6dfb788f33817
   languageName: node
   linkType: hard
 
@@ -6018,7 +6018,7 @@ __metadata:
     "@radix-ui/react-select": "npm:2.2.6"
     "@radix-ui/react-slot": "npm:1.2.4"
     "@reearth/core": "npm:0.0.7-alpha.81"
-    "@reearth/sentinel": "npm:0.1.2"
+    "@reearth/sentinel": "npm:0.2.0"
     "@reearth/visualizer-plugin-api": "npm:2.1.1"
     "@reearth/zushi": "npm:0.3.0"
     "@rollup/plugin-yaml": "npm:4.1.2"
