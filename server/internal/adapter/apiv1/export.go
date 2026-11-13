@@ -31,7 +31,7 @@ func (s Server) ExportProject(ctx context.Context, req ExportProjectRequestObjec
 		return nil, conflict("project %s is in the trash; restore it first", pid)
 	}
 
-	filename, err := projectexport.ToStorage(ctx, uc, op, pid)
+	filename, err := projectexport.ToStorageUnique(ctx, uc, op, pid)
 	if err != nil {
 		return nil, err
 	}

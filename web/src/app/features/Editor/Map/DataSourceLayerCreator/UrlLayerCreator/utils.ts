@@ -70,15 +70,36 @@ const detectFormat = (pathname: string): UrlFormat | undefined =>
         matchesExtension(pathname, f)
       );
 
+// A WMS endpoint has no extension, so it is told by SERVICE=WMS in the query
+// or a path ending in "/wms" or a "…wms.cgi" script (e.g. MapServer).
+export const isWmsUrl = (url: string): boolean => {
+  const parsed = parseUrl(url);
+  if (!parsed) return false;
+  const lastSegment =
+    safeDecode(parsed.pathname)
+      .toLowerCase()
+      .replace(/\/$/, "")
+      .split("/")
+      .pop() ?? "";
+  return (
+    findParams(parsed.searchParams, "service").some(
+      (k) => parsed.searchParams.get(k)?.toLowerCase() === "wms"
+    ) ||
+    lastSegment === "wms" ||
+    lastSegment.endsWith("wms.cgi")
+  );
+};
+
 // Whether the last path segment has a file extension.
 const hasExtension = (pathname: string) => /\.[^/.]+$/.test(pathname);
 
 // The format the URL's extension identifies on its own, used to pre-select the
-// format. A plain ".json" may be GeoJSON, CZML or 3D Tiles and WMS has no
-// extension, so those are left to the user.
+// format. A plain ".json" may be GeoJSON, CZML or 3D Tiles, so it is left to
+// the user; WMS is told by isWmsUrl.
 export const inferFormat = (url: string): UrlFormat | undefined => {
   const parsed = parseUrl(url);
   if (!parsed) return undefined;
+  if (isWmsUrl(url)) return "wms";
   const pathname = safeDecode(parsed.pathname).toLowerCase();
   if (pathname.endsWith(".json") && !isTilesetJson(pathname)) return undefined;
   return detectFormat(pathname);
