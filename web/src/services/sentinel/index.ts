@@ -45,7 +45,6 @@ export async function initializeSentinel(): Promise<void> {
         rasterTiles: /\/(?:cesium-mesh|imagery|google3d|v1\/3dtiles)\//
       },
       tokenConfig: {
-        memoryCacheTTL: 300_000, // 5 min
         refreshThreshold: 60_000 // refresh 1 min before expiry
       },
       // TODO: Debug logging is temporarily disabled due to verbose logging in some environments that
