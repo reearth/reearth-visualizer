@@ -86,6 +86,11 @@ export class PluginFixturePage {
     return this.ui.frameLocator(".zushi-ui-surface-container iframe");
   }
 
+  /** The iframe of the plugin popup surface (reearth.popup.show). */
+  get popupIframe(): FrameLocator {
+    return this.ui.frameLocator(".zushi-popup-surface-container iframe");
+  }
+
   /**
    * Creates a project and scene via GraphQL.
    * Called once from _setup.ts — shared across all API test suites.
