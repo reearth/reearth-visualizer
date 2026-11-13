@@ -1,5 +1,6 @@
 import { Icon, IconName, Typography } from "@reearth/app/lib/reearth-ui";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
@@ -12,15 +13,20 @@ type Props = {
   onChange: (tab: AssetTab) => void;
 };
 
-// The asset sources, shown as tabs in the modal's header bar.
+// The asset sources, shown as tabs in the modal's header bar. The CMS tabs
+// are still under development, so they are only shown in dev mode.
 const AssetTabs: FC<Props> = ({ value, onChange }) => {
   const t = useT();
   const theme = useTheme();
   const tabs: { id: AssetTab; name: string; icon: IconName }[] = useMemo(
     () => [
       { id: "visualizer", name: t("Visualizer Project Assets"), icon: "logo" },
-      // { id: "cmsAssets", name: t("CMS Assets"), icon: "cmsLogo" },
-      // { id: "cmsModels", name: t("CMS Models"), icon: "cmsLogo" }
+      ...(config()?.devMode
+        ? ([
+            { id: "cmsAssets", name: t("CMS Assets"), icon: "cmsLogo" },
+            { id: "cmsModels", name: t("CMS Models"), icon: "cmsLogo" }
+          ] as const)
+        : [])
     ],
     [t]
   );

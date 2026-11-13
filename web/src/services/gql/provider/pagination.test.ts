@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { paginationMergeNodes } from "./pagination";
+import { pageMergeNodes, paginationMergeNodes } from "./pagination";
 
 type Page = {
   nodes: unknown[];
@@ -53,5 +53,31 @@ describe("paginationMergeNodes", () => {
       startCursor: "z",
       endCursor: "z"
     });
+  });
+});
+
+describe("pageMergeNodes", () => {
+  const nodes = (ids: string[]) => ({ nodes: ids.map((id) => ({ id })) });
+  const merge = (
+    existing: { nodes: unknown[] } | null,
+    incoming: { nodes: unknown[] },
+    args: Record<string, unknown>
+  ) => pageMergeNodes(existing, incoming, { args } as never);
+  const idsOf = (r: { nodes: unknown[] }) =>
+    r.nodes.map((n) => (n as { id: string }).id);
+
+  it("appends pages after the first", () => {
+    const first = merge(null, nodes(["a", "b"]), { page: 1 });
+    expect(idsOf(merge(first, nodes(["c"]), { page: 2 }))).toEqual([
+      "a",
+      "b",
+      "c"
+    ]);
+  });
+
+  it("replaces the list on a first page", () => {
+    const loaded = nodes(["a", "b", "c"]);
+    expect(idsOf(merge(loaded, nodes(["a"]), {}))).toEqual(["a"]);
+    expect(idsOf(merge(loaded, nodes(["a"]), { page: 1 }))).toEqual(["a"]);
   });
 });
