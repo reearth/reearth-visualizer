@@ -11,6 +11,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -20,13 +21,9 @@ import (
 	"github.com/spf13/afero"
 )
 
-// ToStorage writes the export zip of a project to the export storage and
-// returns its file name ("<project ID>.zip"), which the export storage is
-// read and removed by.
+// ToStorage writes the export zip to export storage as "<project ID>.zip",
+// the name the GraphQL download URL depends on.
 //
-// SaveExportProjectZip closes the zip writer and the file itself, so the
-// deferred closes below fail by design on success; their errors are not
-// returned, as before this was moved out of the GraphQL resolver.
 // NOTE(SCA-02, AI compliance scan finding): the local scratch file below is
 // created at a fixed "<projectID>.zip" path, so two concurrent exports of the
 // same project race on it -- the second Create truncates the file the first
@@ -42,9 +39,35 @@ import (
 // (most recently as SCA-02 in eukarya-inc/compliance#263) -- each scan opens
 // a fresh issue, so this comment is the durable record instead of a thread.
 func ToStorage(ctx context.Context, uc *interfaces.Container, op *usecase.Operator, pid id.ProjectID) (string, error) {
+	return toStorage(ctx, uc, op, pid, fmt.Sprintf("%s.zip", pid.String()))
+}
+
+// ToStorageUnique is ToStorage with a per-call unique name instead, for a
+// caller like the REST API that reads the result back directly instead of
+// handing out a download URL.
+func ToStorageUnique(ctx context.Context, uc *interfaces.Container, op *usecase.Operator, pid id.ProjectID) (string, error) {
+	objectName, err := uniqueExportObjectName(pid)
+	if err != nil {
+		return "", err
+	}
+	return toStorage(ctx, uc, op, pid, objectName)
+}
+
+func uniqueExportObjectName(pid id.ProjectID) (string, error) {
+	u, err := uuid.NewRandom()
+	if err != nil {
+		return "", fmt.Errorf("failed to generate unique export name: %w", err)
+	}
+	return fmt.Sprintf("%s-%s.zip", pid.String(), u.String()), nil
+}
+
+// SaveExportProjectZip closes the zip writer and the file itself, so the
+// deferred closes below fail by design on success; their errors are not
+// returned, as before this was moved out of the GraphQL resolver.
+func toStorage(ctx context.Context, uc *interfaces.Container, op *usecase.Operator, pid id.ProjectID, objectName string) (string, error) {
 	fs := afero.NewOsFs()
 
-	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", pid.String()))
+	zipFile, err := fs.Create(objectName)
 	if err != nil {
 		return "", fmt.Errorf("failed to create zip file: %w", err)
 	}
