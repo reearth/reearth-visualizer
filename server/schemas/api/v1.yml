@@ -525,6 +525,12 @@ components:
     PublishmentStatus:
       type: string
       enum: [public, limited, private]
+      description: |
+        Whether the project or story is published, and whether search engines
+        may index it. `public`: published and may be indexed. `limited`:
+        published, but the page asks search engines not to index it or follow
+        its links (`noindex,nofollow`). `private`: not published; there is no
+        published page. This is unrelated to the project's `visibility`.
     Project:
       type: object
       required:
@@ -668,7 +674,7 @@ components:
         url:
           type: string
           description: |
-            The published URL. Absent when the project is private or the
+            The published URL. Absent when the status is `private` or the
             server has no published host configured.
     Story:
       type: object
@@ -700,7 +706,7 @@ components:
         url:
           type: string
           description: |
-            The published URL. Absent when the story is private or the server
+            The published URL. Absent when the status is `private` or the server
             has no published host configured.
     ImportUploadResponse:
       type: object
