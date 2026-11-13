@@ -243,6 +243,44 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 ### Tests added
 - server/e2e/api_v1_project_test.go: `TestAPIV1DeleteProject` checks a reader gets 403 on a project in the trash; `TestAPIV1UpdateProject` checks `{}` and a missing body are 400.
 
+## 2026-11-07 — CMS layer creator review fixes, PR #2519 (web/src/app/features/Editor/Map/DataSourceLayerCreator, web/src/services/api/cms)
+
+### Findings & Fixes
+1. **A model check could add or blame the wrong model** (AssetLayerCreator/hooks.ts)
+   - Bug: selecting another model (e.g. with the keyboard) while one was being checked let the first check finish and add that model, or show its error against the new selection. Layer names entered for one MVT/WMS asset were also kept for the next selected asset.
+   - Fix: changing the selection or the project cancels the running check and resets the layer names.
+2. **The Visualizer tab fetched CMS assets** (AssetLayerCreator/hooks.ts, useCmsAssets.ts)
+   - Bug: with a CMS project picked, the Visualizer tab still queried that project's assets, so a failure showed an unrelated error.
+   - Fix: `useCmsAssets` takes `skip`, set off the CMS tabs; the project filter is kept.
+3. **Only the first 100 CMS projects were listed** (services/api/cms/useCMSQueries.ts)
+   - Bug: `useCMSProjects` fetched one page, so the project filter and the all-projects view left out every project after it.
+   - Fix: the following pages are fetched in turn until `totalCount`; `loading` stays true until then.
+4. **A project that failed once stayed missing** (services/api/cms/useCMSQueries.ts)
+   - Bug: in the all-projects view a project whose first page failed was dropped, and the cached result was reused on return, so a transient failure hid it for the modal's lifetime.
+   - Fix: failed projects are tracked and retried when the view is used again, keeping the loaded ones.
+5. **Asset format missed with a query or fragment** (AssetLayerCreator/utils.ts)
+   - Bug: `formatOf` read the extension of the whole URL, so `roads.geojson?token=…` was hidden.
+   - Fix: it reads the URL's pathname.
+6. **CMS 3D Tiles were added as GeoJSON or hidden** (AssetLayerCreator/utils.ts)
+   - Bug: a `tileset.json` with CMS's 3D Tiles preview type went by its `.json` extension (GeoJSON); an extracted 3D Tiles archive was left out.
+   - Fix: `cmsAssetLayer` maps the preview type to `3dtiles`, using the archive's extracted `tileset.json`; 3D Tiles is in the CMS Assets format filter.
+7. **"Copied" shown when the copy failed** (AssetLayerCreator/index.tsx)
+   - Bug: the success banner showed before `clipboard.writeText` settled, also when it was denied.
+   - Fix: the write is awaited and a failure shows an error.
+8. **Deleting a layer name could move focus to the next one's delete button** (LayerNameInputs.tsx)
+   - Bug: rows were keyed by index, so after a delete the focused button belonged to the next name.
+   - Fix: rows are keyed by the (unique) name.
+9. **Japanese layer-name placeholder lost** (i18n/translations/ja.yml) — restored `レイヤー名`.
+10. **checkModelGeoJson tests failed in CI** (AssetLayerCreator/utils.test.ts)
+    - Bug: the tests built a real `Response`, which fails in CI where jsdom's ReadableStream isn't undici's.
+    - Fix: fetch resolves to a plain object with what the check reads.
+
+Not changed: de-duplicating CMS pages that shift when an asset is added between page loads (the reviewer rated it a poor tradeoff).
+
+### Tests added
+- useCMSQueries.test.ts: loadMore across projects, retrying a failed project, paging the project list.
+- AssetLayerCreator/utils.test.ts: CMS 3D Tiles, `formatOf` with a query/fragment.
+- e2e/tests/layer/cmsLayerCreator.spec.ts: setup moved to `beforeAll`; MVT and WMS submissions checked against the saved layer config.
 ## 2026-11-04 — REST API v1 restore permission (server/internal/adapter/apiv1/project.go)
 
 ### Findings & Fixes
