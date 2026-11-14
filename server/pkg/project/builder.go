@@ -156,6 +156,11 @@ func (b *Builder) PublishedAt(publishedAt time.Time) *Builder {
 	return b
 }
 
+func (b *Builder) FirstPublishedAt(firstPublishedAt *time.Time) *Builder {
+	b.p.firstPublishedAt = firstPublishedAt
+	return b
+}
+
 func (b *Builder) PublicTitle(publicTitle string) *Builder {
 	b.p.publicTitle = publicTitle
 	return b

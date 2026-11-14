@@ -2,6 +2,7 @@ package mongodoc
 
 import (
 	"testing"
+	"time"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -47,4 +48,37 @@ func TestProjectDocument_CreatedByUpdatedBy_EmptyForLegacy(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "", got.CreatedBy())
 	assert.Equal(t, "", got.UpdatedBy())
+}
+
+func TestProjectDocument_FirstPublishedAt_RoundTrip(t *testing.T) {
+	first := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	p := project.New().
+		NewID().
+		Workspace(accountsID.NewWorkspaceID()).
+		FirstPublishedAt(&first).
+		MustBuild()
+
+	doc, _ := NewProject(p)
+	assert.Equal(t, &first, doc.FirstPublishedAt)
+
+	got, err := doc.Model()
+	assert.NoError(t, err)
+	assert.Equal(t, &first, got.FirstPublishedAt())
+}
+
+func TestProjectDocument_FirstPublishedAt_NilForLegacy(t *testing.T) {
+	// Projects saved before this field existed have no first publish time and
+	// must round-trip as nil rather than a zero time.
+	p := project.New().
+		NewID().
+		Workspace(accountsID.NewWorkspaceID()).
+		MustBuild()
+
+	doc, _ := NewProject(p)
+	assert.Nil(t, doc.FirstPublishedAt)
+
+	got, err := doc.Model()
+	assert.NoError(t, err)
+	assert.Nil(t, got.FirstPublishedAt())
 }

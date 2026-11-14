@@ -31,6 +31,7 @@ type ProjectDocument struct {
 	Alias             string
 	PublishmentStatus string
 	PublishedAt       time.Time
+	FirstPublishedAt  *time.Time
 	PublicTitle       string
 	PublicDescription string
 	PublicImage       string
@@ -79,6 +80,7 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 		Alias:             p.Alias(),
 		PublishmentStatus: string(p.PublishmentStatus()),
 		PublishedAt:       p.PublishedAt(),
+		FirstPublishedAt:  p.FirstPublishedAt(),
 		PublicTitle:       p.PublicTitle(),
 		PublicDescription: p.PublicDescription(),
 		PublicImage:       p.PublicImage(),
@@ -134,6 +136,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		Alias(d.Alias).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
 		PublishedAt(d.PublishedAt).
+		FirstPublishedAt(d.FirstPublishedAt).
 		PublicTitle(d.PublicTitle).
 		PublicDescription(d.PublicDescription).
 		PublicImage(d.PublicImage).
