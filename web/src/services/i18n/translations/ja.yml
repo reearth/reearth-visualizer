@@ -139,13 +139,26 @@ Street View and Google Map Search require a Google Maps tile type to comply with
 Page: ページ
 Upload: アップロード
 Search by the name: 名前で検索
+Some items could not be loaded from CMS.: 一部の項目をCMSから読み込めませんでした。
+Project: プロジェクト
 Uploaded at: アップロード日時
 No assets found: アセットが見つかりません
 Try adjusting your search or filters: 検索条件やフィルターを変更してみてください
+Model: モデル
 Visualizer Project Assets: Visualizerプロジェクトアセット
+CMS Assets: CMSアセット
+CMS Models: CMSモデル
 Edits to the model in CMS will update added layer automatically: CMSでモデルを編集すると、追加したレイヤーも自動的に更新されます
 All formats: すべての形式
+All CMS projects: すべてのCMSプロジェクト
+No Geometry field was found in this model, so GeoJSON export is not available.: このモデルにはジオメトリフィールドがないため、GeoJSONとして出力できません。
+The model could not be loaded from the CMS Public API. Make sure it is published to the Public API.: CMSのパブリックAPIからモデルを読み込めませんでした。モデルがパブリックAPIで公開されているか確認してください。
+This asset is private in CMS, so it cannot be loaded on the map. Make it public in CMS to add it.: このアセットはCMSで非公開のため、地図に読み込めません。追加するにはCMSで公開してください。
+Cannot add this Model: このモデルは追加できません
+Cannot add this Asset: このアセットは追加できません
+Could not copy the asset URL to the clipboard: アセットURLをクリップボードにコピーできませんでした
 Back: 戻る
+Supports GeoJSON, CSV, CZML and KML.: GeoJSON、CSV、CZML、KMLに対応しています。
 Prioritize Performance: パフォーマンスを優先
 If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
   パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
@@ -155,6 +168,10 @@ Auto Update Time: 自動時間更新
   ファイルで定義された時間範囲に更新されます。警告：このオプションが有効な複数の CZML
   レイヤーが読み込まれた場合、最終的なシミュレーション時間は最後に読み込まれたレイヤーによって設定されます。
 The development of the KML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: KML形式の開発はまだ試験段階で、あまり安定していません。また、一部の機能はまだ完全にはサポートされていないため、注意してご利用ください。
+Hosted by CMS: CMSでホスト
+Copy: コピー
+Checking the model: モデルを確認しています
+Close: 閉じる
 Submit: 反映
 This file format is not supported. Please use GeoJSON, CSV, KML or CZML.: このファイル形式には対応していません。GeoJSON、CSV、KML、CZMLのいずれかを使用してください。
 The file cannot be greater than {{size}} MB. Please use a smaller file.: ファイルサイズは{{size}}MB以下にしてください。より小さいファイルを使用してください。
@@ -164,6 +181,7 @@ Column name: 列名
 Longitude Column Name: 経度の列名
 Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below.: ビジュアライザーは現在、CSVポイントデータのみ対応しています。緯度と経度の列名を以下に指定してください。
 Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
+Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
 Re:Earth Buildings: Re:Earth Buildings
 Add from Assets: アセットから追加
 Upload new files or pick existing ones: 新しいファイルをアップロード、または既存のファイルを選択
@@ -177,10 +195,13 @@ Create Sketch Layer: スケッチレイヤーを作成
 Draw shapes and markers on the map: 地図上に図形やマーカーを描画
 Preset 3D Tiles: プリセット3Dタイル
 Open 3D buildings worldwide: 世界中のオープンな3D建物データ
-Photorealistic 3D mesh of the world: 世界のフォトリアリスティックな3Dメッシュ
-Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
 Requires a Cesium Ion access token: Cesium Ionアクセストークンが必要です
+Photorealistic 3D mesh of the world: 世界のフォトリアリスティックな3Dメッシュ
 New Layer: 新しいレイヤー
+Choose layer to add: 追加するレイヤーを選択
+Delete layer name: レイヤー名を削除
+layer name: レイヤー名
+Layer name: レイヤー名
 Vector Tiles (MVT): ベクトルタイル（MVT）
 3D Tiles: 3Dタイル
 Enter a valid URL starting with http:// or https://.: http:// または https:// で始まる有効なURLを入力してください。
@@ -194,15 +215,9 @@ WMS URLs need at least one layer name. Add a layer below or include LAYERS= in t
 The development of the CZML format is still in the experimental stage and not very stable. Additionally, some features are not fully supported yet, so please use it with caution.: CZML形式の開発はまだ試験段階で、あまり安定していません。また、一部の機能はまだ完全にはサポートされていないため、注意してご利用ください。
 Add a layer from data hosted on the web. The URL must be publicly accessible and allow cross-origin requests.: Web上でホストされているデータからレイヤーを追加します。URLは公開されており、クロスオリジンリクエストを許可している必要があります。
 URL: URL
-Supports GeoJSON, CZML and KML.: GeoJSON、CZML、KMLに対応しています。
-Supports GeoJSON, CSV, CZML and KML.: GeoJSON、CSV、CZML、KMLに対応しています。
 Supports GeoJSON, CSV, CZML, KML, 3D Tiles, MVT and WMS.: GeoJSON、CSV、CZML、KML、3Dタイル、MVT、WMSに対応しています。
 Select format: 形式を選択
 Format: 形式
-Choose layer to add: 追加するレイヤーを選択
-Delete layer name: レイヤー名を削除
-layer name: レイヤー名
-Layer name: レイヤー名
 Checking the URL: URLを確認しています
 The pasted value doesn't match any supported format (GeoJSON, CZML or KML).: 貼り付けた値は、対応している形式（GeoJSON、CZML、KML）のいずれにも一致しません。
 This value looks like {{detected}} data, not {{selected}}. Change the format or check the value.: この値は{{selected}}ではなく{{detected}}のデータのようです。形式を変更するか、値を確認してください。
@@ -211,6 +226,7 @@ This value looks like {{detected}} data, not {{selected}}. Change the format or 
 'Invalid KML: missing <kml> root element or invalid XML.': 無効なKMLです。<kml>ルート要素がないか、XMLが不正です。
 Paste raw data in a supported format. The format is detected automatically, or you can select it manually.: 対応している形式の生データを貼り付けてください。形式は自動で検出されますが、手動で選択することもできます。
 Value: 値
+Supports GeoJSON, CZML and KML.: GeoJSON、CZML、KMLに対応しています。
 Paste data here: ここにデータを貼り付け
 'Disabled: Opacity adjustments are not available for Google Maps tiles to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルの不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
 'Disabled: Opacity adjustments are not available when Google Maps tiles are present, to comply with Google Maps Map Tiles API Policies.': '無効: Google Mapsタイルが存在する場合の不透明度調整は、Google Maps Map Tiles APIポリシーに準拠するため利用できません。'
@@ -378,7 +394,6 @@ Background color: 背景色
 Align System: アラインシステム
 Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
-Project: プロジェクト
 Project Settings: プロジェクト設定
 Plugin: プラグイン
 Dashboard: ダッシュボード
@@ -406,7 +421,6 @@ Export Plugin: プラグインをエクスポート
 Share Plugin: プラグインを共有
 Shared: 共有
 No plugins: プラグインがありません
-Close: 閉じる
 This plugin is too large to share via URL. Please use the Export function to download the plugin and share the file directly.: このプラグインはURLで共有するには大きすぎます。エクスポート機能を使用してプラグインをダウンロードし、ファイルを直接共有してください。
 Custom: カスタム
 User Interface: ユーザーインターフェース
@@ -596,7 +610,6 @@ Show layer: レイヤーを表示
 Plugin URL: プラグインURL
 Load: 読み込む
 Copied: コピーしました
-Copy: コピー
 Copy command: コマンドをコピー
 Connect a plugin: プラグインを接続
 Run this in your plugin's folder. It serves the plugin and opens it here, and reloads it when you save.: プラグインのフォルダでこのコマンドを実行します。プラグインを配信してここで開き、保存すると再読み込みします。

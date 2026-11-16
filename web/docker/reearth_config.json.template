@@ -8,6 +8,7 @@
     "cmsUrl": ${REEARTH_CMS_URL},
     "currentTos": ${REEARTH_CURRENT_TOS},
     "customProviders": ${REEARTH_CUSTOM_PROVIDERS},
+    "devMode": ${REEARTH_DEV_MODE},
     "documentationUrl": ${REEARTH_DOCUMENTATION_URL},
     "earlyAccessAdmins": ${REEARTH_EARLY_ACCESS_ADMINS},
     "enableGqlPlayground": ${REEARTH_ENABLE_GQL_PLAYGROUND},
