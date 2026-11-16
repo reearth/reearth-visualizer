@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,6 +15,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/labstack/echo/v4"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/apperr"
@@ -29,6 +33,11 @@ type fakeProjectUsecase struct {
 	importProjectData  func(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error)
 	updateImportStatus func(ctx context.Context, pid id.ProjectID, status project.ProjectImportStatus, msg *map[string]any, op *usecase.Operator) (*project.ProjectMetadata, error)
 	claimImport        func(ctx context.Context, pid id.ProjectID) (bool, error)
+	create             func(ctx context.Context, param interfaces.CreateProjectParam, op *usecase.Operator) (*project.Project, error)
+}
+
+func (f *fakeProjectUsecase) Create(ctx context.Context, param interfaces.CreateProjectParam, op *usecase.Operator) (*project.Project, error) {
+	return f.create(ctx, param, op)
 }
 
 func (f *fakeProjectUsecase) ImportProjectData(ctx context.Context, wsID string, sceneID *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
@@ -119,7 +128,7 @@ func TestUploadSession_ConcurrentChunkWrites(t *testing.T) {
 	for range goroutines {
 		go func() {
 			defer wg.Done()
-			session, err := m.getOrCreateSession(fileID, goroutines)
+			session, _, err := m.getOrCreateSession(fileID, goroutines)
 			if err != nil {
 				t.Errorf("getOrCreateSession: %v", err)
 				return
@@ -144,7 +153,7 @@ func TestUploadSession_WriteChunk_CompletionDetection(t *testing.T) {
 		t.Fatalf("failed to build project: %v", err)
 	}
 
-	session, err := m.getOrCreateSession("f1", 3)
+	session, _, err := m.getOrCreateSession("f1", 3)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -204,7 +213,7 @@ func TestUploadSession_WriteChunk_CompletesOnlyOnce(t *testing.T) {
 		t.Fatalf("failed to build project: %v", err)
 	}
 
-	session, err := m.getOrCreateSession("f5", 1)
+	session, _, err := m.getOrCreateSession("f5", 1)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -237,7 +246,7 @@ func TestUploadSession_WriteChunk_MissingChunkZero(t *testing.T) {
 
 	// A malformed/1-indexed client sends chunk_num=1 with total_chunks=1 and
 	// never sends chunk 0, so the project is never set.
-	session, err := m.getOrCreateSession("f2", 1)
+	session, _, err := m.getOrCreateSession("f2", 1)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -261,7 +270,7 @@ func TestUploadSession_WriteChunk_MissingChunkZero(t *testing.T) {
 func TestUploadSession_WriteChunk_RejectsShortNonFinalChunk(t *testing.T) {
 	m := newTestManager(t) // chunkSize is 4 bytes
 
-	session, err := m.getOrCreateSession("f6", 2)
+	session, _, err := m.getOrCreateSession("f6", 2)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -284,7 +293,7 @@ func TestUploadSession_WriteChunk_RejectsShortNonFinalChunk(t *testing.T) {
 func TestUploadSession_WriteChunk_RejectsEmptyChunk(t *testing.T) {
 	m := newTestManager(t)
 
-	session, err := m.getOrCreateSession("f8", 2)
+	session, _, err := m.getOrCreateSession("f8", 2)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -307,7 +316,7 @@ func TestUploadSession_WriteChunk_RejectsEmptyChunk(t *testing.T) {
 func TestUploadSession_WriteChunk_RejectsOversizedChunk(t *testing.T) {
 	m := newTestManager(t) // chunkSize is 4 bytes
 
-	session, err := m.getOrCreateSession("f7", 2)
+	session, _, err := m.getOrCreateSession("f7", 2)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -330,7 +339,7 @@ func TestUploadSession_WriteChunk_RejectsWhenCumulativeBytesExceedBudget(t *test
 	defer func() { maxImportSizeBytes = original }()
 
 	m := newTestManager(t) // chunkSize is 4 bytes
-	session, err := m.getOrCreateSession("f9", 3)
+	session, _, err := m.getOrCreateSession("f9", 3)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -359,7 +368,7 @@ func TestUploadSession_WriteChunk_AllowsPartialFinalChunkWithinBudget(t *testing
 	defer func() { maxImportSizeBytes = original }()
 
 	m := newTestManager(t) // chunkSize is 4 bytes
-	session, err := m.getOrCreateSession("f10", 3)
+	session, _, err := m.getOrCreateSession("f10", 3)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -387,7 +396,7 @@ func TestUploadSession_WriteChunk_RetryAfterBudgetRejectionLeavesNoGarbage(t *te
 	defer func() { maxImportSizeBytes = original }()
 
 	m := newTestManager(t) // chunkSize is 4 bytes
-	session, err := m.getOrCreateSession("f11", 3)
+	session, _, err := m.getOrCreateSession("f11", 3)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -430,11 +439,11 @@ func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *tes
 	m := newTestManager(t)
 	t.Cleanup(func() {
 		for _, s := range m.sessions {
-			s.close()
+			s.close(false)
 		}
 	})
 
-	first, err := m.getOrCreateSession("agg-1", 1)
+	first, _, err := m.getOrCreateSession("agg-1", 1)
 	if err != nil {
 		t.Fatalf("getOrCreateSession(agg-1): %v", err)
 	}
@@ -445,7 +454,7 @@ func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *tes
 		t.Fatalf("totalBytes = %d, want 4 after first session's chunk", m.totalBytes)
 	}
 
-	second, err := m.getOrCreateSession("agg-2", 1)
+	second, _, err := m.getOrCreateSession("agg-2", 1)
 	if err != nil {
 		t.Fatalf("getOrCreateSession(agg-2): %v", err)
 	}
@@ -460,7 +469,7 @@ func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *tes
 		t.Errorf("totalBytes = %d, want 4 (rejected chunk must not be counted)", m.totalBytes)
 	}
 
-	m.cleanupSession("agg-1")
+	m.cleanupSession("agg-1", false)
 	if m.totalBytes != 0 {
 		t.Fatalf("totalBytes = %d, want 0 after cleaning up the only session holding bytes", m.totalBytes)
 	}
@@ -476,11 +485,11 @@ func TestSplitUploadManager_WriteChunk_ReleasesUnusedReservationOnShortFinalChun
 	m := newTestManager(t)
 	t.Cleanup(func() {
 		for _, s := range m.sessions {
-			s.close()
+			s.close(false)
 		}
 	})
 
-	session, err := m.getOrCreateSession("agg-short", 1)
+	session, _, err := m.getOrCreateSession("agg-short", 1)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -497,13 +506,13 @@ func TestSplitUploadManager_WriteChunk_ReleasesUnusedReservationOnShortFinalChun
 func TestSplitUploadManager_CleanupSession(t *testing.T) {
 	m := newTestManager(t)
 
-	session, err := m.getOrCreateSession("f1", 1)
+	session, _, err := m.getOrCreateSession("f1", 1)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
 	filePath := session.snapshot().FilePath
 
-	m.cleanupSession("f1")
+	m.cleanupSession("f1", false)
 
 	m.mgrMu.Lock()
 	_, exists := m.sessions["f1"]
@@ -523,7 +532,7 @@ func TestSplitUploadManager_CleanupSession(t *testing.T) {
 func TestSplitUploadManager_CleanupStaleSessions(t *testing.T) {
 	m := newTestManager(t)
 
-	session, err := m.getOrCreateSession("stale", 2)
+	session, _, err := m.getOrCreateSession("stale", 2)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -577,25 +586,25 @@ func TestSplitUploadManager_GetOrCreateSession_CapEnforced(t *testing.T) {
 	var sessions []*uploadSession
 	t.Cleanup(func() {
 		for _, s := range sessions {
-			s.close()
+			s.close(false)
 		}
 	})
 
 	for i := range maxConcurrentSessions {
 		fileID := fmt.Sprintf("session-%d", i)
-		s, err := m.getOrCreateSession(fileID, 1)
+		s, _, err := m.getOrCreateSession(fileID, 1)
 		if err != nil {
 			t.Fatalf("getOrCreateSession(%d): unexpected error before cap: %v", i, err)
 		}
 		sessions = append(sessions, s)
 	}
 
-	if _, err := m.getOrCreateSession("one-too-many", 1); err == nil {
+	if _, _, err := m.getOrCreateSession("one-too-many", 1); err == nil {
 		t.Fatal("expected an error once maxConcurrentSessions is reached")
 	}
 
 	// An already-open session must still be reachable at the cap.
-	if _, err := m.getOrCreateSession("session-0", 1); err != nil {
+	if _, _, err := m.getOrCreateSession("session-0", 1); err != nil {
 		t.Errorf("getOrCreateSession for an existing fileID should succeed at the cap: %v", err)
 	}
 }
@@ -603,7 +612,7 @@ func TestSplitUploadManager_GetOrCreateSession_CapEnforced(t *testing.T) {
 func TestUploadSession_WriteChunk_OutOfOrderOffsets(t *testing.T) {
 	m := newTestManager(t)
 
-	session, err := m.getOrCreateSession("f3", 2)
+	session, _, err := m.getOrCreateSession("f3", 2)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -634,7 +643,7 @@ func TestUploadSession_WriteChunk_OutOfOrderOffsets(t *testing.T) {
 
 func TestUploadSession_FilePathIsUnderTempDir(t *testing.T) {
 	m := newTestManager(t)
-	session, err := m.getOrCreateSession("f4", 1)
+	session, _, err := m.getOrCreateSession("f4", 1)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -666,7 +675,7 @@ func TestSplitUploadManager_DispatchImport_TimesOutWhenPoolWedged(t *testing.T) 
 	if err != nil {
 		t.Fatalf("failed to build project: %v", err)
 	}
-	session, err := m.getOrCreateSession("wedged", 1)
+	session, _, err := m.getOrCreateSession("wedged", 1)
 	if err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
@@ -802,7 +811,7 @@ func TestSplitUploadManager_RunImportJob_ContextTimesOut(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to build project: %v", err)
 	}
-	if _, err := m.getOrCreateSession("stuck-import", 1); err != nil {
+	if _, _, err := m.getOrCreateSession("stuck-import", 1); err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
 
@@ -857,7 +866,7 @@ func TestSplitUploadManager_RunImportJob_FastFailureIsNotTreatedAsTimeout(t *tes
 	if err != nil {
 		t.Fatalf("failed to build project: %v", err)
 	}
-	if _, err := m.getOrCreateSession("fast-fail", 1); err != nil {
+	if _, _, err := m.getOrCreateSession("fast-fail", 1); err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
 
@@ -948,7 +957,7 @@ func TestSplitUploadManager_RunImportJob_ClaimErrorWritesFailed(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to build project: %v", err)
 	}
-	if _, err := m.getOrCreateSession("claim-err", 1); err != nil {
+	if _, _, err := m.getOrCreateSession("claim-err", 1); err != nil {
 		t.Fatalf("getOrCreateSession: %v", err)
 	}
 
@@ -975,5 +984,349 @@ func TestSplitUploadManager_RunImportJob_ClaimErrorWritesFailed(t *testing.T) {
 
 	if !gotFailed {
 		t.Error("ClaimImport error must write a terminal FAILED status (REL-09)")
+	}
+}
+
+// TestSplitUploadManager_HandleChunkedUpload_RejectsChunkFromDifferentOwner
+// is a regression test for SEC-02: upload sessions were keyed only by the
+// client-supplied file_id, with no check against who actually created them.
+// Any caller who knew or guessed another user's file_id could resend chunk 0
+// (treated as a retry) or a later chunk and tamper with that user's import.
+// This confirms a caller other than the session's creator is rejected, both
+// on the chunk-0 "retry" path and on a later chunk, while the real owner can
+// still continue.
+func TestSplitUploadManager_HandleChunkedUpload_RejectsChunkFromDifferentOwner(t *testing.T) {
+	m := newTestManager(t)
+	const fileID = "sec02-session"
+
+	ownerWs := accountsID.NewWorkspaceID()
+	attackerWs := accountsID.NewWorkspaceID()
+	ownerUser := accountsID.NewUserID()
+	attackerUser := accountsID.NewUserID()
+
+	session, _, err := m.getOrCreateSession(fileID, 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	session.setOwner(ownerUser.String(), ownerWs)
+
+	attackerOp := &usecase.Operator{AcOperator: &accountsWorkspace.Operator{User: &attackerUser}}
+
+	assertForbidden := func(t *testing.T, err error) {
+		t.Helper()
+		herr, ok := err.(*echo.HTTPError)
+		if !ok || herr.Code != http.StatusForbidden {
+			t.Errorf("expected 403 Forbidden, got %v", err)
+		}
+	}
+
+	// Attacker "retries" chunk 0 for the victim's file_id.
+	_, err = m.handleChunkedUpload(context.Background(), nil, attackerOp, attackerWs, fileID, 0, 2, fakeMultipartFile{bytes.NewReader([]byte("data"))})
+	if err == nil {
+		t.Fatal("expected an error for a chunk 0 retry from a different caller")
+	}
+	assertForbidden(t, err)
+
+	// Attacker sends a later chunk for the victim's file_id.
+	_, err = m.handleChunkedUpload(context.Background(), nil, attackerOp, attackerWs, fileID, 1, 2, fakeMultipartFile{bytes.NewReader([]byte("data"))})
+	if err == nil {
+		t.Fatal("expected an error for a non-zero chunk from a different caller")
+	}
+	assertForbidden(t, err)
+
+	// The real owner can still continue the upload.
+	ownerOp := &usecase.Operator{AcOperator: &accountsWorkspace.Operator{User: &ownerUser}}
+	if _, err := m.handleChunkedUpload(context.Background(), nil, ownerOp, ownerWs, fileID, 1, 2, fakeMultipartFile{bytes.NewReader([]byte("data"))}); err != nil {
+		t.Errorf("the session's own owner must still be accepted: %v", err)
+	}
+}
+
+// TestSplitUploadManager_HandleChunkedUpload_ConcurrentChunkZeroRaceDoesNotHijackOwner
+// exercises the race two different, independently authorized callers can hit
+// when they both send chunk 0 for the same file_id before either session
+// exists yet: both can see no session via getSession, and only
+// getOrCreateSession's internal lock decides which one actually creates it.
+// The loser must be rejected (SEC-02), never silently become -- or be
+// treated as -- the session's owner.
+func TestSplitUploadManager_HandleChunkedUpload_ConcurrentChunkZeroRaceDoesNotHijackOwner(t *testing.T) {
+	m := newTestManager(t)
+	const fileID = "sec02-race-session"
+
+	release := make(chan struct{})
+	usecases := &interfaces.Container{
+		Project: &fakeProjectUsecase{
+			create: func(ctx context.Context, param interfaces.CreateProjectParam, op *usecase.Operator) (*project.Project, error) {
+				<-release // widen the race window so both callers reach getOrCreateSession together
+				return project.New().NewID().Workspace(param.WorkspaceID).Build()
+			},
+		},
+	}
+
+	userA := accountsID.NewUserID()
+	userB := accountsID.NewUserID()
+	wsA := accountsID.NewWorkspaceID()
+	wsB := accountsID.NewWorkspaceID()
+	opA := &usecase.Operator{AcOperator: &accountsWorkspace.Operator{User: &userA}}
+	opB := &usecase.Operator{AcOperator: &accountsWorkspace.Operator{User: &userB}}
+
+	var wg sync.WaitGroup
+	results := make([]error, 2)
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		_, results[0] = m.handleChunkedUpload(context.Background(), usecases, opA, wsA, fileID, 0, 1, fakeMultipartFile{bytes.NewReader([]byte("data"))})
+	}()
+	go func() {
+		defer wg.Done()
+		_, results[1] = m.handleChunkedUpload(context.Background(), usecases, opB, wsB, fileID, 0, 1, fakeMultipartFile{bytes.NewReader([]byte("data"))})
+	}()
+	close(release)
+	wg.Wait()
+
+	successes := 0
+	for _, err := range results {
+		if err == nil {
+			successes++
+			continue
+		}
+		herr, ok := err.(*echo.HTTPError)
+		if !ok || herr.Code != http.StatusForbidden {
+			t.Errorf("expected either success or 403 Forbidden, got %v", err)
+		}
+	}
+	if successes != 1 {
+		t.Errorf("expected exactly one caller to win the session, got %d successes", successes)
+	}
+}
+
+// fakeMultipartFile adapts a *bytes.Reader to satisfy multipart.File (which
+// also needs Close) for tests that call handleChunkedUpload directly.
+type fakeMultipartFile struct {
+	*bytes.Reader
+}
+
+func (fakeMultipartFile) Close() error { return nil }
+
+// TestSplitUploadManager_HandleChunkedUpload_CleansUpSessionOnWriteChunkFailure
+// is a regression test for REL-08: a failed chunk write used to leave the
+// session's reserved bytes counted against maxAggregateBytes until the 24h
+// stale-session sweep, so a handful of failed uploads could lock out every
+// new import on the instance. This confirms the session (and its reserved
+// bytes) is released immediately when writeChunk rejects a chunk.
+func TestSplitUploadManager_HandleChunkedUpload_CleansUpSessionOnWriteChunkFailure(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+	const fileID = "rel08-cleanup"
+
+	if _, _, err := m.getOrCreateSession(fileID, 2); err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	// 5 bytes on a non-final chunk exceeds the 4-byte chunkSize, which
+	// writeChunk rejects as an expected (client) error.
+	oversized := fakeMultipartFile{bytes.NewReader([]byte("abcde"))}
+
+	if _, err := m.handleChunkedUpload(context.Background(), nil, nil, accountsID.WorkspaceID{}, fileID, 0, 2, oversized); err == nil {
+		t.Fatal("expected an error for an oversized chunk")
+	}
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions[fileID]
+	m.mgrMu.Unlock()
+	if exists {
+		t.Error("a failed chunk write must release the session instead of leaving its reserved bytes held")
+	}
+}
+
+// TestSplitUploadManager_CleanupStaleSessions_ReservedBytesUseShorterCutoff
+// is a regression test for REL-08: an abandoned session that already
+// received data used to share the same 24h cutoff as a brand-new session,
+// so its reserved bytes stayed locked for up to a day. A session holding
+// reserved bytes must be reaped after the shorter reservedBytesStaleAfter
+// instead, while an empty session still gets the full 24h.
+func TestSplitUploadManager_CleanupStaleSessions_ReservedBytesUseShorterCutoff(t *testing.T) {
+	m := newTestManager(t)
+
+	withBytes, _, err := m.getOrCreateSession("with-bytes", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := withBytes.writeChunk(0, strings.NewReader("data")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+	withBytes.setUpdatedAtForTest(time.Now().Add(-2 * reservedBytesStaleAfter))
+
+	empty, _, err := m.getOrCreateSession("empty", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	empty.setUpdatedAtForTest(time.Now().Add(-2 * reservedBytesStaleAfter))
+
+	m.cleanupStaleSessions()
+
+	m.mgrMu.Lock()
+	_, withBytesExists := m.sessions["with-bytes"]
+	_, emptyExists := m.sessions["empty"]
+	m.mgrMu.Unlock()
+
+	if withBytesExists {
+		t.Error("a session holding reserved bytes must be reaped after reservedBytesStaleAfter, not the full 24h")
+	}
+	if !emptyExists {
+		t.Error("a session with no reserved bytes must keep the full 24h cutoff")
+	}
+}
+
+// TestSplitUploadManager_CleanupSession_SkipsFileRemovalForDispatchedSession
+// is a regression test: cleanupSession used to close and remove a session's
+// backing file unconditionally. If a different chunk's failure triggered
+// cleanup (force=false) for a session that another, concurrent chunk had
+// just completed and dispatched for import, the import worker's later read
+// of that file could lose the race and fail -- deleting a file a
+// legitimate, in-progress import still needs. This confirms a non-owning,
+// non-forced cleanup leaves a dispatched session's map entry and file
+// alone entirely, for the import worker's own forced cleanup to handle.
+func TestSplitUploadManager_CleanupSession_SkipsFileRemovalForDispatchedSession(t *testing.T) {
+	m := newTestManager(t)
+
+	session, _, err := m.getOrCreateSession("dispatched-session", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	filePath := session.snapshot().FilePath
+
+	session.mu.Lock()
+	session.dispatched = true
+	session.mu.Unlock()
+
+	m.cleanupSession("dispatched-session", false)
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions["dispatched-session"]
+	m.mgrMu.Unlock()
+	if !exists {
+		t.Error("a non-forced cleanup must leave a dispatched session in the map for its owner's forced cleanup")
+	}
+
+	if _, err := os.Stat(filePath); err != nil {
+		t.Errorf("a dispatched session's backing file must not be removed by a non-forced cleanup, stat err = %v", err)
+	}
+}
+
+// TestUploadSession_Close_ReturnsCurrentReceivedBytes is a regression test:
+// cleanupSession used to snapshot ReceivedBytes and close() in two separate
+// locked sections, so a chunk that landed in between added bytes to the
+// aggregate budget that were never released once the session was torn down.
+// This confirms close() reports the byte count as of the same lock scope
+// that performs the close, not a stale read from before it.
+func TestUploadSession_Close_ReturnsCurrentReceivedBytes(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, _, err := m.getOrCreateSession("close-bytes", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := session.writeChunk(0, strings.NewReader("data")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+
+	got, closed := session.close(false)
+	if !closed {
+		t.Fatal("close(false) on a non-dispatched session must actually close")
+	}
+	if want := int64(4); got != want {
+		t.Errorf("close() returned %d bytes, want %d", got, want)
+	}
+}
+
+// TestSplitUploadManager_CleanupSession_ForceRemovesDispatchedSession is a
+// regression test: the force=false guard that protects a dispatched session
+// from a racing chunk-failure's cleanup must not also block the import
+// worker's own legitimate teardown once it's actually done with that
+// session. force=true (as dispatchImport's timeout path and runImportJob's
+// deferred cleanup use) must still close and remove the file.
+func TestSplitUploadManager_CleanupSession_ForceRemovesDispatchedSession(t *testing.T) {
+	m := newTestManager(t)
+
+	session, _, err := m.getOrCreateSession("dispatched-owned", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	filePath := session.snapshot().FilePath
+
+	session.mu.Lock()
+	session.dispatched = true
+	session.mu.Unlock()
+
+	m.cleanupSession("dispatched-owned", true)
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions["dispatched-owned"]
+	m.mgrMu.Unlock()
+	if exists {
+		t.Error("session should have been removed")
+	}
+
+	if _, err := os.Stat(filePath); !os.IsNotExist(err) {
+		t.Errorf("the import worker's forced cleanup must remove the file, stat err = %v", err)
+	}
+}
+
+// TestUploadSession_Close_IsIdempotent is a regression test: close() had no
+// guard against being called twice on the same non-dispatched session, so
+// two concurrent cleanups of the same session (e.g. two failed chunks, or a
+// chunk failure racing the stale sweep) both succeeded and both reported
+// the same receivedBytes as released -- a double release of the aggregate
+// budget. This confirms a second close() call is a no-op.
+func TestUploadSession_Close_IsIdempotent(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, _, err := m.getOrCreateSession("close-twice", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := session.writeChunk(0, strings.NewReader("data")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+
+	first, closed := session.close(false)
+	if !closed || first != 4 {
+		t.Fatalf("first close() = (%d, %v), want (4, true)", first, closed)
+	}
+
+	second, closed := session.close(false)
+	if closed {
+		t.Error("a second close() must not report closed=true")
+	}
+	if second != 0 {
+		t.Errorf("a second close() must report 0 bytes, got %d", second)
+	}
+}
+
+// TestSplitUploadManager_CleanupStaleSessions_SkipsDispatchedSession confirms
+// the stale sweep leaves a dispatched session alone even once it's old
+// enough to otherwise qualify as stale, since cleanupStaleSessions delegates
+// to cleanupSession's own dispatched guard.
+func TestSplitUploadManager_CleanupStaleSessions_SkipsDispatchedSession(t *testing.T) {
+	m := newTestManager(t)
+
+	session, _, err := m.getOrCreateSession("dispatched-but-stale", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	filePath := session.snapshot().FilePath
+
+	session.mu.Lock()
+	session.dispatched = true
+	session.mu.Unlock()
+	session.setUpdatedAtForTest(time.Now().Add(-25 * time.Hour))
+
+	m.cleanupStaleSessions()
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions["dispatched-but-stale"]
+	m.mgrMu.Unlock()
+	if !exists {
+		t.Error("the stale sweep must leave a dispatched session in the map for its owner's forced cleanup")
+	}
+	if _, err := os.Stat(filePath); err != nil {
+		t.Errorf("the stale sweep must not remove a dispatched session's file, stat err = %v", err)
 	}
 }
