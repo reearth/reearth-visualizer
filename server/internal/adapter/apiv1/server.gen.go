@@ -227,7 +227,7 @@ type Project struct {
 	Archived  bool      `json:"archived"`
 	CreatedAt time.Time `json:"createdAt"`
 
-	// Deleted Whether the project is in the trash.
+	// Deleted Whether the project is in the trash. A project created by an import is also `true` until the import has finished.
 	Deleted     bool    `json:"deleted"`
 	Description string  `json:"description"`
 	Id          string  `json:"id"`
@@ -241,11 +241,20 @@ type Project struct {
 	Name         string               `json:"name"`
 
 	// PublishedAlias The alias used in the published URL. Set by the first publish request, whatever its status, and kept after unpublishing.
-	PublishedAlias    *string           `json:"publishedAlias,omitempty"`
-	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
+	PublishedAlias *string    `json:"publishedAlias,omitempty"`
+	PublishedAt    *time.Time `json:"publishedAt,omitempty"`
+
+	// PublishmentStatus Whether the project or story is published, and whether search engines
+	// may index the published page. Unrelated to the project's `visibility`.
+	//
+	// - `public`: published, and search engines may index the page.
+	// - `limited`: published, but the page asks search engines not to
+	//   index it or follow its links (`noindex,nofollow`). The web app's
+	//   default.
+	// - `private`: not published; there is no published page.
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 
-	// SceneId The scene of the project. Plugins are installed into it.
+	// SceneId The scene of the project. Plugins are installed into it. Absent while an import has not finished.
 	SceneId     *string    `json:"sceneId,omitempty"`
 	Starred     bool       `json:"starred"`
 	UpdatedAt   time.Time  `json:"updatedAt"`
@@ -273,7 +282,16 @@ type ProjectSort string
 // PublishProjectRequest defines model for PublishProjectRequest.
 type PublishProjectRequest struct {
 	// Alias Published alias. Kept when omitted.
-	Alias  *string           `json:"alias,omitempty"`
+	Alias *string `json:"alias,omitempty"`
+
+	// Status Whether the project or story is published, and whether search engines
+	// may index the published page. Unrelated to the project's `visibility`.
+	//
+	// - `public`: published, and search engines may index the page.
+	// - `limited`: published, but the page asks search engines not to
+	//   index it or follow its links (`noindex,nofollow`). The web app's
+	//   default.
+	// - `private`: not published; there is no published page.
 	Status PublishmentStatus `json:"status"`
 }
 
@@ -295,7 +313,14 @@ type PublishStoryResponse struct {
 	Url *string `json:"url,omitempty"`
 }
 
-// PublishmentStatus defines model for PublishmentStatus.
+// PublishmentStatus Whether the project or story is published, and whether search engines
+// may index the published page. Unrelated to the project's `visibility`.
+//
+//   - `public`: published, and search engines may index the page.
+//   - `limited`: published, but the page asks search engines not to
+//     index it or follow its links (`noindex,nofollow`). The web app's
+//     default.
+//   - `private`: not published; there is no published page.
 type PublishmentStatus string
 
 // Story defines model for Story.
@@ -304,8 +329,17 @@ type Story struct {
 	ProjectId string `json:"projectId"`
 
 	// PublishedAlias The alias used in the story's published URL. Every story has one from creation; it only becomes reachable once the story is published.
-	PublishedAlias    *string           `json:"publishedAlias,omitempty"`
-	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
+	PublishedAlias *string    `json:"publishedAlias,omitempty"`
+	PublishedAt    *time.Time `json:"publishedAt,omitempty"`
+
+	// PublishmentStatus Whether the project or story is published, and whether search engines
+	// may index the published page. Unrelated to the project's `visibility`.
+	//
+	// - `public`: published, and search engines may index the page.
+	// - `limited`: published, but the page asks search engines not to
+	//   index it or follow its links (`noindex,nofollow`). The web app's
+	//   default.
+	// - `private`: not published; there is no published page.
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 	Title             string            `json:"title"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
@@ -356,10 +390,10 @@ type ListProjectsParams struct {
 	// Sort Sort order. Cannot be combined with `starred` or `deleted`.
 	Sort *ProjectSort `form:"sort,omitempty" json:"sort,omitempty"`
 
-	// Starred Only starred projects.
+	// Starred Only starred projects. Cannot be combined with `deleted`.
 	Starred *bool `form:"starred,omitempty" json:"starred,omitempty"`
 
-	// Deleted Only projects in the trash.
+	// Deleted Only projects in the trash. Cannot be combined with `starred`.
 	Deleted *bool `form:"deleted,omitempty" json:"deleted,omitempty"`
 
 	// Limit Page size.
