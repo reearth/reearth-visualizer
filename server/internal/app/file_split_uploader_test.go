@@ -14,6 +14,7 @@ import (
 	"testing"
 	"time"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/apperr"
@@ -430,7 +431,7 @@ func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *tes
 	m := newTestManager(t)
 	t.Cleanup(func() {
 		for _, s := range m.sessions {
-			s.close()
+			s.close(false)
 		}
 	})
 
@@ -460,7 +461,7 @@ func TestSplitUploadManager_WriteChunk_RejectsWhenAggregateBudgetExceeded(t *tes
 		t.Errorf("totalBytes = %d, want 4 (rejected chunk must not be counted)", m.totalBytes)
 	}
 
-	m.cleanupSession("agg-1")
+	m.cleanupSession("agg-1", false)
 	if m.totalBytes != 0 {
 		t.Fatalf("totalBytes = %d, want 0 after cleaning up the only session holding bytes", m.totalBytes)
 	}
@@ -476,7 +477,7 @@ func TestSplitUploadManager_WriteChunk_ReleasesUnusedReservationOnShortFinalChun
 	m := newTestManager(t)
 	t.Cleanup(func() {
 		for _, s := range m.sessions {
-			s.close()
+			s.close(false)
 		}
 	})
 
@@ -503,7 +504,7 @@ func TestSplitUploadManager_CleanupSession(t *testing.T) {
 	}
 	filePath := session.snapshot().FilePath
 
-	m.cleanupSession("f1")
+	m.cleanupSession("f1", false)
 
 	m.mgrMu.Lock()
 	_, exists := m.sessions["f1"]
@@ -577,7 +578,7 @@ func TestSplitUploadManager_GetOrCreateSession_CapEnforced(t *testing.T) {
 	var sessions []*uploadSession
 	t.Cleanup(func() {
 		for _, s := range sessions {
-			s.close()
+			s.close(false)
 		}
 	})
 
@@ -975,5 +976,237 @@ func TestSplitUploadManager_RunImportJob_ClaimErrorWritesFailed(t *testing.T) {
 
 	if !gotFailed {
 		t.Error("ClaimImport error must write a terminal FAILED status (REL-09)")
+	}
+}
+
+// fakeMultipartFile adapts a *bytes.Reader to satisfy multipart.File (which
+// also needs Close) for tests that call handleChunkedUpload directly.
+type fakeMultipartFile struct {
+	*bytes.Reader
+}
+
+func (fakeMultipartFile) Close() error { return nil }
+
+// TestSplitUploadManager_HandleChunkedUpload_CleansUpSessionOnWriteChunkFailure
+// is a regression test for REL-08: a failed chunk write used to leave the
+// session's reserved bytes counted against maxAggregateBytes until the 24h
+// stale-session sweep, so a handful of failed uploads could lock out every
+// new import on the instance. This confirms the session (and its reserved
+// bytes) is released immediately when writeChunk rejects a chunk.
+func TestSplitUploadManager_HandleChunkedUpload_CleansUpSessionOnWriteChunkFailure(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+	const fileID = "rel08-cleanup"
+
+	if _, err := m.getOrCreateSession(fileID, 2); err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+
+	// 5 bytes on a non-final chunk exceeds the 4-byte chunkSize, which
+	// writeChunk rejects as an expected (client) error.
+	oversized := fakeMultipartFile{bytes.NewReader([]byte("abcde"))}
+
+	if _, err := m.handleChunkedUpload(context.Background(), nil, nil, accountsID.WorkspaceID{}, fileID, 0, 2, oversized); err == nil {
+		t.Fatal("expected an error for an oversized chunk")
+	}
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions[fileID]
+	m.mgrMu.Unlock()
+	if exists {
+		t.Error("a failed chunk write must release the session instead of leaving its reserved bytes held")
+	}
+}
+
+// TestSplitUploadManager_CleanupStaleSessions_ReservedBytesUseShorterCutoff
+// is a regression test for REL-08: an abandoned session that already
+// received data used to share the same 24h cutoff as a brand-new session,
+// so its reserved bytes stayed locked for up to a day. A session holding
+// reserved bytes must be reaped after the shorter reservedBytesStaleAfter
+// instead, while an empty session still gets the full 24h.
+func TestSplitUploadManager_CleanupStaleSessions_ReservedBytesUseShorterCutoff(t *testing.T) {
+	m := newTestManager(t)
+
+	withBytes, err := m.getOrCreateSession("with-bytes", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := withBytes.writeChunk(0, strings.NewReader("data")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+	withBytes.setUpdatedAtForTest(time.Now().Add(-2 * reservedBytesStaleAfter))
+
+	empty, err := m.getOrCreateSession("empty", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	empty.setUpdatedAtForTest(time.Now().Add(-2 * reservedBytesStaleAfter))
+
+	m.cleanupStaleSessions()
+
+	m.mgrMu.Lock()
+	_, withBytesExists := m.sessions["with-bytes"]
+	_, emptyExists := m.sessions["empty"]
+	m.mgrMu.Unlock()
+
+	if withBytesExists {
+		t.Error("a session holding reserved bytes must be reaped after reservedBytesStaleAfter, not the full 24h")
+	}
+	if !emptyExists {
+		t.Error("a session with no reserved bytes must keep the full 24h cutoff")
+	}
+}
+
+// TestSplitUploadManager_CleanupSession_SkipsFileRemovalForDispatchedSession
+// is a regression test: cleanupSession used to close and remove a session's
+// backing file unconditionally. If a different chunk's failure triggered
+// cleanup (force=false) for a session that another, concurrent chunk had
+// just completed and dispatched for import, the import worker's later read
+// of that file could lose the race and fail -- deleting a file a
+// legitimate, in-progress import still needs. This confirms a non-owning,
+// non-forced cleanup leaves a dispatched session's map entry and file
+// alone entirely, for the import worker's own forced cleanup to handle.
+func TestSplitUploadManager_CleanupSession_SkipsFileRemovalForDispatchedSession(t *testing.T) {
+	m := newTestManager(t)
+
+	session, err := m.getOrCreateSession("dispatched-session", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	filePath := session.snapshot().FilePath
+
+	session.mu.Lock()
+	session.dispatched = true
+	session.mu.Unlock()
+
+	m.cleanupSession("dispatched-session", false)
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions["dispatched-session"]
+	m.mgrMu.Unlock()
+	if !exists {
+		t.Error("a non-forced cleanup must leave a dispatched session in the map for its owner's forced cleanup")
+	}
+
+	if _, err := os.Stat(filePath); err != nil {
+		t.Errorf("a dispatched session's backing file must not be removed by a non-forced cleanup, stat err = %v", err)
+	}
+}
+
+// TestUploadSession_Close_ReturnsCurrentReceivedBytes is a regression test:
+// cleanupSession used to snapshot ReceivedBytes and close() in two separate
+// locked sections, so a chunk that landed in between added bytes to the
+// aggregate budget that were never released once the session was torn down.
+// This confirms close() reports the byte count as of the same lock scope
+// that performs the close, not a stale read from before it.
+func TestUploadSession_Close_ReturnsCurrentReceivedBytes(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, err := m.getOrCreateSession("close-bytes", 2)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := session.writeChunk(0, strings.NewReader("data")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+
+	got, closed := session.close(false)
+	if !closed {
+		t.Fatal("close(false) on a non-dispatched session must actually close")
+	}
+	if want := int64(4); got != want {
+		t.Errorf("close() returned %d bytes, want %d", got, want)
+	}
+}
+
+// TestSplitUploadManager_CleanupSession_ForceRemovesDispatchedSession is a
+// regression test: the force=false guard that protects a dispatched session
+// from a racing chunk-failure's cleanup must not also block the import
+// worker's own legitimate teardown once it's actually done with that
+// session. force=true (as dispatchImport's timeout path and runImportJob's
+// deferred cleanup use) must still close and remove the file.
+func TestSplitUploadManager_CleanupSession_ForceRemovesDispatchedSession(t *testing.T) {
+	m := newTestManager(t)
+
+	session, err := m.getOrCreateSession("dispatched-owned", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	filePath := session.snapshot().FilePath
+
+	session.mu.Lock()
+	session.dispatched = true
+	session.mu.Unlock()
+
+	m.cleanupSession("dispatched-owned", true)
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions["dispatched-owned"]
+	m.mgrMu.Unlock()
+	if exists {
+		t.Error("session should have been removed")
+	}
+
+	if _, err := os.Stat(filePath); !os.IsNotExist(err) {
+		t.Errorf("the import worker's forced cleanup must remove the file, stat err = %v", err)
+	}
+}
+
+// TestUploadSession_Close_IsIdempotent is a regression test: close() had no
+// guard against being called twice on the same non-dispatched session, so
+// two concurrent cleanups of the same session (e.g. two failed chunks, or a
+// chunk failure racing the stale sweep) both succeeded and both reported
+// the same receivedBytes as released -- a double release of the aggregate
+// budget. This confirms a second close() call is a no-op.
+func TestUploadSession_Close_IsIdempotent(t *testing.T) {
+	m := newTestManager(t) // chunkSize is 4 bytes
+	session, err := m.getOrCreateSession("close-twice", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	if _, err := session.writeChunk(0, strings.NewReader("data")); err != nil {
+		t.Fatalf("writeChunk: %v", err)
+	}
+
+	first, closed := session.close(false)
+	if !closed || first != 4 {
+		t.Fatalf("first close() = (%d, %v), want (4, true)", first, closed)
+	}
+
+	second, closed := session.close(false)
+	if closed {
+		t.Error("a second close() must not report closed=true")
+	}
+	if second != 0 {
+		t.Errorf("a second close() must report 0 bytes, got %d", second)
+	}
+}
+
+// TestSplitUploadManager_CleanupStaleSessions_SkipsDispatchedSession confirms
+// the stale sweep leaves a dispatched session alone even once it's old
+// enough to otherwise qualify as stale, since cleanupStaleSessions delegates
+// to cleanupSession's own dispatched guard.
+func TestSplitUploadManager_CleanupStaleSessions_SkipsDispatchedSession(t *testing.T) {
+	m := newTestManager(t)
+
+	session, err := m.getOrCreateSession("dispatched-but-stale", 1)
+	if err != nil {
+		t.Fatalf("getOrCreateSession: %v", err)
+	}
+	filePath := session.snapshot().FilePath
+
+	session.mu.Lock()
+	session.dispatched = true
+	session.mu.Unlock()
+	session.setUpdatedAtForTest(time.Now().Add(-25 * time.Hour))
+
+	m.cleanupStaleSessions()
+
+	m.mgrMu.Lock()
+	_, exists := m.sessions["dispatched-but-stale"]
+	m.mgrMu.Unlock()
+	if !exists {
+		t.Error("the stale sweep must leave a dispatched session in the map for its owner's forced cleanup")
+	}
+	if _, err := os.Stat(filePath); err != nil {
+		t.Errorf("the stale sweep must not remove a dispatched session's file, stat err = %v", err)
 	}
 }

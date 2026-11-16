@@ -88,6 +88,9 @@ export type Config = {
   tileServerBaseUrl?: string;
   tileServerToken?: string;
   cmsUrl?: string;
+  // Enables features still under development (e.g. adding layers from CMS).
+  // Turned on in dev environments only.
+  devMode?: boolean;
 } & AuthInfo;
 
 declare global {
