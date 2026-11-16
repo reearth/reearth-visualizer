@@ -31,8 +31,6 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
   const t = useT();
   const theme = useTheme();
 
-  const [userNotFoundWarningVisible, setUserNotFoundWarningVisible] =
-    useState(false);
   const [userExistsWarningVisible, setUserExistsWarningVisible] =
     useState(false);
 
@@ -41,17 +39,17 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
 
   useDebounce(
     () => {
-      setDebouncedSearchTerm(searchTerm);
+      setDebouncedSearchTerm(searchTerm.trim());
     },
     500,
     [searchTerm]
   );
 
   const [searchResult, setSearchResult] = useState<
-    { id: string; name: string; email: string }[]
+    { id: string; name: string }[]
   >([]);
 
-  const { user, loading } = useSearchUser(debouncedSearchTerm, {
+  const { user, loading, error } = useSearchUser(debouncedSearchTerm, {
     skip: !debouncedSearchTerm
   });
 
@@ -68,7 +66,10 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
   );
 
   useEffect(() => {
-    setUserNotFoundWarningVisible(!user);
+    if (!debouncedSearchTerm || loading || error) {
+      setUserExistsWarningVisible(false);
+      return;
+    }
     const alreadyExists = !!user && existingMemberIds.has(user.id);
     setUserExistsWarningVisible(alreadyExists);
     if (user && !alreadyExists) {
@@ -79,13 +80,12 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
               ...prev,
               {
                 id: user.id,
-                name: user.name,
-                email: user.email
+                name: user.name
               }
             ]
       );
     }
-  }, [user, existingMemberIds]);
+  }, [user, existingMemberIds, debouncedSearchTerm, loading, error]);
 
   const { addMemberToWorkspace } = useWorkspaceMutations();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -111,9 +111,16 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
     }
   }, [searchResult, workspace?.id, isSubmitting, addMemberToWorkspace, onClose]);
 
-  const handleRemoveUserFromSearchResult = useCallback((userId: string) => {
-    setSearchResult((prev) => prev.filter((u) => u.id !== userId));
-  }, []);
+  const handleRemoveUserFromSearchResult = useCallback(
+    (userId: string) => {
+      setSearchResult((prev) => prev.filter((u) => u.id !== userId));
+      if (user?.id === userId) {
+        setSearchTerm("");
+        setDebouncedSearchTerm("");
+      }
+    },
+    [user?.id]
+  );
 
   return (
     <Modal visible={visible} size="small">
@@ -137,15 +144,13 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
           />
         ]}
       >
-        {/* The lookup behind this box matches on alias only, so naming any
-        other field here sends people to a search that cannot succeed. */}
         <Typography size="body">{t("Search by user alias")}</Typography>
         <TextInput
           placeholder="user-alias"
           value={searchTerm}
           onChange={setSearchTerm}
         />
-        {userNotFoundWarningVisible && debouncedSearchTerm && !loading && (
+        {!user && !error && debouncedSearchTerm && !loading && (
           <Warning>
             <Icon icon="warning" size="large" color={theme.warning.main} />
             <Typography size="body" color="warning">
@@ -165,9 +170,6 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
           <ItemContainer key={user.id}>
             <UserInfo>
               <Typography size="body">{user.name}</Typography>
-              <Typography size="body" color="weak">
-                {user.email}
-              </Typography>
             </UserInfo>
             <IconButton
               appearance="simple"

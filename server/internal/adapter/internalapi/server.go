@@ -484,6 +484,11 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 
 	fs := afero.NewOsFs()
 
+	// NOTE(SCA-02, AI compliance scan finding): same fixed-scratch-path race as
+	// the GraphQL export path (see projectexport.ToStorage) -- this gRPC path
+	// has its own separate implementation rather than sharing that helper, so
+	// it carries the same accepted tradeoff independently. See that comment
+	// for the full rationale.
 	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", pid.String()))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create zip file: %w", err)
@@ -729,7 +734,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 
 	}
 
-	// NOTE(REL-04, AI compliance scan finding): read-modify-write lost-update race.
+	// NOTE(REL-02, AI compliance scan finding): read-modify-write lost-update race.
 	// starredBy/starCount are read above, mutated in memory, then written back here with
 	// no transaction covering the span and no atomic update (e.g. $addToSet/$inc). If two
 	// users star/unstar the same project within the same narrow window, the second write can

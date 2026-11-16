@@ -121,6 +121,17 @@ type VisualizerConfig struct {
 	// Policy Checker Configuration
 	Policy        Policy              `pp:",omitempty"`
 	DomainChecker DomainCheckerConfig `pp:",omitempty"`
+
+	CMS CMSConfig `envconfig:"GRPC" pp:",omitempty"`
+}
+
+// CMSConfig points at the Re:Earth CMS internal gRPC API. Leaving Endpoint
+// empty disables the CMS queries.
+type CMSConfig struct {
+	Endpoint string `envconfig:"ENDPOINT_CMS" pp:",omitempty"`
+	Token    string `envconfig:"TOKEN_CMS" pp:",omitempty"`
+	UseTLS   bool   `envconfig:"USE_TLS" pp:",omitempty"`
+	Timeout  int    `envconfig:"TIMEOUT_CMS" default:"10" pp:",omitempty"`
 }
 
 type Policy struct {
@@ -150,8 +161,20 @@ type InternalApiConfig struct {
 // PublicApiConfig runs the process as the REST API service (/api/v1) only,
 // without GraphQL or the web app, so that its traffic is served by its own
 // deployment. Set with REEARTH_VISUALIZER_PUBLICAPI_ACTIVE.
+//
+// That deployment must share the main server's storage and set REEARTH_HOST
+// to the main server's host, not its own: project export includes only the
+// assets served from the current host, so with its own host every export
+// would leave the project's assets out.
 type PublicApiConfig struct {
 	Active bool `default:"false" pp:",omitempty"`
+	// SplitImport picks how project imports are uploaded, as the web app's
+	// useProjectSplitImport does: in chunks through this service (true, the
+	// default, for a single server) or straight to GCS through a signed URL,
+	// whose storage event runs the import on the main service (false, as the
+	// hosted service does). Chunked uploads keep their session on one
+	// instance, so they must be off behind a multi-instance deployment.
+	SplitImport bool `default:"true" pp:",omitempty"`
 }
 
 type PublishedGatewayConfig struct {
@@ -207,7 +230,7 @@ func (c *Config) UseMockAuth() bool {
 }
 
 func (c *Config) secrets() []string {
-	s := []string{c.DB, c.Auth0.ClientSecret, c.Visualizer.PublishedGateway.Token, c.Visualizer.PublishedGateway.PreviousToken}
+	s := []string{c.DB, c.Auth0.ClientSecret, c.Visualizer.PublishedGateway.Token, c.Visualizer.PublishedGateway.PreviousToken, c.Visualizer.CMS.Token}
 	for _, ac := range c.DB_Users {
 		s = append(s, ac.URI)
 	}

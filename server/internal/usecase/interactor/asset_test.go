@@ -4,10 +4,14 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"image"
 	"image/color"
 	"image/png"
 	"io"
+	"os"
+	"path"
 	"strings"
 	"testing"
 
@@ -28,6 +32,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -229,6 +234,88 @@ func TestAsset_CreateIconAsset(t *testing.T) {
 	})
 }
 
+func TestAsset_ImportAssetFiles_MultipleAssets(t *testing.T) {
+	ctx := context.Background()
+
+	ws := accountsWorkspace.New().NewID().MustBuild()
+	wsRepo := accountsInfra.NewMemoryWorkspace()
+	require.NoError(t, wsRepo.Save(ctx, ws))
+
+	prj := project.New().NewID().Workspace(ws.ID()).MustBuild()
+
+	gFile, err := fs.NewFile(afero.NewMemMapFs(), "")
+	require.NoError(t, err)
+
+	uContainer := &Asset{
+		repos: &repo.Container{
+			Asset:     memory.NewAsset(),
+			Workspace: wsRepo,
+		},
+		gateways: &gateway.Container{
+			File: gFile,
+		},
+	}
+
+	assetFiles := map[string]string{
+		"a.txt": "one",
+		"b.txt": "two",
+		"c.txt": "three",
+	}
+
+	var zbuf bytes.Buffer
+	zw := zip.NewWriter(&zbuf)
+	for name, content := range assetFiles {
+		w, err := zw.Create(name)
+		require.NoError(t, err)
+		_, err = w.Write([]byte(content))
+		require.NoError(t, err)
+	}
+	require.NoError(t, zw.Close())
+
+	zr, err := zip.NewReader(bytes.NewReader(zbuf.Bytes()), int64(zbuf.Len()))
+	require.NoError(t, err)
+
+	assets := map[string]*zip.File{}
+	assetNames := map[string]any{}
+	payload := map[string]any{}
+	for _, f := range zr.File {
+		assets[f.Name] = f
+		assetNames[f.Name] = f.Name
+		payload["/assets/"+f.Name] = true
+	}
+	payload["assets"] = assetNames
+
+	bodyBytes, err := json.Marshal(payload)
+	require.NoError(t, err)
+
+	resultData, result, err := uContainer.ImportAssetFiles(ctx, assets, &bodyBytes, prj, &usecase.Operator{})
+	require.NoError(t, err)
+	assert.Len(t, result, len(assetFiles))
+
+	saved, _, err := uContainer.repos.Asset.FindByWorkspaceProject(ctx, ws.ID(), prj.ID().Ref(), repo.AssetFilter{})
+	require.NoError(t, err)
+	require.Len(t, saved, len(assetFiles))
+
+	wantContents := map[string]bool{}
+	for _, content := range assetFiles {
+		wantContents[content] = true
+	}
+	gotContents := map[string]bool{}
+	for _, a := range saved {
+		r, err := gFile.ReadAsset(ctx, path.Base(a.URL()))
+		require.NoError(t, err)
+		b, err := io.ReadAll(r)
+		require.NoError(t, err)
+		require.NoError(t, r.Close())
+		gotContents[string(b)] = true
+	}
+	assert.Equal(t, wantContents, gotContents)
+
+	for before := range assetFiles {
+		assert.NotContains(t, string(*resultData), "/assets/"+before+"\"")
+	}
+}
+
 func TestAsset_ImportAssetFiles_RewritesAllURLs(t *testing.T) {
 	ctx := adapter.AttachCurrentHost(context.Background(), "https://visualizer.example.com")
 
@@ -318,4 +405,153 @@ func createTestPNGImage(width, height int) []byte {
 	var buf bytes.Buffer
 	_ = png.Encode(&buf, img)
 	return buf.Bytes()
+}
+
+func newAssetPolicyTestEnv(t *testing.T, allowed bool) (*Asset, afero.Fs, *MockPolicyChecker, *accountsWorkspace.Workspace, *usecase.Operator) {
+	t.Helper()
+	ctx := context.Background()
+
+	ws := accountsWorkspace.New().NewID().MustBuild()
+	wsRepo := accountsInfra.NewMemoryWorkspace()
+	require.NoError(t, wsRepo.Save(ctx, ws))
+
+	memFs := afero.NewMemMapFs()
+	gFile, err := fs.NewFile(memFs, "https://example.com/")
+	require.NoError(t, err)
+
+	checker := &MockPolicyChecker{}
+	checker.On("CheckPolicy", mock.Anything, mock.Anything).Return(&gateway.PolicyCheckResponse{Allowed: allowed}, nil)
+
+	uc := &Asset{
+		repos: &repo.Container{
+			Asset:     memory.NewAsset(),
+			Workspace: wsRepo,
+		},
+		gateways: &gateway.Container{
+			File:          gFile,
+			PolicyChecker: checker,
+		},
+	}
+	op := &usecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
+		},
+	}
+	return uc, memFs, checker, ws, op
+}
+
+func storedAssetFiles(t *testing.T, memFs afero.Fs) []string {
+	t.Helper()
+	entries, err := afero.ReadDir(memFs, "assets")
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	require.NoError(t, err)
+	names := make([]string, 0, len(entries))
+	for _, e := range entries {
+		names = append(names, e.Name())
+	}
+	return names
+}
+
+func TestAsset_Create_PolicyRefusedBeforeUpload(t *testing.T) {
+	ctx := context.Background()
+	uc, memFs, checker, ws, op := newAssetPolicyTestEnv(t, false)
+
+	res, err := uc.Create(ctx, interfaces.CreateAssetParam{
+		WorkspaceID: ws.ID(),
+		CoreSupport: true,
+		File: &file.File{
+			Content: io.NopCloser(bytes.NewBufferString("Hello")),
+			Path:    "big.geojson",
+			Size:    5,
+		},
+	}, op)
+
+	assert.ErrorIs(t, err, ErrAssetUploadSizeLimitExceeded)
+	assert.Nil(t, res)
+	assert.Empty(t, storedAssetFiles(t, memFs))
+	checker.AssertNumberOfCalls(t, "CheckPolicy", 1)
+	checker.AssertCalled(t, "CheckPolicy", mock.Anything, gateway.PolicyCheckRequest{
+		WorkspaceID: ws.ID(),
+		CheckType:   gateway.PolicyCheckUploadAssetsSize,
+		Value:       5,
+	})
+
+	assets, _, err := uc.repos.Asset.FindByWorkspaceProject(ctx, ws.ID(), nil, repo.AssetFilter{})
+	require.NoError(t, err)
+	assert.Empty(t, assets)
+}
+
+func TestAsset_Create_PolicyRefusedUnknownSizeRemovesFile(t *testing.T) {
+	ctx := context.Background()
+	uc, memFs, checker, ws, op := newAssetPolicyTestEnv(t, false)
+
+	res, err := uc.Create(ctx, interfaces.CreateAssetParam{
+		WorkspaceID: ws.ID(),
+		CoreSupport: true,
+		File: &file.File{
+			Content: io.NopCloser(bytes.NewBufferString("Hello")),
+			Path:    "big.geojson",
+		},
+	}, op)
+
+	assert.ErrorIs(t, err, ErrAssetUploadSizeLimitExceeded)
+	assert.Nil(t, res)
+	assert.Empty(t, storedAssetFiles(t, memFs))
+	checker.AssertNumberOfCalls(t, "CheckPolicy", 1)
+	checker.AssertCalled(t, "CheckPolicy", mock.Anything, gateway.PolicyCheckRequest{
+		WorkspaceID: ws.ID(),
+		CheckType:   gateway.PolicyCheckUploadAssetsSize,
+		Value:       5,
+	})
+}
+
+func TestAsset_Create_PolicyAllowed(t *testing.T) {
+	ctx := context.Background()
+	uc, memFs, checker, ws, op := newAssetPolicyTestEnv(t, true)
+
+	res, err := uc.Create(ctx, interfaces.CreateAssetParam{
+		WorkspaceID: ws.ID(),
+		CoreSupport: true,
+		File: &file.File{
+			Content: io.NopCloser(bytes.NewBufferString("Hello")),
+			Path:    "small.geojson",
+			Size:    5,
+		},
+	}, op)
+
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	assert.Equal(t, int64(5), res.Size())
+	assert.Len(t, storedAssetFiles(t, memFs), 1)
+	checker.AssertNumberOfCalls(t, "CheckPolicy", 1)
+}
+
+type failingSaveAssetRepo struct {
+	repo.Asset
+}
+
+func (r *failingSaveAssetRepo) Save(context.Context, *asset.Asset) error {
+	return errors.New("save failed")
+}
+
+func TestAsset_Create_SaveFailureRemovesFile(t *testing.T) {
+	ctx := context.Background()
+	uc, memFs, _, ws, op := newAssetPolicyTestEnv(t, true)
+	uc.repos.Asset = &failingSaveAssetRepo{Asset: uc.repos.Asset}
+
+	res, err := uc.Create(ctx, interfaces.CreateAssetParam{
+		WorkspaceID: ws.ID(),
+		CoreSupport: true,
+		File: &file.File{
+			Content: io.NopCloser(bytes.NewBufferString("Hello")),
+			Path:    "small.geojson",
+			Size:    5,
+		},
+	}, op)
+
+	assert.EqualError(t, err, "save failed")
+	assert.Nil(t, res)
+	assert.Empty(t, storedAssetFiles(t, memFs))
 }

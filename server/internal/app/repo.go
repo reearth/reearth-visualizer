@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"time"
 
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
@@ -10,6 +11,7 @@ import (
 	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
+	"github.com/reearth/reearth/server/internal/infrastructure/cms"
 	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
@@ -135,6 +137,23 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Infof("domain checker: using default checker (OSS mode)")
 	}
 	gateways.DomainChecker = domainChecker
+
+	// CMS internal API - optional
+	if cmsConf := conf.Visualizer.CMS; cmsConf.Endpoint != "" {
+		cmsClient, err := cms.New(cms.Config{
+			Endpoint: cmsConf.Endpoint,
+			Token:    cmsConf.Token,
+			UseTLS:   cmsConf.UseTLS,
+			Timeout:  time.Duration(cmsConf.Timeout) * time.Second,
+		})
+		if err != nil {
+			log.Fatalf("cms: %v", err)
+		}
+		gateways.CMS = cmsClient
+		log.Infof("cms: using internal API at %s", cmsConf.Endpoint)
+	} else {
+		log.Infof("cms: endpoint not configured, CMS queries are disabled")
+	}
 
 	// Auth0
 	auth0 := auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)

@@ -1,10 +1,7 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
 import { PublishStatus } from "@reearth/services/api/utils";
-import {
-  ProjectImportStatus,
-  PublishmentStatus,
-  WorkspaceMember
-} from "@reearth/services/gql";
+import type { WorkspaceMember } from "@reearth/services/api/workspace/types";
+import { ProjectImportStatus, PublishmentStatus } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 import { ReactNode } from "react";
 

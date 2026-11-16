@@ -1,3 +1,7 @@
-import { CreateWorkspacePayload } from "@reearth/services/gql";
+import { CreateWorkspaceMutation } from "@reearth/services/gql";
 
-export type Workspace = CreateWorkspacePayload["workspace"];
+export type Workspace = NonNullable<
+  CreateWorkspaceMutation["createWorkspace"]
+>["workspace"];
+
+export type WorkspaceMember = Workspace["members"][number];

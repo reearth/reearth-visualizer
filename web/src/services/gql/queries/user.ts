@@ -5,7 +5,6 @@ export const GET_USER_BY_SEARCH = gql(`
     searchUser(nameOrEmail: $nameOrEmail) {
       id
       name
-      email
     }
   }
 `);
@@ -35,7 +34,6 @@ export const GET_ME = gql(`
           user {
             id
             name
-            email
           }
           userId
           role

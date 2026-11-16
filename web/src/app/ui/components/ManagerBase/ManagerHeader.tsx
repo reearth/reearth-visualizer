@@ -22,8 +22,13 @@ export type ManagerLayout = "grid" | "list";
 
 export type ManagerHeaderProps = {
   actions?: ReactNode[];
+  // Where the actions sit: before the tools (default) or after them, at the far right.
+  actionsPosition?: "start" | "end";
   size?: ManagerHeaderSize;
+  iconSize?: "smallest" | "small" | "medium" | "large";
   layout?: ManagerLayout;
+  // Draws a border around the grid/list layout buttons.
+  borderedLayoutButtons?: boolean;
   onLayoutChange?: (value: ManagerLayout) => void;
   sortValue?: string;
   sortOptions?: { value: string; label?: string }[];
@@ -42,8 +47,11 @@ export type ManagerHeaderProps = {
 
 export const ManagerHeader: FC<ManagerHeaderProps> = ({
   actions,
+  actionsPosition = "start",
   size = "medium",
+  iconSize= "small",
   layout = "grid",
+  borderedLayoutButtons,
   onLayoutChange,
   sortValue,
   sortOptions,
@@ -138,7 +146,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
 
   return (
     <Wrapper size={size}>
-      <Actions>{actions}</Actions>
+      {actionsPosition === "start" && <Actions>{actions}</Actions>}
       <Tools>
         {showDelete && (
           <DeleteBar>
@@ -191,7 +199,9 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
               data-testid="grid-layout"
               icon="grid"
               appearance="simple"
+              size={iconSize}
               active={layout === "grid"}
+              hasBorder={borderedLayoutButtons}
               tooltipText={t("Grid Layout")}
               onClick={(e) => handleLayoutChange(e, "grid")}
             />
@@ -199,11 +209,15 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
               icon="list"
               appearance="simple"
               active={layout === "list"}
+              size={iconSize}
+              hasBorder={borderedLayoutButtons}
               tooltipText={t("List Layout")}
               onClick={(e) => handleLayoutChange(e, "list")}
             />
           </Layouts>
         )}
+        {/* Inside the tools' flex row, so the gap spaces them like a tool. */}
+        {actionsPosition === "end" && <Actions>{actions}</Actions>}
       </Tools>
     </Wrapper>
   );

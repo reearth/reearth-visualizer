@@ -111,14 +111,7 @@ func readPluginTranslation(ctx context.Context, fs afero.Fs, base string) (manif
 		if len(lang) == 0 {
 			continue
 		}
-		langfile, err := fs.Open(filepath.Join(base, name))
-		if err != nil {
-			return nil, rerror.ErrInternalByWithContext(ctx, err)
-		}
-		defer func() {
-			_ = langfile.Close()
-		}()
-		t, err := manifest.ParseTranslation(langfile)
+		t, err := readOneTranslationFile(ctx, fs, filepath.Join(base, name))
 		if err != nil {
 			return nil, err
 		}
@@ -126,4 +119,16 @@ func readPluginTranslation(ctx context.Context, fs afero.Fs, base string) (manif
 	}
 
 	return translationMap, nil
+}
+
+func readOneTranslationFile(ctx context.Context, fs afero.Fs, path string) (manifest.TranslationRoot, error) {
+	langfile, err := fs.Open(path)
+	if err != nil {
+		return manifest.TranslationRoot{}, rerror.ErrInternalByWithContext(ctx, err)
+	}
+	defer func() {
+		_ = langfile.Close()
+	}()
+
+	return manifest.ParseTranslation(langfile)
 }

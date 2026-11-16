@@ -99,21 +99,29 @@ None this round — the existing e2e test was repaired rather than extended. Ver
 
 ---
 
-## 2026-10-07 — REST API v1 for the CLI (server/internal/adapter/apiv1, interactor/scene.go)
+## 2026-10-07 — REST API v1 for the CLI (server/internal/adapter/apiv1, interactor/project.go, interactor/scene.go)
 
 ### Findings & Fixes
 
-1. **Unreadable workspaces leaked through list filters** (server/internal/adapter/apiv1/project.go)
+1. **`Project.Update` panicked outside GraphQL** (server/internal/usecase/interactor/project.go)
+   - Bug: before saving, it called `graphql.GetErrors(ctx)`, which panics with "missing response context" unless a gqlgen request is running. Only the internal gRPC API was excluded (`IsInternal`), so the first non-GraphQL caller, `PATCH /api/v1/projects/{id}`, returned 500 on every call.
+   - Fix: read the field errors only when `graphql.HasOperationContext(ctx)`. That is false for gRPC as well, so the `IsInternal` check was dropped. GraphQL behaviour is unchanged.
+
+2. **Unreadable workspaces leaked through list filters** (server/internal/adapter/apiv1/project.go)
    - Bug: listing a workspace the user cannot read returned an empty list, but with `starred=true` or `deleted=true` it returned 403, because those repo lookups answer `ErrOperationDenied` instead of an empty page. That revealed which workspace IDs exist. Found by Copilot review on #2452.
    - Fix: answer an empty list before any lookup when the operator cannot read the workspace.
 
-2. **Project lists loaded every story to find scene IDs** (server/internal/adapter/apiv1/project.go, interactor/scene.go)
+3. **The plugin upload contract described the wrong behaviour** (server/schemas/api/v1.yml)
+   - Bug: the spec said a new version is installed next to the old one. The usecase upgrades instead: it migrates the scene to the new version and deletes the old plugin. Found by Copilot review on #2452.
+   - Fix: the spec now documents the upgrade.
+
+4. **Project lists loaded every story to find scene IDs** (server/internal/adapter/apiv1/project.go, interactor/scene.go)
    - Bug: `FindByProjectsWithStory` was used only for scene IDs, so each list also read and decoded all stories and their pages for up to 100 scenes. Found by Copilot review on #2452.
    - Fix: added `Scene.FindByProjects`, a scene-only batch lookup.
 
 ### Tests added
 
-- e2e/api_v1_project_test.go (4 tests): the list endpoint end to end, including a regression check for unreadable workspaces with `starred`/`deleted`.
+- e2e/api_v1_project_test.go (9 tests): the API end to end, including regression checks for unreadable workspaces with `starred`/`deleted` and for plugin upgrades removing the old ID.
 
 ## 2026-10-08 — Layer style Interface tab loses style data on save (web/src/app/features/Editor/Map/LayerStylePanel/Editor/StyleInterface/**)
 
@@ -141,6 +149,16 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 - convert.test.tsx (3 tests): nested expression/conditions are kept, unknown appearance types are kept, and a known type is still removed once all its nodes are deleted.
 - convert.test.tsx (4 tests): round trip of the `true` fallback, compound `&&`/`||` and `startsWith(...) && startsWith(...)` conditions, the unsupported `==` operator, and an operator that appears more than once.
 
+## 2026-10-08 — REST API v1 alias errors (server/internal/adapter/apiv1/errors.go)
+
+### Findings & Fixes
+1. **Alias validation errors returned 500** (server/internal/adapter/apiv1/errors.go)
+   - Bug: `POST /api/v1/workspaces/{id}/projects` with an invalid alias (`Bad Alias!`, too short) or one already used in the workspace answered 500 "internal server error". The usecase returns these as `verror.VError` values, which `apperr.Classify` does not know, so the error handler treated them as unexpected and logged them as errors.
+   - Fix: the handler now maps a `VError` to 409 when its key ends in `already_exists` or `already_used`, to 404 for `repo.ErrResourceNotFound`, and to 400 otherwise, with the English message rendered from its template (e.g. "Invalid alias name: bad alias!").
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1CreateProject` now checks the default `p-<id>` alias, a custom alias, a duplicate alias (409) and two invalid aliases (400)
+
 ## 2026-10-09 — Condition parser misreads operators inside quotes/arguments (web/src/app/features/Editor/Map/LayerStylePanel/Editor/StyleInterface/convert.ts)
 
 ### Findings & Fixes
@@ -150,3 +168,155 @@ Fix for review finding H1. After every edit, the Interface tab rebuilds the whol
 
 ### Tests added
 - convert.test.tsx (3 tests): quoted/nested operator characters round-trip unchanged, a quoted operator inside a simple value still parses, and `startsWith` args split only on the top-level comma.
+
+## 2026-10-09 — REST API v1 project create (server/internal/adapter/apiv1/project.go)
+
+### Findings & Fixes
+1. **API-created projects could not be imported again after an export** (server/internal/adapter/apiv1/project.go)
+   - Bug: `POST /api/v1/workspaces/{id}/projects` stored the visualizer as `visualizer.VisualizerCesium` ("cesium"), while GraphQL passes its enum value through and the web app's projects store "CESIUM". Export writes the stored value as is, and import parses it into the GraphQL enum, which rejects "cesium", so importing the export of an API-created project always failed with "project data parse error".
+   - Fix: the API stores "CESIUM", as the web app does. Projects stored as "cesium" by other paths (the internal API, older imports) have the same export problem; that is left for a separate fix.
+2. **A reader got 400 instead of 403 when importing** (server/internal/adapter/apiv1/import.go)
+   - Bug: the shared chunked upload answers every failure to start an import, including a missing write permission, with 400.
+   - Fix: the import endpoint checks write access to the workspace first and answers 403.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1ImportProject` exports a project, imports the zip back, polls until SUCCESS and compares the copy; it also covers an unstarted upload, missing fields, an unsafe file ID and a reader (403)
+
+---
+
+## 2026-11-02 — PR #2504 review comments: add-layer creators (web/src/app/features/Editor/Map/DataSourceLayerCreator/**, reearth-ui Switcher/TextInput)
+
+### Findings & Fixes
+1. **Google Photorealistic preset broke non-EE deployments** (DataSourceLayerCreator/index.tsx)
+   - Bug: the preset always set `provider: "reearth"`; on OSS without a Re:Earth tiles provider the layer resolved to no URL and never loaded.
+   - Fix: restored the old default — `reearth` on EE, `cesium-ion` otherwise.
+2. **Asset pagination stopped after drag-over or upload** (AssetLayerCreator/UploadDropzone.tsx)
+   - Bug: the drop zone replaced (unmounted) the asset browser; `useLoadMore` binds its scroll/resize listeners only when `data` changes, so the remounted scroll container had none.
+   - Fix: the browser stays mounted and is hidden with `visibility` (not `display: none`, which would zero its height and make `useLoadMore` fetch every page); the drop zone is overlaid on top.
+3. **Bare GeoJSON geometries added as empty layers** (ValueLayerCreator/utils.ts, hooks.ts)
+   - Bug: validation accepted a top-level geometry, but the core loader reads only Feature/FeatureCollection, so `{"type":"Point",…}` produced zero features.
+   - Fix: `toLoadableGeoJson` wraps a bare geometry in a Feature before submission.
+4. **Plain `.json` URLs judged by extension rather than content** (UrlLayerCreator/utils.ts)
+   - Bug: `/orbits.json` with CZML selected was rejected as GeoJSON; `/mytileset.json` was detected as 3D Tiles (suffix match); a 3D Tiles response with `"asset"` only nested (e.g. `{"metadata":{"asset":{}}}`) passed.
+   - Fix: a plain `.json` defers to response validation for any JSON format; `tileset.json` matches the last path segment only; complete responses are parsed and checked against the selected format's top-level structure (GeoJSON Feature/FeatureCollection, CZML document packet, 3D Tiles `asset`/`geometricError`/`root`).
+5. **Accessibility** (Switcher, TextInput, UrlLayerCreator)
+   - Switcher was not focusable or keyboard-operable — added `tabIndex`, Space/Enter toggling and a focus ring. TextInput's error state was colour-only — it now sets `aria-invalid` and accepts `ariaDescribedby`, which the URL creator links to its error text. The URL creator's checking overlay is anchored to its body (`position: relative`) so it no longer covers the modal actions.
+
+### Tests added
+- None this round (verified URL rules with an ad-hoc vitest run; existing Switcher/TextInput tests pass).
+## 2026-11-02 — REST API v1 create silently made private projects public (server/internal/usecase/interactor/project.go)
+
+### Findings & Fixes
+1. **Private request on a free plan created a public project** (server/internal/usecase/interactor/project.go, server/internal/adapter/apiv1/project.go)
+   - Bug: `POST /api/v1/workspaces/{id}/projects` defaulted to private, but `Project.Create` switches visibility to public whenever the plan does not allow private projects, and the handler still answered 201. A CLI user who asked for (or defaulted to) a private project got a public one without noticing.
+   - Fix: `visibility` is now required in the request. `CreateProjectParam` has a `StrictVisibility` option, set only by the REST API, that makes `Create` return `ErrPrivateProjectNotAllowed` instead of switching to public; the handler answers it with 403 `permission_denied`. GraphQL keeps its current behaviour.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1CreateProject` checks that a missing visibility is 400; `TestAPIV1CreatePrivateProjectOnFreePlan` uses a policy checker that denies private projects and checks that private is 403 with nothing created, and public is still 201.
+
+## 2026-11-02 — REST API v1 review fixes (server/internal/adapter/apiv1)
+
+### Findings & Fixes
+1. **Plugin URLs outside github.com returned 500** (server/internal/adapter/apiv1/plugin.go)
+   - Bug: `POST /api/v1/projects/{id}/plugins` with `{"url": ...}` accepted any http(s) URL, but `UploadFromRemote` only knows github.com repositories. `repourl.ErrUnsupportedHost` / `ErrInvalidURL` were not mapped, so a URL such as `https://example.com/plugin.zip` was answered with 500 and logged as an error.
+   - Fix: both errors are answered with 400 and a message naming the supported form; the spec now describes the URL as a github.com repository URL.
+2. **Cleanup after a failed create used the request context** (server/internal/adapter/apiv1/project.go)
+   - Bug: if the client disconnected while the scene or story was being created, the cleanup delete ran on the canceled context and failed too, leaving a project the editor cannot open.
+   - Fix: the cleanup runs with `context.WithoutCancel(ctx)`.
+3. **Expected usecase errors returned 500** (server/internal/adapter/apiv1/errors.go)
+   - Bug: `interfaces.ErrPluginAlreadyInstalled` and the "operation is disabled by over used seat" errors (plain `errors.New` in the usecases) were classified as unexpected.
+   - Fix: they are answered with 409 `conflict` and 403 `permission_denied`.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1RequiresAUser` covers every route (list and mutating routes were not covered); `TestAPIV1Plugins` checks a non-GitHub URL is 400; `TestAPIV1CreateProjectWithOverusedSeats` checks 403.
+
+## 2026-11-02 — REST API v1 delete and update edge cases (server/internal/adapter/apiv1/project.go)
+
+### Findings & Fixes
+1. **A reader could "delete" a project already in the trash** (server/internal/adapter/apiv1/project.go)
+   - Bug: `DELETE /api/v1/projects/{id}` returned 204 without any write check when the project was already in the trash, because the only permission check ran inside `Project.Update`, which the no-op path skips. A workspace reader got 204 there but 403 for a live project.
+   - Fix: the handler checks write access to the workspace before the no-op.
+2. **PATCH with an empty body returned 200** (server/internal/adapter/apiv1/project.go)
+   - Bug: `PATCH /api/v1/projects/{id}` with no body or `{}` ran an update with no fields, which only bumped `updatedAt`.
+   - Fix: the handler answers 400 when no field is set.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1DeleteProject` checks a reader gets 403 on a project in the trash; `TestAPIV1UpdateProject` checks `{}` and a missing body are 400.
+
+## 2026-11-07 — CMS layer creator review fixes, PR #2519 (web/src/app/features/Editor/Map/DataSourceLayerCreator, web/src/services/api/cms)
+
+### Findings & Fixes
+1. **A model check could add or blame the wrong model** (AssetLayerCreator/hooks.ts)
+   - Bug: selecting another model (e.g. with the keyboard) while one was being checked let the first check finish and add that model, or show its error against the new selection. Layer names entered for one MVT/WMS asset were also kept for the next selected asset.
+   - Fix: changing the selection or the project cancels the running check and resets the layer names.
+2. **The Visualizer tab fetched CMS assets** (AssetLayerCreator/hooks.ts, useCmsAssets.ts)
+   - Bug: with a CMS project picked, the Visualizer tab still queried that project's assets, so a failure showed an unrelated error.
+   - Fix: `useCmsAssets` takes `skip`, set off the CMS tabs; the project filter is kept.
+3. **Only the first 100 CMS projects were listed** (services/api/cms/useCMSQueries.ts)
+   - Bug: `useCMSProjects` fetched one page, so the project filter and the all-projects view left out every project after it.
+   - Fix: the following pages are fetched in turn until `totalCount`; `loading` stays true until then.
+4. **A project that failed once stayed missing** (services/api/cms/useCMSQueries.ts)
+   - Bug: in the all-projects view a project whose first page failed was dropped, and the cached result was reused on return, so a transient failure hid it for the modal's lifetime.
+   - Fix: failed projects are tracked and retried when the view is used again, keeping the loaded ones.
+5. **Asset format missed with a query or fragment** (AssetLayerCreator/utils.ts)
+   - Bug: `formatOf` read the extension of the whole URL, so `roads.geojson?token=…` was hidden.
+   - Fix: it reads the URL's pathname.
+6. **CMS 3D Tiles were added as GeoJSON or hidden** (AssetLayerCreator/utils.ts)
+   - Bug: a `tileset.json` with CMS's 3D Tiles preview type went by its `.json` extension (GeoJSON); an extracted 3D Tiles archive was left out.
+   - Fix: `cmsAssetLayer` maps the preview type to `3dtiles`, using the archive's extracted `tileset.json`; 3D Tiles is in the CMS Assets format filter.
+7. **"Copied" shown when the copy failed** (AssetLayerCreator/index.tsx)
+   - Bug: the success banner showed before `clipboard.writeText` settled, also when it was denied.
+   - Fix: the write is awaited and a failure shows an error.
+8. **Deleting a layer name could move focus to the next one's delete button** (LayerNameInputs.tsx)
+   - Bug: rows were keyed by index, so after a delete the focused button belonged to the next name.
+   - Fix: rows are keyed by the (unique) name.
+9. **Japanese layer-name placeholder lost** (i18n/translations/ja.yml) — restored `レイヤー名`.
+10. **checkModelGeoJson tests failed in CI** (AssetLayerCreator/utils.test.ts)
+    - Bug: the tests built a real `Response`, which fails in CI where jsdom's ReadableStream isn't undici's.
+    - Fix: fetch resolves to a plain object with what the check reads.
+
+Not changed: de-duplicating CMS pages that shift when an asset is added between page loads (the reviewer rated it a poor tradeoff).
+
+### Tests added
+- useCMSQueries.test.ts: loadMore across projects, retrying a failed project, paging the project list.
+- AssetLayerCreator/utils.test.ts: CMS 3D Tiles, `formatOf` with a query/fragment.
+- e2e/tests/layer/cmsLayerCreator.spec.ts: setup moved to `beforeAll`; MVT and WMS submissions checked against the saved layer config.
+## 2026-11-04 — REST API v1 restore permission (server/internal/adapter/apiv1/project.go)
+
+### Findings & Fixes
+1. **A reader could "restore" a live project** (server/internal/adapter/apiv1/project.go)
+   - Bug: `POST /api/v1/projects/{id}/restore` only checked write access inside `Project.Update`, which is skipped when the project is not in the trash, so a workspace reader got 200 for a live project but 403 for a trashed one.
+   - Fix: the handler checks write access before the no-op, as `DeleteProject` does. Also moved `fetchProject`'s doc comment back onto `fetchProject`; a merge had left it on `RestoreProject`.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1RestoreProject` checks a reader gets 403 on a project that is not in the trash.
+
+## 2026-11-04 — REST API v1 import with a non-multipart body (server/internal/adapter/apiv1/errors.go)
+
+### Findings & Fixes
+1. **A non-multipart import request returned 500** (server/internal/adapter/apiv1/errors.go)
+   - Bug: the generated wrapper for `POST /api/v1/workspaces/{id}/projects/import` calls `MultipartReader()` before the handler and returns its error as is. `http.ErrNotMultipart` and `http.ErrMissingBoundary` were not mapped, so a JSON or empty body got 500 "internal" and an ERROR log, and the handler's own body check never ran.
+   - Fix: both errors are answered with 400 `invalid_input`.
+
+### Tests added
+- server/e2e/api_v1_project_test.go: `TestAPIV1ImportProject` checks a JSON body and an empty body are 400.
+
+## 2026-11-06 — REST API v1 export left its zip behind on a failed read (server/internal/adapter/apiv1/export.go)
+
+### Findings & Fixes
+1. **Export zip left in storage when reading it back failed** (server/internal/adapter/apiv1/export.go)
+   - Bug: `GET /api/v1/projects/{id}/export` writes the zip to export storage, then reads it back to stream it. The zip was only removed when the response finished, so if the read failed the handler returned the error and the zip stayed in storage. Raised by ZTongci on #2488.
+   - Fix: `openExport` removes the stored zip when it cannot be read; both removal paths share `removeExport`.
+
+### Tests added
+- server/internal/adapter/apiv1/export_test.go: `TestOpenExport` checks the zip is removed after a failed read, and only after the response is closed on success.
+
+## 2026-11-09 — Reselecting removed member search results
+
+### Findings & Fixes
+1. **A removed user could stay absent when the normalized search was unchanged** (web/src/app/features/Dashboard/ContentsContainer/Members/AddMemberModal.tsx)
+   - Bug: selected results were populated only when the returned user changed. Editing whitespace around the same alias could leave the query and cached user unchanged after removal.
+   - Fix: removing the current search result clears the input and debounced search. Result selection also reacts to search/loading/error changes and ignores blank or incomplete lookups, so a cached user can be selected again after retyping without being immediately restored on removal.
+
+### Validation
+- Reviewed the removal, skipped-query/cache, and repeated-search state transitions; automated tests were not run for this follow-up.
