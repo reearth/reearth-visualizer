@@ -14,6 +14,7 @@ import fragmentMatcher from "../__gen__/fragmentMatcher.json";
 
 import { authLink, sentryLink, errorLink, uploadLink, taskLink } from "./links";
 import langLink from "./links/langLink";
+import workspaceLink from "./links/workspaceLink";
 import {
   pageMergeNodes,
   paginationMerge,
@@ -121,6 +122,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       sentryLink(endpoint),
       authLink(getAccessToken),
       langLink(),
+      workspaceLink(),
       // https://github.com/apollographql/apollo-client/issues/6011#issuecomment-619468320
       uploadLink(endpoint, updateLatestLogoutAt) as unknown as ApolloLink
     ]),
