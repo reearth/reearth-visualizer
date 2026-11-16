@@ -76,6 +76,8 @@ const maxConcurrentSessions = 256
 
 var maxAggregateBytes int64 = 1 * 1024 * 1024 * 1024 // 1GB
 
+const reservedBytesStaleAfter = 1 * time.Hour
+
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
 // fileID flows directly into filepath.Join(tempDir, fileID); without this,
 // a client could send a path-traversal value (e.g. "../../etc/cron.d/x")
@@ -125,6 +127,7 @@ type uploadSession struct {
 	receivedBytes int64
 	project       *project.Project
 	dispatched    bool
+	closed        bool
 	updatedAt     time.Time
 	mgr           *SplitUploadManager
 }
@@ -298,15 +301,23 @@ func (s *uploadSession) isStale(cutoff time.Time) bool {
 	return s.updatedAt.Before(cutoff)
 }
 
-func (s *uploadSession) close() {
+func (s *uploadSession) close(force bool) (releasedBytes int64, closed bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.closed {
+		return 0, false
+	}
+	if s.dispatched && !force {
+		return 0, false
+	}
+	s.closed = true
 	if err := s.file.Close(); err != nil {
 		log.Printf("Warning: failed to close upload file: %v", err)
 	}
 	if err := os.Remove(s.filePath); err != nil && !os.IsNotExist(err) {
 		log.Printf("Warning: failed to remove upload file: %v", err)
 	}
+	return s.receivedBytes, true
 }
 
 // importJob is the handoff between a completed upload and the background
@@ -512,7 +523,7 @@ func (m *SplitUploadManager) dispatchImport(job importJob) {
 			// cleanupSession is deferred here, not called after
 			// UpdateImportStatus, so the session/tempfile is still freed
 			// even if the status write panics or otherwise never returns.
-			defer m.cleanupSession(job.fileID)
+			defer m.cleanupSession(job.fileID, true)
 			errMsg := "import worker pool did not accept job in time"
 			log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
 			UpdateImportStatus(context.Background(), job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, map[string]any{})
@@ -549,7 +560,7 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 			UpdateImportStatus(bgctx, job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, result)
 		}
 	}()
-	defer m.cleanupSession(job.fileID)
+	defer m.cleanupSession(job.fileID, true)
 
 	claim, err := job.usecases.Project.ClaimImport(bgctx, job.projectID, job.op)
 	if err != nil {
@@ -660,11 +671,13 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				log.Warnfc(ctx, "[Import] rejected chunk: %s", errMsg)
 				writeImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 			}
+			m.cleanupSession(fileID, false)
 			return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
 		}
 		if pid := session.snapshot().ProjectID; pid != nil {
 			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 		}
+		m.cleanupSession(fileID, false)
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 	}
 
@@ -699,18 +712,26 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 	return resp, nil
 }
 
-func (m *SplitUploadManager) cleanupSession(fileID string) {
+func (m *SplitUploadManager) cleanupSession(fileID string, force bool) {
 	m.mgrMu.Lock()
 	s, ok := m.sessions[fileID]
-	if ok {
+	m.mgrMu.Unlock()
+	if !ok {
+		return
+	}
+
+	released, closed := s.close(force)
+	if !closed {
+		return
+	}
+
+	m.mgrMu.Lock()
+	if cur, present := m.sessions[fileID]; present && cur == s {
 		delete(m.sessions, fileID)
 	}
 	m.mgrMu.Unlock()
 
-	if ok {
-		m.releaseBytes(s.snapshot().ReceivedBytes)
-		s.close()
-	}
+	m.releaseBytes(released)
 }
 
 func (m *SplitUploadManager) StartCleanupRoutine(interval time.Duration) {
@@ -722,8 +743,15 @@ func (m *SplitUploadManager) StartCleanupRoutine(interval time.Duration) {
 	}()
 }
 
+func staleCutoffFor(s *uploadSession, now time.Time) time.Time {
+	if s.snapshot().ReceivedBytes > 0 {
+		return now.Add(-reservedBytesStaleAfter)
+	}
+	return now.Add(-24 * time.Hour)
+}
+
 func (m *SplitUploadManager) cleanupStaleSessions() {
-	cutoff := time.Now().Add(-24 * time.Hour)
+	now := time.Now()
 
 	m.mgrMu.Lock()
 	candidates := make([]*uploadSession, 0, len(m.sessions))
@@ -732,24 +760,11 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 	}
 	m.mgrMu.Unlock()
 
-	var stale []*uploadSession
 	for _, s := range candidates {
-		if s.isStale(cutoff) {
-			stale = append(stale, s)
+		if !s.isStale(staleCutoffFor(s, now)) {
+			continue
 		}
-	}
-
-	m.mgrMu.Lock()
-	for _, s := range stale {
-		if cur, ok := m.sessions[s.fileID]; ok && cur == s {
-			delete(m.sessions, s.fileID)
-		}
-	}
-	m.mgrMu.Unlock()
-
-	for _, s := range stale {
-		m.releaseBytes(s.snapshot().ReceivedBytes)
-		s.close()
+		m.cleanupSession(s.fileID, false)
 	}
 }
 
