@@ -227,7 +227,7 @@ type Project struct {
 	Archived  bool      `json:"archived"`
 	CreatedAt time.Time `json:"createdAt"`
 
-	// Deleted Whether the project is in the trash.
+	// Deleted Whether the project is in the trash. A project created by an import is also `true` until the import has finished.
 	Deleted     bool    `json:"deleted"`
 	Description string  `json:"description"`
 	Id          string  `json:"id"`
@@ -251,7 +251,7 @@ type Project struct {
 	// published page. This is unrelated to the project's `visibility`.
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 
-	// SceneId The scene of the project. Plugins are installed into it.
+	// SceneId The scene of the project. Plugins are installed into it. Absent while an import has not finished.
 	SceneId     *string    `json:"sceneId,omitempty"`
 	Starred     bool       `json:"starred"`
 	UpdatedAt   time.Time  `json:"updatedAt"`
@@ -378,10 +378,10 @@ type ListProjectsParams struct {
 	// Sort Sort order. Cannot be combined with `starred` or `deleted`.
 	Sort *ProjectSort `form:"sort,omitempty" json:"sort,omitempty"`
 
-	// Starred Only starred projects.
+	// Starred Only starred projects. Cannot be combined with `deleted`.
 	Starred *bool `form:"starred,omitempty" json:"starred,omitempty"`
 
-	// Deleted Only projects in the trash.
+	// Deleted Only projects in the trash. Cannot be combined with `starred`.
 	Deleted *bool `form:"deleted,omitempty" json:"deleted,omitempty"`
 
 	// Limit Page size.
