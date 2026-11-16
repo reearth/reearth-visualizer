@@ -227,7 +227,7 @@ type Project struct {
 	Archived  bool      `json:"archived"`
 	CreatedAt time.Time `json:"createdAt"`
 
-	// Deleted Whether the project is in the trash. A project created by an import is also `true` until the import has finished.
+	// Deleted Whether the project is in the trash. A project being imported is also `true` until its zip has been uploaded; use `importStatus` to tell when the import has finished.
 	Deleted     bool    `json:"deleted"`
 	Description string  `json:"description"`
 	Id          string  `json:"id"`
@@ -251,7 +251,7 @@ type Project struct {
 	// published page. This is unrelated to the project's `visibility`.
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 
-	// SceneId The scene of the project. Plugins are installed into it. Absent while an import has not finished.
+	// SceneId The scene of the project. Plugins are installed into it. Can be absent while the project is being imported.
 	SceneId     *string    `json:"sceneId,omitempty"`
 	Starred     bool       `json:"starred"`
 	UpdatedAt   time.Time  `json:"updatedAt"`
