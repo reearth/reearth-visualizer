@@ -41,18 +41,14 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
   let cesiumViewer: CesiumViewerPage;
   let ids: ProjectIds;
 
-  // The modal background covers the widget while a modal is open, so a real
-  // click would be blocked. dispatchEvent fires the button's click handler.
-  const clickPlugin = (name: string) =>
-    pluginFixture.iframe.getByRole("button", { name }).dispatchEvent("click");
-  const modalFrameElement = () =>
-    page.locator(".zushi-modal-surface-container iframe");
+  const clickPlugin = (name: string) => pluginFixture.clickWidgetButton(name);
   const modalInner = () =>
     pluginFixture.modalIframe.getByRole("button", { name: "Modal Inner" });
-  const closedCount = async () =>
-    Number(
-      await pluginFixture.iframe.locator("#modal-closed-count").textContent()
-    );
+  // Closing clears the modal content, so also assert the surface is hidden.
+  const expectModalClosed = async () => {
+    await expect(modalInner()).toBeHidden();
+    await expect(pluginFixture.modalFrameElement).toBeHidden();
+  };
 
   test.beforeAll(async ({ browser }) => {
     context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL ?? "", {
@@ -80,7 +76,7 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
   // Close is a no-op when no modal is open, so this is safe after every test.
   test.afterEach(async () => {
     await clickPlugin("Modal Close");
-    await expect(modalInner()).toBeHidden();
+    await expectModalClosed();
   });
 
   test("plugin widget iframe is mounted and the modal buttons are reachable", async () => {
@@ -132,13 +128,17 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
     await clickPlugin("Modal Show");
     await expect(modalInner()).toBeVisible();
     await expect
-      .poll(async () => (await modalFrameElement().boundingBox())?.width)
+      .poll(
+        async () => (await pluginFixture.modalFrameElement.boundingBox())?.width
+      )
       .toBeCloseTo(300, -1);
 
     await clickPlugin("Modal Update");
 
     await expect
-      .poll(async () => (await modalFrameElement().boundingBox())?.width)
+      .poll(
+        async () => (await pluginFixture.modalFrameElement.boundingBox())?.width
+      )
       .toBeCloseTo(500, -1);
   });
 
@@ -148,14 +148,14 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
       description: "PLUGIN-MOD-004"
     });
 
-    const before = await closedCount();
+    const before = await pluginFixture.modalClosedCount();
     await clickPlugin("Modal Show");
     await expect(modalInner()).toBeVisible();
 
     await clickPlugin("Modal Close");
 
-    await expect(modalInner()).toBeHidden();
-    await expect.poll(closedCount).toBe(before + 1);
+    await expectModalClosed();
+    await expect.poll(() => pluginFixture.modalClosedCount()).toBe(before + 1);
   });
 
   test("clicking the background closes the modal when clickBgToClose is true", async () => {
@@ -164,20 +164,13 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
       description: "PLUGIN-MOD-005"
     });
 
-    const before = await closedCount();
+    const before = await pluginFixture.modalClosedCount();
     await clickPlugin("Modal Show");
     await expect(modalInner()).toBeVisible();
 
-    // The background fills the visualizer area; click near its top-left corner,
-    // away from the 300x200 modal in the middle.
-    const area = await page
-      .locator(".zushi-modal-surface-container")
-      .locator("..")
-      .boundingBox();
-    expect(area).not.toBeNull();
-    await page.mouse.click((area?.x ?? 0) + 10, (area?.y ?? 0) + 10);
+    await pluginFixture.clickModalBackground();
 
-    await expect(modalInner()).toBeHidden();
-    await expect.poll(closedCount).toBe(before + 1);
+    await expectModalClosed();
+    await expect.poll(() => pluginFixture.modalClosedCount()).toBe(before + 1);
   });
 });

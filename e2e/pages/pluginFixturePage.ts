@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { FrameLocator, Page } from "@playwright/test";
+import { FrameLocator, Locator, Page } from "@playwright/test";
 
 import { GraphQLClient } from "../api/graphql/client";
 import {
@@ -92,6 +92,46 @@ export class PluginFixturePage {
   }
 
   /**
+   * The modal surface iframe element on the host page (not its content).
+   * Closing a modal clears the content, so assert on this to know the
+   * surface itself is hidden.
+   */
+  get modalFrameElement(): Locator {
+    return this.ui.locator(".zushi-modal-surface-container iframe");
+  }
+
+  /**
+   * Clicks a button in the plugin widget iframe with dispatchEvent.
+   * A real click can be blocked by the modal background covering the widget.
+   */
+  async clickWidgetButton(name: string): Promise<void> {
+    await this.iframe.getByRole("button", { name }).dispatchEvent("click");
+  }
+
+  /** How many modal close events the plugin has received (shown by the widget). */
+  async modalClosedCount(): Promise<number> {
+    return Number(
+      await this.iframe.locator("#modal-closed-count").textContent()
+    );
+  }
+
+  /**
+   * Clicks the modal background near its top-left corner, away from the
+   * modal in the middle. The background fills the visualizer area, which is
+   * the parent of the modal surface container.
+   */
+  async clickModalBackground(): Promise<void> {
+    const area = await this.ui
+      .locator(".zushi-modal-surface-container")
+      .locator("..")
+      .boundingBox();
+    if (!area) {
+      throw new Error("[PluginFixture] modal background area not found");
+    }
+    await this.ui.mouse.click(area.x + 10, area.y + 10);
+  }
+
+  /**
    * Creates a project and scene via GraphQL.
    * Called once from _setup.ts — shared across all API test suites.
    */
@@ -177,7 +217,7 @@ export class PluginFixturePage {
     }>(GET_SCENE_WIDGETS, { sceneId });
 
     const widget = (data?.node?.widgets ?? []).find(
-      w => w.extensionId === extensionId
+      (w) => w.extensionId === extensionId
     );
     if (!widget) {
       throw new Error(
@@ -234,7 +274,7 @@ export class PluginFixturePage {
     console.log(`[PluginFixture] Removing widget: ${widgetId}`);
     await this.gql
       .mutate(REMOVE_WIDGET, { input: { type: "DESKTOP", sceneId, widgetId } })
-      .catch(err =>
+      .catch((err) =>
         console.warn(`[PluginFixture] removeWidget failed (non-fatal): ${err}`)
       );
   }
