@@ -152,7 +152,8 @@ reearth.extension.on("message", function(msg) {
   } else if (action === "modal-post") {
     reearth.modal.postMessage({ text: "hello modal" });
   } else if (action === "modal-update") {
-    reearth.modal.update({ width: 500, height: 200, background: "rgba(0,0,0,0.5)", clickBgToClose: true });
+    // Only the width is passed: the backdrop and click-to-close must stay.
+    reearth.modal.update({ width: 500, height: 200 });
   } else if (action === "modal-close") {
     reearth.modal.close();
   }

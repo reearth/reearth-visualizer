@@ -368,6 +368,12 @@ function createModalAdapter(
   let isOpen = false;
 
   /**
+   * Current backdrop options. `update` may omit them, so it merges into these
+   * instead of resetting the backdrop.
+   */
+  let backdrop: { background?: string; clickBgToClose?: boolean } = {};
+
+  /**
    * Clears surface content to ensure fresh state on next show.
    * Uses a minimal HTML structure to avoid ResizeObserver errors
    * (empty string causes document.body.parentElement to be null).
@@ -383,6 +389,7 @@ function createModalAdapter(
     externalCloseRef.current = () => {
       if (!isOpen) return; // Already closed, do nothing
       isOpen = false;
+      backdrop = {};
       surface.setVisible(false);
       clearContent();
       closeEvents.trigger();
@@ -400,14 +407,16 @@ function createModalAdapter(
         visible: true
       });
       onRender?.("modal");
-      onModalShow?.({
+      backdrop = {
         background: options?.background,
         clickBgToClose: options?.clickBgToClose
-      });
+      };
+      onModalShow?.(backdrop);
     },
     close: () => {
       if (!isOpen) return; // Already closed, do nothing
       isOpen = false;
+      backdrop = {};
       surface.setVisible(false);
       clearContent();
       closeEvents.trigger();
@@ -418,11 +427,13 @@ function createModalAdapter(
         width: options?.width,
         height: options?.height
       });
-      // Update modal wrapper background and click behavior
-      onModalShow?.({
-        background: options?.background,
-        clickBgToClose: options?.clickBgToClose
-      });
+      // Update modal wrapper background and click behavior.
+      // Options that are not passed keep their current value.
+      backdrop = {
+        background: options?.background ?? backdrop.background,
+        clickBgToClose: options?.clickBgToClose ?? backdrop.clickBgToClose
+      };
+      onModalShow?.(backdrop);
     },
     postMessage: (msg) => {
       surface.postMessage(msg);
