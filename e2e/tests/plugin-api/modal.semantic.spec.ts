@@ -86,9 +86,7 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
     await expectModalClosed();
     // The close event reaches the widget after the modal is hidden. Wait for
     // it so the next test does not read a stale count.
-    await expect
-      .poll(() => pluginFixture.modalClosedCount())
-      .toBe(openedCount);
+    await expect.poll(() => pluginFixture.modalClosedCount()).toBe(openedCount);
   });
 
   test("plugin widget iframe is mounted and the modal buttons are reachable", async () => {
