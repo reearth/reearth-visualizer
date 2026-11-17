@@ -320,3 +320,14 @@ Not changed: de-duplicating CMS pages that shift when an asset is added between 
 
 ### Validation
 - Reviewed the removal, skipped-query/cache, and repeated-search state transitions; automated tests were not run for this follow-up.
+
+## 2026-11-16 — Scene atmosphere settings never reached the renderer (web/src/app/utils/convert-object.ts)
+
+### Findings & Fixes
+1. **Three atmosphere settings were written under keys `@reearth/core` does not read** (web/src/app/utils/convert-object.ts)
+   - Bug: `sceneProperty2ViewerPropertyMapping` wrote `globe.atmosphere.intensity`, `sky.atmosphere.show` and `sky.atmosphere.lightIntensity`, while core reads `globe.atmosphere.lightIntensity`, `sky.skyAtmosphere.show` and `sky.skyAtmosphere.lightIntensity`. Globe Light Intensity, Sky Atmosphere Enable and Sky Atmosphere Light Intensity therefore had no effect, and the sky atmosphere stayed on because core defaults `show` to true. The Editor and Published pages share this mapping.
+   - Fix: the three mapping targets now use the keys core reads.
+
+### Validation
+- Checked the keys against `GlobeAtmosphereProperty` and `SkyProperty` in `@reearth/core` 0.0.7-alpha.81.
+- Playwright against the dev server: the viewerProperty passed to core now holds `globe.atmosphere.lightIntensity` and `sky.skyAtmosphere.{show,lightIntensity}`; switching Sky Atmosphere Enable off sets `show` to false and removes the atmosphere halo from the globe. The setting was switched back afterwards.
