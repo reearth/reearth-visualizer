@@ -19,6 +19,8 @@ const PLUGIN_ZIP = path.join(
   "../fixtures/plugins/reearth-api-test.zip"
 );
 
+const MODAL_IFRAME_SELECTOR = ".zushi-modal-surface-container iframe";
+
 const SHARED_STATE_PATH = path.join(__dirname, "../.auth/plugin-project.json");
 
 export type ProjectIds = {
@@ -88,7 +90,7 @@ export class PluginFixturePage {
 
   /** The iframe of the plugin modal surface (reearth.modal.show). */
   get modalIframe(): FrameLocator {
-    return this.ui.frameLocator(".zushi-modal-surface-container iframe");
+    return this.ui.frameLocator(MODAL_IFRAME_SELECTOR);
   }
 
   /**
@@ -97,7 +99,7 @@ export class PluginFixturePage {
    * surface itself is hidden.
    */
   get modalFrameElement(): Locator {
-    return this.ui.locator(".zushi-modal-surface-container iframe");
+    return this.ui.locator(MODAL_IFRAME_SELECTOR);
   }
 
   /**

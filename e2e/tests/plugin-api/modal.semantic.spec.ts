@@ -42,6 +42,13 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
   let ids: ProjectIds;
 
   const clickPlugin = (name: string) => pluginFixture.clickWidgetButton(name);
+  // Every open ends with one close event, so count the opens and let
+  // afterEach wait for the same number of close events.
+  let openedCount = 0;
+  const showModal = async () => {
+    openedCount++;
+    await clickPlugin("Modal Show");
+  };
   const modalInner = () =>
     pluginFixture.modalIframe.getByRole("button", { name: "Modal Inner" });
   // Closing clears the modal content, so also assert the surface is hidden.
@@ -77,6 +84,11 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
   test.afterEach(async () => {
     await clickPlugin("Modal Close");
     await expectModalClosed();
+    // The close event reaches the widget after the modal is hidden. Wait for
+    // it so the next test does not read a stale count.
+    await expect
+      .poll(() => pluginFixture.modalClosedCount())
+      .toBe(openedCount);
   });
 
   test("plugin widget iframe is mounted and the modal buttons are reachable", async () => {
@@ -99,7 +111,7 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
       description: "PLUGIN-MOD-001"
     });
 
-    await clickPlugin("Modal Show");
+    await showModal();
 
     await expect(modalInner()).toBeVisible();
   });
@@ -110,7 +122,7 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
       description: "PLUGIN-MOD-002"
     });
 
-    await clickPlugin("Modal Show");
+    await showModal();
     await expect(modalInner()).toBeVisible();
     await clickPlugin("Modal Post");
 
@@ -125,7 +137,7 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
       description: "PLUGIN-MOD-003"
     });
 
-    await clickPlugin("Modal Show");
+    await showModal();
     await expect(modalInner()).toBeVisible();
     await expect
       .poll(
@@ -149,7 +161,7 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
     });
 
     const before = await pluginFixture.modalClosedCount();
-    await clickPlugin("Modal Show");
+    await showModal();
     await expect(modalInner()).toBeVisible();
 
     await clickPlugin("Modal Close");
@@ -165,7 +177,7 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
     });
 
     const before = await pluginFixture.modalClosedCount();
-    await clickPlugin("Modal Show");
+    await showModal();
     await expect(modalInner()).toBeVisible();
 
     await pluginFixture.clickModalBackground();
