@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.31 - 2026-11-17
+
+### Web
+
+#### ✨ Refactor
+
+- Remove member email from UI ([#2521](https://github.com/reearth/reearth-visualizer/pull/2521)) [`4c73e0`](https://github.com/reearth/reearth-visualizer/commit/4c73e0)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.31 ([#2523](https://github.com/reearth/reearth-visualizer/pull/2523)) [`5a7e5f`](https://github.com/reearth/reearth-visualizer/commit/5a7e5f)
+
+### Server
+
+#### 🚀 Features
+
+- Add project export and import to the REST API [VIZ-DEV-260] ([#2488](https://github.com/reearth/reearth-visualizer/pull/2488)) [`d3dd2e`](https://github.com/reearth/reearth-visualizer/commit/d3dd2e)
+- Add project lifecycle endpoints to the REST API [VIZ-DEV-260] ([#2487](https://github.com/reearth/reearth-visualizer/pull/2487)) [`a18983`](https://github.com/reearth/reearth-visualizer/commit/a18983)
+- Add cms internal api intergation [VIZ-DEV-305] ([#2491](https://github.com/reearth/reearth-visualizer/pull/2491)) [`427f36`](https://github.com/reearth/reearth-visualizer/commit/427f36)
+
+#### 🔧 Bug Fixes
+
+- Tolerate hidden user emails from reearth-accounts ([#2518](https://github.com/reearth/reearth-visualizer/pull/2518)) [`bc8ffb`](https://github.com/reearth/reearth-visualizer/commit/bc8ffb)
+
 ## 1.0.0-beta.16.30 - 2026-11-04
 
 ### Web
