@@ -13,28 +13,38 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func listIndexKeys(t *testing.T, ctx context.Context, col *mongo.Collection) map[string]bson.D {
+type testIndexSpec struct {
+	Key       bson.D
+	Collation bson.M
+}
+
+func listIndexSpecs(t *testing.T, ctx context.Context, col *mongo.Collection) map[string]testIndexSpec {
 	t.Helper()
 	cursor, err := col.Indexes().List(ctx)
 	require.NoError(t, err)
 	defer cursor.Close(ctx)
 
-	res := map[string]bson.D{}
+	res := map[string]testIndexSpec{}
 	for cursor.Next(ctx) {
 		var spec struct {
-			Name string `bson:"name"`
-			Key  bson.D `bson:"key"`
+			Name      string `bson:"name"`
+			Key       bson.D `bson:"key"`
+			Collation bson.M `bson:"collation,omitempty"`
 		}
 		require.NoError(t, cursor.Decode(&spec))
-		res[spec.Name] = spec.Key
+		res[spec.Name] = testIndexSpec{Key: spec.Key, Collation: spec.Collation}
 	}
 	require.NoError(t, cursor.Err())
 	return res
 }
 
-func createTestIndex(t *testing.T, ctx context.Context, col *mongo.Collection, name string, keys bson.D) {
+func createTestIndex(t *testing.T, ctx context.Context, col *mongo.Collection, name string, keys bson.D, collation *options.Collation) {
 	t.Helper()
-	_, err := col.Indexes().CreateOne(ctx, mongo.IndexModel{Keys: keys, Options: options.Index().SetName(name)})
+	opts := options.Index().SetName(name)
+	if collation != nil {
+		opts = opts.SetCollation(collation)
+	}
+	_, err := col.Indexes().CreateOne(ctx, mongo.IndexModel{Keys: keys, Options: opts})
 	require.NoError(t, err)
 }
 
@@ -52,59 +62,102 @@ func coveringIndexName(key string) string {
 	return key + "_1_scene_1"
 }
 
+func seedRedundantIndexes(t *testing.T, ctx context.Context, db *mongo.Database) {
+	t.Helper()
+	project := db.Collection("project")
+	property := db.Collection("property")
+	createTestIndex(t, ctx, project, "alias_1", bson.D{{Key: "alias", Value: 1}}, nil)
+	createTestIndex(t, ctx, project, "alias_1_publishmentstatus_1", bson.D{{Key: "alias", Value: 1}, {Key: "publishmentstatus", Value: 1}}, nil)
+	for _, key := range redundantPropertyIndexKeys {
+		createTestIndex(t, ctx, property, key+"_1", bson.D{{Key: key, Value: 1}}, nil)
+		createTestIndex(t, ctx, property, coveringIndexName(key), coveringIndexKeys(key), nil)
+	}
+}
+
 func TestSyncProjectAndPropertyIndexes(t *testing.T) {
 	ctx := context.Background()
 
-	t.Run("creates project indexes and drops redundant indexes", func(t *testing.T) {
+	t.Run("creates indexes and drops redundant indexes", func(t *testing.T) {
 		db := mongotest.Connect(t)(t)
 		client := mongox.NewClientWithDatabase(db)
-		project := db.Collection("project")
-		property := db.Collection("property")
-
-		createTestIndex(t, ctx, project, "alias_1", bson.D{{Key: "alias", Value: 1}})
-		createTestIndex(t, ctx, project, "alias_1_publishmentstatus_1", bson.D{{Key: "alias", Value: 1}, {Key: "publishmentstatus", Value: 1}})
-		for _, key := range redundantPropertyIndexKeys {
-			createTestIndex(t, ctx, property, key+"_1", bson.D{{Key: key, Value: 1}})
-			createTestIndex(t, ctx, property, coveringIndexName(key), coveringIndexKeys(key))
-		}
+		seedRedundantIndexes(t, ctx, db)
 
 		require.NoError(t, SyncProjectAndPropertyIndexes(ctx, client))
 
-		projectIndexes := listIndexKeys(t, ctx, project)
-		assert.Contains(t, projectIndexes, "project_coresupport_workspace_updatedat_id")
-		assert.Contains(t, projectIndexes, "project_coresupport_deleted_workspace_updatedat_id")
+		for _, idx := range syncCreatedIndexes {
+			specs := listIndexSpecs(t, ctx, db.Collection(idx.collection))
+			require.Contains(t, specs, idx.name)
+			assert.True(t, keysEqual(specs[idx.name].Key, idx.keys), idx.name)
+			assert.True(t, collationsEqual(specs[idx.name].Collation, idx.collation), idx.name)
+		}
+
+		projectIndexes := listIndexSpecs(t, ctx, db.Collection("project"))
 		assert.Contains(t, projectIndexes, "alias_1_publishmentstatus_1")
 		assert.NotContains(t, projectIndexes, "alias_1")
 
-		propertyIndexes := listIndexKeys(t, ctx, property)
+		propertyIndexes := listIndexSpecs(t, ctx, db.Collection("property"))
 		for _, key := range redundantPropertyIndexKeys {
 			assert.NotContains(t, propertyIndexes, key+"_1")
 			assert.Contains(t, propertyIndexes, coveringIndexName(key))
 		}
 
 		require.NoError(t, SyncProjectAndPropertyIndexes(ctx, client))
-		assert.Equal(t, projectIndexes, listIndexKeys(t, ctx, project))
-		assert.Equal(t, propertyIndexes, listIndexKeys(t, ctx, property))
+		assert.Equal(t, projectIndexes, listIndexSpecs(t, ctx, db.Collection("project")))
+		assert.Equal(t, propertyIndexes, listIndexSpecs(t, ctx, db.Collection("property")))
 	})
 
-	t.Run("skips project indexes that already exist under another name", func(t *testing.T) {
+	t.Run("skips an index that exists with the same keys and collation", func(t *testing.T) {
 		db := mongotest.Connect(t)(t)
 		client := mongox.NewClientWithDatabase(db)
 		project := db.Collection("project")
-
-		createTestIndex(t, ctx, project, "coresupport_1_workspace_1_updatedat_-1_id_-1", bson.D{
-			{Key: "coresupport", Value: 1}, {Key: "workspace", Value: 1}, {Key: "updatedat", Value: -1}, {Key: "id", Value: -1},
-		})
-		createTestIndex(t, ctx, project, "coresupport_1_deleted_1_workspace_1_updatedat_-1_id_-1", bson.D{
-			{Key: "coresupport", Value: 1}, {Key: "deleted", Value: 1}, {Key: "workspace", Value: 1}, {Key: "updatedat", Value: -1}, {Key: "id", Value: -1},
-		})
+		existing := syncCreatedIndexes[0]
+		createTestIndex(t, ctx, project, "handmade", existing.keys, existing.collation)
 
 		require.NoError(t, SyncProjectAndPropertyIndexes(ctx, client))
 
-		projectIndexes := listIndexKeys(t, ctx, project)
-		assert.Contains(t, projectIndexes, "coresupport_1_workspace_1_updatedat_-1_id_-1")
-		assert.Contains(t, projectIndexes, "coresupport_1_deleted_1_workspace_1_updatedat_-1_id_-1")
-		assert.NotContains(t, projectIndexes, "project_coresupport_workspace_updatedat_id")
-		assert.NotContains(t, projectIndexes, "project_coresupport_deleted_workspace_updatedat_id")
+		specs := listIndexSpecs(t, ctx, project)
+		assert.Contains(t, specs, "handmade")
+		assert.NotContains(t, specs, existing.name)
 	})
+
+	t.Run("creates the collated index when only a non-collated one with the same keys exists", func(t *testing.T) {
+		db := mongotest.Connect(t)(t)
+		client := mongox.NewClientWithDatabase(db)
+		project := db.Collection("project")
+		existing := syncCreatedIndexes[0]
+		createTestIndex(t, ctx, project, "coresupport_1_workspace_1_updatedat_-1_id_-1", existing.keys, nil)
+
+		require.NoError(t, SyncProjectAndPropertyIndexes(ctx, client))
+
+		specs := listIndexSpecs(t, ctx, project)
+		assert.Contains(t, specs, "coresupport_1_workspace_1_updatedat_-1_id_-1")
+		require.Contains(t, specs, existing.name)
+		assert.True(t, collationsEqual(specs[existing.name].Collation, projectQueryCollation))
+	})
+}
+
+func TestRevertSyncProjectAndPropertyIndexes(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+	seedRedundantIndexes(t, ctx, db)
+	createTestIndex(t, ctx, db.Collection("project"), "coresupport_1_workspace_1_updatedat_-1_id_-1", syncCreatedIndexes[0].keys, nil)
+	require.NoError(t, db.CreateCollection(ctx, "asset"))
+
+	before := map[string]map[string]testIndexSpec{}
+	for _, c := range []string{"project", "property", "asset"} {
+		before[c] = listIndexSpecs(t, ctx, db.Collection(c))
+	}
+
+	require.NoError(t, SyncProjectAndPropertyIndexes(ctx, client))
+	require.NoError(t, RevertSyncProjectAndPropertyIndexes(ctx, client))
+
+	for _, c := range []string{"project", "property", "asset"} {
+		assert.Equal(t, before[c], listIndexSpecs(t, ctx, db.Collection(c)), c)
+	}
+
+	require.NoError(t, RevertSyncProjectAndPropertyIndexes(ctx, client))
+	for _, c := range []string{"project", "property", "asset"} {
+		assert.Equal(t, before[c], listIndexSpecs(t, ctx, db.Collection(c)), c)
+	}
 }
