@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
+<g clip-path="url(#clip_papers_logo)">
+<path d="M28 0H0V28H28V0Z" fill="#D2D2C7"/>
+<path d="M11.1813 17.2578L5.42261 28.0005H27.9999V17.2578H11.1813Z" fill="#67545A"/>
+<path d="M23.2307 5.23633V11.9283H14.0374L17.6307 5.23633H23.2307Z" fill="#468361"/>
+<path d="M0 0V25.2373L13.524 0H0Z" fill="#1084B9"/>
+</g>
+<defs>
+<clipPath id="clip_papers_logo">
+<rect width="28" height="28" rx="6" fill="white"/>
+</clipPath>
+</defs>
+</svg>
