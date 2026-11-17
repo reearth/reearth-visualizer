@@ -6,6 +6,7 @@ import (
 
 	"github.com/reearth/reearthx/log"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -70,9 +71,38 @@ func dropIndexWithKeys(ctx context.Context, c DBClient, migrationName, collectio
 		return nil
 	}
 
+	unique, err := indexIsUnique(ctx, collection, name)
+	if err != nil {
+		return fmt.Errorf("migration: %s: failed to list indexes on %s: %w", migrationName, collectionName, err)
+	}
+	if unique {
+		log.Warnfc(ctx, "migration: %s: index %s on %s is unique, not dropping", migrationName, name, collectionName)
+		return nil
+	}
+
 	if _, err := collection.Indexes().DropOne(ctx, name); err != nil {
 		return fmt.Errorf("migration: %s: failed to drop index %s on %s: %w", migrationName, name, collectionName, err)
 	}
 	log.Infofc(ctx, "migration: %s: dropped index on %s: %s", migrationName, collectionName, name)
 	return nil
+}
+
+func indexIsUnique(ctx context.Context, col *mongo.Collection, name string) (bool, error) {
+	cursor, err := col.Indexes().List(ctx)
+	if err != nil {
+		return false, err
+	}
+	var specs []struct {
+		Name   string `bson:"name"`
+		Unique bool   `bson:"unique"`
+	}
+	if err := cursor.All(ctx, &specs); err != nil {
+		return false, err
+	}
+	for _, s := range specs {
+		if s.Name == name {
+			return s.Unique, nil
+		}
+	}
+	return false, nil
 }

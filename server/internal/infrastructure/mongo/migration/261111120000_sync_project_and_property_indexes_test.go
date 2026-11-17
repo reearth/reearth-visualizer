@@ -106,6 +106,21 @@ func TestSyncProjectAndPropertyIndexes(t *testing.T) {
 		assert.Equal(t, propertyIndexes, listIndexSpecs(t, ctx, db.Collection("property")))
 	})
 
+	t.Run("does not drop a unique index", func(t *testing.T) {
+		db := mongotest.Connect(t)(t)
+		client := mongox.NewClientWithDatabase(db)
+		property := db.Collection("property")
+		_, err := property.Indexes().CreateOne(ctx, mongo.IndexModel{
+			Keys:    bson.D{{Key: "scene", Value: 1}},
+			Options: options.Index().SetName("scene_1").SetUnique(true),
+		})
+		require.NoError(t, err)
+
+		require.NoError(t, SyncProjectAndPropertyIndexes(ctx, client))
+
+		assert.Contains(t, listIndexSpecs(t, ctx, property), "scene_1")
+	})
+
 	t.Run("skips an index that exists with the same keys and collation", func(t *testing.T) {
 		db := mongotest.Connect(t)(t)
 		client := mongox.NewClientWithDatabase(db)

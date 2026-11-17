@@ -55,6 +55,7 @@ func TestCreateIndexes_SkipsIndexesWithOtherUniqueness(t *testing.T) {
 	assert.Contains(t, storyIndexes, "alias_1_status_1")
 
 	metaIndexes := indexUniqueByName(t, ctx, meta)
+	require.Contains(t, metaIndexes, "id_1")
 	assert.False(t, metaIndexes["id_1"])
 	assert.Contains(t, metaIndexes, "project_1")
 
