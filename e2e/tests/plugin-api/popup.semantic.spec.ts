@@ -42,15 +42,14 @@ test.describe("Popup Plugin API — semantic (webkit)", () => {
   let ids: ProjectIds;
 
   const clickPlugin = (name: string) =>
-    pluginFixture.iframe.getByRole("button", { name }).click();
-  const popupFrameElement = () =>
-    page.locator(".zushi-popup-surface-container iframe");
+    pluginFixture.clickPopupWidgetButton(name);
   const popupInner = () =>
     pluginFixture.popupIframe.getByRole("button", { name: "Popup Inner" });
-  const closedCount = async () =>
-    Number(
-      await pluginFixture.iframe.locator("#popup-closed-count").textContent()
-    );
+  // Closing clears the popup content, so also assert the surface is hidden.
+  const expectPopupClosed = async () => {
+    await expect(popupInner()).toBeHidden();
+    await expect(pluginFixture.popupFrameElement).toBeHidden();
+  };
 
   test.beforeAll(async ({ browser }) => {
     context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL ?? "", {
@@ -78,7 +77,7 @@ test.describe("Popup Plugin API — semantic (webkit)", () => {
   // Close is a no-op when no popup is open, so this is safe after every test.
   test.afterEach(async () => {
     await clickPlugin("Popup Close");
-    await expect(popupInner()).toBeHidden();
+    await expectPopupClosed();
   });
 
   test("plugin widget iframe is mounted and the popup buttons are reachable", async () => {
@@ -116,9 +115,9 @@ test.describe("Popup Plugin API — semantic (webkit)", () => {
     await expect(popupInner()).toBeVisible();
     await clickPlugin("Popup Post");
 
-    await expect(
-      pluginFixture.popupIframe.locator("#popup-received")
-    ).toHaveText(JSON.stringify({ text: "hello popup" }));
+    await expect(pluginFixture.popupReceivedMessage).toHaveText(
+      JSON.stringify({ text: "hello popup" })
+    );
   });
 
   test("popup.update changes the popup width", async () => {
@@ -130,13 +129,17 @@ test.describe("Popup Plugin API — semantic (webkit)", () => {
     await clickPlugin("Popup Show");
     await expect(popupInner()).toBeVisible();
     await expect
-      .poll(async () => (await popupFrameElement().boundingBox())?.width)
+      .poll(
+        async () => (await pluginFixture.popupFrameElement.boundingBox())?.width
+      )
       .toBeCloseTo(300, -1);
 
     await clickPlugin("Popup Update");
 
     await expect
-      .poll(async () => (await popupFrameElement().boundingBox())?.width)
+      .poll(
+        async () => (await pluginFixture.popupFrameElement.boundingBox())?.width
+      )
       .toBeCloseTo(500, -1);
   });
 
@@ -146,13 +149,13 @@ test.describe("Popup Plugin API — semantic (webkit)", () => {
       description: "PLUGIN-POP-004"
     });
 
-    const before = await closedCount();
+    const before = await pluginFixture.popupClosedCount();
     await clickPlugin("Popup Show");
     await expect(popupInner()).toBeVisible();
 
     await clickPlugin("Popup Close");
 
-    await expect(popupInner()).toBeHidden();
-    await expect.poll(closedCount).toBe(before + 1);
+    await expectPopupClosed();
+    await expect.poll(() => pluginFixture.popupClosedCount()).toBe(before + 1);
   });
 });

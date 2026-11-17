@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { FrameLocator, Page } from "@playwright/test";
+import { FrameLocator, Locator, Page } from "@playwright/test";
 
 import { GraphQLClient } from "../api/graphql/client";
 import {
@@ -92,6 +92,32 @@ export class PluginFixturePage {
   }
 
   /**
+   * The popup surface iframe element on the host page (not its content).
+   * Closing a popup clears the content, so assert on this to know the
+   * surface itself is hidden.
+   */
+  get popupFrameElement(): Locator {
+    return this.ui.locator(".zushi-popup-surface-container iframe");
+  }
+
+  /** The element in the popup content that shows the last message it received. */
+  get popupReceivedMessage(): Locator {
+    return this.popupIframe.locator("#popup-received");
+  }
+
+  /** Clicks a button in the plugin widget iframe. */
+  async clickPopupWidgetButton(name: string): Promise<void> {
+    await this.iframe.getByRole("button", { name }).click();
+  }
+
+  /** How many popup close events the plugin has received (shown by the widget). */
+  async popupClosedCount(): Promise<number> {
+    return Number(
+      await this.iframe.locator("#popup-closed-count").textContent()
+    );
+  }
+
+  /**
    * Creates a project and scene via GraphQL.
    * Called once from _setup.ts — shared across all API test suites.
    */
@@ -177,7 +203,7 @@ export class PluginFixturePage {
     }>(GET_SCENE_WIDGETS, { sceneId });
 
     const widget = (data?.node?.widgets ?? []).find(
-      w => w.extensionId === extensionId
+      (w) => w.extensionId === extensionId
     );
     if (!widget) {
       throw new Error(
@@ -234,7 +260,7 @@ export class PluginFixturePage {
     console.log(`[PluginFixture] Removing widget: ${widgetId}`);
     await this.gql
       .mutate(REMOVE_WIDGET, { input: { type: "DESKTOP", sceneId, widgetId } })
-      .catch(err =>
+      .catch((err) =>
         console.warn(`[PluginFixture] removeWidget failed (non-fatal): ${err}`)
       );
   }
