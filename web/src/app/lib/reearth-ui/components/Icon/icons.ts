@@ -18,6 +18,7 @@ import AToZ from "./Icons/AToZ.svg?react";
 import Book from "./Icons/Book.svg?react";
 import BracketsCurly from "./Icons/BracketsCurly.svg?react";
 import Buildings from "./Icons/Buildings.svg?react";
+import BuildingsLogo from "./Icons/BuildingsLogo.svg?react";
 import CalendarBlank from "./Icons/CalendarBlank.svg?react";
 import Camera from "./Icons/Camera.svg?react";
 import CameraFilled from "./Icons/CameraFilled.svg?react";
@@ -127,6 +128,7 @@ import Page from "./Icons/Page.svg?react";
 import Palette from "./Icons/Palette.svg?react";
 import Paperclip from "./Icons/Paperclip.svg?react";
 import PaperPlaneTilt from "./Icons/PaperPlaneTilt.svg?react";
+import PapersLogo from "./Icons/PapersLogo.svg?react";
 import Pause from "./Icons/Pause.svg?react";
 import Pegman from "./Icons/Pegman.svg?react";
 import PencilFilled from "./Icons/PencilFilled.svg?react";
@@ -186,6 +188,7 @@ import SToL from "./Icons/SToL.svg?react";
 import Swiper from "./Icons/Swiper.svg?react";
 import Table from "./Icons/Table.svg?react";
 import Tag from "./Icons/Tag.svg?react";
+import TerrainLogo from "./Icons/TerrainLogo.svg?react";
 import Terrian from "./Icons/Terrian.svg?react";
 import Text from "./Icons/Text.svg?react";
 import TextAa from "./Icons/TextAa.svg?react";
@@ -234,6 +237,7 @@ export default {
   book: Book,
   bracketsCurly: BracketsCurly,
   buildings: Buildings,
+  buildingsLogo: BuildingsLogo,
   calendarBlank: CalendarBlank,
   camera: Camera,
   cameraFilled: CameraFilled,
@@ -342,6 +346,7 @@ export default {
   page: Page,
   palette: Palette,
   paperclip: Paperclip,
+  papersLogo: PapersLogo,
   paperPlaneTilt: PaperPlaneTilt,
   pause: Pause,
   pegman: Pegman,
@@ -402,6 +407,7 @@ export default {
   swiper: Swiper,
   table: Table,
   tag: Tag,
+  terrainLogo: TerrainLogo,
   terrian: Terrian,
   text: Text,
   textAa: TextAa,
