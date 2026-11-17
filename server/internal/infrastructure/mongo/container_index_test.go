@@ -51,7 +51,6 @@ func TestCreateIndexes_SkipsIndexesWithOtherUniqueness(t *testing.T) {
 	storyIndexes := indexUniqueByName(t, ctx, story)
 	assert.True(t, storyIndexes["scene_1"])
 	assert.True(t, storyIndexes["id_1"])
-	assert.Contains(t, storyIndexes, "alias_1")
 	assert.Contains(t, storyIndexes, "alias_1_status_1")
 
 	metaIndexes := indexUniqueByName(t, ctx, meta)
@@ -63,4 +62,24 @@ func TestCreateIndexes_SkipsIndexesWithOtherUniqueness(t *testing.T) {
 	require.NoError(t, createIndexes(ctx, client.WithCollection("projectmetadata"), projectmetadataIndexes, projectmetadataUniqueIndexes))
 	assert.Equal(t, storyIndexes, indexUniqueByName(t, ctx, story))
 	assert.Equal(t, metaIndexes, indexUniqueByName(t, ctx, meta))
+}
+
+func TestCreateIndexes_IgnoresCollatedIndexesWhenCheckingUniqueness(t *testing.T) {
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+
+	col := db.Collection("collationtest")
+	_, err := col.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys:    bson.D{{Key: "alias", Value: 1}},
+		Options: options.Index().SetName("alias_case_insensitive_unique").SetUnique(true).SetCollation(&options.Collation{Locale: "en", Strength: 2}),
+	})
+	require.NoError(t, err)
+
+	require.NoError(t, createIndexes(ctx, client.WithCollection("collationtest"), []string{"alias"}, nil))
+
+	indexes := indexUniqueByName(t, ctx, col)
+	require.Contains(t, indexes, "alias_1")
+	assert.False(t, indexes["alias_1"])
+	assert.True(t, indexes["alias_case_insensitive_unique"])
 }

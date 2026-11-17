@@ -169,8 +169,9 @@ func skipIndexesWithOtherUniqueness(ctx context.Context, col *mongo.Collection, 
 		return nil, nil, nil, err
 	}
 	var specs []struct {
-		Key    bson.D `bson:"key"`
-		Unique bool   `bson:"unique"`
+		Key       bson.D `bson:"key"`
+		Unique    bool   `bson:"unique"`
+		Collation bson.M `bson:"collation,omitempty"`
 	}
 	if err := cur.All(ctx, &specs); err != nil {
 		return nil, nil, nil, err
@@ -179,6 +180,9 @@ func skipIndexesWithOtherUniqueness(ctx context.Context, col *mongo.Collection, 
 	unique := map[string]bool{}
 	nonUnique := map[string]bool{}
 	for _, s := range specs {
+		if len(s.Collation) > 0 {
+			continue
+		}
 		k := strings.Join(lo.Map(s.Key, func(e bson.E, _ int) string { return e.Key }), ",")
 		if s.Unique {
 			unique[k] = true

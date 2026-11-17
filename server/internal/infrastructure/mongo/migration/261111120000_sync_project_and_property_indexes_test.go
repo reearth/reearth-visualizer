@@ -106,6 +106,44 @@ func TestSyncProjectAndPropertyIndexes(t *testing.T) {
 		assert.Equal(t, propertyIndexes, listIndexSpecs(t, ctx, db.Collection("property")))
 	})
 
+	t.Run("drops a redundant index only when its covering index exists", func(t *testing.T) {
+		db := mongotest.Connect(t)(t)
+		client := mongox.NewClientWithDatabase(db)
+		layer := db.Collection("nlsLayer")
+		style := db.Collection("style")
+		createTestIndex(t, ctx, layer, "group.children_1", bson.D{{Key: "group.children", Value: 1}}, nil)
+		createTestIndex(t, ctx, layer, "group.children_1_scene_1", bson.D{{Key: "group.children", Value: 1}, {Key: "scene", Value: 1}}, nil)
+		createTestIndex(t, ctx, layer, "scene_1", bson.D{{Key: "scene", Value: 1}}, nil)
+		createTestIndex(t, ctx, style, "scene_1", bson.D{{Key: "scene", Value: 1}}, nil)
+
+		require.NoError(t, SyncProjectAndPropertyIndexes(ctx, client))
+
+		layerIndexes := listIndexSpecs(t, ctx, layer)
+		assert.NotContains(t, layerIndexes, "group.children_1")
+		assert.Contains(t, layerIndexes, "group.children_1_scene_1")
+		assert.Contains(t, layerIndexes, "scene_1")
+		assert.Contains(t, listIndexSpecs(t, ctx, style), "scene_1")
+	})
+
+	t.Run("keeps unique and collated indexes with the same keys", func(t *testing.T) {
+		db := mongotest.Connect(t)(t)
+		client := mongox.NewClientWithDatabase(db)
+		project := db.Collection("project")
+		createTestIndex(t, ctx, project, "alias_1_publishmentstatus_1", bson.D{{Key: "alias", Value: 1}, {Key: "publishmentstatus", Value: 1}}, nil)
+		_, err := project.Indexes().CreateOne(ctx, mongo.IndexModel{
+			Keys:    bson.D{{Key: "alias", Value: 1}},
+			Options: options.Index().SetName("alias_unique").SetUnique(true),
+		})
+		require.NoError(t, err)
+		createTestIndex(t, ctx, project, "alias_case_insensitive", bson.D{{Key: "alias", Value: 1}}, &options.Collation{Locale: "en", Strength: 2})
+
+		require.NoError(t, SyncProjectAndPropertyIndexes(ctx, client))
+
+		specs := listIndexSpecs(t, ctx, project)
+		assert.Contains(t, specs, "alias_unique")
+		assert.Contains(t, specs, "alias_case_insensitive")
+	})
+
 	t.Run("does not drop a unique index", func(t *testing.T) {
 		db := mongotest.Connect(t)(t)
 		client := mongox.NewClientWithDatabase(db)
