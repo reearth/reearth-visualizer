@@ -2695,34 +2695,25 @@ All notable changes to this project will be documented in this file.
 
 - Vv1.0.0 [`d34bca`](https://github.com/reearth/reearth-visualizer/commit/d34bca)
 
-## 1.0.0 - 2026-11-18
+## 1.0.0 - 2026-04-15
 
 ### Web
 
-#### 🔧 Bug Fixes
-
-- Use the atmosphere keys @reearth&#x2F;core reads for scene settings [VIZ-DEV-323] ([#2539](https://github.com/reearth/reearth-visualizer/pull/2539)) [`b68436`](https://github.com/reearth/reearth-visualizer/commit/b68436)
-
-#### ✨ Refactor
-
-- Add favicons for re:earth data services ([#2541](https://github.com/reearth/reearth-visualizer/pull/2541)) [`a323af`](https://github.com/reearth/reearth-visualizer/commit/a323af)
-
 #### Miscellaneous Tasks
 
-- Bump version to 1.0.0-beta.16.32 ([#2545](https://github.com/reearth/reearth-visualizer/pull/2545)) [`4611e0`](https://github.com/reearth/reearth-visualizer/commit/4611e0)
+- Update package version to 1.0.0-beta.16.0 ([#2165](https://github.com/reearth/reearth-visualizer/pull/2165)) [`b548f2`](https://github.com/reearth/reearth-visualizer/commit/b548f2)
 
 ### Server
 
-#### 📖 Documentation
-
-- Document publishment status, list filters and import state in the REST API spec [VIZ-DEV-260] ([#2537](https://github.com/reearth/reearth-visualizer/pull/2537)) [`9b69ea`](https://github.com/reearth/reearth-visualizer/commit/9b69ea)
-
-### e2e
-
 #### 🧪 Testing
 
-- Add Modal plugin API semantic tests [VIZ-DEV-321] ([#2533](https://github.com/reearth/reearth-visualizer/pull/2533)) [`e1d492`](https://github.com/reearth/reearth-visualizer/commit/e1d492)
-- Add Data plugin API semantic tests [VIZ-DEV-309] ([#2522](https://github.com/reearth/reearth-visualizer/pull/2522)) [`44af45`](https://github.com/reearth/reearth-visualizer/commit/44af45)
+- Add e2e tests for plugin GraphQL API ([#2159](https://github.com/reearth/reearth-visualizer/pull/2159)) [`80ebab`](https://github.com/reearth/reearth-visualizer/commit/80ebab)
+
+### server,web
+
+#### 🚀 Features
+
+- Add SSO logout tracking with response header ([#2142](https://github.com/reearth/reearth-visualizer/pull/2142)) [`8352bf`](https://github.com/reearth/reearth-visualizer/commit/8352bf)
 
 ## 1.0.0-beta.4.1 - 2025-03-18
 
