@@ -2,6 +2,7 @@ import { LayerAddProps } from "@reearth/app/features/Editor/hooks/useLayers";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { useLayerNames } from "../useLayerNames";
 import { generateTitle } from "../util";
 
 import {
@@ -31,9 +32,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
 
   const [latColumn, setLatColumn] = useState("");
   const [lngColumn, setLngColumn] = useState("");
-  const [isLayerName, setIsLayerName] = useState(false);
-  const [layerName, setLayerName] = useState("");
-  const [layerNameList, setLayerNameList] = useState<string[]>([]);
+  const { entered, inputProps: layerNameInputProps } = useLayerNames();
   const [prioritizePerformance, setPrioritizePerformance] = useState(false);
   const [autoUpdateTime, setAutoUpdateTime] = useState(true);
 
@@ -152,37 +151,14 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     [runValidation, trimmedUrl]
   );
 
-  const handleLayerNameAdd = useCallback(() => {
-    const name = layerName.trim();
-    if (!name) return;
-    setLayerNameList((prev) => (prev.includes(name) ? prev : [...prev, name]));
-    setLayerName("");
-  }, [layerName]);
-
-  const handleBlur = useCallback(() => {
-    handleLayerNameAdd();
-    setIsLayerName(false);
-  }, [handleLayerNameAdd]);
-
-  const handleLayerNameButtonClick = useCallback(() => {
-    handleLayerNameAdd();
-    setIsLayerName(true);
-  }, [handleLayerNameAdd]);
-
-  const handleLayerNameDelete = useCallback((idx: number) => {
-    setLayerNameList((prev) => prev.filter((_, i) => i !== idx));
-  }, []);
-
-  // Includes a name still being typed so it isn't dropped on a direct Add.
   // WMS falls back to the URL's LAYERS parameter.
-  const layers = useMemo(() => {
-    const entered = [...new Set([...layerNameList, layerName.trim()])].filter(
-      Boolean
-    );
-    return !entered.length && format === "wms"
-      ? wmsLayersFromUrl(trimmedUrl)
-      : entered;
-  }, [layerNameList, layerName, format, trimmedUrl]);
+  const layers = useMemo(
+    () =>
+      !entered.length && format === "wms"
+        ? wmsLayersFromUrl(trimmedUrl)
+        : entered,
+    [entered, format, trimmedUrl]
+  );
 
   const needsLayers = format === "mvt" || format === "wms";
 
@@ -251,9 +227,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     formatOptions,
     latColumn,
     lngColumn,
-    layerNameList,
-    layerName,
-    isLayerName,
+    layerNameInputProps,
     checking,
     error: displayedError,
     canSubmit,
@@ -266,10 +240,6 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
     handleUrlChange,
     handleUrlBlur,
     handleFormatChange,
-    setLayerName,
-    handleBlur,
-    handleLayerNameButtonClick,
-    handleLayerNameDelete,
     handleSubmit
   };
 };

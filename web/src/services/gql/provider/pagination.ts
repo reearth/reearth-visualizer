@@ -65,3 +65,14 @@ function offsetFromCursor(
   }
   return -1;
 }
+
+// For CMS's page-based connections (page is 1-based). The first page replaces
+// the list and later ones append, so keyArgs must leave out `page`.
+export function pageMergeNodes(
+  existing: { nodes: unknown[] } | null,
+  incoming: { nodes: unknown[] },
+  { args }: Pick<FieldFunctionOptions, "args">
+) {
+  if (!args?.page || args.page <= 1 || !existing) return incoming;
+  return { ...incoming, nodes: [...existing.nodes, ...incoming.nodes] };
+}
