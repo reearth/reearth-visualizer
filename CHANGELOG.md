@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.32 - 2026-11-18
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Use the atmosphere keys @reearth&#x2F;core reads for scene settings [VIZ-DEV-323] ([#2539](https://github.com/reearth/reearth-visualizer/pull/2539)) [`b68436`](https://github.com/reearth/reearth-visualizer/commit/b68436)
+
+#### ✨ Refactor
+
+- Add favicons for re:earth data services ([#2541](https://github.com/reearth/reearth-visualizer/pull/2541)) [`a323af`](https://github.com/reearth/reearth-visualizer/commit/a323af)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.32 ([#2545](https://github.com/reearth/reearth-visualizer/pull/2545)) [`4611e0`](https://github.com/reearth/reearth-visualizer/commit/4611e0)
+
+### Server
+
+#### 📖 Documentation
+
+- Document publishment status, list filters and import state in the REST API spec [VIZ-DEV-260] ([#2537](https://github.com/reearth/reearth-visualizer/pull/2537)) [`9b69ea`](https://github.com/reearth/reearth-visualizer/commit/9b69ea)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Revert v1.0.0 changelog ([#2547](https://github.com/reearth/reearth-visualizer/pull/2547)) [`253f07`](https://github.com/reearth/reearth-visualizer/commit/253f07)
+
+### e2e
+
+#### 🧪 Testing
+
+- Add Modal plugin API semantic tests [VIZ-DEV-321] ([#2533](https://github.com/reearth/reearth-visualizer/pull/2533)) [`e1d492`](https://github.com/reearth/reearth-visualizer/commit/e1d492)
+- Add Data plugin API semantic tests [VIZ-DEV-309] ([#2522](https://github.com/reearth/reearth-visualizer/pull/2522)) [`44af45`](https://github.com/reearth/reearth-visualizer/commit/44af45)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Revert v1.0.0 changelog ([#2547](https://github.com/reearth/reearth-visualizer/pull/2547)) [`253f07`](https://github.com/reearth/reearth-visualizer/commit/253f07)
+
 ## 1.0.0-beta.16.31 - 2026-11-17
 
 ### Web
