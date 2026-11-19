@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	styleIndexes       = []string{"scene", "id,scene", "scene,infobox.fields"}
+	styleIndexes       = []string{"id,scene", "scene,infobox.fields"}
 	styleUniqueIndexes = []string{"id"}
 )
 

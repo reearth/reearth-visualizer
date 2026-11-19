@@ -16,14 +16,10 @@ import (
 
 var (
 	nlsLayerIndexes = []string{
-		"scene",
 		"id,scene",
 		"scene,infobox.blocks",
-		"group.children",
 		"group.children,scene",
-		"infobox.property",
 		"infobox.property,scene",
-		"infobox.blocks.property",
 		"infobox.blocks.property,scene",
 	}
 	nlsLayerUniqueIndexes = []string{"id"}
