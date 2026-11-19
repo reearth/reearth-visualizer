@@ -1,3 +1,5 @@
+import type { TileProperty, ViewerProperty } from "@reearth/core";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyObject = Record<string, any>;
 
@@ -10,6 +12,39 @@ type ArrayMapping = [
 ];
 
 export type Mapping = Record<string, string | ArrayMapping>;
+
+// `category` is set by web (see SYSTEM_TILE_CATEGORY) and is not part of core's TileProperty.
+type ViewerPropertyWithTileCategory = Omit<ViewerProperty, "tiles"> & {
+  tiles?: (TileProperty & { category?: string })[];
+};
+
+type TileKey = keyof NonNullable<
+  ViewerPropertyWithTileCategory["tiles"]
+>[number] &
+  string;
+
+// Dot-paths of an object type. Arrays end the path (e.g. "tiles").
+type Paths<T> = T extends object
+  ? {
+      [K in keyof T & string]: NonNullable<T[K]> extends readonly unknown[]
+        ? K
+        : K | `${K}.${Paths<NonNullable<T[K]>>}`;
+    }[keyof T & string]
+  : never;
+
+type ViewerPropertyPath = Paths<ViewerPropertyWithTileCategory>;
+
+// Same shape as Mapping, but the target paths must exist in the viewer property,
+// so a path that core does not read fails `yarn type`.
+type ViewerPropertyMapping = Record<
+  string,
+  | ViewerPropertyPath
+  | [
+      targetKey: ViewerPropertyPath,
+      fieldMapping: Record<string, TileKey>,
+      preSortFn?: (a: AnyObject, b: AnyObject) => number
+    ]
+>;
 
 // Helper function to get nested property value
 function getNestedProperty(obj: AnyObject, keys: string[]): unknown {
@@ -64,7 +99,7 @@ export function convertData(source: AnyObject, mapping: Mapping): AnyObject {
 
 // Convert those been defined in backend only
 // Remember to update when cesium-beta schema changes
-export const sceneProperty2ViewerPropertyMapping: Mapping = {
+export const sceneProperty2ViewerPropertyMapping = {
   "default.sceneMode": "scene.mode",
   "default.vr": "scene.vr",
   tiles: [
@@ -107,4 +142,4 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
   "skyAtmosphere.skyAtmosphere": "sky.skyAtmosphere.show",
   "skyAtmosphere.skyAtmosphereIntensity": "sky.skyAtmosphere.lightIntensity",
   "camera.allowEnterGround": "camera.allowEnterGround"
-};
+} satisfies ViewerPropertyMapping;
