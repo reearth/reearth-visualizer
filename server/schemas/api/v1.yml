@@ -47,12 +47,12 @@ paths:
             $ref: "#/components/schemas/ProjectSort"
         - name: starred
           in: query
-          description: Only starred projects.
+          description: Only starred projects. Cannot be combined with `deleted`.
           schema:
             type: boolean
         - name: deleted
           in: query
-          description: Only projects in the trash.
+          description: Only projects in the trash. Cannot be combined with `starred`.
           schema:
             type: boolean
         - $ref: "#/components/parameters/limit"
@@ -525,6 +525,12 @@ components:
     PublishmentStatus:
       type: string
       enum: [public, limited, private]
+      description: |
+        Whether the project or story is published, and whether search engines
+        may index it. `public`: published and may be indexed. `limited`:
+        published, but the page asks search engines not to index it or follow
+        its links (`noindex,nofollow`). `private`: not published; there is no
+        published page. This is unrelated to the project's `visibility`.
     Project:
       type: object
       required:
@@ -545,7 +551,7 @@ components:
         workspaceId:
           type: string
         sceneId:
-          description: The scene of the project. Plugins are installed into it.
+          description: The scene of the project. Plugins are installed into it. Can be absent while the project is being imported.
           type: string
         name:
           type: string
@@ -571,7 +577,7 @@ components:
         archived:
           type: boolean
         deleted:
-          description: Whether the project is in the trash.
+          description: Whether the project is in the trash. A project being imported is also `true` until its zip has been uploaded; use `importStatus` to tell when the import has finished.
           type: boolean
         imageUrl:
           type: string
@@ -668,7 +674,7 @@ components:
         url:
           type: string
           description: |
-            The published URL. Absent when the project is private or the
+            The published URL. Absent when the status is `private` or the
             server has no published host configured.
     Story:
       type: object
@@ -700,7 +706,7 @@ components:
         url:
           type: string
           description: |
-            The published URL. Absent when the story is private or the server
+            The published URL. Absent when the status is `private` or the server
             has no published host configured.
     ImportUploadResponse:
       type: object
