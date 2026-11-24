@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	storytellingIndexes       = []string{"alias", "alias,status", "scene"}
+	storytellingIndexes       = []string{"alias,status", "scene"}
 	storytellingUniqueIndexes = []string{"id"}
 )
 

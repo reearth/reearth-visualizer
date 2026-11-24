@@ -49,4 +49,5 @@ var migrations = migration.Migrations[DBClient]{
 	260804000000: SetTileCategory,
 	260804013000: RepairSetTileCategoryLegacyTileType,
 	260805000000: RemoveLegacyImportStatusFields,
+	261111120000: SyncProjectAndPropertyIndexes,
 }
