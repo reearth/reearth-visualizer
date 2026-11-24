@@ -1,6 +1,35 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { checkModelGeoJson, cmsAssetLayer, formatOf } from "./utils";
+import {
+  checkModelGeoJson,
+  cmsAssetLayer,
+  cmsPageUrl,
+  formatOf
+} from "./utils";
+
+describe("cmsPageUrl", () => {
+  const CMS_URL = "https://cms.dev.example.com";
+
+  it("links to an asset's page", () => {
+    expect(cmsPageUrl(CMS_URL, "ws", "proj", "asset", "a1")).toBe(
+      "https://cms.dev.example.com/workspace/ws/project/proj/asset/a1"
+    );
+    expect(cmsPageUrl(`${CMS_URL}/`, "ws", "proj", "asset", "a1")).toBe(
+      "https://cms.dev.example.com/workspace/ws/project/proj/asset/a1"
+    );
+  });
+
+  it("links to a model's items", () => {
+    expect(cmsPageUrl(CMS_URL, "ws", "proj", "content", "m1")).toBe(
+      "https://cms.dev.example.com/workspace/ws/project/proj/content/m1"
+    );
+  });
+
+  it("needs the CMS URL and workspace", () => {
+    expect(cmsPageUrl(undefined, "ws", "proj", "asset", "a")).toBeUndefined();
+    expect(cmsPageUrl(CMS_URL, undefined, "p", "asset", "a")).toBeUndefined();
+  });
+});
 
 // A stand-in for what checkModelGeoJson reads of a Response: a real one
 // fails in CI, where jsdom's ReadableStream isn't the one undici expects.

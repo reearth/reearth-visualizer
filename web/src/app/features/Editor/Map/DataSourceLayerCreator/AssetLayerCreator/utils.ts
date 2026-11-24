@@ -60,8 +60,9 @@ export const formatOf = (url: string): AssetFormat | undefined => {
 
 // The format CMS states, or the one the file extension implies. MVT, WMS and
 // 3D Tiles can't be told from the URL (a tileset.json looks like GeoJSON).
-export const assetFormat = (asset: LayerAsset): LayerFormat | undefined =>
-  asset.format ?? formatOf(asset.url);
+export const assetFormat = (
+  asset: Pick<LayerAsset, "format" | "url">
+): LayerFormat | undefined => asset.format ?? formatOf(asset.url);
 
 // The list view's grid columns on each tab, shared by its header and rows.
 export const LIST_COLUMNS: Record<AssetTab, string> = {
@@ -163,6 +164,22 @@ export const checkModelGeoJson = async (
   }
 };
 
+// A CMS asset's page ("asset") or a model's items ("content") in CMS's web
+// app, at the deployment's cmsUrl (set per environment, REEARTH_CMS_URL in
+// the Docker image). None without one.
+export const cmsPageUrl = (
+  cmsUrl: string | undefined,
+  workspaceId: string | undefined,
+  projectId: string,
+  page: "asset" | "content",
+  id: string
+): string | undefined => {
+  const base = cmsUrl?.replace(/\/+$/, "");
+  return base && workspaceId
+    ? `${base}/workspace/${workspaceId}/project/${projectId}/${page}/${id}`
+    : undefined;
+};
+
 // For sources the server can't sort, such as CMS.
 export const sortAssets = (assets: LayerAsset[], sort: SortKey) => {
   const [field, direction] = sort.split("-");
@@ -172,9 +189,7 @@ export const sortAssets = (assets: LayerAsset[], sort: SortKey) => {
       sign *
       (field === "name"
         ? a.name.localeCompare(b.name)
-        : field === "size"
-          ? a.size - b.size
-          : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
   );
 };
 

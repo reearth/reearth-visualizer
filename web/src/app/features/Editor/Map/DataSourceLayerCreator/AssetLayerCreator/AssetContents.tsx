@@ -11,9 +11,10 @@ import {
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, RefObject } from "react";
+import { FC, RefObject, useCallback, useEffect, useState } from "react";
 
 import { AssetCard, AssetRow } from "./AssetItem";
+import AssetDetails from "./Cms/AssetDetails";
 import { AssetLayout, AssetTab, LayerAsset } from "./types";
 import { LIST_COLUMNS } from "./utils";
 
@@ -72,6 +73,24 @@ const AssetContents: FC<Props> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
+
+  // The CMS card whose details are open, one at a time. Closed when the tab
+  // changes, or when its card is no longer shown.
+  const isCmsTab = tab !== "visualizer";
+  const [details, setDetails] = useState<{ id: string; card: HTMLElement }>();
+  const detailsAsset =
+    details && layout === "grid"
+      ? assets.find((a) => a.id === details.id)
+      : undefined;
+  const closeDetails = useCallback(() => setDetails(undefined), []);
+  const openDetails = useCallback(
+    (id: string, card: HTMLElement) => setDetails({ id, card }),
+    []
+  );
+  useEffect(() => setDetails(undefined), [tab]);
+  useEffect(() => {
+    if (details && !detailsAsset) setDetails(undefined);
+  }, [details, detailsAsset]);
 
   return (
     <>
@@ -171,6 +190,7 @@ const AssetContents: FC<Props> = ({
                   tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
+                  onInfo={isCmsTab ? openDetails : undefined}
                 />
               ))}
             </Grid>
@@ -189,6 +209,15 @@ const AssetContents: FC<Props> = ({
           )}
         </AssetsContentWrapper>
       </AssetsArea>
+      {details && detailsAsset && (
+        <AssetDetails
+          key={detailsAsset.id}
+          asset={detailsAsset}
+          tab={tab}
+          reference={details.card}
+          onClose={closeDetails}
+        />
+      )}
     </>
   );
 };

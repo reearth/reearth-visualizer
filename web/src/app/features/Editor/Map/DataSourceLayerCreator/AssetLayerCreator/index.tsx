@@ -10,7 +10,7 @@ import {
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
-import { keyframes, styled, useTheme } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback } from "react";
 
@@ -21,17 +21,25 @@ import LayerNameInputs from "../LayerNameInputs";
 import AssetContents from "./AssetContents";
 import AssetTabs from "./AssetTabs";
 import useHooks from "./hooks";
-import UploadDropzone from "./UploadDropzone";
-import UploadList from "./UploadList";
+import Spinner from "./Spinner";
+import { AssetOrigin } from "./types";
 import { FORMAT_LABELS, needsLayerNames } from "./utils";
+import UploadDropzone from "./Visualizer/UploadDropzone";
+import UploadList from "./Visualizer/UploadList";
 
 type Props = {
   sceneId: string;
+  origin: AssetOrigin;
   onClose: () => void;
   onSubmit: (layerAddInp: LayerAddProps) => void;
 };
 
-const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
+const AssetLayerCreator: FC<Props> = ({
+  sceneId,
+  origin,
+  onClose,
+  onSubmit
+}) => {
   const t = useT();
   const theme = useTheme();
   const {
@@ -81,7 +89,7 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
     handleSelect,
     handleBack,
     handleSubmit
-  } = useHooks({ sceneId, onClose, onSubmit });
+  } = useHooks({ sceneId, origin, onClose, onSubmit });
 
   const [, setNotification] = useNotification();
   const handleCopyUrl = useCallback(async () => {
@@ -103,7 +111,9 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
   return (
     <Modal width={880} visible dataTestid="asset-layer-creator-modal">
       <ModalPanel
-        header={<AssetTabs value={tab} onChange={handleTabChange} />}
+        header={
+          <AssetTabs origin={origin} value={tab} onChange={handleTabChange} />
+        }
         onCancel={onClose}
         withBackground
         actions={
@@ -293,11 +303,7 @@ const AssetLayerCreator: FC<Props> = ({ sceneId, onClose, onSubmit }) => {
           </ContentWrapper>
           {checking && (
             <CheckWrapper data-testid="asset-layer-creator-checking">
-              <Spinner aria-hidden>
-                {SPOKES.map((i) => (
-                  <Spoke key={i} index={i} />
-                ))}
-              </Spinner>
+              <Spinner />
               {t("Checking the model")}
             </CheckWrapper>
           )}
@@ -353,36 +359,6 @@ const CheckWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.h5,
   fontWeight: theme.fonts.weight.regular
-}));
-
-// Eight spokes fading in turn around the centre.
-const SPOKES = [0, 1, 2, 3, 4, 5, 6, 7];
-
-const fade = keyframes`
-  from { opacity: 1; }
-  to { opacity: 0.2; }
-`;
-
-const Spinner = styled("div")(() => ({
-  position: css.position.relative,
-  width: 20,
-  height: 20
-}));
-
-const Spoke = styled("span", {
-  shouldForwardProp: (prop) => prop !== "index"
-})<{ index: number }>(({ theme, index }) => ({
-  position: css.position.absolute,
-  left: 9,
-  top: 0,
-  width: 2,
-  height: 6,
-  borderRadius: 1,
-  background: theme.content.main,
-  transformOrigin: "1px 10px",
-  transform: `rotate(${index * 45}deg)`,
-  animation: `${fade} 0.8s linear infinite`,
-  animationDelay: `${(index - SPOKES.length) * 0.1}s`
 }));
 
 // Over the assets, just above the footer.

@@ -144,11 +144,23 @@ Project: プロジェクト
 Uploaded at: アップロード日時
 No assets found: アセットが見つかりません
 Try adjusting your search or filters: 検索条件やフィルターを変更してみてください
+Details: 詳細
 Model: モデル
-Visualizer Project Assets: Visualizerプロジェクトアセット
 CMS Assets: CMSアセット
 CMS Models: CMSモデル
+Visualizer Project Assets: Visualizerプロジェクトアセット
 Edits to the model in CMS will update added layer automatically: CMSでモデルを編集すると、追加したレイヤーも自動的に更新されます
+'{{format}} can''t be previewed here. Add it as a layer to see it on the map, or open it in CMS.': '{{format}}はここではプレビューできません。レイヤーとして追加すると地図上で確認できます。CMSで開くこともできます。'
+This asset is private. Make it public in CMS to preview it or add it as a layer.: このアセットは非公開です。プレビューやレイヤーとして追加するには、CMSで公開してください。
+This file is too large to preview. Files up to 10 MB can be previewed.: ファイルが大きすぎるためプレビューできません。プレビューできるのは10 MBまでのファイルです。
+Couldn't load the preview. Close and reopen to try again.: プレビューを読み込めませんでした。閉じてから再度開いてください。
+Loading preview...: プレビューを読み込み中...
+No geometry field, so this model can't be added as a layer.: ジオメトリフィールドがないため、このモデルはレイヤーとして追加できません。
+First {{shown}} of {{total}} items: 全{{total}}件中、最初の{{shown}}件
+Latitude and longitude columns found: 緯度・経度の列が見つかりました
+'{{count}} features_other': '{{count}}件のフィーチャー'
+Close: 閉じる
+Open in CMS: CMSで開く
 All formats: すべての形式
 All CMS projects: すべてのCMSプロジェクト
 No Geometry field was found in this model, so GeoJSON export is not available.: このモデルにはジオメトリフィールドがないため、GeoJSONとして出力できません。
@@ -171,7 +183,6 @@ The development of the KML format is still in the experimental stage and not ver
 Hosted by CMS: CMSでホスト
 Copy: コピー
 Checking the model: モデルを確認しています
-Close: 閉じる
 Submit: 反映
 This file format is not supported. Please use GeoJSON, CSV, KML or CZML.: このファイル形式には対応していません。GeoJSON、CSV、KML、CZMLのいずれかを使用してください。
 The file cannot be greater than {{size}} MB. Please use a smaller file.: ファイルサイズは{{size}}MB以下にしてください。より小さいファイルを使用してください。
@@ -185,6 +196,8 @@ Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
 Re:Earth Buildings: Re:Earth Buildings
 Add from Assets: アセットから追加
 Upload new files or pick existing ones: 新しいファイルをアップロード、または既存のファイルを選択
+Add from CMS: CMSから追加
+Pick assets or models from Re:Earth CMS: Re:Earth CMSのアセットまたはモデルを選択
 Add from URL: URLから追加
 Link to externally hosted data: 外部でホストされているデータにリンク
 Add from Value: 値から追加
