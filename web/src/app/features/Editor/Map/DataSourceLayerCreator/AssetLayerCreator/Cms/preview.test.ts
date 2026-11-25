@@ -176,30 +176,43 @@ describe("features", () => {
   });
 });
 
+// A response whose body is read in the given pieces, then ends, or never
+// ends when `endless`. (A real Response can't take the test environment's
+// ReadableStream on every Node version.)
+const fakeResponse = (pieces: Uint8Array[], endless = false) => {
+  const state = { reads: 0, cancelled: false };
+  const reader = {
+    read: async () => {
+      const value = endless ? pieces[0] : pieces[state.reads];
+      state.reads++;
+      return value ? { done: false, value } : { done: true, value: undefined };
+    },
+    cancel: async () => {
+      state.cancelled = true;
+    }
+  };
+  const res = { body: { getReader: () => reader } } as unknown as Response;
+  return { res, state };
+};
+
 describe("readBody", () => {
   test("stops and cancels a download once it's over the limit", async () => {
     const chunk = new Uint8Array(1024 * 1024);
-    let pulled = 0;
-    let cancelled = false;
     // Endless, as if the size were unknown.
-    const reader = {
-      read: async () => {
-        pulled++;
-        return { done: false, value: chunk };
-      },
-      cancel: async () => {
-        cancelled = true;
-      }
-    };
-    const res = { body: { getReader: () => reader } } as unknown as Response;
+    const { res, state } = fakeResponse([chunk], true);
     expect(await readBody(res, () => false)).toBe(false);
-    expect(cancelled).toBe(true);
-    expect(pulled * chunk.length).toBeLessThan(MAX_PREVIEW_BYTES * 1.5);
+    expect(state.cancelled).toBe(true);
+    expect(state.reads * chunk.length).toBeLessThan(MAX_PREVIEW_BYTES * 1.5);
   });
 
   test("reads a body within the limit", async () => {
+    const encoder = new TextEncoder();
+    const { res } = fakeResponse([
+      encoder.encode("a,b\n"),
+      encoder.encode("1,2")
+    ]);
     let text = "";
-    const complete = await readBody(new Response("a,b\n1,2"), (piece) => {
+    const complete = await readBody(res, (piece) => {
       text += piece;
       return false;
     });
