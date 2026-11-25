@@ -90,7 +90,7 @@ const DataSourceLayerCreator = () => {
       },
       // Adding layers from CMS is still under development, so it is gated by
       // dev mode.
-      ...(!config()?.devMode
+      ...(config()?.devMode
         ? [
             {
               id: "add-from-cms",
