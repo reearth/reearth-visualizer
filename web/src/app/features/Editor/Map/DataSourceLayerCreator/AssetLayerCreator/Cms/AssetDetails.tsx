@@ -51,6 +51,15 @@ const AssetDetails: FC<Props> = ({ asset, tab, reference, onClose }) => {
     ]
   });
 
+  // Escape closes the details; nothing else in the modal handles it.
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   // Loaded again only when what the preview is made from changes.
   const isModel = tab === "cmsModels";
   const { url, size, private: isPrivate, format } = asset;

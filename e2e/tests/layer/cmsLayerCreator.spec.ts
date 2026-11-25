@@ -153,7 +153,7 @@ test.describe("Add Layer from CMS", () => {
     projectScreen = new ProjectScreenPage(page);
     assetLayerCreator = new AssetLayerCreatorPage(page);
 
-    await assetLayerCreator.enableDevMode();
+    await assetLayerCreator.enableDevMode({ cmsUrl: MOCK_HOST });
     graphQLCalls = await assetLayerCreator.mockGraphQL({
       GetCMSProjects: () => ({
         cmsProjects: {
@@ -304,9 +304,10 @@ test.describe("Add Layer from CMS", () => {
       "Ueno Park538,500city",
       "Yoyogi Park540,529metro"
     ]);
+    // Built from the config's cmsUrl and the CMS project's workspace.
     await expect(assetLayerCreator.openInCmsLink).toHaveAttribute(
       "href",
-      `${MOCK_HOST}/editor/model-roads`
+      `${MOCK_HOST}/workspace/ws/project/cms-p1/content/model-roads`
     );
     await expect(assetLayerCreator.submitButton).toBeDisabled();
 

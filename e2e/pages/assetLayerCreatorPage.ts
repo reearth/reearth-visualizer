@@ -153,12 +153,16 @@ export class AssetLayerCreatorPage {
   }
 
   // The CMS tabs are only shown in dev mode, so it is turned on in the app's
-  // config whatever the environment sets.
-  async enableDevMode() {
+  // config whatever the environment sets, along with any other `settings`
+  // (such as the cmsUrl that "Open in CMS" links to).
+  async enableDevMode(settings: Record<string, unknown> = {}) {
     await this.page.route("**/reearth_config.json", async (route) => {
       const response = await route.fetch();
       const config = await response.json();
-      await route.fulfill({ response, json: { ...config, devMode: true } });
+      await route.fulfill({
+        response,
+        json: { ...config, devMode: true, ...settings }
+      });
     });
   }
 

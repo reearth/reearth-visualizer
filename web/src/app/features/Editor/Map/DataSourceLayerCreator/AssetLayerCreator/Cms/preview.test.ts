@@ -3,12 +3,12 @@ import { describe, expect, test } from "vitest";
 import {
   MAX_PREVIEW_BYTES,
   cellText,
+  csvReader,
   csvTable,
   czmlFeatures,
   geojsonFeatures,
   itemsTable,
   kmlFeatures,
-  parseCsvLine,
   quickPreview,
   summarize
 } from "./preview";
@@ -46,20 +46,35 @@ describe("quickPreview", () => {
 
 describe("csvTable", () => {
   test("the first rows, and whether there are coordinate columns", () => {
-    expect(csvTable(["name,lat,lng", "Tokyo,35.681,139.767"])).toEqual({
+    expect(
+      csvTable([
+        ["name", "lat", "lng"],
+        ["Tokyo", "35.681", "139.767"]
+      ])
+    ).toEqual({
       type: "table",
       columns: ["name", "lat", "lng"],
       rows: [["Tokyo", "35.681", "139.767"]],
       hasLatLng: true
     });
-    expect(csvTable(["name,ward"])).toMatchObject({ hasLatLng: false });
+    expect(csvTable([["name", "ward"]])).toMatchObject({ hasLatLng: false });
   });
 
-  test("quoted fields", () => {
-    expect(parseCsvLine('a,"b, c","say ""hi"""')).toEqual([
-      "a",
-      "b, c",
-      'say "hi"'
+  test("quoted fields, and records across pieces of text", () => {
+    const read = csvReader();
+    read('a,"b, c","say ""h');
+    expect(read('i"""\r\n\r\nname,"north\r\nsouth"\n')).toEqual([
+      ["a", "b, c", 'say "hi"'],
+      ["name", "north\r\nsouth"]
+    ]);
+  });
+
+  test("a record is complete only at its newline", () => {
+    const read = csvReader();
+    expect(read("a,b\nc,d")).toEqual([["a", "b"]]);
+    expect(read("\n")).toEqual([
+      ["a", "b"],
+      ["c", "d"]
     ]);
   });
 });

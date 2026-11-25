@@ -176,7 +176,11 @@ const AssetContents: FC<Props> = ({
                 size={50}
                 color={theme.content.weak}
               />
-              <Typography size="h5">{t("No assets found")}</Typography>
+              <Typography size="h5">
+                {tab === "cmsModels"
+                  ? t("No models found")
+                  : t("No assets found")}
+              </Typography>
               <Typography size="body" color={theme.content.weak}>
                 {t("Try adjusting your search or filters")}
               </Typography>

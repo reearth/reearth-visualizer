@@ -14,7 +14,7 @@ type Props = {
 };
 
 // The modal's header bar: a title for Visualizer assets, or tabs for CMS
-// assets and models.
+// assets and models, selectable with Enter or Space.
 const AssetTabs: FC<Props> = ({ origin, value, onChange }) => {
   const t = useT();
   const theme = useTheme();
@@ -43,9 +43,15 @@ const AssetTabs: FC<Props> = ({ origin, value, onChange }) => {
           <Tab
             key={id}
             role="tab"
+            tabIndex={0}
             aria-selected={selected}
             selected={selected}
             onClick={() => onChange(id)}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter" && e.key !== " ") return;
+              e.preventDefault();
+              onChange(id);
+            }}
             data-testid={`asset-layer-creator-tab-${id}`}
           >
             <Icon icon={icon} size="small" color={theme.warning.main} />
@@ -94,7 +100,11 @@ const Tab = styled("div", {
   padding: `0 ${theme.spacing.normal}px`,
   cursor: css.cursor.pointer,
   background: selected ? theme.select.weaker : "transparent",
-  borderBottom: `2px solid ${selected ? theme.select.main : "transparent"}`
+  borderBottom: `2px solid ${selected ? theme.select.main : "transparent"}`,
+  "&:focus-visible": {
+    outline: `1px solid ${theme.select.main}`,
+    outlineOffset: -1
+  }
 }));
 
 export default AssetTabs;

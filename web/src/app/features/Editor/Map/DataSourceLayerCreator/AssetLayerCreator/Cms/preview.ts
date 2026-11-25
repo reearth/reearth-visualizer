@@ -97,7 +97,10 @@ export const loadPreview = async (
     const res = await fetch(asset.url, { signal: controller.signal });
     if (!res.ok) return { type: "error" };
     const format = assetFormat(asset);
-    if (format === "csv") return csvTable(await readLines(res, CSV_ROWS + 1));
+    if (format === "csv") {
+      const records = await readCsv(res, CSV_ROWS + 1);
+      return records ? csvTable(records) : { type: "tooLarge" };
+    }
     // Not every server states the size up front, so it's checked here too.
     if (Number(res.headers.get("content-length")) > MAX_PREVIEW_BYTES)
       return { type: "tooLarge" };
@@ -154,26 +157,33 @@ export const cellText = (value: unknown): string | undefined => {
   return String(value).replace(/^(\d{4}-\d{2}-\d{2})T.*/, "$1");
 };
 
-// The first non-empty lines, reading no more of the file than they need.
-const readLines = async (res: Response, count: number) => {
+// The first non-empty records, reading no more of the file than they need.
+// Undefined when they aren't found in the first MAX_PREVIEW_BYTES.
+const readCsv = async (res: Response, count: number) => {
   const reader = res.body?.getReader();
   const decoder = new TextDecoder();
-  let text = "";
-  for (;;) {
-    const chunk = await reader?.read();
-    text += decoder.decode(chunk?.value, { stream: !chunk?.done });
-    const lines = text.split(/\r?\n/).filter((l) => l.trim());
-    // While reading, the last line may be cut short, so one more is needed.
-    if (!chunk || chunk.done || lines.length > count) {
-      reader?.cancel().catch(() => undefined);
-      return lines.slice(0, count);
+  const read = csvReader();
+  let bytes = 0;
+  try {
+    for (;;) {
+      const chunk = await reader?.read();
+      const done = !chunk || chunk.done;
+      bytes += chunk?.value?.length ?? 0;
+      // A newline at the end completes the last record.
+      const records = read(
+        decoder.decode(chunk?.value, { stream: !done }) + (done ? "\n" : "")
+      );
+      if (done || records.length >= count) return records.slice(0, count);
+      if (bytes > MAX_PREVIEW_BYTES) return undefined;
     }
+  } finally {
+    reader?.cancel().catch(() => undefined);
   }
 };
 
-export const csvTable = (lines: string[]): AssetPreview => {
-  if (!lines.length) return { type: "error" };
-  const [columns, ...rows] = lines.map(parseCsvLine);
+export const csvTable = (records: string[][]): AssetPreview => {
+  if (!records.length) return { type: "error" };
+  const [columns, ...rows] = records;
   const names = columns.map((c) => c.trim().toLowerCase());
   const has = (options: string[]) => names.some((n) => options.includes(n));
   return {
@@ -186,19 +196,30 @@ export const csvTable = (lines: string[]): AssetPreview => {
   };
 };
 
-// One line, with quoted fields ("a, b", and "" for a quote).
-export const parseCsvLine = (line: string): string[] => {
-  const fields = [""];
+// Reads CSV text, piece by piece, into its non-empty records: fields split
+// by commas and records by newlines, except within quotes ("a, b", a line
+// break, and "" for a quote). Each call returns all records completed so far.
+export const csvReader = () => {
+  const records: string[][] = [];
+  let record = [""];
   let quoted = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (c === '"' && quoted && line[i + 1] === '"')
-      fields[fields.length - 1] += line[i++];
-    else if (c === '"') quoted = !quoted;
-    else if (c === "," && !quoted) fields.push("");
-    else fields[fields.length - 1] += c;
-  }
-  return fields;
+  let last = "";
+  return (text: string) => {
+    for (const c of text) {
+      if (c === '"') {
+        // A quote right after a closing one is a quote within the field.
+        if (!quoted && last === '"') record[record.length - 1] += c;
+        quoted = !quoted;
+      } else if (quoted) record[record.length - 1] += c;
+      else if (c === ",") record.push("");
+      else if (c === "\n") {
+        if (record.some((f) => f.trim())) records.push(record);
+        record = [""];
+      } else if (c !== "\r") record[record.length - 1] += c;
+      last = c;
+    }
+    return records;
+  };
 };
 
 // Features: KML and CZML are read as GeoJSON, then summarized.
@@ -254,16 +275,24 @@ export const shapePaths = (
   { width, height }: { width: number; height: number },
   pad = 8
 ) => {
-  const all = shapes.flatMap((s) => s.rings.flat());
-  const lngs = all.map((p) => p[0]);
-  const lats = all.map((p) => p[1]);
-  const [minLng, minLat, maxLat] = [
-    Math.min(...lngs),
-    Math.min(...lats),
-    Math.max(...lats)
+  // Found in a loop: spreading every position into Math.min would exceed
+  // the engine's argument limit for a large shape.
+  let [minLng, maxLng, minLat, maxLat] = [
+    Infinity,
+    -Infinity,
+    Infinity,
+    -Infinity
   ];
+  for (const { rings } of shapes)
+    for (const ring of rings)
+      for (const [lng, lat] of ring) {
+        minLng = Math.min(minLng, lng);
+        maxLng = Math.max(maxLng, lng);
+        minLat = Math.min(minLat, lat);
+        maxLat = Math.max(maxLat, lat);
+      }
   const kx = Math.cos(((minLat + maxLat) / 360) * Math.PI);
-  const w = (Math.max(...lngs) - minLng) * kx || 1;
+  const w = (maxLng - minLng) * kx || 1;
   const h = maxLat - minLat || 1;
   const scale = Math.min((width - pad * 2) / w, (height - pad * 2) / h);
   const xy = ([lng, lat]: number[]) => [
