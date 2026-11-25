@@ -67,8 +67,9 @@ export const assetFormat = (
 // The list view's grid columns on each tab, shared by its header and rows.
 export const LIST_COLUMNS: Record<AssetTab, string> = {
   visualizer: "1fr 120px 140px",
-  cmsAssets: "minmax(0, 1.4fr) minmax(0, 1fr) 80px 120px",
-  cmsModels: "minmax(0, 1.4fr) minmax(0, 1fr) 140px"
+  // CMS rows end with an info button.
+  cmsAssets: "minmax(0, 1.4fr) minmax(0, 1fr) 80px 120px 24px",
+  cmsModels: "minmax(0, 1.4fr) minmax(0, 1fr) 140px 24px"
 };
 
 const MVT_TEMPLATE = "{z}/{x}/{y}.mvt";

@@ -49,7 +49,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
   actions,
   actionsPosition = "start",
   size = "medium",
-  iconSize= "small",
+  iconSize = "small",
   layout = "grid",
   borderedLayoutButtons,
   onLayoutChange,
@@ -206,6 +206,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
               onClick={(e) => handleLayoutChange(e, "grid")}
             />
             <IconButton
+              data-testid="list-layout"
               icon="list"
               appearance="simple"
               active={layout === "list"}

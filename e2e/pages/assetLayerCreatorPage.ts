@@ -23,6 +23,8 @@ export class AssetLayerCreatorPage {
   backButton: Locator;
   submitButton: Locator;
   cancelButton: Locator;
+  gridLayoutButton: Locator;
+  listLayoutButton: Locator;
   details: Locator;
   detailsTable: Locator;
   detailsColumns: Locator;
@@ -54,6 +56,8 @@ export class AssetLayerCreatorPage {
     this.backButton = this.page.getByTestId("asset-layer-creator-back");
     this.submitButton = this.page.getByTestId("asset-layer-creator-submit");
     this.cancelButton = this.page.getByTestId("asset-layer-creator-cancel");
+    this.gridLayoutButton = this.modal.getByTestId("grid-layout");
+    this.listLayoutButton = this.modal.getByTestId("list-layout");
     this.details = this.page.getByTestId("asset-layer-creator-details");
     this.detailsTable = this.details.getByRole("table");
     this.detailsColumns = this.detailsTable.getByRole("columnheader");
@@ -74,12 +78,17 @@ export class AssetLayerCreatorPage {
   card = (id: string): Locator =>
     this.page.getByTestId(`asset-layer-creator-card-${id}`);
 
-  // Opens a CMS card's details from its info button, without selecting it.
+  row = (id: string): Locator =>
+    this.page.getByTestId(`asset-layer-creator-row-${id}`);
+
+  // A CMS card's or row's info button.
+  infoButton = (id: string): Locator =>
+    this.page.getByTestId(`asset-layer-creator-info-${id}`).getByRole("button");
+
+  // Opens a CMS card's or row's details from its info button, without
+  // selecting it.
   async openDetails(id: string) {
-    await this.page
-      .getByTestId(`asset-layer-creator-info-${id}`)
-      .getByRole("button")
-      .click();
+    await this.infoButton(id).click();
     await expect(this.details).toBeVisible();
   }
 

@@ -315,6 +315,28 @@ test.describe("Add Layer from CMS", () => {
     await assetLayerCreator.cancel();
   });
 
+  test("Models: list view opens a row's details left of its info button", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EXTL-008" });
+    await openTab("cmsModels");
+    await assetLayerCreator.listLayoutButton.click();
+    await expect(assetLayerCreator.row("model-roads")).toBeVisible();
+    await assetLayerCreator.openDetails("model-roads");
+
+    await expect(assetLayerCreator.details).toContainText(
+      "First 2 of 1,248 items"
+    );
+    const details = await assetLayerCreator.details.boundingBox();
+    const info = await assetLayerCreator
+      .infoButton("model-roads")
+      .boundingBox();
+    expect(details && info && details.x + details.width <= info.x).toBe(true);
+    await expect(assetLayerCreator.submitButton).toBeDisabled();
+
+    await assetLayerCreator.closeDetails();
+    await assetLayerCreator.gridLayoutButton.click();
+    await assetLayerCreator.cancel();
+  });
+
   test("Models: warns in the preview that a model has no geometry field", async () => {
     test.info().annotations.push({ type: "story", description: "US-EXTL-008" });
     await openTab("cmsModels");

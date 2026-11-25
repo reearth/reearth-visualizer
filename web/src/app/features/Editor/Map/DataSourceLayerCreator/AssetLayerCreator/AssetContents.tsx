@@ -74,20 +74,21 @@ const AssetContents: FC<Props> = ({
   const t = useT();
   const theme = useTheme();
 
-  // The CMS card whose details are open, one at a time. Closed when the tab
-  // changes, or when its card is no longer shown.
+  // The CMS item whose details are open, one at a time, next to its card or
+  // its row's info button. Closed when the tab or layout changes, or when the
+  // item is no longer shown.
   const isCmsTab = tab !== "visualizer";
-  const [details, setDetails] = useState<{ id: string; card: HTMLElement }>();
-  const detailsAsset =
-    details && layout === "grid"
-      ? assets.find((a) => a.id === details.id)
-      : undefined;
+  const [details, setDetails] = useState<{
+    id: string;
+    reference: HTMLElement;
+  }>();
+  const detailsAsset = details && assets.find((a) => a.id === details.id);
   const closeDetails = useCallback(() => setDetails(undefined), []);
   const openDetails = useCallback(
-    (id: string, card: HTMLElement) => setDetails({ id, card }),
+    (id: string, reference: HTMLElement) => setDetails({ id, reference }),
     []
   );
-  useEffect(() => setDetails(undefined), [tab]);
+  useEffect(() => setDetails(undefined), [tab, layout]);
   useEffect(() => {
     if (details && !detailsAsset) setDetails(undefined);
   }, [details, detailsAsset]);
@@ -163,6 +164,7 @@ const AssetContents: FC<Props> = ({
               <span>
                 {tab === "cmsModels" ? t("Created") : t("Uploaded at")}
               </span>
+              {isCmsTab && <span />}
             </ListHeader>
           </ListHeaderWrapper>
         )}
@@ -207,6 +209,7 @@ const AssetContents: FC<Props> = ({
                   tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
+                  onInfo={isCmsTab ? openDetails : undefined}
                 />
               ))}
             </List>
@@ -218,7 +221,8 @@ const AssetContents: FC<Props> = ({
           key={detailsAsset.id}
           asset={detailsAsset}
           tab={tab}
-          reference={details.card}
+          reference={details.reference}
+          side={layout === "grid" ? "right" : "left"}
           onClose={closeDetails}
         />
       )}

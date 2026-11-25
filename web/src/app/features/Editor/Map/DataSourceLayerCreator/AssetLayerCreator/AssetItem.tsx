@@ -97,11 +97,19 @@ export const AssetCard: FC<
   );
 };
 
-// List view, with columns per tab (see LIST_COLUMNS):
-
-export const AssetRow: FC<Props & { tab: AssetTab }> = ({ tab, ...props }) => {
+// List view, with columns per tab (see LIST_COLUMNS). CMS rows end with an
+// info button that opens their details without selecting them, next to the
+// button.
+export const AssetRow: FC<
+  Props & {
+    tab: AssetTab;
+    onInfo?: (id: string, button: HTMLElement) => void;
+  }
+> = ({ tab, onInfo, ...props }) => {
+  const t = useT();
   const { asset, selected } = props;
   const isModel = tab === "cmsModels";
+  const infoRef = useRef<HTMLSpanElement>(null);
   return (
     <Row
       selected={selected}
@@ -122,6 +130,22 @@ export const AssetRow: FC<Props & { tab: AssetTab }> = ({ tab, ...props }) => {
       {tab !== "visualizer" && <Ellipsis>{asset.projectName}</Ellipsis>}
       {!isModel && <Cell>{formatBytes(asset.size)}</Cell>}
       <Cell>{formatDate(asset.createdAt)}</Cell>
+      {onInfo && (
+        <span
+          ref={infoRef}
+          onKeyDown={(e) => e.stopPropagation()}
+          data-testid={`asset-layer-creator-info-${asset.id}`}
+        >
+          <IconButton
+            icon="informationCircle"
+            size="small"
+            appearance="simple"
+            ariaLabel={t("Details")}
+            stopPropagationOnClick
+            onClick={() => infoRef.current && onInfo(asset.id, infoRef.current)}
+          />
+        </span>
+      )}
     </Row>
   );
 };

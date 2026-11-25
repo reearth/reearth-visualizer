@@ -26,27 +26,31 @@ import { Shape, loadPreview, quickPreview, shapePaths } from "./preview";
 type Props = {
   asset: LayerAsset;
   tab: AssetTab;
-  // The card it belongs to.
+  // Its card, or its row's info button.
   reference: HTMLElement;
+  // Where it opens: right of a card, left of a row's info button. It opens
+  // on the other side when there's no room.
+  side: "left" | "right";
   onClose: () => void;
 };
 
 const BOX = { width: 284, height: 90 };
 const MIN_LOADING_MS = 1000;
 
-// A CMS asset's or model's details, opened from its card's info button: a
-// preview of its data, and a link to it in CMS. Shown to the right of the
-// card, or to the left when there's no room.
-const AssetDetails: FC<Props> = ({ asset, tab, reference, onClose }) => {
+// A CMS asset's or model's details, opened from its card's or row's info
+// button: a preview of its data, and a link to it in CMS.
+const AssetDetails: FC<Props> = ({ asset, tab, reference, side, onClose }) => {
   const t = useT();
   const theme = useTheme();
   const { refs, floatingStyles } = useFloating({
-    placement: "right-start",
+    placement: `${side}-start`,
     elements: { reference },
     whileElementsMounted: autoUpdate,
     middleware: [
       offset(8),
-      flip({ fallbackPlacements: ["left-start"] }),
+      flip({
+        fallbackPlacements: [side === "right" ? "left-start" : "right-start"]
+      }),
       shift({ padding: 8 })
     ]
   });
