@@ -75,6 +75,11 @@ func initPublicAPIEcho(ctx context.Context, cfg *ServerConfig, otelServiceName o
 	if cfg.Config.UseMockAuth() {
 		v1.Use(attachOpMiddlewareMockUser(cfg))
 	} else {
+		// Release builds only: debug builds also accept X-Reearth-Debug-User
+		// without a token.
+		if !cfg.Debug {
+			v1.Use(apiv1.RequireBearerToken)
+		}
 		v1.Use(attachOpMiddlewareReearthAccounts(cfg))
 	}
 	v1.Use(

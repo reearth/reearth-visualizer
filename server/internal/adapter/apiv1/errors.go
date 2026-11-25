@@ -69,6 +69,27 @@ func RequireOperator(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+// RequireBearerToken answers requests that carry no bearer token with 401
+// before the auth middleware runs, so anonymous traffic (scanners, bots) does
+// not cost a call to reearth-accounts and a set of warning logs per request.
+// A token that is present is still verified by reearth-accounts as before.
+func RequireBearerToken(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if bearerToken(c.Request().Header.Get(echo.HeaderAuthorization)) == "" {
+			return errUnauthorized
+		}
+		return next(c)
+	}
+}
+
+func bearerToken(h string) string {
+	scheme, token, ok := strings.Cut(h, " ")
+	if !ok || !strings.EqualFold(scheme, "Bearer") {
+		return ""
+	}
+	return strings.TrimSpace(token)
+}
+
 // ErrorHandler writes every error as the Error schema. Expected failures are
 // answered with their class's status; anything else is logged and hidden
 // behind a generic 500.
