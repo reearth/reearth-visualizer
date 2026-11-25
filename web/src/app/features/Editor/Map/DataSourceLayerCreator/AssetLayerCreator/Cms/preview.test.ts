@@ -10,6 +10,7 @@ import {
   itemsTable,
   kmlFeatures,
   quickPreview,
+  readBody,
   summarize
 } from "./preview";
 
@@ -172,5 +173,37 @@ describe("features", () => {
         properties: undefined
       }
     ]);
+  });
+});
+
+describe("readBody", () => {
+  test("stops and cancels a download once it's over the limit", async () => {
+    const chunk = new Uint8Array(1024 * 1024);
+    let pulled = 0;
+    let cancelled = false;
+    // Endless, as if the size were unknown.
+    const reader = {
+      read: async () => {
+        pulled++;
+        return { done: false, value: chunk };
+      },
+      cancel: async () => {
+        cancelled = true;
+      }
+    };
+    const res = { body: { getReader: () => reader } } as unknown as Response;
+    expect(await readBody(res, () => false)).toBe(false);
+    expect(cancelled).toBe(true);
+    expect(pulled * chunk.length).toBeLessThan(MAX_PREVIEW_BYTES * 1.5);
+  });
+
+  test("reads a body within the limit", async () => {
+    let text = "";
+    const complete = await readBody(new Response("a,b\n1,2"), (piece) => {
+      text += piece;
+      return false;
+    });
+    expect(complete).toBe(true);
+    expect(text).toBe("a,b\n1,2");
   });
 });

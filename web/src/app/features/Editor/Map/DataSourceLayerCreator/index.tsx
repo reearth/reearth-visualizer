@@ -1,5 +1,6 @@
 import { Button, PopupMenu, PopupMenuItem } from "@reearth/app/lib/reearth-ui";
 import { config } from "@reearth/services/config";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
@@ -88,9 +89,8 @@ const DataSourceLayerCreator = () => {
         icon: "floppyDisk",
         onClick: openAssetLayerCreator
       },
-      // Adding layers from CMS is still under development, so it is gated by
-      // dev mode.
-      ...(!config()?.devMode
+      // Adding layers from CMS is part of the EE feature collection.
+      ...(appFeature().cmsLayerCreator
         ? [
             {
               id: "add-from-cms",

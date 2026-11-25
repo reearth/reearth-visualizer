@@ -101,10 +101,11 @@ export const loadPreview = async (
       const records = await readCsv(res, CSV_ROWS + 1);
       return records ? csvTable(records) : { type: "tooLarge" };
     }
-    // Not every server states the size up front, so it's checked here too.
+    // Too large if the server says so up front, or once more has arrived.
     if (Number(res.headers.get("content-length")) > MAX_PREVIEW_BYTES)
       return { type: "tooLarge" };
-    const text = await res.text();
+    const text = await readText(res);
+    if (text === undefined) return { type: "tooLarge" };
     return summarize(
       format === "kml"
         ? kmlFeatures(text)
@@ -157,28 +158,52 @@ export const cellText = (value: unknown): string | undefined => {
   return String(value).replace(/^(\d{4}-\d{2}-\d{2})T.*/, "$1");
 };
 
-// The first non-empty records, reading no more of the file than they need.
-// Undefined when they aren't found in the first MAX_PREVIEW_BYTES.
-const readCsv = async (res: Response, count: number) => {
+// Reads the body as text, piece by piece, until `read` has enough (returns
+// true) or the body ends. False when it's over MAX_PREVIEW_BYTES first,
+// counted as it arrives: neither asset metadata nor Content-Length can be
+// relied on. The download is cancelled when reading stops.
+export const readBody = async (
+  res: Response,
+  read: (text: string, done: boolean) => boolean
+) => {
   const reader = res.body?.getReader();
   const decoder = new TextDecoder();
-  const read = csvReader();
   let bytes = 0;
   try {
     for (;;) {
       const chunk = await reader?.read();
       const done = !chunk || chunk.done;
       bytes += chunk?.value?.length ?? 0;
-      // A newline at the end completes the last record.
-      const records = read(
-        decoder.decode(chunk?.value, { stream: !done }) + (done ? "\n" : "")
-      );
-      if (done || records.length >= count) return records.slice(0, count);
-      if (bytes > MAX_PREVIEW_BYTES) return undefined;
+      if (read(decoder.decode(chunk?.value, { stream: !done }), done) || done)
+        return true;
+      if (bytes > MAX_PREVIEW_BYTES) return false;
     }
   } finally {
     reader?.cancel().catch(() => undefined);
   }
+};
+
+// The first non-empty records, reading no more of the file than they need.
+// Undefined when they aren't found in the first MAX_PREVIEW_BYTES.
+const readCsv = async (res: Response, count: number) => {
+  const read = csvReader();
+  let records: string[][] = [];
+  const complete = await readBody(res, (text, done) => {
+    // A newline at the end completes the last record.
+    records = read(done ? `${text}\n` : text);
+    return records.length >= count;
+  });
+  return complete ? records.slice(0, count) : undefined;
+};
+
+// The whole body as text; undefined when it's over MAX_PREVIEW_BYTES.
+const readText = async (res: Response) => {
+  let text = "";
+  const complete = await readBody(res, (piece) => {
+    text += piece;
+    return false;
+  });
+  return complete ? text : undefined;
 };
 
 export const csvTable = (records: string[][]): AssetPreview => {

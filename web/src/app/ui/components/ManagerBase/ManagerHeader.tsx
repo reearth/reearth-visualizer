@@ -206,7 +206,6 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
               onClick={(e) => handleLayoutChange(e, "grid")}
             />
             <IconButton
-              data-testid="list-layout"
               icon="list"
               appearance="simple"
               active={layout === "list"}

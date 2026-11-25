@@ -56,8 +56,9 @@ export class AssetLayerCreatorPage {
     this.backButton = this.page.getByTestId("asset-layer-creator-back");
     this.submitButton = this.page.getByTestId("asset-layer-creator-submit");
     this.cancelButton = this.page.getByTestId("asset-layer-creator-cancel");
-    this.gridLayoutButton = this.modal.getByTestId("grid-layout");
-    this.listLayoutButton = this.modal.getByTestId("list-layout");
+    // IconButton sets its own test ID from its icon.
+    this.gridLayoutButton = this.modal.getByTestId("icon-button-grid");
+    this.listLayoutButton = this.modal.getByTestId("icon-button-list");
     this.details = this.page.getByTestId("asset-layer-creator-details");
     this.detailsTable = this.details.getByRole("table");
     this.detailsColumns = this.detailsTable.getByRole("columnheader");
@@ -161,16 +162,16 @@ export class AssetLayerCreatorPage {
     );
   }
 
-  // The CMS tabs are only shown in dev mode, so it is turned on in the app's
-  // config whatever the environment sets, along with any other `settings`
-  // (such as the cmsUrl that "Open in CMS" links to).
-  async enableDevMode(settings: Record<string, unknown> = {}) {
+  // "Add from CMS" is part of the EE feature collection, so the app's config
+  // selects it whatever the environment sets, along with any other
+  // `settings` (such as the cmsUrl that "Open in CMS" links to).
+  async enableCms(settings: Record<string, unknown> = {}) {
     await this.page.route("**/reearth_config.json", async (route) => {
       const response = await route.fetch();
       const config = await response.json();
       await route.fulfill({
         response,
-        json: { ...config, devMode: true, ...settings }
+        json: { ...config, featureCollection: "ee", ...settings }
       });
     });
   }
