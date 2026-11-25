@@ -49,8 +49,10 @@ func expectAPIError(t *testing.T, r *httpexpect.Response, status int, code strin
 func TestAPIV1ServesOnlyTheAPI(t *testing.T) {
 	e := startPublicAPI(t)
 
-	e.GET("/api/ping").Expect().Status(http.StatusOK)
-	// The main server's routes are not part of this service.
+	// The main server's routes, including /api/ping and /api/health, are not
+	// part of this service.
+	e.GET("/api/ping").Expect().Status(http.StatusNotFound)
+	e.GET("/api/health").Expect().Status(http.StatusNotFound)
 	e.POST("/api/graphql").WithJSON(map[string]any{"query": "{ me { id } }"}).
 		WithHeader("X-Reearth-Debug-User", uID.String()).
 		Expect().Status(http.StatusNotFound)
