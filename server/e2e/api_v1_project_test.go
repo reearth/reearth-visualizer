@@ -1,14 +1,19 @@
 package e2e
 
 import (
+	"archive/zip"
+	"bytes"
+	"context"
 	"net/http"
+	"os"
 	"testing"
+	"time"
 
 	"github.com/gavv/httpexpect/v2"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,7 +21,8 @@ var publicApiConfig = &config.Config{
 	Dev:      true,
 	MockAuth: true,
 	Visualizer: config.VisualizerConfig{
-		PublicApi: config.PublicApiConfig{Active: true},
+		// SplitImport defaults to true when read from the environment.
+		PublicApi: config.PublicApiConfig{Active: true, SplitImport: true},
 	},
 }
 
@@ -53,8 +59,43 @@ func TestAPIV1ServesOnlyTheAPI(t *testing.T) {
 func TestAPIV1RequiresAUser(t *testing.T) {
 	e := startPublicAPI(t)
 
-	expectAPIError(t, apiV1(e, http.MethodGet, "/workspaces/"+wID.String()+"/projects", accountsID.UserID{}).Expect(),
-		http.StatusUnauthorized, "unauthorized")
+	for _, r := range []struct{ method, path string }{
+		{http.MethodGet, "/workspaces/" + wID.String() + "/projects"},
+		{http.MethodPost, "/workspaces/" + wID.String() + "/projects"},
+		{http.MethodGet, "/projects/" + pID.String()},
+		{http.MethodPatch, "/projects/" + pID.String()},
+		{http.MethodDelete, "/projects/" + pID.String()},
+		{http.MethodGet, "/projects/" + pID.String() + "/plugins"},
+		{http.MethodPost, "/projects/" + pID.String() + "/plugins"},
+		{http.MethodDelete, "/projects/" + pID.String() + "/plugins/reearth"},
+	} {
+		expectAPIError(t, apiV1(e, r.method, r.path, accountsID.UserID{}).Expect(),
+			http.StatusUnauthorized, "unauthorized")
+	}
+}
+
+func TestAPIV1GetProject(t *testing.T) {
+	e := startPublicAPI(t)
+
+	p := apiV1(e, http.MethodGet, "/projects/"+pID.String(), uID).Expect().
+		Status(http.StatusOK).JSON().Object()
+	p.HasValue("id", pID.String())
+	p.HasValue("workspaceId", wID.String())
+	p.HasValue("name", pName)
+	p.HasValue("deleted", false)
+	p.Value("createdAt").String().HasSuffix("Z")
+	p.Value("updatedAt").String().HasSuffix("Z")
+	p.NotContainsKey("basicAuthPassword")
+
+	// A reader of the workspace can see it.
+	apiV1(e, http.MethodGet, "/projects/"+pID.String(), uID3).Expect().Status(http.StatusOK)
+
+	// Someone outside the workspace gets 404, not 403, so IDs do not leak.
+	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/"+pID.String(), uID2).Expect(),
+		http.StatusNotFound, "not_found")
+
+	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/not-an-id", uID).Expect(),
+		http.StatusBadRequest, "invalid_input")
 }
 
 func TestAPIV1ListProjects(t *testing.T) {
@@ -95,12 +136,11 @@ func TestAPIV1ListProjects(t *testing.T) {
 }
 
 func TestAPIV1ListProjectsPagination(t *testing.T) {
-	e, r, _ := startServer(t, publicApiConfig, true, baseSeeder)
+	e := startPublicAPI(t)
 	path := "/workspaces/" + wID.String() + "/projects"
 	for _, name := range []string{"a", "b", "c"} {
-		p := project.New().NewID().Workspace(wID).Name(name).
-			Visualizer(visualizer.VisualizerCesium).CoreSupport(true).MustBuild()
-		require.NoError(t, r.Project.Save(t.Context(), p))
+		apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"name": name, "visibility": "private"}).
+			Expect().Status(http.StatusCreated)
 	}
 
 	seen := map[string]bool{}
@@ -129,4 +169,470 @@ func TestAPIV1ListProjectsPagination(t *testing.T) {
 	if len(seen) != 4 {
 		t.Fatalf("saw %d projects across pages, want 4", len(seen))
 	}
+}
+
+func TestAPIV1CreateProject(t *testing.T) {
+	e := startPublicAPI(t)
+	path := "/workspaces/" + wID.String() + "/projects"
+
+	p := apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "from cli", "description": "desc", "visibility": "private"}).
+		Expect().Status(http.StatusCreated).JSON().Object()
+	p.HasValue("name", "from cli")
+	p.HasValue("description", "desc")
+	p.HasValue("workspaceId", wID.String())
+	p.HasValue("visibility", "private")
+	// The scene is created with the project, so plugins can be installed at once.
+	p.Value("sceneId").String().NotEmpty()
+
+	created := p.Value("id").String().Raw()
+	apiV1(e, http.MethodGet, "/projects/"+created, uID).Expect().Status(http.StatusOK).
+		JSON().Object().HasValue("sceneId", p.Value("sceneId").String().Raw())
+	// Without an alias, the project gets "p-<id>".
+	p.HasValue("alias", "p-"+created)
+
+	apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "aliased", "visibility": "public", "alias": "cli-alias-test"}).
+		Expect().Status(http.StatusCreated).JSON().Object().HasValue("alias", "cli-alias-test")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "x", "visibility": "private", "alias": "cli-alias-test"}).Expect(),
+		http.StatusConflict, "conflict")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "x", "visibility": "private", "alias": "Bad Alias!"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "x", "visibility": "private", "alias": "ab"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"name": "", "visibility": "private"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "x", "visibility": "secret"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"name": "x"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithText("{").
+		WithHeader("Content-Type", "application/json").Expect(),
+		http.StatusBadRequest, "invalid_input")
+
+	// A reader cannot create projects.
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID3).WithJSON(map[string]any{"name": "x", "visibility": "private"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+}
+
+type denyPrivateProjects struct{}
+
+func (denyPrivateProjects) CheckPolicy(_ context.Context, req gateway.PolicyCheckRequest) (*gateway.PolicyCheckResponse, error) {
+	return &gateway.PolicyCheckResponse{
+		Allowed:   req.CheckType != gateway.PolicyCheckGeneralPrivateProjectCreation,
+		CheckType: req.CheckType,
+		Value:     req.Value,
+	}, nil
+}
+
+func TestAPIV1CreatePrivateProjectOnFreePlan(t *testing.T) {
+	e, _, g := startServer(t, publicApiConfig, true, baseSeeder)
+	g.PolicyChecker = denyPrivateProjects{}
+	path := "/workspaces/" + wID.String() + "/projects"
+
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "secret plans", "visibility": "private"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+	list := apiV1(e, http.MethodGet, path, uID).Expect().Status(http.StatusOK).JSON().Object()
+	for _, item := range list.Value("items").Array().Iter() {
+		item.Object().Value("name").String().NotEqual("secret plans")
+	}
+
+	apiV1(e, http.MethodPost, path, uID).
+		WithJSON(map[string]any{"name": "open plans", "visibility": "public"}).
+		Expect().Status(http.StatusCreated).JSON().Object().HasValue("visibility", "public")
+}
+
+type denyAllOperations struct{}
+
+func (denyAllOperations) CheckPolicy(_ context.Context, req gateway.PolicyCheckRequest) (*gateway.PolicyCheckResponse, error) {
+	return &gateway.PolicyCheckResponse{
+		Allowed:   req.CheckType != gateway.PolicyCheckGeneralOperationAllowed,
+		CheckType: req.CheckType,
+		Value:     req.Value,
+	}, nil
+}
+
+func TestAPIV1CreateProjectWithOverusedSeats(t *testing.T) {
+	e, _, g := startServer(t, publicApiConfig, true, baseSeeder)
+	g.PolicyChecker = denyAllOperations{}
+
+	expectAPIError(t, apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "x", "visibility": "public"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+}
+
+func TestAPIV1UpdateProject(t *testing.T) {
+	e := startPublicAPI(t)
+	path := "/projects/" + pID.String()
+
+	p := apiV1(e, http.MethodPatch, path, uID).
+		WithJSON(map[string]any{"name": "renamed", "starred": true}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	p.HasValue("name", "renamed")
+	p.HasValue("starred", true)
+	// Fields that were not given keep their value.
+	p.HasValue("description", pDesc)
+
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithJSON(map[string]any{}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithHeader("Content-Type", "application/json").Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID).WithJSON(map[string]any{"name": ""}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID3).WithJSON(map[string]any{"name": "x"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+	expectAPIError(t, apiV1(e, http.MethodPatch, path, uID2).WithJSON(map[string]any{"name": "x"}).Expect(),
+		http.StatusNotFound, "not_found")
+}
+
+func TestAPIV1DeleteProject(t *testing.T) {
+	e := startPublicAPI(t)
+	path := "/projects/" + pID.String()
+	list := "/workspaces/" + wID.String() + "/projects"
+
+	// A project must be in the trash before it can be deleted for good.
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID).WithQuery("permanent", true).Expect(),
+		http.StatusConflict, "conflict")
+
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID2).Expect(),
+		http.StatusNotFound, "not_found")
+
+	apiV1(e, http.MethodDelete, path, uID).Expect().Status(http.StatusNoContent)
+	apiV1(e, http.MethodGet, path, uID).Expect().Status(http.StatusOK).JSON().Object().HasValue("deleted", true)
+	apiV1(e, http.MethodGet, list, uID).Expect().Status(http.StatusOK).
+		JSON().Object().Value("items").Array().IsEmpty()
+	apiV1(e, http.MethodGet, list, uID).WithQuery("deleted", true).Expect().Status(http.StatusOK).
+		JSON().Object().Value("items").Array().Length().IsEqual(1)
+
+	// Moving it to the trash again is a no-op, but still needs write access.
+	apiV1(e, http.MethodDelete, path, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
+
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID3).WithQuery("permanent", true).Expect(),
+		http.StatusForbidden, "permission_denied")
+	expectAPIError(t, apiV1(e, http.MethodDelete, path, uID2).WithQuery("permanent", true).Expect(),
+		http.StatusNotFound, "not_found")
+
+	apiV1(e, http.MethodDelete, path, uID).WithQuery("permanent", true).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodGet, path, uID).Expect(), http.StatusNotFound, "not_found")
+}
+
+func TestAPIV1RestoreProject(t *testing.T) {
+	e := startPublicAPI(t)
+	path := "/projects/" + pID.String()
+	restore := path + "/restore"
+	list := "/workspaces/" + wID.String() + "/projects"
+
+	apiV1(e, http.MethodDelete, path, uID).Expect().Status(http.StatusNoContent)
+
+	// A reader cannot restore it.
+	expectAPIError(t, apiV1(e, http.MethodPost, restore, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
+
+	apiV1(e, http.MethodPost, restore, uID).Expect().Status(http.StatusOK).
+		JSON().Object().HasValue("id", pID.String()).HasValue("deleted", false)
+	apiV1(e, http.MethodGet, list, uID).Expect().Status(http.StatusOK).
+		JSON().Object().Value("items").Array().Length().IsEqual(1)
+	apiV1(e, http.MethodGet, list, uID).WithQuery("deleted", true).Expect().Status(http.StatusOK).
+		JSON().Object().Value("items").Array().IsEmpty()
+
+	// Restoring a project that is not in the trash is a no-op, but still needs write access.
+	apiV1(e, http.MethodPost, restore, uID).Expect().Status(http.StatusOK).
+		JSON().Object().HasValue("deleted", false)
+	expectAPIError(t, apiV1(e, http.MethodPost, restore, uID3).Expect(),
+		http.StatusForbidden, "permission_denied")
+
+	expectAPIError(t, apiV1(e, http.MethodPost, "/projects/nope/restore", uID).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, "/projects/01m4dn2d8ksnekewhejqa5bbzz/restore", uID).Expect(),
+		http.StatusNotFound, "not_found")
+}
+
+func TestAPIV1Plugins(t *testing.T) {
+	e := startPublicAPI(t)
+	prj := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "plugins", "visibility": "private"}).
+		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
+	path := "/projects/" + prj + "/plugins"
+	zip, err := os.ReadFile(buildTestPluginZip(t, "testplugin", "1.0.0"))
+	require.NoError(t, err)
+	upload := func(user accountsID.UserID, body []byte) *httpexpect.Response {
+		return apiV1(e, http.MethodPost, path, user).
+			WithHeader("Content-Type", "application/zip").WithBytes(body).Expect()
+	}
+
+	p := upload(uID, zip).Status(http.StatusCreated).JSON().Object()
+	p.HasValue("name", "Test Plugin")
+	p.HasValue("version", "1.0.0")
+	p.HasValue("system", false)
+	p.Value("extensions").Array().Length().IsEqual(2)
+	pluginID := p.Value("id").String().Raw()
+
+	// The same ID and version replaces the plugin.
+	upload(uID, zip).Status(http.StatusCreated).JSON().Object().HasValue("id", pluginID)
+
+	ids := func() []string {
+		var res []string
+		for _, v := range apiV1(e, http.MethodGet, path, uID).Expect().Status(http.StatusOK).
+			JSON().Object().Value("items").Array().Iter() {
+			res = append(res, v.Object().Value("id").String().Raw())
+		}
+		return res
+	}
+	assert.ElementsMatch(t, []string{"reearth", pluginID}, ids())
+
+	// A new version upgrades the plugin: the old ID goes away.
+	zip2, err := os.ReadFile(buildTestPluginZip(t, "testplugin", "1.0.1"))
+	require.NoError(t, err)
+	p2 := upload(uID, zip2).Status(http.StatusCreated).JSON().Object()
+	p2.HasValue("version", "1.0.1")
+	upgradedID := p2.Value("id").String().Raw()
+	assert.NotEqual(t, pluginID, upgradedID)
+	assert.ElementsMatch(t, []string{"reearth", upgradedID}, ids())
+	expectAPIError(t, apiV1(e, http.MethodDelete, path+"/"+pluginID, uID).Expect(),
+		http.StatusNotFound, "not_found")
+	pluginID = upgradedID
+
+	expectAPIError(t, upload(uID, []byte("not a zip")), http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"url": "file:///etc/passwd"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, path, uID).WithJSON(map[string]any{"url": "https://example.com/plugin.zip"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, upload(uID3, zip), http.StatusForbidden, "permission_denied")
+	expectAPIError(t, upload(uID2, zip), http.StatusNotFound, "not_found")
+
+	expectAPIError(t, apiV1(e, http.MethodDelete, path+"/reearth", uID).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	apiV1(e, http.MethodDelete, path+"/"+pluginID, uID).Expect().Status(http.StatusNoContent)
+	assert.Equal(t, []string{"reearth"}, ids())
+	expectAPIError(t, apiV1(e, http.MethodDelete, path+"/"+pluginID, uID).Expect(),
+		http.StatusNotFound, "not_found")
+}
+
+func TestAPIV1PublishProject(t *testing.T) {
+	cfg := *publicApiConfig
+	cfg.Published.Host = "https://{}.example.com"
+	e, _, _ := startServer(t, &cfg, true, baseSeeder)
+
+	p := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "to publish", "visibility": "private"}).
+		Expect().Status(http.StatusCreated).JSON().Object()
+	pid := p.Value("id").String().Raw()
+	sid := p.Value("sceneId").String().Raw()
+	p.NotContainsKey("publishedAlias")
+	publish := "/projects/" + pid + "/publish"
+
+	// Limited by default alias: c-<scene ID>.
+	res := apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "limited"}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	res.Value("project").Object().HasValue("publishmentStatus", "limited").HasValue("publishedAlias", "c-"+sid)
+	res.Value("project").Object().Value("publishedAt").String().NotEmpty()
+	res.HasValue("url", "https://c-"+sid+".example.com")
+
+	// Public with a custom alias.
+	res = apiV1(e, http.MethodPost, publish, uID).
+		WithJSON(map[string]any{"status": "public", "alias": "cli-published"}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	res.Value("project").Object().HasValue("publishmentStatus", "public").HasValue("publishedAlias", "cli-published")
+	res.HasValue("url", "https://cli-published.example.com")
+
+	// Private unpublishes and keeps the alias, without a URL.
+	res = apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "private"}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	res.Value("project").Object().HasValue("publishmentStatus", "private").HasValue("publishedAlias", "cli-published")
+	res.NotContainsKey("url")
+
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "secret"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).
+		WithJSON(map[string]any{"status": "public", "alias": "Bad Alias!"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID3).WithJSON(map[string]any{"status": "public"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+
+	// A project in the trash cannot be published.
+	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "public"}).Expect(),
+		http.StatusConflict, "conflict")
+}
+
+func TestAPIV1PublishStory(t *testing.T) {
+	cfg := *publicApiConfig
+	cfg.Published.Host = "https://{}.example.com"
+	e, _, _ := startServer(t, &cfg, true, baseSeeder)
+
+	// Creating a project also creates its story.
+	pid := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "with story", "visibility": "private"}).
+		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
+	publish := "/projects/" + pid + "/story/publish"
+
+	// Limited, with the default alias s-<story ID>.
+	res := apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "limited"}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	story := res.Value("story").Object()
+	sid := story.Value("id").String().Raw()
+	story.HasValue("projectId", pid).HasValue("publishmentStatus", "limited").HasValue("publishedAlias", "s-"+sid)
+	story.Value("publishedAt").String().NotEmpty()
+	res.HasValue("url", "https://s-"+sid+".example.com")
+
+	// The project itself stays unpublished.
+	apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().Status(http.StatusOK).
+		JSON().Object().HasValue("publishmentStatus", "private")
+
+	// Public with a custom alias, then private keeps the alias without a URL.
+	res = apiV1(e, http.MethodPost, publish, uID).
+		WithJSON(map[string]any{"status": "public", "alias": "cli-story"}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	res.Value("story").Object().HasValue("publishmentStatus", "public").HasValue("publishedAlias", "cli-story")
+	res.HasValue("url", "https://cli-story.example.com")
+	res = apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "private"}).
+		Expect().Status(http.StatusOK).JSON().Object()
+	res.Value("story").Object().HasValue("publishmentStatus", "private").HasValue("publishedAlias", "cli-story")
+	res.NotContainsKey("url")
+
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "secret"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID3).WithJSON(map[string]any{"status": "public"}).Expect(),
+		http.StatusForbidden, "permission_denied")
+	expectAPIError(t, apiV1(e, http.MethodPost, "/projects/01m4dn2d8ksnekewhejqa5bbzz/story/publish", uID).
+		WithJSON(map[string]any{"status": "public"}).Expect(), http.StatusNotFound, "not_found")
+
+	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodPost, publish, uID).WithJSON(map[string]any{"status": "public"}).Expect(),
+		http.StatusConflict, "conflict")
+}
+
+func TestAPIV1ExportProject(t *testing.T) {
+	e := startPublicAPI(t)
+	pid := apiV1(e, http.MethodPost, "/workspaces/"+wID.String()+"/projects", uID).
+		WithJSON(map[string]any{"name": "to export", "visibility": "private"}).
+		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
+	export := "/projects/" + pid + "/export"
+
+	resp := apiV1(e, http.MethodGet, export, uID).Expect().Status(http.StatusOK)
+	resp.Header("Content-Type").IsEqual("application/zip")
+	b := []byte(resp.Body().Raw())
+	zr, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
+	require.NoError(t, err)
+	var names []string
+	for _, f := range zr.File {
+		names = append(names, f.Name)
+	}
+	assert.Contains(t, names, "project.json")
+
+	// The stored zip is removed after the download, and a second export
+	// builds a new one.
+	apiV1(e, http.MethodGet, export, uID).Expect().Status(http.StatusOK)
+
+	// Readers can export, as in the web app.
+	apiV1(e, http.MethodGet, export, uID3).Expect().Status(http.StatusOK)
+
+	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/nope/export", uID).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodGet, "/projects/01m4dn2d8ksnekewhejqa5bbzz/export", uID).Expect(),
+		http.StatusNotFound, "not_found")
+
+	apiV1(e, http.MethodDelete, "/projects/"+pid, uID).Expect().Status(http.StatusNoContent)
+	expectAPIError(t, apiV1(e, http.MethodGet, export, uID).Expect(), http.StatusConflict, "conflict")
+}
+
+func TestAPIV1ImportProject(t *testing.T) {
+	e := startPublicAPI(t)
+	projects := "/workspaces/" + wID.String() + "/projects"
+	importPath := projects + "/import"
+
+	// Export a project, then import the zip back.
+	src := apiV1(e, http.MethodPost, projects, uID).
+		WithJSON(map[string]any{"name": "round trip", "description": "exported then imported", "visibility": "private"}).
+		Expect().Status(http.StatusCreated).JSON().Object().Value("id").String().Raw()
+	zipData := []byte(apiV1(e, http.MethodGet, "/projects/"+src+"/export", uID).Expect().Status(http.StatusOK).Body().Raw())
+
+	chunk := func(user accountsID.UserID, fileID string, num, total int, data []byte) *httpexpect.Response {
+		return apiV1(e, http.MethodPost, importPath, user).WithMultipart().
+			WithFormField("file_id", fileID).
+			WithFormField("chunk_num", num).
+			WithFormField("total_chunks", total).
+			WithFileBytes("file", "project.zip", data).
+			Expect()
+	}
+
+	res := chunk(uID, "apiv1-import-test", 0, 1, zipData).Status(http.StatusOK).JSON().Object()
+	res.HasValue("received", 1).HasValue("total", 1).HasValue("completed", true)
+	pid := res.Value("projectId").String().NotEmpty().Raw()
+
+	// The import runs in the background; poll the project until it ends.
+	var status string
+	deadline := time.Now().Add(30 * time.Second)
+	for time.Now().Before(deadline) {
+		p := apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().Status(http.StatusOK).JSON().Object()
+		status, _ = p.Raw()["importStatus"].(string)
+		if status == "SUCCESS" || status == "FAILED" {
+			break
+		}
+		time.Sleep(200 * time.Millisecond)
+	}
+	if status != "SUCCESS" {
+		t.Logf("import result: %v", apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().JSON().Object().Raw())
+	}
+	require.Equal(t, "SUCCESS", status)
+	imported := apiV1(e, http.MethodGet, "/projects/"+pid, uID).Expect().Status(http.StatusOK).JSON().Object()
+	imported.HasValue("name", "round trip").HasValue("description", "exported then imported")
+	imported.Value("sceneId").String().NotEmpty()
+	imported.NotContainsKey("importError")
+
+	// A chunk for an upload that never started.
+	expectAPIError(t, chunk(uID, "apiv1-never-started", 1, 2, []byte("x")), http.StatusBadRequest, "invalid_input")
+	// Missing fields.
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).WithMultipart().
+		WithFormField("file_id", "x").Expect(), http.StatusBadRequest, "invalid_input")
+	// A path-unsafe file ID.
+	expectAPIError(t, chunk(uID, "../escape", 0, 1, zipData), http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).WithJSON(map[string]any{"file_id": "x"}).Expect(),
+		http.StatusBadRequest, "invalid_input")
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).Expect(), http.StatusBadRequest, "invalid_input")
+	// A reader cannot import into the workspace.
+	expectAPIError(t, chunk(uID3, "apiv1-import-reader", 0, 1, zipData), http.StatusForbidden, "permission_denied")
+}
+
+// TestAPIV1ImportModes: the server offers one of the web app's two ways to
+// import, and the other answers 501, so clients can tell which to use.
+func TestAPIV1ImportModes(t *testing.T) {
+	importPath := "/workspaces/" + wID.String() + "/projects/import"
+	urlPath := importPath + "-url"
+
+	// Chunked upload, the default.
+	e := startPublicAPI(t)
+	expectAPIError(t, apiV1(e, http.MethodPost, urlPath, uID).Expect(), http.StatusNotImplemented, "unsupported")
+
+	// Signed upload URLs, as the hosted service uses.
+	cfg := *publicApiConfig
+	cfg.Visualizer.PublicApi.SplitImport = false
+	e, repos, _ := startServer(t, &cfg, true, baseSeeder)
+	expectAPIError(t, apiV1(e, http.MethodPost, importPath, uID).WithMultipart().
+		WithFormField("file_id", "x").WithFormField("chunk_num", 0).WithFormField("total_chunks", 1).
+		WithFileBytes("file", "p.zip", []byte("PK")).Expect(), http.StatusNotImplemented, "unsupported")
+	expectAPIError(t, apiV1(e, http.MethodPost, urlPath, uID3).Expect(), http.StatusForbidden, "permission_denied")
+	// The test server's file storage cannot sign URLs, so this fails, and the
+	// project it started is marked failed instead of staying UPLOADING.
+	expectAPIError(t, apiV1(e, http.MethodPost, urlPath, uID).Expect(), http.StatusInternalServerError, "internal")
+	ctx := context.Background()
+	trashed, _, err := repos.Project.FindDeletedByWorkspace(ctx, wID, nil)
+	require.NoError(t, err)
+	var statuses []string
+	for _, p := range trashed {
+		if m, err := repos.ProjectMetadata.FindByProjectID(ctx, p.ID()); err == nil && m.ImportStatus() != nil {
+			statuses = append(statuses, string(*m.ImportStatus()))
+		}
+	}
+	assert.Equal(t, []string{"FAILED"}, statuses)
 }

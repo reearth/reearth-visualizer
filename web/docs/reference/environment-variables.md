@@ -325,6 +325,24 @@ REEARTH_WEB_MOCK_DATA=true
 
 ## Integration Variables
 
+### `REEARTH_CMS_URL`
+
+URL of Re:Earth CMS's web app.
+
+**Type**: `string` (URL)
+
+**Required**: No
+
+**Example**:
+
+```bash
+REEARTH_CMS_URL=https://cms.example.com
+```
+
+**Description**: Used by the CMS entry in the products menu and by "Open in CMS" in the "Add from CMS" asset details, which link to `{url}/workspace/{workspaceId}/project/{projectId}/asset/{assetId}`. Set it on the Docker image for each environment (dev, production); it is written to `cmsUrl` in `reearth_config.json`. Without it, "Open in CMS" is hidden for CMS assets.
+
+**When to use**: Dev and production deployments
+
 ### `REEARTH_WEB_SENTRY_DSN`
 
 Sentry error tracking DSN.

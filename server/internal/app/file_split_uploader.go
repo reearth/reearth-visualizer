@@ -76,6 +76,8 @@ const maxConcurrentSessions = 256
 
 var maxAggregateBytes int64 = 1 * 1024 * 1024 * 1024 // 1GB
 
+const reservedBytesStaleAfter = 1 * time.Hour
+
 // safeFileIDPattern restricts file_id to a conservative, path-safe charset.
 // fileID flows directly into filepath.Join(tempDir, fileID); without this,
 // a client could send a path-traversal value (e.g. "../../etc/cron.d/x")
@@ -115,18 +117,21 @@ func validateChunkRequest(fileID string, chunkNum, totalChunks int, chunkSize in
 // prevents the class of bug that produced REL-02: a goroutine or handler
 // touching session state without holding its lock.
 type uploadSession struct {
-	mu            sync.Mutex
-	fileID        string
-	filePath      string
-	file          *os.File
-	chunkSize     int64
-	totalChunks   int
-	received      map[int]struct{}
-	receivedBytes int64
-	project       *project.Project
-	dispatched    bool
-	updatedAt     time.Time
-	mgr           *SplitUploadManager
+	mu               sync.Mutex
+	fileID           string
+	filePath         string
+	file             *os.File
+	chunkSize        int64
+	totalChunks      int
+	received         map[int]struct{}
+	receivedBytes    int64
+	project          *project.Project
+	dispatched       bool
+	closed           bool
+	updatedAt        time.Time
+	mgr              *SplitUploadManager
+	ownerUserID      string
+	ownerWorkspaceID accountsID.WorkspaceID
 }
 
 // sessionInfo is an immutable snapshot of the fields callers need after
@@ -273,6 +278,22 @@ func (s *uploadSession) setProject(p *project.Project) {
 	s.project = p
 }
 
+// setOwner records who started this session (SEC-02), so later chunks --
+// including a chunk 0 "retry" -- can be checked against the actual caller
+// instead of trusting the client-supplied file_id alone.
+func (s *uploadSession) setOwner(userID string, wsID accountsID.WorkspaceID) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.ownerUserID = userID
+	s.ownerWorkspaceID = wsID
+}
+
+func (s *uploadSession) matchesOwner(userID string, wsID accountsID.WorkspaceID) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.ownerUserID == userID && s.ownerWorkspaceID == wsID
+}
+
 func (s *uploadSession) snapshot() sessionInfo {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -298,15 +319,23 @@ func (s *uploadSession) isStale(cutoff time.Time) bool {
 	return s.updatedAt.Before(cutoff)
 }
 
-func (s *uploadSession) close() {
+func (s *uploadSession) close(force bool) (releasedBytes int64, closed bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.closed {
+		return 0, false
+	}
+	if s.dispatched && !force {
+		return 0, false
+	}
+	s.closed = true
 	if err := s.file.Close(); err != nil {
 		log.Printf("Warning: failed to close upload file: %v", err)
 	}
 	if err := os.Remove(s.filePath); err != nil && !os.IsNotExist(err) {
 		log.Printf("Warning: failed to remove upload file: %v", err)
 	}
+	return s.receivedBytes, true
 }
 
 // importJob is the handoff between a completed upload and the background
@@ -416,23 +445,26 @@ func servSplitUploadFiles(
 
 // getOrCreateSession is only called for chunk 0, after CanWriteWorkspace
 // has already passed, since creating a session opens a file handle and a
-// temporary file on disk.
-func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) (*uploadSession, error) {
+// temporary file on disk. The returned bool is true only when this call
+// created the session -- a caller that instead raced another chunk-0 caller
+// here gets back the other caller's session and must treat it like a retry
+// (owner check) rather than claim it as its own.
+func (m *SplitUploadManager) getOrCreateSession(fileID string, totalChunks int) (*uploadSession, bool, error) {
 	m.mgrMu.Lock()
 	defer m.mgrMu.Unlock()
 
 	if s, ok := m.sessions[fileID]; ok {
-		return s, nil
+		return s, false, nil
 	}
 	if len(m.sessions) >= maxConcurrentSessions {
-		return nil, errors.New("too many upload sessions in progress, try again later")
+		return nil, false, errors.New("too many upload sessions in progress, try again later")
 	}
 	s, err := newUploadSession(m.tempDir, fileID, totalChunks, m.chunkSize, m)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	m.sessions[fileID] = s
-	return s, nil
+	return s, true, nil
 }
 
 // atCapacity is a cheap pre-check to skip CreateTemporaryProject entirely
@@ -512,7 +544,7 @@ func (m *SplitUploadManager) dispatchImport(job importJob) {
 			// cleanupSession is deferred here, not called after
 			// UpdateImportStatus, so the session/tempfile is still freed
 			// even if the status write panics or otherwise never returns.
-			defer m.cleanupSession(job.fileID)
+			defer m.cleanupSession(job.fileID, true)
 			errMsg := "import worker pool did not accept job in time"
 			log.Errorf("[Import] %s (file %s)", errMsg, job.fileID)
 			UpdateImportStatus(context.Background(), job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, map[string]any{})
@@ -549,7 +581,7 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 			UpdateImportStatus(bgctx, job.usecases, job.op, job.projectID, project.ProjectImportStatusFailed, errMsg, result)
 		}
 	}()
-	defer m.cleanupSession(job.fileID)
+	defer m.cleanupSession(job.fileID, true)
 
 	claim, err := job.usecases.Project.ClaimImport(bgctx, job.projectID, job.op)
 	if err != nil {
@@ -601,7 +633,16 @@ func (m *SplitUploadManager) runImportJob(job importJob) {
 	)
 }
 
+func operatorUserID(op *usecase.Operator) string {
+	if op == nil || op.AcOperator == nil || op.AcOperator.User == nil {
+		return ""
+	}
+	return op.AcOperator.User.String()
+}
+
 func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId accountsID.WorkspaceID, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
+
+	callerUserID := operatorUserID(op)
 
 	var session *uploadSession
 
@@ -609,6 +650,11 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 		// A session already existing means this is a retry: reuse it
 		// instead of creating another temporary project.
 		if s, ok := m.getSession(fileID); ok {
+			// SEC-02: file_id is client-chosen, so a "retry" could be
+			// another caller hijacking someone else's in-progress session.
+			if !s.matchesOwner(callerUserID, wsId) {
+				return nil, echo.NewHTTPError(http.StatusForbidden, "upload session does not belong to this caller")
+			}
 			session = s
 		} else {
 			if m.atCapacity() {
@@ -620,11 +666,21 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			if err != nil {
 				return nil, err
 			}
-			s, err := m.getOrCreateSession(fileID, totalChunks)
+			s, created, err := m.getOrCreateSession(fileID, totalChunks)
 			if err != nil {
 				return nil, echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("Failed to start upload session: %v", err))
 			}
-			s.setProject(prj)
+			if !created {
+				// Lost the race with another chunk-0 caller for this file_id:
+				// s already belongs to whoever created it. Treat this like
+				// the retry path above instead of overwriting their session.
+				if !s.matchesOwner(callerUserID, wsId) {
+					return nil, echo.NewHTTPError(http.StatusForbidden, "upload session does not belong to this caller")
+				}
+			} else {
+				s.setProject(prj)
+				s.setOwner(callerUserID, wsId)
+			}
 			session = s
 		}
 	} else {
@@ -633,6 +689,10 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 		s, ok := m.getSession(fileID)
 		if !ok {
 			return nil, echo.NewHTTPError(http.StatusBadRequest, "unknown or expired upload session; restart the upload from chunk 0")
+		}
+		// SEC-02: reject a chunk from anyone but the session's creator.
+		if !s.matchesOwner(callerUserID, wsId) {
+			return nil, echo.NewHTTPError(http.StatusForbidden, "upload session does not belong to this caller")
 		}
 		// total_chunks must agree with the session's original value, or a
 		// client could inflate it to bypass validateChunkRequest's bound
@@ -660,11 +720,13 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				log.Warnfc(ctx, "[Import] rejected chunk: %s", errMsg)
 				writeImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 			}
+			m.cleanupSession(fileID, false)
 			return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
 		}
 		if pid := session.snapshot().ProjectID; pid != nil {
 			UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, map[string]any{})
 		}
+		m.cleanupSession(fileID, false)
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
 	}
 
@@ -699,18 +761,26 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 	return resp, nil
 }
 
-func (m *SplitUploadManager) cleanupSession(fileID string) {
+func (m *SplitUploadManager) cleanupSession(fileID string, force bool) {
 	m.mgrMu.Lock()
 	s, ok := m.sessions[fileID]
-	if ok {
+	m.mgrMu.Unlock()
+	if !ok {
+		return
+	}
+
+	released, closed := s.close(force)
+	if !closed {
+		return
+	}
+
+	m.mgrMu.Lock()
+	if cur, present := m.sessions[fileID]; present && cur == s {
 		delete(m.sessions, fileID)
 	}
 	m.mgrMu.Unlock()
 
-	if ok {
-		m.releaseBytes(s.snapshot().ReceivedBytes)
-		s.close()
-	}
+	m.releaseBytes(released)
 }
 
 func (m *SplitUploadManager) StartCleanupRoutine(interval time.Duration) {
@@ -722,8 +792,15 @@ func (m *SplitUploadManager) StartCleanupRoutine(interval time.Duration) {
 	}()
 }
 
+func staleCutoffFor(s *uploadSession, now time.Time) time.Time {
+	if s.snapshot().ReceivedBytes > 0 {
+		return now.Add(-reservedBytesStaleAfter)
+	}
+	return now.Add(-24 * time.Hour)
+}
+
 func (m *SplitUploadManager) cleanupStaleSessions() {
-	cutoff := time.Now().Add(-24 * time.Hour)
+	now := time.Now()
 
 	m.mgrMu.Lock()
 	candidates := make([]*uploadSession, 0, len(m.sessions))
@@ -732,24 +809,11 @@ func (m *SplitUploadManager) cleanupStaleSessions() {
 	}
 	m.mgrMu.Unlock()
 
-	var stale []*uploadSession
 	for _, s := range candidates {
-		if s.isStale(cutoff) {
-			stale = append(stale, s)
+		if !s.isStale(staleCutoffFor(s, now)) {
+			continue
 		}
-	}
-
-	m.mgrMu.Lock()
-	for _, s := range stale {
-		if cur, ok := m.sessions[s.fileID]; ok && cur == s {
-			delete(m.sessions, s.fileID)
-		}
-	}
-	m.mgrMu.Unlock()
-
-	for _, s := range stale {
-		m.releaseBytes(s.snapshot().ReceivedBytes)
-		s.close()
+		m.cleanupSession(s.fileID, false)
 	}
 }
 

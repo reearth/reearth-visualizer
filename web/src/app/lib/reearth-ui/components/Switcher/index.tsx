@@ -1,6 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useEffect, useState } from "react";
+import { FC, KeyboardEvent, useEffect, useState } from "react";
 
 export type SwitcherProps = {
   value?: boolean;
@@ -26,6 +26,12 @@ export const Switcher: FC<SwitcherProps> = ({
     onChange?.(newValue);
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== " " && e.key !== "Enter") return;
+    e.preventDefault();
+    handleClick();
+  };
+
   useEffect(() => {
     setIsOn(!!value);
   }, [value]);
@@ -33,10 +39,13 @@ export const Switcher: FC<SwitcherProps> = ({
   return (
     <SwitcherContainer
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={disabled ? -1 : 0}
       isOn={isOn}
       disabled={disabled}
       role="switch"
       aria-checked={isOn}
+      aria-disabled={disabled || undefined}
       aria-label={ariaLabel}
       data-testid={dataTestid || "switcher"}
     >
@@ -61,7 +70,11 @@ const SwitcherContainer = styled.div<{ isOn: boolean; disabled?: boolean }>(
     cursor: disabled ? "not-allowed" : "pointer",
     transition: "background-color 0.3s",
     padding: "1px",
-    boxSizing: css.boxSizing.borderBox
+    boxSizing: css.boxSizing.borderBox,
+    ["&:focus-visible"]: {
+      outline: `2px solid ${theme.primary.main}`,
+      outlineOffset: "2px"
+    }
   })
 );
 

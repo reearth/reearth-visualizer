@@ -11,10 +11,10 @@ import {
   CameraEventType,
   CameraMoveOptions,
   CameraPosition,
+  GeoRect,
   LookAtDestination,
   ScreenSpaceCameraControllerOptions
 } from "../pluginAPI/types";
-import { GeoRect } from "../pluginAPI/types/common";
 import { Props } from "../types";
 import { events, useEmit } from "../utils/events";
 

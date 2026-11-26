@@ -1,4 +1,5 @@
-import { Role, WorkspaceMember } from "@reearth/services/gql";
+import type { WorkspaceMember } from "@reearth/services/api/workspace/types";
+import { Role } from "@reearth/services/gql";
 import { fireEvent, render, screen } from "@reearth/test/utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -46,15 +47,10 @@ vi.mock("./AddMemberModal", () => ({
 vi.mock("./UpdateRoleModal", () => ({ default: () => null }));
 vi.mock("./DeleteMemberWarningModal", () => ({ default: () => null }));
 
-const member = (
-  id: string,
-  name: string,
-  role: Role,
-  email = `${id}@example.com`
-): WorkspaceMember => ({
+const member = (id: string, name: string, role: Role): WorkspaceMember => ({
   userId: id,
   role,
-  user: { id, name, email }
+  user: { id, name }
 });
 
 // Frozen on purpose: Apollo deep-freezes cache results in development, so any
@@ -89,28 +85,22 @@ describe("Members", () => {
     expect(mocks.workspace?.members).toEqual(original);
   });
 
-  it("filters by name and by email", () => {
+  it("filters by name only", () => {
     render(<Members currentWorkspace={{ id: "workspace-1", name: "WS" }} />);
 
-    const search = screen.getByPlaceholderText(
-      "Search member by name or email"
-    );
+    const search = screen.getByPlaceholderText("Search member by name");
 
     fireEvent.change(search, { target: { value: "ad" } });
     fireEvent.blur(search);
     expect(rowNames()).toEqual(["Adam"]);
 
-    fireEvent.change(search, { target: { value: "r1@example.com" } });
-    fireEvent.blur(search);
-    expect(rowNames()).toEqual(["Aaron"]);
+    expect(screen.queryByText("Email")).not.toBeInTheDocument();
   });
 
   it("shows the empty state when nothing matches the search", () => {
     render(<Members currentWorkspace={{ id: "workspace-1", name: "WS" }} />);
 
-    const search = screen.getByPlaceholderText(
-      "Search member by name or email"
-    );
+    const search = screen.getByPlaceholderText("Search member by name");
     fireEvent.change(search, { target: { value: "nobody" } });
     fireEvent.blur(search);
 
@@ -123,9 +113,7 @@ describe("Members", () => {
       <Members currentWorkspace={{ id: "workspace-1", name: "WS" }} />
     );
 
-    const search = screen.getByPlaceholderText(
-      "Search member by name or email"
-    );
+    const search = screen.getByPlaceholderText("Search member by name");
     fireEvent.change(search, { target: { value: "ad" } });
     fireEvent.blur(search);
     expect(rowNames()).toEqual(["Adam"]);
@@ -179,9 +167,7 @@ describe("Members", () => {
     it("does not protect a non-owner just because the search narrows to one row", () => {
       render(<Members currentWorkspace={{ id: "workspace-1", name: "WS" }} />);
 
-      const search = screen.getByPlaceholderText(
-        "Search member by name or email"
-      );
+      const search = screen.getByPlaceholderText("Search member by name");
       fireEvent.change(search, { target: { value: "Aaron" } });
       fireEvent.blur(search);
 

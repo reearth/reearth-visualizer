@@ -18,6 +18,7 @@ import { useLayerStyles } from "@reearth/services/api/layerStyle";
 import { usePropertyMutations } from "@reearth/services/api/property";
 import { useStoryBlockMutations } from "@reearth/services/api/storytelling";
 import { useWidgetMutations } from "@reearth/services/api/widget";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 import { useAtomValue } from "jotai";
 import {
   useMemo,
@@ -38,7 +39,6 @@ import {
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
-import { ViewerProperty } from "./type";
 
 export default ({
   sceneId,

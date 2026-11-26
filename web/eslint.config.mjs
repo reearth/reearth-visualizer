@@ -22,7 +22,7 @@ export default [
   ...config("@reearth"),
   ...themeConfig,
   {
-    ignores: ["bin/pluginDoc.ts", "public/sw.js"]
+    ignores: ["public/sw.js"]
   },
   // Configuration for documentation scripts
   {

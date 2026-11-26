@@ -32,6 +32,13 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 	}
 
 	ec.GET("/api/published/", func(c echo.Context) error { return echo.ErrNotFound })
+	// NOTE(SEC-01, AI compliance scan finding): monthly scans keep re-flagging this
+	// route as missing Cache-Control/Vary on its credential-bearing response. That
+	// was true before #2454 (merged 2026-10-13); privateCache below already sets
+	// Cache-Control: private, no-store, no-cache, must-revalidate, which forbids
+	// any caching outright, so Vary has nothing left to gate. If this gets flagged
+	// again, it is a stale finding, not a regression -- check this comment and
+	// #2454 before "fixing" it again.
 	ec.GET("/api/published/:name", PublishedMetadata(w.GatewayToken, w.PreviousGatewayToken), privateCache)
 	ec.GET("/api/published_data/:name", PublishedData(w.HostPattern, true), RequireGatewayToken(w.GatewayToken, w.PreviousGatewayToken)) // for oss / localhost
 
