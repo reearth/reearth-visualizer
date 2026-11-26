@@ -1,7 +1,8 @@
 import { atom, useAtom, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import { WorkspaceMember, GetAssetsQuery, Project } from "../gql";
+import type { WorkspaceMember } from "../api/workspace/types";
+import { GetAssetsQuery, Project } from "../gql";
 
 export * from "./devPlugins";
 

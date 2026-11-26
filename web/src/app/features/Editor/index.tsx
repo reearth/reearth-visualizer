@@ -10,13 +10,18 @@ import { useWidgetsViewDevice, usePublishViewDevice } from "./atoms";
 import useHooks from "./hooks";
 import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
-import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
+import AssetLayerCreator from "./Map/DataSourceLayerCreator/AssetLayerCreator";
+import UrlLayerCreator from "./Map/DataSourceLayerCreator/UrlLayerCreator";
+import ValueLayerCreator from "./Map/DataSourceLayerCreator/ValueLayerCreator";
 import PlateauAssetLayerCreator from "./Map/PlateauAssetLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
 import {
-  showDataSourceLayerCreatorAtom,
+  showAssetLayerCreatorAtom,
+  showCmsLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
-  showSketchLayerCreatorAtom
+  showSketchLayerCreatorAtom,
+  showUrlLayerCreatorAtom,
+  showValueLayerCreatorAtom
 } from "./Map/state";
 import Publish from "./Publish";
 import { PublishPageProvider } from "./Publish/context";
@@ -64,18 +69,39 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   const [widgetsViewDevice] = useWidgetsViewDevice();
   const [publishViewDevice] = usePublishViewDevice();
 
-  const [showDataSourceLayerCreator, setShowDataSourceLayerCreator] = useAtom(
-    showDataSourceLayerCreatorAtom
-  );
-  const closeDataSourceLayerCreator = () => {
-    setShowDataSourceLayerCreator(false);
-  };
-
   const [showSketchLayerCreator, setShowSketchLayerCreator] = useAtom(
     showSketchLayerCreatorAtom
   );
   const closeSketchLayerCreator = () => {
     setShowSketchLayerCreator(false);
+  };
+
+  const [showUrlLayerCreator, setShowUrlLayerCreator] = useAtom(
+    showUrlLayerCreatorAtom
+  );
+  const closeUrlLayerCreator = () => {
+    setShowUrlLayerCreator(false);
+  };
+
+  const [showAssetLayerCreator, setShowAssetLayerCreator] = useAtom(
+    showAssetLayerCreatorAtom
+  );
+  const closeAssetLayerCreator = () => {
+    setShowAssetLayerCreator(false);
+  };
+
+  const [showCmsLayerCreator, setShowCmsLayerCreator] = useAtom(
+    showCmsLayerCreatorAtom
+  );
+  const closeCmsLayerCreator = () => {
+    setShowCmsLayerCreator(false);
+  };
+
+  const [showValueLayerCreator, setShowValueLayerCreator] = useAtom(
+    showValueLayerCreatorAtom
+  );
+  const closeValueLayerCreator = () => {
+    setShowValueLayerCreator(false);
   };
 
   const [showPlateauAssetLayerCreator, setShowPlateauAssetLayerCreator] =
@@ -152,12 +178,35 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           )}
         </Workbench>
       </Content>
-      {showDataSourceLayerCreator && (
-        <DataSourceLayerCreator
+     
+      {showUrlLayerCreator && (
+        <UrlLayerCreator
           sceneId={sceneId}
-          onClose={closeDataSourceLayerCreator}
+          onClose={closeUrlLayerCreator}
           onSubmit={handleLayerAdd}
-          data-testid="editor-datasource-layer-creator"
+        />
+      )}
+      {showAssetLayerCreator && (
+        <AssetLayerCreator
+          sceneId={sceneId}
+          origin="visualizer"
+          onClose={closeAssetLayerCreator}
+          onSubmit={handleLayerAdd}
+        />
+      )}
+      {showCmsLayerCreator && (
+        <AssetLayerCreator
+          sceneId={sceneId}
+          origin="cms"
+          onClose={closeCmsLayerCreator}
+          onSubmit={handleLayerAdd}
+        />
+      )}
+      {showValueLayerCreator && (
+        <ValueLayerCreator
+          sceneId={sceneId}
+          onClose={closeValueLayerCreator}
+          onSubmit={handleLayerAdd}
         />
       )}
       {showSketchLayerCreator && (

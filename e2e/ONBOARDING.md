@@ -153,7 +153,7 @@ Each file exports one class wrapping a page or feature area. The constructor tak
 | `RecycleBinPage` | Recycle bin item menu and delete-confirmation modal | `recoverProject`, `deleteProject`, `confirmDeleteProject` |
 | `ProjectScreenPage` | Project editor: scene panel, layers panel, sketch tools, style menus, Cesium canvas drawing | `createNewLayer`, `addPointsOnMap`, `addPolygonOnMap`, `addNewLayerStyle`, `addPolylineStyle` |
 | `CesiumViewerPage` | Resium/Cesium canvas — frame navigation tracking, viewer-remount detection, switch toggles | `waitForGlobeReady`, `stampViewerMarker`, `expectViewerNotRemounted`, `toggleSwitch` |
-| `DataSourceManagerPage` | Add-layer modal (GeoJSON / CSV / WMS / Vector Tile / 3D Tiles / CZML / KML tabs) | `addGeoJsonFromUrl`, `addGeoJsonFromValue`, `addThreeDTilesCesiumOsm`, `addThreeDTilesFromUrl` |
+| `DataSourceManagerPage` | "Add from URL" and "Add from Value" modals (opened from the New Layer menu in `ProjectScreenPage`) | `addFromUrl`, `addFromValue`, `cancelUrl` |
 | `LayerStylePanelPage` | Style sidebar inside the editor | `addPresetStyle`, `selectStyle`, `renameStyle`, `deleteStyle` |
 | `PhotoOverlayPage` | Photo Overlay editor and feature inspector | `selectFeatureAndOpenInspector`, `uploadAsset`, `setTransparency`, `submitPhotoOverlay` |
 | `ProjectSettingsPage` | Project settings inner pages (General, Readme, License, Story, Public, Assets, Plugins) | `navigateToTab`, per-tab navigators, `verifySidebarTabsVisible` |
@@ -196,7 +196,7 @@ All UI specs follow the same skeleton:
 | `projectSettings.spec.ts` | All Project Settings tabs (General/Readme/License/Story/Public/Assets) |
 | `accountWorkspaceSettings.spec.ts` | Account settings, workspace settings, change-password modal |
 | `members.spec.ts` | Members list, invite flow, role updates, removal |
-| `externalLayers.spec.ts` | Data Source Manager — GeoJSON (URL/value), 3D Tiles (Cesium OSM / URL) |
+| `externalLayers.spec.ts` | New Layer menu — GeoJSON (URL/value), 3D Tiles (Re:Earth Buildings preset / URL) |
 | `layerDeletionReorder.spec.ts` | Layer create/select/delete/rename/reorder |
 | `multipleStyles.spec.ts` | Adding multiple preset styles to a layer and switching between them |
 | `photoOverlay.spec.ts` | Photo Overlay editor, asset upload, transparency slider, description, delete |

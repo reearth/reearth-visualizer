@@ -1,4 +1,3 @@
-import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import {
   PhotoOverlayPreview,
   SketchFeatureTooltip
@@ -12,6 +11,7 @@ import {
   type MapRef
 } from "@reearth/core";
 import type { NLSLayer } from "@reearth/services/api/layer";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 import {
   useMemo,
   type RefObject,

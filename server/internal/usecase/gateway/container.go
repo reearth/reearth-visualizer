@@ -10,4 +10,5 @@ type Container struct {
 	Google         Google
 	PolicyChecker  PolicyChecker
 	DomainChecker  DomainChecker
+	CMS            CMS
 }

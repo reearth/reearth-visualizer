@@ -148,3 +148,31 @@ export const IconsMenu: Story = {
     </div>
   )
 };
+
+const descriptionItems: PopupMenuItem[] = [
+  {
+    id: "description-default",
+    title: "Default description",
+    description: "Secondary line, truncated when it is too long to fit"
+  },
+  {
+    id: "description-warning",
+    title: "Warning description",
+    description:
+      "Shown in full in the warning color, wrapping onto more lines when needed.",
+    descriptionAppearance: "warning"
+  }
+];
+
+export const DescriptionAppearance: Story = {
+  render: () => (
+    <div style={{ margin: "5px", height: "160px" }}>
+      <PopupMenu
+        label="Descriptions"
+        menu={descriptionItems}
+        width={240}
+        openMenu
+      />
+    </div>
+  )
+};

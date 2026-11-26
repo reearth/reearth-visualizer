@@ -32,6 +32,8 @@ type CreateProjectParam struct {
 	ImportResultLog *map[string]any
 	ProjectAlias    *string
 
+	StrictVisibility bool
+
 	// metadata
 	Readme  *string
 	License *string
@@ -74,8 +76,9 @@ type PublishProjectParam struct {
 }
 
 var (
-	ErrProjectAliasIsNotSet    error = errors.New("project alias is not set")
-	ErrProjectAliasAlreadyUsed       = verror.NewVError(
+	ErrPrivateProjectNotAllowed error = errors.New("private projects require a paid plan")
+	ErrProjectAliasIsNotSet     error = errors.New("project alias is not set")
+	ErrProjectAliasAlreadyUsed        = verror.NewVError(
 		errmsg.ErrKeyUsecaseInterfaceProjectAliasAlreadyUsed,
 		errmsg.ErrorMessages[errmsg.ErrKeyUsecaseInterfaceProjectAliasAlreadyUsed],
 		message.MultiLocaleTemplateData(map[string]any{}),

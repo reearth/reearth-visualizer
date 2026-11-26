@@ -20,6 +20,7 @@ export const getFeatureConfig = (): AppFeatureConfig => {
     builtinTimelineWidget: true,
     useProjectSplitImport: false,
     disabledTileTypes: [...DEPRECATED_TILE_TYPES],
-    defaultTileType: EE_DEFAULT_TILE_TYPE
+    defaultTileType: EE_DEFAULT_TILE_TYPE,
+    cmsLayerCreator: true
   };
 };
