@@ -163,7 +163,7 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.File, oldSceneID string, sce *scene.Scene, data *[]byte) (map[string]any, error) {
 
 	result := map[string]any{}
-	if err := i.uploadPluginFile(ctx, pluginsZip, oldSceneID, sce.ID().String()); err != nil {
+	if err := i.uploadPluginFile(ctx, pluginsZip, oldSceneID, sce.ID()); err != nil {
 		return result, err
 	}
 
@@ -279,20 +279,33 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 	return result, nil
 }
 
-func (i *Plugin) uploadPluginFile(ctx context.Context, plugins map[string]*zip.File, oldSceneID string, newSceneID string) error {
+func (i *Plugin) uploadPluginFile(ctx context.Context, plugins map[string]*zip.File, oldSceneID string, newSceneID id.SceneID) error {
+	type entry struct {
+		pid  id.PluginID
+		name string
+		file *zip.File
+	}
+	entries := make([]entry, 0, len(plugins))
 	for filePathInZip, zipFile := range plugins {
-		parts := strings.Split(filePathInZip, "/")
-		oldPluginId := parts[0]
-		realFileName := parts[1]
+		parts := strings.SplitN(filePathInZip, "/", 2)
+		if len(parts) != 2 || parts[1] == "" {
+			return fmt.Errorf("invalid plugin file path: %s", filePathInZip)
+		}
 
 		// The file paths inside the ZIP remain unchanged, so they need to be updated.
-		newPluginId := strings.Replace(oldPluginId, oldSceneID, newSceneID, 1)
+		newPluginId := strings.Replace(parts[0], oldSceneID, newSceneID.String(), 1)
 		pid, err := id.PluginIDFrom(newPluginId)
 		if err != nil {
 			return err
 		}
+		if pid.System() || pid.Scene() == nil || *pid.Scene() != newSceneID {
+			return fmt.Errorf("plugin %s does not belong to the imported scene", parts[0])
+		}
+		entries = append(entries, entry{pid: pid, name: parts[1], file: zipFile})
+	}
 
-		if err := i.uploadOnePluginFile(ctx, zipFile, realFileName, pid); err != nil {
+	for _, e := range entries {
+		if err := i.uploadOnePluginFile(ctx, e.file, e.name, e.pid); err != nil {
 			return err
 		}
 	}
