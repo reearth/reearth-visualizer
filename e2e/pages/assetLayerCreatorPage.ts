@@ -5,9 +5,9 @@ type GraphQLMocks = Record<
   (variables: Record<string, unknown>) => unknown
 >;
 
-// The "Add from Assets" modal opened from the New Layer menu (see
-// ProjectScreenPage for the menu itself), with its Visualizer, CMS Assets and
-// CMS Models tabs.
+// The asset modal opened from the New Layer menu (see ProjectScreenPage for
+// the menu itself): "Add from Assets" for Visualizer assets, or "Add from
+// CMS" with its CMS Assets and CMS Models tabs.
 export class AssetLayerCreatorPage {
   modal: Locator;
   cmsAssetsTab: Locator;
@@ -23,6 +23,17 @@ export class AssetLayerCreatorPage {
   backButton: Locator;
   submitButton: Locator;
   cancelButton: Locator;
+  gridLayoutButton: Locator;
+  listLayoutButton: Locator;
+  details: Locator;
+  detailsTable: Locator;
+  detailsColumns: Locator;
+  detailsRows: Locator;
+  detailsShapes: Locator;
+  detailsPoints: Locator;
+  detailsTags: Locator;
+  detailsCloseButton: Locator;
+  openInCmsLink: Locator;
 
   constructor(private page: Page) {
     this.modal = this.page.getByTestId("asset-layer-creator-modal");
@@ -45,10 +56,47 @@ export class AssetLayerCreatorPage {
     this.backButton = this.page.getByTestId("asset-layer-creator-back");
     this.submitButton = this.page.getByTestId("asset-layer-creator-submit");
     this.cancelButton = this.page.getByTestId("asset-layer-creator-cancel");
+    // IconButton sets its own test ID from its icon.
+    this.gridLayoutButton = this.modal.getByTestId("icon-button-grid");
+    this.listLayoutButton = this.modal.getByTestId("icon-button-list");
+    this.details = this.page.getByTestId("asset-layer-creator-details");
+    this.detailsTable = this.details.getByRole("table");
+    this.detailsColumns = this.detailsTable.getByRole("columnheader");
+    this.detailsRows = this.detailsTable.locator("tbody tr");
+    this.detailsShapes = this.page.getByTestId(
+      "asset-layer-creator-details-shapes"
+    );
+    this.detailsPoints = this.detailsShapes.locator("circle");
+    this.detailsTags = this.page.getByTestId("asset-layer-creator-details-tag");
+    this.detailsCloseButton = this.details.getByRole("button", {
+      name: "Close"
+    });
+    this.openInCmsLink = this.page.getByTestId(
+      "asset-layer-creator-open-in-cms"
+    );
   }
 
   card = (id: string): Locator =>
     this.page.getByTestId(`asset-layer-creator-card-${id}`);
+
+  row = (id: string): Locator =>
+    this.page.getByTestId(`asset-layer-creator-row-${id}`);
+
+  // A CMS card's or row's info button.
+  infoButton = (id: string): Locator =>
+    this.page.getByTestId(`asset-layer-creator-info-${id}`).getByRole("button");
+
+  // Opens a CMS card's or row's details from its info button, without
+  // selecting it.
+  async openDetails(id: string) {
+    await this.infoButton(id).click();
+    await expect(this.details).toBeVisible();
+  }
+
+  async closeDetails() {
+    await this.detailsCloseButton.click();
+    await expect(this.details).not.toBeVisible();
+  }
 
   private async selectOption(select: Locator, name: string) {
     await select.click();
@@ -114,13 +162,17 @@ export class AssetLayerCreatorPage {
     );
   }
 
-  // The CMS tabs are only shown in dev mode, so it is turned on in the app's
-  // config whatever the environment sets.
-  async enableDevMode() {
+  // "Add from CMS" is part of the EE feature collection, so the app's config
+  // selects it whatever the environment sets, along with any other
+  // `settings` (such as the cmsUrl that "Open in CMS" links to).
+  async enableCms(settings: Record<string, unknown> = {}) {
     await this.page.route("**/reearth_config.json", async (route) => {
       const response = await route.fetch();
       const config = await response.json();
-      await route.fulfill({ response, json: { ...config, devMode: true } });
+      await route.fulfill({
+        response,
+        json: { ...config, featureCollection: "ee", ...settings }
+      });
     });
   }
 

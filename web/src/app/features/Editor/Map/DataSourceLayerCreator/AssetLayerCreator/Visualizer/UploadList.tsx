@@ -11,8 +11,9 @@ import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 import { ClipLoader } from "react-spinners";
 
+import { AssetFormat, formatOf } from "../utils";
+
 import { Upload } from "./useUploads";
-import { AssetFormat, formatOf } from "./utils";
 
 const FORMAT_ICON: Record<AssetFormat, IconName> = {
   geojson: "fileGeoJSON",

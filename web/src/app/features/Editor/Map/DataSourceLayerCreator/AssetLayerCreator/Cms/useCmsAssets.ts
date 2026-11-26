@@ -5,11 +5,12 @@ import {
   useCMSModels,
   useCMSModelsAcrossProjects
 } from "@reearth/services/api/cms";
+import { config } from "@reearth/services/config";
 import { useWorkspace } from "@reearth/services/state";
 import { useMemo } from "react";
 
-import { AssetSource, LayerAsset, SortKey } from "./types";
-import { cmsAssetLayer, sortAssets } from "./utils";
+import { AssetSource, LayerAsset, SortKey } from "../types";
+import { cmsAssetLayer, cmsPageUrl, sortAssets } from "../utils";
 
 // CMS assets, or models as GeoJSON layers, of one project or (without
 // projectId) of all the given projects. CMS can't search or sort these, so
@@ -64,7 +65,21 @@ export default ({
     : !!(tab === "cmsAssets" ? oneAssets : oneModels).error;
 
   const assets = useMemo(() => {
-    const projectNames = new Map(projects.map((p) => [p.id, p.name]));
+    const projectsById = new Map(projects.map((p) => [p.id, p]));
+    // Where assets and models open in CMS, on this deployment's CMS.
+    const cmsUrl = config()?.cmsUrl;
+    const editorUrl = (
+      projectId: string,
+      page: "asset" | "content",
+      id: string
+    ) =>
+      cmsPageUrl(
+        cmsUrl,
+        projectsById.get(projectId)?.workspaceId,
+        projectId,
+        page,
+        id
+      );
     const items: LayerAsset[] =
       tab === "cmsAssets"
         ? (assetsSource.assets ?? []).map((a) => ({
@@ -76,22 +91,27 @@ export default ({
             private: a.public === false,
             createdAt: a.createdAt,
             contentType: "",
-            projectName: projectNames.get(a.projectId)
+            projectName: projectsById.get(a.projectId)?.name,
+            editorUrl: editorUrl(a.projectId, "asset", a.id)
           }))
-        : (modelsSource.models ?? []).map((m) => ({
-            id: m.id,
-            workspaceId: workspaceId ?? "",
-            name: m.name,
-            size: 0,
-            // The model's items, served as GeoJSON by the CMS Public API.
-            url: `${m.publicApiEp}.geojson`,
-            createdAt: m.createdAt,
-            contentType: "",
-            format: "geojson",
-            projectName: projectNames.get(m.projectId),
-            modelName: m.name,
-            modelUrl: m.editorUrl
-          }));
+        : (modelsSource.models ?? []).map((m) => {
+            const modelEditorUrl = editorUrl(m.projectId, "content", m.id);
+            return {
+              id: m.id,
+              workspaceId: workspaceId ?? "",
+              name: m.name,
+              size: 0,
+              // The model's items, served as GeoJSON by the CMS Public API.
+              url: `${m.publicApiEp}.geojson`,
+              createdAt: m.createdAt,
+              contentType: "",
+              format: "geojson",
+              projectName: projectsById.get(m.projectId)?.name,
+              modelName: m.name,
+              modelUrl: modelEditorUrl,
+              editorUrl: modelEditorUrl
+            };
+          });
     const term = keyword?.toLowerCase();
     return sortAssets(
       term ? items.filter((a) => a.name.toLowerCase().includes(term)) : items,
