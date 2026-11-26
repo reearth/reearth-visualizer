@@ -234,4 +234,4 @@ require (
 	moul.io/http2curl/v2 v2.3.0 // indirect
 )
 
-go 1.27.2
+go 1.27.4
