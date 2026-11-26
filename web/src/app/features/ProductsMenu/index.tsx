@@ -47,6 +47,7 @@ type DataServiceItem = {
   id: DataServiceId;
   title: string;
   description: string;
+  icon: IconName;
   disabled?: boolean;
   onNavigate?: () => void;
 };
@@ -123,18 +124,21 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
       id: "terrain",
       title: "Terrain",
       description: t("Open terrain tiles for 3D globes"),
+      icon: "terrainLogo",
       onNavigate: () => openUrlInNewTab(DATA_SERVICE_URLS.TERRAIN)
     },
     {
       id: "buildings",
       title: "Buildings",
       description: t("Open 3D buildings tiles for the world"),
+      icon: "buildingsLogo",
       onNavigate: () => openUrlInNewTab(DATA_SERVICE_URLS.BUILDINGS)
     },
     {
       id: "paper",
       title: "Papers",
       description: t("Open Map Tile Service"),
+      icon: "papersLogo",
       onNavigate: () => openUrlInNewTab(DATA_SERVICE_URLS.PAPER)
     }
   ];
@@ -216,17 +220,23 @@ const ProductsMenu: FC<ProductsMenuProps> = ({ workspaceId, onSelect }) => {
           <DataServiceList>
             {dataServices.map((service) => (
               <DataServiceRow key={service.id}>
-                <DataServiceLabel type="button" onClick={handleAction(service)}>
-                  <Typography size="body">{service.title}</Typography>
-                  <Icon
-                    icon="arrowExternalLink"
-                    size="small"
-                    color={theme.content.weak}
-                  />
-                </DataServiceLabel>
-                <Typography size="body" color="#B1B1B1">
-                  {service.description}
-                </Typography>
+                <Icon size={28} icon={service.icon} />
+                <DataServiceText>
+                  <DataServiceLabel
+                    type="button"
+                    onClick={handleAction(service)}
+                  >
+                    <Typography size="body">{service.title}</Typography>
+                    <Icon
+                      icon="arrowExternalLink"
+                      size="small"
+                      color={theme.content.weak}
+                    />
+                  </DataServiceLabel>
+                  <Typography size="body" color="#B1B1B1">
+                    {service.description}
+                  </Typography>
+                </DataServiceText>
               </DataServiceRow>
             ))}
           </DataServiceList>
@@ -325,10 +335,17 @@ const DataServiceList = styled("div")(({ theme }) => ({
   gap: theme.spacing.normal
 }));
 
-const DataServiceRow = styled("div")(() => ({
+const DataServiceRow = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.normal
+}));
+
+const DataServiceText = styled("div")(() => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
-  alignItems: css.alignItems.flexStart
+  alignItems: css.alignItems.flexStart,
+  minWidth: 0
 }));
 
 // The negative margin cancels the padding, so the hover background can breathe

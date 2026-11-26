@@ -1,8 +1,8 @@
-import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { Camera } from "@reearth/app/utils/value";
 import { ComputedFeature, ComputedLayer } from "@reearth/core";
 import { config } from "@reearth/services/config";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
+import { ViewerProperty } from "@reearth/visualizer-plugin-api";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { useVisualizerCamera } from "./atoms";

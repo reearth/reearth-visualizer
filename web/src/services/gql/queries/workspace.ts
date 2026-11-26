@@ -10,7 +10,6 @@ export const CREATE_WORKSPACE = gql(`
           user {
             id
             name
-            email
           }
           userId
           role
@@ -39,7 +38,6 @@ export const UPDATE_WORKSPACE = gql(`
           user {
             id
             name
-            email
           }
           userId
           role
@@ -60,7 +58,6 @@ export const ADD_MEMBER_TO_WORKSPACE = gql(`
           user {
             id
             name
-            email
           }
           userId
           role
@@ -81,7 +78,6 @@ export const REMOVE_MEMBER_FROM_WORKSPACE = gql(`
           user {
             id
             name
-            email
           }
           userId
           role
@@ -104,7 +100,6 @@ export const UPDATE_MEMBER_OF_WORKSPACE = gql(`
           user {
             id
             name
-            email
           }
           userId
           role

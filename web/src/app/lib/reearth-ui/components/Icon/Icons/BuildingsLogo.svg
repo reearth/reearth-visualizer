@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
+<g clip-path="url(#clip_buildings_logo)">
+<path d="M28 0H0V28H28V0Z" fill="#59ACF6"/>
+<path d="M14.0653 4.84375L0 11.5357V27.9998H14.0653V4.84375Z" fill="#E4F0FF"/>
+<path d="M14.0653 4.84375L28 11.5357V27.9998H14.0653V4.84375Z" fill="#262C38"/>
+</g>
+<defs>
+<clipPath id="clip_buildings_logo">
+<rect width="28" height="28" rx="6" fill="white"/>
+</clipPath>
+</defs>
+</svg>

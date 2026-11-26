@@ -1,4 +1,5 @@
-import { Role, WorkspaceMember } from "@reearth/services/gql";
+import type { WorkspaceMember } from "@reearth/services/api/workspace/types";
+import { Role } from "@reearth/services/gql";
 import { fireEvent, render, screen, waitFor } from "@reearth/test/utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -17,7 +18,7 @@ vi.mock("@reearth/services/api/workspace", () => ({
 const member: WorkspaceMember = {
   userId: "u1",
   role: Role.Writer,
-  user: { id: "u1", name: "Writer One", email: "w1@example.com" }
+  user: { id: "u1", name: "Writer One" }
 };
 
 const setup = (props: { member?: WorkspaceMember } = {}) => {

@@ -1,8 +1,9 @@
 import { Button, TextInput, Typography } from "@reearth/app/lib/reearth-ui";
 import { useMe } from "@reearth/services/api/user";
 import { useWorkspace } from "@reearth/services/api/workspace";
+import type { WorkspaceMember } from "@reearth/services/api/workspace/types";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { Role, WorkspaceMember } from "@reearth/services/gql";
+import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
@@ -51,9 +52,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) return members;
     return members.filter(({ user }) =>
-      [user?.name, user?.email].some((str) =>
-        str?.toLowerCase().includes(query)
-      )
+      user?.name.toLowerCase().includes(query)
     );
   }, [members, searchQuery]);
 
@@ -88,7 +87,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           <TextInput
             value={searchQuery}
             extendWidth
-            placeholder={t("Search member by name or email")}
+            placeholder={t("Search member by name")}
             onChange={handleSearch}
           />
         </Search>
@@ -105,7 +104,6 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
       </HeaderWrapper>
       <Table>
         <TableHeaderCell>{t("User Name")}</TableHeaderCell>
-        <TableHeaderCell>{t("Email")}</TableHeaderCell>
         <TableHeaderCell>{t("Role")}</TableHeaderCell>
         <TableHeaderCell />
       </Table>
@@ -197,7 +195,7 @@ const TemplateWrapper = styled("div")({
 const Table = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px 32px`,
   display: css.display.grid,
-  gridTemplateColumns: "3fr 4fr 2fr 1fr",
+  gridTemplateColumns: "3fr 2fr 1fr",
   gap: theme.spacing.small,
   color: theme.content.main,
   height: `${theme.fonts.lineHeights.h4}px`

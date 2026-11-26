@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
+<g clip-path="url(#clip_terrain_logo)">
+<path d="M28 0H0V28H28V0Z" fill="#225B9B"/>
+<path d="M14 4.84375L8.46533 14H19.5347L14 4.84375Z" fill="white"/>
+<path d="M8.46533 14L0 28H28L19.5347 14H8.46533Z" fill="#DA2120"/>
+</g>
+<defs>
+<clipPath id="clip_terrain_logo">
+<rect width="28" height="28" rx="6" fill="white"/>
+</clipPath>
+</defs>
+</svg>
