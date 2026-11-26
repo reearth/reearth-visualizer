@@ -1,4 +1,3 @@
-import { Asset } from "@reearth/app/features/AssetsManager/types";
 import {
   Icon,
   Loading,
@@ -12,21 +11,29 @@ import {
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, RefObject } from "react";
+import { FC, RefObject, useCallback, useEffect, useState } from "react";
 
-import { AssetCard, AssetRow, LIST_COLUMNS } from "./AssetItem";
-import { AssetLayout } from "./types";
+import { AssetCard, AssetRow } from "./AssetItem";
+import AssetDetails from "./Cms/AssetDetails";
+import { AssetLayout, AssetTab, LayerAsset } from "./types";
+import { LIST_COLUMNS } from "./utils";
 
 type Option = { value: string; label: string };
 
 type Props = {
-  assets: Asset[];
+  assets: LayerAsset[];
   loading: boolean;
+  // Notes that some items couldn't be loaded.
+  incomplete?: boolean;
   wrapperRef: RefObject<HTMLDivElement | null>;
   contentRef: RefObject<HTMLDivElement | null>;
   layout: AssetLayout;
   formatFilter: string;
   formatOptions: Option[];
+  // Picks the list columns; CMS tabs also add a project filter.
+  tab: AssetTab;
+  projectFilter: string;
+  projectOptions: Option[];
   sort: string;
   sortOptions: Option[];
   selectedId?: string;
@@ -35,6 +42,7 @@ type Props = {
   onLayoutChange: (layout: AssetLayout) => void;
   onSearch: (keyword?: string) => void;
   onFormatFilterChange: (value: string | string[]) => void;
+  onProjectFilterChange: (value: string | string[]) => void;
   onSortChange: (value: string) => void;
   onSelect: (id: string) => void;
 };
@@ -43,11 +51,15 @@ type Props = {
 const AssetContents: FC<Props> = ({
   assets,
   loading,
+  incomplete,
   wrapperRef,
   contentRef,
   layout,
   formatFilter,
   formatOptions,
+  tab,
+  projectFilter,
+  projectOptions,
   sort,
   sortOptions,
   selectedId,
@@ -55,11 +67,31 @@ const AssetContents: FC<Props> = ({
   onLayoutChange,
   onSearch,
   onFormatFilterChange,
+  onProjectFilterChange,
   onSortChange,
   onSelect
 }) => {
   const t = useT();
   const theme = useTheme();
+
+  // The CMS item whose details are open, one at a time, next to its card or
+  // its row's info button. Closed when the tab or layout changes, or when the
+  // item is no longer shown.
+  const isCmsTab = tab !== "visualizer";
+  const [details, setDetails] = useState<{
+    id: string;
+    reference: HTMLElement;
+  }>();
+  const detailsAsset = details && assets.find((a) => a.id === details.id);
+  const closeDetails = useCallback(() => setDetails(undefined), []);
+  const openDetails = useCallback(
+    (id: string, reference: HTMLElement) => setDetails({ id, reference }),
+    []
+  );
+  useEffect(() => setDetails(undefined), [tab, layout]);
+  useEffect(() => {
+    if (details && !detailsAsset) setDetails(undefined);
+  }, [details, detailsAsset]);
 
   return (
     <>
@@ -88,26 +120,51 @@ const AssetContents: FC<Props> = ({
         searchPlaceholder={t("Search by the name")}
         onSearch={onSearch}
         filters={
-          <FormatFilter>
-            <Selector
-              value={formatFilter}
-              options={formatOptions}
-              onChange={onFormatFilterChange}
-              dataTestid="asset-layer-creator-format"
-            />
-          </FormatFilter>
+          <Filters>
+            {/* CMS models only come as GeoJSON. */}
+            {tab !== "cmsModels" && (
+              <Filter>
+                <Selector
+                  value={formatFilter}
+                  options={formatOptions}
+                  onChange={onFormatFilterChange}
+                  dataTestid="asset-layer-creator-format"
+                />
+              </Filter>
+            )}
+            {tab !== "visualizer" && (
+              <Filter>
+                <Selector
+                  value={projectFilter}
+                  options={projectOptions}
+                  onChange={onProjectFilterChange}
+                  dataTestid="asset-layer-creator-project"
+                />
+              </Filter>
+            )}
+          </Filters>
         }
       />
 
       <AssetsArea>
-        {/* Like the dashboard asset list: the header sits outside the scroll
-            area, so only the rows scroll and nothing shows behind it. */}
+        {incomplete && !loading && (
+          <Notice data-testid="asset-layer-creator-incomplete">
+            <Icon icon="warning" size="small" color={theme.warning.main} />
+            <Typography size="footnote" color={theme.content.weak}>
+              {t("Some items could not be loaded from CMS.")}
+            </Typography>
+          </Notice>
+        )}
         {layout === "list" && !loading && !!assets.length && (
           <ListHeaderWrapper>
-            <ListHeader>
+            <ListHeader tab={tab}>
               <span>{t("Name")}</span>
-              <span>{t("Size")}</span>
-              <span>{t("Uploaded at")}</span>
+              {tab !== "visualizer" && <span>{t("Project")}</span>}
+              {tab !== "cmsModels" && <span>{t("Size")}</span>}
+              <span>
+                {tab === "cmsModels" ? t("Created") : t("Uploaded at")}
+              </span>
+              {isCmsTab && <span />}
             </ListHeader>
           </ListHeaderWrapper>
         )}
@@ -121,7 +178,11 @@ const AssetContents: FC<Props> = ({
                 size={50}
                 color={theme.content.weak}
               />
-              <Typography size="h5">{t("No assets found")}</Typography>
+              <Typography size="h5">
+                {tab === "cmsModels"
+                  ? t("No models found")
+                  : t("No assets found")}
+              </Typography>
               <Typography size="body" color={theme.content.weak}>
                 {t("Try adjusting your search or filters")}
               </Typography>
@@ -132,8 +193,10 @@ const AssetContents: FC<Props> = ({
                 <AssetCard
                   key={asset.id}
                   asset={asset}
+                  tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
+                  onInfo={isCmsTab ? openDetails : undefined}
                 />
               ))}
             </Grid>
@@ -143,26 +206,53 @@ const AssetContents: FC<Props> = ({
                 <AssetRow
                   key={asset.id}
                   asset={asset}
+                  tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
+                  onInfo={isCmsTab ? openDetails : undefined}
                 />
               ))}
             </List>
           )}
         </AssetsContentWrapper>
       </AssetsArea>
+      {details && detailsAsset && (
+        <AssetDetails
+          key={detailsAsset.id}
+          asset={detailsAsset}
+          tab={tab}
+          reference={details.reference}
+          side={layout === "grid" ? "right" : "left"}
+          onClose={closeDetails}
+        />
+      )}
     </>
   );
 };
 
-const FormatFilter = styled("div")(() => ({
-  width: 150,
+const Filters = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.small,
   flexShrink: 0
 }));
 
-const AssetsArea = styled("div")(() => ({
+const Notice = styled("div")(({ theme }) => ({
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  gap: theme.spacing.smallest,
+  padding: `0 ${theme.spacing.small}px ${theme.spacing.small}px`
+}));
+
+// At least 150px, and wider when a label needs it (as some translations do).
+const Filter = styled("div")(() => ({
+  minWidth: 150
+}));
+
+const AssetsArea = styled("div")(({ theme }) => ({
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
+  padding: theme.spacing.small,
   height: 440
 }));
 
@@ -201,9 +291,11 @@ const List = styled("div")(({ theme }) => ({
   gap: theme.spacing.micro
 }));
 
-const ListHeader = styled("div")(({ theme }) => ({
+const ListHeader = styled("div", {
+  shouldForwardProp: (prop) => prop !== "tab"
+})<{ tab: AssetTab }>(({ theme, tab }) => ({
   display: "grid",
-  gridTemplateColumns: LIST_COLUMNS,
+  gridTemplateColumns: LIST_COLUMNS[tab],
   gap: theme.spacing.normal,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   color: theme.content.weak,

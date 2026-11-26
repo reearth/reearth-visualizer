@@ -100,11 +100,11 @@ export const sceneProperty2ViewerPropertyMapping: Mapping = {
   "globeLighting.globeLighting": "globe.enableLighting",
   "globeShadow.globeShadow": "scene.shadow.enabled",
   "globeAtmosphere.globeAtmosphere": "globe.atmosphere.enabled",
-  "globeAtmosphere.globeAtmosphereIntensity": "globe.atmosphere.intensity",
+  "globeAtmosphere.globeAtmosphereIntensity": "globe.atmosphere.lightIntensity",
   "skyBox.skyBox": "sky.skyBox.show",
   "sun.sun": "sky.sun.show",
   "moon.moon": "sky.moon.show",
-  "skyAtmosphere.skyAtmosphere": "sky.atmosphere.show",
-  "skyAtmosphere.skyAtmosphereIntensity": "sky.atmosphere.lightIntensity",
+  "skyAtmosphere.skyAtmosphere": "sky.skyAtmosphere.show",
+  "skyAtmosphere.skyAtmosphereIntensity": "sky.skyAtmosphere.lightIntensity",
   "camera.allowEnterGround": "camera.allowEnterGround"
 };

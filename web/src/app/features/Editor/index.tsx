@@ -17,6 +17,7 @@ import PlateauAssetLayerCreator from "./Map/PlateauAssetLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
 import {
   showAssetLayerCreatorAtom,
+  showCmsLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
   showSketchLayerCreatorAtom,
   showUrlLayerCreatorAtom,
@@ -87,6 +88,13 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   );
   const closeAssetLayerCreator = () => {
     setShowAssetLayerCreator(false);
+  };
+
+  const [showCmsLayerCreator, setShowCmsLayerCreator] = useAtom(
+    showCmsLayerCreatorAtom
+  );
+  const closeCmsLayerCreator = () => {
+    setShowCmsLayerCreator(false);
   };
 
   const [showValueLayerCreator, setShowValueLayerCreator] = useAtom(
@@ -181,7 +189,16 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
       {showAssetLayerCreator && (
         <AssetLayerCreator
           sceneId={sceneId}
+          origin="visualizer"
           onClose={closeAssetLayerCreator}
+          onSubmit={handleLayerAdd}
+        />
+      )}
+      {showCmsLayerCreator && (
+        <AssetLayerCreator
+          sceneId={sceneId}
+          origin="cms"
+          onClose={closeCmsLayerCreator}
           onSubmit={handleLayerAdd}
         />
       )}

@@ -65,7 +65,7 @@ jobs:
       - id: changelog
         name: Generate CHANGELOG
         if: steps.gate.outputs.cut != 'true'
-        uses: reearth/changelog-action@86cb9d7a3727f3cb6afe36a1536fad61e9775287 # main
+        uses: reearth/changelog-action@cd9d00f467a683c3c9996c1574cfa42d60968dc5 # main
         with:
           version: ${{ github.event.inputs.version == 'custom' && github.event.inputs.custom_version || github.event.inputs.version }}
           repo: ${{ github.repository }}

@@ -6,7 +6,7 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { useWorkspaceMutations } from "@reearth/services/api/workspace";
-import { WorkspaceMember } from "@reearth/services/gql";
+import type { WorkspaceMember } from "@reearth/services/api/workspace/types";
 import { useT } from "@reearth/services/i18n/hooks";
 import { Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";

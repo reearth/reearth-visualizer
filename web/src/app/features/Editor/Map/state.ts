@@ -22,3 +22,4 @@ export const showSketchLayerCreatorAtom = atomWithReset<boolean>(false);
 export const showUrlLayerCreatorAtom = atomWithReset<boolean>(false);
 export const showValueLayerCreatorAtom = atomWithReset<boolean>(false);
 export const showAssetLayerCreatorAtom = atomWithReset<boolean>(false);
+export const showCmsLayerCreatorAtom = atomWithReset<boolean>(false);
