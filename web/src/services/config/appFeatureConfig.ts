@@ -62,6 +62,7 @@ export type AppFeatureConfig = {
   useProjectSplitImport?: boolean;
   disabledTileTypes?: string[];
   defaultTileType?: string;
+  cmsLayerCreator?: boolean;
 };
 
 const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
@@ -77,7 +78,8 @@ const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
   builtinTimelineWidget: true,
   useProjectSplitImport: true,
   disabledTileTypes: [...EE_TILE_TYPES, ...DEPRECATED_TILE_TYPES],
-  defaultTileType: DEFAULT_TILE_TYPE
+  defaultTileType: DEFAULT_TILE_TYPE,
+  cmsLayerCreator: false
 };
 
 let appFeatureConfig: AppFeatureConfig = {

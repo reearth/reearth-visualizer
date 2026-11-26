@@ -9,10 +9,8 @@ import useFileInput from "use-file-input";
 import { wmsLayersFromUrl } from "../UrlLayerCreator/utils";
 import { useLayerNames } from "../useLayerNames";
 
-import { AssetLayout, AssetTab, SortKey } from "./types";
-import useCmsAssets from "./useCmsAssets";
-import useUploads from "./useUploads";
-import useVisualizerAssets from "./useVisualizerAssets";
+import useCmsAssets from "./Cms/useCmsAssets";
+import { AssetLayout, AssetOrigin, AssetTab, SortKey } from "./types";
 import {
   ACCEPT_STRING,
   ASSET_FORMATS,
@@ -24,6 +22,8 @@ import {
   checkModelGeoJson,
   needsLayerNames
 } from "./utils";
+import useUploads from "./Visualizer/useUploads";
+import useVisualizerAssets from "./Visualizer/useVisualizerAssets";
 
 const ALL_FORMATS = "all";
 const ALL_PROJECTS = "all";
@@ -31,14 +31,17 @@ const MIN_CHECKING_MODEL_GEOMETRY = 2000;
 
 type Props = {
   sceneId: string;
+  origin: AssetOrigin;
   onClose: () => void;
   onSubmit: (layerAddInp: LayerAddProps) => void;
 };
 
-export default ({ sceneId, onClose, onSubmit }: Props) => {
+export default ({ sceneId, origin, onClose, onSubmit }: Props) => {
   const t = useT();
 
-  const [tab, setTab] = useState<AssetTab>("visualizer");
+  const [tab, setTab] = useState<AssetTab>(
+    origin === "cms" ? "cmsAssets" : "visualizer"
+  );
   const [layout, setLayout] = useState<AssetLayout>("grid");
   const [sort, setSort] = useState<SortKey>("date-desc");
   const [formatFilter, setFormatFilter] = useState<string>(ALL_FORMATS);
@@ -172,9 +175,7 @@ export default ({ sceneId, onClose, onSubmit }: Props) => {
       { value: "date-desc", label: t("Last Uploaded") },
       { value: "date-asc", label: t("First Uploaded") },
       { value: "name-asc", label: t("A To Z") },
-      { value: "name-desc", label: t("Z To A") },
-      { value: "size-asc", label: t("Size Small to Large") },
-      { value: "size-desc", label: t("Size Large to Small") }
+      { value: "name-desc", label: t("Z To A") }
     ],
     [t]
   );

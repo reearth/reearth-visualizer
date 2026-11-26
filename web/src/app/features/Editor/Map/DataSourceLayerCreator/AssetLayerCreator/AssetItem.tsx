@@ -1,8 +1,8 @@
-import { Icon, Typography } from "@reearth/app/lib/reearth-ui";
+import { Icon, IconButton, Typography } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, KeyboardEvent } from "react";
+import { FC, KeyboardEvent, useRef } from "react";
 
 import { AssetTab, LayerAsset } from "./types";
 import {
@@ -42,16 +42,39 @@ const selectableProps = ({ asset, selected, onSelect }: Props) => ({
 });
 
 // Grid view: the format name (or a folder for CMS models) as a tile, with the
-// name below (and the CMS project above it).
-export const AssetCard: FC<Props & { tab: AssetTab }> = ({ tab, ...props }) => {
+// name below (and the CMS project above it). CMS cards also have an info
+// button that opens their details without selecting them.
+export const AssetCard: FC<
+  Props & {
+    tab: AssetTab;
+    onInfo?: (id: string, card: HTMLElement) => void;
+  }
+> = ({ tab, onInfo, ...props }) => {
   const t = useT();
   const { asset, selected } = props;
+  const cardRef = useRef<HTMLDivElement>(null);
   return (
     <Card
+      ref={cardRef}
       selected={selected}
       {...selectableProps(props)}
       data-testid={`asset-layer-creator-card-${asset.id}`}
     >
+      {onInfo && (
+        <InfoButton
+          onKeyDown={(e) => e.stopPropagation()}
+          data-testid={`asset-layer-creator-info-${asset.id}`}
+        >
+          <IconButton
+            icon="informationCircle"
+            size="small"
+            appearance="simple"
+            ariaLabel={t("Details")}
+            stopPropagationOnClick
+            onClick={() => cardRef.current && onInfo(asset.id, cardRef.current)}
+          />
+        </InfoButton>
+      )}
       <CardPreview selected={selected}>
         {tab === "cmsModels" ? (
           <>
@@ -74,11 +97,19 @@ export const AssetCard: FC<Props & { tab: AssetTab }> = ({ tab, ...props }) => {
   );
 };
 
-// List view, with columns per tab (see LIST_COLUMNS):
-
-export const AssetRow: FC<Props & { tab: AssetTab }> = ({ tab, ...props }) => {
+// List view, with columns per tab (see LIST_COLUMNS). CMS rows end with an
+// info button that opens their details without selecting them, next to the
+// button.
+export const AssetRow: FC<
+  Props & {
+    tab: AssetTab;
+    onInfo?: (id: string, button: HTMLElement) => void;
+  }
+> = ({ tab, onInfo, ...props }) => {
+  const t = useT();
   const { asset, selected } = props;
   const isModel = tab === "cmsModels";
+  const infoRef = useRef<HTMLSpanElement>(null);
   return (
     <Row
       selected={selected}
@@ -99,6 +130,22 @@ export const AssetRow: FC<Props & { tab: AssetTab }> = ({ tab, ...props }) => {
       {tab !== "visualizer" && <Ellipsis>{asset.projectName}</Ellipsis>}
       {!isModel && <Cell>{formatBytes(asset.size)}</Cell>}
       <Cell>{formatDate(asset.createdAt)}</Cell>
+      {onInfo && (
+        <span
+          ref={infoRef}
+          onKeyDown={(e) => e.stopPropagation()}
+          data-testid={`asset-layer-creator-info-${asset.id}`}
+        >
+          <IconButton
+            icon="informationCircle"
+            size="small"
+            appearance="simple"
+            ariaLabel={t("Details")}
+            stopPropagationOnClick
+            onClick={() => infoRef.current && onInfo(asset.id, infoRef.current)}
+          />
+        </span>
+      )}
     </Row>
   );
 };
@@ -106,6 +153,7 @@ export const AssetRow: FC<Props & { tab: AssetTab }> = ({ tab, ...props }) => {
 const Card = styled("div", {
   shouldForwardProp: (prop) => prop !== "selected"
 })<{ selected: boolean }>(({ theme, selected }) => ({
+  position: css.position.relative,
   display: css.display.flex,
   flexDirection: css.flexDirection.column,
   border: `1px solid ${selected ? theme.select.main : "transparent"}`,
@@ -126,6 +174,12 @@ const CardPreview = styled("div", {
   fontSize: theme.fonts.sizes.h5,
   fontWeight: theme.fonts.weight.bold,
   background: selected ? theme.select.main : theme.bg[2]
+}));
+
+const InfoButton = styled("span")(({ theme }) => ({
+  position: css.position.absolute,
+  top: theme.spacing.smallest,
+  right: theme.spacing.smallest
 }));
 
 const CardInfo = styled("div")(({ theme }) => ({

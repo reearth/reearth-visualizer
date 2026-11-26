@@ -60,14 +60,16 @@ export const formatOf = (url: string): AssetFormat | undefined => {
 
 // The format CMS states, or the one the file extension implies. MVT, WMS and
 // 3D Tiles can't be told from the URL (a tileset.json looks like GeoJSON).
-export const assetFormat = (asset: LayerAsset): LayerFormat | undefined =>
-  asset.format ?? formatOf(asset.url);
+export const assetFormat = (
+  asset: Pick<LayerAsset, "format" | "url">
+): LayerFormat | undefined => asset.format ?? formatOf(asset.url);
 
 // The list view's grid columns on each tab, shared by its header and rows.
 export const LIST_COLUMNS: Record<AssetTab, string> = {
   visualizer: "1fr 120px 140px",
-  cmsAssets: "minmax(0, 1.4fr) minmax(0, 1fr) 80px 120px",
-  cmsModels: "minmax(0, 1.4fr) minmax(0, 1fr) 140px"
+  // CMS rows end with an info button.
+  cmsAssets: "minmax(0, 1.4fr) minmax(0, 1fr) 80px 120px 24px",
+  cmsModels: "minmax(0, 1.4fr) minmax(0, 1fr) 140px 24px"
 };
 
 const MVT_TEMPLATE = "{z}/{x}/{y}.mvt";
@@ -129,7 +131,28 @@ export const cmsAssetLayer = (asset: {
 // GeoJSON, or a private asset, whose URL needs CMS credentials to load.
 export type AddIssue = "noGeometry" | "unavailable" | "private";
 
-const MODEL_CHECK_TIMEOUT_MS = 15000;
+// How long a request to CMS may take before it is given up.
+export const REQUEST_TIMEOUT_MS = 15000;
+
+// A signal aborted by the caller's `signal` or after `timeoutMs`. `cleanup`
+// stops the timer, detaches from the caller's signal, and aborts, which also
+// stops a download that's left unread.
+// (AbortSignal.any would do, but it needs Safari 17.4+.)
+export const linkedSignal = (signal: AbortSignal, timeoutMs: number) => {
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  const timeout = setTimeout(abort, timeoutMs);
+  if (signal.aborted) abort();
+  else signal.addEventListener("abort", abort, { once: true });
+  return {
+    signal: controller.signal,
+    cleanup: () => {
+      clearTimeout(timeout);
+      signal.removeEventListener("abort", abort);
+      abort();
+    }
+  };
+};
 
 // A CMS model is served as GeoJSON only when it is published to the Public
 // API (otherwise 404) and has a geometry field (otherwise CMS fails with "no
@@ -138,15 +161,9 @@ export const checkModelGeoJson = async (
   url: string,
   signal: AbortSignal
 ): Promise<AddIssue | undefined> => {
-  // Aborted by the caller or after the timeout. (AbortSignal.any would do,
-  // but it needs Safari 17.4+.)
-  const controller = new AbortController();
-  const abort = () => controller.abort();
-  const timeout = setTimeout(abort, MODEL_CHECK_TIMEOUT_MS);
-  if (signal.aborted) abort();
-  else signal.addEventListener("abort", abort, { once: true });
+  const linked = linkedSignal(signal, REQUEST_TIMEOUT_MS);
   try {
-    const res = await fetch(`${url}?limit=1`, { signal: controller.signal });
+    const res = await fetch(`${url}?limit=1`, { signal: linked.signal });
     if (res.ok) {
       res.body?.cancel().catch(() => undefined);
       return undefined;
@@ -158,9 +175,24 @@ export const checkModelGeoJson = async (
   } catch {
     return "unavailable";
   } finally {
-    clearTimeout(timeout);
-    signal.removeEventListener("abort", abort);
+    linked.cleanup();
   }
+};
+
+// A CMS asset's page ("asset") or a model's items ("content") in CMS's web
+// app, at the deployment's cmsUrl (set per environment, REEARTH_CMS_URL in
+// the Docker image). None without one.
+export const cmsPageUrl = (
+  cmsUrl: string | undefined,
+  workspaceId: string | undefined,
+  projectId: string,
+  page: "asset" | "content",
+  id: string
+): string | undefined => {
+  const base = cmsUrl?.replace(/\/+$/, "");
+  return base && workspaceId
+    ? `${base}/workspace/${workspaceId}/project/${projectId}/${page}/${id}`
+    : undefined;
 };
 
 // For sources the server can't sort, such as CMS.
@@ -172,9 +204,7 @@ export const sortAssets = (assets: LayerAsset[], sort: SortKey) => {
       sign *
       (field === "name"
         ? a.name.localeCompare(b.name)
-        : field === "size"
-          ? a.size - b.size
-          : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
   );
 };
 

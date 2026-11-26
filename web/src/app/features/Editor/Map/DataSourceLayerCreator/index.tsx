@@ -1,5 +1,6 @@
 import { Button, PopupMenu, PopupMenuItem } from "@reearth/app/lib/reearth-ui";
 import { config } from "@reearth/services/config";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
@@ -7,6 +8,7 @@ import { useCallback, useMemo } from "react";
 import { useMapPage } from "../context";
 import {
   showAssetLayerCreatorAtom,
+  showCmsLayerCreatorAtom,
   showPlateauAssetLayerCreatorAtom,
   showSketchLayerCreatorAtom,
   showUrlLayerCreatorAtom,
@@ -51,6 +53,11 @@ const DataSourceLayerCreator = () => {
     setShowAssetLayerCreator(true);
   }, [setShowAssetLayerCreator]);
 
+  const setShowCmsLayerCreator = useSetAtom(showCmsLayerCreatorAtom);
+  const openCmsLayerCreator = useCallback(() => {
+    setShowCmsLayerCreator(true);
+  }, [setShowCmsLayerCreator]);
+
   const setShowSketchLayerCreator = useSetAtom(showSketchLayerCreatorAtom);
   const openSketchLayerCreator = useCallback(() => {
     setShowSketchLayerCreator(true);
@@ -82,6 +89,18 @@ const DataSourceLayerCreator = () => {
         icon: "floppyDisk",
         onClick: openAssetLayerCreator
       },
+      // Adding layers from CMS is part of the EE feature collection.
+      ...(appFeature().cmsLayerCreator
+        ? [
+            {
+              id: "add-from-cms",
+              title: t("Add from CMS"),
+              description: t("Pick assets or models from Re:Earth CMS"),
+              icon: "cmsLogo" as const,
+              onClick: openCmsLayerCreator
+            }
+          ]
+        : []),
       {
         id: "add-from-url",
         title: t("Add from URL"),
@@ -143,6 +162,7 @@ const DataSourceLayerCreator = () => {
       addPreset,
       googleProvider,
       openAssetLayerCreator,
+      openCmsLayerCreator,
       openUrlLayerCreator,
       openValueLayerCreator,
       openSketchLayerCreator,
