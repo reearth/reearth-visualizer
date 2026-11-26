@@ -1,5 +1,10 @@
 import { LayerAsset } from "../types";
-import { assetFormat, checkModelGeoJson } from "../utils";
+import {
+  REQUEST_TIMEOUT_MS,
+  assetFormat,
+  checkModelGeoJson,
+  linkedSignal
+} from "../utils";
 
 // What the details popover of a CMS asset or model shows.
 export type AssetPreview =
@@ -18,7 +23,8 @@ export type AssetPreview =
   | {
       type: "features";
       count: number;
-      geometryType?: string;
+      // The GeoJSON geometry types found, e.g. ["Polygon"].
+      geometryTypes: string[];
       properties: string[];
       shapes: Shape[];
     }
@@ -70,11 +76,7 @@ export const loadPreview = async (
 ): Promise<AssetPreview> => {
   const quick = quickPreview(asset, isModel);
   if (quick) return quick;
-  // Aborted by the caller or after 15 seconds.
-  const controller = new AbortController();
-  const abort = () => controller.abort();
-  const timeout = setTimeout(abort, 15000);
-  signal.addEventListener("abort", abort);
+  const linked = linkedSignal(signal, REQUEST_TIMEOUT_MS);
   try {
     if (isModel) {
       // A model's URL is its items as GeoJSON; without ".geojson" the CMS
@@ -82,9 +84,9 @@ export const loadPreview = async (
       // as adding it does: whether it's served as GeoJSON at all.
       const [res, issue] = await Promise.all([
         fetch(`${asset.url.replace(/\.geojson$/, "")}?limit=${MODEL_ITEMS}`, {
-          signal: controller.signal
+          signal: linked.signal
         }),
-        checkModelGeoJson(asset.url, controller.signal)
+        checkModelGeoJson(asset.url, linked.signal)
       ]);
       if (!res.ok) return { type: "error" };
       const { results = [], totalCount } = await res.json();
@@ -94,7 +96,7 @@ export const loadPreview = async (
         noGeometry: issue === "noGeometry"
       };
     }
-    const res = await fetch(asset.url, { signal: controller.signal });
+    const res = await fetch(asset.url, { signal: linked.signal });
     if (!res.ok) return { type: "error" };
     const format = assetFormat(asset);
     if (format === "csv") {
@@ -116,9 +118,7 @@ export const loadPreview = async (
   } catch {
     return { type: "error" };
   } finally {
-    // Also stops a download that's left unread, such as one too large.
-    clearTimeout(timeout);
-    abort();
+    linked.cleanup();
   }
 };
 
@@ -159,9 +159,10 @@ export const cellText = (value: unknown): string | undefined => {
 };
 
 // Reads the body as text, piece by piece, until `read` has enough (returns
-// true) or the body ends. False when it's over MAX_PREVIEW_BYTES first,
-// counted as it arrives: neither asset metadata nor Content-Length can be
-// relied on. The download is cancelled when reading stops.
+// true) or the body ends. Only the first MAX_PREVIEW_BYTES reach `read`,
+// counted as they arrive: neither asset metadata nor Content-Length can be
+// relied on. False when the body goes past them before `read` has enough.
+// The download is cancelled when reading stops.
 export const readBody = async (
   res: Response,
   read: (text: string, done: boolean) => boolean
@@ -173,10 +174,16 @@ export const readBody = async (
     for (;;) {
       const chunk = await reader?.read();
       const done = !chunk || chunk.done;
-      bytes += chunk?.value?.length ?? 0;
-      if (read(decoder.decode(chunk?.value, { stream: !done }), done) || done)
-        return true;
-      if (bytes > MAX_PREVIEW_BYTES) return false;
+      const value = chunk?.value;
+      // A chunk that crosses the limit is cut at it, so what follows can't
+      // complete the preview.
+      const remaining = MAX_PREVIEW_BYTES - bytes;
+      const over = !!value && value.length > remaining;
+      const within = over ? value.subarray(0, remaining) : value;
+      bytes += within?.length ?? 0;
+      if (read(decoder.decode(within, { stream: !done }), done)) return true;
+      if (over) return false;
+      if (done) return true;
     }
   } finally {
     reader?.cancel().catch(() => undefined);
@@ -185,7 +192,7 @@ export const readBody = async (
 
 // The first non-empty records, reading no more of the file than they need.
 // Undefined when they aren't found in the first MAX_PREVIEW_BYTES.
-const readCsv = async (res: Response, count: number) => {
+export const readCsv = async (res: Response, count: number) => {
   const read = csvReader();
   let records: string[][] = [];
   const complete = await readBody(res, (text, done) => {
@@ -270,11 +277,11 @@ const geometryShapes = (g?: Geometry | null): Shape[] => {
 };
 
 export const summarize = (features: Feature[]): AssetPreview => {
-  const types = [...new Set(features.map((f) => f.geometry?.type ?? "None"))];
+  const types = [...new Set(features.flatMap((f) => f.geometry?.type ?? []))];
   return {
     type: "features",
     count: features.length,
-    geometryType: types.length > 1 ? "Mixed" : types[0],
+    geometryTypes: types,
     properties: [
       ...new Set(features.flatMap((f) => Object.keys(f.properties ?? {})))
     ],

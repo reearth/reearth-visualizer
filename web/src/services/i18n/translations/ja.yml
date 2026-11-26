@@ -158,6 +158,8 @@ Couldn't load the preview. Close and reopen to try again.: プレビューを読
 Loading preview...: プレビューを読み込み中...
 No geometry field, so this model can't be added as a layer.: ジオメトリフィールドがないため、このモデルはレイヤーとして追加できません。
 First {{shown}} of {{total}} items: 全{{total}}件中、最初の{{shown}}件
+'{{count}} items_other': '{{count}}件'
+Mixed: 混在
 Latitude and longitude columns found: 緯度・経度の列が見つかりました
 '{{count}} features_other': '{{count}}件のフィーチャー'
 Close: 閉じる

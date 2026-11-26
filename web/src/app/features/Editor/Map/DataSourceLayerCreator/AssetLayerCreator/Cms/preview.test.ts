@@ -11,6 +11,7 @@ import {
   kmlFeatures,
   quickPreview,
   readBody,
+  readCsv,
   summarize
 } from "./preview";
 
@@ -143,7 +144,7 @@ describe("features", () => {
     expect(preview).toMatchObject({
       type: "features",
       count: 2,
-      geometryType: "Polygon",
+      geometryTypes: ["Polygon"],
       properties: ["name", "ward", "area_m2"]
     });
     expect(preview.type === "features" && preview.shapes).toHaveLength(2);
@@ -218,5 +219,40 @@ describe("readBody", () => {
     });
     expect(complete).toBe(true);
     expect(text).toBe("a,b\n1,2");
+  });
+});
+
+describe("readCsv at the size limit", () => {
+  // The text in 64 KB chunks, as a browser may deliver it.
+  const chunked = (text: string) => {
+    const bytes = new TextEncoder().encode(text);
+    const size = 64 * 1024;
+    return Array.from({ length: Math.ceil(bytes.length / size) }, (_, i) =>
+      bytes.subarray(i * size, (i + 1) * size)
+    );
+  };
+
+  test("too large when the records are only complete past the limit", async () => {
+    // A long header row, then rows ending at 1 byte before, and 1 and 3
+    // bytes after, the limit. The chunk that crosses the limit holds them
+    // all, but only the header and the first row are within it.
+    const text = `${"h".repeat(MAX_PREVIEW_BYTES - 4)}\n1\n2\n3\n`;
+    const { res, state } = fakeResponse(chunked(text));
+    expect(await readCsv(res, 4)).toBeUndefined();
+    expect(state.cancelled).toBe(true);
+  });
+
+  test("a table when the records end exactly at the limit", async () => {
+    const text = `${"h".repeat(MAX_PREVIEW_BYTES - 7)}\n1\n2\n3\n`;
+    const { res } = fakeResponse([
+      ...chunked(text),
+      new TextEncoder().encode("4\n")
+    ]);
+    expect(await readCsv(res, 4)).toEqual([
+      ["h".repeat(MAX_PREVIEW_BYTES - 7)],
+      ["1"],
+      ["2"],
+      ["3"]
+    ]);
   });
 });

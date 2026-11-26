@@ -251,11 +251,13 @@ const Tools = styled("div")(({ theme }) => ({
   flex: 1
 }));
 
+// At least 200px, and wider when a label needs it (as some translations do).
 const Sort = styled("div")(({ theme }) => ({
   display: css.display.flex,
   alignItems: css.alignItems.center,
   gap: theme.spacing.small,
-  width: 200
+  minWidth: 200,
+  flexShrink: 0
 }));
 
 const Layouts = styled("div")(({ theme }) => ({

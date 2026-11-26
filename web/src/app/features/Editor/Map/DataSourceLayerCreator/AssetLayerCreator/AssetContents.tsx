@@ -244,8 +244,9 @@ const Notice = styled("div")(({ theme }) => ({
   padding: `0 ${theme.spacing.small}px ${theme.spacing.small}px`
 }));
 
+// At least 150px, and wider when a label needs it (as some translations do).
 const Filter = styled("div")(() => ({
-  width: 150
+  minWidth: 150
 }));
 
 const AssetsArea = styled("div")(({ theme }) => ({

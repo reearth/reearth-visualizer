@@ -143,10 +143,13 @@ const AssetDetails: FC<Props> = ({ asset, tab, reference, side, onClose }) => {
         )}
         {preview.total !== undefined &&
           footnote(
-            t("First {{shown}} of {{total}} items", {
-              shown: preview.rows.length,
-              total: preview.total.toLocaleString("en-US")
-            })
+            // "First N of M" only when the list is cut off.
+            preview.rows.length < preview.total
+              ? t("First {{shown}} of {{total}} items", {
+                  shown: preview.rows.length,
+                  total: preview.total.toLocaleString("en-US")
+                })
+              : t("{{count}} items", { count: preview.total })
           )}
         {!!preview.rows.length && (
           <Table columns={preview.columns} rows={preview.rows} />
@@ -169,7 +172,10 @@ const AssetDetails: FC<Props> = ({ asset, tab, reference, side, onClose }) => {
         </Box>
         {footnote(
           [
-            preview.geometryType,
+            // GeoJSON's own type names, e.g. Polygon, aren't translated.
+            preview.geometryTypes.length > 1
+              ? t("Mixed")
+              : preview.geometryTypes[0],
             t("{{count}} features", { count: preview.count })
           ]
             .filter(Boolean)

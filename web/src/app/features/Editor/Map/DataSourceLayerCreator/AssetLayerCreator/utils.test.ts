@@ -4,7 +4,8 @@ import {
   checkModelGeoJson,
   cmsAssetLayer,
   cmsPageUrl,
-  formatOf
+  formatOf,
+  linkedSignal
 } from "./utils";
 
 describe("cmsPageUrl", () => {
@@ -203,5 +204,42 @@ describe("formatOf", () => {
     );
     expect(formatOf("https://example.com/points.csv#top")).toBe("csv");
     expect(formatOf("https://example.com/data?file=x.kml")).toBeUndefined();
+  });
+});
+
+describe("linkedSignal", () => {
+  afterEach(() => vi.useRealTimers());
+
+  it("is aborted at once when the caller's signal already is", () => {
+    const caller = new AbortController();
+    caller.abort();
+    const linked = linkedSignal(caller.signal, 1000);
+    expect(linked.signal.aborted).toBe(true);
+    linked.cleanup();
+  });
+
+  it("follows the caller's signal, and times out", () => {
+    vi.useFakeTimers();
+    const caller = new AbortController();
+    const followed = linkedSignal(caller.signal, 1000);
+    caller.abort();
+    expect(followed.signal.aborted).toBe(true);
+
+    const timed = linkedSignal(new AbortController().signal, 1000);
+    vi.advanceTimersByTime(999);
+    expect(timed.signal.aborted).toBe(false);
+    vi.advanceTimersByTime(1);
+    expect(timed.signal.aborted).toBe(true);
+    followed.cleanup();
+    timed.cleanup();
+  });
+
+  it("detaches from the caller's signal on cleanup", () => {
+    const caller = new AbortController();
+    const remove = vi.spyOn(caller.signal, "removeEventListener");
+    const linked = linkedSignal(caller.signal, 1000);
+    linked.cleanup();
+    expect(remove).toHaveBeenCalledWith("abort", expect.any(Function));
+    expect(linked.signal.aborted).toBe(true);
   });
 });

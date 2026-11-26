@@ -258,6 +258,7 @@ export const Selector: FC<SelectorProps> = ({
                 ? theme.content.weaker
                 : theme.content.main
             }
+            otherProperties={SINGLE_LINE}
           >
             {selectedItems[0]?.label}
           </Typography>
@@ -374,6 +375,15 @@ export const Selector: FC<SelectorProps> = ({
     </SelectorWrapper>
   );
 };
+
+// The input is one line high, so a label too long for it (as some
+// translations are) is cut with an ellipsis instead of wrapping.
+const SINGLE_LINE = {
+  minWidth: 0,
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+  textOverflow: "ellipsis"
+} as const;
 
 const SelectorWrapper = styled("div", {
   shouldForwardProp: (prop) => prop !== "fitTrigger"
