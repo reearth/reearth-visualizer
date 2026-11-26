@@ -23,8 +23,8 @@ import (
 )
 
 // initPublicAPIEcho builds the server for the public API mode
-// (Visualizer.PublicApi.Active). It serves only /api/v1 and the health
-// endpoints: no GraphQL, imports, file serving or web app. It runs as its own
+// (Visualizer.PublicApi.Active). It serves only /api/v1: no ping or health
+// endpoints, GraphQL, imports, file serving or web app. It runs as its own
 // deployment so that API clients such as the CLI never share the main
 // server's capacity, while using the same auth, usecases and database.
 func initPublicAPIEcho(ctx context.Context, cfg *ServerConfig, otelServiceName otel.OtelServiceName) *echo.Echo {
@@ -67,11 +67,10 @@ func initPublicAPIEcho(ctx context.Context, cfg *ServerConfig, otelServiceName o
 		})
 	}
 
-	api := e.Group("/api")
-	api.GET("/ping", Ping(), privateCache)
-	api.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
-
-	v1 := api.Group("/v1", privateCache)
+	// Only /api/v1: the load balancer routes nothing else here, and Cloud Run
+	// checks the service by its port, so /api/ping and /api/health would only
+	// add an unauthenticated (and, for health, expensive) endpoint.
+	v1 := e.Group("/api/v1", privateCache)
 	if cfg.Config.UseMockAuth() {
 		v1.Use(attachOpMiddlewareMockUser(cfg))
 	} else {
