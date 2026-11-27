@@ -121,6 +121,7 @@ type UpdateMeParam struct {
 type Workspace interface {
 	Fetch(context.Context, accountsWorkspace.IDList, *accountsWorkspace.Operator) (accountsWorkspace.List, error)
 	FindByUser(context.Context, accountsUser.ID, *accountsWorkspace.Operator) (accountsWorkspace.List, error)
+	FindByAlias(context.Context, string, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
 	// User mutation fallback (used when AccountsAPIClient is nil, e.g. e2e tests)
 	Create(context.Context, string, accountsUser.ID, *string, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
 	Update(context.Context, accountsWorkspace.ID, string, *string, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)

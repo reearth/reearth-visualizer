@@ -17,7 +17,7 @@ import (
 
 func (Server) ListPlugins(ctx context.Context, req ListPluginsRequestObject) (ListPluginsResponseObject, error) {
 	uc, op := usecases(ctx)
-	sc, err := projectScene(ctx, uc, req.ProjectId)
+	sc, err := projectScene(ctx, uc, req.ProjectId, req.Params.Workspace)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func (Server) ListPlugins(ctx context.Context, req ListPluginsRequestObject) (Li
 
 func (Server) UploadPlugin(ctx context.Context, req UploadPluginRequestObject) (UploadPluginResponseObject, error) {
 	uc, op := usecases(ctx)
-	sc, err := projectScene(ctx, uc, req.ProjectId)
+	sc, err := projectScene(ctx, uc, req.ProjectId, req.Params.Workspace)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (Server) UploadPlugin(ctx context.Context, req UploadPluginRequestObject) (
 
 func (Server) UninstallPlugin(ctx context.Context, req UninstallPluginRequestObject) (UninstallPluginResponseObject, error) {
 	uc, op := usecases(ctx)
-	sc, err := projectScene(ctx, uc, req.ProjectId)
+	sc, err := projectScene(ctx, uc, req.ProjectId, req.Params.Workspace)
 	if err != nil {
 		return nil, err
 	}
@@ -92,11 +92,11 @@ func (Server) UninstallPlugin(ctx context.Context, req UninstallPluginRequestObj
 // projectScene returns the scene of a project the user can read. Plugins are
 // installed per scene; the API addresses them by project so that clients
 // never need the scene ID.
-func projectScene(ctx context.Context, uc *interfaces.Container, projectID string) (*scene.Scene, error) {
+func projectScene(ctx context.Context, uc *interfaces.Container, projectID string, workspace *string) (*scene.Scene, error) {
 	_, op := usecases(ctx)
-	pid, err := id.ProjectIDFrom(projectID)
+	pid, err := resolveProject(ctx, projectID, workspace)
 	if err != nil {
-		return nil, invalidInput("invalid project ID %q", projectID)
+		return nil, err
 	}
 	if _, err := fetchProject(ctx, uc, pid); err != nil {
 		return nil, err

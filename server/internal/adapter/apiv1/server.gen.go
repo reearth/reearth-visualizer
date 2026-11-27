@@ -359,6 +359,9 @@ type Limit = int
 // ProjectId defines model for projectId.
 type ProjectId = string
 
+// Workspace defines model for workspace.
+type Workspace = string
+
 // WorkspaceId defines model for workspaceId.
 type WorkspaceId = string
 
@@ -368,6 +371,63 @@ type bearerAuthContextKey string
 // DeleteProjectParams defines parameters for DeleteProject.
 type DeleteProjectParams struct {
 	Permanent *bool `form:"permanent,omitempty" json:"permanent,omitempty"`
+
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
+}
+
+// GetProjectParams defines parameters for GetProject.
+type GetProjectParams struct {
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
+}
+
+// UpdateProjectParams defines parameters for UpdateProject.
+type UpdateProjectParams struct {
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
+}
+
+// ExportProjectParams defines parameters for ExportProject.
+type ExportProjectParams struct {
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
+}
+
+// ListPluginsParams defines parameters for ListPlugins.
+type ListPluginsParams struct {
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
+}
+
+// UploadPluginParams defines parameters for UploadPlugin.
+type UploadPluginParams struct {
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
+}
+
+// UninstallPluginParams defines parameters for UninstallPlugin.
+type UninstallPluginParams struct {
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
+}
+
+// PublishProjectParams defines parameters for PublishProject.
+type PublishProjectParams struct {
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
+}
+
+// RestoreProjectParams defines parameters for RestoreProject.
+type RestoreProjectParams struct {
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
+}
+
+// PublishStoryParams defines parameters for PublishStory.
+type PublishStoryParams struct {
+	// Workspace Workspace ID or alias. Required when `projectId` is a project alias.
+	Workspace *Workspace `form:"workspace,omitempty" json:"workspace,omitempty"`
 }
 
 // ListProjectsParams defines parameters for ListProjects.
@@ -427,31 +487,31 @@ type ServerInterface interface {
 	DeleteProject(ctx echo.Context, projectId ProjectId, params DeleteProjectParams) error
 	// Get a project
 	// (GET /projects/{projectId})
-	GetProject(ctx echo.Context, projectId ProjectId) error
+	GetProject(ctx echo.Context, projectId ProjectId, params GetProjectParams) error
 	// Update a project
 	// (PATCH /projects/{projectId})
-	UpdateProject(ctx echo.Context, projectId ProjectId) error
+	UpdateProject(ctx echo.Context, projectId ProjectId, params UpdateProjectParams) error
 	// Download a project as a zip
 	// (GET /projects/{projectId}/export)
-	ExportProject(ctx echo.Context, projectId ProjectId) error
+	ExportProject(ctx echo.Context, projectId ProjectId, params ExportProjectParams) error
 	// List the plugins installed in a project
 	// (GET /projects/{projectId}/plugins)
-	ListPlugins(ctx echo.Context, projectId ProjectId) error
+	ListPlugins(ctx echo.Context, projectId ProjectId, params ListPluginsParams) error
 	// Upload a plugin and install it in a project
 	// (POST /projects/{projectId}/plugins)
-	UploadPlugin(ctx echo.Context, projectId ProjectId) error
+	UploadPlugin(ctx echo.Context, projectId ProjectId, params UploadPluginParams) error
 	// Uninstall a plugin from a project
 	// (DELETE /projects/{projectId}/plugins/{pluginId})
-	UninstallPlugin(ctx echo.Context, projectId ProjectId, pluginId string) error
+	UninstallPlugin(ctx echo.Context, projectId ProjectId, pluginId string, params UninstallPluginParams) error
 	// Publish or unpublish a project
 	// (POST /projects/{projectId}/publish)
-	PublishProject(ctx echo.Context, projectId ProjectId) error
+	PublishProject(ctx echo.Context, projectId ProjectId, params PublishProjectParams) error
 	// Restore a project from the trash
 	// (POST /projects/{projectId}/restore)
-	RestoreProject(ctx echo.Context, projectId ProjectId) error
+	RestoreProject(ctx echo.Context, projectId ProjectId, params RestoreProjectParams) error
 	// Publish or unpublish a project's story
 	// (POST /projects/{projectId}/story/publish)
-	PublishStory(ctx echo.Context, projectId ProjectId) error
+	PublishStory(ctx echo.Context, projectId ProjectId, params PublishStoryParams) error
 	// List the projects of a workspace
 	// (GET /workspaces/{workspaceId}/projects)
 	ListProjects(ctx echo.Context, workspaceId WorkspaceId, params ListProjectsParams) error
@@ -493,6 +553,13 @@ func (w *ServerInterfaceWrapper) DeleteProject(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter permanent: %s", err))
 	}
 
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.DeleteProject(ctx, projectId, params)
 	return err
@@ -511,8 +578,17 @@ func (w *ServerInterfaceWrapper) GetProject(ctx echo.Context) error {
 
 	ctx.Set(string(BearerAuthScopes), []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetProjectParams
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetProject(ctx, projectId)
+	err = w.Handler.GetProject(ctx, projectId, params)
 	return err
 }
 
@@ -529,8 +605,17 @@ func (w *ServerInterfaceWrapper) UpdateProject(ctx echo.Context) error {
 
 	ctx.Set(string(BearerAuthScopes), []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateProjectParams
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.UpdateProject(ctx, projectId)
+	err = w.Handler.UpdateProject(ctx, projectId, params)
 	return err
 }
 
@@ -547,8 +632,17 @@ func (w *ServerInterfaceWrapper) ExportProject(ctx echo.Context) error {
 
 	ctx.Set(string(BearerAuthScopes), []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ExportProjectParams
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.ExportProject(ctx, projectId)
+	err = w.Handler.ExportProject(ctx, projectId, params)
 	return err
 }
 
@@ -565,8 +659,17 @@ func (w *ServerInterfaceWrapper) ListPlugins(ctx echo.Context) error {
 
 	ctx.Set(string(BearerAuthScopes), []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListPluginsParams
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.ListPlugins(ctx, projectId)
+	err = w.Handler.ListPlugins(ctx, projectId, params)
 	return err
 }
 
@@ -583,8 +686,17 @@ func (w *ServerInterfaceWrapper) UploadPlugin(ctx echo.Context) error {
 
 	ctx.Set(string(BearerAuthScopes), []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UploadPluginParams
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.UploadPlugin(ctx, projectId)
+	err = w.Handler.UploadPlugin(ctx, projectId, params)
 	return err
 }
 
@@ -609,8 +721,17 @@ func (w *ServerInterfaceWrapper) UninstallPlugin(ctx echo.Context) error {
 
 	ctx.Set(string(BearerAuthScopes), []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UninstallPluginParams
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.UninstallPlugin(ctx, projectId, pluginId)
+	err = w.Handler.UninstallPlugin(ctx, projectId, pluginId, params)
 	return err
 }
 
@@ -627,8 +748,17 @@ func (w *ServerInterfaceWrapper) PublishProject(ctx echo.Context) error {
 
 	ctx.Set(string(BearerAuthScopes), []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PublishProjectParams
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PublishProject(ctx, projectId)
+	err = w.Handler.PublishProject(ctx, projectId, params)
 	return err
 }
 
@@ -645,8 +775,17 @@ func (w *ServerInterfaceWrapper) RestoreProject(ctx echo.Context) error {
 
 	ctx.Set(string(BearerAuthScopes), []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RestoreProjectParams
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.RestoreProject(ctx, projectId)
+	err = w.Handler.RestoreProject(ctx, projectId, params)
 	return err
 }
 
@@ -663,8 +802,17 @@ func (w *ServerInterfaceWrapper) PublishStory(ctx echo.Context) error {
 
 	ctx.Set(string(BearerAuthScopes), []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params PublishStoryParams
+	// ------------- Optional query parameter "workspace" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "workspace", ctx.QueryParams(), &params.Workspace, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter workspace: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PublishStory(ctx, projectId)
+	err = w.Handler.PublishStory(ctx, projectId, params)
 	return err
 }
 
@@ -939,6 +1087,7 @@ func (response DeleteProject409JSONResponse) VisitDeleteProjectResponse(w http.R
 
 type GetProjectRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
+	Params    GetProjectParams
 }
 
 type GetProjectResponseObject interface {
@@ -1003,6 +1152,7 @@ func (response GetProject404JSONResponse) VisitGetProjectResponse(w http.Respons
 
 type UpdateProjectRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
+	Params    UpdateProjectParams
 	Body      *UpdateProjectJSONRequestBody
 }
 
@@ -1082,6 +1232,7 @@ func (response UpdateProject404JSONResponse) VisitUpdateProjectResponse(w http.R
 
 type ExportProjectRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
+	Params    ExportProjectParams
 }
 
 type ExportProjectResponseObject interface {
@@ -1180,6 +1331,7 @@ func (response ExportProject409JSONResponse) VisitExportProjectResponse(w http.R
 
 type ListPluginsRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
+	Params    ListPluginsParams
 }
 
 type ListPluginsResponseObject interface {
@@ -1244,6 +1396,7 @@ func (response ListPlugins404JSONResponse) VisitListPluginsResponse(w http.Respo
 
 type UploadPluginRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
+	Params    UploadPluginParams
 	JSONBody  *UploadPluginJSONRequestBody
 	Body      io.Reader
 }
@@ -1339,6 +1492,7 @@ func (response UploadPlugin409JSONResponse) VisitUploadPluginResponse(w http.Res
 type UninstallPluginRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
 	PluginId  string    `json:"pluginId"`
+	Params    UninstallPluginParams
 }
 
 type UninstallPluginResponseObject interface {
@@ -1411,6 +1565,7 @@ func (response UninstallPlugin404JSONResponse) VisitUninstallPluginResponse(w ht
 
 type PublishProjectRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
+	Params    PublishProjectParams
 	Body      *PublishProjectJSONRequestBody
 }
 
@@ -1504,6 +1659,7 @@ func (response PublishProject409JSONResponse) VisitPublishProjectResponse(w http
 
 type RestoreProjectRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
+	Params    RestoreProjectParams
 }
 
 type RestoreProjectResponseObject interface {
@@ -1582,6 +1738,7 @@ func (response RestoreProject404JSONResponse) VisitRestoreProjectResponse(w http
 
 type PublishStoryRequestObject struct {
 	ProjectId ProjectId `json:"projectId"`
+	Params    PublishStoryParams
 	Body      *PublishStoryJSONRequestBody
 }
 
@@ -2059,10 +2216,11 @@ func (sh *strictHandler) DeleteProject(ctx echo.Context, projectId ProjectId, pa
 }
 
 // GetProject operation middleware
-func (sh *strictHandler) GetProject(ctx echo.Context, projectId ProjectId) error {
+func (sh *strictHandler) GetProject(ctx echo.Context, projectId ProjectId, params GetProjectParams) error {
 	var request GetProjectRequestObject
 
 	request.ProjectId = projectId
+	request.Params = params
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.GetProject(ctx.Request().Context(), request.(GetProjectRequestObject))
@@ -2084,10 +2242,11 @@ func (sh *strictHandler) GetProject(ctx echo.Context, projectId ProjectId) error
 }
 
 // UpdateProject operation middleware
-func (sh *strictHandler) UpdateProject(ctx echo.Context, projectId ProjectId) error {
+func (sh *strictHandler) UpdateProject(ctx echo.Context, projectId ProjectId, params UpdateProjectParams) error {
 	var request UpdateProjectRequestObject
 
 	request.ProjectId = projectId
+	request.Params = params
 
 	var body UpdateProjectJSONRequestBody
 	if err := ctx.Bind(&body); err != nil {
@@ -2115,10 +2274,11 @@ func (sh *strictHandler) UpdateProject(ctx echo.Context, projectId ProjectId) er
 }
 
 // ExportProject operation middleware
-func (sh *strictHandler) ExportProject(ctx echo.Context, projectId ProjectId) error {
+func (sh *strictHandler) ExportProject(ctx echo.Context, projectId ProjectId, params ExportProjectParams) error {
 	var request ExportProjectRequestObject
 
 	request.ProjectId = projectId
+	request.Params = params
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.ExportProject(ctx.Request().Context(), request.(ExportProjectRequestObject))
@@ -2140,10 +2300,11 @@ func (sh *strictHandler) ExportProject(ctx echo.Context, projectId ProjectId) er
 }
 
 // ListPlugins operation middleware
-func (sh *strictHandler) ListPlugins(ctx echo.Context, projectId ProjectId) error {
+func (sh *strictHandler) ListPlugins(ctx echo.Context, projectId ProjectId, params ListPluginsParams) error {
 	var request ListPluginsRequestObject
 
 	request.ProjectId = projectId
+	request.Params = params
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.ListPlugins(ctx.Request().Context(), request.(ListPluginsRequestObject))
@@ -2165,10 +2326,11 @@ func (sh *strictHandler) ListPlugins(ctx echo.Context, projectId ProjectId) erro
 }
 
 // UploadPlugin operation middleware
-func (sh *strictHandler) UploadPlugin(ctx echo.Context, projectId ProjectId) error {
+func (sh *strictHandler) UploadPlugin(ctx echo.Context, projectId ProjectId, params UploadPluginParams) error {
 	var request UploadPluginRequestObject
 
 	request.ProjectId = projectId
+	request.Params = params
 	if strings.HasPrefix(ctx.Request().Header.Get("Content-Type"), "application/json") {
 		var body UploadPluginJSONRequestBody
 		if err := ctx.Bind(&body); err != nil {
@@ -2201,11 +2363,12 @@ func (sh *strictHandler) UploadPlugin(ctx echo.Context, projectId ProjectId) err
 }
 
 // UninstallPlugin operation middleware
-func (sh *strictHandler) UninstallPlugin(ctx echo.Context, projectId ProjectId, pluginId string) error {
+func (sh *strictHandler) UninstallPlugin(ctx echo.Context, projectId ProjectId, pluginId string, params UninstallPluginParams) error {
 	var request UninstallPluginRequestObject
 
 	request.ProjectId = projectId
 	request.PluginId = pluginId
+	request.Params = params
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.UninstallPlugin(ctx.Request().Context(), request.(UninstallPluginRequestObject))
@@ -2227,10 +2390,11 @@ func (sh *strictHandler) UninstallPlugin(ctx echo.Context, projectId ProjectId, 
 }
 
 // PublishProject operation middleware
-func (sh *strictHandler) PublishProject(ctx echo.Context, projectId ProjectId) error {
+func (sh *strictHandler) PublishProject(ctx echo.Context, projectId ProjectId, params PublishProjectParams) error {
 	var request PublishProjectRequestObject
 
 	request.ProjectId = projectId
+	request.Params = params
 
 	var body PublishProjectJSONRequestBody
 	if err := ctx.Bind(&body); err != nil {
@@ -2258,10 +2422,11 @@ func (sh *strictHandler) PublishProject(ctx echo.Context, projectId ProjectId) e
 }
 
 // RestoreProject operation middleware
-func (sh *strictHandler) RestoreProject(ctx echo.Context, projectId ProjectId) error {
+func (sh *strictHandler) RestoreProject(ctx echo.Context, projectId ProjectId, params RestoreProjectParams) error {
 	var request RestoreProjectRequestObject
 
 	request.ProjectId = projectId
+	request.Params = params
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.RestoreProject(ctx.Request().Context(), request.(RestoreProjectRequestObject))
@@ -2283,10 +2448,11 @@ func (sh *strictHandler) RestoreProject(ctx echo.Context, projectId ProjectId) e
 }
 
 // PublishStory operation middleware
-func (sh *strictHandler) PublishStory(ctx echo.Context, projectId ProjectId) error {
+func (sh *strictHandler) PublishStory(ctx echo.Context, projectId ProjectId, params PublishStoryParams) error {
 	var request PublishStoryRequestObject
 
 	request.ProjectId = projectId
+	request.Params = params
 
 	var body PublishStoryJSONRequestBody
 	if err := ctx.Bind(&body); err != nil {

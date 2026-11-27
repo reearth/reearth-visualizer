@@ -43,6 +43,17 @@ func (i *WorkspaceInteractor) FindByUser(ctx context.Context, id accountsUser.ID
 	return filterWorkspacesAc(res, operator, err, true, true)
 }
 
+func (i *WorkspaceInteractor) FindByAlias(ctx context.Context, alias string, operator *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error) {
+	ws, err := i.repos.Workspace.FindByAlias(ctx, alias)
+	if err != nil {
+		return nil, err
+	}
+	if ws == nil || operator == nil || !operator.IsReadableWorkspace(ws.ID()) {
+		return nil, rerror.ErrNotFound
+	}
+	return ws, nil
+}
+
 func (i *WorkspaceInteractor) Create(ctx context.Context, name string, firstUser accountsUser.ID, alias *string, operator *accountsWorkspace.Operator) (_ *accountsWorkspace.Workspace, err error) {
 	if operator == nil || operator.User == nil {
 		return nil, errInvalidOperator
