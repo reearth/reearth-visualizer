@@ -342,6 +342,63 @@ describe("zushiAdapter", () => {
       });
     });
 
+    test("modal.update keeps the backdrop options that are not passed", () => {
+      const onModalShow = vi.fn();
+      const reearthContext = {
+        ...createMockReearthContext(),
+        onModalShow
+      };
+      const messageHandlers = {
+        onMessage: vi.fn(),
+        offMessage: vi.fn(),
+        onceMessage: vi.fn(),
+        dispatchMessage: vi.fn()
+      };
+
+      const factory = createZushiExposedAPI(
+        () => reearthContext,
+        messageHandlers,
+        () => {}
+      );
+      const mockZushiContext = {
+        surfaces: {
+          ui: createMockSurface(),
+          modal: createMockSurface(),
+          popup: createMockSurface()
+        },
+        startEventLoop: vi.fn()
+      };
+
+      const globalThis = factory(mockZushiContext as any);
+
+      globalThis.reearth.modal.show("<div>modal</div>", {
+        background: "#ff0000",
+        clickBgToClose: true
+      });
+      globalThis.reearth.modal.update({ width: 500 });
+
+      expect(onModalShow).toHaveBeenLastCalledWith({
+        background: "#ff0000",
+        clickBgToClose: true
+      });
+
+      // A value that is passed replaces the old one
+      globalThis.reearth.modal.update({ background: "#00ff00" });
+      expect(onModalShow).toHaveBeenLastCalledWith({
+        background: "#00ff00",
+        clickBgToClose: true
+      });
+
+      // Close resets them, and a new show starts clean
+      globalThis.reearth.modal.close();
+      globalThis.reearth.modal.show("<div>modal</div>");
+      globalThis.reearth.modal.update({ width: 500 });
+      expect(onModalShow).toHaveBeenLastCalledWith({
+        background: undefined,
+        clickBgToClose: undefined
+      });
+    });
+
     test("maps Popup surface to reearth.popup API", () => {
       const reearthContext = createMockReearthContext();
       const messageHandlers = {

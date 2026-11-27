@@ -183,4 +183,24 @@ test.describe("Modal Plugin API — semantic (webkit)", () => {
     await expectModalClosed();
     await expect.poll(() => pluginFixture.modalClosedCount()).toBe(before + 1);
   });
+
+  test("modal.update without background options keeps click-to-close", async () => {
+    test.info().annotations.push({
+      type: "story",
+      description: "PLUGIN-MOD-006"
+    });
+
+    await showModal();
+    await expect(modalInner()).toBeVisible();
+    await clickPlugin("Modal Update");
+    await expect
+      .poll(
+        async () => (await pluginFixture.modalFrameElement.boundingBox())?.width
+      )
+      .toBeCloseTo(500, -1);
+
+    await pluginFixture.clickModalBackground();
+
+    await expectModalClosed();
+  });
 });
