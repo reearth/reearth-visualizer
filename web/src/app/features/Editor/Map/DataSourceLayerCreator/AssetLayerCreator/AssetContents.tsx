@@ -11,9 +11,10 @@ import {
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, RefObject } from "react";
+import { FC, RefObject, useCallback, useEffect, useState } from "react";
 
 import { AssetCard, AssetRow } from "./AssetItem";
+import AssetDetails from "./Cms/AssetDetails";
 import { AssetLayout, AssetTab, LayerAsset } from "./types";
 import { LIST_COLUMNS } from "./utils";
 
@@ -72,6 +73,25 @@ const AssetContents: FC<Props> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
+
+  // The CMS item whose details are open, one at a time, next to its card or
+  // its row's info button. Closed when the tab or layout changes, or when the
+  // item is no longer shown.
+  const isCmsTab = tab !== "visualizer";
+  const [details, setDetails] = useState<{
+    id: string;
+    reference: HTMLElement;
+  }>();
+  const detailsAsset = details && assets.find((a) => a.id === details.id);
+  const closeDetails = useCallback(() => setDetails(undefined), []);
+  const openDetails = useCallback(
+    (id: string, reference: HTMLElement) => setDetails({ id, reference }),
+    []
+  );
+  useEffect(() => setDetails(undefined), [tab, layout]);
+  useEffect(() => {
+    if (details && !detailsAsset) setDetails(undefined);
+  }, [details, detailsAsset]);
 
   return (
     <>
@@ -144,6 +164,7 @@ const AssetContents: FC<Props> = ({
               <span>
                 {tab === "cmsModels" ? t("Created") : t("Uploaded at")}
               </span>
+              {isCmsTab && <span />}
             </ListHeader>
           </ListHeaderWrapper>
         )}
@@ -157,7 +178,11 @@ const AssetContents: FC<Props> = ({
                 size={50}
                 color={theme.content.weak}
               />
-              <Typography size="h5">{t("No assets found")}</Typography>
+              <Typography size="h5">
+                {tab === "cmsModels"
+                  ? t("No models found")
+                  : t("No assets found")}
+              </Typography>
               <Typography size="body" color={theme.content.weak}>
                 {t("Try adjusting your search or filters")}
               </Typography>
@@ -171,6 +196,7 @@ const AssetContents: FC<Props> = ({
                   tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
+                  onInfo={isCmsTab ? openDetails : undefined}
                 />
               ))}
             </Grid>
@@ -183,12 +209,23 @@ const AssetContents: FC<Props> = ({
                   tab={tab}
                   selected={asset.id === selectedId}
                   onSelect={onSelect}
+                  onInfo={isCmsTab ? openDetails : undefined}
                 />
               ))}
             </List>
           )}
         </AssetsContentWrapper>
       </AssetsArea>
+      {details && detailsAsset && (
+        <AssetDetails
+          key={detailsAsset.id}
+          asset={detailsAsset}
+          tab={tab}
+          reference={details.reference}
+          side={layout === "grid" ? "right" : "left"}
+          onClose={closeDetails}
+        />
+      )}
     </>
   );
 };
@@ -207,8 +244,9 @@ const Notice = styled("div")(({ theme }) => ({
   padding: `0 ${theme.spacing.small}px ${theme.spacing.small}px`
 }));
 
+// At least 150px, and wider when a label needs it (as some translations do).
 const Filter = styled("div")(() => ({
-  width: 150
+  minWidth: 150
 }));
 
 const AssetsArea = styled("div")(({ theme }) => ({

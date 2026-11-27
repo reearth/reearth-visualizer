@@ -3,7 +3,7 @@ import { useAssetMutations, useAssets } from "@reearth/services/api/asset";
 import { useProjectId, useWorkspace } from "@reearth/services/state";
 import { useCallback, useRef } from "react";
 
-import { AssetSource, SORTS, SortKey } from "./types";
+import { AssetSource, SORTS, SortKey } from "../types";
 
 const ASSETS_PER_PAGE = 20;
 

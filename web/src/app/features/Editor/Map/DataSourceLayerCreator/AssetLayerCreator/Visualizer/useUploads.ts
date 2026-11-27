@@ -1,7 +1,7 @@
 import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useRef, useState } from "react";
 
-import { formatOf } from "./utils";
+import { formatOf } from "../utils";
 
 const MAX_FILE_SIZE_MB = 100;
 

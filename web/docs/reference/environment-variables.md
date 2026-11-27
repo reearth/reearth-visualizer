@@ -280,26 +280,6 @@ REEARTH_WEB_ENABLE_GQL_PLAYGROUND=true
 
 **When to use**: Development and staging environments only
 
-### `REEARTH_WEB_DEV_MODE`
-
-Enable features still under development.
-
-**Type**: `boolean`
-
-**Required**: No
-
-**Default**: `false`
-
-**Example**:
-
-```bash
-REEARTH_WEB_DEV_MODE=true
-```
-
-**Description**: Shows features that are not yet released, such as adding layers from CMS (the CMS tabs in "Add from Assets"). In the Docker image, set `REEARTH_DEV_MODE=true`.
-
-**When to use**: Development environments only
-
 ### `REEARTH_WEB_LOG_LEVEL`
 
 Logging level.
@@ -344,6 +324,24 @@ REEARTH_WEB_MOCK_DATA=true
 **When to use**: Development without backend
 
 ## Integration Variables
+
+### `REEARTH_CMS_URL`
+
+URL of Re:Earth CMS's web app.
+
+**Type**: `string` (URL)
+
+**Required**: No
+
+**Example**:
+
+```bash
+REEARTH_CMS_URL=https://cms.example.com
+```
+
+**Description**: Used by the CMS entry in the products menu and by "Open in CMS" in the "Add from CMS" asset details, which link to `{url}/workspace/{workspaceId}/project/{projectId}/asset/{assetId}`. Set it on the Docker image for each environment (dev, production); it is written to `cmsUrl` in `reearth_config.json`. Without it, "Open in CMS" is hidden for CMS assets.
+
+**When to use**: Dev and production deployments
 
 ### `REEARTH_WEB_SENTRY_DSN`
 

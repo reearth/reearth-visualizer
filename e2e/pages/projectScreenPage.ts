@@ -7,6 +7,7 @@ export class ProjectScreenPage {
   newLayerButton: Locator;
   addSketchLayerButton: Locator;
   addFromAssetsButton: Locator;
+  addFromCmsButton: Locator;
   addFromUrlButton: Locator;
   addFromValueButton: Locator;
   addFromPlateauButton: Locator;
@@ -74,6 +75,9 @@ export class ProjectScreenPage {
     });
     this.addFromAssetsButton = this.page.getByRole("menuitem", {
       name: "Add from Assets"
+    });
+    this.addFromCmsButton = this.page.getByRole("menuitem", {
+      name: "Add from CMS"
     });
     this.addFromUrlButton = this.page.getByRole("menuitem", {
       name: "Add from URL"

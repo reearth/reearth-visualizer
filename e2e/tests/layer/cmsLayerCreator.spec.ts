@@ -104,6 +104,34 @@ const VALID_GEOJSON = JSON.stringify({
   ]
 });
 
+// A model's first items from the Public API, as the details preview asks
+// for them: the id, CMS metadata and geometry are left out of its table.
+const ROADS_ITEMS = JSON.stringify({
+  totalCount: 1248,
+  results: [
+    {
+      id: "item-1",
+      $createdAt: CREATED_AT,
+      name: "Ueno Park",
+      area_m2: 538500,
+      category: { id: "tag-1", name: "city" },
+      location: { type: "Point", coordinates: [139.77, 35.71] }
+    },
+    {
+      id: "item-2",
+      name: "Yoyogi Park",
+      area_m2: 540529,
+      category: { id: "tag-2", name: "metro" }
+    }
+  ]
+});
+
+// "Notes" has items but no geometry field.
+const NOTES_ITEMS = JSON.stringify({
+  totalCount: 87,
+  results: [{ id: "item-1", title: "Roof repair", author: "Sato" }]
+});
+
 test.describe.configure({ mode: "serial" });
 
 test.describe("Add Layer from CMS", () => {
@@ -125,7 +153,7 @@ test.describe("Add Layer from CMS", () => {
     projectScreen = new ProjectScreenPage(page);
     assetLayerCreator = new AssetLayerCreatorPage(page);
 
-    await assetLayerCreator.enableDevMode();
+    await assetLayerCreator.enableCms({ cmsUrl: MOCK_HOST });
     graphQLCalls = await assetLayerCreator.mockGraphQL({
       GetCMSProjects: () => ({
         cmsProjects: {
@@ -151,6 +179,15 @@ test.describe("Add Layer from CMS", () => {
     await assetLayerCreator.mockUrl(/\/model-notes\.geojson/, {
       status: 400,
       body: '{"error":"no geometry field in this model"}'
+    });
+    await assetLayerCreator.mockUrl(/\/model-notes\?limit=5$/, {
+      body: NOTES_ITEMS
+    });
+    await assetLayerCreator.mockUrl(/\/model-roads\?limit=5$/, {
+      body: ROADS_ITEMS
+    });
+    await assetLayerCreator.mockUrl(/\/assets\/roads\.geojson$/, {
+      body: VALID_GEOJSON
     });
 
     await page.goto(REEARTH_WEB_E2E_BASEURL || "", {
@@ -206,7 +243,7 @@ test.describe("Add Layer from CMS", () => {
 
   async function openTab(tab: "cmsAssets" | "cmsModels") {
     await projectScreen.newLayerButton.click();
-    await projectScreen.addFromAssetsButton.click();
+    await projectScreen.addFromCmsButton.click();
     await expect(assetLayerCreator.modal).toBeVisible();
     await (
       tab === "cmsAssets"
@@ -250,6 +287,70 @@ test.describe("Add Layer from CMS", () => {
       await expect(assetLayerCreator.card(m.id)).toBeVisible();
     }
     expect(graphQLCalls.GetCMSModels).toBe(fetched);
+    await assetLayerCreator.cancel();
+  });
+
+  test("Models: previews a model's first items without selecting it", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EXTL-008" });
+    await openTab("cmsModels");
+    await assetLayerCreator.openDetails("model-roads");
+
+    const { details, detailsColumns, detailsRows } = assetLayerCreator;
+    await expect(details).toContainText("Roads");
+    await expect(details).toContainText("Model · E2E Roads");
+    await expect(details).toContainText("First 2 of 1,248 items");
+    await expect(detailsColumns).toHaveText(["name", "area_m2", "category"]);
+    await expect(detailsRows).toHaveText([
+      "Ueno Park538,500city",
+      "Yoyogi Park540,529metro"
+    ]);
+    // Built from the config's cmsUrl and the CMS project's workspace.
+    await expect(assetLayerCreator.openInCmsLink).toHaveAttribute(
+      "href",
+      `${MOCK_HOST}/workspace/ws/project/cms-p1/content/model-roads`
+    );
+    await expect(assetLayerCreator.submitButton).toBeDisabled();
+
+    await assetLayerCreator.closeDetails();
+    await assetLayerCreator.cancel();
+  });
+
+  test("Models: list view opens a row's details left of its info button", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EXTL-008" });
+    await openTab("cmsModels");
+    await assetLayerCreator.listLayoutButton.click();
+    await expect(assetLayerCreator.row("model-roads")).toBeVisible();
+    await assetLayerCreator.openDetails("model-roads");
+
+    await expect(assetLayerCreator.details).toContainText(
+      "First 2 of 1,248 items"
+    );
+    const details = await assetLayerCreator.details.boundingBox();
+    const info = await assetLayerCreator
+      .infoButton("model-roads")
+      .boundingBox();
+    expect(details && info && details.x + details.width <= info.x).toBe(true);
+    await expect(assetLayerCreator.submitButton).toBeDisabled();
+
+    await assetLayerCreator.closeDetails();
+    await assetLayerCreator.gridLayoutButton.click();
+    await assetLayerCreator.cancel();
+  });
+
+  test("Models: warns in the preview that a model has no geometry field", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EXTL-008" });
+    await openTab("cmsModels");
+    await assetLayerCreator.openDetails("model-notes");
+
+    const { details, detailsColumns, detailsRows } = assetLayerCreator;
+    await expect(details).toContainText(
+      "No geometry field, so this model can't be added as a layer."
+    );
+    await expect(details).toContainText("First 1 of 87 items");
+    await expect(detailsColumns).toHaveText(["title", "author"]);
+    await expect(detailsRows).toHaveText(["Roof repairSato"]);
+
+    await assetLayerCreator.closeDetails();
     await assetLayerCreator.cancel();
   });
 
@@ -303,6 +404,36 @@ test.describe("Add Layer from CMS", () => {
     await expect(assetLayerCreator.card("asset-wms")).toBeVisible();
     await expect(assetLayerCreator.card("asset-geojson")).not.toBeVisible();
     await expect(assetLayerCreator.card("asset-mvt")).not.toBeVisible();
+    await assetLayerCreator.cancel();
+  });
+
+  test("Assets: previews a GeoJSON asset's features", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EXTL-009" });
+    await openTab("cmsAssets");
+    await assetLayerCreator.openDetails("asset-geojson");
+
+    const { details, detailsPoints, detailsTags } = assetLayerCreator;
+    await expect(details).toContainText("GeoJSON · 1 KB · E2E Roads");
+    await expect(detailsPoints).toHaveCount(1);
+    await expect(details).toContainText("Point · 1 feature");
+    await expect(detailsTags).toHaveText(["name"]);
+    await expect(assetLayerCreator.detailsTable).toHaveCount(0);
+
+    await assetLayerCreator.closeDetails();
+    await assetLayerCreator.cancel();
+  });
+
+  test("Assets: says why an asset has no preview", async () => {
+    test.info().annotations.push({ type: "story", description: "US-EXTL-009" });
+    await openTab("cmsAssets");
+    await assetLayerCreator.openDetails("asset-mvt");
+
+    await expect(assetLayerCreator.details).toContainText(
+      "MVT can't be previewed here"
+    );
+    await expect(assetLayerCreator.detailsTable).toHaveCount(0);
+
+    await assetLayerCreator.closeDetails();
     await assetLayerCreator.cancel();
   });
 
