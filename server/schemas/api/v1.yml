@@ -179,6 +179,7 @@ paths:
   /projects/{projectId}:
     parameters:
       - $ref: "#/components/parameters/projectId"
+      - $ref: "#/components/parameters/workspace"
     get:
       operationId: getProject
       summary: Get a project
@@ -251,6 +252,7 @@ paths:
   /projects/{projectId}/restore:
     parameters:
       - $ref: "#/components/parameters/projectId"
+      - $ref: "#/components/parameters/workspace"
     post:
       operationId: restoreProject
       summary: Restore a project from the trash
@@ -276,6 +278,7 @@ paths:
   /projects/{projectId}/publish:
     parameters:
       - $ref: "#/components/parameters/projectId"
+      - $ref: "#/components/parameters/workspace"
     post:
       operationId: publishProject
       summary: Publish or unpublish a project
@@ -314,6 +317,7 @@ paths:
   /projects/{projectId}/story/publish:
     parameters:
       - $ref: "#/components/parameters/projectId"
+      - $ref: "#/components/parameters/workspace"
     post:
       operationId: publishStory
       summary: Publish or unpublish a project's story
@@ -349,6 +353,7 @@ paths:
   /projects/{projectId}/export:
     parameters:
       - $ref: "#/components/parameters/projectId"
+      - $ref: "#/components/parameters/workspace"
     get:
       operationId: exportProject
       summary: Download a project as a zip
@@ -378,6 +383,7 @@ paths:
   /projects/{projectId}/plugins:
     parameters:
       - $ref: "#/components/parameters/projectId"
+      - $ref: "#/components/parameters/workspace"
     get:
       operationId: listPlugins
       summary: List the plugins installed in a project
@@ -438,6 +444,7 @@ paths:
   /projects/{projectId}/plugins/{pluginId}:
     parameters:
       - $ref: "#/components/parameters/projectId"
+      - $ref: "#/components/parameters/workspace"
       - name: pluginId
         in: path
         required: true
@@ -469,12 +476,20 @@ components:
       name: workspaceId
       in: path
       required: true
+      description: Workspace ID or alias.
       schema:
         type: string
     projectId:
       name: projectId
       in: path
       required: true
+      description: Project ID, or project alias together with the `workspace` query parameter.
+      schema:
+        type: string
+    workspace:
+      name: workspace
+      in: query
+      description: Workspace ID or alias. Required when `projectId` is a project alias.
       schema:
         type: string
     limit:

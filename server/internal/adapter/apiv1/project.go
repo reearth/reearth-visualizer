@@ -3,10 +3,12 @@ package apiv1
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/apperr"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -165,9 +167,9 @@ func createSceneAndStory(ctx context.Context, uc *interfaces.Container, pid id.P
 
 func (Server) GetProject(ctx context.Context, req GetProjectRequestObject) (GetProjectResponseObject, error) {
 	uc, _ := usecases(ctx)
-	pid, err := id.ProjectIDFrom(req.ProjectId)
+	pid, err := resolveProject(ctx, req.ProjectId, req.Params.Workspace)
 	if err != nil {
-		return nil, invalidInput("invalid project ID %q", req.ProjectId)
+		return nil, err
 	}
 	prj, err := fetchProject(ctx, uc, pid)
 	if err != nil {
@@ -182,9 +184,9 @@ func (Server) GetProject(ctx context.Context, req GetProjectRequestObject) (GetP
 
 func (Server) UpdateProject(ctx context.Context, req UpdateProjectRequestObject) (UpdateProjectResponseObject, error) {
 	uc, op := usecases(ctx)
-	pid, err := id.ProjectIDFrom(req.ProjectId)
+	pid, err := resolveProject(ctx, req.ProjectId, req.Params.Workspace)
 	if err != nil {
-		return nil, invalidInput("invalid project ID %q", req.ProjectId)
+		return nil, err
 	}
 	b := req.Body
 	if b == nil || (b.Name == nil && b.Description == nil && b.Starred == nil && b.Archived == nil) {
@@ -220,9 +222,9 @@ func (Server) UpdateProject(ctx context.Context, req UpdateProjectRequestObject)
 // mistaken call can never destroy a project.
 func (Server) DeleteProject(ctx context.Context, req DeleteProjectRequestObject) (DeleteProjectResponseObject, error) {
 	uc, op := usecases(ctx)
-	pid, err := id.ProjectIDFrom(req.ProjectId)
+	pid, err := resolveProject(ctx, req.ProjectId, req.Params.Workspace)
 	if err != nil {
-		return nil, invalidInput("invalid project ID %q", req.ProjectId)
+		return nil, err
 	}
 	prj, err := fetchProject(ctx, uc, pid)
 	if err != nil {
@@ -257,9 +259,9 @@ func (Server) DeleteProject(ctx context.Context, req DeleteProjectRequestObject)
 // the trash is returned unchanged, so retrying is safe.
 func (Server) RestoreProject(ctx context.Context, req RestoreProjectRequestObject) (RestoreProjectResponseObject, error) {
 	uc, op := usecases(ctx)
-	pid, err := id.ProjectIDFrom(req.ProjectId)
+	pid, err := resolveProject(ctx, req.ProjectId, req.Params.Workspace)
 	if err != nil {
-		return nil, invalidInput("invalid project ID %q", req.ProjectId)
+		return nil, err
 	}
 	prj, err := fetchProject(ctx, uc, pid)
 	if err != nil {
@@ -288,9 +290,9 @@ func (Server) RestoreProject(ctx context.Context, req RestoreProjectRequestObjec
 // project's current state, so publishing again updates the published site.
 func (s Server) PublishProject(ctx context.Context, req PublishProjectRequestObject) (PublishProjectResponseObject, error) {
 	uc, op := usecases(ctx)
-	pid, err := id.ProjectIDFrom(req.ProjectId)
+	pid, err := resolveProject(ctx, req.ProjectId, req.Params.Workspace)
 	if err != nil {
-		return nil, invalidInput("invalid project ID %q", req.ProjectId)
+		return nil, err
 	}
 	status, ok := fromPublishmentStatus(req.Body.Status)
 	if !ok {
@@ -339,6 +341,40 @@ const webVisualizerCesium = visualizer.Visualizer("CESIUM")
 
 // fetchProject returns the project, or a not found error when it does not
 // exist or the user cannot read its workspace.
+func resolveProject(ctx context.Context, raw string, workspace *string) (id.ProjectID, error) {
+	if pid, err := id.ProjectIDFrom(raw); err == nil {
+		return pid, nil
+	}
+	var zero id.ProjectID
+	if workspace == nil || *workspace == "" {
+		return zero, invalidInput("%q is not a project ID; to use a project alias, also pass the workspace query parameter", raw)
+	}
+	wid, err := resolveWorkspace(ctx, *workspace)
+	if err != nil {
+		return zero, err
+	}
+	uc, op := usecases(ctx)
+	if raw == "" || !op.IsReadableWorkspace(wid) {
+		return zero, notFound(fmt.Sprintf("project %q", raw))
+	}
+	for _, excludeDeleted := range []bool{true, false} {
+		prj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, wid, raw, excludeDeleted, op)
+		if err == nil && prj != nil {
+			return prj.ID(), nil
+		}
+		if err != nil && !isProjectNotFound(err) {
+			return zero, err
+		}
+	}
+	return zero, notFound(fmt.Sprintf("project %q", raw))
+}
+
+func isProjectNotFound(err error) bool {
+	return errors.Is(err, repo.ErrResourceNotFound) ||
+		errors.Is(err, interfaces.ErrOperationDenied) ||
+		apperr.Classify(err) == apperr.ClassNotFound
+}
+
 func fetchProject(ctx context.Context, uc *interfaces.Container, pid id.ProjectID) (*project.Project, error) {
 	_, op := usecases(ctx)
 	res, err := uc.Project.Fetch(ctx, []id.ProjectID{pid}, op)

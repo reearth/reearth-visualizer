@@ -15,9 +15,9 @@ import (
 // clients for its ID.
 func (s Server) PublishStory(ctx context.Context, req PublishStoryRequestObject) (PublishStoryResponseObject, error) {
 	uc, op := usecases(ctx)
-	pid, err := id.ProjectIDFrom(req.ProjectId)
+	pid, err := resolveProject(ctx, req.ProjectId, req.Params.Workspace)
 	if err != nil {
-		return nil, invalidInput("invalid project ID %q", req.ProjectId)
+		return nil, err
 	}
 	status, ok := fromStoryPublishmentStatus(req.Body.Status)
 	if !ok {

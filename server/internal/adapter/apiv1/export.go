@@ -7,7 +7,6 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/projectexport"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
-	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/log"
 )
 
@@ -19,9 +18,9 @@ func (s Server) ExportProject(ctx context.Context, req ExportProjectRequestObjec
 		return nil, errors.New("api v1: no file storage for exports")
 	}
 	uc, op := usecases(ctx)
-	pid, err := id.ProjectIDFrom(req.ProjectId)
+	pid, err := resolveProject(ctx, req.ProjectId, req.Params.Workspace)
 	if err != nil {
-		return nil, invalidInput("invalid project ID %q", req.ProjectId)
+		return nil, err
 	}
 	prj, err := fetchProject(ctx, uc, pid)
 	if err != nil {
