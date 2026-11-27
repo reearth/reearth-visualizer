@@ -102,9 +102,9 @@ func (s Server) ImportProjectUploadUrl(ctx context.Context, req ImportProjectUpl
 // create projects in it. Checked here because the shared import code answers
 // every failure to start an import with 400.
 func writableWorkspace(ctx context.Context, raw string) (accountsID.WorkspaceID, error) {
-	wid, err := accountsID.WorkspaceIDFrom(raw)
+	wid, err := resolveWorkspace(ctx, raw)
 	if err != nil {
-		return wid, invalidInput("invalid workspace ID %q", raw)
+		return wid, err
 	}
 	if _, op := usecases(ctx); !op.IsWritableWorkspace(wid) {
 		return wid, permissionDenied("you cannot create projects in workspace %s", wid)

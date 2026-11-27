@@ -5,7 +5,6 @@ import (
 	"errors"
 	"strings"
 
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/apperr"
@@ -26,9 +25,9 @@ const (
 
 func (Server) ListProjects(ctx context.Context, req ListProjectsRequestObject) (ListProjectsResponseObject, error) {
 	uc, op := usecases(ctx)
-	wid, err := accountsID.WorkspaceIDFrom(req.WorkspaceId)
+	wid, err := resolveWorkspace(ctx, req.WorkspaceId)
 	if err != nil {
-		return nil, invalidInput("invalid workspace ID %q", req.WorkspaceId)
+		return nil, err
 	}
 	p := req.Params
 
@@ -94,9 +93,9 @@ func (Server) ListProjects(ctx context.Context, req ListProjectsRequestObject) (
 // same set the web app creates, so the project opens in the editor as usual.
 func (Server) CreateProject(ctx context.Context, req CreateProjectRequestObject) (CreateProjectResponseObject, error) {
 	uc, op := usecases(ctx)
-	wid, err := accountsID.WorkspaceIDFrom(req.WorkspaceId)
+	wid, err := resolveWorkspace(ctx, req.WorkspaceId)
 	if err != nil {
-		return nil, invalidInput("invalid workspace ID %q", req.WorkspaceId)
+		return nil, err
 	}
 	b := req.Body
 	if b.Name == "" {
