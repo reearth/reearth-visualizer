@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.16.33 - 2026-11-27
+
+### Web
+
+#### ✨ Refactor
+
+- Improve add layer from cms ui&#x2F;ux ([#2549](https://github.com/reearth/reearth-visualizer/pull/2549)) [`3edc99`](https://github.com/reearth/reearth-visualizer/commit/3edc99)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.16.33 ([#2554](https://github.com/reearth/reearth-visualizer/pull/2554)) [`dcd8b0`](https://github.com/reearth/reearth-visualizer/commit/dcd8b0)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update dependency golangci&#x2F;golangci-lint to v2.15.0 ([#2499](https://github.com/reearth/reearth-visualizer/pull/2499)) [`e1638c`](https://github.com/reearth/reearth-visualizer/commit/e1638c)
+- Update reearth&#x2F;changelog-action digest to cd9d00f ([#2498](https://github.com/reearth/reearth-visualizer/pull/2498)) [`406aa8`](https://github.com/reearth/reearth-visualizer/commit/406aa8)
+- Update reearth&#x2F;actions digest to aa5f705 ([#2520](https://github.com/reearth/reearth-visualizer/pull/2520)) [`e52120`](https://github.com/reearth/reearth-visualizer/commit/e52120)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update dependency golangci&#x2F;golangci-lint to v2.15.0 ([#2499](https://github.com/reearth/reearth-visualizer/pull/2499)) [`e1638c`](https://github.com/reearth/reearth-visualizer/commit/e1638c)
+- Update reearth&#x2F;changelog-action digest to cd9d00f ([#2498](https://github.com/reearth/reearth-visualizer/pull/2498)) [`406aa8`](https://github.com/reearth/reearth-visualizer/commit/406aa8)
+- Update reearth&#x2F;actions digest to aa5f705 ([#2520](https://github.com/reearth/reearth-visualizer/pull/2520)) [`e52120`](https://github.com/reearth/reearth-visualizer/commit/e52120)
+
 ## 1.0.0-beta.16.32 - 2026-11-18
 
 ### Web
